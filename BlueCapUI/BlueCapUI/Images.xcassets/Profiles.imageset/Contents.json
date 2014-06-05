@@ -3,12 +3,11 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "second.png"
+      "filename" : "map-paper-7.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "second@2x.png"
+      "scale" : "2x"
     }
   ],
   "info" : {

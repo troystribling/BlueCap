@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6154.17" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Gm5-G9-oBc">
     <dependencies>
-        <deployment defaultVersion="2048" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6153.11"/>
     </dependencies>
     <scenes>
@@ -150,10 +149,10 @@
             </objects>
             <point key="canvasLocation" x="1697" y="249"/>
         </scene>
-        <!--Table View Controller - Peripheral-->
+        <!--Peripheral Manager View Controller - Peripheral-->
         <scene sceneID="liP-61-EJD">
             <objects>
-                <tableViewController id="CAb-bN-tC0" sceneMemberID="viewController">
+                <tableViewController id="CAb-bN-tC0" customClass="PeripheralManagerViewController" customModule="BlueCapUI" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="hnD-Xa-gy8">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1646,10 +1645,10 @@
             </objects>
             <point key="canvasLocation" x="4161" y="192"/>
         </scene>
-        <!--Table View Controller - Peripherals-->
+        <!--Peripherals View Controller - Peripherals-->
         <scene sceneID="fVi-u5-rlX">
             <objects>
-                <tableViewController id="Iax-qU-br4" sceneMemberID="viewController">
+                <tableViewController id="Iax-qU-br4" customClass="PeripheralsViewController" customModule="BlueCapUI" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="QuF-dc-4mj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1738,10 +1737,10 @@
             </objects>
             <point key="canvasLocation" x="1260" y="3069"/>
         </scene>
-        <!--Characteristic Profiles View Controller - Characteristic Profiles-->
+        <!--Table View Controller - Characteristic Profiles-->
         <scene sceneID="pPZ-cj-EZf">
             <objects>
-                <tableViewController id="zWl-Dc-J9w" customClass="CharacteristicProfilesViewController" sceneMemberID="viewController">
+                <tableViewController id="zWl-Dc-J9w" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="llw-2h-NAC">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2220,10 +2219,10 @@
             </objects>
             <point key="canvasLocation" x="2218" y="3071"/>
         </scene>
-        <!--Characteristic Profile Values View Controller - Characteristic Values-->
+        <!--Table View Controller - Characteristic Values-->
         <scene sceneID="xKB-CJ-bqP">
             <objects>
-                <tableViewController id="KJi-TH-L2L" customClass="CharacteristicProfileValuesViewController" sceneMemberID="viewController">
+                <tableViewController id="KJi-TH-L2L" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="ntU-6W-CqR">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2262,7 +2261,7 @@
         <scene sceneID="qez-Id-BOC">
             <objects>
                 <navigationController definesPresentationContext="YES" id="6n5-d3-u2z" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Profiles" image="profiles" id="UGG-m5-JJE"/>
+                    <tabBarItem key="tabBarItem" title="Profiles" image="Profiles" id="UGG-m5-JJE"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="i9N-nT-Ltn">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2278,7 +2277,7 @@
         <scene sceneID="Gdg-cU-BBN">
             <objects>
                 <navigationController definesPresentationContext="YES" id="ysN-jF-arT" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Peripheral" image="peripheral" id="mB3-kQ-w76"/>
+                    <tabBarItem key="tabBarItem" title="Peripheral" image="Peripheral" id="mB3-kQ-w76"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hrb-An-DV2">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2314,7 +2313,7 @@
         <scene sceneID="9nG-V3-L1A">
             <objects>
                 <navigationController definesPresentationContext="YES" id="ekL-3M-31h" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Central" image="central" id="07S-vg-Fo9"/>
+                    <tabBarItem key="tabBarItem" title="Central" image="Central" id="07S-vg-Fo9"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4Qv-4W-Kpb">
                         <autoresizingMask key="autoresizingMask"/>
@@ -2329,9 +2328,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="central" width="30" height="30"/>
-        <image name="peripheral" width="30" height="30"/>
-        <image name="profiles" width="30" height="30"/>
+        <image name="Central" width="30" height="30"/>
+        <image name="Peripheral" width="30" height="30"/>
+        <image name="Profiles" width="30" height="30"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

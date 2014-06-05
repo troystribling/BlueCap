@@ -14,6 +14,4 @@ FOUNDATION_EXPORT double BlueCapVersionNumber;
 //! Project version string for BlueCap.
 FOUNDATION_EXPORT const unsigned char BlueCapVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <BlueCap/PublicHeader.h>
-
 

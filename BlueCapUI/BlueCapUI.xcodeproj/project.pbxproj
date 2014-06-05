@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		054A67151940AB4600B66ADA /* PeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054A67141940AB4600B66ADA /* PeripheralsViewController.swift */; };
+		054A67191940AC5900B66ADA /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054A67181940AC5900B66ADA /* PeripheralManagerViewController.swift */; };
+		054A671B1940AC9000B66ADA /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054A671A1940AC9000B66ADA /* ServiceProfilesViewController.swift */; };
 		0595E356193EC47D00C8169C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595E355193EC47D00C8169C /* AppDelegate.swift */; };
-		0595E358193EC47D00C8169C /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595E357193EC47D00C8169C /* FirstViewController.swift */; };
-		0595E35A193EC47D00C8169C /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595E359193EC47D00C8169C /* SecondViewController.swift */; };
 		0595E35D193EC47D00C8169C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0595E35B193EC47D00C8169C /* Main.storyboard */; };
 		0595E35F193EC47D00C8169C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0595E35E193EC47D00C8169C /* Images.xcassets */; };
 		0595E36B193EC47D00C8169C /* BlueCapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595E36A193EC47D00C8169C /* BlueCapUITests.swift */; };
@@ -49,11 +50,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		054A67131940A90800B66ADA /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
+		054A67141940AB4600B66ADA /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
+		054A67181940AC5900B66ADA /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerViewController.swift; sourceTree = "<group>"; };
+		054A671A1940AC9000B66ADA /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		0595E350193EC47D00C8169C /* BlueCapUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCapUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0595E354193EC47D00C8169C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0595E355193EC47D00C8169C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		0595E357193EC47D00C8169C /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
-		0595E359193EC47D00C8169C /* SecondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondViewController.swift; sourceTree = "<group>"; };
 		0595E35C193EC47D00C8169C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0595E35E193EC47D00C8169C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		0595E364193EC47D00C8169C /* BlueCapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +94,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		054A67161940ABB200B66ADA /* Peripheral */ = {
+			isa = PBXGroup;
+			children = (
+				054A67181940AC5900B66ADA /* PeripheralManagerViewController.swift */,
+			);
+			name = Peripheral;
+			sourceTree = "<group>";
+		};
+		054A67171940ABCD00B66ADA /* Profiles */ = {
+			isa = PBXGroup;
+			children = (
+				054A671A1940AC9000B66ADA /* ServiceProfilesViewController.swift */,
+			);
+			name = Profiles;
+			sourceTree = "<group>";
+		};
 		0595E347193EC47D00C8169C = {
 			isa = PBXGroup;
 			children = (
@@ -114,12 +133,11 @@
 		0595E352193EC47D00C8169C /* BlueCapUI */ = {
 			isa = PBXGroup;
 			children = (
-				0595E387193ED86D00C8169C /* Controllers */,
+				054A67131940A90800B66ADA /* MyPlayground.playground */,
 				0595E355193EC47D00C8169C /* AppDelegate.swift */,
-				0595E357193EC47D00C8169C /* FirstViewController.swift */,
-				0595E359193EC47D00C8169C /* SecondViewController.swift */,
-				0595E35B193EC47D00C8169C /* Main.storyboard */,
 				0595E35E193EC47D00C8169C /* Images.xcassets */,
+				0595E387193ED86D00C8169C /* Controllers */,
+				0595E35B193EC47D00C8169C /* Main.storyboard */,
 				0595E353193EC47D00C8169C /* Supporting Files */,
 			);
 			path = BlueCapUI;
@@ -163,6 +181,8 @@
 			isa = PBXGroup;
 			children = (
 				0595E38E194028C300C8169C /* Central */,
+				054A67161940ABB200B66ADA /* Peripheral */,
+				054A67171940ABCD00B66ADA /* Profiles */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -170,6 +190,7 @@
 		0595E38E194028C300C8169C /* Central */ = {
 			isa = PBXGroup;
 			children = (
+				054A67141940AB4600B66ADA /* PeripheralsViewController.swift */,
 			);
 			name = Central;
 			sourceTree = "<group>";
@@ -297,9 +318,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0595E35A193EC47D00C8169C /* SecondViewController.swift in Sources */,
+				054A67151940AB4600B66ADA /* PeripheralsViewController.swift in Sources */,
+				054A671B1940AC9000B66ADA /* ServiceProfilesViewController.swift in Sources */,
 				0595E356193EC47D00C8169C /* AppDelegate.swift in Sources */,
-				0595E358193EC47D00C8169C /* FirstViewController.swift in Sources */,
+				054A67191940AC5900B66ADA /* PeripheralManagerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
