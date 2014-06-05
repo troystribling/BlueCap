@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BlueCap
 
 class FirstViewController: UIViewController {
                             
