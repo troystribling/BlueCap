@@ -1,0 +1,6 @@
+*.xcuserstate
+*.xcscheme
+*.xcbkptlist
+BlueCap.xcodeproj/xcuserdata/*
+BlueCapUI/BlueCapUI.xcodeproj/xcuserdata/*
+.DS_Store
