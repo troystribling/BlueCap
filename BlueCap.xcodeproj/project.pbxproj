@@ -55,12 +55,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0595E321193EC42400C8169C = {
+		054A670F19402D3600B66ADA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				0595E37F193ED52500C8169C /* CoreBluetooth.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0595E321193EC42400C8169C = {
+			isa = PBXGroup;
+			children = (
 				0595E32D193EC42400C8169C /* BlueCap */,
 				0595E33A193EC42400C8169C /* BlueCapTests */,
+				054A670F19402D3600B66ADA /* Frameworks */,
 				0595E32C193EC42400C8169C /* Products */,
 			);
 			sourceTree = "<group>";

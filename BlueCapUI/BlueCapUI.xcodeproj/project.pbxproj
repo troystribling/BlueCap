@@ -83,13 +83,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0595E347193EC47D00C8169C = {
+		054A671019402D5400B66ADA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				0595E381193ED53B00C8169C /* CoreBluetooth.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0595E347193EC47D00C8169C = {
+			isa = PBXGroup;
+			children = (
 				0595E374193EC48800C8169C /* BlueCap.xcodeproj */,
 				0595E352193EC47D00C8169C /* BlueCapUI */,
 				0595E367193EC47D00C8169C /* BlueCapUITests */,
+				054A671019402D5400B66ADA /* Frameworks */,
 				0595E351193EC47D00C8169C /* Products */,
 			);
 			sourceTree = "<group>";
