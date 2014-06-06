@@ -1,14 +1,14 @@
 //
-//  BlueCapUITests.swift
-//  BlueCapUITests
+//  BlueCapKitTests.swift
+//  BlueCapKitTests
 //
-//  Created by Troy Stribling on 6/3/14.
+//  Created by Troy Stribling on 6/6/14.
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
 import XCTest
 
-class BlueCapUITests: XCTestCase {
+class BlueCapKitTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
