@@ -11,6 +11,20 @@ import CoreBluetooth
 
 class CentralManager : NSObject, CBCentralManagerDelegate {
     
+    // queues
+
+    // scanning
+    func startScanning() {
+    }
+    
+    // connection
+    func disconnectAllPeripherals() {
+    }
+    
+    // power up
+    func powerOn() {
+    }
+    
     // CBCentralManagerDelegate
     func centralManager(central: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {
     }

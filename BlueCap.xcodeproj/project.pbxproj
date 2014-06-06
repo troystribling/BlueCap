@@ -89,6 +89,7 @@
 		05840FA019420B0000C744E6 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840FA619420B0000C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
+		05C3F1C51942159D006F80AD /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,12 +154,13 @@
 		05840F61194206F100C744E6 /* BlueCap */ = {
 			isa = PBXGroup;
 			children = (
-				05840F861942093D00C744E6 /* UI */,
-				05840F831942092600C744E6 /* Framework */,
+				05C3F1C51942159D006F80AD /* MyPlayground.playground */,
 				05840F64194206F100C744E6 /* AppDelegate.swift */,
-				05840F6A194206F100C744E6 /* Main.storyboard */,
 				05840F6D194206F100C744E6 /* Images.xcassets */,
+				05840F831942092600C744E6 /* Framework */,
+				05840F6A194206F100C744E6 /* Main.storyboard */,
 				05840F62194206F100C744E6 /* Supporting Files */,
+				05840F861942093D00C744E6 /* UI */,
 			);
 			path = BlueCap;
 			sourceTree = "<group>";
@@ -736,6 +738,7 @@
 				05840FB219420B0000C744E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		05840FB319420B0000C744E6 /* Build configuration list for PBXNativeTarget "BlueCapKitTests" */ = {
 			isa = XCConfigurationList;
@@ -744,6 +747,7 @@
 				05840FB519420B0000C744E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
