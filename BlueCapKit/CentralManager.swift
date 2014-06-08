@@ -11,6 +11,27 @@ import CoreBluetooth
 
 class CentralManager : NSObject, CBCentralManagerDelegate {
     
+    var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
+    var centralManager : CBCentralManager!
+    
+    let mainQueue = dispatch_queue_create("com.gnos.us.central.main:", DISPATCH_QUEUE_SERIAL)
+    let callbackQueue = dispatch_queue_create("com.gnos.us.central.callback", DISPATCH_QUEUE_SERIAL);
+    
+    var isScanning      = false
+    var poweredOn       = false
+    var connecting      = false
+    
+    init() {
+    }
+    
+    // class methods
+    class func sharedinstance() -> CentralManager {
+        if (!thisCentralManager) {
+            thisCentralManager = CentralManager()
+        }
+        return thisCentralManager!;
+    }
+    
     // queues
 
     // scanning
@@ -50,3 +71,5 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     func centralManagerDidUpdateState(central: CBCentralManager!) {
     }
 }
+
+var thisCentralManager : CentralManager?

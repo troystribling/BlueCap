@@ -7,20 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0516666B1944EF9F006A337C /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0516666A1944EF9F006A337C /* Characteristic.swift */; };
+		0516666D1944F01F006A337C /* Descriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0516666C1944F01F006A337C /* Descriptor.swift */; };
+		05277C9F1944CAE50022FB59 /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */; };
+		05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */; };
+		05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */; };
+		05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA21944CB0E0022FB59 /* CentralManager.swift */; };
+		05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA31944CB0E0022FB59 /* Peripheral.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
 		05840F6C194206F100C744E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6A194206F100C744E6 /* Main.storyboard */; };
 		05840F6E194206F100C744E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6D194206F100C744E6 /* Images.xcassets */; };
 		05840F7A194206F100C744E6 /* BlueCapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F79194206F100C744E6 /* BlueCapTests.swift */; };
-		05840F8A1942093D00C744E6 /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F871942093D00C744E6 /* PeripheralManagerViewController.swift */; };
-		05840F8B1942093D00C744E6 /* PeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F881942093D00C744E6 /* PeripheralsViewController.swift */; };
-		05840F8C1942093D00C744E6 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F891942093D00C744E6 /* ServiceProfilesViewController.swift */; };
 		05840F8E1942098300C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
 		05840F9B19420B0000C744E6 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 05840F9A19420B0000C744E6 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05840FA119420B0000C744E6 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; };
 		05840FA819420B0000C744E6 /* BlueCapKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840FA719420B0000C744E6 /* BlueCapKitTests.swift */; };
 		05840FAB19420B0000C744E6 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; };
 		05840FAD19420B0000C744E6 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		05840FB619420B1200C744E6 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F841942092600C744E6 /* CentralManager.swift */; };
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +73,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0516666A1944EF9F006A337C /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
+		0516666C1944F01F006A337C /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
+		05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerViewController.swift; sourceTree = "<group>"; };
+		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
+		05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
+		05277CA21944CB0E0022FB59 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
+		05277CA31944CB0E0022FB59 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F63194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840F64194206F100C744E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -78,10 +88,6 @@
 		05840F73194206F100C744E6 /* BlueCapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F78194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840F79194206F100C744E6 /* BlueCapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapTests.swift; sourceTree = "<group>"; };
-		05840F841942092600C744E6 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
-		05840F871942093D00C744E6 /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerViewController.swift; sourceTree = "<group>"; };
-		05840F881942093D00C744E6 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
-		05840F891942093D00C744E6 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05840F8D1942098300C744E6 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		05840F9619420B0000C744E6 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F9919420B0000C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -128,6 +134,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0516666E1944F043006A337C /* Central */ = {
+			isa = PBXGroup;
+			children = (
+				05277CA21944CB0E0022FB59 /* CentralManager.swift */,
+				0516666A1944EF9F006A337C /* Characteristic.swift */,
+				0516666C1944F01F006A337C /* Descriptor.swift */,
+				05277CA31944CB0E0022FB59 /* Peripheral.swift */,
+			);
+			name = Central;
+			sourceTree = "<group>";
+		};
+		05277C9B1944CAE50022FB59 /* Central */ = {
+			isa = PBXGroup;
+			children = (
+				05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */,
+				05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */,
+				05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */,
+			);
+			path = Central;
+			sourceTree = "<group>";
+		};
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
@@ -157,10 +184,9 @@
 				05C3F1C51942159D006F80AD /* MyPlayground.playground */,
 				05840F64194206F100C744E6 /* AppDelegate.swift */,
 				05840F6D194206F100C744E6 /* Images.xcassets */,
-				05840F831942092600C744E6 /* Framework */,
+				05277C9B1944CAE50022FB59 /* Central */,
 				05840F6A194206F100C744E6 /* Main.storyboard */,
 				05840F62194206F100C744E6 /* Supporting Files */,
-				05840F861942093D00C744E6 /* UI */,
 			);
 			path = BlueCap;
 			sourceTree = "<group>";
@@ -190,36 +216,11 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		05840F831942092600C744E6 /* Framework */ = {
-			isa = PBXGroup;
-			children = (
-				05840F841942092600C744E6 /* CentralManager.swift */,
-			);
-			path = Framework;
-			sourceTree = "<group>";
-		};
-		05840F861942093D00C744E6 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				05840F90194209D800C744E6 /* Central */,
-				05840F871942093D00C744E6 /* PeripheralManagerViewController.swift */,
-				05840F881942093D00C744E6 /* PeripheralsViewController.swift */,
-				05840F891942093D00C744E6 /* ServiceProfilesViewController.swift */,
-			);
-			path = UI;
-			sourceTree = "<group>";
-		};
-		05840F90194209D800C744E6 /* Central */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Central;
-			sourceTree = "<group>";
-		};
 		05840F9719420B0000C744E6 /* BlueCapKit */ = {
 			isa = PBXGroup;
 			children = (
 				05840F9A19420B0000C744E6 /* BlueCapKit.h */,
+				0516666E1944F043006A337C /* Central */,
 				05840F9819420B0000C744E6 /* Supporting Files */,
 			);
 			path = BlueCapKit;
@@ -422,10 +423,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05840F8B1942093D00C744E6 /* PeripheralsViewController.swift in Sources */,
-				05840F8A1942093D00C744E6 /* PeripheralManagerViewController.swift in Sources */,
+				05277C9F1944CAE50022FB59 /* PeripheralManagerViewController.swift in Sources */,
+				05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */,
+				05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */,
 				05840F65194206F100C744E6 /* AppDelegate.swift in Sources */,
-				05840F8C1942093D00C744E6 /* ServiceProfilesViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,7 +442,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05840FB619420B1200C744E6 /* CentralManager.swift in Sources */,
+				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
+				05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */,
+				0516666D1944F01F006A337C /* Descriptor.swift in Sources */,
+				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
