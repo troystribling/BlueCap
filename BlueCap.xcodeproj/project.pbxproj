@@ -25,6 +25,7 @@
 		05840FAB19420B0000C744E6 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; };
 		05840FAD19420B0000C744E6 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
+		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +96,7 @@
 		05840FA019420B0000C744E6 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840FA619420B0000C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
+		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		05C3F1C51942159D006F80AD /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -222,6 +224,7 @@
 				05840F9A19420B0000C744E6 /* BlueCapKit.h */,
 				0516666E1944F043006A337C /* Central */,
 				05840F9819420B0000C744E6 /* Supporting Files */,
+				05B2432E1945368C00E8E878 /* Utils */,
 			);
 			path = BlueCapKit;
 			sourceTree = "<group>";
@@ -249,6 +252,14 @@
 				05840FA619420B0000C744E6 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		05B2432E1945368C00E8E878 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				05B2432F194536A400E8E878 /* Logger.swift */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -442,6 +453,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B24330194536A400E8E878 /* Logger.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */,
 				0516666D1944F01F006A337C /* Descriptor.swift in Sources */,

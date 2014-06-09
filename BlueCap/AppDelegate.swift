@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BlueCapKit
 
 @UIApplicationMain
 
@@ -22,6 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
+        let central = CentralManager.sharedinstance()
+        central.stopScanning()
+        central.disconnectAllPeripherals()
     }
 
     func applicationWillEnterForeground(application: UIApplication) {
