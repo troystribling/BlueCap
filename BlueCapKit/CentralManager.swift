@@ -11,9 +11,9 @@ import CoreBluetooth
 
 class CentralManager : NSObject, CBCentralManagerDelegate {
     
-    var afterPowerOnCallback : (()->())?
-    var afterPowerOffCallback : (()->())?
-    var afterPeripheralDiscoveredCallback : ((peripheral:Peripheral!, rssi:Int)->())?
+    var afterPowerOn : (()->())?
+    var afterPowerOff : (()->())?
+    var afterPeripheralDiscovered : ((peripheral:Peripheral!, rssi:Int)->())?
     
     var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
 
@@ -39,16 +39,42 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // queues
+    func syncMain(request:(()->())) {
+        dispatch_sync(self.mainQueue, request)
+    }
 
-    // scanning
-    func startScanning() {
-        startScanningForServiceUUIDds(nil)
+    func asyncMain(request:(()->())) {
+        dispatch_async(self.mainQueue, request)
+    }
+
+    func delayMain(delay:Float, request:(()->())) {
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
+        dispatch_after(popTime, self.mainQueue, request)
     }
     
-    func startScanningForServiceUUIDds(uuids:Array<CBUUID>!) {
+    func syncCallback(request:(()->())) {
+        dispatch_sync(self.callbackQueue, request)
+    }
+    
+    func asyncCallback(request:(()->())) {
+        dispatch_async(self.callbackQueue, request)
+    }
+
+    func delayCallback(delay:Float, request:(()->())) {
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
+        dispatch_after(popTime, self.callbackQueue, request)
+    }
+
+    // scanning
+    func startScanning(afterPeripheralDiscovered:((peripheral:Peripheral!, rssi:Int)->())?) {
+        startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
+    }
+    
+    func startScanningForServiceUUIDds(uuids:Array<CBUUID>!, afterPeripheralDiscovered:((peripheral:Peripheral!, rssi:Int)->())?) {
         if (!self.isScanning) {
             Logger.debug("startScanningForServiceUUIDds")
             self.isScanning = true
+            self.afterPeripheralDiscovered = afterPeripheralDiscovered
             self.centralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
     }
@@ -68,12 +94,20 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // power up
     func powerOn(afterPowerOnCallback:(()->())?) {
-        self.afterPowerOnCallback = afterPowerOnCallback
-        Logger.debug("powerOn")
+        self.powerOn(afterPowerOnCallback, nil)
     }
 
-    func powerOn(afterPowerOnCallback:(()->())?, afterPowerOff:(()->())?) {
+    func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())?) {
         Logger.debug("powerOn")
+        self.afterPowerOn = afterPowerOn
+        self.afterPowerOff = afterPowerOff
+        if (self.poweredOn() && self.afterPowerOn) {
+            self.asyncMain(self.afterPowerOn!)
+        }
+    }
+
+    func poweredOn() -> Bool {
+        return self.centralManager.state == CBCentralManagerState.PoweredOn
     }
     
     // CBCentralManagerDelegate
@@ -121,9 +155,15 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("centralManagerDidUpdateState: PoweredOff")
+            if (self.afterPowerOff) {
+                asyncMain(self.afterPowerOff!)
+            }
             break
         case .PoweredOn:
             Logger.debug("centralManagerDidUpdateState: PoweredOn")
+            if (self.afterPowerOn) {
+                asyncMain(self.afterPowerOn!)
+            }
             break
         }
     }
