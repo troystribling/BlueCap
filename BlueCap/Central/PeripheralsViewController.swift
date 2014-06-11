@@ -41,6 +41,8 @@ class PeripheralsViewController : UITableViewController {
         } else {
             central.powerOn(){
                 Logger.debug("powerOn Callback")
+                central.startScanning(){(peripheral:Peripheral!, rssi:Int) -> () in
+                }
             }
         }
     }
