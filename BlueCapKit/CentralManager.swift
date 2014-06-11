@@ -11,16 +11,15 @@ import CoreBluetooth
 
 class CentralManager : NSObject, CBCentralManagerDelegate {
     
-    var afterPowerOn : (()->())?
-    var afterPowerOff : (()->())?
-    var afterPeripheralDiscovered : ((peripheral:Peripheral!, rssi:Int)->())?
+    var afterPowerOn                : (()->())?
+    var afterPowerOff               : (()->())?
+    var afterPeripheralDiscovered   : ((Peripheral!, Int)->())?
     
     var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
-
     let centralManager : CBCentralManager!
     
-    let mainQueue = dispatch_queue_create("com.gnos.us.central.main:", DISPATCH_QUEUE_SERIAL)
-    let callbackQueue = dispatch_queue_create("com.gnos.us.central.callback", DISPATCH_QUEUE_SERIAL);
+    let mainQueue       = dispatch_queue_create("com.gnos.us.central.main:", DISPATCH_QUEUE_SERIAL)
+    let callbackQueue   = dispatch_queue_create("com.gnos.us.central.callback", DISPATCH_QUEUE_SERIAL);
     
     var isScanning  = false
     var connecting  = false
@@ -111,35 +110,40 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // CBCentralManagerDelegate
-    func centralManager(central: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {
+    func centralManager(central:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
         Logger.debug("didConnectPeripheral")
     }
     
-    func centralManager(central: CBCentralManager!, didDisconnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
+    func centralManager(central:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
         Logger.debug("didDisconnectPeripheral")
     }
     
-    func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral: CBPeripheral!, advertisementData: NSDictionary!, RSSI: NSNumber!) {
-        Logger.debug("didDiscoverPeripheral")
+    func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
+        let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisement:advertisementData)
+        Logger.debug("didDiscoverPeripheral: \(bcPeripheral.name)")
+        self.discoveredPeripherals[peripheral] = bcPeripheral
+        if (self.afterPeripheralDiscovered) {
+            self.afterPeripheralDiscovered!(bcPeripheral, RSSI.integerValue)
+        }
     }
     
-    func centralManager(central: CBCentralManager!, didFailToConnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
+    func centralManager(central:CBCentralManager!, didFailToConnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
         Logger.debug("didFailToConnectPeripheral")
     }
     
-    func centralManager(central: CBCentralManager!, didRetrieveConnectedPeripherals peripherals: AnyObject[]!) {
+    func centralManager(central:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:AnyObject[]!) {
         Logger.debug("didRetrieveConnectedPeripherals")
     }
     
-    func centralManager(central: CBCentralManager!, didRetrievePeripherals peripherals: AnyObject[]!) {
+    func centralManager(central:CBCentralManager!, didRetrievePeripherals peripherals:AnyObject[]!) {
         Logger.debug("didRetrievePeripherals")
     }
     
-    func centralManager(central: CBCentralManager!, willRestoreState dict: NSDictionary!) {
+    func centralManager(central: CBCentralManager!, willRestoreState dict:NSDictionary!) {
         Logger.debug("willRestoreState")
     }
     
-    func centralManagerDidUpdateState(central: CBCentralManager!) {
+    func centralManagerDidUpdateState(central:CBCentralManager!) {
         switch(self.centralManager.state) {
         case .Unauthorized:
             Logger.debug("centralManagerDidUpdateState: Unauthorized")
@@ -156,13 +160,13 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         case .PoweredOff:
             Logger.debug("centralManagerDidUpdateState: PoweredOff")
             if (self.afterPowerOff) {
-                asyncMain(self.afterPowerOff!)
+                asyncCallback(self.afterPowerOff!)
             }
             break
         case .PoweredOn:
             Logger.debug("centralManagerDidUpdateState: PoweredOn")
             if (self.afterPowerOn) {
-                asyncMain(self.afterPowerOn!)
+                asyncCallback(self.afterPowerOn!)
             }
             break
         }

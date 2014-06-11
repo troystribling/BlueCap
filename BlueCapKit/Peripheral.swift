@@ -11,9 +11,16 @@ import CoreBluetooth
 
 class Peripheral : NSObject, CBPeripheralDelegate {
     
-    var cbPeripheral : CBPeripheral!
+    let cbPeripheral    : CBPeripheral!
+    let advertisement   : NSDictionary!
     
-    init() {
+    var name : String {
+        return cbPeripheral.name
+    }
+    
+    init(cbPeripheral:CBPeripheral, advertisement:NSDictionary) {
+        self.cbPeripheral = cbPeripheral
+        self.advertisement = advertisement
     }
     
     // CBPeripheralDelegate Peripheral

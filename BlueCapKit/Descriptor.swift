@@ -10,4 +10,11 @@ import Foundation
 import CoreBluetooth
 
 class Descriptor : NSObject {
+    
+    let cbDescriptor : CBDescriptor!
+    
+    init(cbDescriptor:CBDescriptor) {
+        self.cbDescriptor = cbDescriptor
+    }
+    
 }
