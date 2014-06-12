@@ -11,8 +11,22 @@ import CoreBluetooth
 
 class Peripheral : NSObject, CBPeripheralDelegate {
     
+    // peripheral
+    var peripheralConnected         : ((peripheral:Peripheral!, error:NSError!) -> ())?
+    var peripheralDisconnected      : ((Peripheral:Peripheral!) -> ())?
+    var servicesDiscovered          : ((services:Service[]!) -> ())?
+    var characteristicsDiscovered   : ((characteristics:Characteristic[]!) -> ())?
+    var descriptorsDiscovered       : ((descriptors:Descriptor[]!) -> ())?
+    var peripheralDiscovered        : ((peripheral:Peripheral!, error:NSError!) -> ())?
+    
+    
     let cbPeripheral    : CBPeripheral!
     let advertisement   : NSDictionary!
+    
+    var discoveredServices  : Dictionary<String, Service> = [:]
+    var discoveredObjects   : Dictionary<String, AnyObject> = [:]
+    
+    var connectionSequence = 0
     
     var name : String {
         return cbPeripheral.name
@@ -21,6 +35,29 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     init(cbPeripheral:CBPeripheral, advertisement:NSDictionary) {
         self.cbPeripheral = cbPeripheral
         self.advertisement = advertisement
+    }
+    
+    // connect
+    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->()) {
+    }
+    
+    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->(), perpheralDisconnected:(peripheral:Peripheral!)->()) {
+    }
+
+    func connect () {
+    }
+
+    func disconnect() {
+    }
+    
+    // service discovery
+    func discoverAllServices(servicesDiscovered:(services:Service[]!)->()) {
+    }
+    
+    func discoverServices(services:CBUUID[]!, servicesDiscovered:(services:Service[]!)->()) {
+    }
+    
+    func discoverPeripheral(peripheralDiscovered:(peripheral:Peripheral!, error:NSError!)->()) {
     }
     
     // CBPeripheralDelegate Peripheral

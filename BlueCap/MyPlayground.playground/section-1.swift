@@ -27,3 +27,4 @@ var fc = FuncCheck()
 fc.callF()
 fc.setF({println("Hey It Works")})
 fc.callF()
+

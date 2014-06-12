@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-class Characteristic : NSObject {
+class Characteristic {
     
     let cbCharacteristic : CBCharacteristic!
     

@@ -38,28 +38,52 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // queues
-    func syncMain(request:(()->())) {
+    class func syncMain(request:()->()) {
+        CentralManager.sharedinstance().syncMain(request)
+    }
+
+    class func asyncMain(request:()->()) {
+        CentralManager.sharedinstance().asyncMain(request)
+    }
+    
+    class func delayMain(delay:Float, request:()->()) {
+        CentralManager.sharedinstance().delayMain(delay, request)
+    }
+
+    class func syncCallback(request:()->()) {
+        CentralManager.sharedinstance().syncCallback(request)
+    }
+    
+    class func asyncCallback(request:()->()) {
+        CentralManager.sharedinstance().asyncCallback(request)
+    }
+    
+    class func delayCallback(delay:Float, request:()->()) {
+        CentralManager.sharedinstance().delayCallback(delay, request)
+    }
+    
+    func syncMain(request:()->()) {
         dispatch_sync(self.mainQueue, request)
     }
 
-    func asyncMain(request:(()->())) {
+    func asyncMain(request:()->()) {
         dispatch_async(self.mainQueue, request)
     }
 
-    func delayMain(delay:Float, request:(()->())) {
+    func delayMain(delay:Float, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, self.mainQueue, request)
     }
     
-    func syncCallback(request:(()->())) {
+    func syncCallback(request:()->()) {
         dispatch_sync(self.callbackQueue, request)
     }
     
-    func asyncCallback(request:(()->())) {
+    func asyncCallback(request:()->()) {
         dispatch_async(self.callbackQueue, request)
     }
 
-    func delayCallback(delay:Float, request:(()->())) {
+    func delayCallback(delay:Float, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, self.callbackQueue, request)
     }
@@ -69,7 +93,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
     }
     
-    func startScanningForServiceUUIDds(uuids:Array<CBUUID>!, afterPeripheralDiscovered:((peripheral:Peripheral!, rssi:Int)->())?) {
+    func startScanningForServiceUUIDds(uuids:CBUUID[]!, afterPeripheralDiscovered:((peripheral:Peripheral!, rssi:Int)->())?) {
         if (!self.isScanning) {
             Logger.debug("startScanningForServiceUUIDds")
             self.isScanning = true
