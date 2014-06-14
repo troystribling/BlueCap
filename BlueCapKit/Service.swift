@@ -14,6 +14,8 @@ class Service : NSObject {
     let cbService           : CBService!
     var discoveredServices  : Dictionary<String, Characteristic> = [:]
     
+    var characteristicsDiscovered   : ((characteristics:Characteristic[]!) -> ())?
+
     init(cbService:CBService) {
         self.cbService = cbService
     }

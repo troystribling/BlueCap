@@ -13,6 +13,8 @@ class Characteristic {
     
     let cbCharacteristic : CBCharacteristic!
     
+    var descriptorsDiscovered       : ((descriptors:Descriptor[]!) -> ())?
+
     init(cbCharacteristic:CBCharacteristic) {
         self.cbCharacteristic = cbCharacteristic
     }

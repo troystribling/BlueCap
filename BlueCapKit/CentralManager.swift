@@ -16,7 +16,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     var afterPeripheralDiscovered   : ((Peripheral!, Int)->())?
     
     var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
-    let centralManager : CBCentralManager!
+    let cbCentralManager : CBCentralManager!
     
     let mainQueue       = dispatch_queue_create("com.gnos.us.central.main:", DISPATCH_QUEUE_SERIAL)
     let callbackQueue   = dispatch_queue_create("com.gnos.us.central.callback", DISPATCH_QUEUE_SERIAL);
@@ -26,7 +26,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     
     init() {
         super.init()
-        self.centralManager = CBCentralManager(delegate:self, queue:self.mainQueue)
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.mainQueue)
     }
     
     // class methods
@@ -98,7 +98,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
             Logger.debug("startScanningForServiceUUIDds")
             self.isScanning = true
             self.afterPeripheralDiscovered = afterPeripheralDiscovered
-            self.centralManager.scanForPeripheralsWithServices(uuids,options: nil)
+            self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
     }
     
@@ -106,13 +106,23 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         if (self.isScanning) {
             Logger.debug("stopScanning")
             self.isScanning = false
-            self.centralManager.stopScan()
+            self.cbCentralManager.stopScan()
         }
     }
     
     // connection
     func disconnectAllPeripherals() {
         Logger.debug("disconnectAllPeripherals")
+    }
+    
+    func connectPeripheral(peripheral:Peripheral) {
+        Logger.debug("connectPeripheral")
+        self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
+    }
+    
+    func cancelPeripheralConnection(peripheral:Peripheral) {
+        Logger.debug("cancelPeripheralConnection")
+        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
     }
     
     // power up
@@ -130,7 +140,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     func poweredOn() -> Bool {
-        return self.centralManager.state == CBCentralManagerState.PoweredOn
+        return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
     
     // CBCentralManagerDelegate
@@ -168,7 +178,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func centralManagerDidUpdateState(central:CBCentralManager!) {
-        switch(self.centralManager.state) {
+        switch(self.cbCentralManager.state) {
         case .Unauthorized:
             Logger.debug("centralManagerDidUpdateState: Unauthorized")
             break

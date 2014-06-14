@@ -9,14 +9,19 @@
 import Foundation
 import CoreBluetooth
 
+let PERIPHERAL_CONNECTION_TIMEOUT   : Float = 5.0
+let RECONNECT_DELAY                 : Float = 1.0
+
+enum PeripheralConnectionError {
+    case None
+    case Timeout
+}
+
 class Peripheral : NSObject, CBPeripheralDelegate {
     
-    // peripheral
     var peripheralConnected         : ((peripheral:Peripheral!, error:NSError!) -> ())?
     var peripheralDisconnected      : ((Peripheral:Peripheral!) -> ())?
     var servicesDiscovered          : ((services:Service[]!) -> ())?
-    var characteristicsDiscovered   : ((characteristics:Characteristic[]!) -> ())?
-    var descriptorsDiscovered       : ((descriptors:Descriptor[]!) -> ())?
     var peripheralDiscovered        : ((peripheral:Peripheral!, error:NSError!) -> ())?
     
     
@@ -25,20 +30,28 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     var discoveredServices  : Dictionary<String, Service> = [:]
     var discoveredObjects   : Dictionary<String, AnyObject> = [:]
-    
-    var connectionSequence = 0
+    var currentError        : PeripheralConnectionError!
     
     var name : String {
         return cbPeripheral.name
     }
     
+    var state : CBPeripheralState {
+        return self.cbPeripheral.state
+    }
+    
     init(cbPeripheral:CBPeripheral, advertisement:NSDictionary) {
         self.cbPeripheral = cbPeripheral
         self.advertisement = advertisement
+        self.currentError = .None
     }
     
     // connect
     func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->()) {
+        if (self.state != .Connected) {
+            self.peripheralConnected = peripheralConnected
+            CentralManager.sharedinstance().connectPeripheral(self)
+        }
     }
     
     func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->(), perpheralDisconnected:(peripheral:Peripheral!)->()) {
@@ -48,6 +61,16 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
 
     func disconnect() {
+    }
+    
+    func timeoutConnection() {
+        let central = CentralManager.sharedinstance()
+        central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
+            if (self.state != .Connected) {
+                self.currentError = PeripheralConnectionError.Timeout
+                central.cancelPeripheralConnection(self)
+            }
+        }
     }
     
     // service discovery
