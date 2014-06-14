@@ -47,20 +47,32 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // connect
-    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->()) {
+    func connect(peripheralConnected:((peripheral:Peripheral!, error:NSError!)->())?) {
         if (self.state != .Connected) {
             self.peripheralConnected = peripheralConnected
             CentralManager.sharedinstance().connectPeripheral(self)
+            self.timeoutConnection()
         }
     }
     
-    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->(), perpheralDisconnected:(peripheral:Peripheral!)->()) {
+    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->(), peripheralDisconnected:(peripheral:Peripheral!)->()) {
+        self.peripheralDisconnected = peripheralDisconnected
+        self.connect(peripheralConnected)
     }
 
-    func connect () {
+    func connect() {
+        self.connect(nil)
     }
 
+    func disconnect(peripheralDisconnected:((peripheral:Peripheral!)->())?) {
+        if (self.state == .Connected) {
+            self.peripheralDisconnected = peripheralDisconnected
+            CentralManager.sharedinstance().cancelPeripheralConnection(self)
+        }
+    }
+    
     func disconnect() {
+        self.disconnect(nil)
     }
     
     func timeoutConnection() {
