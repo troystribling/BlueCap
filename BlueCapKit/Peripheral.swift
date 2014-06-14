@@ -19,18 +19,19 @@ enum PeripheralConnectionError {
 
 class Peripheral : NSObject, CBPeripheralDelegate {
     
-    var peripheralConnected         : ((peripheral:Peripheral!, error:NSError!) -> ())?
-    var peripheralDisconnected      : ((Peripheral:Peripheral!) -> ())?
-    var servicesDiscovered          : ((services:Service[]!) -> ())?
-    var peripheralDiscovered        : ((peripheral:Peripheral!, error:NSError!) -> ())?
-    
+    var peripheralConnected         : ((peripheral:Peripheral, error:NSError!) -> ())?
+    var peripheralDisconnected      : ((peripheral:Peripheral) -> ())?
+    var servicesDiscovered          : ((services:Service[]) -> ())?
+    var peripheralDiscovered        : ((peripheral:Peripheral, error:NSError!) -> ())?
+
+    var connectionSequence = 0
     
     let cbPeripheral    : CBPeripheral!
     let advertisement   : NSDictionary!
     
     var discoveredServices  : Dictionary<String, Service> = [:]
     var discoveredObjects   : Dictionary<String, AnyObject> = [:]
-    var currentError        : PeripheralConnectionError!
+    var currentError        : PeripheralConnectionError
     
     var name : String {
         return cbPeripheral.name
@@ -47,69 +48,72 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // connect
-    func connect(peripheralConnected:((peripheral:Peripheral!, error:NSError!)->())?) {
-        if (self.state != .Connected) {
-            self.peripheralConnected = peripheralConnected
-            CentralManager.sharedinstance().connectPeripheral(self)
-            self.timeoutConnection()
+    func connect() {
+        if self.state != .Connected {
+            self.peripheralConnected = nil
+            self.reconnect()
         }
     }
     
-    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->(), peripheralDisconnected:(peripheral:Peripheral!)->()) {
+    func reconnect() {
+        if self.state != .Connected {
+            CentralManager.sharedinstance().connectPeripheral(self)
+            ++self.connectionSequence
+            self.timeoutConnection(self.connectionSequence)
+        }
+    }
+    
+    func connect(peripheralConnected:((peripheral:Peripheral , error:NSError!)->())) {
+        if self.state != .Connected {
+            self.peripheralConnected = peripheralConnected
+            self.reconnect()
+        }
+    }
+    
+    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->(), peripheralDisconnected:(peripheral:Peripheral)->()) {
         self.peripheralDisconnected = peripheralDisconnected
         self.connect(peripheralConnected)
     }
 
-    func connect() {
-        self.connect(nil)
+    func disconnect() {
+        if self.state == .Connected {
+            self.peripheralDisconnected = nil
+            CentralManager.sharedinstance().cancelPeripheralConnection(self)
+        }
     }
 
-    func disconnect(peripheralDisconnected:((peripheral:Peripheral!)->())?) {
-        if (self.state == .Connected) {
+    func disconnect(peripheralDisconnected:((peripheral:Peripheral)->())) {
+        if self.state == .Connected {
             self.peripheralDisconnected = peripheralDisconnected
             CentralManager.sharedinstance().cancelPeripheralConnection(self)
         }
     }
     
-    func disconnect() {
-        self.disconnect(nil)
-    }
-    
-    func timeoutConnection() {
-        let central = CentralManager.sharedinstance()
-        central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
-            if (self.state != .Connected) {
-                self.currentError = PeripheralConnectionError.Timeout
-                central.cancelPeripheralConnection(self)
-            }
-        }
-    }
-    
     // service discovery
-    func discoverAllServices(servicesDiscovered:(services:Service[]!)->()) {
+    func discoverAllServices(servicesDiscovered:(services:Service[])->()) {
     }
     
-    func discoverServices(services:CBUUID[]!, servicesDiscovered:(services:Service[]!)->()) {
+    func discoverServices(services:CBUUID[]!, servicesDiscovered:(services:Service[])->()) {
     }
     
     func discoverPeripheral(peripheralDiscovered:(peripheral:Peripheral!, error:NSError!)->()) {
     }
     
-    // CBPeripheralDelegate Peripheral
+    // CBPeripheralDelegate: peripheral
     func peripheralDidUpdateName(peripheral:CBPeripheral!) {
     }
     
     func peripheral(peripheral:CBPeripheral!, didModifyServices invalidatedServices:AnyObject[]!) {
     }
 
-    // CBPeripheralDelegate Services
+    // CBPeripheralDelegate: services
     func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
     }
     
     func peripheral(peripheral:CBPeripheral!, didDiscoverIncludedServicesForService service:CBService!, error:NSError!) {
     }
     
-    // CBPeripheralDelegate Characteristics
+    // CBPeripheralDelegate: characteristics
     func peripheral(peripheral:CBPeripheral!, didDiscoverCharacteristicsForService service:CBService!, error:NSError!) {
     }
     
@@ -122,7 +126,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     func peripheral(peripheral:CBPeripheral!, didWriteValueForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
     }
     
-    // CBPeripheral Delegate Descriptors
+    // CBPeripheralDelegate: descriptors
     func peripheral(peripheral:CBPeripheral!, didDiscoverDescriptorsForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
     }
     
@@ -130,5 +134,57 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     func peripheral(peripheral:CBPeripheral!, didWriteValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
+    }
+    
+    // PRIVATE
+    func timeoutConnection(sequence:Int) {
+        let central = CentralManager.sharedinstance()
+        central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
+            if self.state != .Connected && sequence == self.connectionSequence {
+                self.currentError = .Timeout
+                central.cancelPeripheralConnection(self)
+            }
+        }
+    }
+    
+    func error() -> NSError! {
+        var errorObj : NSError?
+        switch(self.currentError) {
+        case .Timeout:
+            errorObj = NSError(domain: "BlueCap", code: 408, userInfo:[NSLocalizedDescriptionKey:"Connection Timeout"])
+        default:
+            errorObj = nil
+        }
+        self.currentError = .None
+        return errorObj;
+    }
+    
+    // FRIEND: CentralManager callbacks
+    func didDidconnectPeripheral(peripheral:Peripheral) {
+        if self.currentError == .None {
+            if self.peripheralDisconnected {
+                CentralManager.asyncCallback() {
+                    self.peripheralDisconnected!(peripheral:self)
+                }
+            }
+        } else {
+            if self.peripheralConnected {
+                CentralManager.asyncCallback() {
+                    self.peripheralConnected!(peripheral:self, error:self.error())
+                }
+            }
+        }
+    }
+
+    func didConnectPeripheral(peripheral:Peripheral) {
+        if self.peripheralConnected {
+            self.peripheralConnected!(peripheral:self, error:nil)
+        }
+    }
+    
+    func didFailToConnectPeripheral(peripheral:Peripheral, withError error:NSError!) {
+        if self.peripheralConnected {
+            self.peripheralConnected!(peripheral:self, error:error)
+        }
     }
 }

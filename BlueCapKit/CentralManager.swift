@@ -31,7 +31,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // class methods
     class func sharedinstance() -> CentralManager {
-        if (!thisCentralManager) {
+        if !thisCentralManager {
             thisCentralManager = CentralManager()
         }
         return thisCentralManager!;
@@ -94,7 +94,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func startScanningForServiceUUIDds(uuids:CBUUID[]!, afterPeripheralDiscovered:((peripheral:Peripheral!, rssi:Int)->())?) {
-        if (!self.isScanning) {
+        if !self.isScanning {
             Logger.debug("startScanningForServiceUUIDds")
             self.isScanning = true
             self.afterPeripheralDiscovered = afterPeripheralDiscovered
@@ -134,7 +134,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("powerOn")
         self.afterPowerOn = afterPowerOn
         self.afterPowerOff = afterPowerOff
-        if (self.poweredOn() && self.afterPowerOn) {
+        if self.poweredOn() && self.afterPowerOn {
             self.asyncMain(self.afterPowerOn!)
         }
     }
@@ -143,7 +143,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
     
-    // CBCentralManagerDelegate
+    // CBCentralManagerDelegate: peripheral
     func centralManager(central:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
         Logger.debug("didConnectPeripheral")
     }
@@ -173,6 +173,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("didRetrievePeripherals")
     }
     
+    // CBCentralManagerDelegate: centrail manager state
     func centralManager(central: CBCentralManager!, willRestoreState dict:NSDictionary!) {
         Logger.debug("willRestoreState")
     }
