@@ -19,13 +19,12 @@ enum PeripheralConnectionError {
 
 class Peripheral : NSObject, CBPeripheralDelegate {
     
-    var peripheralConnected         : ((peripheral:Peripheral, error:NSError!) -> ())?
-    var peripheralDisconnected      : ((peripheral:Peripheral) -> ())?
     var servicesDiscovered          : ((services:Service[]) -> ())?
     var peripheralDiscovered        : ((peripheral:Peripheral, error:NSError!) -> ())?
 
     var connectionSequence = 0
     
+    var connectorator   : Connectorator?
     let cbPeripheral    : CBPeripheral!
     let advertisement   : NSDictionary!
     
@@ -50,7 +49,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     // connect
     func connect() {
         if self.state != .Connected {
-            self.peripheralConnected = nil
+            self.connectorator = nil
             self.reconnect()
         }
     }
@@ -63,28 +62,15 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    func connect(peripheralConnected:((peripheral:Peripheral , error:NSError!)->())) {
+    func connect(connectorator:Connectorator) {
         if self.state != .Connected {
-            self.peripheralConnected = peripheralConnected
+            self.connectorator = connectorator
             self.reconnect()
         }
     }
     
-    func connect(peripheralConnected:(peripheral:Peripheral!, error:NSError!)->(), peripheralDisconnected:(peripheral:Peripheral)->()) {
-        self.peripheralDisconnected = peripheralDisconnected
-        self.connect(peripheralConnected)
-    }
-
     func disconnect() {
         if self.state == .Connected {
-            self.peripheralDisconnected = nil
-            CentralManager.sharedinstance().cancelPeripheralConnection(self)
-        }
-    }
-
-    func disconnect(peripheralDisconnected:((peripheral:Peripheral)->())) {
-        if self.state == .Connected {
-            self.peripheralDisconnected = peripheralDisconnected
             CentralManager.sharedinstance().cancelPeripheralConnection(self)
         }
     }
@@ -147,44 +133,31 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    func error() -> NSError! {
-        var errorObj : NSError?
-        switch(self.currentError) {
-        case .Timeout:
-            errorObj = NSError(domain: "BlueCap", code: 408, userInfo:[NSLocalizedDescriptionKey:"Connection Timeout"])
-        default:
-            errorObj = nil
-        }
-        self.currentError = .None
-        return errorObj;
-    }
-    
     // FRIEND: CentralManager callbacks
     func didDidconnectPeripheral(peripheral:Peripheral) {
-        if self.currentError == .None {
-            if self.peripheralDisconnected {
-                CentralManager.asyncCallback() {
-                    self.peripheralDisconnected!(peripheral:self)
-                }
-            }
-        } else {
-            if self.peripheralConnected {
-                CentralManager.asyncCallback() {
-                    self.peripheralConnected!(peripheral:self, error:self.error())
-                }
+        if let connectorator = self.connectorator {
+            switch(self.currentError) {
+            case .None:
+                    CentralManager.asyncCallback() {
+                        connectorator.didDisconnect(self)
+                    }
+            case .Timeout:
+                    CentralManager.asyncCallback() {
+                        connectorator.didTimeout(self)
+                    }
             }
         }
     }
 
     func didConnectPeripheral(peripheral:Peripheral) {
-        if self.peripheralConnected {
-            self.peripheralConnected!(peripheral:self, error:nil)
+        if let connectorator = self.connectorator {
+            connectorator.didConnect(self)
         }
     }
     
     func didFailToConnectPeripheral(peripheral:Peripheral, withError error:NSError!) {
-        if self.peripheralConnected {
-            self.peripheralConnected!(peripheral:self, error:error)
+        if let connectorator = self.connectorator {
+            connectorator.didFailConnect(self, error:error)
         }
     }
 }
