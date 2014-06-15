@@ -22,7 +22,7 @@ class Connectorator {
     var timeoutCount = 0
     var disconnectCount = 0
     
-    // application interface
+    // APPLICATION INTERFACE
     init () {
     }
     
@@ -30,6 +30,11 @@ class Connectorator {
         initConnector(connector:self)
     }
     
+    init(timeoutRetries:Int, disconnectRetries:Int) {
+        self.timeoutRetries = timeoutRetries
+        self.disconnectRetries = disconnectRetries
+    }
+
     convenience init(timeoutRetries:Int, disconnectRetries:Int, initConnector:(connector:Connectorator) -> ()) {
         self.init(initConnector)
         self.timeoutRetries = timeoutRetries
@@ -56,25 +61,69 @@ class Connectorator {
         self.onGiveup = onGiveup
     }
     
-    // internal interface
+    // INTERNAL INTERFACE
     func didTimeout(peripheral:Peripheral) {
-        if let onTimeout = self.onTimeout {
+        Logger.debug("Connectorator#didTimeout")
+        if let timeoutRetries = self.timeoutRetries {
+            if self.timeoutCount < self.timeoutRetries {
+                self.callOnTimeout(peripheral)
+                ++self.timeoutCount
+            } else {
+                self.callOnGiveUp(peripheral)
+                self.timeoutCount = 0
+            }
+        } else {
+            self.callOnTimeout(peripheral)
         }
     }
-    
+
     func didDisconnect(peripheral:Peripheral) {
-        if let onDisconnect = self.onDisconnect {
+        if let disconnectRetries = self.disconnectRetries {
+            if self.disconnectCount < self.disconnectRetries {
+                ++self.disconnectCount
+                self.callOnDisconnect(peripheral)
+            } else {
+                self.disconnectCount = 0
+                self.callOnGiveUp(peripheral)
+            }
+        } else {
+            self.callOnDisconnect(peripheral)
         }
     }
     
     func didConnect(peripheral:Peripheral) {
         if let onConnect = self.onConnect {
+            self.timeoutCount = 0
+            onConnect(peripheral:peripheral)
         }
     }
     
     func didFailConnect(peripheral:Peripheral, error:NSError!) {
         if let onFailConnect = self.onFailConnect {
-            
+            onFailConnect(peripheral:peripheral, error:error)
+        }
+    }
+    
+    // PRIVATE INTERFACE
+    func callOnTimeout(peripheral:Peripheral) {
+        if let onTimeout = self.onTimeout {
+            onTimeout(peripheral:peripheral)
+        } else {
+            peripheral.reconnect()
+        }
+    }
+    
+    func callOnDisconnect(peripheral:Peripheral) {
+        if let onDisconnect = self.onDisconnect {
+            onDisconnect(peripheral:peripheral)
+        } else {
+            peripheral.reconnect()
+        }
+    }
+    
+    func callOnGiveUp(peripheral:Peripheral) {
+        if let onGiveup = self.onGiveup {
+            onGiveup(peripheral:peripheral)
         }
     }
 }

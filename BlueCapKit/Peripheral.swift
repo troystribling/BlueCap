@@ -40,6 +40,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         return self.cbPeripheral.state
     }
     
+    // APPLICATION INTERFACE
     init(cbPeripheral:CBPeripheral, advertisement:NSDictionary) {
         self.cbPeripheral = cbPeripheral
         self.advertisement = advertisement
@@ -47,23 +48,26 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // connect
-    func connect() {
-        if self.state != .Connected {
-            self.connectorator = nil
-            self.reconnect()
-        }
-    }
-    
     func reconnect() {
         if self.state != .Connected {
+            Logger.debug("Peripheral#reconnect")
             CentralManager.sharedinstance().connectPeripheral(self)
             ++self.connectionSequence
             self.timeoutConnection(self.connectionSequence)
         }
     }
     
+    func connect() {
+        if self.state != .Connected {
+            Logger.debug("Peripheral#connect")
+            self.connectorator = nil
+            self.reconnect()
+        }
+    }
+    
     func connect(connectorator:Connectorator) {
         if self.state != .Connected {
+            Logger.debug("Peripheral#connect")
             self.connectorator = connectorator
             self.reconnect()
         }
@@ -71,6 +75,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     func disconnect() {
         if self.state == .Connected {
+            Logger.debug("Peripheral#disconnect")
             CentralManager.sharedinstance().cancelPeripheralConnection(self)
         }
     }
@@ -85,21 +90,22 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     func discoverPeripheral(peripheralDiscovered:(peripheral:Peripheral!, error:NSError!)->()) {
     }
     
-    // CBPeripheralDelegate: peripheral
+    // CBPeripheralDelegate
+    // peripheral
     func peripheralDidUpdateName(peripheral:CBPeripheral!) {
     }
     
     func peripheral(peripheral:CBPeripheral!, didModifyServices invalidatedServices:AnyObject[]!) {
     }
 
-    // CBPeripheralDelegate: services
+    // services
     func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
     }
     
     func peripheral(peripheral:CBPeripheral!, didDiscoverIncludedServicesForService service:CBService!, error:NSError!) {
     }
     
-    // CBPeripheralDelegate: characteristics
+    // characteristics
     func peripheral(peripheral:CBPeripheral!, didDiscoverCharacteristicsForService service:CBService!, error:NSError!) {
     }
     
@@ -112,7 +118,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     func peripheral(peripheral:CBPeripheral!, didWriteValueForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
     }
     
-    // CBPeripheralDelegate: descriptors
+    // descriptors
     func peripheral(peripheral:CBPeripheral!, didDiscoverDescriptorsForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
     }
     
@@ -122,10 +128,11 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     func peripheral(peripheral:CBPeripheral!, didWriteValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
     }
     
-    // PRIVATE
+    // PRIVATE INTERFACE
     func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedinstance()
         central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
+            Logger.debug("")
             if self.state != .Connected && sequence == self.connectionSequence {
                 self.currentError = .Timeout
                 central.cancelPeripheralConnection(self)
@@ -133,8 +140,8 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    // FRIEND: CentralManager callbacks
-    func didDidconnectPeripheral(peripheral:Peripheral) {
+    // INTERNAL INTERFACE
+    func didDisconnectPeripheral() {
         if let connectorator = self.connectorator {
             switch(self.currentError) {
             case .None:
@@ -149,13 +156,13 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
 
-    func didConnectPeripheral(peripheral:Peripheral) {
+    func didConnectPeripheral() {
         if let connectorator = self.connectorator {
             connectorator.didConnect(self)
         }
     }
     
-    func didFailToConnectPeripheral(peripheral:Peripheral, withError error:NSError!) {
+    func didFailToConnectPeripheral(error:NSError!) {
         if let connectorator = self.connectorator {
             connectorator.didFailConnect(self, error:error)
         }
