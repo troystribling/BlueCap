@@ -45,7 +45,6 @@ class PeripheralsViewController : UITableViewController {
         let central = CentralManager.sharedinstance()
         if (central.isScanning) {
             central.stopScanning()
-            self.setScanButton()
         } else {
             central.powerOn(){
                 Logger.debug("powerOn Callback")
@@ -54,6 +53,7 @@ class PeripheralsViewController : UITableViewController {
                 }
             }
         }
+        self.setScanButton()
     }
     
     // UITableViewDataSource
@@ -95,18 +95,14 @@ class PeripheralsViewController : UITableViewController {
     func connect(peripheral:Peripheral) {
         peripheral.connect(Connectorator() {(connectorator:Connectorator) -> () in
                 connectorator.onDisconnect() {(periphear:Peripheral) -> () in
+                    Logger.debug("PeripheralsViewController#onDisconnect")
                     peripheral.reconnect()
-                    self.loadTableData()
+                    self.tableView.reloadData()
                 }
                 connectorator.onConnect() {(peipheral:Peripheral) -> () in
-                    self.loadTableData()
+                    Logger.debug("PeripheralsViewController#onConnect")
+                    self.tableView.reloadData()
                 }
-            })
-    }
-    
-    func loadTableData() {
-        dispatch_async(dispatch_get_main_queue(), {
-                self.tableView.reloadData()
             })
     }
 }

@@ -9,8 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-let PERIPHERAL_CONNECTION_TIMEOUT   : Float = 5.0
-let RECONNECT_DELAY                 : Float = 1.0
+let PERIPHERAL_CONNECTION_TIMEOUT   : Float = 10.0
 
 enum PeripheralConnectionError {
     case None
@@ -53,7 +52,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     // connect
     func reconnect() {
-        if self.state != .Connected {
+        if self.state == .Disconnected {
             Logger.debug("Peripheral#reconnect")
             CentralManager.sharedinstance().connectPeripheral(self)
             ++self.connectionSequence
@@ -62,19 +61,15 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     func connect() {
-        if self.state != .Connected {
-            Logger.debug("Peripheral#connect")
-            self.connectorator = nil
-            self.reconnect()
-        }
+        Logger.debug("Peripheral#connect")
+        self.connectorator = nil
+        self.reconnect()
     }
     
     func connect(connectorator:Connectorator) {
-        if self.state != .Connected {
-            Logger.debug("Peripheral#connect")
-            self.connectorator = connectorator
-            self.reconnect()
-        }
+        Logger.debug("Peripheral#connect")
+        self.connectorator = connectorator
+        self.reconnect()
     }
     
     func disconnect() {
@@ -135,26 +130,31 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     // PRIVATE INTERFACE
     func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedinstance()
+        Logger.debug("Periphearl#timeoutConnection: sequence \(sequence)")
         central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
-            Logger.debug("Periphear#timeoutConnection: sequence \(sequence)")
             if self.state != .Connected && sequence == self.connectionSequence {
-                Logger.debug("Periphear#timeoutConnection: timming out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
+                Logger.debug("Periphearl#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
                 central.cancelPeripheralConnection(self)
+            } else {
+                Logger.debug("Periphearl#timeoutConnection: expired")
             }
         }
     }
     
     // INTERNAL INTERFACE
     func didDisconnectPeripheral() {
+        Logger.debug("Periphearl#didDisconnectPeripheral")
         if let connectorator = self.connectorator {
             switch(self.currentError) {
             case .None:
                     CentralManager.asyncCallback() {
+                        Logger.debug("Periphearl#didFailToConnectPeripheral: No errors disconnecting")
                         connectorator.didDisconnect(self)
                     }
             case .Timeout:
                     CentralManager.asyncCallback() {
+                        Logger.debug("Periphearl#didFailToConnectPeripheral: Timeout reconnecting")
                         connectorator.didTimeout(self)
                     }
             }
@@ -162,12 +162,14 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
 
     func didConnectPeripheral() {
+        Logger.debug("PeripheralConnectionError#didConnectPeripheral")
         if let connectorator = self.connectorator {
             connectorator.didConnect(self)
         }
     }
     
     func didFailToConnectPeripheral(error:NSError!) {
+        Logger.debug("PeripheralConnectionError#didFailToConnectPeripheral")
         if let connectorator = self.connectorator {
             connectorator.didFailConnect(self, error:error)
         }

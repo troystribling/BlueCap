@@ -18,18 +18,11 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
     let cbCentralManager : CBCentralManager!
     
-    let mainQueue       = dispatch_queue_create("com.gnos.us.central.main:", DISPATCH_QUEUE_SERIAL)
-    let callbackQueue   = dispatch_queue_create("com.gnos.us.central.callback", DISPATCH_QUEUE_SERIAL);
-    
     var isScanning  = false
     var connecting  = false
     
     var peripherals : Peripheral[] {
-        var bcPeripherals : Peripheral[] = []
-        self.syncMain() {
-            bcPeripherals = Array(self.discoveredPeripherals.values)
-        }
-        return bcPeripherals
+        return Array(self.discoveredPeripherals.values)
     }
     
     // APPLICATION INTERFACE
@@ -69,12 +62,12 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     
     func connectPeripheral(peripheral:Peripheral) {
         Logger.debug("CentralManager#connectPeripheral")
-        self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
+        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
     }
     
     func cancelPeripheralConnection(peripheral:Peripheral) {
         Logger.debug("CentralManager#cancelPeripheralConnection")
-        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
+        self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
     
     // power up
@@ -87,7 +80,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         self.afterPowerOn = afterPowerOn
         self.afterPowerOff = afterPowerOff
         if self.poweredOn() && self.afterPowerOn {
-            self.asyncMain(self.afterPowerOn!)
+            self.afterPowerOn!()
         }
     }
 
@@ -107,7 +100,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     func centralManager(central:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
         Logger.debug("CentralManager#didDisconnectPeripheral")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
-            bcPeripheral.didConnectPeripheral()
+            bcPeripheral.didDisconnectPeripheral()
         }
     }
     
@@ -116,8 +109,8 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisement:advertisementData)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
-            if (self.afterPeripheralDiscovered) {
-                self.afterPeripheralDiscovered!(bcPeripheral, RSSI.integerValue)
+            if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
+                afterPeripheralDiscovered(bcPeripheral, RSSI.integerValue)
             }
         }
     }
@@ -172,18 +165,6 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // INTERNAL INTERFACE
-    class func syncMain(request:()->()) {
-        CentralManager.sharedinstance().syncMain(request)
-    }
-    
-    class func asyncMain(request:()->()) {
-        CentralManager.sharedinstance().asyncMain(request)
-    }
-    
-    class func delayMain(delay:Float, request:()->()) {
-        CentralManager.sharedinstance().delayMain(delay, request)
-    }
-    
     class func syncCallback(request:()->()) {
         CentralManager.sharedinstance().syncCallback(request)
     }
@@ -196,36 +177,23 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         CentralManager.sharedinstance().delayCallback(delay, request)
     }
     
-    func syncMain(request:()->()) {
-        dispatch_sync(self.mainQueue, request)
-    }
-    
-    func asyncMain(request:()->()) {
-        dispatch_async(self.mainQueue, request)
-    }
-    
-    func delayMain(delay:Float, request:()->()) {
-        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
-        dispatch_after(popTime, self.mainQueue, request)
-    }
-    
     func syncCallback(request:()->()) {
-        dispatch_sync(self.callbackQueue, request)
+        dispatch_sync(dispatch_get_main_queue(), request)
     }
     
     func asyncCallback(request:()->()) {
-        dispatch_async(self.callbackQueue, request)
+        dispatch_async(dispatch_get_main_queue(), request)
     }
     
     func delayCallback(delay:Float, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
-        dispatch_after(popTime, self.callbackQueue, request)
+        dispatch_after(popTime, dispatch_get_main_queue(), request)
     }
     
     // PRIVATE INTERFACE
     init() {
         super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.mainQueue)
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:nil)
     }
     
 }

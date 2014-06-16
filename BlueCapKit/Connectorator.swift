@@ -78,6 +78,7 @@ class Connectorator {
     }
 
     func didDisconnect(peripheral:Peripheral) {
+        Logger.debug("Connectorator#didDisconnect")
         if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < self.disconnectRetries {
                 ++self.disconnectCount
@@ -92,6 +93,7 @@ class Connectorator {
     }
     
     func didConnect(peripheral:Peripheral) {
+        Logger.debug("Connectorator#didConnect")
         if let onConnect = self.onConnect {
             self.timeoutCount = 0
             onConnect(peripheral:peripheral)
@@ -99,6 +101,7 @@ class Connectorator {
     }
     
     func didFailConnect(peripheral:Peripheral, error:NSError!) {
+        Logger.debug("Connectorator#didFailConnect")
         if let onFailConnect = self.onFailConnect {
             onFailConnect(peripheral:peripheral, error:error)
         }
