@@ -33,7 +33,11 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     var currentError        : PeripheralConnectionError
     
     var name : String {
-        return cbPeripheral.name
+        if let name = cbPeripheral.name {
+            return name
+        } else {
+            return "Unknown"
+        }
     }
     
     var state : CBPeripheralState {
@@ -132,8 +136,9 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedinstance()
         central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
-            Logger.debug("")
+            Logger.debug("Periphear#timeoutConnection: sequence \(sequence)")
             if self.state != .Connected && sequence == self.connectionSequence {
+                Logger.debug("Periphear#timeoutConnection: timming out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
                 central.cancelPeripheralConnection(self)
             }

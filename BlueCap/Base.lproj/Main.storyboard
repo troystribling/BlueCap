@@ -1654,7 +1654,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralCell" id="b10-w7-dLb" customClass="PeripheralCell">
+                            <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralCell" id="b10-w7-dLb" customClass="PeripheralCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="b10-w7-dLb" id="7UM-ye-K73">
@@ -1669,12 +1669,13 @@
                                         </label>
                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="gqE-d5-je8">
                                             <rect key="frame" x="280" y="12" width="20" height="20"/>
+                                            <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         </activityIndicatorView>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="connectingActivityIndicator" destination="gqE-d5-je8" id="aCL-6k-C0o"/>
-                                    <outlet property="nameLabel" destination="BsC-C9-NZC" id="ZMK-nz-Q53"/>
+                                    <outlet property="connectingActivityIndicator" destination="gqE-d5-je8" id="fPu-OQ-JEN"/>
+                                    <outlet property="nameLabel" destination="BsC-C9-NZC" id="cQt-CI-Q0U"/>
                                     <segue destination="XKG-l0-TPz" kind="push" identifier="PeripheralDetail" trigger="accessoryAction" id="tZw-mu-C7H"/>
                                 </connections>
                             </tableViewCell>

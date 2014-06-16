@@ -24,6 +24,14 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     var isScanning  = false
     var connecting  = false
     
+    var peripherals : Peripheral[] {
+        var bcPeripherals : Peripheral[] = []
+        self.syncMain() {
+            bcPeripherals = Array(self.discoveredPeripherals.values)
+        }
+        return bcPeripherals
+    }
+    
     // APPLICATION INTERFACE
     class func sharedinstance() -> CentralManager {
         if !thisCentralManager {
@@ -104,11 +112,13 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
-        let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisement:advertisementData)
-        Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
-        self.discoveredPeripherals[peripheral] = bcPeripheral
-        if (self.afterPeripheralDiscovered) {
-            self.afterPeripheralDiscovered!(bcPeripheral, RSSI.integerValue)
+        if !self.discoveredPeripherals[peripheral] {
+            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisement:advertisementData)
+            Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
+            self.discoveredPeripherals[peripheral] = bcPeripheral
+            if (self.afterPeripheralDiscovered) {
+                self.afterPeripheralDiscovered!(bcPeripheral, RSSI.integerValue)
+            }
         }
     }
     

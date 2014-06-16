@@ -104,7 +104,7 @@ class Connectorator {
         }
     }
     
-    // PRIVATE INTERFACE
+    // PROTECTED INTERFACE
     func callOnTimeout(peripheral:Peripheral) {
         if let onTimeout = self.onTimeout {
             onTimeout(peripheral:peripheral)

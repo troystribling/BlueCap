@@ -59,3 +59,8 @@ f2 = addOnePlus
 f1!(j:Junk())
 f2!(j:Junk(), s:"Test")
 
+var x = ["1":"a", "2":"b", "3":"c"]
+Array(x.values)
+
+
+

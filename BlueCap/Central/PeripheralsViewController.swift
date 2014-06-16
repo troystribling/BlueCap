@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreBluetooth
 import BlueCapKit
 
 let MAX_FAILED_RECONNECTS = 0
@@ -17,6 +18,10 @@ class PeripheralsViewController : UITableViewController {
     var stopScanBarButtonItem : UIBarButtonItem!
     var startScanBarButtonItem : UIBarButtonItem!
     var connectionSequence : Dictionary<Peripheral, Int> = [:]
+    
+    struct MainStoryboard {
+        static let periphearlCell = "PeripheralCell"
+    }
     
     init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
@@ -51,7 +56,34 @@ class PeripheralsViewController : UITableViewController {
         }
     }
     
-    // UI
+    // UITableViewDataSource
+    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+        return 1
+    }
+    
+    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+        return CentralManager.sharedinstance().peripherals.count
+    }
+    
+    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.periphearlCell, forIndexPath: indexPath) as PeripheralCell
+        let peripheral = CentralManager.sharedinstance().peripherals[indexPath.row]
+        cell.nameLabel.text = peripheral.name
+        cell.connectingActivityIndicator.stopAnimating()
+        switch(peripheral.state) {
+        case .Connected:
+            cell.accessoryType = .DetailButton
+        case .Connecting:
+            cell.connectingActivityIndicator.startAnimating()
+        default:
+            cell.accessoryType = .None
+        }
+        return cell
+    }
+    
+    // UITableViewDelegate
+    
+    // PRIVATE INTERFACE
     func setScanButton() {
         if (CentralManager.sharedinstance().isScanning) {
             self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)
@@ -60,30 +92,21 @@ class PeripheralsViewController : UITableViewController {
         }
     }
     
-    // connection
     func connect(peripheral:Peripheral) {
+        peripheral.connect(Connectorator() {(connectorator:Connectorator) -> () in
+                connectorator.onDisconnect() {(periphear:Peripheral) -> () in
+                    peripheral.reconnect()
+                    self.loadTableData()
+                }
+                connectorator.onConnect() {(peipheral:Peripheral) -> () in
+                    self.loadTableData()
+                }
+            })
     }
     
-    func reconnect(peripheral:Peripheral) {
+    func loadTableData() {
+        dispatch_async(dispatch_get_main_queue(), {
+                self.tableView.reloadData()
+            })
     }
-    
-    func updateConnectionSequence(peripheral:Peripheral) {
-        var count = self.connectionSequence[peripheral]
-        if (count) {
-            count = count! + 1
-        } else {
-            count = 0
-        }
-        self.connectionSequence[peripheral] = count
-    }
-    
-    func resetConnectionSequence(peripheral:Peripheral) {
-        self.connectionSequence[peripheral] = 0
-    }
-    
-    func canReconnect(peripheral:Peripheral) -> Bool {
-        var count = self.connectionSequence[peripheral]
-        return count < MAX_FAILED_RECONNECTS
-    }
-
 }
