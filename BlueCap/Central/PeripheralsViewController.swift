@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import CoreBluetooth
 import BlueCapKit
@@ -39,12 +38,16 @@ class PeripheralsViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    }
+    
     // actions
     @IBAction func toggleScan(sender:AnyObject) {
         Logger.debug("toggleScan")
         let central = CentralManager.sharedinstance()
         if (central.isScanning) {
             central.stopScanning()
+            central.disconnectAllPeripherals()
         } else {
             central.powerOn(){
                 Logger.debug("powerOn Callback")
@@ -69,10 +72,9 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.periphearlCell, forIndexPath: indexPath) as PeripheralCell
         let peripheral = CentralManager.sharedinstance().peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        cell.connectingActivityIndicator.stopAnimating()
-        cell.accessoryType = .None
         switch(peripheral.state) {
         case .Connected:
+            cell.connectingActivityIndicator.stopAnimating()
             cell.accessoryType = .DetailButton
         default:
             cell.connectingActivityIndicator.startAnimating()
@@ -94,20 +96,24 @@ class PeripheralsViewController : UITableViewController {
     
     func connect(peripheral:Peripheral) {
         peripheral.connect(Connectorator() {(connectorator:Connectorator) -> () in
-                connectorator.onDisconnect() {(periphear:Peripheral) -> () in
-                    Logger.debug("PeripheralsViewController#onDisconnect")
-                    peripheral.reconnect()
-                    self.tableView.reloadData()
-                }
-                connectorator.onConnect() {(peipheral:Peripheral) -> () in
-                    Logger.debug("PeripheralsViewController#onConnect")
-                    self.tableView.reloadData()
-                }
-                connectorator.onTimeout() {(peripheral:Peripheral) -> () in
-                    Logger.debug("PeripheralsViewController#onTimeout")
-                    peripheral.reconnect()
-                    self.tableView.reloadData()
-                }
-            })
+            connectorator.onDisconnect() {(periphear:Peripheral) -> () in
+                Logger.debug("PeripheralsViewController#onDisconnect")
+                peripheral.reconnect()
+                self.tableView.reloadData()
+            }
+            connectorator.onConnect() {(peipheral:Peripheral) -> () in
+                Logger.debug("PeripheralsViewController#onConnect")
+                self.tableView.reloadData()
+            }
+            connectorator.onTimeout() {(peripheral:Peripheral) -> () in
+                Logger.debug("PeripheralsViewController#onTimeout")
+                peripheral.reconnect()
+                self.tableView.reloadData()
+            }
+            connectorator.onForcedDisconnect() {(peripheral:Peripheral) -> () in
+                Logger.debug("PeripheralsViewController#onForcedDisconnect")
+                self.tableView.reloadData()
+            }
+        })
     }
 }

@@ -13,13 +13,14 @@ class Connectorator {
     let timeoutRetries : Int?
     let disconnectRetries : Int?
     
-    var onTimeout       : ((peripheral:Peripheral) -> ())?
-    var onDisconnect    : ((peripheral:Peripheral) -> ())?
-    var onConnect       : ((peripheral:Peripheral) -> ())?
-    var onFailConnect   : ((peripheral:Peripheral, error:NSError!) -> ())?
-    var onGiveup        : ((peripheral:Peripheral) -> ())?
+    var onTimeout           : ((peripheral:Peripheral) -> ())?
+    var onDisconnect        : ((peripheral:Peripheral) -> ())?
+    var onForcedDisconnect  : ((peripheral:Peripheral) -> ())?
+    var onConnect           : ((peripheral:Peripheral) -> ())?
+    var onFailConnect       : ((peripheral:Peripheral, error:NSError!) -> ())?
+    var onGiveup            : ((peripheral:Peripheral) -> ())?
     
-    var timeoutCount = 0
+    var timeoutCount    = 0
     var disconnectCount = 0
     
     // APPLICATION INTERFACE
@@ -41,11 +42,11 @@ class Connectorator {
         self.disconnectRetries = disconnectRetries
     }
     
-    func onTimeout(onTimeout:(peripheral:Peripheral)->()) {
+    func onTimeout(onTimeout:(peripheral:Peripheral) -> ()) {
         self.onTimeout = onTimeout
     }
     
-    func onDisconnect(onDisconnect:(peripheral:Peripheral)->()) {
+    func onDisconnect(onDisconnect:(peripheral:Peripheral) -> ()) {
         self.onDisconnect = onDisconnect
     }
     
@@ -59,6 +60,10 @@ class Connectorator {
 
     func onGiveup(onGiveup:(peripheral:Peripheral) -> ()) {
         self.onGiveup = onGiveup
+    }
+    
+    func onForcedDisconnect(onForcedDisconnect:(peripheral:Peripheral) -> ()) {
+        self.onForcedDisconnect = onForcedDisconnect
     }
     
     // INTERNAL INTERFACE
@@ -89,6 +94,13 @@ class Connectorator {
             }
         } else {
             self.callOnDisconnect(peripheral)
+        }
+    }
+    
+    func didForceDisconnect(peripheral:Peripheral) {
+        Logger.debug("Connectorator#didForceDisconnect")
+        if let onForcedDisconnect = self.onForcedDisconnect {
+            onForcedDisconnect(peripheral:peripheral)
         }
     }
     

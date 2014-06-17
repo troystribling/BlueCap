@@ -29,7 +29,9 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     var discoveredServices  : Dictionary<String, Service> = [:]
     var discoveredObjects   : Dictionary<String, AnyObject> = [:]
-    var currentError        : PeripheralConnectionError
+
+    var currentError        = PeripheralConnectionError.None
+    var forcedDisconnect    = false
     
     var name : String {
         if let name = cbPeripheral.name {
@@ -55,11 +57,12 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         if self.state == .Disconnected {
             Logger.debug("Peripheral#reconnect")
             CentralManager.sharedinstance().connectPeripheral(self)
+            self.forcedDisconnect = false
             ++self.connectionSequence
             self.timeoutConnection(self.connectionSequence)
         }
     }
-    
+     
     func connect() {
         Logger.debug("Peripheral#connect")
         self.connectorator = nil
@@ -74,6 +77,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     func disconnect() {
         if self.state == .Connected {
+            self.forcedDisconnect = true
             Logger.debug("Peripheral#disconnect")
             CentralManager.sharedinstance().cancelPeripheralConnection(self)
         }
@@ -132,7 +136,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         let central = CentralManager.sharedinstance()
         Logger.debug("Periphearl#timeoutConnection: sequence \(sequence)")
         central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
-            if self.state != .Connected && sequence == self.connectionSequence {
+            if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("Periphearl#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
                 central.cancelPeripheralConnection(self)
@@ -146,17 +150,24 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     func didDisconnectPeripheral() {
         Logger.debug("Periphearl#didDisconnectPeripheral")
         if let connectorator = self.connectorator {
-            switch(self.currentError) {
-            case .None:
-                    CentralManager.asyncCallback() {
-                        Logger.debug("Periphearl#didFailToConnectPeripheral: No errors disconnecting")
-                        connectorator.didDisconnect(self)
-                    }
-            case .Timeout:
-                    CentralManager.asyncCallback() {
-                        Logger.debug("Periphearl#didFailToConnectPeripheral: Timeout reconnecting")
-                        connectorator.didTimeout(self)
-                    }
+            if (self.forcedDisconnect) {
+                CentralManager.asyncCallback() {
+                    Logger.debug("Periphearl#didFailToConnectPeripheral: forced disconnect")
+                    connectorator.didForceDisconnect(self)
+                }
+            } else {
+                switch(self.currentError) {
+                case .None:
+                        CentralManager.asyncCallback() {
+                            Logger.debug("Periphearl#didFailToConnectPeripheral: No errors disconnecting")
+                            connectorator.didDisconnect(self)
+                        }
+                case .Timeout:
+                        CentralManager.asyncCallback() {
+                            Logger.debug("Periphearl#didFailToConnectPeripheral: Timeout reconnecting")
+                            connectorator.didTimeout(self)
+                        }
+                }
             }
         }
     }

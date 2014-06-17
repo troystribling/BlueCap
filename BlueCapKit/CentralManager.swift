@@ -58,6 +58,9 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     // connection
     func disconnectAllPeripherals() {
         Logger.debug("CentralManager#disconnectAllPeripherals")
+        for peripheral in self.peripherals {
+            peripheral.disconnect()
+        }
     }
     
     func connectPeripheral(peripheral:Peripheral) {
@@ -102,6 +105,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }
+//        self.discoveredPeripherals.removeAll(keepCapacity:false)
     }
     
     func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {

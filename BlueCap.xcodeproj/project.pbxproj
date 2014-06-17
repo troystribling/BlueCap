@@ -28,6 +28,7 @@
 		05840FAD19420B0000C744E6 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
 		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
+		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
 		05F929841949498200542A1E /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F929831949498200542A1E /* Service.swift */; };
 /* End PBXBuildFile section */
 
@@ -79,7 +80,7 @@
 /* Begin PBXFileReference section */
 		0516666A1944EF9F006A337C /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		0516666C1944F01F006A337C /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
-		05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerViewController.swift; sourceTree = "<group>"; };
+		05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PeripheralManagerViewController.swift; path = Central/PeripheralManagerViewController.swift; sourceTree = "<group>"; };
 		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
 		05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05277CA21944CB0E0022FB59 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
@@ -103,6 +104,7 @@
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		05C3F1C51942159D006F80AD /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
+		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05F929831949498200542A1E /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -159,8 +161,8 @@
 			isa = PBXGroup;
 			children = (
 				054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */,
-				05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */,
 				05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */,
+				05E68700194FF5A2009B38DA /* PeripheralViewController.swift */,
 				05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */,
 			);
 			path = Central;
@@ -197,6 +199,8 @@
 				05840F6D194206F100C744E6 /* Images.xcassets */,
 				05277C9B1944CAE50022FB59 /* Central */,
 				05840F6A194206F100C744E6 /* Main.storyboard */,
+				05E6870219508799009B38DA /* Peripheral */,
+				05E68703195087D0009B38DA /* Profiles */,
 				05840F62194206F100C744E6 /* Supporting Files */,
 			);
 			path = BlueCap;
@@ -269,6 +273,21 @@
 				05B2432F194536A400E8E878 /* Logger.swift */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		05E6870219508799009B38DA /* Peripheral */ = {
+			isa = PBXGroup;
+			children = (
+				05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */,
+			);
+			name = Peripheral;
+			sourceTree = "<group>";
+		};
+		05E68703195087D0009B38DA /* Profiles */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Profiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -447,6 +466,7 @@
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
 				05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */,
 				05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */,
+				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,
 				05840F65194206F100C744E6 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
