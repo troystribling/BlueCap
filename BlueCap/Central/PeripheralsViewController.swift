@@ -70,12 +70,12 @@ class PeripheralsViewController : UITableViewController {
         let peripheral = CentralManager.sharedinstance().peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         cell.connectingActivityIndicator.stopAnimating()
+        cell.accessoryType = .None
         switch(peripheral.state) {
         case .Connected:
             cell.accessoryType = .DetailButton
-        case .Connecting:
-            cell.connectingActivityIndicator.startAnimating()
         default:
+            cell.connectingActivityIndicator.startAnimating()
             cell.accessoryType = .None
         }
         return cell
@@ -101,6 +101,11 @@ class PeripheralsViewController : UITableViewController {
                 }
                 connectorator.onConnect() {(peipheral:Peripheral) -> () in
                     Logger.debug("PeripheralsViewController#onConnect")
+                    self.tableView.reloadData()
+                }
+                connectorator.onTimeout() {(peripheral:Peripheral) -> () in
+                    Logger.debug("PeripheralsViewController#onTimeout")
+                    peripheral.reconnect()
                     self.tableView.reloadData()
                 }
             })
