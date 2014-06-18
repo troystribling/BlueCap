@@ -39,6 +39,23 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == "PeripheralDetail" {
+            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
+            let viewController = segue.destinationViewController as PeripheralViewController
+            viewController.peripheral = CentralManager.sharedinstance().peripherals[selectedIndex.row]
+        }
+    }
+    
+    override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
+        var perform = false
+        if identifier == "PeripheralDetail" {
+            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
+            let peripheral = CentralManager.sharedinstance().peripherals[selectedIndex.row]
+            if peripheral.state == .Connected {
+                perform = true
+            }
+        }
+        return perform
     }
     
     // actions

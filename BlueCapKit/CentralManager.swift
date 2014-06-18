@@ -93,14 +93,14 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // CBCentralManagerDelegate
     // peripheral
-    func centralManager(central:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
+    func centralManager(_:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
         Logger.debug("CentralManager#didConnectPeripheral")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
-    func centralManager(central:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
+    func centralManager(_:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
         Logger.debug("CentralManager#didDisconnectPeripheral")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
@@ -108,7 +108,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         self.discoveredPeripherals.removeAll(keepCapacity:false)
     }
     
-    func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
+    func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
         if !self.discoveredPeripherals[peripheral] {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisement:advertisementData)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
@@ -119,27 +119,27 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    func centralManager(central:CBCentralManager!, didFailToConnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
+    func centralManager(_:CBCentralManager!, didFailToConnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
         Logger.debug("CentralManager#didFailToConnectPeripheral")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didFailToConnectPeripheral(error)
         }
     }
     
-    func centralManager(central:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:AnyObject[]!) {
+    func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:AnyObject[]!) {
         Logger.debug("CentralManager#didRetrieveConnectedPeripherals")
     }
     
-    func centralManager(central:CBCentralManager!, didRetrievePeripherals peripherals:AnyObject[]!) {
+    func centralManager(_:CBCentralManager!, didRetrievePeripherals peripherals:AnyObject[]!) {
         Logger.debug("CentralManager#didRetrievePeripherals")
     }
     
     // centrail manager state
-    func centralManager(central: CBCentralManager!, willRestoreState dict:NSDictionary!) {
+    func centralManager(_:CBCentralManager!, willRestoreState dict:NSDictionary!) {
         Logger.debug("CentralManager#willRestoreState")
     }
     
-    func centralManagerDidUpdateState(central:CBCentralManager!) {
+    func centralManagerDidUpdateState(_:CBCentralManager!) {
         switch(self.cbCentralManager.state) {
         case .Unauthorized:
             Logger.debug("CentralManager#centralManagerDidUpdateState: Unauthorized")

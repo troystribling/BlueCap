@@ -9,7 +9,8 @@
 import Foundation
 import CoreBluetooth
 
-let PERIPHERAL_CONNECTION_TIMEOUT   : Float = 10.0
+let PERIPHERAL_CONNECTION_TIMEOUT : Float  = 10.0
+let RSSI_UPDATE_PERIOD            : Float  = 1.0
 
 enum PeripheralConnectionError {
     case None
@@ -20,6 +21,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     var servicesDiscovered          : ((services:Service[]) -> ())?
     var peripheralDiscovered        : ((peripheral:Peripheral, error:NSError!) -> ())?
+    var rssiUpdate                  : ((rssi:Int) -> ())?
 
     var connectionSequence = 0
     
@@ -27,7 +29,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     let cbPeripheral    : CBPeripheral!
     let advertisement   : NSDictionary!
     
-    var discoveredServices  : Dictionary<String, Service> = [:]
+    var discoveredServices  : Dictionary<String, Service>   = [:]
     var discoveredObjects   : Dictionary<String, AnyObject> = [:]
 
     var currentError        = PeripheralConnectionError.None
@@ -43,6 +45,14 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     var state : CBPeripheralState {
         return self.cbPeripheral.state
+    }
+    
+    var rssi : Int {
+        var rssiInt = -1
+        if let rssiNumber = cbPeripheral.RSSI {
+            rssiInt = rssiNumber.integerValue
+        }
+        return rssiInt
     }
     
     // APPLICATION INTERFACE
@@ -83,6 +93,30 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
+    // rssi
+    func readRSSI(rssiUpdate:(rssi:Int) -> ()) {
+        if self.state == .Connected {
+            self.rssiUpdate = rssiUpdate
+            self.cbPeripheral.readRSSI()
+        }
+    }
+    
+    func pollRSSI(rssiUpdate:(rssi:Int) -> ()) {
+        if self.state == .Connected {
+            self.rssiUpdate = rssiUpdate
+            CentralManager.sharedinstance().delayCallback(RSSI_UPDATE_PERIOD) {
+                if let rssiUpdate = self.rssiUpdate {
+                    self.readRSSI(rssiUpdate)
+                    self.pollRSSI(rssiUpdate)
+                }
+            }
+        }
+    }
+    
+    func stopPollingRSSI() {
+        self.rssiUpdate = nil
+    }
+    
     // service discovery
     func discoverAllServices(servicesDiscovered:(services:Service[])->()) {
     }
@@ -95,40 +129,46 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     // CBPeripheralDelegate
     // peripheral
-    func peripheralDidUpdateName(peripheral:CBPeripheral!) {
+    func peripheralDidUpdateName(_:CBPeripheral!) {
     }
     
-    func peripheral(peripheral:CBPeripheral!, didModifyServices invalidatedServices:AnyObject[]!) {
+    func peripheral(_:CBPeripheral!, didModifyServices invalidatedServices:AnyObject[]!) {
     }
-
+    
+    func peripheralDidUpdateRSSI(_:CBPeripheral!, error: NSError!) {
+        if let rssiUpdate = self.rssiUpdate {
+            CentralManager.sharedinstance().asyncCallback(){rssiUpdate(rssi:self.rssi)}
+        }
+    }
+    
     // services
-    func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
+    func peripheral(_:CBPeripheral!, didDiscoverServices error:NSError!) {
     }
     
-    func peripheral(peripheral:CBPeripheral!, didDiscoverIncludedServicesForService service:CBService!, error:NSError!) {
+    func peripheral(_:CBPeripheral!, didDiscoverIncludedServicesForService service:CBService!, error:NSError!) {
     }
     
     // characteristics
-    func peripheral(peripheral:CBPeripheral!, didDiscoverCharacteristicsForService service:CBService!, error:NSError!) {
+    func peripheral(_:CBPeripheral!, didDiscoverCharacteristicsForService service:CBService!, error:NSError!) {
     }
     
-    func peripheral(peripheral:CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
+    func peripheral(_:CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
     }
 
-    func peripheral(peripheral:CBPeripheral!, didUpdateValueForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
+    func peripheral(_:CBPeripheral!, didUpdateValueForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
     }
 
-    func peripheral(peripheral:CBPeripheral!, didWriteValueForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
+    func peripheral(_:CBPeripheral!, didWriteValueForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
     }
     
     // descriptors
-    func peripheral(peripheral:CBPeripheral!, didDiscoverDescriptorsForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
+    func peripheral(_:CBPeripheral!, didDiscoverDescriptorsForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
     }
     
-    func peripheral(peripheral:CBPeripheral!, didUpdateValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
+    func peripheral(_:CBPeripheral!, didUpdateValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
     }
     
-    func peripheral(peripheral:CBPeripheral!, didWriteValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
+    func peripheral(_:CBPeripheral!, didWriteValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
     }
     
     // PRIVATE INTERFACE

@@ -21,6 +21,10 @@ class PeripheralViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let peripheralName = self.peripheral?.name {
+            self.navigationItem.title = peripheralName
+        }
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
     override func viewWillAppear(animated:Bool) {
