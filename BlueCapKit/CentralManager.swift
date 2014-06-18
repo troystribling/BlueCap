@@ -105,7 +105,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }
-//        self.discoveredPeripherals.removeAll(keepCapacity:false)
+        self.discoveredPeripherals.removeAll(keepCapacity:false)
     }
     
     func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
