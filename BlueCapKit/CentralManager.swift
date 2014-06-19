@@ -105,12 +105,11 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }
-        self.discoveredPeripherals.removeAll(keepCapacity:false)
     }
     
     func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
         if !self.discoveredPeripherals[peripheral] {
-            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisement:advertisementData)
+            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:advertisementData, rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
             if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {

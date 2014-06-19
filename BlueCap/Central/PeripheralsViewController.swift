@@ -14,9 +14,9 @@ let MAX_FAILED_RECONNECTS = 0
 
 class PeripheralsViewController : UITableViewController {
     
-    var stopScanBarButtonItem : UIBarButtonItem!
-    var startScanBarButtonItem : UIBarButtonItem!
-    var connectionSequence : Dictionary<Peripheral, Int> = [:]
+    var stopScanBarButtonItem   : UIBarButtonItem!
+    var startScanBarButtonItem  : UIBarButtonItem!
+    var connectionSequence      : Dictionary<Peripheral, Int> = [:]
     
     struct MainStoryboard {
         static let periphearlCell = "PeripheralCell"

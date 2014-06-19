@@ -29,6 +29,8 @@
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
 		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
 		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
+		05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */; };
+		05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */; };
 		05F929841949498200542A1E /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F929831949498200542A1E /* Service.swift */; };
 /* End PBXBuildFile section */
 
@@ -82,7 +84,7 @@
 		0516666C1944F01F006A337C /* Descriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Descriptor.swift; sourceTree = "<group>"; };
 		05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PeripheralManagerViewController.swift; path = Central/PeripheralManagerViewController.swift; sourceTree = "<group>"; };
 		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
-		05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
+		05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceProfilesViewController.swift; path = Central/ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05277CA21944CB0E0022FB59 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		05277CA31944CB0E0022FB59 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connectorator.swift; sourceTree = "<group>"; };
@@ -105,6 +107,8 @@
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		05C3F1C51942159D006F80AD /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
+		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
+		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
 		05F929831949498200542A1E /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,7 +167,8 @@
 				054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */,
 				05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */,
 				05E68700194FF5A2009B38DA /* PeripheralViewController.swift */,
-				05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */,
+				05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */,
+				05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */,
 			);
 			path = Central;
 			sourceTree = "<group>";
@@ -286,6 +291,7 @@
 		05E68703195087D0009B38DA /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
+				05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */,
 			);
 			name = Profiles;
 			sourceTree = "<group>";
@@ -463,7 +469,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				05277C9F1944CAE50022FB59 /* PeripheralManagerViewController.swift in Sources */,
+				05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */,
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
+				05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */,
 				05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */,
 				05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */,
 				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,

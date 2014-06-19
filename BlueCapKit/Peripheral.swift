@@ -21,13 +21,13 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     var servicesDiscovered          : ((services:Service[]) -> ())?
     var peripheralDiscovered        : ((peripheral:Peripheral, error:NSError!) -> ())?
-    var rssiUpdate                  : ((rssi:Int) -> ())?
 
     var connectionSequence = 0
     
     var connectorator   : Connectorator?
     let cbPeripheral    : CBPeripheral!
-    let advertisement   : NSDictionary!
+    let advertisements  : NSDictionary!
+    let rssi            : Int!
     
     var discoveredServices  : Dictionary<String, Service>   = [:]
     var discoveredObjects   : Dictionary<String, AnyObject> = [:]
@@ -47,19 +47,20 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         return self.cbPeripheral.state
     }
     
-    var rssi : Int {
-        var rssiInt = -1
-        if let rssiNumber = cbPeripheral.RSSI {
-            rssiInt = rssiNumber.integerValue
+    var uuidString : String {
+        if let identifier = self.cbPeripheral.identifier {
+            return self.cbPeripheral.identifier.UUIDString
+        } else {
+            return "Unknown"
         }
-        return rssiInt
     }
     
     // APPLICATION INTERFACE
-    init(cbPeripheral:CBPeripheral, advertisement:NSDictionary) {
+    init(cbPeripheral:CBPeripheral, advertisements:NSDictionary, rssi:Int) {
         self.cbPeripheral = cbPeripheral
-        self.advertisement = advertisement
+        self.advertisements = advertisements
         self.currentError = .None
+        self.rssi = rssi
     }
     
     // connect
@@ -93,30 +94,6 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    // rssi
-    func readRSSI(rssiUpdate:(rssi:Int) -> ()) {
-        if self.state == .Connected {
-            self.rssiUpdate = rssiUpdate
-            self.cbPeripheral.readRSSI()
-        }
-    }
-    
-    func pollRSSI(rssiUpdate:(rssi:Int) -> ()) {
-        if self.state == .Connected {
-            self.rssiUpdate = rssiUpdate
-            CentralManager.sharedinstance().delayCallback(RSSI_UPDATE_PERIOD) {
-                if let rssiUpdate = self.rssiUpdate {
-                    self.readRSSI(rssiUpdate)
-                    self.pollRSSI(rssiUpdate)
-                }
-            }
-        }
-    }
-    
-    func stopPollingRSSI() {
-        self.rssiUpdate = nil
-    }
-    
     // service discovery
     func discoverAllServices(servicesDiscovered:(services:Service[])->()) {
     }
@@ -133,12 +110,6 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     func peripheral(_:CBPeripheral!, didModifyServices invalidatedServices:AnyObject[]!) {
-    }
-    
-    func peripheralDidUpdateRSSI(_:CBPeripheral!, error: NSError!) {
-        if let rssiUpdate = self.rssiUpdate {
-            CentralManager.sharedinstance().asyncCallback(){rssiUpdate(rssi:self.rssi)}
-        }
     }
     
     // services
@@ -193,6 +164,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
             if (self.forcedDisconnect) {
                 CentralManager.asyncCallback() {
                     Logger.debug("Periphearl#didFailToConnectPeripheral: forced disconnect")
+                    CentralManager.sharedinstance().discoveredPeripherals.removeAll(keepCapacity:false)
                     connectorator.didForceDisconnect(self)
                 }
             } else {

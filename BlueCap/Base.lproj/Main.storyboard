@@ -28,7 +28,7 @@
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fuu-e0-HWI">
-                                                    <rect key="frame" x="100" y="11" width="200" height="21"/>
+                                                    <rect key="frame" x="78" y="11" width="222" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -49,7 +49,7 @@
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q4d-zx-jkB">
-                                                    <rect key="frame" x="100" y="11" width="200" height="21"/>
+                                                    <rect key="frame" x="78" y="11" width="222" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -881,16 +881,16 @@
             </objects>
             <point key="canvasLocation" x="3735" y="1648"/>
         </scene>
-        <!--Table View Controller - Advertisements-->
+        <!--Peripheral Advertisements View Controller - Advertisements-->
         <scene sceneID="UIA-LO-yfN">
             <objects>
-                <tableViewController id="LBb-So-p2j" sceneMemberID="viewController">
+                <tableViewController id="LBb-So-p2j" customClass="PeripheralAdvertisementsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="vzp-FS-Cw6">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralAdvertisementCell" rowHeight="59" id="gnb-6E-LuY" customClass="PeripheralAdvertisementCell">
+                            <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralAdvertisementCell" rowHeight="59" id="gnb-6E-LuY" customClass="PeripheralAdvertisementCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="59"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gnb-6E-LuY" id="uh7-Tk-mRh">
@@ -911,8 +911,8 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLabel" destination="Yyo-Tj-2NE" id="L4e-oz-MaU"/>
-                                    <outlet property="valueLabel" destination="ed1-20-2k2" id="eYJ-WI-f3w"/>
+                                    <outlet property="nameLabel" destination="Yyo-Tj-2NE" id="TOB-h4-e52"/>
+                                    <outlet property="valueLabel" destination="ed1-20-2k2" id="4dT-Qf-W54"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

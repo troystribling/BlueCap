@@ -15,27 +15,31 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var uuidLabel         : UILabel
     @IBOutlet var rssiLabel         : UILabel
     
+    struct MainStoryBoard {
+        static let peripheralServicesSegue          = "PeripheralServices"
+        static let peripehralAdvertisementsSegue    = "PeripheralAdvertisements"
+    }
+    
     init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let peripheralName = self.peripheral?.name {
-            self.navigationItem.title = peripheralName
+        if let peripheral = self.peripheral {
+            self.navigationItem.title = peripheral.name
+            self.uuidLabel.text = peripheral.uuidString
+            self.rssiLabel.text = "\(peripheral.rssi)"
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
-    
-    override func viewWillAppear(animated:Bool) {
-        super.viewWillAppear(animated)
+        
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryBoard.peripheralServicesSegue {
+        } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {            
+        }
     }
     
-    override func viewWillDisappear(animated:Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {        
-    }
+    // PRIVATE INTERFACE
     
 }
