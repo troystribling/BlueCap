@@ -11,9 +11,9 @@ import BlueCapKit
 
 class PeripheralAdvertisementsViewController : UITableViewController {
    
-    var peripheral  : Peripheral?
-    var names       : Array<String>  = []
-    var values      : Array<String>  = []
+    weak var peripheral : Peripheral?
+    var names           : Array<String>  = []
+    var values          : Array<String>  = []
     
     struct MainStoryBoard {
         static let peripheralAdvertisementCell = "PeripheralAdvertisementCell"
@@ -25,7 +25,10 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.unpackAdvertisements()
+        if let peripheral = self.peripheral {
+            self.names = Array(peripheral.advertisements.keys)
+            self.values = Array(peripheral.advertisements.values)
+        }
     }
     
     // UITableViewDataSource
@@ -34,11 +37,14 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+        println("Count:\(self.names.count)")
         return self.names.count
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.peripheralAdvertisementCell, forIndexPath: indexPath) as PeripheralAdvertisementCell
+        cell.nameLabel.text = self.names[indexPath.row]
+        cell.valueLabel.text = self.values[indexPath.row]
         return cell
     }
 
@@ -46,7 +52,5 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     // UITableViewDelegate
     
     // PRIVATE INTERFACE
-    func unpackAdvertisements() {
-    }
 
 }

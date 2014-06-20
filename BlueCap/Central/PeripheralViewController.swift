@@ -36,7 +36,9 @@ class PeripheralViewController : UITableViewController {
         
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
-        } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {            
+        } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
+            let viewController = segue.destinationViewController as PeripheralAdvertisementsViewController
+            viewController.peripheral = self.peripheral
         }
     }
     

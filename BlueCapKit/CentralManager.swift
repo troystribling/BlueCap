@@ -109,7 +109,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     
     func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
         if !self.discoveredPeripherals[peripheral] {
-            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:advertisementData, rssi:RSSI.integerValue)
+            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
             if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
@@ -197,6 +197,34 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     init() {
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:nil)
+    }
+    
+    func unpackAdvertisements(advertDictionary:NSDictionary!) -> Dictionary<String,String> {
+        var advertisements = Dictionary<String, String>()
+        func addKey(key:String, andValue value:AnyObject) -> () {
+            if value is NSString {
+                advertisements[key] = (value as? String)
+            } else {
+                advertisements[key] = value.stringValue
+            }
+            Logger.debug("CentralManager#unpackAdvertisements key:\(key), value:\(advertisements[key])")
+        }
+        if (advertDictionary) {
+            for keyObject : AnyObject in advertDictionary.allKeys {
+                let key = keyObject as String
+                let value : AnyObject! = advertDictionary.objectForKey(keyObject)
+                if value is NSArray {
+                    for v : AnyObject in (value as NSArray) {
+                        addKey(key, andValue:value)
+                    }
+                } else {
+                    addKey(key, andValue:value)
+                }
+                
+            }
+        }
+        Logger.debug("CentralManager#unpackAdvertisements found \(advertisements.count) advertisements")
+        return advertisements
     }
     
 }

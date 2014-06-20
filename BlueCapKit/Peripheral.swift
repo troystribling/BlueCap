@@ -26,7 +26,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     var connectorator   : Connectorator?
     let cbPeripheral    : CBPeripheral!
-    let advertisements  : NSDictionary!
+    let advertisements  : Dictionary<String, String>!
     let rssi            : Int!
     
     var discoveredServices  : Dictionary<String, Service>   = [:]
@@ -56,7 +56,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // APPLICATION INTERFACE
-    init(cbPeripheral:CBPeripheral, advertisements:NSDictionary, rssi:Int) {
+    init(cbPeripheral:CBPeripheral, advertisements:Dictionary<String, String>, rssi:Int) {
         self.cbPeripheral = cbPeripheral
         self.advertisements = advertisements
         self.currentError = .None
