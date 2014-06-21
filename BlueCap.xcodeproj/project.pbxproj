@@ -16,6 +16,9 @@
 		05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA31944CB0E0022FB59 /* Peripheral.swift */; };
 		054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */; };
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
+		0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E4081955EFD800F33D4E /* ProfileManager.swift */; };
+		0552E40B195604CD00F33D4E /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40A195604CD00F33D4E /* ServiceProfile.swift */; };
+		0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40C1956055700F33D4E /* CharacteristicProfile.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
 		05840F6C194206F100C744E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6A194206F100C744E6 /* Main.storyboard */; };
 		05840F6E194206F100C744E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6D194206F100C744E6 /* Images.xcassets */; };
@@ -89,6 +92,9 @@
 		05277CA31944CB0E0022FB59 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connectorator.swift; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
+		0552E4081955EFD800F33D4E /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
+		0552E40A195604CD00F33D4E /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
+		0552E40C1956055700F33D4E /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F63194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840F64194206F100C744E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -173,6 +179,16 @@
 			path = Central;
 			sourceTree = "<group>";
 		};
+		0552E4071955EFB900F33D4E /* Profiles */ = {
+			isa = PBXGroup;
+			children = (
+				0552E4081955EFD800F33D4E /* ProfileManager.swift */,
+				0552E40A195604CD00F33D4E /* ServiceProfile.swift */,
+				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
+			);
+			name = Profiles;
+			sourceTree = "<group>";
+		};
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
@@ -239,6 +255,7 @@
 		05840F9719420B0000C744E6 /* BlueCapKit */ = {
 			isa = PBXGroup;
 			children = (
+				0552E4071955EFB900F33D4E /* Profiles */,
 				05840F9A19420B0000C744E6 /* BlueCapKit.h */,
 				0516666E1944F043006A337C /* Central */,
 				05840F9819420B0000C744E6 /* Supporting Files */,
@@ -491,9 +508,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0552E40B195604CD00F33D4E /* ServiceProfile.swift in Sources */,
 				05B24330194536A400E8E878 /* Logger.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */,
+				0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */,
+				0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */,
 				0516666D1944F01F006A337C /* Descriptor.swift in Sources */,
 				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
 				054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */,

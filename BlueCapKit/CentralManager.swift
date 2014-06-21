@@ -30,7 +30,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         if !thisCentralManager {
             thisCentralManager = CentralManager()
         }
-        return thisCentralManager!;
+        return thisCentralManager!
     }
     
     // scanning
