@@ -15,8 +15,8 @@ class Service : NSObject {
     let perpheral   : Peripheral!
     let profile     : ServiceProfile?
     
-    var discoveredCharacteristics   = Dictionary<String, Characteristic>()
-    var characteristicsDiscovered   : ((characteristics:Characteristic[]!) -> ())?
+    var discoveredCharacteristics   = Dictionary<CBUUID, Characteristic>()
+    var characteristicsDiscovered   : ((characteristics:Characteristic[]) -> ())?
 
     var name : String {
         if let profile = self.profile {
@@ -34,10 +34,36 @@ class Service : NSObject {
         return Array(self.discoveredCharacteristics.values)
     }
     
+    // APPLICATION INTERFACE
     init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
         self.perpheral = peripheral
         self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
     }
     
+    func discoverAllCharacteristics(characteristicsDiscovered:(characteristics:Characteristic[]) -> ()) {
+        Logger.debug("Service#discoverAllCharacteristics")
+        self.characteristicsDiscovered = characteristicsDiscovered
+        self.perpheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
+    }
+    
+    func discoverCharacteristics(characteristics:CBUUID[], characteristicsDiscovered:(characteristics:Characteristic[]) -> ()) {
+        Logger.debug("Service#discoverCharacteristics")
+        self.characteristicsDiscovered = characteristicsDiscovered
+        self.perpheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)
+    }
+    
+    // INTERNAL INTERFACE
+    func didDiscoverCharacteristics() {
+        self.discoveredCharacteristics.removeAll()
+        for cbCharacteristic : AnyObject in self.cbService.characteristics {
+            let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic as CBCharacteristic, service:self)
+            self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+            bcCharacteristic.didDiscover()
+            Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+        }
+        if let characteristicsDiscovered = self.characteristicsDiscovered {
+            CentralManager.asyncCallback(){characteristicsDiscovered(characteristics:self.characteristics)}
+        }
+    }
 }
