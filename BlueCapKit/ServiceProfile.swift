@@ -11,7 +11,7 @@ import CoreBluetooth
 
 class ServiceProfile {
     
-    var characteristicProfiles = Dictionary<String, CharacteristicProfile>()
+    var characteristicProfiles = Dictionary<CBUUID, CharacteristicProfile>()
 
     let uuid : CBUUID!
     let name : String!
@@ -29,7 +29,7 @@ class ServiceProfile {
     func createCharateristic(uuid:String, name:String, profile:(profile:CharacteristicProfile) -> ()) -> CharacteristicProfile {
         Logger.debug("ServiceProfile#createCharateristic: name=\(name), uuid=\(uuid)")
         let characteristicProfile = CharacteristicProfile(uuid:uuid, name:name, profile:profile)
-        self.characteristicProfiles[uuid] = characteristicProfile
+        self.characteristicProfiles[CBUUID.UUIDWithString(uuid)] = characteristicProfile
         return characteristicProfile
     }
     

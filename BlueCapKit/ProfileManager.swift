@@ -7,17 +7,18 @@
 //
 
 import Foundation
+import CoreBluetooth
 
 class ProfileManager {
     
-    var serviceProfiles = Dictionary<String, ServiceProfile>()
+    var serviceProfiles = Dictionary<CBUUID, ServiceProfile>()
     
     var services : ServiceProfile[] {
         return Array(self.serviceProfiles.values)
     }
     
     // APPLICATION INTERFACE
-    func sharedInstance() -> ProfileManager {
+    class func sharedInstance() -> ProfileManager {
         if !thisProfileManager {
             thisProfileManager = ProfileManager()
         }
@@ -27,7 +28,7 @@ class ProfileManager {
     func createServiceProfile(uuid:String, name:String, profile:(service:ServiceProfile) -> ()) -> ServiceProfile {
         Logger.debug("ProfileManager#createServiceProfile: name=\(name), uuid=\(uuid)")
         let serviceProfile = ServiceProfile(uuid:uuid, name:name, profile:profile)
-        self.serviceProfiles[uuid] = serviceProfile
+        self.serviceProfiles[CBUUID.UUIDWithString(uuid)] = serviceProfile
         return serviceProfile
     }
 }

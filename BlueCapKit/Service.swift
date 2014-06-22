@@ -11,13 +11,33 @@ import CoreBluetooth
 
 class Service : NSObject {
     
-    let cbService           : CBService!
-    var discoveredServices  : Dictionary<String, Characteristic> = [:]
+    let cbService   : CBService!
+    let perpheral   : Peripheral!
+    let profile     : ServiceProfile?
     
+    var discoveredCharacteristics   = Dictionary<String, Characteristic>()
     var characteristicsDiscovered   : ((characteristics:Characteristic[]!) -> ())?
 
-    init(cbService:CBService) {
+    var name : String {
+        if let profile = self.profile {
+            return profile.name
+        } else {
+            return "Unknown"
+        }
+    }
+    
+    var uuid : CBUUID {
+        return self.cbService.UUID
+    }
+    
+    var characteristics : Characteristic[] {
+        return Array(self.discoveredCharacteristics.values)
+    }
+    
+    init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
+        self.perpheral = peripheral
+        self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
     }
     
 }

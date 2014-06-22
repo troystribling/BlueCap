@@ -13,6 +13,10 @@ class Descriptor {
     
     let cbDescriptor : CBDescriptor!
     
+    var uuid : CBUUID {
+        return self.cbDescriptor.UUID
+    }
+    
     init(cbDescriptor:CBDescriptor) {
         self.cbDescriptor = cbDescriptor
     }

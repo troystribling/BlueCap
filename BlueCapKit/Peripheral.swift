@@ -29,8 +29,8 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     let advertisements  : Dictionary<String, String>!
     let rssi            : Int!
     
-    var discoveredServices  : Dictionary<String, Service>   = [:]
-    var discoveredObjects   : Dictionary<String, AnyObject> = [:]
+    var discoveredServices  = Dictionary<CBUUID, Service>()
+    var discoveredObjects   = Dictionary<CBUUID, AnyObject>()
 
     var currentError        = PeripheralConnectionError.None
     var forcedDisconnect    = false
@@ -96,9 +96,15 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     // service discovery
     func discoverAllServices(servicesDiscovered:(services:Service[])->()) {
+        Logger.debug("Peripheral#discoverAllServices")
+        self.servicesDiscovered = servicesDiscovered
+        self.cbPeripheral.discoverServices(nil)
     }
     
     func discoverServices(services:CBUUID[]!, servicesDiscovered:(services:Service[])->()) {
+        Logger.debug("Peripheral#discoverAllServices")
+        self.servicesDiscovered = servicesDiscovered
+        self.cbPeripheral.discoverServices(services)
     }
     
     func discoverPeripheral(peripheralDiscovered:(peripheral:Peripheral!, error:NSError!)->()) {
@@ -113,7 +119,12 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // services
-    func peripheral(_:CBPeripheral!, didDiscoverServices error:NSError!) {
+    func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
+        self.clearServices()
+        for service : AnyObject in peripheral.services {
+            let cbService = service as CBService
+            self.discoveredServices[cbService.UUID] = Service(cbService:cbService, peripheral:self)
+        }
     }
     
     func peripheral(_:CBPeripheral!, didDiscoverIncludedServicesForService service:CBService!, error:NSError!) {
@@ -155,6 +166,24 @@ class Peripheral : NSObject, CBPeripheralDelegate {
                 Logger.debug("Periphearl#timeoutConnection: expired")
             }
         }
+    }
+    
+    func clearServices() {
+        self.discoveredServices.removeAll()
+    }
+    
+    func clearCharacteristics(service:Service) {
+        for characteristic in service.characteristics {
+            self.discoveredObjects.removeValueForKey(characteristic.uuid)
+        }
+        service.discoveredCharacteristics.removeAll()
+    }
+    
+    func clearDescriptors(characteristic:Characteristic) {
+        for descriptor in characteristic.descriptors {
+            self.discoveredObjects.removeValueForKey(descriptor.uuid)
+        }
+        characteristic.discoveredDescriptors.removeAll()
     }
     
     // INTERNAL INTERFACE
