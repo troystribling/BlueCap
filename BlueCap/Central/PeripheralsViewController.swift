@@ -19,7 +19,7 @@ class PeripheralsViewController : UITableViewController {
     var connectionSequence      : Dictionary<Peripheral, Int> = [:]
     
     struct MainStoryboard {
-        static let periphearlCell = "PeripheralCell"
+        static let peripheralCell = "PeripheralCell"
     }
     
     init(coder aDecoder:NSCoder!) {
@@ -68,7 +68,7 @@ class PeripheralsViewController : UITableViewController {
         } else {
             central.powerOn(){
                 Logger.debug("powerOn Callback")
-                central.startScanning(){(peripheral:Peripheral!, rssi:Int) -> () in
+                central.startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
                     self.connect(peripheral)
                 }
             }
@@ -86,7 +86,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.periphearlCell, forIndexPath: indexPath) as PeripheralCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
         let peripheral = CentralManager.sharedinstance().peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         switch(peripheral.state) {

@@ -31,6 +31,7 @@
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
 		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
 		05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */; };
+		05B6F0781957ACF300D798CB /* PeripheralServiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* PeripheralServiceCell.swift */; };
 		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
 		05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */; };
 		05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */; };
@@ -111,6 +112,7 @@
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
+		05B6F0771957ACF300D798CB /* PeripheralServiceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCell.swift; sourceTree = "<group>"; };
 		05C3F1C51942159D006F80AD /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
@@ -169,12 +171,13 @@
 		05277C9B1944CAE50022FB59 /* Central */ = {
 			isa = PBXGroup;
 			children = (
-				054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */,
-				05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */,
-				05E68700194FF5A2009B38DA /* PeripheralViewController.swift */,
 				05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */,
 				05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */,
+				054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */,
+				05B6F0771957ACF300D798CB /* PeripheralServiceCell.swift */,
 				05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */,
+				05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */,
+				05E68700194FF5A2009B38DA /* PeripheralViewController.swift */,
 			);
 			path = Central;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */,
 				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,
 				05840F65194206F100C744E6 /* AppDelegate.swift in Sources */,
+				05B6F0781957ACF300D798CB /* PeripheralServiceCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,7 +13,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     
     var afterPowerOn                : (()->())?
     var afterPowerOff               : (()->())?
-    var afterPeripheralDiscovered   : ((Peripheral!, Int)->())?
+    var afterPeripheralDiscovered   : ((peripheral:Peripheral, rssi:Int)->())?
     
     var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
     let cbCentralManager : CBCentralManager!
@@ -34,11 +34,11 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // scanning
-    func startScanning(afterPeripheralDiscovered:((peripheral:Peripheral!, rssi:Int)->())?) {
+    func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
     }
     
-    func startScanningForServiceUUIDds(uuids:CBUUID[]!, afterPeripheralDiscovered:((peripheral:Peripheral!, rssi:Int)->())?) {
+    func startScanningForServiceUUIDds(uuids:CBUUID[]!, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         if !self.isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDds")
             self.isScanning = true
@@ -113,7 +113,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
             if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
-                afterPeripheralDiscovered(bcPeripheral, RSSI.integerValue)
+                afterPeripheralDiscovered(peripheral:bcPeripheral, rssi:RSSI.integerValue)
             }
         }
     }

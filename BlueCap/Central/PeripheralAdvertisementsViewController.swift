@@ -15,7 +15,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     var names           : Array<String>  = []
     var values          : Array<String>  = []
     
-    struct MainStoryBoard {
+    struct MainStoryboard {
         static let peripheralAdvertisementCell = "PeripheralAdvertisementCell"
     }
     
@@ -42,7 +42,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.peripheralAdvertisementCell, forIndexPath: indexPath) as PeripheralAdvertisementCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementCell, forIndexPath: indexPath) as PeripheralAdvertisementCell
         cell.nameLabel.text = self.names[indexPath.row]
         cell.valueLabel.text = self.values[indexPath.row]
         return cell

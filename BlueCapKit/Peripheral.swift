@@ -20,7 +20,7 @@ enum PeripheralConnectionError {
 class Peripheral : NSObject, CBPeripheralDelegate {
     
     var servicesDiscoveredCallback          : ((services:Service[]) -> ())?
-    var peripheralDiscoveredCallback        : ((peripheral:Peripheral, error:NSError!) -> ())?
+    var peripheralDiscoveredCallback        : ((error:NSError!) -> ())?
 
     var connectionSequence = 0
     
@@ -110,7 +110,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         self.cbPeripheral.discoverServices(services)
     }
     
-    func discoverPeripheral(peripheralDiscovered:(peripheral:Peripheral!, error:NSError!)->()) {
+    func discoverPeripheral(peripheralDiscovered:(error:NSError!)->()) {
     }
     
     // CBPeripheralDelegate
