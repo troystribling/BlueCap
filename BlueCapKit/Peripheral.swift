@@ -19,7 +19,7 @@ enum PeripheralConnectionError {
 
 class Peripheral : NSObject, CBPeripheralDelegate {
     
-    var servicesDiscoveredCallback          : ((services:Service[]) -> ())?
+    var servicesDiscoveredCallback          : (() -> ())?
     var peripheralDiscoveredCallback        : ((error:NSError!) -> ())?
 
     var connectionSequence = 0
@@ -60,7 +60,9 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     // APPLICATION INTERFACE
     init(cbPeripheral:CBPeripheral, advertisements:Dictionary<String, String>, rssi:Int) {
+        super.init()
         self.cbPeripheral = cbPeripheral
+        self.cbPeripheral.delegate = self
         self.advertisements = advertisements
         self.currentError = .None
         self.rssi = rssi
@@ -98,13 +100,13 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // service discovery
-    func discoverAllServices(servicesDiscoveredCallback:(services:Service[])->()) {
+    func discoverAllServices(servicesDiscoveredCallback:()->()) {
         Logger.debug("Peripheral#discoverAllServices")
         self.servicesDiscoveredCallback = servicesDiscoveredCallback
         self.cbPeripheral.discoverServices(nil)
     }
     
-    func discoverServices(services:CBUUID[]!, servicesDiscoveredCallback:(services:Service[])->()) {
+    func discoverServices(services:CBUUID[]!, servicesDiscoveredCallback:()->()) {
         Logger.debug("Peripheral#discoverAllServices")
         self.servicesDiscoveredCallback = servicesDiscoveredCallback
         self.cbPeripheral.discoverServices(services)
@@ -125,6 +127,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     
     // services
     func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
+        Logger.debug("Peripheral#didDiscoverServices")
         self.discoveredServices.removeAll()
         for cbService : AnyObject in peripheral.services {
             let bcService = Service(cbService:cbService as CBService, peripheral:self)
@@ -132,7 +135,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
             Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
         }
         if let servicesDiscoveredCallback = self.servicesDiscoveredCallback {
-            CentralManager.asyncCallback(){servicesDiscoveredCallback(services:self.services)}
+            CentralManager.asyncCallback(servicesDiscoveredCallback)
         }
     }
     

@@ -16,7 +16,7 @@ class Service : NSObject {
     let profile     : ServiceProfile?
     
     var discoveredCharacteristics   = Dictionary<CBUUID, Characteristic>()
-    var characteristicsDiscovered   : ((characteristics:Characteristic[]) -> ())?
+    var characteristicsDiscovered   : (() -> ())?
 
     var name : String {
         if let profile = self.profile {
@@ -41,13 +41,13 @@ class Service : NSObject {
         self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
     }
     
-    func discoverAllCharacteristics(characteristicsDiscovered:(characteristics:Characteristic[]) -> ()) {
+    func discoverAllCharacteristics(characteristicsDiscovered:() -> ()) {
         Logger.debug("Service#discoverAllCharacteristics")
         self.characteristicsDiscovered = characteristicsDiscovered
         self.perpheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
     }
     
-    func discoverCharacteristics(characteristics:CBUUID[], characteristicsDiscovered:(characteristics:Characteristic[]) -> ()) {
+    func discoverCharacteristics(characteristics:CBUUID[], characteristicsDiscovered:() -> ()) {
         Logger.debug("Service#discoverCharacteristics")
         self.characteristicsDiscovered = characteristicsDiscovered
         self.perpheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)
@@ -63,7 +63,7 @@ class Service : NSObject {
             Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
         }
         if let characteristicsDiscovered = self.characteristicsDiscovered {
-            CentralManager.asyncCallback(){characteristicsDiscovered(characteristics:self.characteristics)}
+            CentralManager.asyncCallback(characteristicsDiscovered)
         }
     }
 }

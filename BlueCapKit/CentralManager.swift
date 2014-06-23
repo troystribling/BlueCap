@@ -200,6 +200,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func unpackAdvertisements(advertDictionary:NSDictionary!) -> Dictionary<String,String> {
+        Logger.debug("CentralManager#unpackAdvertisements found \(advertDictionary.count) advertisements")
         var advertisements = Dictionary<String, String>()
         func addKey(key:String, andValue value:AnyObject) -> () {
             if value is NSString {
@@ -223,7 +224,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
                 
             }
         }
-        Logger.debug("CentralManager#unpackAdvertisements found \(advertisements.count) advertisements")
+        Logger.debug("CentralManager#unpackAdvertisements unpacked \(advertisements.count) advertisements")
         return advertisements
     }
     

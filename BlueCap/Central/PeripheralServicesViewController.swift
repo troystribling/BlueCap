@@ -14,7 +14,8 @@ class PeripheralServicesViewController : UITableViewController {
     weak var peripheral : Peripheral?
     
     struct MainStoryboard {
-        static let peripheralServiceCell = "PeripheralServiceCell"
+        static let peripheralServiceCell            = "PeripheralServiceCell"
+        static let peripheralServicesCharacteritics = "PeripheralServicesCharacteritics"
     }
     
     init(coder aDecoder:NSCoder!) {
@@ -23,6 +24,9 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidLoad()  {
         super.viewDidLoad()
+        if let peripheral = self.peripheral {
+            peripheral.discoverAllServices(){self.tableView.reloadData()}
+        }
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {        
@@ -53,5 +57,4 @@ class PeripheralServicesViewController : UITableViewController {
     
     // UITableViewDelegate
     
-
 }
