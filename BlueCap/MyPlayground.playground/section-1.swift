@@ -1,5 +1,6 @@
 // Playground - noun: a place where people can play
 import Foundation
+import CoreBluetooth
 
 // function types
 var a : (()->())?
@@ -62,5 +63,7 @@ f2!(j:Junk(), s:"Test")
 var x = ["1":"a", "2":"b", "3":"c"]
 Array(x.values)
 
+let cc : CBCharacteristicProperties = .Read
+cc.toRaw() | CBCharacteristicProperties.Write.toRaw()
 
 

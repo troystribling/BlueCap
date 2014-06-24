@@ -14,7 +14,8 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     var service : Service?
     
     struct MainStoryboard {
-        static let peripheralServiceCharacteristicCell = "PeripheralServiceCharacteristicCell"
+        static let peripheralServiceCharacteristicCell  = "PeripheralServiceCharacteristicCell"
+        static let peripheralServiceCharacteristicSegue = "PeripheralServiceCharacteristic"
     }
     
     init(coder aDecoder:NSCoder!) {
@@ -24,7 +25,19 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let service = self.service {
+            self.navigationItem.title = service.name
             service.discoverAllCharacteristics(){self.tableView.reloadData()}
+        }
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+    }
+    
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.peripheralServiceCharacteristicSegue {
+            if let service = self.service {
+                let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
+                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicViewController
+                viewController.characteristic = service.characteristics[selectedIndex.row]
+            }
         }
     }
     

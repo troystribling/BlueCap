@@ -1057,7 +1057,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="cDW-hg-LSS" id="naA-fo-0L2"/>
                                     <outlet property="uuidLabel" destination="9KI-AZ-e1H" id="PLC-we-dIy"/>
-                                    <segue destination="qDj-sM-07o" kind="push" identifier="Characteristic" trigger="accessoryAction" id="uuQ-Wv-Q5M"/>
+                                    <segue destination="qDj-sM-07o" kind="push" identifier="PeripheralServiceCharacteristic" trigger="accessoryAction" id="uuQ-Wv-Q5M"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1072,10 +1072,10 @@
             </objects>
             <point key="canvasLocation" x="2628" y="249"/>
         </scene>
-        <!--Table View Controller - Characteristic-->
+        <!--Peripheral Service Characteristic View Controller - Characteristic-->
         <scene sceneID="QcM-LX-kfU">
             <objects>
-                <tableViewController id="qDj-sM-07o" sceneMemberID="viewController">
+                <tableViewController id="qDj-sM-07o" customClass="PeripheralServiceCharacteristicViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="hmv-lf-o2k">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1436,29 +1436,6 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="yFC-1i-7uV">
-                                        <rect key="frame" x="0.0" y="883" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yFC-1i-7uV" id="W2e-rn-1pu">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Broadcast" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Rs-Dr-0Im">
-                                                    <rect key="frame" x="20" y="11" width="230" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ALR-GU-uf2">
-                                                    <rect key="frame" x="250" y="11" width="50" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -1469,20 +1446,19 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Characteristic" id="IFu-8E-43n"/>
                     <connections>
-                        <outlet property="broadcastingLabel" destination="IFw-aJ-zwi" id="mWv-J2-Gbn"/>
-                        <outlet property="notifiyButton" destination="p2s-ec-2l6" id="Os2-Rj-nS4"/>
-                        <outlet property="notifyingLabel" destination="zYq-Y7-zJY" id="YbB-tH-Iqh"/>
-                        <outlet property="propertyAuthenticatedSignedWrites" destination="Vj1-bV-RyJ" id="h0r-tb-Uph"/>
-                        <outlet property="propertyBroadcast" destination="46t-ye-Fke" id="3QE-5F-Igt"/>
-                        <outlet property="propertyExtendedProperties" destination="ryv-Cg-UZr" id="qtF-nz-9M0"/>
-                        <outlet property="propertyIndicate" destination="DaH-6d-aKM" id="M4z-pA-2LA"/>
-                        <outlet property="propertyIndicateEncryptionRequired" destination="QA0-lp-qSE" id="z4R-iS-daw"/>
-                        <outlet property="propertyNotify" destination="j0P-ee-fIx" id="rsD-lX-kxf"/>
-                        <outlet property="propertyNotifyEncryptionRequired" destination="FVx-gh-hi1" id="iED-US-Mog"/>
-                        <outlet property="propertyRead" destination="ehn-mg-Eag" id="YsR-5C-hIP"/>
-                        <outlet property="propertyWrite" destination="41a-Ks-38j" id="ufD-Pf-OhH"/>
-                        <outlet property="propertyWriteWithoutResponse" destination="Tj3-FV-sDf" id="COY-N7-jVx"/>
-                        <outlet property="uuidLabel" destination="org-I3-xEa" id="rBY-hN-fza"/>
+                        <outlet property="broadcastingLabel" destination="IFw-aJ-zwi" id="8dP-fN-frj"/>
+                        <outlet property="notifiyButton" destination="p2s-ec-2l6" id="BT3-19-deR"/>
+                        <outlet property="notifyingLabel" destination="zYq-Y7-zJY" id="9sR-Np-Dm9"/>
+                        <outlet property="propertyAuthenticatedSignedWritesLabel" destination="Vj1-bV-RyJ" id="hPb-qK-Keh"/>
+                        <outlet property="propertyBroadcastLabel" destination="46t-ye-Fke" id="37s-DU-t03"/>
+                        <outlet property="propertyExtendedPropertiesLabel" destination="ryv-Cg-UZr" id="GTn-2W-JgZ"/>
+                        <outlet property="propertyIndicateEncryptionRequiredLabel" destination="QA0-lp-qSE" id="PMW-OQ-jE0"/>
+                        <outlet property="propertyIndicateLabel" destination="DaH-6d-aKM" id="oBu-vq-kBG"/>
+                        <outlet property="propertyNotifyEncryptionRequiredLabel" destination="FVx-gh-hi1" id="2QO-yP-MvE"/>
+                        <outlet property="propertyNotifyLabel" destination="j0P-ee-fIx" id="Z42-88-oEa"/>
+                        <outlet property="propertyReadLabel" destination="ehn-mg-Eag" id="Owk-vs-XW4"/>
+                        <outlet property="propertyWriteLabel" destination="41a-Ks-38j" id="0Tc-sR-DMH"/>
+                        <outlet property="propertyWriteWithoutResponseLabel" destination="Tj3-FV-sDf" id="ZWk-Y5-FlX"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wAa-QU-BTY" userLabel="First Responder" sceneMemberID="firstResponder"/>

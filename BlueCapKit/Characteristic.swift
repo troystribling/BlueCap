@@ -26,6 +26,10 @@ class Characteristic {
     var uuid : CBUUID {
         return self.cbCharacteristic.UUID
     }
+    
+    var properties : CBCharacteristicProperties {
+        return self.cbCharacteristic.properties
+    }
 
     // APPLICATION INTERFACE
     init(cbCharacteristic:CBCharacteristic, service:Service) {
@@ -34,6 +38,10 @@ class Characteristic {
         if let serviceProfile = ProfileManager.sharedInstance().serviceProfiles[service.uuid] {
             self.profile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID]
         }
+    }
+
+    func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
+        return (self.properties.toRaw() & property.toRaw()) > 0
     }
     
     // INTERNAL INTERFACE

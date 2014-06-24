@@ -27,6 +27,7 @@ class PeripheralServicesViewController : UITableViewController {
         if let peripheral = self.peripheral {
             peripheral.discoverAllServices(){self.tableView.reloadData()}
         }
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
