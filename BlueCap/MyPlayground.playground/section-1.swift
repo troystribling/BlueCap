@@ -65,5 +65,3 @@ Array(x.values)
 
 let cc : CBCharacteristicProperties = .Read
 cc.toRaw() | CBCharacteristicProperties.Write.toRaw()
-
-

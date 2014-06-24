@@ -31,6 +31,14 @@ class Characteristic {
         return self.cbCharacteristic.properties
     }
 
+    var isNotifying : Bool {
+        return self.cbCharacteristic.isNotifying
+    }
+    
+    var isBroadcasted : Bool {
+        return self.cbCharacteristic.isBroadcasted
+    }
+    
     // APPLICATION INTERFACE
     init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
