@@ -14,7 +14,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     var service : Service?
     
     struct MainStoryboard {
-        static let peripheralServiceCharacteriticCell = "PeripheralServiceCharacteristicCell"
+        static let peripheralServiceCharacteristicCell = "PeripheralServiceCharacteristicCell"
     }
     
     init(coder aDecoder:NSCoder!) {
@@ -23,7 +23,9 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        if let service = self.service {
+            service.discoverAllCharacteristics(){self.tableView.reloadData()}
+        }
     }
     
     // UITableViewDataSource
@@ -40,7 +42,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteriticCell, forIndexPath: indexPath) as PeripheralServiceCharacteristicCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicCell, forIndexPath: indexPath) as PeripheralServiceCharacteristicCell
         if let service = self.service {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name

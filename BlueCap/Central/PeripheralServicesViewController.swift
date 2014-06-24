@@ -29,7 +29,14 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {        
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.peripheralServicesCharacteritics {
+            if let peripheral = self.peripheral {
+                let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
+                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicsViewController
+                viewController.service = peripheral.services[selectedIndex.row]
+            }
+        }
     }
     
     // UITableViewDataSource
