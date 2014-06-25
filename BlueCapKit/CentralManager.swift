@@ -11,9 +11,9 @@ import CoreBluetooth
 
 class CentralManager : NSObject, CBCentralManagerDelegate {
     
-    var afterPowerOn                : (()->())?
-    var afterPowerOff               : (()->())?
-    var afterPeripheralDiscovered   : ((peripheral:Peripheral, rssi:Int)->())?
+    var afterPowerOn                        : (()->())?
+    var afterPowerOff                       : (()->())?
+    var afterPeripheralDiscoveredCallback   : ((peripheral:Peripheral, rssi:Int)->())?
     
     var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
     let cbCentralManager : CBCentralManager!
@@ -38,11 +38,11 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
     }
     
-    func startScanningForServiceUUIDds(uuids:CBUUID[]!, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+    func startScanningForServiceUUIDds(uuids:CBUUID[]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
         if !self.isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDds")
             self.isScanning = true
-            self.afterPeripheralDiscovered = afterPeripheralDiscovered
+            self.afterPeripheralDiscoveredCallback = afterPeripheralDiscoveredCallback
             self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
     }
@@ -112,8 +112,8 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
-            if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
-                afterPeripheralDiscovered(peripheral:bcPeripheral, rssi:RSSI.integerValue)
+            if let afterPeripheralDiscoveredCallback = self.afterPeripheralDiscoveredCallback {
+                afterPeripheralDiscoveredCallback(peripheral:bcPeripheral, rssi:RSSI.integerValue)
             }
         }
     }

@@ -11,9 +11,13 @@ import CoreBluetooth
 
 class Characteristic {
     
-    let cbCharacteristic    : CBCharacteristic!
-    let service             : Service!
-    let profile             : CharacteristicProfile?
+    let cbCharacteristic                    : CBCharacteristic!
+    let service                             : Service!
+    let profile                             : CharacteristicProfile?
+    
+    var notificationStateChangedCallback    : (() -> ())?
+    var afterReadCallback                   : (() -> ())?
+    var afterWriteCallback                  : (() -> ())?
     
     var name : String {
         if let profile = self.profile {
@@ -39,12 +43,46 @@ class Characteristic {
         return self.cbCharacteristic.isBroadcasted
     }
     
+    var dataValue : NSData {
+        return self.cbCharacteristic.value
+    }
+    
+    var value : Dictionary<String, Any> {
+        return [:]
+    }
+    
     // APPLICATION INTERFACE
     init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self.service = service
         if let serviceProfile = ProfileManager.sharedInstance().serviceProfiles[service.uuid] {
             self.profile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID]
+        } 
+    }
+
+    func startNotifying(notificationStateChangedCallback:() -> ()) {
+        if self.propertyEnabled(.Notify) {
+            self.notificationStateChangedCallback = notificationStateChangedCallback
+            self.service.perpheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
+        }
+    }
+
+    func stopNotifying(notificationStateChangedCallback:() -> ()) {
+        if self.propertyEnabled(.Notify) {
+            self.notificationStateChangedCallback = notificationStateChangedCallback
+            self.service.perpheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
+        }
+    }
+
+    func startUpdates(afterReadCallback:() -> ()) {
+        if self.propertyEnabled(.Notify) {
+            self.afterReadCallback = afterReadCallback
+        }
+    }
+
+    func stopUpdates(afterReadCallback:() -> ()) {
+        if self.propertyEnabled(.Notify) {
+            self.afterReadCallback = nil
         }
     }
 

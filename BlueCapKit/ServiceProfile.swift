@@ -26,7 +26,7 @@ class ServiceProfile {
         profile(service:self)
     }
     
-    func createCharateristic(uuid:String, name:String, profile:(profile:CharacteristicProfile) -> ()) -> CharacteristicProfile {
+    func charateristic(uuid:String, name:String, profile:(profile:CharacteristicProfile) -> ()) -> CharacteristicProfile {
         Logger.debug("ServiceProfile#createCharateristic: name=\(name), uuid=\(uuid)")
         let characteristicProfile = CharacteristicProfile(uuid:uuid, name:name, profile:profile)
         self.characteristicProfiles[CBUUID.UUIDWithString(uuid)] = characteristicProfile

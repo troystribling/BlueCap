@@ -14,6 +14,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     weak var characteristic                                 : Characteristic?
     
     @IBOutlet var notifiyButton                             : UIButton
+    
     @IBOutlet var uuidLabel                                 : UILabel
     @IBOutlet var broadcastingLabel                         : UILabel
     @IBOutlet var notifyingLabel                            : UILabel
@@ -38,7 +39,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             self.navigationItem.title = characteristic.name
             if characteristic.propertyEnabled(.Notify) {
                 self.notifiyButton.enabled = true
-                self.toggleNotificaton()
+                self.setNotifyButtonLabel()
             } else {
                 self.notifiyButton.enabled = false
             }
@@ -46,6 +47,17 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             self.uuidLabel.text = characteristic.uuid.UUIDString
             self.notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
             self.broadcastingLabel.text = self.booleanStringValue(characteristic.isBroadcasted)
+            
+            self.propertyBroadcastLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Broadcast))
+            self.propertyReadLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Read))
+            self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.WriteWithoutResponse))
+            self.propertyWriteLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Write))
+            self.propertyNotifyLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Notify))
+            self.propertyIndicateLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Indicate))
+            self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.AuthenticatedSignedWrites))
+            self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.ExtendedProperties))
+            self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.NotifyEncryptionRequired))
+            self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.IndicateEncryptionRequired))
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
@@ -59,10 +71,10 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
                 self.notifiyButton.setTitle("Stop Notifications", forState:.Normal)
-                self.notifiyButton.setTitleColor(UIColor.redColor(), forState:.Normal)
+                self.notifiyButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
             } else {
                 self.notifiyButton.setTitle("Start Notifications", forState:.Normal)
-                self.notifiyButton.setTitleColor(UIColor.greenColor(), forState:.Normal)
+                self.notifiyButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
             }
         }
     }

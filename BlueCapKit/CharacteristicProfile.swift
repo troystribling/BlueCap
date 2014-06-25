@@ -14,14 +14,11 @@ class CharacteristicProfile {
     let uuid : CBUUID!
     let name : String!
     
-    var serializeNamedObjectCallback    : ((obejctName:String, data:AnyObject) -> NSData)?
-    var serializeObjectCallback         : ((data:AnyObject) -> NSData)?
+    var serializeObjectCallback         : ((data:Any) -> NSData)?
     var serializeStringCallback         : ((data:Dictionary<String, String>) -> NSData)?
-    var deserializeDataCallback         : ((data:NSData) -> Dictionary<String, AnyObject>)?
-    var stringValueCallback             : ((data:Dictionary<String, AnyObject>) -> Dictionary<String, String>)?
+    var deserializeDataCallback         : ((data:NSData) -> Dictionary<String, Any>)?
+    var stringValueCallback             : ((data:Dictionary<String, Any>) -> Dictionary<String, String>)?
     var afterDiscoveredCallback         : ((characteristic:Characteristic) -> ())?
-    
-    var valueObjects            = Dictionary<String, AnyObject>()
     
     // APPLICATION INTERFACE
     init(uuid:String, name:String, profile:(characteristic:CharacteristicProfile) -> ()) {
@@ -30,15 +27,7 @@ class CharacteristicProfile {
         profile(characteristic:self)
     }
     
-    func setValue(objectValue:AnyObject, name:String) {
-        self.valueObjects[name] = objectValue
-    }
-    
-    func serializeNamedObject(serializeNamedObjectCallback:(objectName:String, data:AnyObject) -> NSData) {
-        self.serializeNamedObjectCallback = serializeNamedObjectCallback
-    }
-    
-    func serializeObject(serializeObjectCallback:(data:AnyObject) -> NSData) {
+    func serializeObject(serializeObjectCallback:(data:Any) -> NSData) {
         self.serializeObjectCallback = serializeObjectCallback
     }
     
@@ -46,15 +35,18 @@ class CharacteristicProfile {
         self.serializeStringCallback = serializeStringCallback
     }
     
-    func deserializeData(deserializeDataCallback:(data:NSData) -> Dictionary<String, AnyObject>) {
+    func deserializeData(deserializeDataCallback:(data:NSData) -> Dictionary<String, Any>) {
         self.deserializeDataCallback = deserializeDataCallback
     }
     
-    func stringValue(stringValueCallback:(data:(Dictionary<String, AnyObject>) -> Dictionary<String, String>)) {
+    func stringValue(stringValueCallback:(data:(Dictionary<String, Any>) -> Dictionary<String, String>)) {
         self.stringValueCallback = stringValueCallback
     }
     
     func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
+    
+    // INTERNAL INTERFACE
+    
 }

@@ -1446,7 +1446,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Characteristic" id="IFu-8E-43n"/>
                     <connections>
-                        <outlet property="broadcastingLabel" destination="IFw-aJ-zwi" id="8dP-fN-frj"/>
+                        <outlet property="broadcastingLabel" destination="IFw-aJ-zwi" id="IIo-xO-lpE"/>
                         <outlet property="notifiyButton" destination="p2s-ec-2l6" id="BT3-19-deR"/>
                         <outlet property="notifyingLabel" destination="zYq-Y7-zJY" id="9sR-Np-Dm9"/>
                         <outlet property="propertyAuthenticatedSignedWritesLabel" destination="Vj1-bV-RyJ" id="hPb-qK-Keh"/>
@@ -1459,6 +1459,7 @@
                         <outlet property="propertyReadLabel" destination="ehn-mg-Eag" id="Owk-vs-XW4"/>
                         <outlet property="propertyWriteLabel" destination="41a-Ks-38j" id="0Tc-sR-DMH"/>
                         <outlet property="propertyWriteWithoutResponseLabel" destination="Tj3-FV-sDf" id="ZWk-Y5-FlX"/>
+                        <outlet property="uuidLabel" destination="org-I3-xEa" id="RlT-ej-Kwq"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wAa-QU-BTY" userLabel="First Responder" sceneMemberID="firstResponder"/>

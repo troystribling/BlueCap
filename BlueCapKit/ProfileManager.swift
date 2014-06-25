@@ -25,7 +25,7 @@ class ProfileManager {
         return thisProfileManager!
     }
     
-    func createServiceProfile(uuid:String, name:String, profile:(service:ServiceProfile) -> ()) -> ServiceProfile {
+    func serviceProfile(uuid:String, name:String, profile:(service:ServiceProfile) -> ()) -> ServiceProfile {
         Logger.debug("ProfileManager#createServiceProfile: name=\(name), uuid=\(uuid)")
         let serviceProfile = ServiceProfile(uuid:uuid, name:name, profile:profile)
         self.serviceProfiles[CBUUID.UUIDWithString(uuid)] = serviceProfile
