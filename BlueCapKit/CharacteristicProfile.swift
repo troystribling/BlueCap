@@ -9,15 +9,15 @@
 import Foundation
 import CoreBluetooth
 
-class CharacteristicProfile {
+class CharacteristicProfile<T> {
     
     let uuid : CBUUID!
     let name : String!
     
-    var serializeObjectCallback         : ((data:Any) -> NSData)?
-    var serializeStringCallback         : ((data:Dictionary<String, String>) -> NSData)?
-    var deserializeDataCallback         : ((data:NSData) -> Dictionary<String, Any>)?
-    var stringValueCallback             : ((data:Dictionary<String, Any>) -> Dictionary<String, String>)?
+    var serializeObjectCallback         : ((obejct:T) -> NSData)?
+    var serializeStringCallback         : ((obejct:Dictionary<String, String>) -> NSData)?
+    var deserializeDataCallback         : ((data:NSData) -> T)?
+    var stringValueCallback             : ((data:T) -> Dictionary<String, String>)?
     var afterDiscoveredCallback         : ((characteristic:Characteristic) -> ())?
     
     // APPLICATION INTERFACE
@@ -26,8 +26,8 @@ class CharacteristicProfile {
         self.name = name
         profile(characteristic:self)
     }
-    
-    func serializeObject(serializeObjectCallback:(data:Any) -> NSData) {
+
+    func serializeObject(serializeObjectCallback:(obejct:T) -> NSData) {
         self.serializeObjectCallback = serializeObjectCallback
     }
     
@@ -35,18 +35,19 @@ class CharacteristicProfile {
         self.serializeStringCallback = serializeStringCallback
     }
     
-    func deserializeData(deserializeDataCallback:(data:NSData) -> Dictionary<String, Any>) {
+    func deserializeData(deserializeDataCallback:(data:NSData) -> T) {
         self.deserializeDataCallback = deserializeDataCallback
     }
     
-    func stringValue(stringValueCallback:(data:(Dictionary<String, Any>) -> Dictionary<String, String>)) {
+    func stringValue(stringValueCallback:(data:(T) -> Dictionary<String, String>)) {
         self.stringValueCallback = stringValueCallback
     }
     
     func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
-    
+
     // INTERNAL INTERFACE
-    
+    func deserializeData(data:NSData) -> T {
+    }
 }

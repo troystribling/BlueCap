@@ -43,14 +43,10 @@ class Characteristic {
         return self.cbCharacteristic.isBroadcasted
     }
     
-    var dataValue : NSData {
+    var value : NSData {
         return self.cbCharacteristic.value
     }
-    
-    var value : Dictionary<String, Any> {
-        return [:]
-    }
-    
+
     // APPLICATION INTERFACE
     init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic

@@ -119,7 +119,8 @@
 		05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
 		05B6F07C19587CE200D798CB /* PeripheralServiceCharacteristicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicCell.swift; sourceTree = "<group>"; };
 		05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicViewController.swift; sourceTree = "<group>"; };
-		05C3F1C51942159D006F80AD /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
+		05BB68B9195BD44F00434136 /* Genrics.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Genrics.playground; sourceTree = "<group>"; };
+		05C3F1C51942159D006F80AD /* FunctionTypes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = FunctionTypes.playground; sourceTree = "<group>"; };
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
 		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
@@ -227,12 +228,12 @@
 		05840F61194206F100C744E6 /* BlueCap */ = {
 			isa = PBXGroup;
 			children = (
-				05C3F1C51942159D006F80AD /* MyPlayground.playground */,
 				05840F64194206F100C744E6 /* AppDelegate.swift */,
 				05840F6D194206F100C744E6 /* Images.xcassets */,
 				05277C9B1944CAE50022FB59 /* Central */,
 				05840F6A194206F100C744E6 /* Main.storyboard */,
 				05E6870219508799009B38DA /* Peripheral */,
+				05BB68BA195C71F200434136 /* Playgrounds */,
 				05E68703195087D0009B38DA /* Profiles */,
 				05840F62194206F100C744E6 /* Supporting Files */,
 			);
@@ -307,6 +308,15 @@
 				05B2432F194536A400E8E878 /* Logger.swift */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		05BB68BA195C71F200434136 /* Playgrounds */ = {
+			isa = PBXGroup;
+			children = (
+				05C3F1C51942159D006F80AD /* FunctionTypes.playground */,
+				05BB68B9195BD44F00434136 /* Genrics.playground */,
+			);
+			name = Playgrounds;
 			sourceTree = "<group>";
 		};
 		05E6870219508799009B38DA /* Peripheral */ = {
