@@ -2,46 +2,50 @@
 
 import UIKit
 
+// A swift protocol with associated type used as type parameter in generic function
 protocol Thing {
     typealias argType
     func doit(val:argType) -> argType
 }
 
 class IntThing : Thing {
-    typealias argType = Int
     func doit(val: Int) -> Int {
         return val + 1
     }
 }
 
-func doThing<A:Thing>(thing:A, val:Int) -> Int {
+func doThing<A:Thing>(thing:A, val:A.argType) -> A.argType {
     return thing.doit(val)
 }
 
+doThing(IntThing(), 2)
+
+// Protocols in arrays
+protocol IntStuff {
+    func doit(val:Int) -> Int
+}
+
+class Stuff : IntStuff {
+    func doit(val:Int) -> Int {
+        return val + 2
+    }
+}
+
+var allStuff = Dictionary<String, IntStuff>()
+allStuff["A"] = Stuff()
+println(allStuff["A"]?.doit(2))
+
+var allThings = Dictionary<String, Thing>()
+allThings["Z"] = IntThing()
+// allThings["Z"]?.doit(2) ERROR
+
+// Characteristic profile model
 protocol CharateristicProtocol {
-    typealias T
-    func value(data:NSData) -> T
-    func stringValue(object:T) -> Dictionary<String, String>
+    typealias ValueType
+    func value(data:NSData) -> ValueType
 }
 
 class CharacteristicProfile {
-}
-
-var profiles = Dictionary<String, CharateristicProtocol>()
-
-class Characteristic {
-    
-    var data : NSData!
-    
-    init() {
-        var initVal : UInt8 = 0xff
-        self.data = NSData(bytes:&initVal, length:1)
-    }
-    
-//    func value<V>(data:NSData) -> V {
-//        var profile = profiles["uuid"]
-//        return profile!.value(self.data)
-//    }
 }
 
 class UInt8CharateristicProfile : CharacteristicProfile, CharateristicProtocol {
@@ -52,8 +56,39 @@ class UInt8CharateristicProfile : CharacteristicProfile, CharateristicProtocol {
         return value
     }
     
-    func stringValue(object: UInt8) -> Dictionary<String, String> {
-        return ["value":"\(object)"]
-    }
 }
 
+class StringCharateristicProfile : CharacteristicProfile, CharateristicProtocol {
+    
+    func value(data:NSData) -> String {
+        return NSString(data:data, encoding:NSUTF8StringEncoding)
+    }
+    
+}
+
+class Characteristic {
+    
+    var data : NSData!
+    
+    init() {
+        var initVal : UInt8 = 0xff
+        self.data = NSData(bytes:&initVal, length:1)
+    }
+    
+    func value<ProfileType:CharateristicProtocol>(profile:ProfileType) -> ProfileType.ValueType {
+        return profile.value(self.data)
+    }
+    
+//    func castProfile(profile:CharateristicProtocol) -> CharateristicProtocol {        
+//    }
+}
+
+var profiles = Dictionary<String, CharateristicProtocol>()
+profiles["ABC"] = UInt8CharateristicProfile()
+let profile = profiles["ABC"]! as? UInt8CharateristicProfile
+let noProfile = profiles["ABC"]! as? StringCharateristicProfile
+
+var characteristic = Characteristic()
+var val = characteristic.value(UInt8CharateristicProfile())
+println(profile!.value(characteristic.data))
+println(val)
