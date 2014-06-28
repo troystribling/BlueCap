@@ -47,7 +47,9 @@ class CharacteristicProfile<T> {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
 
+    //
     // INTERNAL INTERFACE
     func deserializeData(data:NSData) -> T {
     }
+    
 }
