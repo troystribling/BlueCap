@@ -9,47 +9,37 @@
 import Foundation
 import CoreBluetooth
 
-class CharacteristicProfile<T> {
+class CharacteristicProfile {
     
-    let uuid : CBUUID!
-    let name : String!
+    let uuid            : CBUUID!
+    let name            : String!
+    var permissions     : CBAttributePermissions!
+    var properties      : CBCharacteristicProperties!
     
-    var serializeObjectCallback         : ((obejct:T) -> NSData)?
-    var serializeStringCallback         : ((obejct:Dictionary<String, String>) -> NSData)?
-    var deserializeDataCallback         : ((data:NSData) -> T)?
-    var stringValueCallback             : ((data:T) -> Dictionary<String, String>)?
     var afterDiscoveredCallback         : ((characteristic:Characteristic) -> ())?
     
     // APPLICATION INTERFACE
     init(uuid:String, name:String, profile:(characteristic:CharacteristicProfile) -> ()) {
         self.uuid = CBUUID.UUIDWithString(uuid)
         self.name = name
+        self.permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+        self.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
         profile(characteristic:self)
     }
 
-    func serializeObject(serializeObjectCallback:(obejct:T) -> NSData) {
-        self.serializeObjectCallback = serializeObjectCallback
-    }
-    
-    func serializeString(serializeStringCallback:(data:Dictionary<String, String>) -> NSData) {
-        self.serializeStringCallback = serializeStringCallback
-    }
-    
-    func deserializeData(deserializeDataCallback:(data:NSData) -> T) {
-        self.deserializeDataCallback = deserializeDataCallback
-    }
-    
-    func stringValue(stringValueCallback:(data:(T) -> Dictionary<String, String>)) {
-        self.stringValueCallback = stringValueCallback
-    }
-    
     func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
-
-    //
-    // INTERNAL INTERFACE
-    func deserializeData(data:NSData) -> T {
+    
+    func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
+        return (self.properties.toRaw() & property.toRaw()) > 0
     }
+    
+    func permissionEnabled(permission:CBAttributePermissions) -> Bool {
+        return (self.permissions.toRaw() & permissions.toRaw()) > 0
+    }
+
+    // INTERNAL INTERFACE
+    
     
 }

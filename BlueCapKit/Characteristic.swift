@@ -47,6 +47,10 @@ class Characteristic {
         return self.cbCharacteristic.value
     }
 
+    var stringValue : Dictionary<String, String> {
+    return [self.name: "value"]
+    }
+    
     // APPLICATION INTERFACE
     init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic

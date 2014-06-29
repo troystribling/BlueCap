@@ -48,6 +48,14 @@ protocol CharateristicProtocol {
 class CharacteristicProfile {
 }
 
+class AnyCharacteristicProfile : CharacteristicProfile, CharateristicProtocol {
+    
+    func value(data:NSData) -> NSData {
+        return data
+    }
+    
+}
+
 class UInt8CharateristicProfile : CharacteristicProfile, CharateristicProtocol {
     
     func value(data:NSData) -> UInt8 {
@@ -66,6 +74,10 @@ class StringCharateristicProfile : CharacteristicProfile, CharateristicProtocol 
     
 }
 
+var profiles = Dictionary<String, CharateristicProtocol>()
+profiles["ABC"] = UInt8CharateristicProfile()
+profiles["DEF"] = StringCharateristicProfile()
+
 class Characteristic {
     
     var data : NSData!
@@ -79,16 +91,10 @@ class Characteristic {
         return profile.value(self.data)
     }
     
-//    func castProfile(profile:CharateristicProtocol) -> CharateristicProtocol {        
-//    }
 }
 
-var profiles = Dictionary<String, CharateristicProtocol>()
-profiles["ABC"] = UInt8CharateristicProfile()
-let profile = profiles["ABC"]! as? UInt8CharateristicProfile
-let noProfile = profiles["ABC"]! as? StringCharateristicProfile
+let characteristic = Characteristic()
+let profile = profiles["ABC"] as UInt8CharateristicProfile
+characteristic.value(profile)
 
-var characteristic = Characteristic()
-var val = characteristic.value(UInt8CharateristicProfile())
-println(profile!.value(characteristic.data))
-println(val)
+
