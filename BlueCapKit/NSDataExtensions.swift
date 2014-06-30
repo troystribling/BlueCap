@@ -1,5 +1,5 @@
 //
-//  NSDataHexStringValue.swift
+//  NSDataExtensions.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/29/14.
