@@ -19,6 +19,7 @@
 		0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E4081955EFD800F33D4E /* ProfileManager.swift */; };
 		0552E40B195604CD00F33D4E /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40A195604CD00F33D4E /* ServiceProfile.swift */; };
 		0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40C1956055700F33D4E /* CharacteristicProfile.swift */; };
+		0558EACE196173B100AA34BC /* UInt8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0558EACD196173B100AA34BC /* UInt8Extensions.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
 		05840F6C194206F100C744E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6A194206F100C744E6 /* Main.storyboard */; };
 		05840F6E194206F100C744E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6D194206F100C744E6 /* Images.xcassets */; };
@@ -103,6 +104,7 @@
 		0552E4081955EFD800F33D4E /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		0552E40A195604CD00F33D4E /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
 		0552E40C1956055700F33D4E /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
+		0558EACD196173B100AA34BC /* UInt8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt8Extensions.swift; sourceTree = "<group>"; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F63194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840F64194206F100C744E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -316,6 +318,7 @@
 				05B2432F194536A400E8E878 /* Logger.swift */,
 				0518866F1960861400ED2D3A /* NSDataExtensions.swift */,
 				05CAF6CC1960E22500F6D598 /* StringExtensions.swift */,
+				0558EACD196173B100AA34BC /* UInt8Extensions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -549,6 +552,7 @@
 				0552E40B195604CD00F33D4E /* ServiceProfile.swift in Sources */,
 				051886701960861400ED2D3A /* NSDataExtensions.swift in Sources */,
 				05B24330194536A400E8E878 /* Logger.swift in Sources */,
+				0558EACE196173B100AA34BC /* UInt8Extensions.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05F773B419606AF300FADF6C /* AnyCharacteristicProfile.swift in Sources */,
 				05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */,
