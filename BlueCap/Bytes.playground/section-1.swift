@@ -44,11 +44,24 @@ func int16HostToLittle(value:Int16) -> Int16 {
 }
 
 func int16BigToHost(value:Int16) -> Int16 {
-    return (value << 8) | (value >> 8);
+    var hostVal : Int16 = value
+    return reverseBytes(&hostVal);
 }
 
 func int16HostToBig(value:Int16) -> Int16 {
     return (value << 8) | (value >> 8);
+}
+
+func byteArrayValue<T>(value:T) -> Byte[] {
+    let data = NSData(bytes:[value], length:sizeof(T))
+    var byteArray = Byte[](count:sizeof(T), repeatedValue:0)
+    data.getBytes(&byteArray, length:sizeof(T))
+    return byteArray
+}
+
+func reverseBytes<T>(inout value:T) {
+    var swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length:sizeof(T))
+    swappedBytes.getBytes(&value, length:sizeof(Int16))
 }
 
 extension NSData {
@@ -97,7 +110,7 @@ extension NSData {
 
     // UInt16
     convenience init(uint16ToLittle value:UInt16) {
-        self.init(bytes:[uint16HostToLittle(value)], length:1)
+        self.init(bytes:[uint16HostToLittle(value)], length:2)
     }
     
     convenience init(uint16ArrayToLittle values:UInt16[]) {
@@ -181,7 +194,7 @@ extension NSData {
         return int16BigToHost(value)
     }
     
-    // string value
+    // uytils
     func hexStringValue() -> String {
         var dataBytes = Array<Byte>(count:self.length, repeatedValue:0x0)
         self.getBytes(&dataBytes, length:self.length)
@@ -192,6 +205,6 @@ extension NSData {
     }
 }
 
-var test = NSData(int16ToBig:(-101))
+var test = NSData(int16ToBig:1000)
 test.hexStringValue()
-println(test.int16FromBigValue())
+println(test.int16FromLittleValue())
