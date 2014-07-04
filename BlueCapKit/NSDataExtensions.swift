@@ -9,36 +9,34 @@
 import Foundation
 
 // swap
-func uint16LittleToHost(value:UInt16) -> UInt16 {
+func littleToHost<T>(value:T) -> T {
     return value;
 }
 
-func uint16HostToLittle(value:UInt16) -> UInt16 {
+func hostToLittle<T>(value:T) -> T {
     return value;
 }
 
-func uint16BigToHost(value:UInt16) -> UInt16 {
-    return (value << 8) | (value >> 8);
+func bigToHost<T>(value:T) -> T {
+    return reverseBytes(value);
 }
 
-func uint16HostToBig(value:UInt16) -> UInt16 {
-    return (value << 8) | (value >> 8);
+func hostToBig<T>(value:T) -> T {
+    return reverseBytes(value);
 }
 
-func int16LittleToHost(value:Int16) -> Int16 {
-    return value;
+func byteArrayValue<T>(value:T) -> Byte[] {
+    let data = NSData(bytes:[value], length:sizeof(T))
+    var byteArray = Byte[](count:sizeof(T), repeatedValue:0)
+    data.getBytes(&byteArray, length:sizeof(T))
+    return byteArray
 }
 
-func int16HostToLittle(value:Int16) -> Int16 {
-    return value;
-}
-
-func int16BigToHost(value:Int16) -> Int16 {
-    return (value << 8) | (value >> 8);
-}
-
-func int16HostToBig(value:Int16) -> Int16 {
-    return (value << 8) | (value >> 8);
+func reverseBytes<T>(value:T) -> T {
+    var result = value
+    var swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length:sizeof(T))
+    swappedBytes.getBytes(&result, length:sizeof(Int16))
+    return result
 }
 
 extension NSData {
@@ -85,93 +83,75 @@ extension NSData {
         return value
     }
     
-    // UInt16
-    convenience init(uint16ToLittle value:UInt16) {
-        self.init(bytes:[uint16HostToLittle(value)], length:1)
+    // Little Endian
+    convenience init<T>(toLittleEndian value:T) {
+        self.init(bytes:[hostToLittle(value)], length:sizeof(T))
     }
     
-    convenience init(uint16ArrayToLittle values:UInt16[]) {
-        let littleValues = values.map{value in uint16HostToLittle(value)}
-        self.init(bytes:littleValues, length:2*littleValues.count)
+    convenience init<T>(toLittleEndian values:T[]) {
+        let littleValues = values.map{value in hostToLittle(value)}
+        self.init(bytes:littleValues, length:sizeof(T)*littleValues.count)
     }
     
-    func uint16FromLittleValue() -> UInt16 {
+    func fromLittleEndianValue() -> UInt16 {
         var value : UInt16 = 0
-        self.getBytes(&value, length:2)
-        return uint16LittleToHost(value)
+        self.getBytes(&value, length:sizeof(UInt16))
+        return littleToHost(value)
     }
     
-    func uint16FromLittleValue(start:Int) -> UInt16 {
+    func fromLittleEndianValue(start:Int) -> UInt16 {
         var value : UInt16 = 0
-        self.getBytes(&value, range:NSMakeRange(start, 2))
-        return uint16LittleToHost(value)
+        self.getBytes(&value, range:NSMakeRange(start, sizeof(UInt16)))
+        return bigToHost(value)
     }
     
-    convenience init(uint16ToBig value:UInt16) {
-        self.init(bytes:[uint16HostToBig(value)], length:2)
+    func fromLittleEndianValue() -> Int16 {
+        var value : Int16 = 0
+        self.getBytes(&value, length:sizeof(Int16))
+        return littleToHost(value)
     }
     
-    convenience init(uint16ArrayToBig values:UInt16[]) {
-        let bigValues = values.map{value in uint16HostToBig(value)}
-        self.init(bytes:bigValues, length:2*bigValues.count)
+    func fromLittleEndianValue(start:Int) -> Int16 {
+        var value : Int16 = 0
+        self.getBytes(&value, range:NSMakeRange(start, sizeof(Int16)))
+        return bigToHost(value)
     }
     
-    func uint16FromBigValue() -> UInt16 {
+    // Big Endian
+    convenience init<T>(toBigEndian value:T) {
+        self.init(bytes:[hostToBig(value)], length:sizeof(T))
+    }
+    
+    convenience init<T>(toBigEndian values:T[]) {
+        let bigValues = values.map{value in hostToBig(value)}
+        self.init(bytes:bigValues, length:sizeof(T)*bigValues.count)
+    }
+    
+    func fromBigEndianValue() -> UInt16 {
         var value : UInt16 = 0
-        self.getBytes(&value, length:2)
-        return uint16BigToHost(value)
+        self.getBytes(&value, length:sizeof(UInt16))
+        return bigToHost(value)
     }
     
-    func uint16FromBigValue(start:Int) -> UInt16 {
+    func fromBigEndianValue(start:Int) -> UInt16 {
         var value : UInt16 = 0
-        self.getBytes(&value, range:NSMakeRange(start, 2))
-        return uint16BigToHost(value)
+        self.getBytes(&value, range:NSMakeRange(start, sizeof(UInt16)))
+        return bigToHost(value)
     }
     
-    // Int16
-    convenience init(int16ToLittle value:Int16) {
-        self.init(bytes:[int16HostToLittle(value)], length:2)
-    }
-    
-    convenience init(int16ArrayToLittle values:Int16[]) {
-        let littleValues = values.map{value in int16HostToLittle(value)}
-        self.init(bytes:littleValues, length:2*littleValues.count)
-    }
-    
-    func int16FromLittleValue() -> Int16 {
+    func fromBigEndianValue() -> Int16 {
         var value : Int16 = 0
-        self.getBytes(&value, length: 2)
-        return int16LittleToHost(value)
+        self.getBytes(&value, length:sizeof(Int16))
+        return bigToHost(value)
     }
     
-    func int16FromLittleValue(start:Int) -> Int16 {
+    func fromBigEndianValue(start:Int) -> Int16 {
         var value : Int16 = 0
-        self.getBytes(&value, range:NSMakeRange(start,2))
-        return int16LittleToHost(value)
+        self.getBytes(&value, range:NSMakeRange(start, sizeof(Int16)))
+        return bigToHost(value)
     }
     
-    convenience init(int16ToBig value:Int16) {
-        self.init(bytes:[int16HostToBig(value)], length:2)
-    }
-    
-    convenience init(int16ArrayToBig values:Int16[]) {
-        let bigValues = values.map{value in int16HostToBig(value)}
-        self.init(bytes:bigValues, length:2*bigValues.count)
-    }
-    
-    func int16FromBigValue() -> Int16 {
-        var value : Int16 = 0
-        self.getBytes(&value, length:2)
-        return int16BigToHost(value)
-    }
-    
-    func int16FromBigValue(start:Int) -> Int16 {
-        var value : Int16 = 0
-        self.getBytes(&value, range:NSMakeRange(start,2))
-        return int16BigToHost(value)
-    }
-    
-    // string value
+    // utils
     func hexStringValue() -> String {
         var dataBytes = Array<Byte>(count:self.length, repeatedValue:0x0)
         self.getBytes(&dataBytes, length:self.length)
