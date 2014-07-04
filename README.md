@@ -1,3 +1,7 @@
+# BlueCap
+
+## Description
+
 BlueCap provides a swift wrapper around Core Bluetooth with additional functionality that includes,
 
 - Trailing closure callbacks to replace protocol implementation for Central Manager peripheral, service and characteristic discovery, characteristic read and write and characteristic value update notifications. Similarly, for Peripheral Managers trailing closures are provided for advertising and characteristic write callbacks.
