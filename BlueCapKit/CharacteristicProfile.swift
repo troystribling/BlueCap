@@ -19,14 +19,18 @@ class CharacteristicProfile {
     var afterDiscoveredCallback         : ((characteristic:Characteristic) -> ())?
     
     // APPLICATION INTERFACE
-    init(uuid:String, name:String, profile:(characteristic:CharacteristicProfile) -> ()) {
+    init(uuid:String, name:String) {
         self.uuid = CBUUID.UUIDWithString(uuid)
         self.name = name
         self.permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
         self.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
+    }
+    
+    convenience init(uuid:String, name:String, profile:(characteristic:CharacteristicProfile) -> ()) {
+        self.init(uuid:uuid, name:name)
         profile(characteristic:self)
     }
-
+    
     func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
@@ -40,6 +44,8 @@ class CharacteristicProfile {
     }
 
     // INTERNAL INTERFACE
-    
+    func stringValue(data:NSData) -> Dictionary<String, String> {
+        return [self.name:data.hexStringValue()]
+    }
     
 }

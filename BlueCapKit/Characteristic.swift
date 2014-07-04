@@ -13,18 +13,14 @@ class Characteristic {
     
     let cbCharacteristic                    : CBCharacteristic!
     let service                             : Service!
-    let profile                             : CharacteristicProfile?
+    let profile                             : CharacteristicProfile!
     
     var notificationStateChangedCallback    : (() -> ())?
     var afterReadCallback                   : (() -> ())?
     var afterWriteCallback                  : (() -> ())?
     
     var name : String {
-        if let profile = self.profile {
-            return profile.name
-        } else {
-            return "Unknown"
-        }
+        return self.profile.name
     }
     
     var uuid : CBUUID {
@@ -48,7 +44,7 @@ class Characteristic {
     }
 
     var stringValue : Dictionary<String, String> {
-    return [self.name: "value"]
+        return self.profile.stringValue(self.value)
     }
     
     // APPLICATION INTERFACE
@@ -57,7 +53,9 @@ class Characteristic {
         self.service = service
         if let serviceProfile = ProfileManager.sharedInstance().serviceProfiles[service.uuid] {
             self.profile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID]
-        } 
+        } else {
+            self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString, name:"Unknown")
+        }
     }
 
     func startNotifying(notificationStateChangedCallback:() -> ()) {
@@ -90,6 +88,33 @@ class Characteristic {
         return (self.properties.toRaw() & property.toRaw()) > 0
     }
     
+    func read(afterReadCallback:()->()) {
+        if self.propertyEnabled(.Read) {
+            self.afterReadCallback = afterReadCallback
+            self.service.perpheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
+        } else {
+            NSException(name:"Characteristic read error", reason: "read not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+    
+    func write(value:NSData, afterWriteCallback:()->()) {
+        if self.propertyEnabled(.Write) {
+            self.afterWriteCallback = afterWriteCallback
+            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
+        } else {
+            NSException(name:"Characteristic write error", reason: "write not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+
+    func write(value:NSData) {
+        if self.propertyEnabled(.WriteWithoutResponse) {
+            self.afterWriteCallback = nil
+            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
+        } else {
+            NSException(name:"Characteristic write error", reason: "write  without responsde not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+
     // INTERNAL INTERFACE
     func didDiscover() {
         if let afterDiscoveredCallback = self.profile?.afterDiscoveredCallback {
