@@ -15,8 +15,8 @@ class Service : NSObject {
     let perpheral   : Peripheral!
     let profile     : ServiceProfile?
     
-    var discoveredCharacteristics   = Dictionary<CBUUID, Characteristic>()
-    var characteristicsDiscovered   : (() -> ())?
+    var discoveredCharacteristics           = Dictionary<CBUUID, Characteristic>()
+    var characteristicsDiscoveredCallback   : (() -> ())?
 
     var name : String {
         if let profile = self.profile {
@@ -41,15 +41,15 @@ class Service : NSObject {
         self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
     }
     
-    func discoverAllCharacteristics(characteristicsDiscovered:() -> ()) {
+    func discoverAllCharacteristics(characteristicsDiscoveredCallback:() -> ()) {
         Logger.debug("Service#discoverAllCharacteristics")
-        self.characteristicsDiscovered = characteristicsDiscovered
+        self.characteristicsDiscoveredCallback = characteristicsDiscoveredCallback
         self.perpheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
     }
     
     func discoverCharacteristics(characteristics:CBUUID[], characteristicsDiscovered:() -> ()) {
         Logger.debug("Service#discoverCharacteristics")
-        self.characteristicsDiscovered = characteristicsDiscovered
+        self.characteristicsDiscoveredCallback = characteristicsDiscovered
         self.perpheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)
     }
     
@@ -62,8 +62,8 @@ class Service : NSObject {
             bcCharacteristic.didDiscover()
             Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
         }
-        if let characteristicsDiscovered = self.characteristicsDiscovered {
-            CentralManager.asyncCallback(characteristicsDiscovered)
+        if let characteristicsDiscoveredCallback = self.characteristicsDiscoveredCallback {
+            CentralManager.asyncCallback(characteristicsDiscoveredCallback)
         }
     }
 }

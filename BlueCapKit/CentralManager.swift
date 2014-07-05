@@ -74,11 +74,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // power up
-    func powerOn(afterPowerOnCallback:(()->())?) {
-        self.powerOn(afterPowerOnCallback, nil)
-    }
-
-    func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())?) {
+    func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())? = nil) {
         Logger.debug("powerOn")
         self.afterPowerOn = afterPowerOn
         self.afterPowerOff = afterPowerOff
@@ -220,8 +216,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
                     }
                 } else {
                     addKey(key, andValue:value)
-                }
-                
+                }                
             }
         }
         Logger.debug("CentralManager#unpackAdvertisements unpacked \(advertisements.count) advertisements")

@@ -28,7 +28,8 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     let advertisements  : Dictionary<String, String>!
     let rssi            : Int!
     
-    var discoveredServices  = Dictionary<CBUUID, Service>()
+    var discoveredServices          = Dictionary<CBUUID, Service>()
+    var discoveredCharacteristics   = Dictionary<CBCharacteristic, Characteristic>()
 
     var currentError        = PeripheralConnectionError.None
     var forcedDisconnect    = false
@@ -147,19 +148,35 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug("Peripheral#didDiscoverCharacteristicsForService")
         if let bcService = self.discoveredServices[service.UUID] {
             bcService.didDiscoverCharacteristics()
+            for characteristic : AnyObject in service.characteristics {
+                let cbCharacteristic = characteristic as CBCharacteristic
+                self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+            }
         }
     }
     
-    func peripheral(_:CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
+    func peripheral(_:CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
         Logger.debug("Peripheral#didUpdateNotificationStateForCharacteristic")
+        if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
+            Logger.debug("Peripheral#didUpdateNotificationStateForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            bcCharacteristic.didUpdateNotificationState(error)
+        }
     }
 
     func peripheral(_:CBPeripheral!, didUpdateValueForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
         Logger.debug("Peripheral#didUpdateValueForCharacteristic")
+        if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
+            Logger.debug("Peripheral#didUpdateValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            bcCharacteristic.didUpdate(error)
+        }
     }
 
     func peripheral(_:CBPeripheral!, didWriteValueForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
         Logger.debug("Peripheral#didWriteValueForCharacteristic")
+        if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
+            Logger.debug("Peripheral#didWriteValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            bcCharacteristic.didWrite(error)
+        }
     }
     
     // descriptors

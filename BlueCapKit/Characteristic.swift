@@ -13,16 +13,17 @@ class Characteristic {
 
     let CHARACTERISTIC_READ_TIMEOUT : Float  = 10.0
     let CHARACTERISTIC_WRITE_TIMEOUT : Float = 10.0
-
+   
     let cbCharacteristic                    : CBCharacteristic!
     let service                             : Service!
     let profile                             : CharacteristicProfile!
     
-    var notificationStateChangedCallback    : (() -> ())?
-    var afterUpdateSuccesCallback           : (() -> ())?
-    var afterUpdateFailedCallback           : (() -> ())?
-    var afterWriteSuccessCallback           : (() -> ())?
-    var afterWriteFailedCallback            : (() -> ())?
+    var notificationStateChangedSuccessCallback     : (() -> ())?
+    var notificationStateChangedFailedCallback      : ((error:NSError!) -> ())?
+    var afterUpdateSuccessCallback                  : (() -> ())?
+    var afterUpdateFailedCallback                   : ((error:NSError) -> ())?
+    var afterWriteSuccessCallback                   : (() -> ())?
+    var afterWriteFailedCallback                    : ((error:NSError) -> ())?
     
     var reading = false
     var writing = false
@@ -69,37 +70,32 @@ class Characteristic {
         }
     }
 
-    func startNotifying(notificationStateChangedCallback:() -> ()) {
+    func startNotifying(notificationStateChangedSuccessCallback:(() -> ())? = nil, notificationStateChangedFailedCallback:((error:NSError!) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
-            self.notificationStateChangedCallback = notificationStateChangedCallback
+            self.notificationStateChangedSuccessCallback = notificationStateChangedSuccessCallback
+            self.notificationStateChangedFailedCallback = notificationStateChangedFailedCallback
             self.service.perpheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
         }
     }
 
-    func stopNotifying(notificationStateChangedCallback:() -> ()) {
+    func stopNotifying(notificationStateChangedSuccessCallback:(() -> ())? = nil, notificationStateChangedFailedCallback:((error:NSError!) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
-            self.notificationStateChangedCallback = notificationStateChangedCallback
+            self.notificationStateChangedSuccessCallback = notificationStateChangedSuccessCallback
+            self.notificationStateChangedFailedCallback = notificationStateChangedFailedCallback
             self.service.perpheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
         }
     }
 
-    func startUpdates(afterUpdateSuccesCallback:() -> (), afterUpdateFailedCallback:()->()) {
+    func startUpdates(afterUpdateSuccessCallback:() -> (), afterUpdateFailedCallback:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.Notify) {
-            self.afterUpdateSuccesCallback = afterUpdateSuccesCallback
+            self.afterUpdateSuccessCallback = afterUpdateSuccessCallback
             self.afterUpdateFailedCallback = afterUpdateFailedCallback
-        }
-    }
-
-    func startUpdates(afterUpdateSuccesCallback:() -> ()) {
-        if self.propertyEnabled(.Notify) {
-            self.afterUpdateSuccesCallback = afterUpdateSuccesCallback
-            self.afterUpdateFailedCallback = nil
         }
     }
 
     func stopUpdates(afterReadCallback:() -> ()) {
         if self.propertyEnabled(.Notify) {
-            self.afterUpdateSuccesCallback = nil
+            self.afterUpdateSuccessCallback = nil
             self.afterUpdateFailedCallback = nil
         }
     }
@@ -108,10 +104,10 @@ class Characteristic {
         return (self.properties.toRaw() & property.toRaw()) > 0
     }
     
-    func read(afterUpdateSuccesCallback:(() -> ())? = nil, afterUpdateFailedCallback:(()->())?) {
+    func read(afterReadSuccessCallback:() -> (), afterReadFailedCallback:((error:NSError)->())?) {
         if self.propertyEnabled(.Read) {
-            self.afterUpdateSuccesCallback = afterUpdateSuccesCallback
-            self.afterUpdateFailedCallback = afterUpdateFailedCallback
+            self.afterUpdateSuccessCallback = afterReadSuccessCallback
+            self.afterUpdateFailedCallback = afterReadFailedCallback
             self.service.perpheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
             self.reading = true
             ++self.readSequence
@@ -121,7 +117,7 @@ class Characteristic {
         }
     }
 
-    func write(value:NSData, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:(()->())? = nil) {
+    func write(value:NSData, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.Write) {
             self.afterWriteSuccessCallback = afterWriteSucessCallback
             self.afterWriteFailedCallback = afterWriteFailedCallback
@@ -146,6 +142,11 @@ class Characteristic {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
+                if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
+                    CentralManager.asyncCallback(){
+                        afterUpdateFailedCallback(error:NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
+                    }
+                }
             } else {
                 Logger.debug("Characteristic#timeoutRead: expired")
             }
@@ -159,6 +160,11 @@ class Characteristic {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
+                if let afterWriteFailedCallback = self.afterWriteFailedCallback {
+                    CentralManager.asyncCallback(){
+                        afterWriteFailedCallback(error:NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
+                    }
+                }
             } else {
                 Logger.debug("Characteristic#timeoutWrite: expired")
             }
@@ -169,6 +175,42 @@ class Characteristic {
     func didDiscover() {
         if let afterDiscoveredCallback = self.profile?.afterDiscoveredCallback {
             CentralManager.asyncCallback(){afterDiscoveredCallback(characteristic:self)}
+        }
+    }
+    
+    func didUpdateNotificationState(error:NSError!) {
+        if error {
+            if let notificationStateChangedFailedCallback = self.notificationStateChangedFailedCallback {
+                CentralManager.asyncCallback(){notificationStateChangedFailedCallback(error:error)}
+            }
+        } else {
+            if let notificationStateChangedSuccessCallback = self.notificationStateChangedSuccessCallback {
+                CentralManager.asyncCallback(notificationStateChangedSuccessCallback)
+            }
+        }
+    }
+    
+    func didUpdate(error:NSError!) {
+        if error {
+            if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
+                CentralManager.asyncCallback(){afterUpdateFailedCallback(error:error)}
+            }
+        } else {
+            if let afterUpdateSuccessCallback = self.afterUpdateSuccessCallback {
+                CentralManager.asyncCallback(afterUpdateSuccessCallback)
+            }
+        }
+    }
+    
+    func didWrite(error:NSError!) {
+        if error {
+            if let afterWriteFailedCallback = self.afterWriteFailedCallback {
+                CentralManager.asyncCallback(){afterWriteFailedCallback(error:error)}
+            }
+        } else {
+            if let afterWriteSuccessCallback = self.afterWriteSuccessCallback {
+                CentralManager.asyncCallback(afterWriteSuccessCallback)
+            }
         }
     }
 }
