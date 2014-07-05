@@ -6,7 +6,7 @@ BlueCap provides a swift wrapper around Core Bluetooth with additional functiona
 
 - Trailing closure callbacks to replace protocol implementation for Central Manager peripheral, service and characteristic discovery, characteristic read and write and characteristic value update notifications. Similarly, for Peripheral Managers trailing closures are provided for advertising and characteristic write callbacks.
 
-- Connectorators and Scannerators provide management of peripheral scan and connection events.
+- Connectorators and Scannerators provide management of peripheral scan and connection events. Timeouts for connection, scanning, read and write.
 
 - A DSL for specification of GATT profiles. Bluetooth LE device manufactures can provide implementations of their GATT profiles for distribution to developer and developers can easily implement GATT profiles for their Bluetooth LE devices.
 
