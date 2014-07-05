@@ -17,3 +17,4 @@ let byte = Array<Byte>(count:1, repeatedValue:0)
 allBytes += Byte(clongBytes)
 let allData = NSData(bytes:allBytes, length:allBytes.count)
 println(allData)
+

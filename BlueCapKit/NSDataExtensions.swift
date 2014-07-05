@@ -93,25 +93,25 @@ extension NSData {
         self.init(bytes:littleValues, length:sizeof(T)*littleValues.count)
     }
     
-    func fromLittleEndianValue() -> UInt16 {
+    func uint16FromLittleEndianValue() -> UInt16 {
         var value : UInt16 = 0
         self.getBytes(&value, length:sizeof(UInt16))
         return littleToHost(value)
     }
     
-    func fromLittleEndianValue(start:Int) -> UInt16 {
+    func uint16FromLittleEndianValue(start:Int) -> UInt16 {
         var value : UInt16 = 0
         self.getBytes(&value, range:NSMakeRange(start, sizeof(UInt16)))
         return bigToHost(value)
     }
     
-    func fromLittleEndianValue() -> Int16 {
+    func int16FromLittleEndianValue() -> Int16 {
         var value : Int16 = 0
         self.getBytes(&value, length:sizeof(Int16))
         return littleToHost(value)
     }
     
-    func fromLittleEndianValue(start:Int) -> Int16 {
+    func int16FromLittleEndianValue(start:Int) -> Int16 {
         var value : Int16 = 0
         self.getBytes(&value, range:NSMakeRange(start, sizeof(Int16)))
         return bigToHost(value)
@@ -127,25 +127,25 @@ extension NSData {
         self.init(bytes:bigValues, length:sizeof(T)*bigValues.count)
     }
     
-    func fromBigEndianValue() -> UInt16 {
+    func uint16FromBigEndianValue() -> UInt16 {
         var value : UInt16 = 0
         self.getBytes(&value, length:sizeof(UInt16))
         return bigToHost(value)
     }
     
-    func fromBigEndianValue(start:Int) -> UInt16 {
+    func uint16FromBigEndianValue(start:Int) -> UInt16 {
         var value : UInt16 = 0
         self.getBytes(&value, range:NSMakeRange(start, sizeof(UInt16)))
         return bigToHost(value)
     }
     
-    func fromBigEndianValue() -> Int16 {
+    func int16FromBigEndianValue() -> Int16 {
         var value : Int16 = 0
         self.getBytes(&value, length:sizeof(Int16))
         return bigToHost(value)
     }
     
-    func fromBigEndianValue(start:Int) -> Int16 {
+    func int16FromBigEndianValue(start:Int) -> Int16 {
         var value : Int16 = 0
         self.getBytes(&value, range:NSMakeRange(start, sizeof(Int16)))
         return bigToHost(value)

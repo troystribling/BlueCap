@@ -9,16 +9,15 @@
 import Foundation
 import CoreBluetooth
 
-let PERIPHERAL_CONNECTION_TIMEOUT : Float  = 10.0
-let RSSI_UPDATE_PERIOD            : Float  = 1.0
-
 enum PeripheralConnectionError {
     case None
     case Timeout
 }
 
 class Peripheral : NSObject, CBPeripheralDelegate {
-    
+
+    let PERIPHERAL_CONNECTION_TIMEOUT : Float  = 10.0
+
     var servicesDiscoveredCallback          : (() -> ())?
     var peripheralDiscoveredCallback        : ((error:NSError!) -> ())?
 
@@ -179,25 +178,25 @@ class Peripheral : NSObject, CBPeripheralDelegate {
     // PRIVATE INTERFACE
     func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedinstance()
-        Logger.debug("Periphearl#timeoutConnection: sequence \(sequence)")
+        Logger.debug("Peripheral#timeoutConnection: sequence \(sequence)")
         central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
             if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
-                Logger.debug("Periphearl#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
+                Logger.debug("Peripheral#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
                 central.cancelPeripheralConnection(self)
             } else {
-                Logger.debug("Periphearl#timeoutConnection: expired")
+                Logger.debug("Peripheral#timeoutConnection: expired")
             }
         }
     }
     
     // INTERNAL INTERFACE
     func didDisconnectPeripheral() {
-        Logger.debug("Periphearl#didDisconnectPeripheral")
+        Logger.debug("Peripheral#didDisconnectPeripheral")
         if let connectorator = self.connectorator {
             if (self.forcedDisconnect) {
                 CentralManager.asyncCallback() {
-                    Logger.debug("Periphearl#didFailToConnectPeripheral: forced disconnect")
+                    Logger.debug("Peripheral#didFailToConnectPeripheral: forced disconnect")
                     CentralManager.sharedinstance().discoveredPeripherals.removeAll(keepCapacity:false)
                     connectorator.didForceDisconnect(self)
                 }
@@ -205,12 +204,12 @@ class Peripheral : NSObject, CBPeripheralDelegate {
                 switch(self.currentError) {
                 case .None:
                         CentralManager.asyncCallback() {
-                            Logger.debug("Periphearl#didFailToConnectPeripheral: No errors disconnecting")
+                            Logger.debug("Peripheral#didFailToConnectPeripheral: No errors disconnecting")
                             connectorator.didDisconnect(self)
                         }
                 case .Timeout:
                         CentralManager.asyncCallback() {
-                            Logger.debug("Periphearl#didFailToConnectPeripheral: Timeout reconnecting")
+                            Logger.debug("Peripheral#didFailToConnectPeripheral: Timeout reconnecting")
                             connectorator.didTimeout(self)
                         }
                 }

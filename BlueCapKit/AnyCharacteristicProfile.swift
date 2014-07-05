@@ -11,22 +11,22 @@ import CoreBluetooth
 
 class AnyCharacteristicProfile : CharacteristicProfile {
     
-    var serializeObjectCallback         : ((obejct:Any) -> NSData)?
+    var serializeCallback               : ((obejct:Any) -> NSData)?
+    var deserializeCallback             : ((data:NSData) -> Any)?
     var serializeStringCallback         : ((obejct:Dictionary<String, String>) -> NSData)?
-    var deserializeDataCallback         : ((data:NSData) -> Any)?
     var stringValueCallback             : ((data:Any) -> Dictionary<String, String>)?
     
     // APPLICATION INTERFACE
-    func serializeObject(serializeObjectCallback:(obejct:Any) -> NSData) {
-        self.serializeObjectCallback = serializeObjectCallback
+    func serialize(serializeCallback:(obejct:Any) -> NSData) {
+        self.serializeCallback = serializeCallback
     }
     
+    func deserialize(deserializeCallback:(data:NSData) -> Any) {
+        self.deserializeCallback = deserializeCallback
+    }
+
     func serializeString(serializeStringCallback:(data:Dictionary<String, String>) -> NSData) {
         self.serializeStringCallback = serializeStringCallback
-    }
-    
-    func deserializeData(deserializeDataCallback:(data:NSData) -> Any) {
-        self.deserializeDataCallback = deserializeDataCallback
     }
     
     func stringValue(stringValueCallback:(data:(Any) -> Dictionary<String, String>)) {

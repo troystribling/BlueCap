@@ -48,4 +48,15 @@ class CharacteristicProfile {
         return [self.name:data.hexStringValue()]
     }
     
+    func dataValue(object:Any) -> NSData {
+        return object as NSData
+    }
+    
+    func dataValue(data:Dictionary<String, String>) -> NSData {
+        if let stringVal = data[self.name] {
+            return stringVal.dataFromHexString()
+        } else {
+            return NSData()
+        }
+    }
 }

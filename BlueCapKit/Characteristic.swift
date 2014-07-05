@@ -10,14 +10,25 @@ import Foundation
 import CoreBluetooth
 
 class Characteristic {
-    
+
+    let CHARACTERISTIC_READ_TIMEOUT : Float  = 10.0
+    let CHARACTERISTIC_WRITE_TIMEOUT : Float = 10.0
+
     let cbCharacteristic                    : CBCharacteristic!
     let service                             : Service!
     let profile                             : CharacteristicProfile!
     
     var notificationStateChangedCallback    : (() -> ())?
-    var afterReadCallback                   : (() -> ())?
-    var afterWriteCallback                  : (() -> ())?
+    var afterUpdateSuccesCallback           : (() -> ())?
+    var afterUpdateFailedCallback           : (() -> ())?
+    var afterWriteSuccessCallback           : (() -> ())?
+    var afterWriteFailedCallback            : (() -> ())?
+    
+    var reading = false
+    var writing = false
+    
+    var readSequence    = 0
+    var writeSequence   = 0
     
     var name : String {
         return self.profile.name
@@ -72,15 +83,24 @@ class Characteristic {
         }
     }
 
-    func startUpdates(afterReadCallback:() -> ()) {
+    func startUpdates(afterUpdateSuccesCallback:() -> (), afterUpdateFailedCallback:()->()) {
         if self.propertyEnabled(.Notify) {
-            self.afterReadCallback = afterReadCallback
+            self.afterUpdateSuccesCallback = afterUpdateSuccesCallback
+            self.afterUpdateFailedCallback = afterUpdateFailedCallback
+        }
+    }
+
+    func startUpdates(afterUpdateSuccesCallback:() -> ()) {
+        if self.propertyEnabled(.Notify) {
+            self.afterUpdateSuccesCallback = afterUpdateSuccesCallback
+            self.afterUpdateFailedCallback = nil
         }
     }
 
     func stopUpdates(afterReadCallback:() -> ()) {
         if self.propertyEnabled(.Notify) {
-            self.afterReadCallback = nil
+            self.afterUpdateSuccesCallback = nil
+            self.afterUpdateFailedCallback = nil
         }
     }
 
@@ -88,30 +108,60 @@ class Characteristic {
         return (self.properties.toRaw() & property.toRaw()) > 0
     }
     
-    func read(afterReadCallback:()->()) {
+    func read(afterUpdateSuccesCallback:(() -> ())? = nil, afterUpdateFailedCallback:(()->())?) {
         if self.propertyEnabled(.Read) {
-            self.afterReadCallback = afterReadCallback
+            self.afterUpdateSuccesCallback = afterUpdateSuccesCallback
+            self.afterUpdateFailedCallback = afterUpdateFailedCallback
             self.service.perpheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
+            self.reading = true
+            ++self.readSequence
+            self.timeoutRead(self.readSequence)
         } else {
             NSException(name:"Characteristic read error", reason: "read not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
     }
-    
-    func write(value:NSData, afterWriteCallback:()->()) {
+
+    func write(value:NSData, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:(()->())? = nil) {
         if self.propertyEnabled(.Write) {
-            self.afterWriteCallback = afterWriteCallback
-            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
+            self.afterWriteSuccessCallback = afterWriteSucessCallback
+            self.afterWriteFailedCallback = afterWriteFailedCallback
+            if afterWriteSucessCallback {
+                self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
+            } else {
+                self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
+            }
+            self.writing = true
+            ++self.writeSequence
+            self.timeoutWrite(self.writeSequence)
         } else {
             NSException(name:"Characteristic write error", reason: "write not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
     }
 
-    func write(value:NSData) {
-        if self.propertyEnabled(.WriteWithoutResponse) {
-            self.afterWriteCallback = nil
-            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
-        } else {
-            NSException(name:"Characteristic write error", reason: "write  without responsde not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
+    // PRIVATE INTERFACE
+    func timeoutRead(sequence:Int) {
+        let central = CentralManager.sharedinstance()
+        Logger.debug("Characteristic#timeoutRead: sequence \(sequence)")
+        central.delayCallback(CHARACTERISTIC_READ_TIMEOUT) {
+            if sequence == self.readSequence && self.reading {
+                self.reading = false
+                Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
+            } else {
+                Logger.debug("Characteristic#timeoutRead: expired")
+            }
+        }
+    }
+
+    func timeoutWrite(sequence:Int) {
+        let central = CentralManager.sharedinstance()
+        Logger.debug("Characteristic#timeoutWrite: sequence \(sequence)")
+        central.delayCallback(CHARACTERISTIC_WRITE_TIMEOUT) {
+            if sequence == self.writeSequence && self.writing {
+                self.writing = false
+                Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
+            } else {
+                Logger.debug("Characteristic#timeoutWrite: expired")
+            }
         }
     }
 
