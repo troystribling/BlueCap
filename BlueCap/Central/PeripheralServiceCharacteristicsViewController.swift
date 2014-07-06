@@ -54,7 +54,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicCell, forIndexPath: indexPath) as PeripheralServiceCharacteristicCell
         if let service = self.service {
             let characteristic = service.characteristics[indexPath.row]

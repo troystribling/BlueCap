@@ -11,6 +11,10 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicViewController : UITableViewController {
 
+    struct MainStoryboard {
+        static let peripheralServiceCharacteristicValueSegue = "PeripheralServiceCharacteristicValues"
+    }
+    
     weak var characteristic                                 : Characteristic?
     
     @IBOutlet var notifiyButton                             : UIButton
@@ -60,6 +64,13 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.IndicateEncryptionRequired))
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+    }
+    
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
+            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicValuesViewController
+            viewController.characteristic = self.characteristic
+        }
     }
     
     @IBAction func toggleNotificaton() {

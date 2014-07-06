@@ -971,7 +971,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iFU-Vo-22p" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2234" y="-426"/>
+            <point key="canvasLocation" x="2165" y="-367"/>
         </scene>
         <!--Peripheral Services View Controller - Services-->
         <scene sceneID="WVo-G7-hTg">
@@ -1100,7 +1100,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="ljK-JQ-Agv" kind="push" identifier="CharacteristicValues" id="HiV-sn-Ldg"/>
+                                            <segue destination="ljK-JQ-Agv" kind="push" identifier="PeripheralServiceCharacteristicValues" id="HiV-sn-Ldg"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -1466,16 +1466,16 @@
             </objects>
             <point key="canvasLocation" x="3067" y="249"/>
         </scene>
-        <!--Table View Controller - Values-->
+        <!--Peripheral Service Characteristic Values View Controller - Values-->
         <scene sceneID="0ms-TL-iQP">
             <objects>
-                <tableViewController id="ljK-JQ-Agv" sceneMemberID="viewController">
+                <tableViewController id="ljK-JQ-Agv" customClass="PeripheralServiceCharacteristicValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="71" sectionHeaderHeight="22" sectionFooterHeight="22" id="ryT-Ue-dbY">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CharacteristicValueCell" rowHeight="71" id="q9H-Fo-Way" customClass="CharacteristicValueCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CharacteristicValueCell" rowHeight="71" id="q9H-Fo-Way" customClass="PeripheralServiceCharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="71"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="q9H-Fo-Way" id="PAI-wi-1fK">
@@ -1500,7 +1500,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="valueLable" destination="UHv-O5-QAn" id="w2k-F4-G2R"/>
-                                    <outlet property="valueNameLable" destination="6kS-yg-EBr" id="hwm-vf-zs7"/>
+                                    <outlet property="valueNameLabel" destination="6kS-yg-EBr" id="qPd-gE-1xn"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1512,7 +1512,7 @@
                     <navigationItem key="navigationItem" title="Values" id="kKL-KP-SaW">
                         <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="Ujk-4y-jRa">
                             <connections>
-                                <action selector="refeshValues" destination="ljK-JQ-Agv" id="OFI-Qz-Fsg"/>
+                                <action selector="updateValues" destination="ljK-JQ-Agv" id="oTf-Ab-MDv"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1524,7 +1524,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Iy-e4-WX9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3582" y="249"/>
+            <point key="canvasLocation" x="3525" y="249"/>
         </scene>
         <!--View Controller - New Value-->
         <scene sceneID="ONO-2I-dJx">
