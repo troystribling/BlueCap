@@ -26,11 +26,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         super.viewDidLoad()
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
-            characteristic.read({
-                    self.tableView.reloadData()
-                },
-                afterReadFailedCallback:{(error) in                    
-                })
+            self.readValue()
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
@@ -39,6 +35,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     @IBAction func updateValues() {
+        self.readValue()
     }
     
     // UITableViewDataSource
@@ -55,7 +52,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath: indexPath) as PeripheralServiceCharacteristicValueCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as PeripheralServiceCharacteristicValueCell
         if let characteristic = self.characteristic {
             let stringValues = characteristic.stringValue
             let names = Array(stringValues.keys)
@@ -68,4 +65,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     // UITableViewDelegate
     
+    func readValue() {
+        if let characteristic = self.characteristic {
+            characteristic.read({
+                    self.tableView.reloadData()
+                },
+                afterReadFailedCallback:{(error) in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                })
+        }
+    }
 }

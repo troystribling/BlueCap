@@ -1083,7 +1083,7 @@
                         <sections>
                             <tableViewSection id="4ky-G5-H6R">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="fZY-R1-1VI" style="IBUITableViewCellStyleDefault" id="Z5w-Yv-vm9">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="fZY-R1-1VI" style="IBUITableViewCellStyleDefault" id="Z5w-Yv-vm9">
                                         <rect key="frame" x="0.0" y="99" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Z5w-Yv-vm9" id="N53-rW-kml">
@@ -1460,6 +1460,7 @@
                         <outlet property="propertyWriteLabel" destination="41a-Ks-38j" id="0Tc-sR-DMH"/>
                         <outlet property="propertyWriteWithoutResponseLabel" destination="Tj3-FV-sDf" id="ZWk-Y5-FlX"/>
                         <outlet property="uuidLabel" destination="org-I3-xEa" id="RlT-ej-Kwq"/>
+                        <outlet property="valuesLabel" destination="fZY-R1-1VI" id="Sc0-V9-Qid"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wAa-QU-BTY" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1475,7 +1476,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CharacteristicValueCell" rowHeight="71" id="q9H-Fo-Way" customClass="PeripheralServiceCharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCharacteristicValueCell" rowHeight="71" id="q9H-Fo-Way" customClass="PeripheralServiceCharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="71"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="q9H-Fo-Way" id="PAI-wi-1fK">

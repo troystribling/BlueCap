@@ -10,7 +10,7 @@ import Foundation
 
 class Logger {
     class func debug(message:String) {
-        println(message)
+        println("\(message)")
     }
 
 }

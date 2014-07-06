@@ -17,6 +17,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     weak var characteristic                                 : Characteristic?
     
+    @IBOutlet var valuesLabel                               : UILabel
+
     @IBOutlet var notifiyButton                             : UIButton
     
     @IBOutlet var uuidLabel                                 : UILabel
@@ -41,13 +43,18 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func viewDidLoad()  {
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
+
+            if !characteristic.propertyEnabled(.Read) {
+                self.valuesLabel.textColor = UIColor.lightGrayColor()
+            }
+            
             if characteristic.propertyEnabled(.Notify) {
                 self.notifiyButton.enabled = true
                 self.setNotifyButtonLabel()
             } else {
                 self.notifiyButton.enabled = false
             }
-
+            
             self.uuidLabel.text = characteristic.uuid.UUIDString
             self.notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
             self.broadcastingLabel.text = self.booleanStringValue(characteristic.isBroadcasted)
@@ -70,6 +77,14 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
+        }
+    }
+    
+    override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
+        if let characteristic = self.characteristic {
+            return characteristic.propertyEnabled(.Read)
+        } else {
+            return false
         }
     }
     

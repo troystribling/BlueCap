@@ -51,12 +51,16 @@ class Characteristic {
         return self.cbCharacteristic.isBroadcasted
     }
     
-    var value : NSData {
+    var value : NSData! {
         return self.cbCharacteristic.value
     }
 
     var stringValue : Dictionary<String, String> {
-        return self.profile.stringValue(self.value)
+        if self.value {
+            return self.profile.stringValue(self.value)
+        } else {
+            return [:]
+        }
     }
     
     // APPLICATION INTERFACE
@@ -136,9 +140,8 @@ class Characteristic {
 
     // PRIVATE INTERFACE
     func timeoutRead(sequence:Int) {
-        let central = CentralManager.sharedinstance()
         Logger.debug("Characteristic#timeoutRead: sequence \(sequence)")
-        central.delayCallback(CHARACTERISTIC_READ_TIMEOUT) {
+        CentralManager.delayCallback(CHARACTERISTIC_READ_TIMEOUT) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
@@ -154,9 +157,8 @@ class Characteristic {
     }
 
     func timeoutWrite(sequence:Int) {
-        let central = CentralManager.sharedinstance()
         Logger.debug("Characteristic#timeoutWrite: sequence \(sequence)")
-        central.delayCallback(CHARACTERISTIC_WRITE_TIMEOUT) {
+        CentralManager.delayCallback(CHARACTERISTIC_WRITE_TIMEOUT) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
@@ -191,6 +193,7 @@ class Characteristic {
     }
     
     func didUpdate(error:NSError!) {
+        self.reading = false
         if error {
             if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
                 CentralManager.asyncCallback(){afterUpdateFailedCallback(error:error)}
@@ -203,6 +206,7 @@ class Characteristic {
     }
     
     func didWrite(error:NSError!) {
+        self.writing = false
         if error {
             if let afterWriteFailedCallback = self.afterWriteFailedCallback {
                 CentralManager.asyncCallback(){afterWriteFailedCallback(error:error)}

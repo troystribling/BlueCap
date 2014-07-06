@@ -21,6 +21,7 @@
 		0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40C1956055700F33D4E /* CharacteristicProfile.swift */; };
 		0558EACE196173B100AA34BC /* UInt8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0558EACD196173B100AA34BC /* UInt8Extensions.swift */; };
 		05680DC119687D050000FECB /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05680DC019687D050000FECB /* BCErrors.swift */; };
+		05764D7F1969D03B00E6C801 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
 		057E6ABD1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
@@ -109,6 +110,7 @@
 		0552E40C1956055700F33D4E /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
 		0558EACD196173B100AA34BC /* UInt8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt8Extensions.swift; sourceTree = "<group>"; };
 		05680DC019687D050000FECB /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
+		05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
 		057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValueCell.swift; sourceTree = "<group>"; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -221,6 +223,14 @@
 			name = Profiles;
 			sourceTree = "<group>";
 		};
+		05764D7D1969D01900E6C801 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
@@ -255,6 +265,7 @@
 				05BB68BA195C71F200434136 /* Playgrounds */,
 				05E68703195087D0009B38DA /* Profiles */,
 				05840F62194206F100C744E6 /* Supporting Files */,
+				05764D7D1969D01900E6C801 /* Utils */,
 			);
 			path = BlueCap;
 			sourceTree = "<group>";
@@ -537,6 +548,7 @@
 				05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */,
 				05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */,
 				05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */,
+				05764D7F1969D03B00E6C801 /* UIAlertControllerExtensions.swift in Sources */,
 				057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */,
 				05B6F07D19587CE200D798CB /* PeripheralServiceCharacteristicCell.swift in Sources */,
 				05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */,
