@@ -22,6 +22,7 @@
 		0558EACE196173B100AA34BC /* UInt8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0558EACD196173B100AA34BC /* UInt8Extensions.swift */; };
 		05680DC119687D050000FECB /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05680DC019687D050000FECB /* BCErrors.swift */; };
 		05764D7F1969D03B00E6C801 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */; };
+		05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
 		057E6ABD1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
@@ -111,6 +112,8 @@
 		0558EACD196173B100AA34BC /* UInt8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt8Extensions.swift; sourceTree = "<group>"; };
 		05680DC019687D050000FECB /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
+		05764D80196A1E0600E6C801 /* EnumsAndStructs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = EnumsAndStructs.playground; sourceTree = "<group>"; };
+		05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TISensorTagServiceProfiles.swift; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
 		057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValueCell.swift; sourceTree = "<group>"; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -231,6 +234,14 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
+		05764D81196A23F700E6C801 /* Service Profiles */ = {
+			isa = PBXGroup;
+			children = (
+				05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */,
+			);
+			name = "Service Profiles";
+			sourceTree = "<group>";
+		};
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
@@ -298,9 +309,10 @@
 		05840F9719420B0000C744E6 /* BlueCapKit */ = {
 			isa = PBXGroup;
 			children = (
-				0552E4071955EFB900F33D4E /* Profiles */,
 				05840F9A19420B0000C744E6 /* BlueCapKit.h */,
 				0516666E1944F043006A337C /* Central */,
+				0552E4071955EFB900F33D4E /* Profiles */,
+				05764D81196A23F700E6C801 /* Service Profiles */,
 				05840F9819420B0000C744E6 /* Supporting Files */,
 				05B2432E1945368C00E8E878 /* Utils */,
 			);
@@ -349,6 +361,7 @@
 				05C3F1C51942159D006F80AD /* FunctionTypes.playground */,
 				05BB68B9195BD44F00434136 /* Genrics.playground */,
 				0518867119609B5800ED2D3A /* Bytes.playground */,
+				05764D80196A1E0600E6C801 /* EnumsAndStructs.playground */,
 			);
 			name = Playgrounds;
 			sourceTree = "<group>";
@@ -574,6 +587,7 @@
 			files = (
 				0552E40B195604CD00F33D4E /* ServiceProfile.swift in Sources */,
 				051886701960861400ED2D3A /* NSDataExtensions.swift in Sources */,
+				05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */,
 				05B24330194536A400E8E878 /* Logger.swift in Sources */,
 				0558EACE196173B100AA34BC /* UInt8Extensions.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
