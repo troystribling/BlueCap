@@ -19,7 +19,7 @@
 		0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E4081955EFD800F33D4E /* ProfileManager.swift */; };
 		0552E40B195604CD00F33D4E /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40A195604CD00F33D4E /* ServiceProfile.swift */; };
 		0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40C1956055700F33D4E /* CharacteristicProfile.swift */; };
-		0558EACE196173B100AA34BC /* UInt8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0558EACD196173B100AA34BC /* UInt8Extensions.swift */; };
+		0555A814196B958600F5E4A0 /* EnumCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */; };
 		05680DC119687D050000FECB /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05680DC019687D050000FECB /* BCErrors.swift */; };
 		05764D7F1969D03B00E6C801 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */; };
 		05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */; };
@@ -36,6 +36,11 @@
 		05840FAB19420B0000C744E6 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; };
 		05840FAD19420B0000C744E6 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
+		05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */; };
+		05AEAF93196C44B2009E8A0C /* ByteExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */; };
+		05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */; };
+		05AEAF97196C4591009E8A0C /* Int8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF96196C4591009E8A0C /* Int8Extensions.swift */; };
+		05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */; };
 		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
 		05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */; };
 		05B6F0781957ACF300D798CB /* PeripheralServiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* PeripheralServiceCell.swift */; };
@@ -109,7 +114,7 @@
 		0552E4081955EFD800F33D4E /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		0552E40A195604CD00F33D4E /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
 		0552E40C1956055700F33D4E /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
-		0558EACD196173B100AA34BC /* UInt8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt8Extensions.swift; sourceTree = "<group>"; };
+		0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05680DC019687D050000FECB /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 		05764D80196A1E0600E6C801 /* EnumsAndStructs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = EnumsAndStructs.playground; sourceTree = "<group>"; };
@@ -131,6 +136,11 @@
 		05840FA019420B0000C744E6 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840FA619420B0000C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
+		05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeDeserialize.swift; sourceTree = "<group>"; };
+		05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteExtensions.swift; sourceTree = "<group>"; };
+		05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
+		05AEAF96196C4591009E8A0C /* Int8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int8Extensions.swift; sourceTree = "<group>"; };
+		05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int16Extensions.swift; sourceTree = "<group>"; };
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
 		05B6F0771957ACF300D798CB /* PeripheralServiceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCell.swift; sourceTree = "<group>"; };
@@ -222,6 +232,7 @@
 				0552E40A195604CD00F33D4E /* ServiceProfile.swift */,
 				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
 				05F773B319606AF300FADF6C /* AnyCharacteristicProfile.swift */,
+				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
 			);
 			name = Profiles;
 			sourceTree = "<group>";
@@ -350,7 +361,11 @@
 				05B2432F194536A400E8E878 /* Logger.swift */,
 				0518866F1960861400ED2D3A /* NSDataExtensions.swift */,
 				05CAF6CC1960E22500F6D598 /* StringExtensions.swift */,
-				0558EACD196173B100AA34BC /* UInt8Extensions.swift */,
+				05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */,
+				05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */,
+				05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */,
+				05AEAF96196C4591009E8A0C /* Int8Extensions.swift */,
+				05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -589,17 +604,22 @@
 				051886701960861400ED2D3A /* NSDataExtensions.swift in Sources */,
 				05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */,
 				05B24330194536A400E8E878 /* Logger.swift in Sources */,
-				0558EACE196173B100AA34BC /* UInt8Extensions.swift in Sources */,
+				05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
+				05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */,
 				05F773B419606AF300FADF6C /* AnyCharacteristicProfile.swift in Sources */,
 				05680DC119687D050000FECB /* BCErrors.swift in Sources */,
 				05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */,
+				05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */,
+				0555A814196B958600F5E4A0 /* EnumCharacteristicProfile.swift in Sources */,
 				0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */,
 				0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */,
+				05AEAF97196C4591009E8A0C /* Int8Extensions.swift in Sources */,
 				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
 				054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */,
 				05CAF6CD1960E22500F6D598 /* StringExtensions.swift in Sources */,
 				05F929841949498200542A1E /* Service.swift in Sources */,
+				05AEAF93196C44B2009E8A0C /* ByteExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,8 +3,12 @@
 import Foundation
 
 protocol ProfileableEnum {
+    typealias EnumType
+    class func fromRaw(newValue:UInt8) -> EnumType?
+    class func fromString(newValue:String) -> EnumType?
     var stringValue : String {get}
-    class fromString(newValue:String) -> ProfileableEnum?
+    func toRaw() -> UInt8
+    
 }
 
 enum Enabled : UInt8, ProfileableEnum {
@@ -35,12 +39,11 @@ enum Enabled : UInt8, ProfileableEnum {
 
 if let a = Enabled.fromRaw(1) {
     a.stringValue
+    a.toRaw()
 }
 
-if let a = Enabled.fromString("Noo") {
+if let a = Enabled.fromString("No") {
     a.stringValue
 } else {
     println("invalid")
 }
-
-
