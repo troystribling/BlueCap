@@ -358,14 +358,14 @@
 		05B2432E1945368C00E8E878 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				05B2432F194536A400E8E878 /* Logger.swift */,
-				0518866F1960861400ED2D3A /* NSDataExtensions.swift */,
-				05CAF6CC1960E22500F6D598 /* StringExtensions.swift */,
-				05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */,
 				05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */,
-				05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */,
 				05AEAF96196C4591009E8A0C /* Int8Extensions.swift */,
 				05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */,
+				05B2432F194536A400E8E878 /* Logger.swift */,
+				0518866F1960861400ED2D3A /* NSDataExtensions.swift */,
+				05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */,
+				05CAF6CC1960E22500F6D598 /* StringExtensions.swift */,
+				05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";

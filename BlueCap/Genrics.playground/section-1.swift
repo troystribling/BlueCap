@@ -97,4 +97,57 @@ let characteristic = Characteristic()
 let profile = profiles["ABC"] as UInt8CharateristicProfile
 characteristic.value(profile)
 
+protocol DeserializeData {
+    typealias DeserializedType
+    class func deserialize(data:NSData) -> DeserializedType
+    class func deserialize(data:NSData, start:Int) -> DeserializedType
+}
+
+extension Byte : DeserializeData {
+    static func deserialize(data:NSData) -> Byte {
+        var value : Byte = 0
+        data.getBytes(&value, length:sizeof(Byte))
+        return value
+    }
+    static func deserialize(data:NSData, start:Int) -> Byte {
+        var value : Byte = 0
+        data.getBytes(&value, range: NSMakeRange(start, sizeof(Byte)))
+        return value
+    }
+}
+
+protocol SerializeType {
+    class func serialize<SerializedType>(value:SerializedType) -> NSData
+    class func serialize<SerializedType>(values:SerializedType[]) -> NSData
+}
+
+extension NSData : SerializeType {
+    class func serialize<SerializedType>(value:SerializedType) -> NSData {
+        return NSData(bytes:[value], length:sizeof(SerializedType))
+    }
+    class func serialize<SerializedType>(values:SerializedType[]) -> NSData {
+        return NSData(bytes:values, length:values.count*sizeof(SerializedType))
+    }
+    func hexStringValue() -> String {
+        var dataBytes = Array<Byte>(count:self.length, repeatedValue:0x0)
+        self.getBytes(&dataBytes, length:self.length)
+        var hexString = dataBytes.reduce(""){(out:String, dataByte:Byte) in
+            out +  NSString(format:"%02lx", dataByte)
+        }
+        return hexString
+    }
+}
+
+class Profile<ProfileType:DeserializeData> {
+    func deserialize(data:NSData) -> ProfileType.DeserializedType {
+        return ProfileType.deserialize(data)
+    }
+}
+
+let testByte : Byte = 0x11
+var a = NSData.serialize(testByte)
+Byte.deserialize(a)
+
+var b = Profile<Byte>()
+b.deserialize(a)
 

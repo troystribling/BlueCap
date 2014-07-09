@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Byte : DeserializeData {
+extension Byte : Deserialized {
     
     static func deserialize(data:NSData) -> Byte {
         var value : Byte = 0
@@ -22,4 +22,28 @@ extension Byte : DeserializeData {
         return value
     }
     
+    static func deserializeFromLittleEndian(data:NSData) -> Byte {
+        return deserialize(data)
+    }
+    
+    static func deserializeFromLittleEndian(data:NSData) -> Byte[] {
+        return []
+    }
+    
+    static func deserializeFromLittleEndian(data:NSData, start:Int) -> Byte {
+        return deserialize(data, start:start)
+    }
+    
+    static func deserializeFromBigEndian(data:NSData) -> Byte {
+        return deserialize(data)
+    }
+    
+    static func deserializeFromBigEndian(data:NSData) -> Byte[] {
+        return []
+    }
+    
+    static func deserializeFromBigEndian(data:NSData, start:Int) -> Byte {
+        return deserialize(data, start:start)
+    }
+
 }

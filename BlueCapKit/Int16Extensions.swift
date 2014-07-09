@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Int16 : DeserializeData {
+extension Int16 : Deserialized {
     
     static func deserialize(data:NSData) -> Int16 {
         var value : Int16 = 0
@@ -22,4 +22,36 @@ extension Int16 : DeserializeData {
         return value
     }
     
+    static func deserializeFromLittleEndian(data:NSData) -> Int16 {
+        var value : Int16 = 0
+        data.getBytes(&value, length:sizeof(Int16))
+        return littleEndianToHost(value)
+    }
+    
+    static func deserializeFromLittleEndian(data:NSData) -> Int16[] {
+        return []
+    }
+    
+    static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int16 {
+        var value : Int16 = 0
+        data.getBytes(&value, range:NSMakeRange(start, sizeof(Int16)))
+        return littleEndianToHost(value)
+    }
+    
+    static func deserializeFromBigEndian(data:NSData) -> Int16 {
+        var value : Int16 = 0
+        data.getBytes(&value, length:sizeof(Int16))
+        return bigEndianToHost(value)
+    }
+    
+    static func deserializeFromBigEndian(data:NSData) -> Int16[] {
+        return []
+    }
+    
+    static func deserializeFromBigEndian(data:NSData, start:Int) -> Int16 {
+        var value : Int16 = 0
+        data.getBytes(&value, range:NSMakeRange(start, sizeof(Int16)))
+        return bigEndianToHost(value)
+    }
+
 }

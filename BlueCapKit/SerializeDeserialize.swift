@@ -8,19 +8,19 @@
 
 import Foundation
 
-func littleToHost<T>(value:T) -> T {
+func littleEndianToHost<T>(value:T) -> T {
     return value;
 }
 
-func hostToLittle<T>(value:T) -> T {
+func hostToLittleEndian<T>(value:T) -> T {
     return value;
 }
 
-func bigToHost<T>(value:T) -> T {
+func bigEndianToHost<T>(value:T) -> T {
     return reverseBytes(value);
 }
 
-func hostToBig<T>(value:T) -> T {
+func hostToBigEndian<T>(value:T) -> T {
     return reverseBytes(value);
 }
 
@@ -38,13 +38,28 @@ func reverseBytes<T>(value:T) -> T {
     return result
 }
 
-protocol DeserializeData {
+protocol Deserialized {
     typealias DeserializedType
+    
     class func deserialize(data:NSData) -> DeserializedType
     class func deserialize(data:NSData, start:Int) -> DeserializedType
+    
+    class func deserializeFromLittleEndian(data:NSData) -> DeserializedType
+    class func deserializeFromLittleEndian(data:NSData) -> DeserializedType[]
+    class func deserializeFromLittleEndian(data:NSData, start:Int) -> DeserializedType
+
+    class func deserializeFromBigEndian(data:NSData) -> DeserializedType
+    class func deserializeFromBigEndian(data:NSData) -> DeserializedType[]
+    class func deserializeFromBigEndian(data:NSData, start:Int) -> DeserializedType
 }
 
-protocol SerializeType {
+protocol Serialized {
     class func serialize<SerializedType>(value:SerializedType) -> NSData
     class func serialize<SerializedType>(values:SerializedType[]) -> NSData
+    
+    class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData
+    class func serializeToLittleEndian<SerializedType>(values:SerializedType[]) -> NSData
+    
+    class func serializeToBigEndian<SerializedType>(value:SerializedType) -> NSData
+    class func serializeToBigEndian<SerializedType>(values:SerializedType[]) -> NSData
 }
