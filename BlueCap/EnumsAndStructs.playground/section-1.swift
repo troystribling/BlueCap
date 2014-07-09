@@ -2,16 +2,19 @@
 
 import Foundation
 
-protocol ProfileableEnum {
+protocol ProfileableEnumStatic {
     typealias EnumType
     class func fromRaw(newValue:UInt8) -> EnumType?
     class func fromString(newValue:String) -> EnumType?
+}
+
+protocol ProfileableEnumInstance {
     var stringValue : String {get}
-    func toRaw() -> UInt8
+    func toRaw() -> Byte
     
 }
 
-enum Enabled : UInt8, ProfileableEnum {
+enum Enabled : Byte, ProfileableEnumStatic, ProfileableEnumInstance {
     case No     = 0
     case Yes    = 1
     var stringValue : String {
@@ -37,6 +40,18 @@ enum Enabled : UInt8, ProfileableEnum {
 
 }
 
+class Profile<EnumType:ProfileableEnumStatic where EnumType.EnumType:ProfileableEnumInstance> {
+
+    func fromString(value:String) -> EnumType.EnumType? {
+        return EnumType.fromString(value)
+    }
+    
+    func fromByte(value:Byte) -> EnumType.EnumType? {
+        return EnumType.fromRaw(value)
+    }
+
+}
+
 if let a = Enabled.fromRaw(1) {
     a.stringValue
     a.toRaw()
@@ -47,3 +62,6 @@ if let a = Enabled.fromString("No") {
 } else {
     println("invalid")
 }
+
+var testing = Profile<Enabled>()
+testing.fromString("Yes") == Enabled.Yes

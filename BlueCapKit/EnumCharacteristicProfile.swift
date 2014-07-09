@@ -8,41 +8,53 @@
 
 import Foundation
 
-protocol ProfileableEnumCharacteristic {
+protocol ProfileableEnumStatic {
     typealias EnumType
-    class func fromRaw(newValue:UInt8) -> EnumType?
+    class func fromRaw(newValue:Byte) -> EnumType?
     class func fromString(newValue:String) -> EnumType?
-    var stringValue : String {get}
-    func toRaw() -> UInt8
     
 }
 
-class EnumCharacteristicProfile<EnumType : ProfileableEnumCharacteristic> : CharacteristicProfile {
-    
-    var values : EnumType[]
-    
-    var value : EnumType {
-        get {
-            return self.values[0]
-        }
-        set(value) {
-            self.value = value
-        }
-    }
+protocol ProfileableEnumInstance {
+    var stringValue : String {get}
+    func toRaw() -> Byte
+}
+
+class EnumCharacteristicProfile<EnumType:ProfileableEnumStatic where EnumType.EnumType:ProfileableEnumInstance> : CharacteristicProfile {
     
     init(value:EnumType, uuid:String, name:String) {
-        self.values = [value]
         super.init(uuid:uuid, name:name)
     }
     
     // APPLICATION INTERFACE
-//    override func stringValue(data:NSData) -> Dictionary<String, String> {
-//    }
-//    
-//    override func dataValue(data:Dictionary<String, String>) -> NSData {
-//    }
-//    
-//    override func dataValue(object:Any) -> NSData {
-//    }
+    override func stringValue(data:NSData) -> Dictionary<String, String>? {
+        let byteValue = Byte.deserialize(data)
+        if let value = EnumType.fromRaw(byteValue) {
+            return [self.name:value.stringValue]
+        } else {
+            return nil
+        }
+    }
+    
+    override func dataValue(data:Dictionary<String, String>) -> NSData? {
+        if let dataString = data[self.name] {
+            if let value = EnumType.fromString(dataString) {
+                let valueRaw = value.toRaw()
+                return NSData.serialize(valueRaw)
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    override func dataValue(object:Any) -> NSData? {
+        if let value = object as? EnumType.EnumType {
+           return NSData.serialize(value.toRaw())
+        } else {
+            return nil
+        }
+    }
     
 }
