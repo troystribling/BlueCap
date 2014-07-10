@@ -22,7 +22,7 @@ protocol ProfileableEnumInstance {
 
 class EnumCharacteristicProfile<EnumType:ProfileableEnumStatic where EnumType.EnumType:ProfileableEnumInstance> : CharacteristicProfile {
     
-    init(value:EnumType, uuid:String, name:String) {
+    init(uuid:String, name:String) {
         super.init(uuid:uuid, name:name)
     }
     
@@ -34,6 +34,11 @@ class EnumCharacteristicProfile<EnumType:ProfileableEnumStatic where EnumType.En
         } else {
             return nil
         }
+    }
+
+    override func anyValue(data:NSData) -> Any {
+        let byteValue = Byte.deserialize(data)
+        return EnumType.fromRaw(byteValue)
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
@@ -56,5 +61,6 @@ class EnumCharacteristicProfile<EnumType:ProfileableEnumStatic where EnumType.En
             return nil
         }
     }
+    
     
 }

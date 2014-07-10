@@ -55,11 +55,11 @@ class Characteristic {
         return self.cbCharacteristic.value
     }
 
-    var stringValue : Dictionary<String, String> {
+    var stringValue : Dictionary<String, String>? {
         if self.value {
             return self.profile.stringValue(self.value)
         } else {
-            return [:]
+            return nil
         }
     }
     

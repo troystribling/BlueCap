@@ -51,6 +51,7 @@
 		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
 		05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */; };
 		05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */; };
+		05F3281D196E2EE700821D14 /* IntegerCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3281C196E2EE700821D14 /* IntegerCharacteristicProfile.swift */; };
 		05F773B419606AF300FADF6C /* AnyCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F773B319606AF300FADF6C /* AnyCharacteristicProfile.swift */; };
 		05F929841949498200542A1E /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F929831949498200542A1E /* Service.swift */; };
 /* End PBXBuildFile section */
@@ -153,6 +154,7 @@
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
 		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
+		05F3281C196E2EE700821D14 /* IntegerCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegerCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05F773B319606AF300FADF6C /* AnyCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05F929831949498200542A1E /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -228,11 +230,12 @@
 		0552E4071955EFB900F33D4E /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
+				05F773B319606AF300FADF6C /* AnyCharacteristicProfile.swift */,
+				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
+				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
+				05F3281C196E2EE700821D14 /* IntegerCharacteristicProfile.swift */,
 				0552E4081955EFD800F33D4E /* ProfileManager.swift */,
 				0552E40A195604CD00F33D4E /* ServiceProfile.swift */,
-				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
-				05F773B319606AF300FADF6C /* AnyCharacteristicProfile.swift */,
-				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
 			);
 			name = Profiles;
 			sourceTree = "<group>";
@@ -618,6 +621,7 @@
 				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
 				054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */,
 				05CAF6CD1960E22500F6D598 /* StringExtensions.swift in Sources */,
+				05F3281D196E2EE700821D14 /* IntegerCharacteristicProfile.swift in Sources */,
 				05F929841949498200542A1E /* Service.swift in Sources */,
 				05AEAF93196C44B2009E8A0C /* ByteExtensions.swift in Sources */,
 			);
