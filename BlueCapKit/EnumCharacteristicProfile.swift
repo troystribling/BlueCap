@@ -12,6 +12,7 @@ protocol ProfileableEnumStatic {
     typealias EnumType
     class func fromRaw(newValue:Byte) -> EnumType?
     class func fromString(newValue:String) -> EnumType?
+    class func stringValues() -> String[]
     
 }
 
@@ -21,6 +22,10 @@ protocol ProfileableEnumInstance {
 }
 
 class EnumCharacteristicProfile<EnumType:ProfileableEnumStatic where EnumType.EnumType:ProfileableEnumInstance> : CharacteristicProfile {
+    
+    var stringValues : String[] {
+        return EnumType.stringValues()
+    }
     
     init(uuid:String, name:String) {
         super.init(uuid:uuid, name:name)
@@ -36,7 +41,7 @@ class EnumCharacteristicProfile<EnumType:ProfileableEnumStatic where EnumType.En
         }
     }
 
-    override func anyValue(data:NSData) -> Any {
+    override func anyValue(data:NSData) -> Any? {
         let byteValue = Byte.deserialize(data)
         return EnumType.fromRaw(byteValue)
     }

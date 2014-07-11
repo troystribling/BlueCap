@@ -10,6 +10,14 @@ import Foundation
 
 extension UInt16 : Deserialized {
     
+    static func fromString(data:String) -> UInt16? {
+        if let intVal = data.toInt() {
+            return UInt16(intVal)
+        } else {
+            return nil
+        }
+    }
+
     static func deserialize(data:NSData) -> UInt16 {
         var value : UInt16 = 0
         data.getBytes(&value, length:sizeof(UInt16))

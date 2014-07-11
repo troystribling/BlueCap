@@ -10,6 +10,20 @@ import Foundation
 
 extension Byte : Deserialized {
     
+    static func fromString(data:String) -> Byte? {
+        if let intVal = data.toInt() {
+            if intVal > 255 {
+                return Byte(255)
+            } else if intVal < 0 {
+                return Byte(0)
+            } else {
+                return Byte(intVal)
+            }
+        } else {
+            return nil
+        }
+    }
+
     static func deserialize(data:NSData) -> Byte {
         var value : Byte = 0
         data.getBytes(&value, length:sizeof(Byte))

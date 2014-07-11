@@ -8,12 +8,7 @@
 
 import Foundation
 
-enum Endianness {
-    case Little
-    case Big
-}
-
-class IntegerCharacteristicProfile<IntegerType:Deserialized> : CharacteristicProfile {
+class DeserializedCharacteristicProfile<DeserializedType:Deserialized> : CharacteristicProfile {
 
     var endianness : Endianness
     
@@ -27,41 +22,37 @@ class IntegerCharacteristicProfile<IntegerType:Deserialized> : CharacteristicPro
         return [self.name:"\(self.deserialize(data))"]
     }
     
-//    override func anyValue(data:NSData) -> Any {
-//        
-//    }
-//    
-//    override func dataValue(data:Dictionary<String, String>) -> NSData? {
-//        if let value = data[self.name] {
-//            if let intValue = value.toInt() {
-//                if let integerTypeValue = intValue as? IntegerType {
-//                    
-//                } else {
-//                    return nil
-//                }
-//            } else {
-//                return nil
-//            }
-//        } else {
-//            return nil
-//        }
-//    }
+    override func anyValue(data:NSData) -> Any? {
+        return self.deserialize(data)
+    }
+    
+    override func dataValue(data:Dictionary<String, String>) -> NSData? {
+        if let stringValue = data[self.name] {
+            if let value = DeserializedType.fromString(stringValue) {
+                return self.serialize(value)
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
 
 //    override func dataValue(object: Any) -> NSData? {
-//        
+//        return self.serialize(object)
 //    }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> IntegerType.DeserializedType {
+    func deserialize(data:NSData) -> DeserializedType.DeserializedType {
         switch self.endianness {
         case Endianness.Little:
-            return IntegerType.deserializeFromLittleEndian(data)
+            return DeserializedType.deserializeFromLittleEndian(data)
         case Endianness.Big:
-            return IntegerType.deserializeFromBigEndian(data)
+            return DeserializedType.deserializeFromBigEndian(data)
         }
     }
     
-    func serialize(value:IntegerType) -> NSData {
+    func serialize(value:DeserializedType.DeserializedType) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(value)

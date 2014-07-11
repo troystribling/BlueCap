@@ -10,6 +10,19 @@ import Foundation
 
 extension Int8 : Deserialized {
     
+    static func fromString(data:String) -> Int8? {
+        if let intVal = data.toInt() {
+            if intVal > 127 {
+                return Int8(127)
+            } else if intVal < -128 {
+                return Int8(-127)
+            }
+            return Int8(intVal)
+        } else {
+            return nil
+        }
+    }
+
     static func deserialize(data:NSData) -> Int8 {
         var value : Int8 = 0
         data.getBytes(&value, length:sizeof(Int8))

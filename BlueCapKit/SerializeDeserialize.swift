@@ -8,6 +8,11 @@
 
 import Foundation
 
+enum Endianness {
+    case Little
+    case Big
+}
+
 func littleEndianToHost<T>(value:T) -> T {
     return value;
 }
@@ -40,6 +45,8 @@ func reverseBytes<T>(value:T) -> T {
 
 protocol Deserialized {
     typealias DeserializedType
+    
+    class func fromString(data:String) -> DeserializedType?
     
     class func deserialize(data:NSData) -> DeserializedType
     class func deserialize(data:NSData, start:Int) -> DeserializedType
