@@ -15,7 +15,7 @@ extension Int8 : Deserialized {
             if intVal > 127 {
                 return Int8(127)
             } else if intVal < -128 {
-                return Int8(-127)
+                return Int8(-128)
             }
             return Int8(intVal)
         } else {

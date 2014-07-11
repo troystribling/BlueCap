@@ -12,7 +12,13 @@ extension UInt16 : Deserialized {
     
     static func fromString(data:String) -> UInt16? {
         if let intVal = data.toInt() {
-            return UInt16(intVal)
+            if intVal > 65535 {
+                return UInt16(65535)
+            } else if intVal < 0 {
+                return UInt16(0)
+            } else {
+                return UInt16(intVal)
+            }
         } else {
             return nil
         }
