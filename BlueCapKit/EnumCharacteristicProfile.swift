@@ -27,10 +27,15 @@ class EnumCharacteristicProfile<EnumType:ProfileableEnumStatic where EnumType.En
         return EnumType.stringValues()
     }
     
-    init(uuid:String, name:String) {
+    init(uuid: String, name: String) {
         super.init(uuid:uuid, name:name)
     }
     
+    convenience init(uuid:String, name:String, profile:(characteristic:EnumCharacteristicProfile) -> ()) {
+        self.init(uuid:uuid, name:name)
+        profile(characteristic:self)
+    }
+
     // APPLICATION INTERFACE
     override func stringValue(data:NSData) -> Dictionary<String, String>? {
         let byteValue = Byte.deserialize(data)

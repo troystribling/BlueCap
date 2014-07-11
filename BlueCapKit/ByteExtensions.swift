@@ -41,7 +41,8 @@ extension Byte : Deserialized {
     }
     
     static func deserializeFromLittleEndian(data:NSData) -> Byte[] {
-        return []
+        let count = data.length / sizeof(Byte)
+        return Int[](0..count).map{(i) in self.deserializeFromLittleEndian(data, start:i)}
     }
     
     static func deserializeFromLittleEndian(data:NSData, start:Int) -> Byte {

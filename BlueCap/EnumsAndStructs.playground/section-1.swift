@@ -65,4 +65,3 @@ if let a = Enabled.fromString("No") {
 
 var testing = Profile<Enabled>()
 testing.fromString("Yes") == Enabled.Yes
-

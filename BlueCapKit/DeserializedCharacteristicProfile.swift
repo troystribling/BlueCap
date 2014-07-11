@@ -13,14 +13,14 @@ class DeserializedCharacteristicProfile<DeserializedType:Deserialized> : Charact
     var endianness : Endianness = .Little
     
     init(uuid:String, name:String, fromEndianness endianness:Endianness) {
-        self.endianness = endianness
         super.init(uuid:uuid, name:name)
+        self.endianness = endianness
     }
     
-    init(uuid:String, name:String) {
-        super.init(uuid:uuid, name:name)
+    convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:(characteristic:DeserializedCharacteristicProfile) -> ()) {
+        self.init(uuid:uuid, name:name, fromEndianness:endianness)
+        profile(characteristic:self)
     }
-
     
     // APPLICATION INTERFACE
     override func stringValue(data:NSData) -> Dictionary<String, String>? {

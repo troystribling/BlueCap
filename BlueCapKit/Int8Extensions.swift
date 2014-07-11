@@ -40,7 +40,8 @@ extension Int8 : Deserialized {
     }
     
     static func deserializeFromLittleEndian(data:NSData) -> Int8[] {
-        return []
+        let count = data.length / sizeof(Int8)
+        return Int[](0..count).map{(i) in self.deserializeFromLittleEndian(data, start:i)}
     }
     
     static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int8 {

@@ -232,8 +232,8 @@
 			children = (
 				05F773B319606AF300FADF6C /* AnyCharacteristicProfile.swift */,
 				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
-				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
 				05F3281C196E2EE700821D14 /* DeserializedCharacteristicProfile.swift */,
+				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
 				0552E4081955EFD800F33D4E /* ProfileManager.swift */,
 				0552E40A195604CD00F33D4E /* ServiceProfile.swift */,
 			);
