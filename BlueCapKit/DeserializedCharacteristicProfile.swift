@@ -10,12 +10,17 @@ import Foundation
 
 class DeserializedCharacteristicProfile<DeserializedType:Deserialized> : CharacteristicProfile {
 
-    var endianness : Endianness
+    var endianness : Endianness = .Little
     
     init(uuid:String, name:String, fromEndianness endianness:Endianness) {
         self.endianness = endianness
         super.init(uuid:uuid, name:name)
     }
+    
+    init(uuid:String, name:String) {
+        super.init(uuid:uuid, name:name)
+    }
+
     
     // APPLICATION INTERFACE
     override func stringValue(data:NSData) -> Dictionary<String, String>? {
@@ -38,9 +43,13 @@ class DeserializedCharacteristicProfile<DeserializedType:Deserialized> : Charact
         }
     }
 
-//    override func dataValue(object: Any) -> NSData? {
-//        return self.serialize(object)
-//    }
+    override func dataValue(object: Any) -> NSData? {
+        if let value = object as? DeserializedType.DeserializedType {
+            return self.serialize(value)
+        } else {
+            return nil
+        }
+    }
     
     // PRIVATE INTERFACE
     func deserialize(data:NSData) -> DeserializedType.DeserializedType {
