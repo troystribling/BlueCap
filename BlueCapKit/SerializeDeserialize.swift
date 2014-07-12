@@ -70,3 +70,29 @@ protocol Serialized {
     class func serializeToBigEndian<SerializedType>(value:SerializedType) -> NSData
     class func serializeToBigEndian<SerializedType>(values:SerializedType[]) -> NSData
 }
+
+protocol DeserializedEnumStatic {
+    typealias EnumType
+    class func fromRaw(value:Byte) -> EnumType?
+    class func fromString(value:String) -> EnumType?
+    class func stringValues() -> String[]
+    
+}
+
+protocol DeserializedEnumInstance {
+    var stringValue : String {get}
+    func toRaw() -> Byte
+}
+
+protocol DeserializedStructStatic {
+    typealias StructType
+    typealias ValueType
+    class func fromStrings(values:Dictionary<String, String>) -> StructType
+    class func fromArray(values:Array<ValueType>) -> StructType
+}
+
+protocol DeserializedStructInstance {
+    typealias ValueType
+    var stringValues : Dictionary<String,String> {get}
+    func arrayValue() -> Array<ValueType>
+}

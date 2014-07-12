@@ -49,7 +49,7 @@ class Profile<EnumType:ProfileableEnumStatic where EnumType.EnumType:Profileable
     func fromByte(value:Byte) -> EnumType.EnumType? {
         return EnumType.fromRaw(value)
     }
-
+    
 }
 
 if let a = Enabled.fromRaw(1) {
