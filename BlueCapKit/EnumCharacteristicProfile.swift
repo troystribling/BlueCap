@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnumStatic where EnumType.EnumType:DeserializedEnumInstance> : CharacteristicProfile {
+class EnumCharacteristicProfile<EnumType:DeserializedEnumStatic, DeserilaizedEnumInstance where EnumType.InstanceType:DeserializedEnumInstance> : CharacteristicProfile {
     
     var stringValues : String[] {
         return EnumType.stringValues()
@@ -19,12 +19,12 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnumStatic where EnumType.E
         super.init(uuid:uuid, name:name)
     }
     
-    convenience init(uuid:String, name:String, profile:(characteristic:EnumCharacteristicProfile<EnumType>) -> ()) {
+    convenience init(uuid:String, name:String, profile:(characteristic:EnumCharacteristicProfile) -> ()) {
         self.init(uuid:uuid, name:name)
         profile(characteristic:self)
     }
 
-    override func stringValue(data:NSData) -> Dictionary<String, String>? {
+    override func stringValues(data:NSData) -> Dictionary<String, String>? {
         let byteValue = Byte.deserialize(data)
         if let value = EnumType.fromRaw(byteValue) {
             return [self.name:value.stringValue]
@@ -52,7 +52,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnumStatic where EnumType.E
     }
     
     override func dataValue(object:Any) -> NSData? {
-        if let value = object as? EnumType.EnumType {
+        if let value = object as? EnumType.InstanceType {
            return NSData.serialize(value.toRaw())
         } else {
             return nil

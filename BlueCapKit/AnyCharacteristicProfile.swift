@@ -23,7 +23,7 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
         profile(characteristic:self)
     }
     
-    override func stringValue(data:NSData) -> Dictionary<String, String>? {
+    override func stringValues(data:NSData) -> Dictionary<String, String>? {
         return [self.name:"\(self.deserialize(data))"]
     }
     

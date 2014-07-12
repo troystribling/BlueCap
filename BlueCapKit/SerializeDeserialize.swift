@@ -72,11 +72,10 @@ protocol Serialized {
 }
 
 protocol DeserializedEnumStatic {
-    typealias EnumType
-    class func fromRaw(value:Byte) -> EnumType?
-    class func fromString(value:String) -> EnumType?
+    typealias InstanceType
+    class func fromRaw(value:Byte) -> InstanceType?
+    class func fromString(value:String) -> InstanceType?
     class func stringValues() -> String[]
-    
 }
 
 protocol DeserializedEnumInstance {
@@ -85,14 +84,13 @@ protocol DeserializedEnumInstance {
 }
 
 protocol DeserializedStructStatic {
-    typealias StructType
-    typealias ValueType
-    class func fromStrings(values:Dictionary<String, String>) -> StructType
-    class func fromArray(values:Array<ValueType>) -> StructType
+    typealias InstanceType : DeserializedStructInstance
+    class func fromStrings(values:Dictionary<String, String>) -> InstanceType?
+    class func fromArray(values:InstanceType.ValueType.DeserializedType[]) -> InstanceType?
 }
 
 protocol DeserializedStructInstance {
-    typealias ValueType
+    typealias ValueType : Deserialized
     var stringValues : Dictionary<String,String> {get}
-    func arrayValue() -> Array<ValueType>
+    func arrayValue() -> ValueType.DeserializedType[]
 }

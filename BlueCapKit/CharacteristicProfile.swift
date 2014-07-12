@@ -44,7 +44,7 @@ class CharacteristicProfile {
     }
 
     // INTERNAL INTERFACE
-    func stringValue(data:NSData) -> Dictionary<String, String>? {
+    func stringValues(data:NSData) -> Dictionary<String, String>? {
         return [self.name:data.hexStringValue()]
     }
     

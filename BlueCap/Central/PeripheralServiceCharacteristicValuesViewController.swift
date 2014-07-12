@@ -44,7 +44,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        if let values = self.characteristic?.stringValue {
+        if let values = self.characteristic?.stringValues {
             return values.count
         } else {
             return 0;
@@ -53,7 +53,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as PeripheralServiceCharacteristicValueCell
-        if let stringValues = self.characteristic?.stringValue {
+        if let stringValues = self.characteristic?.stringValues {
             let names = Array(stringValues.keys)
             let values = Array(stringValues.values)
             cell.valueNameLabel.text = names[indexPath.row]

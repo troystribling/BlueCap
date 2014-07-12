@@ -8,7 +8,7 @@
 
 import Foundation
 
-class StructCharacteristicProfile<StructType:DeserializedStructStatic where StructType.StructType:DeserializedStructInstance, StructType.ValueType:Deserialized> : CharacteristicProfile {
+class StructCharacteristicProfile<StructType:DeserializedStructStatic> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
     
@@ -23,39 +23,56 @@ class StructCharacteristicProfile<StructType:DeserializedStructStatic where Stru
         profile(characteristic:self)
     }
     
-    override func stringValue(data:NSData) -> Dictionary<String, String>? {
-        return nil
-    }
-    
-    override func anyValue(data:NSData) -> Any? {
-        return nil
-    }
-    
-    override func dataValue(data:Dictionary<String, String>) -> NSData? {
-        return nil
-    }
-    
-    override func dataValue(object:Any) -> NSData? {
-        return nil
-    }
-    
-    // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> StructType.ValueType.DeserializedType[] {
-        switch self.endianness {
-        case Endianness.Little:
-            return StructType.ValueType.deserializeFromLittleEndian(data)
-        case Endianness.Big:
-            return StructType.ValueType.deserializeFromBigEndian(data)
+    override func stringValues(data:NSData) -> Dictionary<String, String>? {
+        if let value = self.structFromData(data) {
+            return value.stringValues
+        } else {
+            return nil
         }
     }
     
-    func serialize(values:StructType.ValueType[]) -> NSData {
+    override func anyValue(data:NSData) -> Any? {
+        return self.structFromData(data)
+    }
+    
+    override func dataValue(data:Dictionary<String, String>) -> NSData? {
+        if let value = StructType.fromStrings(data) {
+            return self.serialize(value.arrayValue())
+        } else {
+            return nil
+        }
+    }
+    
+    override func dataValue(object:Any) -> NSData? {
+        if let value = object as? StructType.InstanceType {
+            return self.serialize(value.arrayValue())
+        } else {
+            return nil
+        }
+    }
+    
+    // PRIVATE INTERFACE
+    func deserialize(data:NSData) -> StructType.InstanceType.ValueType.DeserializedType[] {
+        switch self.endianness {
+        case Endianness.Little:
+            return StructType.InstanceType.ValueType.deserializeFromLittleEndian(data)
+        case Endianness.Big:
+            return StructType.InstanceType.ValueType.deserializeFromBigEndian(data)
+        }
+    }
+    
+    func serialize(values:StructType.InstanceType.ValueType.DeserializedType[]) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(values)
         case Endianness.Big:
             return NSData.serializeToBigEndian(values)
         }
+    }
+    
+    func structFromData(data:NSData) -> StructType.InstanceType? {
+        let values = self.deserialize(data)
+        return StructType.fromArray(values)
     }
 
 }

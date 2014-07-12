@@ -6,15 +6,11 @@ protocol ProfileableEnumStatic {
     typealias EnumType
     class func fromRaw(newValue:UInt8) -> EnumType?
     class func fromString(newValue:String) -> EnumType?
-}
-
-protocol ProfileableEnumInstance {
     var stringValue : String {get}
     func toRaw() -> Byte
-    
 }
 
-enum Enabled : Byte, ProfileableEnumStatic, ProfileableEnumInstance {
+enum Enabled : Byte, ProfileableEnumStatic {
     case No     = 0
     case Yes    = 1
     var stringValue : String {
@@ -40,7 +36,7 @@ enum Enabled : Byte, ProfileableEnumStatic, ProfileableEnumInstance {
 
 }
 
-class Profile<EnumType:ProfileableEnumStatic where EnumType.EnumType:ProfileableEnumInstance> {
+class Profile<EnumType:ProfileableEnumStatic> {
 
     func fromString(value:String) -> EnumType.EnumType? {
         return EnumType.fromString(value)
