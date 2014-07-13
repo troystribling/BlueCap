@@ -44,20 +44,18 @@ func reverseBytes<T>(value:T) -> T {
 }
 
 protocol Deserialized {
-    typealias DeserializedType
+    class func fromString(data:String) -> Deserialized?
     
-    class func fromString(data:String) -> DeserializedType?
+    class func deserialize(data:NSData) -> Deserialized
+    class func deserialize(data:NSData, start:Int) -> Deserialized
     
-    class func deserialize(data:NSData) -> DeserializedType
-    class func deserialize(data:NSData, start:Int) -> DeserializedType
-    
-    class func deserializeFromLittleEndian(data:NSData) -> DeserializedType
-    class func deserializeFromLittleEndian(data:NSData) -> DeserializedType[]
-    class func deserializeFromLittleEndian(data:NSData, start:Int) -> DeserializedType
+    class func deserializeFromLittleEndian(data:NSData) -> Deserialized
+    class func deserializeFromLittleEndian(data:NSData) -> Deserialized[]
+    class func deserializeFromLittleEndian(data:NSData, start:Int) -> Deserialized
 
-    class func deserializeFromBigEndian(data:NSData) -> DeserializedType
-    class func deserializeFromBigEndian(data:NSData) -> DeserializedType[]
-    class func deserializeFromBigEndian(data:NSData, start:Int) -> DeserializedType
+    class func deserializeFromBigEndian(data:NSData) -> Deserialized
+    class func deserializeFromBigEndian(data:NSData) -> Deserialized[]
+    class func deserializeFromBigEndian(data:NSData, start:Int) -> Deserialized
 }
 
 protocol Serialized {
@@ -71,26 +69,19 @@ protocol Serialized {
     class func serializeToBigEndian<SerializedType>(values:SerializedType[]) -> NSData
 }
 
-protocol DeserializedEnumStatic {
-    typealias InstanceType
-    class func fromRaw(value:Byte) -> InstanceType?
-    class func fromString(value:String) -> InstanceType?
+protocol DeserializedEnum {
+    typealias ValueType
+    class func fromNative(value:ValueType) -> DeserializedEnum?
+    class func fromString(value:String) -> DeserializedEnum?
     class func stringValues() -> String[]
-}
-
-protocol DeserializedEnumInstance {
     var stringValue : String {get}
-    func toRaw() -> Byte
+    func toNative() -> ValueType
 }
 
-protocol DeserializedStructStatic {
-    typealias InstanceType : DeserializedStructInstance
-    class func fromStrings(values:Dictionary<String, String>) -> InstanceType?
-    class func fromArray(values:InstanceType.ValueType.DeserializedType[]) -> InstanceType?
-}
-
-protocol DeserializedStructInstance {
-    typealias ValueType : Deserialized
+protocol DeserializedStruct {
+    typealias ValueType
+    class func fromStrings(values:Dictionary<String, String>) -> DeserializedStruct?
+    class func fromArray(values:ValueType[]) -> DeserializedStruct?
     var stringValues : Dictionary<String,String> {get}
-    func arrayValue() -> ValueType.DeserializedType[]
+    func arrayValue() -> ValueType[]
 }

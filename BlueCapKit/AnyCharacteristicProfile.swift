@@ -28,12 +28,12 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
     }
     
     override func anyValue(data:NSData) -> Any? {
-        return self.deserialize(data)
+        return self.deserialize(data) as? AnyType
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let stringValue = data[self.name] {
-            if let value = AnyType.fromString(stringValue) {
+            if let value = AnyType.fromString(stringValue) as? AnyType {
                 return self.serialize(value)
             } else {
                 return nil
@@ -44,7 +44,7 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
     }
 
     override func dataValue(object: Any) -> NSData? {
-        if let value = object as? AnyType.DeserializedType {
+        if let value = object as? AnyType {
             return self.serialize(value)
         } else {
             return nil
@@ -52,7 +52,7 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> AnyType.DeserializedType {
+    func deserialize(data:NSData) -> Deserialized {
         switch self.endianness {
         case Endianness.Little:
             return AnyType.deserializeFromLittleEndian(data)
@@ -61,7 +61,7 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
         }
     }
     
-    func serialize(value:AnyType.DeserializedType) -> NSData {
+    func serialize(value:AnyType) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(value)

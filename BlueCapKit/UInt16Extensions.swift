@@ -10,7 +10,7 @@ import Foundation
 
 extension UInt16 : Deserialized {
     
-    static func fromString(data:String) -> UInt16? {
+    static func fromString(data:String) -> Deserialized? {
         if let intVal = data.toInt() {
             if intVal > 65535 {
                 return UInt16(65535)
@@ -24,51 +24,49 @@ extension UInt16 : Deserialized {
         }
     }
 
-    static func deserialize(data:NSData) -> UInt16 {
+    static func deserialize(data:NSData) -> Deserialized {
         var value : UInt16 = 0
         data.getBytes(&value, length:sizeof(UInt16))
         return value
     }
     
-    static func deserialize(data:NSData, start:Int) -> UInt16 {
+    static func deserialize(data:NSData, start:Int) -> Deserialized {
         var value : UInt16 = 0
         data.getBytes(&value, range: NSMakeRange(start, sizeof(UInt16)))
         return value
     }
     
-    static func deserializeFromLittleEndian(data:NSData) -> UInt16 {
+    static func deserializeFromLittleEndian(data:NSData) -> Deserialized {
         var value : UInt16 = 0
         data.getBytes(&value, length:sizeof(UInt16))
         return littleEndianToHost(value)
     }
     
-    static func deserializeFromLittleEndian(data:NSData) -> UInt16[] {
+    static func deserializeFromLittleEndian(data:NSData) -> Deserialized[] {
         let count = data.length / sizeof(UInt16)
         return Int[](0..count).map{(i) in self.deserializeFromLittleEndian(data, start:i)}
     }
     
-    static func deserializeFromLittleEndian(data:NSData, start:Int) -> UInt16 {
+    static func deserializeFromLittleEndian(data:NSData, start:Int) -> Deserialized {
         var value : UInt16 = 0
         data.getBytes(&value, range:NSMakeRange(start, sizeof(UInt16)))
         return littleEndianToHost(value)
     }
     
-    static func deserializeFromBigEndian(data:NSData) -> UInt16 {
+    static func deserializeFromBigEndian(data:NSData) -> Deserialized {
         var value : UInt16 = 0
         data.getBytes(&value, length:sizeof(UInt16))
         return bigEndianToHost(value)
     }
     
-    static func deserializeFromBigEndian(data:NSData) -> UInt16[] {
-        return []
+    static func deserializeFromBigEndian(data:NSData) -> Deserialized[] {
+        let count = data.length / sizeof(UInt16)
+        return Int[](0..count).map{(i) in self.deserializeFromBigEndian(data, start:i)}
     }
     
-    static func deserializeFromBigEndian(data:NSData, start:Int) -> UInt16 {
+    static func deserializeFromBigEndian(data:NSData, start:Int) -> Deserialized {
         var value : UInt16 = 0
         data.getBytes(&value, range:NSMakeRange(start, sizeof(UInt16)))
         return bigEndianToHost(value)
     }
-    
-    
-
 }

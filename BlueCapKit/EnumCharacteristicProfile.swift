@@ -8,41 +8,50 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnumStatic, DeserilaizedEnumInstance where EnumType.InstanceType:DeserializedEnumInstance> : CharacteristicProfile {
+class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueType:Deserialized> : CharacteristicProfile {
     
+    var endianness : Endianness = .Little
+
     var stringValues : String[] {
         return EnumType.stringValues()
     }
     
     // APPLICATION INTERFACE
-    init(uuid: String, name: String) {
+    init(uuid:String, name:String, fromEndianness endianness:Endianness = .Little) {
         super.init(uuid:uuid, name:name)
+        self.endianness = endianness
     }
     
-    convenience init(uuid:String, name:String, profile:(characteristic:EnumCharacteristicProfile) -> ()) {
-        self.init(uuid:uuid, name:name)
+    convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:(characteristic:EnumCharacteristicProfile<EnumType>) -> ()) {
+        self.init(uuid:uuid, name:name, fromEndianness:endianness)
         profile(characteristic:self)
     }
 
     override func stringValues(data:NSData) -> Dictionary<String, String>? {
-        let byteValue = Byte.deserialize(data)
-        if let value = EnumType.fromRaw(byteValue) {
-            return [self.name:value.stringValue]
+        if let valueNative = self.deserialize(data) as? EnumType.ValueType {
+            if let value = EnumType.fromNative(valueNative) as? EnumType {
+                return [self.name:value.stringValue]
+            } else {
+                return nil
+            }
         } else {
             return nil
         }
     }
 
     override func anyValue(data:NSData) -> Any? {
-        let byteValue = Byte.deserialize(data)
-        return EnumType.fromRaw(byteValue)
+        if let value = self.deserialize(data) as? EnumType.ValueType {
+            return EnumType.fromNative(value) as? EnumType
+        } else {
+            return nil
+        }
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let dataString = data[self.name] {
-            if let value = EnumType.fromString(dataString) {
-                let valueRaw = value.toRaw()
-                return NSData.serialize(valueRaw)
+            if let value = EnumType.fromString(dataString) as? EnumType {
+                let valueNative = value.toNative()
+                return self.serialize(valueNative)
             } else {
                 return nil
             }
@@ -52,11 +61,29 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnumStatic, DeserilaizedEnu
     }
     
     override func dataValue(object:Any) -> NSData? {
-        if let value = object as? EnumType.InstanceType {
-           return NSData.serialize(value.toRaw())
+        if let value = object as? EnumType {
+           return self.serialize(value.toNative())
         } else {
             return nil
         }
     }
     
+    // PRIVATE INTERFACE
+    func deserialize(data:NSData) -> Deserialized {
+        switch self.endianness {
+        case Endianness.Little:
+            return EnumType.ValueType.deserializeFromLittleEndian(data)
+        case Endianness.Big:
+            return EnumType.ValueType.deserializeFromBigEndian(data)
+        }
+    }
+    
+    func serialize(value:EnumType.ValueType) -> NSData {
+        switch self.endianness {
+        case Endianness.Little:
+            return NSData.serializeToLittleEndian(value)
+        case Endianness.Big:
+            return NSData.serializeToBigEndian(value)
+        }
+    }
 }

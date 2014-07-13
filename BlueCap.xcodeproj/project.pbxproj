@@ -14,6 +14,7 @@
 		05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */; };
 		05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA21944CB0E0022FB59 /* CentralManager.swift */; };
 		05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA31944CB0E0022FB59 /* Peripheral.swift */; };
+		054314CF1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054314CE1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift */; };
 		054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */; };
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
 		0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E4081955EFD800F33D4E /* ProfileManager.swift */; };
@@ -110,6 +111,7 @@
 		05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceProfilesViewController.swift; path = Central/ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05277CA21944CB0E0022FB59 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		05277CA31944CB0E0022FB59 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
+		054314CE1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCharacteristicProfile.swift; sourceTree = "<group>"; };
 		054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connectorator.swift; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
 		0552E4081955EFD800F33D4E /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
@@ -118,7 +120,7 @@
 		0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05680DC019687D050000FECB /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
-		05764D80196A1E0600E6C801 /* EnumsAndStructs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = EnumsAndStructs.playground; sourceTree = "<group>"; };
+		05764D80196A1E0600E6C801 /* Enums.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Enums.playground; sourceTree = "<group>"; };
 		05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TISensorTagServiceProfiles.swift; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
 		057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValueCell.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 		05AEAF96196C4591009E8A0C /* Int8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int8Extensions.swift; sourceTree = "<group>"; };
 		05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int16Extensions.swift; sourceTree = "<group>"; };
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		05B48C7C1971FA3200260F4A /* Structs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Structs.playground; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
 		05B6F0771957ACF300D798CB /* PeripheralServiceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCell.swift; sourceTree = "<group>"; };
 		05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
@@ -232,6 +235,7 @@
 			children = (
 				05F3281C196E2EE700821D14 /* AnyCharacteristicProfile.swift */,
 				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
+				054314CE1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift */,
 				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
 				0552E4081955EFD800F33D4E /* ProfileManager.swift */,
 				0552E40A195604CD00F33D4E /* ServiceProfile.swift */,
@@ -326,6 +330,7 @@
 				05840F9A19420B0000C744E6 /* BlueCapKit.h */,
 				0516666E1944F043006A337C /* Central */,
 				0552E4071955EFB900F33D4E /* Profiles */,
+				05B48C7B1971A15800260F4A /* Serialization/Deserialization */,
 				05764D81196A23F700E6C801 /* Service Profiles */,
 				05840F9819420B0000C744E6 /* Supporting Files */,
 				05B2432E1945368C00E8E878 /* Utils */,
@@ -361,16 +366,23 @@
 		05B2432E1945368C00E8E878 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				05B2432F194536A400E8E878 /* Logger.swift */,
+				05CAF6CC1960E22500F6D598 /* StringExtensions.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		05B48C7B1971A15800260F4A /* Serialization/Deserialization */ = {
+			isa = PBXGroup;
+			children = (
 				05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */,
 				05AEAF96196C4591009E8A0C /* Int8Extensions.swift */,
 				05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */,
-				05B2432F194536A400E8E878 /* Logger.swift */,
 				0518866F1960861400ED2D3A /* NSDataExtensions.swift */,
 				05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */,
-				05CAF6CC1960E22500F6D598 /* StringExtensions.swift */,
 				05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */,
 			);
-			name = Utils;
+			name = Serialization/Deserialization;
 			sourceTree = "<group>";
 		};
 		05BB68BA195C71F200434136 /* Playgrounds */ = {
@@ -379,7 +391,8 @@
 				05C3F1C51942159D006F80AD /* FunctionTypes.playground */,
 				05BB68B9195BD44F00434136 /* Genrics.playground */,
 				0518867119609B5800ED2D3A /* Bytes.playground */,
-				05764D80196A1E0600E6C801 /* EnumsAndStructs.playground */,
+				05764D80196A1E0600E6C801 /* Enums.playground */,
+				05B48C7C1971FA3200260F4A /* Structs.playground */,
 			);
 			name = Playgrounds;
 			sourceTree = "<group>";
@@ -608,6 +621,7 @@
 				05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */,
 				05B24330194536A400E8E878 /* Logger.swift in Sources */,
 				05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */,
+				054314CF1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */,
 				05680DC119687D050000FECB /* BCErrors.swift in Sources */,
