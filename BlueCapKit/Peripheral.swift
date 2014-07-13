@@ -54,7 +54,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    var services : Service[] {
+    var services : [Service] {
         return Array(self.discoveredServices.values)
     }
     
@@ -106,7 +106,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         self.cbPeripheral.discoverServices(nil)
     }
     
-    func discoverServices(services:CBUUID[]!, servicesDiscoveredCallback:()->()) {
+    func discoverServices(services:[CBUUID]!, servicesDiscoveredCallback:()->()) {
         Logger.debug("Peripheral#discoverAllServices")
         self.servicesDiscoveredCallback = servicesDiscoveredCallback
         self.cbPeripheral.discoverServices(services)
@@ -121,7 +121,7 @@ class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug("Peripheral#peripheralDidUpdateName")
     }
     
-    func peripheral(_:CBPeripheral!, didModifyServices invalidatedServices:AnyObject[]!) {
+    func peripheral(_:CBPeripheral!, didModifyServices invalidatedServices:[AnyObject]!) {
         Logger.debug("Peripheral#didModifyServices")
     }
     

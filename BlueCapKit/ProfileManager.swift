@@ -13,7 +13,7 @@ class ProfileManager {
     
     var serviceProfiles = Dictionary<CBUUID, ServiceProfile>()
     
-    var services : ServiceProfile[] {
+    var services : [ServiceProfile] {
         return Array(self.serviceProfiles.values)
     }
     

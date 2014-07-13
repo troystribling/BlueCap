@@ -40,9 +40,9 @@ extension Byte : Deserialized {
         return deserialize(data)
     }
     
-    static func deserializeFromLittleEndian(data:NSData) -> Deserialized[] {
+    static func deserializeFromLittleEndian(data:NSData) -> [Deserialized] {
         let count = data.length / sizeof(Byte)
-        return Int[](0..count).map{(i) in self.deserializeFromLittleEndian(data, start:i)}
+        return [Int](0..<count).map{(i) in self.deserializeFromLittleEndian(data, start:i)}
     }
     
     static func deserializeFromLittleEndian(data:NSData, start:Int) -> Deserialized {
@@ -53,9 +53,9 @@ extension Byte : Deserialized {
         return deserialize(data)
     }
     
-    static func deserializeFromBigEndian(data:NSData) -> Deserialized[] {
+    static func deserializeFromBigEndian(data:NSData) -> [Deserialized] {
         let count = data.length / sizeof(Byte)
-        return Int[](0..count).map{(i) in self.deserializeFromBigEndian(data, start:i)}
+        return [Int](0..<count).map{(i) in self.deserializeFromBigEndian(data, start:i)}
     }
     
     static func deserializeFromBigEndian(data:NSData, start:Int) -> Deserialized {

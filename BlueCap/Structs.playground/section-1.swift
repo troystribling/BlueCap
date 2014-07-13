@@ -4,12 +4,12 @@ import Foundation
 
 protocol Deserialized {
     class func deserialize(data:NSData, start:Int) -> Deserialized
-    class func deserialize(data:NSData) -> Deserialized[]
+    class func deserialize(data:NSData) -> [Deserialized]
 }
 
 protocol DeserializedStruct {
     typealias ValueType
-    class func fromArray(values:ValueType[]) -> DeserializedStruct?
+    class func fromArray(values:[ValueType]) -> DeserializedStruct?
 }
 
 extension Byte : Deserialized {
@@ -18,7 +18,7 @@ extension Byte : Deserialized {
         data.getBytes(&value, range: NSMakeRange(start, sizeof(Byte)))
         return value
     }
-    static func deserialize(data:NSData) -> Deserialized[] {
+    static func deserialize(data:NSData) -> [Deserialized] {
         let count = data.length / sizeof(Byte)
         return Int[](0..count).map{(i) in self.deserialize(data, start:i)}
     }
@@ -28,7 +28,7 @@ struct Values : DeserializedStruct {
     var v1 : Byte
     var v2 : Byte
     var v3 : Byte
-    static func fromArray(values:Byte[]) -> DeserializedStruct? {
+    static func fromArray(values:[Byte]) -> DeserializedStruct? {
         println(values)
         return Values(v1:values[0], v2:values[1], v3:values[3])
     }
@@ -36,13 +36,8 @@ struct Values : DeserializedStruct {
 
 class StructDeserialized<StructType:DeserializedStruct where StructType.ValueType:Deserialized> {
     func anyValue(data:NSData) -> Any? {
-        if let valuesDes = StructType.ValueType.deserialize(data)  {
-//            println(valuesDes)
-//            return StructType.fromArray(values) as? StructType
-        } else {
-            return nil
-        }
-    }
+        let valuesDes = StructType.ValueType.deserialize(data)
+        return StructType.fromArray(valuesDes) as? StructType
 }
 
 let structDeserialized = StructDeserialized<Values>()

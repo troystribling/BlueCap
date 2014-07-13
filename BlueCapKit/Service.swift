@@ -30,7 +30,7 @@ class Service : NSObject {
         return self.cbService.UUID
     }
     
-    var characteristics : Characteristic[] {
+    var characteristics : [Characteristic] {
         return Array(self.discoveredCharacteristics.values)
     }
     
@@ -47,7 +47,7 @@ class Service : NSObject {
         self.perpheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
     }
     
-    func discoverCharacteristics(characteristics:CBUUID[], characteristicsDiscovered:() -> ()) {
+    func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscovered:() -> ()) {
         Logger.debug("Service#discoverCharacteristics")
         self.characteristicsDiscoveredCallback = characteristicsDiscovered
         self.perpheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)

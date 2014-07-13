@@ -16,7 +16,7 @@ class ServiceProfile {
     let uuid : CBUUID!
     let name : String!
     
-    var characteristics : CharacteristicProfile[] {
+    var characteristics : [CharacteristicProfile] {
         return Array(self.characteristicProfiles.values)
     }
     

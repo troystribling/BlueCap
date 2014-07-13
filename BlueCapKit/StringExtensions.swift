@@ -19,9 +19,9 @@ extension String {
     }
     
     func dataFromHexString() -> NSData {
-        var bytes : Byte[] = []
-        for i in 0..(countElements(self)/2) {
-            let stringBytes = self[2*i..2*i+2]
+        var bytes : [Byte] = []
+        for i in 0..<(countElements(self)/2) {
+            let stringBytes = self[2*i..<2*i+2]
             let byte = strtol(stringBytes.bridgeToObjectiveC().UTF8String, nil, 16)
             bytes += Byte(byte)
         }

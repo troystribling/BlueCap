@@ -21,7 +21,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     var isScanning  = false
     var connecting  = false
     
-    var peripherals : Peripheral[] {
+    var peripherals : [Peripheral] {
         return Array(self.discoveredPeripherals.values)
     }
     
@@ -38,7 +38,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
     }
     
-    func startScanningForServiceUUIDds(uuids:CBUUID[]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
+    func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
         if !self.isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDds")
             self.isScanning = true
@@ -121,11 +121,11 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:AnyObject[]!) {
+    func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:[AnyObject]!) {
         Logger.debug("CentralManager#didRetrieveConnectedPeripherals")
     }
     
-    func centralManager(_:CBCentralManager!, didRetrievePeripherals peripherals:AnyObject[]!) {
+    func centralManager(_:CBCentralManager!, didRetrievePeripherals peripherals:[AnyObject]!) {
         Logger.debug("CentralManager#didRetrievePeripherals")
     }
     

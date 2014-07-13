@@ -31,15 +31,12 @@ class Connectorator {
         initConnector(connector:self)
     }
     
-    init(timeoutRetries:Int, disconnectRetries:Int) {
+    init(timeoutRetries:Int, disconnectRetries:Int, initConnector:((connector:Connectorator) -> ())? = nil) {
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
-    }
-
-    convenience init(timeoutRetries:Int, disconnectRetries:Int, initConnector:(connector:Connectorator) -> ()) {
-        self.init(initConnector)
-        self.timeoutRetries = timeoutRetries
-        self.disconnectRetries = disconnectRetries
+        if let runInitConnector = initConnector {
+            runInitConnector(connector:self)
+        }
     }
     
     func onTimeout(onTimeoutCallback:(peripheral:Peripheral) -> ()) {
