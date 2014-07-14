@@ -52,7 +52,7 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> Deserialized {
+    func deserialize(data:NSData) -> AnyType.SelfType {
         switch self.endianness {
         case Endianness.Little:
             return AnyType.deserializeFromLittleEndian(data)

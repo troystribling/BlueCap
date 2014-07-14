@@ -45,18 +45,19 @@ func reverseBytes<T>(value:T) -> T {
 }
 
 protocol Deserialized {
-    class func fromString(data:String) -> Deserialized?
+    typealias SelfType
+    class func fromString(data:String) -> SelfType?
     
-    class func deserialize(data:NSData) -> Deserialized
-    class func deserialize(data:NSData, start:Int) -> Deserialized
+    class func deserialize(data:NSData) -> SelfType
+    class func deserialize(data:NSData, start:Int) -> SelfType
     
-    class func deserializeFromLittleEndian(data:NSData) -> Deserialized
-    class func deserializeFromLittleEndian(data:NSData) -> [Deserialized]
-    class func deserializeFromLittleEndian(data:NSData, start:Int) -> Deserialized
+    class func deserializeFromLittleEndian(data:NSData) -> SelfType
+    class func deserializeFromLittleEndian(data:NSData) -> [SelfType]
+    class func deserializeFromLittleEndian(data:NSData, start:Int) -> SelfType
 
-    class func deserializeFromBigEndian(data:NSData) -> Deserialized
-    class func deserializeFromBigEndian(data:NSData) -> [Deserialized]
-    class func deserializeFromBigEndian(data:NSData, start:Int) -> Deserialized
+    class func deserializeFromBigEndian(data:NSData) -> SelfType
+    class func deserializeFromBigEndian(data:NSData) -> [SelfType]
+    class func deserializeFromBigEndian(data:NSData, start:Int) -> SelfType
 }
 
 protocol Serialized {
@@ -71,16 +72,18 @@ protocol Serialized {
 }
 
 protocol DeserializedEnum {
-    typealias ValueType
-    class func fromNative(value:ValueType) -> DeserializedEnum?
-    class func fromString(value:String) -> DeserializedEnum?
+    typealias SelfType
+    typealias ValueType : Deserialized
+    class func fromNative(value:ValueType) -> SelfType?
+    class func fromString(value:String) -> SelfType?
     class func stringValues() -> [String]
     var stringValue : String {get}
     func toNative() -> ValueType
 }
 
 protocol DeserializedStruct {
-    typealias ValueType
+    typealias SelfType
+    typealias ValueType : Deserialized
     class func fromStrings(values:Dictionary<String, String>) -> DeserializedStruct?
     class func fromArray(values:[ValueType]) -> DeserializedStruct?
     var stringValues : Dictionary<String,String> {get}

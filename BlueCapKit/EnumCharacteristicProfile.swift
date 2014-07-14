@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueType:Deserialized> : CharacteristicProfile {
+class EnumCharacteristicProfile<EnumType:DeserializedEnum> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
 
@@ -69,7 +69,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueTy
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> Deserialized {
+    func deserialize(data:NSData) -> EnumType.ValueType.SelfType {
         switch self.endianness {
         case Endianness.Little:
             return EnumType.ValueType.deserializeFromLittleEndian(data)

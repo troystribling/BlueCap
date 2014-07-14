@@ -20,7 +20,7 @@ extension Byte : Deserialized {
     }
     static func deserialize(data:NSData) -> [Deserialized] {
         let count = data.length / sizeof(Byte)
-        return Int[](0..count).map{(i) in self.deserialize(data, start:i)}
+        return Int[](0..<count).map{(i) in self.deserialize(data, start:i)}
     }
 }
 
@@ -42,5 +42,5 @@ class StructDeserialized<StructType:DeserializedStruct where StructType.ValueTyp
 
 let structDeserialized = StructDeserialized<Values>()
 let data = NSData(bytes:[0x01, 0x0a, 0x0b], length:3)
-//let structValue = structDeserialized.anyValue(data)
+let structValue = structDeserialized.anyValue(data)
 
