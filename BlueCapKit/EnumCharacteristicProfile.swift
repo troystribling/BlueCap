@@ -17,14 +17,12 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueTy
     }
     
     // APPLICATION INTERFACE
-    init(uuid:String, name:String, fromEndianness endianness:Endianness = .Little) {
+    init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         self.endianness = endianness
-    }
-    
-    convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:(characteristic:EnumCharacteristicProfile<EnumType>) -> ()) {
-        self.init(uuid:uuid, name:name, fromEndianness:endianness)
-        profile(characteristic:self)
+        if let runProfile = profile {
+            runProfile(characteristic:self)
+        }
     }
 
     override func stringValues(data:NSData) -> Dictionary<String, String>? {

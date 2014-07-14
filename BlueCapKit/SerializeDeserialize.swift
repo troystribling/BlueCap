@@ -84,8 +84,8 @@ protocol DeserializedEnum {
 protocol DeserializedStruct {
     typealias SelfType
     typealias ValueType : Deserialized
-    class func fromStrings(values:Dictionary<String, String>) -> DeserializedStruct?
-    class func fromArray(values:[ValueType]) -> DeserializedStruct?
+    class func fromStrings(values:Dictionary<String, String>) -> SelfType?
+    class func fromArray(values:[ValueType]) -> SelfType?
     var stringValues : Dictionary<String,String> {get}
     func arrayValue() -> [ValueType]
 }
