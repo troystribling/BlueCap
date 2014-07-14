@@ -151,7 +151,6 @@
 		05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
 		05B6F07C19587CE200D798CB /* PeripheralServiceCharacteristicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicCell.swift; sourceTree = "<group>"; };
 		05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicViewController.swift; sourceTree = "<group>"; };
-		05BB68B9195BD44F00434136 /* Genrics.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Genrics.playground; sourceTree = "<group>"; };
 		05C3F1C51942159D006F80AD /* FunctionTypes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = FunctionTypes.playground; sourceTree = "<group>"; };
 		05CAF6CC1960E22500F6D598 /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
@@ -389,7 +388,6 @@
 			isa = PBXGroup;
 			children = (
 				05C3F1C51942159D006F80AD /* FunctionTypes.playground */,
-				05BB68B9195BD44F00434136 /* Genrics.playground */,
 				0518867119609B5800ED2D3A /* Bytes.playground */,
 				05764D80196A1E0600E6C801 /* Enums.playground */,
 				05B48C7C1971FA3200260F4A /* Structs.playground */,
