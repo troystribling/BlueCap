@@ -17,8 +17,8 @@ class CharacteristicProfile {
     var properties      : CBCharacteristicProperties!
     
     var afterDiscoveredCallback     : ((characteristic:Characteristic) -> ())?
-    var afterReadCallback           : ((value:Any) -> ())?
-    var beforeWriteCallback         : ((value:Any) -> ())?
+    var afterReadCallback           : ((value:Any) -> Any?)?
+    var beforeWriteCallback         : ((value:Any) -> Any?)?
     
     // APPLICATION INTERFACE
     init(uuid:String, name:String) {
