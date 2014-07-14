@@ -36,10 +36,10 @@ enum Enabled : Byte, DeserializedEnum {
     }
 }
 
-class EnumDeserialized<EnumType:DeserializedEnum where EnumType.ValueType == EnumType.ValueType.SelfType> {
+class EnumDeserialized<EnumType:DeserializedEnum where EnumType.ValueType == EnumType.ValueType.SelfType, EnumType == EnumType.SelfType> {
     func anyValue(data:NSData) -> Any? {
         let value = EnumType.ValueType.deserialize(data)
-        return EnumType.fromNative(value) as? EnumType
+        return EnumType.fromNative(value)
     }
 }
 

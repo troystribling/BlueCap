@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueType == EnumType.ValueType.SelfType> : CharacteristicProfile {
+class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueType == EnumType.ValueType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
 
@@ -29,7 +29,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueTy
 
     override func stringValues(data:NSData) -> Dictionary<String, String>? {
         let valueNative = self.deserialize(data)
-        if let value = EnumType.fromNative(valueNative) as? EnumType {
+        if let value = EnumType.fromNative(valueNative) {
             return [self.name:value.stringValue]
         } else {
             return nil
@@ -38,12 +38,12 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueTy
 
     override func anyValue(data:NSData) -> Any? {
         let value = self.deserialize(data)
-        return EnumType.fromNative(value) as? EnumType
+        return EnumType.fromNative(value)
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let dataString = data[self.name] {
-            if let value = EnumType.fromString(dataString) as? EnumType {
+            if let value = EnumType.fromString(dataString) {
                 let valueNative = value.toNative()
                 return self.serialize(valueNative)
             } else {
