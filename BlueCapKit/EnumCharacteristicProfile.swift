@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueType == EnumType.ValueType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
+class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType == EnumType.RawType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
 
@@ -61,16 +61,16 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueTy
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> EnumType.ValueType {
+    func deserialize(data:NSData) -> EnumType.RawType {
         switch self.endianness {
         case Endianness.Little:
-            return EnumType.ValueType.deserializeFromLittleEndian(data)
+            return EnumType.RawType.deserializeFromLittleEndian(data)
         case Endianness.Big:
-            return EnumType.ValueType.deserializeFromBigEndian(data)
+            return EnumType.RawType.deserializeFromBigEndian(data)
         }
     }
     
-    func serialize(value:EnumType.ValueType) -> NSData {
+    func serialize(value:EnumType.RawType) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(value)

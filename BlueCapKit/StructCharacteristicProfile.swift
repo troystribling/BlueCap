@@ -8,7 +8,7 @@
 
 import Foundation
 
-class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.ValueType == StructType.ValueType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
+class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.RawType == StructType.RawType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
     
@@ -50,16 +50,16 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> [StructType.ValueType] {
+    func deserialize(data:NSData) -> [StructType.RawType] {
         switch self.endianness {
         case Endianness.Little:
-            return StructType.ValueType.deserializeFromLittleEndian(data)
+            return StructType.RawType.deserializeFromLittleEndian(data)
         case Endianness.Big:
-            return StructType.ValueType.deserializeFromBigEndian(data)
+            return StructType.RawType.deserializeFromBigEndian(data)
         }
     }
     
-    func serialize(values:[StructType.ValueType]) -> NSData {
+    func serialize(values:[StructType.RawType]) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(values)
