@@ -16,7 +16,9 @@ class CharacteristicProfile {
     var permissions     : CBAttributePermissions!
     var properties      : CBCharacteristicProperties!
     
-    var afterDiscoveredCallback         : ((characteristic:Characteristic) -> ())?
+    var afterDiscoveredCallback     : ((characteristic:Characteristic) -> ())?
+    var afterReadCallback           : ((value:Any) -> ())?
+    var beforeWriteCallback         : ((value:Any) -> ())?
     
     // APPLICATION INTERFACE
     init(uuid:String, name:String) {
@@ -31,16 +33,25 @@ class CharacteristicProfile {
         profile(characteristic:self)
     }
     
-    func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
-        self.afterDiscoveredCallback = afterDiscoveredCallback
-    }
-    
     func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
         return (self.properties.toRaw() & property.toRaw()) > 0
     }
     
     func permissionEnabled(permission:CBAttributePermissions) -> Bool {
         return (self.permissions.toRaw() & permissions.toRaw()) > 0
+    }
+    
+    // Callbacks
+    func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
+        self.afterDiscoveredCallback = afterDiscoveredCallback
+    }
+    
+    func afterRead(afterReadCallback:(value:Any) -> ()) {
+        self.afterReadCallback = afterReadCallback
+    }
+
+    func beforeWrite(beforeWriteCallback:(value:Any) -> ()) {
+        self.beforeWriteCallback = beforeWriteCallback
     }
 
     // INTERNAL INTERFACE
