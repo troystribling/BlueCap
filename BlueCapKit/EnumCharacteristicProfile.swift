@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnum> : CharacteristicProfile {
+class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.ValueType == EnumType.ValueType.SelfType> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
 
@@ -28,23 +28,17 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum> : CharacteristicProfi
     }
 
     override func stringValues(data:NSData) -> Dictionary<String, String>? {
-        if let valueNative = self.deserialize(data) as? EnumType.ValueType {
-            if let value = EnumType.fromNative(valueNative) as? EnumType {
-                return [self.name:value.stringValue]
-            } else {
-                return nil
-            }
+        let valueNative = self.deserialize(data)
+        if let value = EnumType.fromNative(valueNative) as? EnumType {
+            return [self.name:value.stringValue]
         } else {
             return nil
         }
     }
 
     override func anyValue(data:NSData) -> Any? {
-        if let value = self.deserialize(data) as? EnumType.ValueType {
-            return EnumType.fromNative(value) as? EnumType
-        } else {
-            return nil
-        }
+        let value = self.deserialize(data)
+        return EnumType.fromNative(value) as? EnumType
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
@@ -69,7 +63,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum> : CharacteristicProfi
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> EnumType.ValueType.SelfType {
+    func deserialize(data:NSData) -> EnumType.ValueType {
         switch self.endianness {
         case Endianness.Little:
             return EnumType.ValueType.deserializeFromLittleEndian(data)
