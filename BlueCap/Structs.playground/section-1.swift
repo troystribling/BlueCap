@@ -3,24 +3,26 @@
 import Foundation
 
 protocol Deserialized {
-    class func deserialize(data:NSData, start:Int) -> Deserialized
-    class func deserialize(data:NSData) -> [Deserialized]
+    typealias SelfType
+    class func deserialize(data:NSData, start:Int) -> SelfType
+    class func deserialize(data:NSData) -> [SelfType]
 }
 
 protocol DeserializedStruct {
-    typealias ValueType
-    class func fromArray(values:[ValueType]) -> DeserializedStruct?
+    typealias SelfType
+    typealias ValueType : Deserialized
+    class func fromArray(values:[ValueType]) -> SelfType?
 }
 
 extension Byte : Deserialized {
-    static func deserialize(data:NSData, start:Int) -> Deserialized {
+    static func deserialize(data:NSData, start:Int) -> Byte {
         var value : Byte = 0
         data.getBytes(&value, range: NSMakeRange(start, sizeof(Byte)))
         return value
     }
-    static func deserialize(data:NSData) -> [Deserialized] {
+    static func deserialize(data:NSData) -> [Byte] {
         let count = data.length / sizeof(Byte)
-        return Int[](0..<count).map{(i) in self.deserialize(data, start:i)}
+        return [Int](0..<count).map{(i) in self.deserialize(data, start:i)}
     }
 }
 
@@ -28,19 +30,20 @@ struct Values : DeserializedStruct {
     var v1 : Byte
     var v2 : Byte
     var v3 : Byte
-    static func fromArray(values:[Byte]) -> DeserializedStruct? {
-        println(values)
-        return Values(v1:values[0], v2:values[1], v3:values[3])
+    static func fromArray(values:[Byte]) -> Values? {
+        return Values(v1:values[0], v2:values[1], v3:values[2])
     }
 }
 
-class StructDeserialized<StructType:DeserializedStruct where StructType.ValueType:Deserialized> {
+class StructDeserialized<StructType:DeserializedStruct where StructType.ValueType == StructType.ValueType.SelfType, StructType == StructType.SelfType> {
     func anyValue(data:NSData) -> Any? {
-        let valuesDes = StructType.ValueType.deserialize(data)
-        return StructType.fromArray(valuesDes) as? StructType
+        let values = StructType.ValueType.deserialize(data)
+        return StructType.fromArray(values)
+    }
 }
 
 let structDeserialized = StructDeserialized<Values>()
-let data = NSData(bytes:[0x01, 0x0a, 0x0b], length:3)
+let values : [Byte] = [0x01, 0x0a, 0x0b]
+let data = NSData(bytes:values, length:3)
 let structValue = structDeserialized.anyValue(data)
 
