@@ -26,10 +26,9 @@ class ServiceProfile {
         profile(service:self)
     }
     
-    func addCharacteristic(characteristicProfile:CharacteristicProfile) -> CharacteristicProfile {
+    func addCharacteristic( characteristicProfile:CharacteristicProfile) {
         Logger.debug("ServiceProfile#createCharateristic: name=\(characteristicProfile.name), uuid=\(characteristicProfile.uuid.UUIDString)")
         self.characteristicProfiles[characteristicProfile.uuid] = characteristicProfile
-        return characteristicProfile
     }
     
 }

@@ -38,7 +38,7 @@
 		05840FAD19420B0000C744E6 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
 		05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */; };
-		05AEAF93196C44B2009E8A0C /* ByteExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */; };
+		05AEAF93196C44B2009E8A0C /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */; };
 		05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */; };
 		05AEAF97196C4591009E8A0C /* Int8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF96196C4591009E8A0C /* Int8Extensions.swift */; };
 		05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */; };
@@ -52,7 +52,7 @@
 		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
 		05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */; };
 		05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */; };
-		05F3281D196E2EE700821D14 /* AnyCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3281C196E2EE700821D14 /* AnyCharacteristicProfile.swift */; };
+		05F3281D196E2EE700821D14 /* DeserializedCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3281C196E2EE700821D14 /* DeserializedCharacteristicProfile.swift */; };
 		05F328211970957200821D14 /* StructCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F328201970957200821D14 /* StructCharacteristicProfile.swift */; };
 		05F929841949498200542A1E /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F929831949498200542A1E /* Service.swift */; };
 /* End PBXBuildFile section */
@@ -140,7 +140,7 @@
 		05840FA619420B0000C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
 		05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeDeserialize.swift; sourceTree = "<group>"; };
-		05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteExtensions.swift; sourceTree = "<group>"; };
+		05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
 		05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
 		05AEAF96196C4591009E8A0C /* Int8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int8Extensions.swift; sourceTree = "<group>"; };
 		05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int16Extensions.swift; sourceTree = "<group>"; };
@@ -156,7 +156,7 @@
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
 		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
-		05F3281C196E2EE700821D14 /* AnyCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyCharacteristicProfile.swift; sourceTree = "<group>"; };
+		05F3281C196E2EE700821D14 /* DeserializedCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserializedCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05F328201970957200821D14 /* StructCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05F929831949498200542A1E /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -232,7 +232,7 @@
 		0552E4071955EFB900F33D4E /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
-				05F3281C196E2EE700821D14 /* AnyCharacteristicProfile.swift */,
+				05F3281C196E2EE700821D14 /* DeserializedCharacteristicProfile.swift */,
 				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
 				054314CE1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift */,
 				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
@@ -374,11 +374,11 @@
 		05B48C7B1971A15800260F4A /* Serialization/Deserialization */ = {
 			isa = PBXGroup;
 			children = (
-				05AEAF92196C44B2009E8A0C /* ByteExtensions.swift */,
 				05AEAF96196C4591009E8A0C /* Int8Extensions.swift */,
 				05AEAF98196C45A1009E8A0C /* Int16Extensions.swift */,
 				0518866F1960861400ED2D3A /* NSDataExtensions.swift */,
 				05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */,
+				05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */,
 				05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */,
 			);
 			name = Serialization/Deserialization;
@@ -633,9 +633,9 @@
 				054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */,
 				05F328211970957200821D14 /* StructCharacteristicProfile.swift in Sources */,
 				05CAF6CD1960E22500F6D598 /* StringExtensions.swift in Sources */,
-				05F3281D196E2EE700821D14 /* AnyCharacteristicProfile.swift in Sources */,
+				05F3281D196E2EE700821D14 /* DeserializedCharacteristicProfile.swift in Sources */,
 				05F929841949498200542A1E /* Service.swift in Sources */,
-				05AEAF93196C44B2009E8A0C /* ByteExtensions.swift in Sources */,
+				05AEAF93196C44B2009E8A0C /* Uint8Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

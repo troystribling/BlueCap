@@ -13,12 +13,16 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
     var endianness : Endianness = .Little
     
     // APPLICATION INTERFACE
-    init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
+    init(uuid:String, name:String, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
-        self.endianness = endianness
         if let runProfile = profile {
             runProfile(characteristic:self)
         }
+    }
+
+    convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
+        self.init(uuid:uuid, name:name, profile:profile)
+        self.endianness = endianness
     }
     
     override func stringValues(data:NSData) -> Dictionary<String, String>? {

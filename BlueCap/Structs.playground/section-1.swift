@@ -10,8 +10,8 @@ protocol Deserialized {
 
 protocol DeserializedStruct {
     typealias SelfType
-    typealias ValueType : Deserialized
-    class func fromArray(values:[ValueType]) -> SelfType?
+    typealias NativeType : Deserialized
+    class func fromArray(values:[NativeType]) -> SelfType?
 }
 
 extension Byte : Deserialized {
@@ -35,9 +35,9 @@ struct Values : DeserializedStruct {
     }
 }
 
-class StructDeserialized<StructType:DeserializedStruct where StructType.ValueType == StructType.ValueType.SelfType, StructType == StructType.SelfType> {
+class StructDeserialized<StructType:DeserializedStruct where StructType.NativeType == StructType.NativeType.SelfType, StructType == StructType.SelfType> {
     func anyValue(data:NSData) -> Any? {
-        let values = StructType.ValueType.deserialize(data)
+        let values = StructType.NativeType.deserialize(data)
         return StructType.fromArray(values)
     }
 }

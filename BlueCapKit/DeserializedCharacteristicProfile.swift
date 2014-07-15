@@ -1,5 +1,5 @@
 //
-//  AnyCharacteristicProfile.swift
+//  DeserializedCharacteristicProfile.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/9/14.
@@ -8,30 +8,34 @@
 
 import Foundation
 
-class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
+class DeserializedCharacteristicProfile<DeserializedType:Deserialized where DeserializedType == DeserializedType.SelfType> : CharacteristicProfile {
 
     var endianness : Endianness = .Little
     
     // APPLICATION INTERFACE
-    init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:AnyCharacteristicProfile<AnyType>) -> ())? = nil) {
+    init(uuid:String, name:String, profile:((characteristic:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
-        self.endianness = endianness
         if let runProfile = profile {
             runProfile(characteristic:self)
         }
     }
-    
+
+    convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
+        self.init(uuid:uuid, name:name, profile:profile)
+        self.endianness = endianness
+    }
+
     override func stringValues(data:NSData) -> Dictionary<String, String>? {
         return [self.name:"\(self.deserialize(data))"]
     }
     
     override func anyValue(data:NSData) -> Any? {
-        return self.deserialize(data) as? AnyType
+        return self.deserialize(data)
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let stringValue = data[self.name] {
-            if let value = AnyType.fromString(stringValue) as? AnyType {
+            if let value = DeserializedType.fromString(stringValue) as? DeserializedType {
                 return self.serialize(value)
             } else {
                 return nil
@@ -42,7 +46,7 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
     }
 
     override func dataValue(object: Any) -> NSData? {
-        if let value = object as? AnyType {
+        if let value = object as? DeserializedType {
             return self.serialize(value)
         } else {
             return nil
@@ -50,16 +54,16 @@ class AnyCharacteristicProfile<AnyType:Deserialized> : CharacteristicProfile {
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> AnyType.SelfType {
+    func deserialize(data:NSData) -> DeserializedType {
         switch self.endianness {
         case Endianness.Little:
-            return AnyType.deserializeFromLittleEndian(data)
+            return DeserializedType.deserializeFromLittleEndian(data)
         case Endianness.Big:
-            return AnyType.deserializeFromBigEndian(data)
+            return DeserializedType.deserializeFromBigEndian(data)
         }
     }
     
-    func serialize(value:AnyType) -> NSData {
+    func serialize(value:DeserializedType) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(value)
