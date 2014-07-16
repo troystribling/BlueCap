@@ -11,6 +11,9 @@ import Foundation
 class DeserializedCharacteristicProfile<DeserializedType:Deserialized where DeserializedType == DeserializedType.SelfType> : CharacteristicProfile {
 
     var endianness : Endianness = .Little
+    var afterReadCallback           : ((value:DeserializedType) -> DeserializedType?)?
+    var beforeWriteCallback         : ((value:DeserializedType) -> DeserializedType?)?
+
     
     // APPLICATION INTERFACE
     init(uuid:String, name:String, profile:((characteristic:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
@@ -26,17 +29,31 @@ class DeserializedCharacteristicProfile<DeserializedType:Deserialized where Dese
     }
 
     override func stringValues(data:NSData) -> Dictionary<String, String>? {
-        return [self.name:"\(self.deserialize(data))"]
+        let deserializedValue = self.deserialize(data)
+        if let afterReadCallback = self.afterReadCallback {
+            if let alteredValue = afterReadCallback(value:deserializedValue) {
+                return [self.name:"\(alteredValue)"]
+            } else {
+                return nil
+            }
+        } else {
+            return [self.name:"\(deserializedValue)"]
+        }
     }
     
     override func anyValue(data:NSData) -> Any? {
-        return self.deserialize(data)
+        let deserializedValue = self.deserialize(data)
+        if let afterReadCallback = self.afterReadCallback {
+            return afterReadCallback(value:deserializedValue)
+        } else {
+            return deserializedValue
+        }
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let stringValue = data[self.name] {
-            if let value = DeserializedType.fromString(stringValue) as? DeserializedType {
-                return self.serialize(value)
+            if let value = DeserializedType.fromString(stringValue) {
+                return self.applyBeforeWriteCallback(value)
             } else {
                 return nil
             }
@@ -45,14 +62,23 @@ class DeserializedCharacteristicProfile<DeserializedType:Deserialized where Dese
         }
     }
 
-    override func dataValue(object: Any) -> NSData? {
+    override func dataValue(object:Any) -> NSData? {
         if let value = object as? DeserializedType {
-            return self.serialize(value)
+            return self.applyBeforeWriteCallback(value)
         } else {
             return nil
         }
     }
     
+    // CALLBACKS
+    func afterRead(afterReadCallback:(value:DeserializedType) -> DeserializedType?) {
+        self.afterReadCallback = afterReadCallback
+    }
+    
+    func beforeWrite(beforeWriteCallback:(value:DeserializedType) -> DeserializedType?) {
+        self.beforeWriteCallback = beforeWriteCallback
+    }
+
     // PRIVATE INTERFACE
     func deserialize(data:NSData) -> DeserializedType {
         switch self.endianness {
@@ -69,6 +95,18 @@ class DeserializedCharacteristicProfile<DeserializedType:Deserialized where Dese
             return NSData.serializeToLittleEndian(value)
         case Endianness.Big:
             return NSData.serializeToBigEndian(value)
+        }
+    }
+    
+    func applyBeforeWriteCallback(value:DeserializedType) -> NSData? {
+        if let beforeWriteCallback = self.beforeWriteCallback {
+            if let alteredValue = beforeWriteCallback(value:value) {
+                return self.serialize(alteredValue)
+            } else {
+                return nil
+            }
+        } else {
+            return self.serialize(value)
         }
     }
 }

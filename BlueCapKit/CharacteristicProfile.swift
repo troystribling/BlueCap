@@ -17,8 +17,6 @@ class CharacteristicProfile {
     var properties      : CBCharacteristicProperties!
     
     var afterDiscoveredCallback     : ((characteristic:Characteristic) -> ())?
-    var afterReadCallback           : ((value:Any) -> Any?)?
-    var beforeWriteCallback         : ((value:Any) -> Any?)?
     
     // APPLICATION INTERFACE
     init(uuid:String, name:String) {
@@ -41,19 +39,11 @@ class CharacteristicProfile {
         return (self.permissions.toRaw() & permissions.toRaw()) > 0
     }
     
-    // Callbacks
+    // CALLBACKS
     func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
     
-    func afterRead(afterReadCallback:(value:Any) -> Any?) {
-        self.afterReadCallback = afterReadCallback
-    }
-
-    func beforeWrite(beforeWriteCallback:(value:Any) -> Any?) {
-        self.beforeWriteCallback = beforeWriteCallback
-    }
-
     // INTERNAL INTERFACE
     func stringValues(data:NSData) -> Dictionary<String, String>? {
         return [self.name:data.hexStringValue()]
@@ -74,4 +64,5 @@ class CharacteristicProfile {
             return NSData()
         }
     }
+    
 }
