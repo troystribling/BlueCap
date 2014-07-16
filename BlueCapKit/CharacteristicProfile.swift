@@ -46,11 +46,11 @@ class CharacteristicProfile {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
     
-    func afterRead(afterReadCallback:(value:Any) -> ()) {
+    func afterRead(afterReadCallback:(value:Any) -> Any?) {
         self.afterReadCallback = afterReadCallback
     }
 
-    func beforeWrite(beforeWriteCallback:(value:Any) -> ()) {
+    func beforeWrite(beforeWriteCallback:(value:Any) -> Any?) {
         self.beforeWriteCallback = beforeWriteCallback
     }
 

@@ -63,6 +63,14 @@ class Characteristic {
         }
     }
     
+    var anyValue : Any? {
+        if self.value {
+            return self.profile.anyValue(self.value)
+        } else {
+            return nil
+        }
+    }
+    
     // APPLICATION INTERFACE
     init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
@@ -138,6 +146,23 @@ class Characteristic {
         }
     }
 
+    func write(stringValue:Dictionary<String, String>, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+        if let value = self.profile.dataValue(stringValue) {
+            self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
+        } else {
+            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+
+    func write(anyValue:Any, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+        if let value = self.profile.dataValue(anyValue) {
+            self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
+        } else {
+            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+
+
     // PRIVATE INTERFACE
     func timeoutRead(sequence:Int) {
         Logger.debug("Characteristic#timeoutRead: sequence \(sequence)")
@@ -175,8 +200,11 @@ class Characteristic {
 
     // INTERNAL INTERFACE
     func didDiscover() {
-        if let afterDiscoveredCallback = self.profile?.afterDiscoveredCallback {
+        if let afterDiscoveredCallback = self.profile.afterDiscoveredCallback {
             CentralManager.asyncCallback(){afterDiscoveredCallback(characteristic:self)}
+        }
+        if let profileAfterDiscoveredCallback = self.profile.afterDiscoveredCallback {
+            profileAfterDiscoveredCallback(characteristic:self)
         }
     }
     

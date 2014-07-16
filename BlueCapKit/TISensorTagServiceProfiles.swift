@@ -11,7 +11,9 @@ import BlueCapKit
 
 struct TISensorTag {
 
+    //***************************************************************************************************
     // Accelerometer Service
+    //***************************************************************************************************
     struct AccelerometerService {
         static let uuid = "F000AA10-0451-4000-B000-000000000000"
         static let name = "TI Accelerometer Service"
