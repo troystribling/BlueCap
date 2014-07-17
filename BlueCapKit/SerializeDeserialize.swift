@@ -73,19 +73,19 @@ protocol Serialized {
 
 protocol DeserializedEnum {
     typealias SelfType
-    typealias NativeType : Deserialized
-    class func fromNative(value:NativeType) -> SelfType?
+    typealias RawType : Deserialized
+    class func fromRaw(value:RawType) -> SelfType?
     class func fromString(value:String) -> SelfType?
     class func stringValues() -> [String]
     var stringValue : String {get}
-    func toNative() -> NativeType
+    func toRaw() -> RawType
 }
 
 protocol DeserializedStruct {
     typealias SelfType
-    typealias NativeType : Deserialized
-    class func fromNativeArray(values:[NativeType]) -> SelfType?
+    typealias RawType : Deserialized
+    class func fromRawValues(values:[RawType]) -> SelfType?
     class func fromStrings(values:Dictionary<String, String>) -> SelfType?
     var stringValues : Dictionary<String,String> {get}
-    func arrayValue() -> [NativeType]
+    func rawValues() -> [RawType]
 }

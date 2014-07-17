@@ -8,9 +8,11 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.NativeType == EnumType.NativeType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
+class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType == EnumType.RawType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
+    var afterReadCallback           : ((value:EnumType) -> EnumType?)?
+    var beforeWriteCallback         : ((value:EnumType) -> EnumType?)?
 
     var stringValues : [String] {
         return EnumType.stringValues()
@@ -30,9 +32,17 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.NativeT
     }
 
     override func stringValues(data:NSData) -> Dictionary<String, String>? {
-        let valueNative = self.deserialize(data)
-        if let value = EnumType.fromNative(valueNative) {
-            return [self.name:value.stringValue]
+        let valueRaw = self.deserialize(data)
+        if let value = EnumType.fromRaw(valueRaw) {
+            if let afterReadCallback = self.afterReadCallback {
+                if let alteredValue = afterReadCallback(value:value) {
+                    return [self.name:alteredValue.stringValue]
+                } else {
+                    return nil
+                }
+            } else {
+                return [self.name:value.stringValue]
+            }
         } else {
             return nil
         }
@@ -40,13 +50,13 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.NativeT
 
     override func anyValue(data:NSData) -> Any? {
         let value = self.deserialize(data)
-        return EnumType.fromNative(value)
+        return EnumType.fromRaw(value)
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let dataString = data[self.name] {
             if let value = EnumType.fromString(dataString) {
-                let valueNative = value.toNative()
+                let valueNative = value.toRaw()
                 return self.serialize(valueNative)
             } else {
                 return nil
@@ -58,23 +68,32 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.NativeT
     
     override func dataValue(object:Any) -> NSData? {
         if let value = object as? EnumType {
-           return self.serialize(value.toNative())
+           return self.serialize(value.toRaw())
         } else {
             return nil
         }
     }
     
+    // CALLBACKS
+    func afterRead(afterReadCallback:(value:EnumType) -> EnumType?) {
+        self.afterReadCallback = afterReadCallback
+    }
+    
+    func beforeWrite(beforeWriteCallback:(value:EnumType) -> EnumType?) {
+        self.beforeWriteCallback = beforeWriteCallback
+    }
+
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> EnumType.NativeType {
+    func deserialize(data:NSData) -> EnumType.RawType {
         switch self.endianness {
         case Endianness.Little:
-            return EnumType.NativeType.deserializeFromLittleEndian(data)
+            return EnumType.RawType.deserializeFromLittleEndian(data)
         case Endianness.Big:
-            return EnumType.NativeType.deserializeFromBigEndian(data)
+            return EnumType.RawType.deserializeFromBigEndian(data)
         }
     }
     
-    func serialize(value:EnumType.NativeType) -> NSData {
+    func serialize(value:EnumType.RawType) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(value)
@@ -82,4 +101,17 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.NativeT
             return NSData.serializeToBigEndian(value)
         }
     }
+    
+    func applyBeforeWriteCallback(value:EnumType) -> NSData? {
+        if let beforeWriteCallback = self.beforeWriteCallback {
+            if let alteredValue = beforeWriteCallback(value:value) {
+                return self.serialize(alteredValue.toRaw())
+            } else {
+                return nil
+            }
+        } else {
+            return self.serialize(value.toRaw())
+        }
+    }
+
 }

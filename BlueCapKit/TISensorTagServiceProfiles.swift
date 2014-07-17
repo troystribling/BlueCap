@@ -25,7 +25,7 @@ struct TISensorTag {
                 var x:Int8
                 var y:Int8
                 var z:Int8
-                static func fromNativeArray(values:[Int8]) -> Values? {
+                static func fromRawValues(values:[Int8]) -> Values? {
                     return Values(x:values[0], y:values[1], z:values[2])
                 }
                 static func fromStrings(values:Dictionary<String, String>) -> Values? {
@@ -54,7 +54,7 @@ struct TISensorTag {
                 var stringValues : Dictionary<String,String> {
                     return ["x":"\(x)", "y":"\(y)", "z":"\(z)"]
                 }
-                func arrayValue() -> [Int8] {
+                func rawValues() -> [Int8] {
                     return [x, y, z]
                 }
 
@@ -67,7 +67,7 @@ struct TISensorTag {
             enum Value: UInt8, DeserializedEnum {
                 case No     = 0
                 case Yes    = 1
-                static func fromNative(value:UInt8) -> Value? {
+                static func fromRaw(value:UInt8) -> Value? {
                     switch value {
                     case 0:
                         return Value.No
@@ -98,7 +98,7 @@ struct TISensorTag {
                         return "Yes"
                     }
                 }
-                func toNative() -> UInt8 {
+                func toRaw() -> UInt8 {
                     switch self {
                     case .No:
                         return 0

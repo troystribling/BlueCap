@@ -8,7 +8,7 @@
 
 import Foundation
 
-class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.NativeType == StructType.NativeType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
+class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.RawType == StructType.RawType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
     
@@ -39,7 +39,7 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let value = StructType.fromStrings(data) {
-            return self.serialize(value.arrayValue())
+            return self.serialize(value.rawValues())
         } else {
             return nil
         }
@@ -47,23 +47,23 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
     
     override func dataValue(object:Any) -> NSData? {
         if let value = object as? StructType {
-            return self.serialize(value.arrayValue())
+            return self.serialize(value.rawValues())
         } else {
             return nil
         }
     }
     
     // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> [StructType.NativeType] {
+    func deserialize(data:NSData) -> [StructType.RawType] {
         switch self.endianness {
         case Endianness.Little:
-            return StructType.NativeType.deserializeFromLittleEndian(data)
+            return StructType.RawType.deserializeFromLittleEndian(data)
         case Endianness.Big:
-            return StructType.NativeType.deserializeFromBigEndian(data)
+            return StructType.RawType.deserializeFromBigEndian(data)
         }
     }
     
-    func serialize(values:[StructType.NativeType]) -> NSData {
+    func serialize(values:[StructType.RawType]) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(values)
@@ -74,7 +74,7 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
     
     func structFromData(data:NSData) -> StructType? {
         let values = self.deserialize(data)
-        return StructType.fromNativeArray(values)
+        return StructType.fromRawValues(values)
     }
 
 }
