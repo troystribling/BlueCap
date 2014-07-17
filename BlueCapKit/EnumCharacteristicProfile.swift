@@ -50,14 +50,21 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
 
     override func anyValue(data:NSData) -> Any? {
         let value = self.deserialize(data)
-        return EnumType.fromRaw(value)
+        if let enumValue =  EnumType.fromRaw(value) {
+            if let afterReadCallback = self.afterReadCallback {
+                return afterReadCallback(value:enumValue)
+            } else {
+                return enumValue
+            }
+        } else {
+            return nil
+        }
     }
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let dataString = data[self.name] {
             if let value = EnumType.fromString(dataString) {
-                let valueNative = value.toRaw()
-                return self.serialize(valueNative)
+                return self.applyBeforeWriteCallback(value)
             } else {
                 return nil
             }
@@ -68,7 +75,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
     
     override func dataValue(object:Any) -> NSData? {
         if let value = object as? EnumType {
-           return self.serialize(value.toRaw())
+            return self.applyBeforeWriteCallback(value)
         } else {
             return nil
         }
