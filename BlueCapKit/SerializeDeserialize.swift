@@ -87,5 +87,5 @@ protocol DeserializedStruct {
     class func fromRawValues(values:[RawType]) -> SelfType?
     class func fromStrings(values:Dictionary<String, String>) -> SelfType?
     var stringValues : Dictionary<String,String> {get}
-    func rawValues() -> [RawType]
+    func toRawValues() -> [RawType]
 }

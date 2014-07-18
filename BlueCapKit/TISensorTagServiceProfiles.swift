@@ -54,7 +54,7 @@ struct TISensorTag {
                 var stringValues : Dictionary<String,String> {
                     return ["x":"\(x)", "y":"\(y)", "z":"\(z)"]
                 }
-                func rawValues() -> [Int8] {
+                func toRawValues() -> [Int8] {
                     return [x, y, z]
                 }
 
@@ -130,7 +130,10 @@ class TISensorTagServiceProfiles {
                 })
             // Accelerometer Enabled
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>(
-                uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name){(CharacteristicProfile:EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>) in
+                uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name){(characteristicProfile:EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>) in
+                    characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
+                        characteristic.write(TISensorTag.AccelerometerService.Enabled.Value.Yes)
+                    }
                 })
             // Accelerometer Update Period
             serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt8>(
