@@ -11,8 +11,6 @@ import Foundation
 class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType == EnumType.RawType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
     
     var endianness : Endianness = .Little
-    var afterReadCallback           : ((value:EnumType) -> EnumType?)?
-    var beforeWriteCallback         : ((value:EnumType) -> EnumType?)?
 
     var stringValues : [String] {
         return EnumType.stringValues()
@@ -32,30 +30,18 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
     }
 
     override func stringValues(data:NSData) -> Dictionary<String, String>? {
-        let valueRaw = self.deserialize(data)
-        if let value = EnumType.fromRaw(valueRaw) {
-            if let afterReadCallback = self.afterReadCallback {
-                if let alteredValue = afterReadCallback(value:value) {
-                    return [self.name:alteredValue.stringValue]
-                } else {
-                    return nil
-                }
-            } else {
-                return [self.name:value.stringValue]
-            }
+        if let value = self.anyValue(data) as? EnumType {
+            return [self.name:value.stringValue]
         } else {
             return nil
         }
     }
 
     override func anyValue(data:NSData) -> Any? {
-        let value = self.deserialize(data)
-        if let enumValue =  EnumType.fromRaw(value) {
-            if let afterReadCallback = self.afterReadCallback {
-                return afterReadCallback(value:enumValue)
-            } else {
-                return enumValue
-            }
+        let valueRaw = self.deserialize(data)
+        Logger.debug("EnumCharacteristicProfile#anyValue: data = \(data.hexStringValue()), raw value = \(valueRaw)")
+        if let value =  EnumType.fromRaw(valueRaw) {
+            return value
         } else {
             return nil
         }
@@ -63,8 +49,9 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let dataString = data[self.name] {
+            Logger.debug("EnumCharacteristicProfile#dataValue: data = \(data)")
             if let value = EnumType.fromString(dataString) {
-                return self.applyBeforeWriteCallback(value)
+                return self.serialize(value.toRaw())
             } else {
                 return nil
             }
@@ -75,21 +62,14 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
     
     override func dataValue(object:Any) -> NSData? {
         if let value = object as? EnumType {
-            return self.applyBeforeWriteCallback(value)
+            Logger.debug("EnumCharacteristicProfile#dataValue: data = \(value.toRaw())")
+            return self.serialize(value.toRaw())
         } else {
             return nil
         }
     }
     
-    // CALLBACKS
-    func afterRead(afterReadCallback:(value:EnumType) -> EnumType?) {
-        self.afterReadCallback = afterReadCallback
-    }
     
-    func beforeWrite(beforeWriteCallback:(value:EnumType) -> EnumType?) {
-        self.beforeWriteCallback = beforeWriteCallback
-    }
-
     // PRIVATE INTERFACE
     func deserialize(data:NSData) -> EnumType.RawType {
         switch self.endianness {
@@ -109,16 +89,4 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
         }
     }
     
-    func applyBeforeWriteCallback(value:EnumType) -> NSData? {
-        if let beforeWriteCallback = self.beforeWriteCallback {
-            if let alteredValue = beforeWriteCallback(value:value) {
-                return self.serialize(alteredValue.toRaw())
-            } else {
-                return nil
-            }
-        } else {
-            return self.serialize(value.toRaw())
-        }
-    }
-
 }
