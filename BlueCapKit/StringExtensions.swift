@@ -18,6 +18,10 @@ extension String {
         }
     }
     
+    var floatValue : Float {
+        return (self as NSString).floatValue
+    }
+    
     func dataFromHexString() -> NSData {
         var bytes : [Byte] = []
         for i in 0..<(countElements(self)/2) {

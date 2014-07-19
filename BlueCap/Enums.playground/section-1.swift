@@ -47,3 +47,4 @@ let enumDeserialized = EnumDeserialized<Enabled>()
 let values : [Byte] = [0x01]
 let data = NSData(bytes:values, length:1)
 (enumDeserialized.anyValue(data) as Enabled) == Enabled.Yes
+
