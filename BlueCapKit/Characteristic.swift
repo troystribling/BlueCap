@@ -118,6 +118,7 @@ class Characteristic {
     
     func read(afterReadSuccessCallback:() -> (), afterReadFailedCallback:((error:NSError)->())?) {
         if self.propertyEnabled(.Read) {
+            Logger.debug("Characteristic#read: \(self.uuid.UUIDString)")
             self.afterUpdateSuccessCallback = afterReadSuccessCallback
             self.afterUpdateFailedCallback = afterReadFailedCallback
             self.service.perpheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
@@ -129,15 +130,12 @@ class Characteristic {
         }
     }
 
-    func write(value:NSData, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    func write(value:NSData, afterWriteSucessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.Write) {
+            Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.afterWriteSuccessCallback = afterWriteSucessCallback
             self.afterWriteFailedCallback = afterWriteFailedCallback
-            if afterWriteSucessCallback {
-                self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
-            } else {
-                self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
-            }
+            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
             self.writing = true
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
@@ -146,7 +144,21 @@ class Characteristic {
         }
     }
 
-    func write(stringValue:Dictionary<String, String>, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    func write(value:NSData, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+        if self.propertyEnabled(.WriteWithoutResponse) {
+            Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
+            self.afterWriteSuccessCallback = nil
+            self.afterWriteFailedCallback = afterWriteFailedCallback
+            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
+            self.writing = true
+            ++self.writeSequence
+            self.timeoutWrite(self.writeSequence)
+        } else {
+            NSException(name:"Characteristic write error", reason: "write without response not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+
+    func write(stringValue:Dictionary<String, String>, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if let value = self.profile.dataValue(stringValue) {
             self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
         } else {
@@ -154,14 +166,30 @@ class Characteristic {
         }
     }
 
-    func write(anyValue:Any, afterWriteSucessCallback:(()->())? = nil, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    func write(stringValue:Dictionary<String, String>, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+        if let value = self.profile.dataValue(stringValue) {
+            self.write(value, afterWriteFailedCallback)
+        } else {
+            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+
+    func write(anyValue:Any, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if let value = self.profile.dataValue(anyValue) {
+            
             self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
     }
 
+    func write(anyValue:Any, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+        if let value = self.profile.dataValue(anyValue) {
+            self.write(value, afterWriteFailedCallback)
+        } else {
+            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
 
     // PRIVATE INTERFACE
     func timeoutRead(sequence:Int) {
@@ -200,6 +228,7 @@ class Characteristic {
 
     // INTERNAL INTERFACE
     func didDiscover() {
+        Logger.debug("Characteristic#didDiscover:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
         if let afterDiscoveredCallback = self.profile.afterDiscoveredCallback {
             CentralManager.asyncCallback(){afterDiscoveredCallback(characteristic:self)}
         }
@@ -210,10 +239,12 @@ class Characteristic {
     
     func didUpdateNotificationState(error:NSError!) {
         if error {
+            Logger.debug("Characteristic#didUpdateNotificationState Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let notificationStateChangedFailedCallback = self.notificationStateChangedFailedCallback {
                 CentralManager.asyncCallback(){notificationStateChangedFailedCallback(error:error)}
             }
         } else {
+            Logger.debug("Characteristic#didUpdateNotificationState Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let notificationStateChangedSuccessCallback = self.notificationStateChangedSuccessCallback {
                 CentralManager.asyncCallback(notificationStateChangedSuccessCallback)
             }
@@ -223,10 +254,12 @@ class Characteristic {
     func didUpdate(error:NSError!) {
         self.reading = false
         if error {
+            Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
                 CentralManager.asyncCallback(){afterUpdateFailedCallback(error:error)}
             }
         } else {
+            Logger.debug("Characteristic#didUpdate Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterUpdateSuccessCallback = self.afterUpdateSuccessCallback {
                 CentralManager.asyncCallback(afterUpdateSuccessCallback)
             }
@@ -236,10 +269,12 @@ class Characteristic {
     func didWrite(error:NSError!) {
         self.writing = false
         if error {
+            Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterWriteFailedCallback = self.afterWriteFailedCallback {
                 CentralManager.asyncCallback(){afterWriteFailedCallback(error:error)}
             }
         } else {
+            Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterWriteSuccessCallback = self.afterWriteSuccessCallback {
                 CentralManager.asyncCallback(afterWriteSuccessCallback)
             }
