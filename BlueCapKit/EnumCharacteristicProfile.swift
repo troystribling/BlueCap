@@ -12,10 +12,10 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
     
     var endianness : Endianness = .Little
 
-    var stringValues : [String] {
+    override var discreteStringValues : [String] {
         return EnumType.stringValues()
     }
-    
+
     // APPLICATION INTERFACE
     init(uuid:String, name:String, profile:((characteristic:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)

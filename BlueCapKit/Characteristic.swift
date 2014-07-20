@@ -71,6 +71,10 @@ class Characteristic {
         }
     }
     
+    var discreteStringValues : [String] {
+        return self.profile.discreteStringValues
+    }
+    
     // APPLICATION INTERFACE
     init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic

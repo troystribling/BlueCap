@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6154.21" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Gm5-G9-oBc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6185.7" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Gm5-G9-oBc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6153.13"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6181.2"/>
     </dependencies>
     <scenes>
-        <!--Peripheral View Controller - Name-->
+        <!--Name-->
         <scene sceneID="xNx-2v-y8B">
             <objects>
                 <tableViewController id="XKG-l0-TPz" customClass="PeripheralViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -127,7 +127,7 @@
             </objects>
             <point key="canvasLocation" x="1697" y="249"/>
         </scene>
-        <!--Peripheral Manager View Controller - Peripheral-->
+        <!--Peripheral-->
         <scene sceneID="liP-61-EJD">
             <objects>
                 <tableViewController id="CAb-bN-tC0" customClass="PeripheralManagerViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -225,7 +225,7 @@
             </objects>
             <point key="canvasLocation" x="1218" y="934"/>
         </scene>
-        <!--Table View Controller - Services-->
+        <!--Services-->
         <scene sceneID="BwA-CH-XMP">
             <objects>
                 <tableViewController id="daR-Mz-YiG" sceneMemberID="viewController">
@@ -283,7 +283,7 @@
             </objects>
             <point key="canvasLocation" x="1692" y="933"/>
         </scene>
-        <!--Table View Controller - Service Profiles-->
+        <!--Service Profiles-->
         <scene sceneID="A36-Hm-X1j">
             <objects>
                 <tableViewController id="RDl-GN-TkA" sceneMemberID="viewController">
@@ -925,7 +925,7 @@
             </objects>
             <point key="canvasLocation" x="3735" y="1648"/>
         </scene>
-        <!--Peripheral Advertisements View Controller - Advertisements-->
+        <!--Advertisements-->
         <scene sceneID="UIA-LO-yfN">
             <objects>
                 <tableViewController id="LBb-So-p2j" customClass="PeripheralAdvertisementsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -973,7 +973,7 @@
             </objects>
             <point key="canvasLocation" x="2165" y="-367"/>
         </scene>
-        <!--Peripheral Services View Controller - Services-->
+        <!--Services-->
         <scene sceneID="WVo-G7-hTg">
             <objects>
                 <tableViewController id="VpE-cb-2P0" customClass="PeripheralServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -1023,7 +1023,7 @@
             </objects>
             <point key="canvasLocation" x="2165" y="249"/>
         </scene>
-        <!--Peripheral Service Characteristics View Controller - Characteristics-->
+        <!--Characteristics-->
         <scene sceneID="Awb-N4-Vuk">
             <objects>
                 <tableViewController id="flO-6L-RZ3" customClass="PeripheralServiceCharacteristicsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -1072,7 +1072,7 @@
             </objects>
             <point key="canvasLocation" x="2628" y="249"/>
         </scene>
-        <!--Peripheral Service Characteristic View Controller - Characteristic-->
+        <!--Characteristic-->
         <scene sceneID="QcM-LX-kfU">
             <objects>
                 <tableViewController id="qDj-sM-07o" customClass="PeripheralServiceCharacteristicViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -1467,7 +1467,7 @@
             </objects>
             <point key="canvasLocation" x="3067" y="249"/>
         </scene>
-        <!--Peripheral Service Characteristic Values View Controller - Values-->
+        <!--Values-->
         <scene sceneID="0ms-TL-iQP">
             <objects>
                 <tableViewController id="ljK-JQ-Agv" customClass="PeripheralServiceCharacteristicValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -1519,18 +1519,18 @@
                     </navigationItem>
                     <connections>
                         <outlet property="refreshButton" destination="Ujk-4y-jRa" id="la4-U9-zec"/>
-                        <segue destination="Fgs-SR-AAC" kind="push" identifier="CharacteristicFreeFormValue" id="Shv-rw-Zsd"/>
-                        <segue destination="Ab0-DZ-mXp" kind="push" identifier="CharacteristicDiscreteValue" id="bnk-4c-Gfl"/>
+                        <segue destination="Fgs-SR-AAC" kind="push" identifier="PeripheralServiceCharacteristicEditValue" id="Shv-rw-Zsd"/>
+                        <segue destination="Ab0-DZ-mXp" kind="push" identifier="PeripheralServiceCharacteristicEditDiscreteValues" id="bnk-4c-Gfl"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Iy-e4-WX9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3525" y="249"/>
         </scene>
-        <!--View Controller - New Value-->
+        <!--New Value-->
         <scene sceneID="ONO-2I-dJx">
             <objects>
-                <viewController id="Fgs-SR-AAC" sceneMemberID="viewController">
+                <viewController id="Fgs-SR-AAC" customClass="PeripheralServiceCharacteristicEditValueViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MOZ-6m-7pg">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1556,16 +1556,16 @@
             </objects>
             <point key="canvasLocation" x="4142" y="-68"/>
         </scene>
-        <!--Table View Controller - New Value-->
+        <!--New Value-->
         <scene sceneID="FiJ-VJ-H6P">
             <objects>
-                <tableViewController id="Ab0-DZ-mXp" sceneMemberID="viewController">
+                <tableViewController id="Ab0-DZ-mXp" customClass="PeripheralServiceCharacteristicEditDiscreteValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Jnh-PR-nUt">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="checkmark" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CharacteristicDiscreteValueCell" textLabel="ESD-Ul-cK9" style="IBUITableViewCellStyleDefault" id="j8L-Uf-bOc">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="checkmark" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCharacteristicDiscreteValueCell" textLabel="ESD-Ul-cK9" style="IBUITableViewCellStyleDefault" id="j8L-Uf-bOc">
                                 <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="j8L-Uf-bOc" id="y2m-hq-NYd">
@@ -1594,7 +1594,7 @@
             </objects>
             <point key="canvasLocation" x="4142" y="578"/>
         </scene>
-        <!--Peripherals View Controller - Peripherals-->
+        <!--Peripherals-->
         <scene sceneID="fVi-u5-rlX">
             <objects>
                 <tableViewController id="Iax-qU-br4" customClass="PeripheralsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -1645,7 +1645,7 @@
             </objects>
             <point key="canvasLocation" x="1218" y="249"/>
         </scene>
-        <!--Table View Controller - Service Profiles-->
+        <!--Service Profiles-->
         <scene sceneID="YHQ-Rd-s1p">
             <objects>
                 <tableViewController id="zEN-c1-NRB" sceneMemberID="viewController">
@@ -1691,7 +1691,7 @@
             </objects>
             <point key="canvasLocation" x="1260" y="3069"/>
         </scene>
-        <!--Table View Controller - Characteristic Profiles-->
+        <!--Characteristic Profiles-->
         <scene sceneID="pPZ-cj-EZf">
             <objects>
                 <tableViewController id="zWl-Dc-J9w" sceneMemberID="viewController">
@@ -2202,7 +2202,7 @@
             </objects>
             <point key="canvasLocation" x="2218" y="3071"/>
         </scene>
-        <!--Table View Controller - Characteristic Values-->
+        <!--Characteristic Values-->
         <scene sceneID="xKB-CJ-bqP">
             <objects>
                 <tableViewController id="KJi-TH-L2L" sceneMemberID="viewController">
@@ -2240,7 +2240,7 @@
             </objects>
             <point key="canvasLocation" x="2706" y="3071"/>
         </scene>
-        <!--Navigation Controller - Profiles-->
+        <!--Profiles-->
         <scene sceneID="qez-Id-BOC">
             <objects>
                 <navigationController definesPresentationContext="YES" id="6n5-d3-u2z" sceneMemberID="viewController">
@@ -2256,7 +2256,7 @@
             </objects>
             <point key="canvasLocation" x="751" y="3069"/>
         </scene>
-        <!--Navigation Controller - Peripheral-->
+        <!--Peripheral-->
         <scene sceneID="Gdg-cU-BBN">
             <objects>
                 <navigationController definesPresentationContext="YES" id="ysN-jF-arT" sceneMemberID="viewController">
@@ -2292,7 +2292,7 @@
             </objects>
             <point key="canvasLocation" x="195" y="934"/>
         </scene>
-        <!--Navigation Controller - Central-->
+        <!--Central-->
         <scene sceneID="9nG-V3-L1A">
             <objects>
                 <navigationController definesPresentationContext="YES" id="ekL-3M-31h" sceneMemberID="viewController">
@@ -2318,6 +2318,9 @@
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination"/>
+        <simulatedScreenMetrics key="destination">
+            <size key="portraitSize" width="320" height="480"/>
+            <size key="landscapeSize" width="480" height="320"/>
+        </simulatedScreenMetrics>
     </simulatedMetricsContainer>
 </document>

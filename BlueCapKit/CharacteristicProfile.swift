@@ -18,6 +18,10 @@ class CharacteristicProfile {
     
     var afterDiscoveredCallback     : ((characteristic:Characteristic) -> ())?
     
+    var discreteStringValues : [String] {
+        return []
+    }
+    
     // APPLICATION INTERFACE
     init(uuid:String, name:String) {
         self.uuid = CBUUID.UUIDWithString(uuid)

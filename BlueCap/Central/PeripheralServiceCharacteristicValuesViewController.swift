@@ -15,7 +15,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     @IBOutlet var refreshButton :UIButton
     
     struct MainStoryboard {
-        static let peripheralServiceCharactertisticValueCell  = "PeripheralServiceCharacteristicValueCell"
+        static let peripheralServiceCharactertisticValueCell                = "PeripheralServiceCharacteristicValueCell"
+        static let peripheralServiceCharacteristicEditDiscreteValuesSegue   = "PeripheralServiceCharacteristicEditDiscreteValues"
+        static let peripheralServiceCharacteristicEditValueSeque            = "PeripheralServiceCharacteristicEditValue"
     }
     
     init(coder aDecoder:NSCoder!) {
@@ -32,6 +34,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if let characteristic = self.characteristic {
+            if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
+                let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell)
+                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
+                viewController.characteristic = self.characteristic
+            } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
+            }
+        }
     }
     
     @IBAction func updateValues() {
@@ -53,17 +63,36 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as PeripheralServiceCharacteristicValueCell
-        if let stringValues = self.characteristic?.stringValues {
-            let names = Array(stringValues.keys)
-            let values = Array(stringValues.values)
-            cell.valueNameLabel.text = names[indexPath.row]
-            cell.valueLable.text = values[indexPath.row]
+        if let characteristic = self.characteristic {
+            if let stringValues = characteristic.stringValues {
+                let names = Array(stringValues.keys)
+                let values = Array(stringValues.values)
+                cell.valueNameLabel.text = names[indexPath.row]
+                cell.valueLable.text = values[indexPath.row]
+            }
+            if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+                cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryType.None
+            }
         }
         return cell
     }
     
     // UITableViewDelegate
+    override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+        if let characteristic = self.characteristic {
+            if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+                if characteristic.discreteStringValues.isEmpty {
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:self)
+                } else {
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:self)
+                }
+            }
+        }
+    }
     
+    // PRIVATE
     func readValue() {
         if let characteristic = self.characteristic {
             characteristic.read({
