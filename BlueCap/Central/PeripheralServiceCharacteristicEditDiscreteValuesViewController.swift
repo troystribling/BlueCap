@@ -39,7 +39,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
         if let characteristic = self.characteristic {
-            return 0
+            return characteristic.discreteStringValues.count
         } else {
             return 0
         }
@@ -47,14 +47,21 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.PeripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
-        if let stringValues = self.characteristic?.stringValues {
-            let names = Array(stringValues.keys)
-            let values = Array(stringValues.values)
-            cell.textLabel.text = names[indexPath.row]
+        if let characteristic = self.characteristic {
+            let stringValue = characteristic.discreteStringValues[indexPath.row]
+            cell.textLabel.text = stringValue
+            if let value = characteristic.stringValues?[characteristic.name] {
+                if value == stringValue {
+                    cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                } else {
+                    cell.accessoryType = UITableViewCellAccessoryType.None
+                }
+            }
         }
         return cell
     }
     
     // UITableViewDelegate
-
+    override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+    }
 }

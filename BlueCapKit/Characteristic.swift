@@ -109,7 +109,7 @@ class Characteristic {
         }
     }
 
-    func stopUpdates(afterReadCallback:() -> ()) {
+    func stopUpdates() {
         if self.propertyEnabled(.Notify) {
             self.afterUpdateSuccessCallback = nil
             self.afterUpdateFailedCallback = nil

@@ -88,13 +88,40 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
     }
     
-    @IBAction func toggleNotificaton() {
+    @IBAction func toggleNotificatons() {
         if let characteristic = self.characteristic {
+            self.notifiyButton.enabled = false
+            self.notifiyButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
+            if characteristic.isNotifying {
+                self.notifiyButton.setTitle("Stopping Notifications", forState:.Normal)
+                characteristic.stopNotifying({
+                        characteristic.stopUpdates()
+                        self.setNotifyButtonLabel()
+                    },
+                    notificationStateChangedFailedCallback: {(error) in
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        self.setNotifyButtonLabel()
+                    })
+            } else {
+                self.notifiyButton.setTitle("Starting Notifications", forState:.Normal)
+                characteristic.startNotifying({
+                    characteristic.startUpdates({
+                            self.setNotifyButtonLabel()
+                        }, afterUpdateFailedCallback:{(error) in
+                            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        })
+                    },
+                    notificationStateChangedFailedCallback:{(error) in
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        self.setNotifyButtonLabel()
+                    })
+            }
         }
     }
     
     func setNotifyButtonLabel() {
         if let characteristic = self.characteristic {
+            self.notifiyButton.enabled = true
             if characteristic.isNotifying {
                 self.notifiyButton.setTitle("Stop Notifications", forState:.Normal)
                 self.notifiyButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)

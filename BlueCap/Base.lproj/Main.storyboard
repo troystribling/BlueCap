@@ -1123,7 +1123,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="toggleNotifications" destination="qDj-sM-07o" eventType="touchUpInside" id="aFj-mG-FBj"/>
+                                                        <action selector="toggleNotificatons" destination="qDj-sM-07o" eventType="touchDown" id="Hsk-jY-AkS"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
