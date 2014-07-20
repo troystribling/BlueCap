@@ -21,31 +21,30 @@ struct TISensorTag {
         struct Data {
             static let uuid = "F000AA11-0451-4000-B000-000000000000"
             static let name = "Accelerometer Data"
-            struct Values  : DeserializedStruct {
+            struct Value : DeserializedStruct {
                 var xRaw:Int8
                 var yRaw:Int8
                 var zRaw:Int8
                 var x:Float
                 var y:Float
                 var z:Float
-                static func fromRawValues(rawValues:[Int8]) -> Values? {
+                static func fromRawValues(rawValues:[Int8]) -> Value? {
                     let values = self.valuesFromRaw(rawValues)
-                    return Values(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
+                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
                 }
-                static func fromStrings(stringValues:Dictionary<String, String>) -> Values? {
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
                     let xRaw = self.valueFromString("xRaw", values:stringValues)
                     let yRaw = self.valueFromString("yRaw", values:stringValues)
                     let zRaw = self.valueFromString("zRaw", values:stringValues)
                     if xRaw && yRaw && zRaw {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
-                        return Values(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
+                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
                     } else {
                         return nil
                     }
                 }
                 static func valuesFromRaw(values:[Int8]) -> [Float] {
-                    return [-Float(values[0])/64.0, -Float(values[1])/64.0, Float(values[2]) / 64.0]
-
+                    return [-Float(values[0])/64.0, -Float(values[1])/64.0, Float(values[2])/64.0]
                 }
                 static func valueFromString(name:String, values:Dictionary<String,String>) -> Int8? {
                     if let value = values[name]?.toInt() {
@@ -121,6 +120,34 @@ struct TISensorTag {
         struct UpdatePeriod {
             static let uuid = "F000AA13-0451-4000-B000-000000000000"
             static let name = "Accelerometer Update Period"
+            struct Value : DeserializedStruct {
+                var periodRaw : UInt8
+                var period : Int
+                static func fromRawValues(values:[UInt8]) -> Value? {
+                    let period = 10*Int(values[0])
+                    return Value(periodRaw:values[0], period:period)
+                }
+                static func fromStrings(values:Dictionary<String, String>) -> Value? {
+                    if let period = values["period"]?.toInt() {
+                        return Value(periodRaw:self.periodRawFromPeriod(period), period:period)
+                    } else {
+                        return nil
+                    }
+                }
+                static func periodRawFromPeriod(period:Int) -> UInt8 {
+                    if period/10 > 255 {
+                        return 255
+                    } else {
+                        return UInt8(period/10)
+                    }
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["periodRaw":"\(periodRaw)", "period":"\(period)"]
+                }
+                func toRawValues() -> [UInt8] {
+                    return [periodRaw]
+                }
+            }
         }
     }
 }
@@ -134,16 +161,20 @@ class TISensorTagServiceProfiles {
         // Accelerometer Service
         profileManage.addService(ServiceProfile(uuid:TISensorTag.AccelerometerService.uuid, name:TISensorTag.AccelerometerService.name){(serviceProfile:ServiceProfile) in
             // Accelerometer Data
-            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Values>(uuid:TISensorTag.AccelerometerService.Data.uuid, name:TISensorTag.AccelerometerService.Data.name))
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>(uuid:TISensorTag.AccelerometerService.Data.uuid, name:TISensorTag.AccelerometerService.Data.name)
+                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>) in
+            })
             // Accelerometer Enabled
-            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>(
-                uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name){(characteristicProfile:EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>) in
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>(uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name)
+                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>) in
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
                         characteristic.write(TISensorTag.AccelerometerService.Enabled.Value.Yes, afterWriteSuccessCallback:{})
                     }
                 })
             // Accelerometer Update Period
-            serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt8>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name))
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod.Value>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
+                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod.Value>) in
+                })
         })
         
     }
