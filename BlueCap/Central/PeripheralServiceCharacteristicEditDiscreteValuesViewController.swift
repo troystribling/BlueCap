@@ -65,10 +65,18 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
         if let characteristic = self.characteristic {
             let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]
-            characteristic.write(stringValue, afterWriteSuccessCallback:{}, afterWriteFailedCallback:{(error) in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            characteristic.write(stringValue, afterWriteSuccessCallback:{
+                    self.writeComplete()
+                },
+                afterWriteFailedCallback:{(error) in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.writeComplete()
             })
-            self.navigationController.popViewControllerAnimated(true)
         }
+    }
+    
+    // PRIVATE
+    func writeComplete() {
+        self.navigationController.popViewControllerAnimated(true)
     }
 }

@@ -33,6 +33,10 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
+    override func viewDidAppear(animated:Bool)  {
+        self.updateValues()
+    }
+    
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if let characteristic = self.characteristic {
             if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
