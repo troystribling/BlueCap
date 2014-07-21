@@ -180,7 +180,6 @@ class Characteristic {
 
     func write(anyValue:Any, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if let value = self.profile.dataValue(anyValue) {
-            
             self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()

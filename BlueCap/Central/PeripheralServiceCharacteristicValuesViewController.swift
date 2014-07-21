@@ -36,7 +36,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if let characteristic = self.characteristic {
             if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
-                let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell)
                 let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
                 viewController.characteristic = self.characteristic
             } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
