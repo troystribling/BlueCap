@@ -12,6 +12,7 @@ import BlueCapKit
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
    
     var characteristic          : Characteristic?
+    let progressView            : ProgressView!
     @IBOutlet var refreshButton :UIButton
     
     struct MainStoryboard {
@@ -22,13 +23,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
+        self.progressView = ProgressView(message:"Updating")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
-            self.readValue()
+            self.updateValues()
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
@@ -48,7 +50,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     @IBAction func updateValues() {
-        self.readValue()
+        self.progressView.show(UIApplication.sharedApplication().keyWindow)
+        self.readValues()
     }
     
     // UITableViewDataSource
@@ -96,12 +99,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     // PRIVATE
-    func readValue() {
+    func readValues() {
         if let characteristic = self.characteristic {
             characteristic.read({
                     self.tableView.reloadData()
+                    self.progressView.remove()
                 },
                 afterReadFailedCallback:{(error) in
+                    self.progressView.remove()
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 })
         }
