@@ -23,7 +23,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
-        self.progressView = ProgressView(message:"Updating")
+        self.progressView = ProgressView()
     }
     
     override func viewDidLoad() {

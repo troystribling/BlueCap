@@ -10,34 +10,33 @@ import UIkit
 
 class ProgressView : UIView {
     
-    let DISPLAY_MESSAGE_WIDTH   : Float             = 200.0
-    let BACKGROUND_ALPHA        : CGFloat           = 0.4
-    let TEXTBOX_OFFSET          : CGFloat           = 20.0
+    let BACKGROUND_ALPHA        : CGFloat           = 0.6
     let DISPLAY_REMOVE_DURATION : NSTimeInterval    = 0.5
     
-    var textBoxView     : TextBoxView!
-    var backgroundView  : UIView!
+    var activityIndicator   : UIActivityIndicatorView!
+    var backgroundView      : UIView!
     
     var displayed = false
     
-    init(frame:CGRect, message:String) {
+    init(frame:CGRect) {
         super.init(frame:frame)
-        self.textBoxView = TextBoxView(text:message, width:DISPLAY_MESSAGE_WIDTH)
-        self.textBoxView.center = CGPointMake(self.center.x, self.center.y - TEXTBOX_OFFSET)
+        self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle:UIActivityIndicatorViewStyle.WhiteLarge)
+        self.activityIndicator.center = self.center
         self.backgroundView = UIView(frame:frame)
         self.backgroundView.backgroundColor = UIColor.blackColor()
         self.backgroundView.alpha = BACKGROUND_ALPHA
-//        self.addSubview(self.backgroundView)
-        self.addSubview(self.textBoxView)
+        self.addSubview(self.backgroundView)
+        self.addSubview(self.activityIndicator)
     }
     
-    convenience init(message:String) {
-        self.init(frame:UIScreen.mainScreen().bounds, message:message)
+    convenience init() {
+        self.init(frame:UIScreen.mainScreen().bounds)
     }
     
     func show(view:UIView) {
         if !self.displayed {
             self.displayed = true
+            self.activityIndicator.startAnimating()
             view.addSubview(self)
         }
     }
