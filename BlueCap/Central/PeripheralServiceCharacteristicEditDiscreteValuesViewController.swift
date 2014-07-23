@@ -12,6 +12,7 @@ import BlueCapKit
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
    
     var characteristic  : Characteristic?
+    var progressView    : ProgressView!
     
     struct MainStoryboard {
         static let PeripheralServiceCharacteristicDiscreteValueCell  = "PeripheralServiceCharacteristicDiscreteValueCell"
@@ -19,6 +20,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
+        self.progressView = ProgressView()
     }
     
     override func viewDidLoad() {
@@ -63,6 +65,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+        self.progressView.show(UIApplication.sharedApplication().keyWindow)
         if let characteristic = self.characteristic {
             let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]
             characteristic.write(stringValue, afterWriteSuccessCallback:{
@@ -78,5 +81,6 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     // PRIVATE
     func writeComplete() {
         self.navigationController.popViewControllerAnimated(true)
+        self.progressView.remove()
     }
 }
