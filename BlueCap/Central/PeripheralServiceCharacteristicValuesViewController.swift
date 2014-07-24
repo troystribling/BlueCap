@@ -45,12 +45,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
                 viewController.characteristic = self.characteristic
             } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
+//                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
+//                viewController.characteristic = self.characteristic
             }
         }
     }
     
     @IBAction func updateValues() {
-        self.progressView.show(UIApplication.sharedApplication().keyWindow)
+        self.progressView.show()
         self.readValues()
     }
     

@@ -65,7 +65,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
-        self.progressView.show(UIApplication.sharedApplication().keyWindow)
+        self.progressView.show()
         if let characteristic = self.characteristic {
             let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]
             characteristic.write(stringValue, afterWriteSuccessCallback:{

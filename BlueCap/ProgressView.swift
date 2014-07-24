@@ -33,6 +33,10 @@ class ProgressView : UIView {
         self.init(frame:UIScreen.mainScreen().bounds)
     }
     
+    func show() {
+        self.show(UIApplication.sharedApplication().keyWindow)
+    }
+    
     func show(view:UIView) {
         if !self.displayed {
             self.displayed = true

@@ -1540,17 +1540,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
-                                <connections>
-                                    <outlet property="delegate" destination="Fgs-SR-AAC" id="n3N-um-1dx"/>
-                                </connections>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="New Value" id="qC6-hX-sHJ"/>
-                    <connections>
-                        <outlet property="valueTextField" destination="J6D-MW-7oK" id="z93-SD-m62"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YHC-G5-ek2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

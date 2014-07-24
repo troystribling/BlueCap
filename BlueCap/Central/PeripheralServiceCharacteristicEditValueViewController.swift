@@ -21,22 +21,35 @@ class PeripheralServiceCharacteristicEditValueViewController : UITableViewContro
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let valueName = self.valueName {
-            self.navigationItem.title = self.valueName
-            if let value = self.characteristic?.stringValues?[valueName] {
-                self.valueTextField.text = value
-            }
-        }
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+//        if let valueName = self.valueName {
+//            self.navigationItem.title = self.valueName
+//            if let value = self.characteristic?.stringValues?[valueName] {
+//                self.valueTextField.text = value
+//            }
+//        }
+//        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        let value = self.valueTextField.text
-        var values = self.characteristic?.stringValues
-        let valueName = self.valueName
-        if value && values && valueName {
-//            values![valueName!] = value!
+        if let newValue = self.valueTextField.text {
+            if let valueName = self.valueName {
+                if let characteristic = self.characteristic {
+                    if let values = characteristic.stringValues {
+                        var newValues = values
+                        newValues[valueName] = newValue
+                        let progressView = ProgressView()
+                        progressView.show()
+                        characteristic.write(newValues, afterWriteSuccessCallback: {
+                                progressView.remove()
+                                self.navigationController.popViewControllerAnimated(true)
+                            }, afterWriteFailedCallback: {(error) in
+                                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                                self.navigationController.popViewControllerAnimated(true)
+                            })
+                    }
+                }
+            }
         }
         return true
     }
