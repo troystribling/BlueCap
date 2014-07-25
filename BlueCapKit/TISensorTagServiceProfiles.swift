@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreBluetooth
 import BlueCapKit
 
 struct TISensorTag {
@@ -170,10 +171,14 @@ class TISensorTagServiceProfiles {
             // Accelerometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>(uuid:TISensorTag.AccelerometerService.Data.uuid, name:TISensorTag.AccelerometerService.Data.name)
                 {(characteristicProfile:StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.AccelerometerService.Data.Value.fromRawValues([-2, 6, 69]))
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             })
             // Accelerometer Enabled
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>(uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name)
                 {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.AccelerometerService.Enabled.Value.No)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
                         characteristic.write(TISensorTag.AccelerometerService.Enabled.Value.Yes, afterWriteSuccessCallback:{})
                     }
@@ -181,6 +186,8 @@ class TISensorTagServiceProfiles {
             // Accelerometer Update Period
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod.Value>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
                 {(characteristicProfile:StructCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod.Value>) in
+                    characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
                 })
         })
         

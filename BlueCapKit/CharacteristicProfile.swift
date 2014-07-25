@@ -15,6 +15,7 @@ class CharacteristicProfile {
     let name            : String!
     var permissions     : CBAttributePermissions!
     var properties      : CBCharacteristicProperties!
+    var initialValue    : NSData?
     
     var afterDiscoveredCallback     : ((characteristic:Characteristic) -> ())?
     
