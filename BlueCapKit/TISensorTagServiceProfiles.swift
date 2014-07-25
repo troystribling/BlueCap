@@ -124,21 +124,28 @@ struct TISensorTag {
                 var periodRaw : UInt8
                 var period : Int
                 static func fromRawValues(values:[UInt8]) -> Value? {
-                    let period = 10*Int(values[0])
+                    var period = 10*Int(values[0])
+                    if period < 10 {
+                        period = 10
+                    }
                     return Value(periodRaw:values[0], period:period)
                 }
                 static func fromStrings(values:Dictionary<String, String>) -> Value? {
                     if let period = values["period"]?.toInt() {
-                        return Value(periodRaw:self.periodRawFromPeriod(period), period:period)
+                        let rawPeriod = self.periodRawFromPeriod(period)
+                        return Value(periodRaw:rawPeriod, period:10*period)
                     } else {
                         return nil
                     }
                 }
                 static func periodRawFromPeriod(period:Int) -> UInt8 {
-                    if period/10 > 255 {
+                    let scaledPeriod = period/10
+                    if scaledPeriod > 255 {
                         return 255
+                    } else if scaledPeriod < 10 {
+                        return 10
                     } else {
-                        return UInt8(period/10)
+                        return UInt8(scaledPeriod)
                     }
                 }
                 var stringValues : Dictionary<String,String> {

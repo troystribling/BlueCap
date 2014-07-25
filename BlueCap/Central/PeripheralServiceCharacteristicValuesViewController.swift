@@ -13,6 +13,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
    
     var characteristic          : Characteristic?
     let progressView            : ProgressView!
+    var selectedIndex           : NSIndexPath?
+    
     @IBOutlet var refreshButton :UIButton
     
     struct MainStoryboard {
@@ -30,6 +32,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         super.viewDidLoad()
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
+            if characteristic.isNotifying {
+                self.refreshButton.enabled = false
+            } else {
+                self.refreshButton.enabled = true
+            }
             self.updateValues()
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
@@ -45,8 +52,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
                 viewController.characteristic = self.characteristic
             } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
-//                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
-//                viewController.characteristic = self.characteristic
+                if let stringValues = characteristic.stringValues {
+                    let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
+                    viewController.characteristic = self.characteristic
+                    if let selectedIndex = self.selectedIndex {
+                        let names = Array(stringValues.keys)
+                        viewController.valueName = names[selectedIndex.row]
+                    }
+                }
             }
         }
     }
@@ -89,6 +102,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+        self.selectedIndex = indexPath
         if let characteristic = self.characteristic {
             if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
                 if characteristic.discreteStringValues.isEmpty {

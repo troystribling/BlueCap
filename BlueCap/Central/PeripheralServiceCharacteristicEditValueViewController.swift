@@ -9,7 +9,7 @@
 import UIKit
 import BlueCapKit
 
-class PeripheralServiceCharacteristicEditValueViewController : UITableViewController, UITextFieldDelegate {
+class PeripheralServiceCharacteristicEditValueViewController : UIViewController, UITextFieldDelegate {
    
     @IBOutlet var valueTextField    : UITextField
     var characteristic              : Characteristic?
@@ -18,16 +18,16 @@ class PeripheralServiceCharacteristicEditValueViewController : UITableViewContro
     init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-//        if let valueName = self.valueName {
-//            self.navigationItem.title = self.valueName
-//            if let value = self.characteristic?.stringValues?[valueName] {
-//                self.valueTextField.text = value
-//            }
-//        }
-//        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+        if let valueName = self.valueName {
+            self.navigationItem.title = valueName
+            if let value = self.characteristic?.stringValues?[valueName] {
+                self.valueTextField.text = value
+            }
+        }
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
     // UITextFieldDelegate
@@ -53,5 +53,5 @@ class PeripheralServiceCharacteristicEditValueViewController : UITableViewContro
         }
         return true
     }
-    
+
 }
