@@ -45,7 +45,7 @@ struct BLESIGGATT {
     }
     
     //***************************************************************************************************
-    // Battery Level Service
+    // Battery Service
     //***************************************************************************************************
     struct BatteryService {
         static let uuid = "180f"
@@ -57,7 +57,7 @@ struct BLESIGGATT {
     }
 
     //***************************************************************************************************
-    // Tx Power Level Service
+    // Tx Power Service
     //***************************************************************************************************
     struct TxPowerService {
         static let uuid = "1804"
@@ -74,7 +74,24 @@ class BLESIGGATTProfiles {
     
     class func create () {
         
-        let profileManage = ProfileManager.sharedInstance()
+        let profileManager = ProfileManager.sharedInstance()
+        
+        //***************************************************************************************************
+        // Device Information Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:BLESIGGATT.DeviceInformationService.uuid, name:BLESIGGATT.DeviceInformationService.name){(serviceProfile:ServiceProfile) in
+        })
 
+        //***************************************************************************************************
+        // Battery Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:BLESIGGATT.BatteryService.uuid, name:BLESIGGATT.BatteryService.name){(serviceProfile:ServiceProfile) in
+        })
+
+        //***************************************************************************************************
+        // Tx Power Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:BLESIGGATT.TxPowerService.uuid, name:BLESIGGATT.TxPowerService.name){(serviceProfile:ServiceProfile) in
+        })
     }
 }

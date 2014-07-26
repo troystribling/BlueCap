@@ -314,30 +314,44 @@ class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Magnetometer Service
         //***************************************************************************************************
+        profileManage.addService(ServiceProfile(uuid:TISensorTag.MagnetometerService.uuid, name:TISensorTag.MagnetometerService.name){(serviceProfile:ServiceProfile) in
+        })
 
         //***************************************************************************************************
         // Gyroscope Service
         //***************************************************************************************************
+        profileManage.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile:ServiceProfile) in
+        })
 
         //***************************************************************************************************
         // Temperature Service
         //***************************************************************************************************
+        profileManage.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile:ServiceProfile) in
+        })
 
         //***************************************************************************************************
         // Barometer Service
         //***************************************************************************************************
+        profileManage.addService(ServiceProfile(uuid:TISensorTag.BarometerService.uuid, name:TISensorTag.BarometerService.name){(serviceProfile:ServiceProfile) in
+        })
 
         //***************************************************************************************************
         // Hygrometer Service
         //***************************************************************************************************
+        profileManage.addService(ServiceProfile(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name){(serviceProfile:ServiceProfile) in
+        })
 
         //***************************************************************************************************
         // Sensor Tag Test Service
         //***************************************************************************************************
+        profileManage.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name){(serviceProfile:ServiceProfile) in
+        })
 
         //***************************************************************************************************
         // Key Pressed Service
         //***************************************************************************************************
+        profileManage.addService(ServiceProfile(uuid:TISensorTag.KeyPressedService.uuid, name:TISensorTag.KeyPressedService.name){(serviceProfile:ServiceProfile) in
+        })
 
     }
 }

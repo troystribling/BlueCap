@@ -48,5 +48,17 @@ class NordicProfiles {
         
         let profileManager = ProfileManager.sharedInstance()
         
+        //***************************************************************************************************
+        // Nordic Device Temperature Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:Nordic.DeviceTemperature.uuid, name:Nordic.DeviceTemperature.name){(serviceProfile:ServiceProfile) in
+        })
+
+        //***************************************************************************************************
+        // Nordic BLE Address Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:Nordic.BLEAddress.uuid, name:Nordic.BLEAddress.name){(serviceProfile:ServiceProfile) in
+        })
+
     }
 }

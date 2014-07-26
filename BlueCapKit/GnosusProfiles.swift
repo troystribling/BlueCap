@@ -15,7 +15,7 @@ struct Gnosus {
     //***************************************************************************************************
     // Hello World Service
     //***************************************************************************************************
-    struct HelloWorld {
+    struct HelloWorldService {
         static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
         static let name = "Gnosus Hello World"
         struct Greeting {
@@ -31,7 +31,7 @@ struct Gnosus {
     //***************************************************************************************************
     // Location Service
     //***************************************************************************************************
-    struct Location {
+    struct LocationService {
         static let uuid = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
         static let name = "Gnosus Location"
         struct LatitudeAndLongitude {
@@ -43,12 +43,12 @@ struct Gnosus {
     //***************************************************************************************************
     // Epoc Time Service
     //***************************************************************************************************
-    struct EpocTime {
+    struct EpocTimeService {
         static let uuid = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
         static let name = "Gnosus Epoc Time"
-        struct Seconds {
+        struct  Data {
             static let uuid = "2f0a0026-69aa-f316-3e78-4194989a6c1a"
-            static let name = "Epoc Time Seconds"
+            static let name = "Epoc Time Data"
         }
     }
 
@@ -60,5 +60,23 @@ class GnosusProfiles {
         
         let profileManager = ProfileManager.sharedInstance()
         
+        //***************************************************************************************************
+        // Hello World Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:Gnosus.HelloWorldService.uuid, name:Gnosus.HelloWorldService.name){(serviceProfile:ServiceProfile) in
+        })
+
+        //***************************************************************************************************
+        // Location Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:Gnosus.LocationService.uuid, name:Gnosus.LocationService.name){(serviceProfile:ServiceProfile) in
+        })
+
+        //***************************************************************************************************
+        // Epoc Time Service
+        //***************************************************************************************************
+        profileManager.addService(ServiceProfile(uuid:Gnosus.EpocTimeService.uuid, name:Gnosus.EpocTimeService.name){(serviceProfile:ServiceProfile) in
+        })
+
     }
 }
