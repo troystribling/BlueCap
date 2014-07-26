@@ -13,11 +13,59 @@ import BlueCapKit
 struct BLESIGGATT {
     
     //***************************************************************************************************
-    // Key Pressed Service
+    // Device Information Service
     //***************************************************************************************************
-    struct KeyPressedService {
-        static let uuid = "ffe0"
-        static let name = "BLE SIG GATT Key Pressed Service"
+    struct DeviceInformationService {
+        static let uuid = "180a"
+        static let name = "Device Information"
+        struct ModelNumber {
+            static let uuid = "2a24"
+            static let name = "Device Model Number"
+        }
+        struct SerialNumber {
+            static let uuid = "2a25"
+            static let name = "Device Serial Number"
+        }
+        struct FirmwareRevision {
+            static let uuid = "2a26"
+            static let name = "Device Firmware Revision"
+        }
+        struct HardwareRevision {
+            static let uuid = "2a27"
+            static let name = "Device Hardware Revision"
+        }
+        struct SoftwareRevision {
+            static let uuid = "2a28"
+            static let name = "Device Software Revision"
+        }
+        struct ManufacturerName {
+            static let uuid = "2a29"
+            static let name = "Device Manufacturer Name"
+        }
+    }
+    
+    //***************************************************************************************************
+    // Battery Level Service
+    //***************************************************************************************************
+    struct BatteryService {
+        static let uuid = "180f"
+        static let name = "Battery"
+        struct Level {
+            static let uuid = "2a19"
+            static let name = "Battery Level"
+        }
+    }
+
+    //***************************************************************************************************
+    // Tx Power Level Service
+    //***************************************************************************************************
+    struct TxPowerService {
+        static let uuid = "1804"
+        static let name = "Tx Power Level"
+        struct Level {
+            static let uuid = "2a07"
+            static let name = "Tx Power Level"
+        }
     }
     
 }

@@ -17,7 +17,7 @@ struct TISensorTag {
     //***************************************************************************************************
     struct AccelerometerService {
         static let uuid = "F000AA10-0451-4000-B000-000000000000"
-        static let name = "TI Accelerometer Service"
+        static let name = "TI Accelerometer"
         // Accelerometer Data
         struct Data {
             static let uuid = "F000AA11-0451-4000-B000-000000000000"
@@ -164,7 +164,19 @@ struct TISensorTag {
     //***************************************************************************************************
     struct MagnetometerService {
         static let uuid = "F000AA30-0451-4000-B000-000000000000"
-        static let name = "TI Magnetometer Service"
+        static let name = "TI Magnetometer"
+        struct Data {
+            static let uuid = "f000aa31-0451-4000-b000-000000000000"
+            static let name = "Magnetometer Data"
+        }
+        struct Enabled {
+            static let uuid = "f000aa32-0451-4000-b000-000000000000"
+            static let name = "Magnetometer Enabled"
+        }
+        struct UpdatePeriod {
+            static let uuid = "f000aa33-0451-4000-b000-000000000000"
+            static let name = "Magnetometer Update Period"
+        }
     }
 
     //***************************************************************************************************
@@ -172,7 +184,15 @@ struct TISensorTag {
     //***************************************************************************************************
     struct GyroscopeService {
         static let uuid = "F000AA50-0451-4000-B000-000000000000"
-        static let name = "TI Gyroscope Service"
+        static let name = "TI Gyroscope"
+        struct Data {
+            static let uuid = "f000aa51-0451-4000-b000-000000000000"
+            static let name = "Gyroscope Data"
+        }
+        struct Enabled {
+            static let uuid = "f000aa52-0451-4000-b000-000000000000"
+            static let name = "Gyroscope Enabled"
+        }
     }
 
     //***************************************************************************************************
@@ -180,7 +200,15 @@ struct TISensorTag {
     //***************************************************************************************************
     struct TemperatureService {
         static let uuid = "F000AA00-0451-4000-B000-000000000000"
-        static let name = "TI Temperature Service"
+        static let name = "TI Temperature"
+        struct Data {
+            static let uuid = "f000aa01-0451-4000-b000-000000000000"
+            static let name = "Temperature Data"
+        }
+        struct Enabled {
+            static let uuid = "f000aa02-0451-4000-b000-000000000000"
+            static let name = "Temperature Enabled"
+        }
     }
 
     //***************************************************************************************************
@@ -188,7 +216,19 @@ struct TISensorTag {
     //***************************************************************************************************
     struct BarometerService {
         static let uuid = "F000AA40-0451-4000-B000-000000000000"
-        static let name = "TI Barometer Service"
+        static let name = "TI Barometer"
+        struct Data {
+            static let uuid = "f000aa41-0451-4000-b000-000000000000"
+            static let name = "Baraometer Data"
+        }
+        struct Calibration {
+            static let uuid = "f000aa42-0451-4000-b000-000000000000"
+            static let name = "Baraometer Calibration Data"
+        }
+        struct Enabled {
+            static let uuid = "f000aa43-0451-4000-b000-000000000000"
+            static let name = "Baraometer Enabled"
+        }
     }
 
     //***************************************************************************************************
@@ -196,7 +236,15 @@ struct TISensorTag {
     //***************************************************************************************************
     struct HygrometerService {
         static let uuid = "F000AA20-0451-4000-B000-000000000000"
-        static let name = "TI Hygrometer Service"
+        static let name = "TI Hygrometer"
+        struct Data {
+            static let uuid = "f000aa21-0451-4000-b000-000000000000"
+            static let name = "Hygrometer Data"
+        }
+        struct Enabled {
+            static let uuid = "f000aa22-0451-4000-b000-000000000000"
+            static let name = "Hygrometer Enabled"
+        }
     }
 
     //***************************************************************************************************
@@ -204,8 +252,29 @@ struct TISensorTag {
     //***************************************************************************************************
     struct SensorTagTestService {
         static let uuid = "F000AA60-0451-4000-B000-000000000000"
-        static let name = "TI Sensor Tag Test Service"
+        static let name = "TI Sensor Tag Test"
+        struct Data {
+            static let uuid = "f000aa61-0451-4000-b000-000000000000"
+            static let name = "Test Data"
+        }
+        struct Enabled {
+            static let uuid = "f000aa62-0451-4000-b000-000000000000"
+            static let name = "Test Enabled"
+        }
     }
+
+    //***************************************************************************************************
+    // Key Pressed Service
+    //***************************************************************************************************
+    struct KeyPressedService {
+        static let uuid = "ffe0"
+        static let name = "Sensor Tag Key Pressed"
+        struct State {
+            static let uuid = "ffe1"
+            static let name = "Key Pressed State"
+        }
+    }
+    
 
 }
 
@@ -264,6 +333,10 @@ class TISensorTagServiceProfiles {
 
         //***************************************************************************************************
         // Sensor Tag Test Service
+        //***************************************************************************************************
+
+        //***************************************************************************************************
+        // Key Pressed Service
         //***************************************************************************************************
 
     }
