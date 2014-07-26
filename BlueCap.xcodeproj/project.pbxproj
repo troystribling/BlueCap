@@ -14,7 +14,6 @@
 		05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */; };
 		05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA21944CB0E0022FB59 /* CentralManager.swift */; };
 		05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA31944CB0E0022FB59 /* Peripheral.swift */; };
-		054314CF1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054314CE1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift */; };
 		054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */; };
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
 		0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E4081955EFD800F33D4E /* ProfileManager.swift */; };
@@ -41,6 +40,7 @@
 		05900F281982AEBD00CEAD0B /* BLESIGGATTProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F271982AEBD00CEAD0B /* BLESIGGATTProfiles.swift */; };
 		05900F2A198368DB00CEAD0B /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F29198368DB00CEAD0B /* GnosusProfiles.swift */; };
 		05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2B198368EC00CEAD0B /* NordicProfiles.swift */; };
+		05900F2E1984205A00CEAD0B /* StringCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */; };
 		05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */; };
 		05AEAF93196C44B2009E8A0C /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */; };
 		05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */; };
@@ -117,7 +117,6 @@
 		05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceProfilesViewController.swift; path = Central/ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05277CA21944CB0E0022FB59 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		05277CA31944CB0E0022FB59 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
-		054314CE1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCharacteristicProfile.swift; sourceTree = "<group>"; };
 		054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connectorator.swift; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
 		0552E4081955EFD800F33D4E /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
@@ -149,6 +148,7 @@
 		05900F271982AEBD00CEAD0B /* BLESIGGATTProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLESIGGATTProfiles.swift; sourceTree = "<group>"; };
 		05900F29198368DB00CEAD0B /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		05900F2B198368EC00CEAD0B /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
+		05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeDeserialize.swift; sourceTree = "<group>"; };
 		05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
 		05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
@@ -246,12 +246,12 @@
 		0552E4071955EFB900F33D4E /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
-				05F3281C196E2EE700821D14 /* DeserializedCharacteristicProfile.swift */,
 				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
-				054314CE1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift */,
+				05F3281C196E2EE700821D14 /* DeserializedCharacteristicProfile.swift */,
 				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
 				0552E4081955EFD800F33D4E /* ProfileManager.swift */,
 				0552E40A195604CD00F33D4E /* ServiceProfile.swift */,
+				05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */,
 				05F328201970957200821D14 /* StructCharacteristicProfile.swift */,
 			);
 			name = Profiles;
@@ -269,10 +269,10 @@
 		05764D81196A23F700E6C801 /* Service Profiles */ = {
 			isa = PBXGroup;
 			children = (
-				05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */,
 				05900F271982AEBD00CEAD0B /* BLESIGGATTProfiles.swift */,
 				05900F29198368DB00CEAD0B /* GnosusProfiles.swift */,
 				05900F2B198368EC00CEAD0B /* NordicProfiles.swift */,
+				05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */,
 			);
 			name = "Service Profiles";
 			sourceTree = "<group>";
@@ -640,7 +640,6 @@
 				05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */,
 				05B24330194536A400E8E878 /* Logger.swift in Sources */,
 				05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */,
-				054314CF1971FEB2005DD2F8 /* CustomCharacteristicProfile.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */,
 				05680DC119687D050000FECB /* BCErrors.swift in Sources */,
@@ -652,6 +651,7 @@
 				0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */,
 				05AEAF97196C4591009E8A0C /* Int8Extensions.swift in Sources */,
 				05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */,
+				05900F2E1984205A00CEAD0B /* StringCharacteristicProfile.swift in Sources */,
 				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
 				054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */,
 				05900F2A198368DB00CEAD0B /* GnosusProfiles.swift in Sources */,
