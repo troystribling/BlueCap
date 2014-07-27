@@ -80,6 +80,36 @@ class BLESIGGATTProfiles {
         // Device Information Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:BLESIGGATT.DeviceInformationService.uuid, name:BLESIGGATT.DeviceInformationService.name){(serviceProfile:ServiceProfile) in
+            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.ModelNumber.uuid, name:BLESIGGATT.DeviceInformationService.ModelNumber.name)
+                {(characteristicProfile:StringCharacteristicProfile) in
+                    characteristicProfile.properties = CBCharacteristicProperties.Read
+                    characteristicProfile.initialValue = "Model A".dataUsingEncoding(NSUTF8StringEncoding)
+                })
+            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.SerialNumber.uuid, name:BLESIGGATT.DeviceInformationService.SerialNumber.name)
+                {(characteristicProfile:StringCharacteristicProfile) in
+                    characteristicProfile.properties = CBCharacteristicProperties.Read
+                    characteristicProfile.initialValue = "AAA11".dataUsingEncoding(NSUTF8StringEncoding)
+                })
+            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.FirmwareRevision.uuid, name:BLESIGGATT.DeviceInformationService.FirmwareRevision.name)
+                {(characteristicProfile:StringCharacteristicProfile) in
+                    characteristicProfile.properties = CBCharacteristicProperties.Read
+                    characteristicProfile.initialValue = "1.0".dataUsingEncoding(NSUTF8StringEncoding)
+                })
+            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.HardwareRevision.uuid, name:BLESIGGATT.DeviceInformationService.HardwareRevision.name)
+                {(characteristicProfile:StringCharacteristicProfile) in
+                    characteristicProfile.properties = CBCharacteristicProperties.Read
+                    characteristicProfile.initialValue = "1.0".dataUsingEncoding(NSUTF8StringEncoding)
+                })
+            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.SoftwareRevision.uuid, name:BLESIGGATT.DeviceInformationService.SoftwareRevision.name)
+                {(characteristicProfile:StringCharacteristicProfile) in
+                    characteristicProfile.properties = CBCharacteristicProperties.Read
+                    characteristicProfile.initialValue = "1.0".dataUsingEncoding(NSUTF8StringEncoding)
+                })
+            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.ManufacturerName.uuid, name:BLESIGGATT.DeviceInformationService.ManufacturerName.name)
+                {(characteristicProfile:StringCharacteristicProfile) in
+                    characteristicProfile.properties = CBCharacteristicProperties.Read
+                    characteristicProfile.initialValue = "gnos.us".dataUsingEncoding(NSUTF8StringEncoding)
+                })
         })
 
         //***************************************************************************************************

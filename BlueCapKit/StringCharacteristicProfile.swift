@@ -37,14 +37,14 @@ class StringCharacteristicProfile : CharacteristicProfile {
     
     override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let value = data[self.name] {
-            return (value as NSString).dataUsingEncoding(self.encoding)
+            return self.dataValue(value)
         } else {
             return nil
         }
     }
     
     override func dataValue(object:Any) -> NSData? {
-        if let value = object as? NSString {
+        if let value = object as? String {
             return value.dataUsingEncoding(self.encoding)
         } else {
             return nil

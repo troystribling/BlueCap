@@ -17,6 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) -> Bool {
         TISensorTagServiceProfiles.create()
+        BLESIGGATTProfiles.create()
+        GnosusProfiles.create()
+        NordicProfiles.create()
         return true
     }
 
