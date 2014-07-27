@@ -73,94 +73,16 @@ struct TISensorTag {
         struct Enabled {
             static let uuid = "F000AA12-0451-4000-B000-000000000000"
             static let name = "Accelerometer Enabled"
-            enum Value: UInt8, DeserializedEnum {
-                case No     = 0
-                case Yes    = 1
-                static func fromRaw(value:UInt8) -> Value? {
-                    switch value {
-                    case 0:
-                        return Value.No
-                    case 1:
-                        return Value.Yes
-                    default:
-                        return nil
-                    }
-                }
-                static func fromString(value:String) -> Value? {
-                    switch value {
-                    case "No":
-                        return Value.No
-                    case "Yes":
-                        return Value.Yes
-                    default:
-                        return nil
-                    }
-                }
-                static func stringValues() -> [String] {
-                    return ["No", "Yes"]
-                }
-                var stringValue : String {
-                    switch self {
-                    case .No:
-                        return "No"
-                    case .Yes:
-                        return "Yes"
-                    }
-                }
-                func toRaw() -> UInt8 {
-                    switch self {
-                    case .No:
-                        return 0
-                    case .Yes:
-                        return 1
-                    }
-                }
-            }
         }
         // Accelerometer Update Period
         struct UpdatePeriod {
             static let uuid = "F000AA13-0451-4000-B000-000000000000"
             static let name = "Accelerometer Update Period"
-            struct Value : DeserializedStruct {
-                var periodRaw : UInt8
-                var period : Int
-                static func fromRawValues(values:[UInt8]) -> Value? {
-                    var period = 10*Int(values[0])
-                    if period < 10 {
-                        period = 10
-                    }
-                    return Value(periodRaw:values[0], period:period)
-                }
-                static func fromStrings(values:Dictionary<String, String>) -> Value? {
-                    if let period = values["period"]?.toInt() {
-                        let rawPeriod = self.periodRawFromPeriod(period)
-                        return Value(periodRaw:rawPeriod, period:10*period)
-                    } else {
-                        return nil
-                    }
-                }
-                static func periodRawFromPeriod(period:Int) -> UInt8 {
-                    let scaledPeriod = period/10
-                    if scaledPeriod > 255 {
-                        return 255
-                    } else if scaledPeriod < 10 {
-                        return 10
-                    } else {
-                        return UInt8(scaledPeriod)
-                    }
-                }
-                var stringValues : Dictionary<String,String> {
-                    return ["periodRaw":"\(periodRaw)", "period":"\(period)"]
-                }
-                func toRawValues() -> [UInt8] {
-                    return [periodRaw]
-                }
-            }
         }
     }
     
     //***************************************************************************************************
-    // Magnetometer Service
+    // Magnetometer Service: units are uT
     //***************************************************************************************************
     struct MagnetometerService {
         static let uuid = "F000AA30-0451-4000-B000-000000000000"
@@ -168,6 +90,51 @@ struct TISensorTag {
         struct Data {
             static let uuid = "f000aa31-0451-4000-b000-000000000000"
             static let name = "Magnetometer Data"
+            struct Value : DeserializedStruct {
+                var xRaw    : Int16
+                var yRaw    : Int16
+                var zRaw    : Int16
+                var x       : Double
+                var y       : Double
+                var z       : Double
+                static func fromRawValues(rawValues:[Int16]) -> Value? {
+                    let values = self.valuesFromRaw(rawValues)
+                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    let xRaw = self.valueFromString("xRaw", values:stringValues)
+                    let yRaw = self.valueFromString("yRaw", values:stringValues)
+                    let zRaw = self.valueFromString("zRaw", values:stringValues)
+                    if xRaw && yRaw && zRaw {
+                        let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
+                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
+                    } else {
+                        return nil
+                    }
+                }
+                static func valuesFromRaw(values:[Int16]) -> [Double] {
+                    return [-Double(values[0])*2000.0/65536.0, -Double(values[1])*2000.0/65536.0, Double(values[2])*2000.0/65536.0]
+                }
+                static func valueFromString(name:String, values:Dictionary<String,String>) -> Int16? {
+                    if let value = values[name]?.toInt() {
+                        if value < -32768 {
+                            return Int16(-32768)
+                        } else if value > 32767 {
+                            return Int16(32767)
+                        } else {
+                            return Int16(value)
+                        }
+                    } else {
+                        return nil
+                    }
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
+                }
+                func toRawValues() -> [Int16] {
+                    return [xRaw, yRaw, zRaw]
+                }
+            }
         }
         struct Enabled {
             static let uuid = "f000aa32-0451-4000-b000-000000000000"
@@ -275,7 +242,88 @@ struct TISensorTag {
         }
     }
     
-
+    //***************************************************************************************************
+    // Common
+    //***************************************************************************************************
+    struct UInt8Period : DeserializedStruct {
+        var periodRaw   : UInt8
+        var period      : Int
+        static func fromRawValues(values:[UInt8]) -> UInt8Period? {
+            var period = 10*Int(values[0])
+            if period < 10 {
+                period = 10
+            }
+            return UInt8Period(periodRaw:values[0], period:period)
+        }
+        static func fromStrings(values:Dictionary<String, String>) -> UInt8Period? {
+            if let period = values["period"]?.toInt() {
+                let rawPeriod = self.periodRawFromPeriod(period)
+                return UInt8Period(periodRaw:rawPeriod, period:10*period)
+            } else {
+                return nil
+            }
+        }
+        static func periodRawFromPeriod(period:Int) -> UInt8 {
+            let scaledPeriod = period/10
+            if scaledPeriod > 255 {
+                return 255
+            } else if scaledPeriod < 10 {
+                return 10
+            } else {
+                return UInt8(scaledPeriod)
+            }
+        }
+        var stringValues : Dictionary<String,String> {
+        return ["periodRaw":"\(periodRaw)", "period":"\(period)"]
+        }
+        func toRawValues() -> [UInt8] {
+            return [periodRaw]
+        }
+    }
+    
+    enum Enabled: UInt8, DeserializedEnum {
+        case No     = 0
+        case Yes    = 1
+        static func fromRaw(value:UInt8) -> Enabled? {
+            switch value {
+            case 0:
+                return Enabled.No
+            case 1:
+                return Enabled.Yes
+            default:
+                return nil
+            }
+        }
+        static func fromString(value:String) -> Enabled? {
+            switch value {
+            case "No":
+                return Enabled.No
+            case "Yes":
+                return Enabled.Yes
+            default:
+                return nil
+            }
+        }
+        static func stringValues() -> [String] {
+            return ["No", "Yes"]
+        }
+        var stringValue : String {
+        switch self {
+        case .No:
+            return "No"
+        case .Yes:
+            return "Yes"
+            }
+        }
+        func toRaw() -> UInt8 {
+            switch self {
+            case .No:
+                return 0
+            case .Yes:
+                return 1
+            }
+        }
+    }
 }
 
 class TISensorTagServiceProfiles {
@@ -295,17 +343,17 @@ class TISensorTagServiceProfiles {
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             })
             // Accelerometer Enabled
-            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>(uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name)
-                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.AccelerometerService.Enabled.Value>) in
-                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.AccelerometerService.Enabled.Value.No)
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name)
+                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
-                        characteristic.write(TISensorTag.AccelerometerService.Enabled.Value.Yes, afterWriteSuccessCallback:{})
+                        characteristic.write(TISensorTag.Enabled.Yes, afterWriteSuccessCallback:{})
                     }
                 })
             // Accelerometer Update Period
-            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod.Value>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
-                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod.Value>) in
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
+                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.UInt8Period>) in
                     characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
                 })
@@ -315,6 +363,21 @@ class TISensorTagServiceProfiles {
         // Magnetometer Service
         //***************************************************************************************************
         profileManage.addService(ServiceProfile(uuid:TISensorTag.MagnetometerService.uuid, name:TISensorTag.MagnetometerService.name){(serviceProfile:ServiceProfile) in
+            // Magentometer Data
+            // Magnetometer Enabled
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.MagnetometerService.Enabled.uuid, name: TISensorTag.MagnetometerService.name){(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+                    characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
+                        characteristic.write(TISensorTag.Enabled.Yes, afterWriteSuccessCallback:{})
+                    }
+                })
+            // Magnetometer Update Period
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.MagnetometerService.UpdatePeriod.uuid, name:TISensorTag.MagnetometerService.UpdatePeriod.name)
+                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.UInt8Period>) in
+                    characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
+                })
         })
 
         //***************************************************************************************************
