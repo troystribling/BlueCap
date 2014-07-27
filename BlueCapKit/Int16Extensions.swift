@@ -43,8 +43,9 @@ extension Int16 : Deserialized {
     }
     
     static func deserializeFromLittleEndian(data:NSData) -> [Int16] {
-        let count = data.length / sizeof(Int16)
-        return [Int](0..<count).map{(i) in self.deserializeFromLittleEndian(data, start:i)}
+        let size = sizeof(Int16)
+        let count = data.length / size
+        return [Int](0..<count).map{(i) in self.deserializeFromLittleEndian(data, start:i*size)}
     }
     
     static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int16 {
@@ -60,8 +61,9 @@ extension Int16 : Deserialized {
     }
     
     static func deserializeFromBigEndian(data:NSData) -> [Int16] {
-        let count = data.length / sizeof(Int16)
-        return [Int](0..<count).map{(i) in self.deserializeFromBigEndian(data, start:i)}
+        let size = sizeof(Int16)
+        let count = data.length / size
+        return [Int](0..<count).map{(i) in self.deserializeFromBigEndian(data, start:i*size)}
     }
     
     static func deserializeFromBigEndian(data:NSData, start:Int) -> Int16 {
