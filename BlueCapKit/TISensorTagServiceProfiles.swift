@@ -34,9 +34,9 @@ struct TISensorTag {
                     return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
                 }
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-                    let xRaw = self.valueFromString("xRaw", values:stringValues)
-                    let yRaw = self.valueFromString("yRaw", values:stringValues)
-                    let zRaw = self.valueFromString("zRaw", values:stringValues)
+                    let xRaw = Gnosus.int8ValueFromStringValue("xRaw", values:stringValues)
+                    let yRaw = Gnosus.int8ValueFromStringValue("yRaw", values:stringValues)
+                    let zRaw = Gnosus.int8ValueFromStringValue("zRaw", values:stringValues)
                     if xRaw && yRaw && zRaw {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
@@ -46,19 +46,6 @@ struct TISensorTag {
                 }
                 static func valuesFromRaw(values:[Int8]) -> [Float] {
                     return [-Float(values[0])/64.0, -Float(values[1])/64.0, Float(values[2])/64.0]
-                }
-                static func valueFromString(name:String, values:Dictionary<String,String>) -> Int8? {
-                    if let value = values[name]?.toInt() {
-                        if value < -128 {
-                            return Int8(-128)
-                        } else if value > 127 {
-                            return Int8(127)
-                        } else {
-                            return Int8(value)
-                        }
-                    } else {
-                        return nil
-                    }
                 }
                 var stringValues : Dictionary<String,String> {
                     return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
@@ -102,9 +89,9 @@ struct TISensorTag {
                     return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
                 }
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-                    let xRaw = self.valueFromString("xRaw", values:stringValues)
-                    let yRaw = self.valueFromString("yRaw", values:stringValues)
-                    let zRaw = self.valueFromString("zRaw", values:stringValues)
+                    let xRaw = Gnosus.int16ValueFromStringValue("xRaw", values:stringValues)
+                    let yRaw = Gnosus.int16ValueFromStringValue("yRaw", values:stringValues)
+                    let zRaw = Gnosus.int16ValueFromStringValue("zRaw", values:stringValues)
                     if xRaw && yRaw && zRaw {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
@@ -114,19 +101,6 @@ struct TISensorTag {
                 }
                 static func valuesFromRaw(values:[Int16]) -> [Double] {
                     return [-Double(values[0])*2000.0/65536.0, -Double(values[1])*2000.0/65536.0, Double(values[2])*2000.0/65536.0]
-                }
-                static func valueFromString(name:String, values:Dictionary<String,String>) -> Int16? {
-                    if let value = values[name]?.toInt() {
-                        if value < -32768 {
-                            return Int16(-32768)
-                        } else if value > 32767 {
-                            return Int16(32767)
-                        } else {
-                            return Int16(value)
-                        }
-                    } else {
-                        return nil
-                    }
                 }
                 var stringValues : Dictionary<String,String> {
                     return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
@@ -147,7 +121,7 @@ struct TISensorTag {
     }
 
     //***************************************************************************************************
-    // Gyroscope Service
+    // Gyroscope Service: units are degrees
     //***************************************************************************************************
     struct GyroscopeService {
         static let uuid = "F000AA50-0451-4000-B000-000000000000"
@@ -155,10 +129,139 @@ struct TISensorTag {
         struct Data {
             static let uuid = "f000aa51-0451-4000-b000-000000000000"
             static let name = "Gyroscope Data"
+            struct Value : DeserializedStruct {
+                var xRaw    : Int16
+                var yRaw    : Int16
+                var zRaw    : Int16
+                var x       : Double
+                var y       : Double
+                var z       : Double
+                static func fromRawValues(rawValues:[Int16]) -> Value? {
+                    let values = self.valuesFromRaw(rawValues)
+                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    let xRaw = Gnosus.int16ValueFromStringValue("xRaw", values:stringValues)
+                    let yRaw = Gnosus.int16ValueFromStringValue("yRaw", values:stringValues)
+                    let zRaw = Gnosus.int16ValueFromStringValue("zRaw", values:stringValues)
+                    if xRaw && yRaw && zRaw {
+                        let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
+                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
+                    } else {
+                        return nil
+                    }
+                }
+                static func valuesFromRaw(values:[Int16]) -> [Double] {
+                    return [-Double(values[0])*500.0/65536.0, -Double(values[1])*500.0/65536.0, Double(values[2])*500.0/65536.0]
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
+                }
+                func toRawValues() -> [Int16] {
+                    return [xRaw, yRaw, zRaw]
+                }
+            }
         }
         struct Enabled {
             static let uuid = "f000aa52-0451-4000-b000-000000000000"
             static let name = "Gyroscope Enabled"
+            enum Value : UInt8, DeserializedEnum {
+                case No         = 0
+                case XAxis      = 1
+                case YAxis      = 2
+                case XYAxis     = 3
+                case ZAxis      = 4
+                case XZAxis     = 5
+                case YZAxis     = 6
+                case XYZAxis    = 7
+                static func fromRaw(value:UInt8) -> Value? {
+                    switch value {
+                    case 0:
+                        return Value.No
+                    case 1:
+                        return Value.XAxis
+                    case 2:
+                        return Value.YAxis
+                    case 3:
+                        return Value.XYAxis
+                    case 4:
+                        return Value.ZAxis
+                    case 5:
+                        return Value.XZAxis
+                    case 6:
+                        return Value.YZAxis
+                    case 7:
+                        return Value.XYZAxis
+                    default:
+                        return nil
+                    }
+                }
+                static func fromString(value:String) -> Value? {
+                    switch value {
+                    case "No":
+                        return Value.No
+                    case "XAxis":
+                        return Value.XAxis
+                    case "YAxis":
+                        return Value.YAxis
+                    case "XYAxis":
+                        return Value.XYAxis
+                    case "ZAxis":
+                        return Value.ZAxis
+                    case "XZAxis":
+                        return Value.XZAxis
+                    case "YZAxis":
+                        return Value.YZAxis
+                    case "XYZAxis":
+                        return Value.XYZAxis
+                    default:
+                        return nil
+                    }
+                }
+                static func stringValues() -> [String] {
+                    return ["No", "XAxis", "YAxis", "XYAxis", "ZAxis", "XZAxis", "YZAxis", "XYZAxis"]
+                }
+                var stringValue : String {
+                    switch self {
+                    case .No:
+                        return "No"
+                    case .XAxis:
+                        return "XAxis"
+                    case .YAxis:
+                        return "YAxis"
+                    case .XYAxis:
+                        return "XYAxis"
+                    case .ZAxis:
+                        return "ZAxis"
+                    case .XZAxis:
+                        return "XZAxis"
+                    case .YZAxis:
+                        return "YZAxis"
+                    case .XYZAxis:
+                        return "XYZAxis"
+                    }
+                }
+                func toRaw() -> UInt8 {
+                    switch self {
+                    case .No:
+                        return 0
+                    case .XAxis:
+                        return 1
+                    case .YAxis:
+                        return 2
+                    case .XYAxis:
+                        return 3
+                    case .ZAxis:
+                        return 4
+                    case .XZAxis:
+                        return 5
+                    case .YZAxis:
+                        return 6
+                    case .XYZAxis:
+                        return 7
+                    }
+                }
+            }
         }
     }
 
@@ -280,7 +383,6 @@ struct TISensorTag {
             return [periodRaw]
         }
     }
-    
     enum Enabled: UInt8, DeserializedEnum {
         case No     = 0
         case Yes    = 1
@@ -355,7 +457,7 @@ class TISensorTagServiceProfiles {
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
                 {(characteristicProfile:StructCharacteristicProfile<TISensorTag.UInt8Period>) in
                     characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
-                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                 })
         })
         
@@ -382,7 +484,7 @@ class TISensorTagServiceProfiles {
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.MagnetometerService.UpdatePeriod.uuid, name:TISensorTag.MagnetometerService.UpdatePeriod.name)
                 {(characteristicProfile:StructCharacteristicProfile<TISensorTag.UInt8Period>) in
                     characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
-                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                 })
         })
 
@@ -390,6 +492,20 @@ class TISensorTagServiceProfiles {
         // Gyroscope Service
         //***************************************************************************************************
         profileManage.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile:ServiceProfile) in
+            
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.GyroscopeService.Data.Value>(uuid:TISensorTag.GyroscopeService.Data.uuid, name:TISensorTag.GyroscopeService.Data.name, fromEndianness:.Little)
+                {(characteristicProfile:CharacteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.GyroscopeService.Data.Value.fromRawValues([-24, -219, -23]))
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+                })
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.GyroscopeService.Enabled.Value>(uuid:TISensorTag.GyroscopeService.Enabled.uuid, name:TISensorTag.GyroscopeService.Enabled.name)
+                {(characteristicProfile:CharacteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.GyroscopeService.Enabled.Value.No)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+                    characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
+                        characteristic.write(TISensorTag.GyroscopeService.Enabled.Value.XYZAxis, afterWriteSuccessCallback:{})
+                    }
+                })
         })
 
         //***************************************************************************************************
