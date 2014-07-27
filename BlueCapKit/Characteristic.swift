@@ -79,10 +79,11 @@ class Characteristic {
     init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self.service = service
+        self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString, name:"Unknown")
         if let serviceProfile = ProfileManager.sharedInstance().serviceProfiles[service.uuid] {
-            self.profile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID]
-        } else {
-            self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString, name:"Unknown")
+            if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
+                self.profile = characteristicProfile
+            }
         }
     }
 

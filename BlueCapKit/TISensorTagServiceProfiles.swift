@@ -364,8 +364,14 @@ class TISensorTagServiceProfiles {
         //***************************************************************************************************
         profileManage.addService(ServiceProfile(uuid:TISensorTag.MagnetometerService.uuid, name:TISensorTag.MagnetometerService.name){(serviceProfile:ServiceProfile) in
             // Magentometer Data
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.MagnetometerService.Data.Value>(uuid:TISensorTag.MagnetometerService.Data.uuid, name:TISensorTag.MagnetometerService.Data.name, fromEndianness:.Little)
+                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.MagnetometerService.Data.Value>) in
+                    characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.MagnetometerService.Data.Value.fromRawValues([-2183, 1916, 1255]))
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+                })
             // Magnetometer Enabled
-            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.MagnetometerService.Enabled.uuid, name: TISensorTag.MagnetometerService.name){(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.MagnetometerService.Enabled.uuid, name: TISensorTag.MagnetometerService.Enabled.name)
+                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
