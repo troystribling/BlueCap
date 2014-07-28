@@ -25,7 +25,7 @@ extension NSData : Serialized {
     }
     
     public class func serializeToLittleEndian<SerializedType>(values:[SerializedType]) -> NSData {
-        let littleValues = values.map{value in hostToLittleEndian(value)}
+        let littleValues = values.map{hostToLittleEndian($0)}
         return NSData(bytes:littleValues, length:sizeof(SerializedType)*littleValues.count)
     }
     
@@ -35,7 +35,7 @@ extension NSData : Serialized {
     }
     
     public class func serializeToBigEndian<SerializedType>(values:[SerializedType]) -> NSData {
-        let bigValues = values.map{value in hostToBigEndian(value)}
+        let bigValues = values.map{hostToBigEndian($0)}
         return NSData(bytes:bigValues, length:sizeof(SerializedType)*bigValues.count)
     }
 
