@@ -34,9 +34,9 @@ public struct TISensorTag {
                     return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
                 }
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-                    let xRaw = Gnosus.int8ValueFromStringValue("xRaw", values:stringValues)
-                    let yRaw = Gnosus.int8ValueFromStringValue("yRaw", values:stringValues)
-                    let zRaw = Gnosus.int8ValueFromStringValue("zRaw", values:stringValues)
+                    let xRaw = BlueCap.int8ValueFromStringValue("xRaw", values:stringValues)
+                    let yRaw = BlueCap.int8ValueFromStringValue("yRaw", values:stringValues)
+                    let zRaw = BlueCap.int8ValueFromStringValue("zRaw", values:stringValues)
                     if xRaw && yRaw && zRaw {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
@@ -89,9 +89,9 @@ public struct TISensorTag {
                     return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
                 }
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-                    let xRaw = Gnosus.int16ValueFromStringValue("xRaw", values:stringValues)
-                    let yRaw = Gnosus.int16ValueFromStringValue("yRaw", values:stringValues)
-                    let zRaw = Gnosus.int16ValueFromStringValue("zRaw", values:stringValues)
+                    let xRaw = BlueCap.int16ValueFromStringValue("xRaw", values:stringValues)
+                    let yRaw = BlueCap.int16ValueFromStringValue("yRaw", values:stringValues)
+                    let zRaw = BlueCap.int16ValueFromStringValue("zRaw", values:stringValues)
                     if xRaw && yRaw && zRaw {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
@@ -141,9 +141,9 @@ public struct TISensorTag {
                     return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
                 }
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-                    let xRaw = Gnosus.int16ValueFromStringValue("xRaw", values:stringValues)
-                    let yRaw = Gnosus.int16ValueFromStringValue("yRaw", values:stringValues)
-                    let zRaw = Gnosus.int16ValueFromStringValue("zRaw", values:stringValues)
+                    let xRaw = BlueCap.int16ValueFromStringValue("xRaw", values:stringValues)
+                    let yRaw = BlueCap.int16ValueFromStringValue("yRaw", values:stringValues)
+                    let zRaw = BlueCap.int16ValueFromStringValue("zRaw", values:stringValues)
                     if xRaw && yRaw && zRaw {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
@@ -274,6 +274,43 @@ public struct TISensorTag {
         struct Data {
             static let uuid = "f000aa01-0451-4000-b000-000000000000"
             static let name = "Temperature Data"
+            struct Value : DeserializedStruct {
+                var rawObject   : Int16
+                var rawAmbient  : Int16
+                var object      : Double
+                var ambient     : Double
+                static func fromRawValues(rawValues:[Int16]) -> Value? {
+                    let (object, ambient) = self.valuesFromRaw(rawValues[0], rawAmbient:rawValues[1])
+                    return Value(rawObject:rawValues[0], rawAmbient:rawValues[1], object:object, ambient:ambient)
+                }
+                static func valuesFromRaw(rawObject:Int16, rawAmbient:Int16) -> (Double, Double) {
+                    let ambient = Double(rawAmbient)/128.0;
+                    let vObj2 = Double(rawObject)*0.00000015625;
+                    let tDie2 = ambient + 273.15;
+                    let s0 = 6.4*pow(10,-14);
+                    let a1 = 1.75*pow(10,-3);
+                    let a2 = -1.678*pow(10,-5);
+                    let b0 = -2.94*pow(10,-5);
+                    let b1 = -5.7*pow(10,-7);
+                    let b2 = 4.63*pow(10,-9);
+                    let c2 = 13.4;
+                    let tRef = 298.15;
+                    let s = s0*(1+a1*(tDie2 - tRef)+a2*pow((tDie2 - tRef),2));
+                    let vOs = b0 + b1*(tDie2 - tRef) + b2*pow((tDie2 - tRef),2);
+                    let fObj = (vObj2 - vOs) + c2*pow((vObj2 - vOs),2);
+                    let object = pow(pow(tDie2,4) + (fObj/s),0.25) - 273.15;
+                    return (object, ambient)
+                }
+                static func fromStrings(values:Dictionary<String, String>) -> Value? {
+                    return nil
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["rawObject":"\(rawObject)", "rawAmbient":"\(rawAmbient)", "object":"\(object)", "ambient":"\(ambient)"]
+                }
+                func toRawValues() -> [Int16] {
+                    return [rawObject, rawAmbient]
+                }
+            }
         }
         struct Enabled {
             static let uuid = "f000aa02-0451-4000-b000-000000000000"
@@ -512,6 +549,16 @@ public class TISensorTagServiceProfiles {
         // Temperature Service
         //***************************************************************************************************
         profileManage.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile:ServiceProfile) in
+            // Temperature Data
+            // Temperature Enabled
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.TemperatureService.Enabled.uuid, name:TISensorTag.TemperatureService.Enabled.name)
+                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+                    characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
+                        characteristic.write(TISensorTag.Enabled.Yes, afterWriteSuccessCallback:{})
+                    }
+                })
         })
 
         //***************************************************************************************************

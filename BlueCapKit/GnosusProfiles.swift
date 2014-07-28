@@ -10,48 +10,7 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-public struct Gnosus {
-  
-    //***************************************************************************************************
-    // Hello World Service
-    //***************************************************************************************************
-    struct HelloWorldService {
-        static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
-        static let name = "Gnosus Hello World"
-        struct Greeting {
-            static let uuid = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
-            static let name = "Hello World Greeting"
-        }
-        struct UpdatePeriod {
-            static let uuid = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
-            static let name = "Hello World Update Period"
-        }
-    }
-
-    //***************************************************************************************************
-    // Location Service
-    //***************************************************************************************************
-    struct LocationService {
-        static let uuid = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
-        static let name = "Gnosus Location"
-        struct LatitudeAndLongitude {
-            static let uuid = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
-            static let name = "Location Lattitude and Longitude"
-        }
-    }
-
-    //***************************************************************************************************
-    // Epoc Time Service
-    //***************************************************************************************************
-    struct EpocTimeService {
-        static let uuid = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
-        static let name = "Gnosus Epoc Time"
-        struct  Data {
-            static let uuid = "2f0a0026-69aa-f316-3e78-4194989a6c1a"
-            static let name = "Epoc Time Data"
-        }
-    }
-    
+public struct BlueCap {
     static func int16ValueFromStringValue(name:String, values:Dictionary<String,String>) -> Int16? {
         if let value = values[name]?.toInt() {
             if value < -32768 {
@@ -104,7 +63,49 @@ public struct Gnosus {
             return nil
         }
     }
+}
 
+public struct Gnosus {
+  
+    //***************************************************************************************************
+    // Hello World Service
+    //***************************************************************************************************
+    struct HelloWorldService {
+        static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
+        static let name = "Gnosus Hello World"
+        struct Greeting {
+            static let uuid = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+            static let name = "Hello World Greeting"
+        }
+        struct UpdatePeriod {
+            static let uuid = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
+            static let name = "Hello World Update Period"
+        }
+    }
+
+    //***************************************************************************************************
+    // Location Service
+    //***************************************************************************************************
+    struct LocationService {
+        static let uuid = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+        static let name = "Gnosus Location"
+        struct LatitudeAndLongitude {
+            static let uuid = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
+            static let name = "Location Lattitude and Longitude"
+        }
+    }
+
+    //***************************************************************************************************
+    // Epoc Time Service
+    //***************************************************************************************************
+    struct EpocTimeService {
+        static let uuid = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
+        static let name = "Gnosus Epoc Time"
+        struct  Data {
+            static let uuid = "2f0a0026-69aa-f316-3e78-4194989a6c1a"
+            static let name = "Epoc Time Data"
+        }
+    }    
 }
 
 public class GnosusProfiles {

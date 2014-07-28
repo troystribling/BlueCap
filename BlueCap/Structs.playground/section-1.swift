@@ -46,3 +46,9 @@ let structDeserialized = StructDeserialized<Values>()
 let values : [Byte] = [0x01, 0x0a, 0x0b]
 let data = NSData(bytes:values, length:3)
 let structValue = structDeserialized.anyValue(data)
+
+func hey() -> (Float, Int) {
+    return (1.0, 32)
+}
+
+hey()
