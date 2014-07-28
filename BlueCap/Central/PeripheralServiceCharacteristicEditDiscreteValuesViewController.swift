@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
    
-    var characteristic  : Characteristic?
+    weak var characteristic  : Characteristic?
     var progressView    : ProgressView!
     
     struct MainStoryboard {

@@ -8,11 +8,6 @@
 
 import Foundation
 
-enum Endianness {
-    case Little
-    case Big
-}
-
 func littleEndianToHost<T>(value:T) -> T {
     return value;
 }
@@ -44,7 +39,12 @@ func reverseBytes<T>(value:T) -> T {
     return result
 }
 
-protocol Deserialized {
+public enum Endianness {
+    case Little
+    case Big
+}
+
+public protocol Deserialized {
     typealias SelfType
     class func fromString(data:String) -> SelfType?
     
@@ -60,7 +60,7 @@ protocol Deserialized {
     class func deserializeFromBigEndian(data:NSData, start:Int) -> SelfType
 }
 
-protocol Serialized {
+public protocol Serialized {
     class func serialize<SerializedType>(value:SerializedType) -> NSData
     class func serialize<SerializedType>(values:[SerializedType]) -> NSData
     
@@ -71,7 +71,7 @@ protocol Serialized {
     class func serializeToBigEndian<SerializedType>(values:[SerializedType]) -> NSData
 }
 
-protocol DeserializedEnum {
+public protocol DeserializedEnum {
     typealias SelfType
     typealias RawType : Deserialized
     class func fromRaw(value:RawType) -> SelfType?
@@ -81,7 +81,7 @@ protocol DeserializedEnum {
     func toRaw() -> RawType
 }
 
-protocol DeserializedStruct {
+public protocol DeserializedStruct {
     typealias SelfType
     typealias RawType : Deserialized
     class func fromRawValues(values:[RawType]) -> SelfType?

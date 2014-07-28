@@ -17,24 +17,24 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     weak var characteristic                                 : Characteristic?
     
-    @IBOutlet var valuesLabel                               : UILabel
+    @IBOutlet var valuesLabel                               : UILabel!
 
-    @IBOutlet var notifiyButton                             : UIButton
+    @IBOutlet var notifiyButton                             : UIButton!
     
-    @IBOutlet var uuidLabel                                 : UILabel
-    @IBOutlet var broadcastingLabel                         : UILabel
-    @IBOutlet var notifyingLabel                            : UILabel
+    @IBOutlet var uuidLabel                                 : UILabel!
+    @IBOutlet var broadcastingLabel                         : UILabel!
+    @IBOutlet var notifyingLabel                            : UILabel!
     
-    @IBOutlet var propertyBroadcastLabel                    : UILabel
-    @IBOutlet var propertyReadLabel                         : UILabel
-    @IBOutlet var propertyWriteWithoutResponseLabel         : UILabel
-    @IBOutlet var propertyWriteLabel                        : UILabel
-    @IBOutlet var propertyNotifyLabel                       : UILabel
-    @IBOutlet var propertyIndicateLabel                     : UILabel
-    @IBOutlet var propertyAuthenticatedSignedWritesLabel    : UILabel
-    @IBOutlet var propertyExtendedPropertiesLabel           : UILabel
-    @IBOutlet var propertyNotifyEncryptionRequiredLabel     : UILabel
-    @IBOutlet var propertyIndicateEncryptionRequiredLabel   : UILabel
+    @IBOutlet var propertyBroadcastLabel                    : UILabel!
+    @IBOutlet var propertyReadLabel                         : UILabel!
+    @IBOutlet var propertyWriteWithoutResponseLabel         : UILabel!
+    @IBOutlet var propertyWriteLabel                        : UILabel!
+    @IBOutlet var propertyNotifyLabel                       : UILabel!
+    @IBOutlet var propertyIndicateLabel                     : UILabel!
+    @IBOutlet var propertyAuthenticatedSignedWritesLabel    : UILabel!
+    @IBOutlet var propertyExtendedPropertiesLabel           : UILabel!
+    @IBOutlet var propertyNotifyEncryptionRequiredLabel     : UILabel!
+    @IBOutlet var propertyIndicateEncryptionRequiredLabel   : UILabel!
     
     init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)

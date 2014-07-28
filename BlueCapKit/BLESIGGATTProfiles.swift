@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-struct BLESIGGATT {
+public struct BLESIGGATT {
     
     //***************************************************************************************************
     // Device Information Service
@@ -70,9 +70,9 @@ struct BLESIGGATT {
     
 }
 
-class BLESIGGATTProfiles {
+public class BLESIGGATTProfiles {
     
-    class func create () {
+    public class func create () {
         
         let profileManager = ProfileManager.sharedInstance()
         

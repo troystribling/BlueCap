@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralServiceCell : UITableViewCell {
     
-    @IBOutlet var nameLabel : UILabel
-    @IBOutlet var uuidLabel : UILabel
+    @IBOutlet var nameLabel : UILabel!
+    @IBOutlet var uuidLabel : UILabel!
     
 }

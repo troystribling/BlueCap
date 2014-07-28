@@ -9,60 +9,60 @@
 import Foundation
 import CoreBluetooth
 
-class CharacteristicProfile {
+public class CharacteristicProfile {
     
-    let uuid            : CBUUID!
-    let name            : String!
-    var permissions     : CBAttributePermissions!
-    var properties      : CBCharacteristicProperties!
-    var initialValue    : NSData?
+    // INTERNAL
+    internal var afterDiscoveredCallback : ((characteristic:Characteristic) -> ())?
+
+    // PUBLIC
+    public let uuid                     : CBUUID!
+    public let name                     : String!
+    public var permissions              : CBAttributePermissions!
+    public var properties               : CBCharacteristicProperties!
+    public var initialValue             : NSData?
     
-    var afterDiscoveredCallback     : ((characteristic:Characteristic) -> ())?
-    
-    var discreteStringValues : [String] {
+    public var discreteStringValues : [String] {
         return []
     }
     
-    // APPLICATION INTERFACE
-    init(uuid:String, name:String) {
+    public init(uuid:String, name:String) {
         self.uuid = CBUUID.UUIDWithString(uuid)
         self.name = name
         self.permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
         self.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
     }
     
-    convenience init(uuid:String, name:String, profile:(characteristic:CharacteristicProfile) -> ()) {
+    public convenience init(uuid:String, name:String, profile:(characteristic:CharacteristicProfile) -> ()) {
         self.init(uuid:uuid, name:name)
         profile(characteristic:self)
     }
     
-    func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
+    public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
         return (self.properties.toRaw() & property.toRaw()) > 0
     }
     
-    func permissionEnabled(permission:CBAttributePermissions) -> Bool {
+    public func permissionEnabled(permission:CBAttributePermissions) -> Bool {
         return (self.permissions.toRaw() & permissions.toRaw()) > 0
     }
     
-    // CALLBACKS
-    func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
+    public func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
     
-    // INTERNAL INTERFACE
-    func stringValues(data:NSData) -> Dictionary<String, String>? {
+    // INTERNAL
+    internal func stringValues(data:NSData) -> Dictionary<String, String>? {
         return [self.name:data.hexStringValue()]
     }
     
-    func anyValue(data:NSData) -> Any? {
+    internal func anyValue(data:NSData) -> Any? {
         return data
     }
     
-    func dataValue(object:Any) -> NSData? {
+    internal func dataValue(object:Any) -> NSData? {
         return object as? NSData
     }
     
-    func dataValue(data:Dictionary<String, String>) -> NSData? {
+    internal func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let stringVal = data[self.name] {
             return stringVal.dataFromHexString()
         } else {

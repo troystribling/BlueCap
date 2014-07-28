@@ -9,24 +9,29 @@
 import Foundation
 import CoreBluetooth
 
-class CentralManager : NSObject, CBCentralManagerDelegate {
+public class CentralManager : NSObject, CBCentralManagerDelegate {
     
-    var afterPowerOn                        : (()->())?
-    var afterPowerOff                       : (()->())?
-    var afterPeripheralDiscoveredCallback   : ((peripheral:Peripheral, rssi:Int)->())?
+    // PRIVATE
+    private var afterPowerOn                        : (()->())?
+    private var afterPowerOff                       : (()->())?
+    private var afterPeripheralDiscoveredCallback   : ((peripheral:Peripheral, rssi:Int)->())?
+
+    private let cbCentralManager        : CBCentralManager!
+
+    private var connecting  = false
     
-    var discoveredPeripherals : Dictionary<CBPeripheral, Peripheral> = [:]
-    let cbCentralManager : CBCentralManager!
+    // INTERNAL
+    internal var discoveredPeripherals   : Dictionary<CBPeripheral, Peripheral> = [:]
     
-    var isScanning  = false
-    var connecting  = false
     
-    var peripherals : [Peripheral] {
+    // PUBLIC
+    public var isScanning  = false
+
+    public var peripherals : [Peripheral] {
         return Array(self.discoveredPeripherals.values)
     }
     
-    // APPLICATION INTERFACE
-    class func sharedinstance() -> CentralManager {
+    public class func sharedinstance() -> CentralManager {
         if !thisCentralManager {
             thisCentralManager = CentralManager()
         }
@@ -34,11 +39,11 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // scanning
-    func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
     }
     
-    func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
         if !self.isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDds")
             self.isScanning = true
@@ -47,7 +52,7 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    func stopScanning() {
+    public func stopScanning() {
         if (self.isScanning) {
             Logger.debug("CentralManager#stopScanning")
             self.isScanning = false
@@ -56,25 +61,25 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // connection
-    func disconnectAllPeripherals() {
+    public func disconnectAllPeripherals() {
         Logger.debug("CentralManager#disconnectAllPeripherals")
         for peripheral in self.peripherals {
             peripheral.disconnect()
         }
     }
     
-    func connectPeripheral(peripheral:Peripheral) {
+    public func connectPeripheral(peripheral:Peripheral) {
         Logger.debug("CentralManager#connectPeripheral")
         self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
     }
     
-    func cancelPeripheralConnection(peripheral:Peripheral) {
+    public func cancelPeripheralConnection(peripheral:Peripheral) {
         Logger.debug("CentralManager#cancelPeripheralConnection")
         self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
     
     // power up
-    func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())? = nil) {
+    public func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())? = nil) {
         Logger.debug("powerOn")
         self.afterPowerOn = afterPowerOn
         self.afterPowerOff = afterPowerOff
@@ -83,27 +88,26 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    func poweredOn() -> Bool {
+    public func poweredOn() -> Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
     
     // CBCentralManagerDelegate
-    // peripheral
-    func centralManager(_:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
+    public func centralManager(_:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
         Logger.debug("CentralManager#didConnectPeripheral")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
-    func centralManager(_:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
+    public func centralManager(_:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
         Logger.debug("CentralManager#didDisconnectPeripheral")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }
     }
     
-    func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
+    public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
         if !self.discoveredPeripherals[peripheral] {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
@@ -114,27 +118,27 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    func centralManager(_:CBCentralManager!, didFailToConnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
+    public func centralManager(_:CBCentralManager!, didFailToConnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
         Logger.debug("CentralManager#didFailToConnectPeripheral")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didFailToConnectPeripheral(error)
         }
     }
     
-    func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:[AnyObject]!) {
+    public func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:[AnyObject]!) {
         Logger.debug("CentralManager#didRetrieveConnectedPeripherals")
     }
     
-    func centralManager(_:CBCentralManager!, didRetrievePeripherals peripherals:[AnyObject]!) {
+    public func centralManager(_:CBCentralManager!, didRetrievePeripherals peripherals:[AnyObject]!) {
         Logger.debug("CentralManager#didRetrievePeripherals")
     }
     
     // centrail manager state
-    func centralManager(_:CBCentralManager!, willRestoreState dict:NSDictionary!) {
+    public func centralManager(_:CBCentralManager!, willRestoreState dict:NSDictionary!) {
         Logger.debug("CentralManager#willRestoreState")
     }
     
-    func centralManagerDidUpdateState(_:CBCentralManager!) {
+    public func centralManagerDidUpdateState(_:CBCentralManager!) {
         switch(self.cbCentralManager.state) {
         case .Unauthorized:
             Logger.debug("CentralManager#centralManagerDidUpdateState: Unauthorized")
@@ -164,38 +168,38 @@ class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // INTERNAL INTERFACE
-    class func syncCallback(request:()->()) {
+    internal class func syncCallback(request:()->()) {
         CentralManager.sharedinstance().syncCallback(request)
     }
     
-    class func asyncCallback(request:()->()) {
+    internal class func asyncCallback(request:()->()) {
         CentralManager.sharedinstance().asyncCallback(request)
     }
     
-    class func delayCallback(delay:Float, request:()->()) {
+    internal class func delayCallback(delay:Float, request:()->()) {
         CentralManager.sharedinstance().delayCallback(delay, request)
     }
     
-    func syncCallback(request:()->()) {
+    internal func syncCallback(request:()->()) {
         dispatch_sync(dispatch_get_main_queue(), request)
     }
     
-    func asyncCallback(request:()->()) {
+    internal func asyncCallback(request:()->()) {
         dispatch_async(dispatch_get_main_queue(), request)
     }
     
-    func delayCallback(delay:Float, request:()->()) {
+    internal func delayCallback(delay:Float, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, dispatch_get_main_queue(), request)
     }
     
     // PRIVATE INTERFACE
-    init() {
+    private init() {
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:nil)
     }
     
-    func unpackAdvertisements(advertDictionary:NSDictionary!) -> Dictionary<String,String> {
+    private func unpackAdvertisements(advertDictionary:NSDictionary!) -> Dictionary<String,String> {
         Logger.debug("CentralManager#unpackAdvertisements found \(advertDictionary.count) advertisements")
         var advertisements = Dictionary<String, String>()
         func addKey(key:String, andValue value:AnyObject) -> () {

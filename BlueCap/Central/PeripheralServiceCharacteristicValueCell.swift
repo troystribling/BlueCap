@@ -10,7 +10,7 @@ import UIKit
 
 class PeripheralServiceCharacteristicValueCell : UITableViewCell {
   
-    @IBOutlet var valueNameLabel    : UILabel
-    @IBOutlet var valueLable        : UILabel
+    @IBOutlet var valueNameLabel    : UILabel!
+    @IBOutlet var valueLable        : UILabel!
     
 }

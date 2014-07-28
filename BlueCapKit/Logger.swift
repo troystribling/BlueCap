@@ -8,8 +8,8 @@
 
 import Foundation
 
-class Logger {
-    class func debug(message:String) {
+public class Logger {
+    public class func debug(message:String) {
         println("\(message)")
     }
 

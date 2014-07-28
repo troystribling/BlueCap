@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-struct Gnosus {
+public struct Gnosus {
   
     //***************************************************************************************************
     // Hello World Service
@@ -107,9 +107,9 @@ struct Gnosus {
 
 }
 
-class GnosusProfiles {
+public class GnosusProfiles {
     
-    class func create() {
+    public class func create() {
         
         let profileManager = ProfileManager.sharedInstance()
         

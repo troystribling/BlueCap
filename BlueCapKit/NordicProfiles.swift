@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-struct Nordic {
+public struct Nordic {
     
     //***************************************************************************************************
     // Nordic Device Temperature Service
@@ -42,9 +42,9 @@ struct Nordic {
     
 }
 
-class NordicProfiles {
+public class NordicProfiles {
     
-    class func create() {
+    public class func create() {
         
         let profileManager = ProfileManager.sharedInstance()
         

@@ -9,16 +9,19 @@
 import Foundation
 import CoreBluetooth
 
-class Service : NSObject {
+public class Service : NSObject {
     
-    let cbService   : CBService!
-    let perpheral   : Peripheral!
-    let profile     : ServiceProfile?
-    
-    var discoveredCharacteristics           = Dictionary<CBUUID, Characteristic>()
-    var characteristicsDiscoveredCallback   : (() -> ())?
+    // PRIVATE
+    private let profile                             : ServiceProfile?
+    private var characteristicsDiscoveredCallback   : (() -> ())?
 
-    var name : String {
+    // INTERNAL
+    internal let perpheral                      : Peripheral!
+    internal let cbService                      : CBService!
+    internal var discoveredCharacteristics      = Dictionary<CBUUID, Characteristic>()
+    
+    // PUBLIC
+    public var name : String {
         if let profile = self.profile {
             return profile.name
         } else {
@@ -26,35 +29,35 @@ class Service : NSObject {
         }
     }
     
-    var uuid : CBUUID {
+    public var uuid : CBUUID {
         return self.cbService.UUID
     }
     
-    var characteristics : [Characteristic] {
+    public var characteristics : [Characteristic] {
         return Array(self.discoveredCharacteristics.values)
     }
     
-    // APPLICATION INTERFACE
-    init(cbService:CBService, peripheral:Peripheral) {
-        self.cbService = cbService
-        self.perpheral = peripheral
-        self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
-    }
-    
-    func discoverAllCharacteristics(characteristicsDiscoveredCallback:() -> ()) {
+    // PUBLIC
+    public func discoverAllCharacteristics(characteristicsDiscoveredCallback:() -> ()) {
         Logger.debug("Service#discoverAllCharacteristics")
         self.characteristicsDiscoveredCallback = characteristicsDiscoveredCallback
         self.perpheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
     }
     
-    func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscovered:() -> ()) {
+    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscovered:() -> ()) {
         Logger.debug("Service#discoverCharacteristics")
         self.characteristicsDiscoveredCallback = characteristicsDiscovered
         self.perpheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)
     }
     
-    // INTERNAL INTERFACE
-    func didDiscoverCharacteristics() {
+    // INTERNAL
+    internal init(cbService:CBService, peripheral:Peripheral) {
+        self.cbService = cbService
+        self.perpheral = peripheral
+        self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
+    }
+    
+    internal func didDiscoverCharacteristics() {
         self.discoveredCharacteristics.removeAll()
         for cbCharacteristic : AnyObject in self.cbService.characteristics {
             let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic as CBCharacteristic, service:self)

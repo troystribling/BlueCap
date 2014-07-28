@@ -10,7 +10,7 @@ import Foundation
 
 extension Int8 : Deserialized {
     
-    static func fromString(data:String) -> Int8? {
+    public static func fromString(data:String) -> Int8? {
         if let intVal = data.toInt() {
             if intVal > 127 {
                 return Int8(127)
@@ -23,41 +23,41 @@ extension Int8 : Deserialized {
         }
     }
 
-    static func deserialize(data:NSData) -> Int8 {
+    public static func deserialize(data:NSData) -> Int8 {
         var value : Int8 = 0
         data.getBytes(&value, length:sizeof(Int8))
         return value
     }
     
-    static func deserialize(data:NSData, start:Int) -> Int8 {
+    public static func deserialize(data:NSData, start:Int) -> Int8 {
         var value : Int8 = 0
         data.getBytes(&value, range: NSMakeRange(start, sizeof(Int8)))
         return value
     }
     
-    static func deserializeFromLittleEndian(data:NSData) -> Int8 {
+    public static func deserializeFromLittleEndian(data:NSData) -> Int8 {
         return deserialize(data)
     }
     
-    static func deserializeFromLittleEndian(data:NSData) -> [Int8] {
+    public static func deserializeFromLittleEndian(data:NSData) -> [Int8] {
         let count = data.length / sizeof(Int8)
         return [Int](0..<count).map{(i) in self.deserializeFromLittleEndian(data, start:i)}
     }
     
-    static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int8 {
+    public static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int8 {
         return deserialize(data, start:start)
     }
     
-    static func deserializeFromBigEndian(data:NSData) -> Int8 {
+    public static func deserializeFromBigEndian(data:NSData) -> Int8 {
         return deserialize(data)
     }
     
-    static func deserializeFromBigEndian(data:NSData) -> [Int8] {
+    public static func deserializeFromBigEndian(data:NSData) -> [Int8] {
         let count = data.length / sizeof(Int8)
         return [Int](0..<count).map{(i) in self.deserializeFromBigEndian(data, start:i)}
     }
     
-    static func deserializeFromBigEndian(data:NSData, start:Int) -> Int8 {
+    public static func deserializeFromBigEndian(data:NSData, start:Int) -> Int8 {
         return deserialize(data, start:start)
     }
 

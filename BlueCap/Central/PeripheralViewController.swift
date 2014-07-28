@@ -12,8 +12,8 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
     
     weak var peripheral             : Peripheral?
-    @IBOutlet var uuidLabel         : UILabel
-    @IBOutlet var rssiLabel         : UILabel
+    @IBOutlet var uuidLabel         : UILabel!
+    @IBOutlet var rssiLabel         : UILabel!
     
     struct MainStoryBoard {
         static let peripheralServicesSegue          = "PeripheralServices"

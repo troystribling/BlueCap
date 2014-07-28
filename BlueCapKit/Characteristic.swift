@@ -9,53 +9,56 @@
 import Foundation
 import CoreBluetooth
 
-class Characteristic {
+public class Characteristic {
 
-    let CHARACTERISTIC_READ_TIMEOUT : Float  = 10.0
-    let CHARACTERISTIC_WRITE_TIMEOUT : Float = 10.0
+    // PRIVATE
+    private let CHARACTERISTIC_READ_TIMEOUT : Float  = 10.0
+    private let CHARACTERISTIC_WRITE_TIMEOUT : Float = 10.0
    
-    let cbCharacteristic                    : CBCharacteristic!
-    let service                             : Service!
-    let profile                             : CharacteristicProfile!
+    private var notificationStateChangedSuccessCallback     : (() -> ())?
+    private var notificationStateChangedFailedCallback      : ((error:NSError!) -> ())?
+    private var afterUpdateSuccessCallback                  : (() -> ())?
+    private var afterUpdateFailedCallback                   : ((error:NSError) -> ())?
+    private var afterWriteSuccessCallback                   : (() -> ())?
+    private var afterWriteFailedCallback                    : ((error:NSError) -> ())?
     
-    var notificationStateChangedSuccessCallback     : (() -> ())?
-    var notificationStateChangedFailedCallback      : ((error:NSError!) -> ())?
-    var afterUpdateSuccessCallback                  : (() -> ())?
-    var afterUpdateFailedCallback                   : ((error:NSError) -> ())?
-    var afterWriteSuccessCallback                   : (() -> ())?
-    var afterWriteFailedCallback                    : ((error:NSError) -> ())?
+    private var reading = false
+    private var writing = false
     
-    var reading = false
-    var writing = false
+    private var readSequence    = 0
+    private var writeSequence   = 0
     
-    var readSequence    = 0
-    var writeSequence   = 0
+    // INTERNAL
+    internal let cbCharacteristic                    : CBCharacteristic!
+    internal let service                             : Service!
+    internal let profile                             : CharacteristicProfile!
     
-    var name : String {
+    // PUBLIC
+    public var name : String {
         return self.profile.name
     }
     
-    var uuid : CBUUID {
+    public var uuid : CBUUID {
         return self.cbCharacteristic.UUID
     }
     
-    var properties : CBCharacteristicProperties {
+    public var properties : CBCharacteristicProperties {
         return self.cbCharacteristic.properties
     }
 
-    var isNotifying : Bool {
+    public var isNotifying : Bool {
         return self.cbCharacteristic.isNotifying
     }
     
-    var isBroadcasted : Bool {
+    public var isBroadcasted : Bool {
         return self.cbCharacteristic.isBroadcasted
     }
     
-    var value : NSData! {
+    public var value : NSData! {
         return self.cbCharacteristic.value
     }
 
-    var stringValues : Dictionary<String, String>? {
+    public var stringValues : Dictionary<String, String>? {
         if self.value {
             return self.profile.stringValues(self.value)
         } else {
@@ -63,7 +66,7 @@ class Characteristic {
         }
     }
     
-    var anyValue : Any? {
+    public var anyValue : Any? {
         if self.value {
             return self.profile.anyValue(self.value)
         } else {
@@ -71,23 +74,11 @@ class Characteristic {
         }
     }
     
-    var discreteStringValues : [String] {
+    public var discreteStringValues : [String] {
         return self.profile.discreteStringValues
     }
     
-    // APPLICATION INTERFACE
-    init(cbCharacteristic:CBCharacteristic, service:Service) {
-        self.cbCharacteristic = cbCharacteristic
-        self.service = service
-        self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString, name:"Unknown")
-        if let serviceProfile = ProfileManager.sharedInstance().serviceProfiles[service.uuid] {
-            if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
-                self.profile = characteristicProfile
-            }
-        }
-    }
-
-    func startNotifying(notificationStateChangedSuccessCallback:(() -> ())? = nil, notificationStateChangedFailedCallback:((error:NSError!) -> ())? = nil) {
+    public func startNotifying(notificationStateChangedSuccessCallback:(() -> ())? = nil, notificationStateChangedFailedCallback:((error:NSError!) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
             self.notificationStateChangedSuccessCallback = notificationStateChangedSuccessCallback
             self.notificationStateChangedFailedCallback = notificationStateChangedFailedCallback
@@ -95,7 +86,7 @@ class Characteristic {
         }
     }
 
-    func stopNotifying(notificationStateChangedSuccessCallback:(() -> ())? = nil, notificationStateChangedFailedCallback:((error:NSError!) -> ())? = nil) {
+    public func stopNotifying(notificationStateChangedSuccessCallback:(() -> ())? = nil, notificationStateChangedFailedCallback:((error:NSError!) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
             self.notificationStateChangedSuccessCallback = notificationStateChangedSuccessCallback
             self.notificationStateChangedFailedCallback = notificationStateChangedFailedCallback
@@ -103,25 +94,25 @@ class Characteristic {
         }
     }
 
-    func startUpdates(afterUpdateSuccessCallback:() -> (), afterUpdateFailedCallback:((error:NSError)->())? = nil) {
+    public func startUpdates(afterUpdateSuccessCallback:() -> (), afterUpdateFailedCallback:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.Notify) {
             self.afterUpdateSuccessCallback = afterUpdateSuccessCallback
             self.afterUpdateFailedCallback = afterUpdateFailedCallback
         }
     }
 
-    func stopUpdates() {
+    public func stopUpdates() {
         if self.propertyEnabled(.Notify) {
             self.afterUpdateSuccessCallback = nil
             self.afterUpdateFailedCallback = nil
         }
     }
 
-    func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
+    public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
         return (self.properties.toRaw() & property.toRaw()) > 0
     }
     
-    func read(afterReadSuccessCallback:() -> (), afterReadFailedCallback:((error:NSError)->())?) {
+    public func read(afterReadSuccessCallback:() -> (), afterReadFailedCallback:((error:NSError)->())?) {
         if self.propertyEnabled(.Read) {
             Logger.debug("Characteristic#read: \(self.uuid.UUIDString)")
             self.afterUpdateSuccessCallback = afterReadSuccessCallback
@@ -135,7 +126,7 @@ class Characteristic {
         }
     }
 
-    func write(value:NSData, afterWriteSucessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    public func write(value:NSData, afterWriteSucessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.afterWriteSuccessCallback = afterWriteSucessCallback
@@ -149,7 +140,7 @@ class Characteristic {
         }
     }
 
-    func write(value:NSData, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    public func write(value:NSData, afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.WriteWithoutResponse) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.afterWriteSuccessCallback = nil
@@ -163,7 +154,7 @@ class Characteristic {
         }
     }
 
-    func write(stringValue:Dictionary<String, String>, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    public func write(stringValue:Dictionary<String, String>, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if let value = self.profile.dataValue(stringValue) {
             self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
         } else {
@@ -171,7 +162,7 @@ class Characteristic {
         }
     }
 
-    func write(stringValue:Dictionary<String, String>, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    public func write(stringValue:Dictionary<String, String>, afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if let value = self.profile.dataValue(stringValue) {
             self.write(value, afterWriteFailedCallback)
         } else {
@@ -179,7 +170,7 @@ class Characteristic {
         }
     }
 
-    func write(anyValue:Any, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    public func write(anyValue:Any, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if let value = self.profile.dataValue(anyValue) {
             self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
         } else {
@@ -187,7 +178,7 @@ class Characteristic {
         }
     }
 
-    func write(anyValue:Any, afterWriteFailedCallback:((error:NSError)->())? = nil) {
+    public func write(anyValue:Any, afterWriteFailedCallback:((error:NSError)->())? = nil) {
         if let value = self.profile.dataValue(anyValue) {
             self.write(value, afterWriteFailedCallback)
         } else {
@@ -195,8 +186,8 @@ class Characteristic {
         }
     }
 
-    // PRIVATE INTERFACE
-    func timeoutRead(sequence:Int) {
+    // PRIVATE
+    private func timeoutRead(sequence:Int) {
         Logger.debug("Characteristic#timeoutRead: sequence \(sequence)")
         CentralManager.delayCallback(CHARACTERISTIC_READ_TIMEOUT) {
             if sequence == self.readSequence && self.reading {
@@ -213,7 +204,7 @@ class Characteristic {
         }
     }
 
-    func timeoutWrite(sequence:Int) {
+    private func timeoutWrite(sequence:Int) {
         Logger.debug("Characteristic#timeoutWrite: sequence \(sequence)")
         CentralManager.delayCallback(CHARACTERISTIC_WRITE_TIMEOUT) {
             if sequence == self.writeSequence && self.writing {
@@ -230,8 +221,19 @@ class Characteristic {
         }
     }
 
-    // INTERNAL INTERFACE
-    func didDiscover() {
+    // INTERNAL
+    internal init(cbCharacteristic:CBCharacteristic, service:Service) {
+        self.cbCharacteristic = cbCharacteristic
+        self.service = service
+        self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString, name:"Unknown")
+        if let serviceProfile = ProfileManager.sharedInstance().serviceProfiles[service.uuid] {
+            if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
+                self.profile = characteristicProfile
+            }
+        }
+    }
+    
+    internal func didDiscover() {
         Logger.debug("Characteristic#didDiscover:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
         if let afterDiscoveredCallback = self.profile.afterDiscoveredCallback {
             CentralManager.asyncCallback(){afterDiscoveredCallback(characteristic:self)}
@@ -241,7 +243,7 @@ class Characteristic {
         }
     }
     
-    func didUpdateNotificationState(error:NSError!) {
+    internal func didUpdateNotificationState(error:NSError!) {
         if error {
             Logger.debug("Characteristic#didUpdateNotificationState Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let notificationStateChangedFailedCallback = self.notificationStateChangedFailedCallback {
@@ -255,7 +257,7 @@ class Characteristic {
         }
     }
     
-    func didUpdate(error:NSError!) {
+    internal func didUpdate(error:NSError!) {
         self.reading = false
         if error {
             Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
@@ -270,7 +272,7 @@ class Characteristic {
         }
     }
     
-    func didWrite(error:NSError!) {
+    internal func didWrite(error:NSError!) {
         self.writing = false
         if error {
             Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")

@@ -11,11 +11,11 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
    
-    var characteristic          : Characteristic?
+    weak var characteristic     : Characteristic?
     let progressView            : ProgressView!
     var selectedIndex           : NSIndexPath?
     
-    @IBOutlet var refreshButton :UIButton
+    @IBOutlet var refreshButton :UIButton!
     
     struct MainStoryboard {
         static let peripheralServiceCharactertisticValueCell                = "PeripheralServiceCharacteristicValueCell"

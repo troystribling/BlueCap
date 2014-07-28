@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
-    var service : Service?
+    weak var service : Service?
     
     struct MainStoryboard {
         static let peripheralServiceCharacteristicCell  = "PeripheralServiceCharacteristicCell"

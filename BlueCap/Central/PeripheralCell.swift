@@ -10,7 +10,7 @@ import UIKit
 
 class PeripheralCell : UITableViewCell {
 
-    @IBOutlet var nameLabel                     : UILabel
-    @IBOutlet var connectingActivityIndicator   : UIActivityIndicatorView
+    @IBOutlet var nameLabel                     : UILabel!
+    @IBOutlet var connectingActivityIndicator   : UIActivityIndicatorView!
     
 }

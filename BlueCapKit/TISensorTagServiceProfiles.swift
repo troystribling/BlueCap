@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-struct TISensorTag {
+public struct TISensorTag {
 
     //***************************************************************************************************
     // Accelerometer Service
@@ -428,9 +428,9 @@ struct TISensorTag {
     }
 }
 
-class TISensorTagServiceProfiles {
+public class TISensorTagServiceProfiles {
     
-    class func create() {
+    public class func create() {
 
         let profileManage = ProfileManager.sharedInstance()
         

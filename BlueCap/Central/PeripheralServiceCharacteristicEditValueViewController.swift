@@ -11,8 +11,8 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicEditValueViewController : UIViewController, UITextFieldDelegate {
    
-    @IBOutlet var valueTextField    : UITextField
-    var characteristic              : Characteristic?
+    @IBOutlet var valueTextField    : UITextField!
+    weak var characteristic         : Characteristic?
     var valueName                   : String?
     
     init(coder aDecoder:NSCoder!) {

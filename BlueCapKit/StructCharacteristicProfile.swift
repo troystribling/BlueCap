@@ -8,24 +8,25 @@
 
 import Foundation
 
-class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.RawType == StructType.RawType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
+public class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.RawType == StructType.RawType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
     
-    var endianness : Endianness = .Little
+    // PRIVATE
+    private var endianness : Endianness = .Little
 
-    // APPLICATION INTERFACE
-    init(uuid:String, name:String, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
+    // PUBLIC
+    public init(uuid:String, name:String, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runProfile = profile {
             runProfile(characteristic:self)
         }
     }
 
-    convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
+    public convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
         self.init(uuid:uuid, name:name, profile:profile)
         self.endianness = endianness
     }
     
-    override func stringValues(data:NSData) -> Dictionary<String, String>? {
+    public override func stringValues(data:NSData) -> Dictionary<String, String>? {
         if let value = self.anyValue(data) as? StructType {
             return value.stringValues
         } else {
@@ -33,7 +34,8 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
         }
     }
     
-    override func anyValue(data:NSData) -> Any? {
+    // INTERNAL
+    internal override func anyValue(data:NSData) -> Any? {
         let values = self.deserialize(data)
         if let value = StructType.fromRawValues(values) {
             Logger.debug("StructCharacteristicProfile#anyValue: data = \(data.hexStringValue()), value = \(value.toRawValues())")
@@ -43,7 +45,7 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
         }
     }
     
-    override func dataValue(data:Dictionary<String, String>) -> NSData? {
+    internal override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let value = StructType.fromStrings(data) {
             Logger.debug("StructCharacteristicProfile#dataValue: data = \(data), value = \(value.toRawValues())")
             return self.serialize(value.toRawValues())
@@ -52,7 +54,7 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
         }
     }
     
-    override func dataValue(object:Any) -> NSData? {
+    internal override func dataValue(object:Any) -> NSData? {
         if let value = object as? StructType {
             Logger.debug("StructCharacteristicProfile#dataValue: value = \(value.toRawValues())")
             return self.serialize(value.toRawValues())
@@ -61,8 +63,8 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
         }
     }
     
-    // PRIVATE INTERFACE
-    func deserialize(data:NSData) -> [StructType.RawType] {
+    // PRIVATE
+    private func deserialize(data:NSData) -> [StructType.RawType] {
         switch self.endianness {
         case Endianness.Little:
             return StructType.RawType.deserializeFromLittleEndian(data)
@@ -71,7 +73,7 @@ class StructCharacteristicProfile<StructType:DeserializedStruct where StructType
         }
     }
     
-    func serialize(values:[StructType.RawType]) -> NSData {
+    private func serialize(values:[StructType.RawType]) -> NSData {
         switch self.endianness {
         case Endianness.Little:
             return NSData.serializeToLittleEndian(values)
