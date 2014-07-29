@@ -266,7 +266,7 @@ public struct TISensorTag {
     }
 
     //***************************************************************************************************
-    // Temperature Service
+    // Temperature Service units Celsius
     //***************************************************************************************************
     struct TemperatureService {
         static let uuid = "F000AA00-0451-4000-B000-000000000000"
@@ -347,6 +347,8 @@ public struct TISensorTag {
 
     //***************************************************************************************************
     // Hygrometer Service
+    // Temperature units Celsius
+    // Humidity units Relative Humdity
     //***************************************************************************************************
     struct HygrometerService {
         static let uuid = "F000AA20-0451-4000-B000-000000000000"
@@ -354,6 +356,35 @@ public struct TISensorTag {
         struct Data {
             static let uuid = "f000aa21-0451-4000-b000-000000000000"
             static let name = "Hygrometer Data"
+            struct Value : DeserializedStruct {
+                var temperatureRaw  : UInt16
+                var humidityRaw     : UInt16
+                var temperature     : Double
+                var humidity        : Double
+                static func fromRawValues(rawValues:[UInt16]) -> Value? {
+                    let (temperature, humidity) = self.valuesFromRaw(rawValues[0], humidityRaw:rawValues[1])
+                    return Value(temperatureRaw:rawValues[0], humidityRaw:rawValues[1], temperature:temperature, humidity:humidity)
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    let temperatureRaw = BlueCap.uint16ValueFromStringValue("temperatureRaw", values:stringValues)
+                    let humidityRaw = BlueCap.uint16ValueFromStringValue("humidityRaw", values:stringValues)
+                    if temperatureRaw && humidityRaw {
+                        let (temperature, humidity) = self.valuesFromRaw(temperatureRaw!, humidityRaw:humidityRaw!)
+                        return Value(temperatureRaw:temperatureRaw!, humidityRaw:humidityRaw!, temperature:temperature, humidity:humidity)
+                    } else {
+                        return nil
+                    }
+                }
+                static func valuesFromRaw(temperatureRaw:UInt16, humidityRaw:UInt16) -> (Double, Double) {
+                    return (-46.86+175.72*Double(temperatureRaw)/65536.0, -6.0+125.0*Double(humidityRaw)/65536.0)
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["temperatureRae":"\(temperatureRaw)", "humidityRaw":"\(humidityRaw)", "temperature":"\(temperature)", "humidity":"\(humidity)"]
+                }
+                func toRawValues() -> [UInt16] {
+                    return [temperatureRaw, humidityRaw]
+                }
+            }
         }
         struct Enabled {
             static let uuid = "f000aa22-0451-4000-b000-000000000000"
@@ -484,13 +515,13 @@ public class TISensorTagServiceProfiles {
         profileManage.addService(ServiceProfile(uuid:TISensorTag.AccelerometerService.uuid, name:TISensorTag.AccelerometerService.name){(serviceProfile:ServiceProfile) in
             // Accelerometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>(uuid:TISensorTag.AccelerometerService.Data.uuid, name:TISensorTag.AccelerometerService.Data.name)
-                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.AccelerometerService.Data.Value.fromRawValues([-2, 6, 69]))
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             })
             // Accelerometer Enabled
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name)
-                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
@@ -499,7 +530,7 @@ public class TISensorTagServiceProfiles {
                 })
             // Accelerometer Update Period
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
-                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.UInt8Period>) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                 })
@@ -511,13 +542,13 @@ public class TISensorTagServiceProfiles {
         profileManage.addService(ServiceProfile(uuid:TISensorTag.MagnetometerService.uuid, name:TISensorTag.MagnetometerService.name){(serviceProfile:ServiceProfile) in
             // Magentometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.MagnetometerService.Data.Value>(uuid:TISensorTag.MagnetometerService.Data.uuid, name:TISensorTag.MagnetometerService.Data.name, fromEndianness:.Little)
-                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.MagnetometerService.Data.Value>) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.MagnetometerService.Data.Value.fromRawValues([-2183, 1916, 1255]))
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
                 })
             // Magnetometer Enabled
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.MagnetometerService.Enabled.uuid, name: TISensorTag.MagnetometerService.Enabled.name)
-                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
@@ -526,7 +557,7 @@ public class TISensorTagServiceProfiles {
                 })
             // Magnetometer Update Period
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.MagnetometerService.UpdatePeriod.uuid, name:TISensorTag.MagnetometerService.UpdatePeriod.name)
-                {(characteristicProfile:StructCharacteristicProfile<TISensorTag.UInt8Period>) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                 })
@@ -538,13 +569,13 @@ public class TISensorTagServiceProfiles {
         profileManage.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile:ServiceProfile) in
             // Gyroscope Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.GyroscopeService.Data.Value>(uuid:TISensorTag.GyroscopeService.Data.uuid, name:TISensorTag.GyroscopeService.Data.name, fromEndianness:.Little)
-                {(characteristicProfile:CharacteristicProfile) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.GyroscopeService.Data.Value.fromRawValues([-24, -219, -23]))
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
                 })
             // Gyroscope Enables
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.GyroscopeService.Enabled.Value>(uuid:TISensorTag.GyroscopeService.Enabled.uuid, name:TISensorTag.GyroscopeService.Enabled.name)
-                {(characteristicProfile:CharacteristicProfile) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.GyroscopeService.Enabled.Value.No)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
@@ -559,13 +590,13 @@ public class TISensorTagServiceProfiles {
         profileManage.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile:ServiceProfile) in
             // Temperature Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.TemperatureService.Data.Value>(uuid:TISensorTag.TemperatureService.Data.uuid, name:TISensorTag.TemperatureService.Data.name, fromEndianness:.Little)
-                {(characteristicProfile:CharacteristicProfile) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.GyroscopeService.Data.Value.fromRawValues([-24, -219, -23]))
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
                 })
             // Temperature Enabled
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.TemperatureService.Enabled.uuid, name:TISensorTag.TemperatureService.Enabled.name)
-                {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in
+                {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
@@ -584,6 +615,21 @@ public class TISensorTagServiceProfiles {
         // Hygrometer Service
         //***************************************************************************************************
         profileManage.addService(ServiceProfile(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name){(serviceProfile:ServiceProfile) in
+            // Hygrometer Data
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.HygrometerService.Data.Value>(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name, fromEndianness:.Little)
+                {(characteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.HygrometerService.Data.Value.fromRawValues([2600, 3500]))
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+                })
+            // Hygrometer Enabled
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.HygrometerService.Enabled.uuid, name:TISensorTag.HygrometerService.Enabled.name)
+                {(characteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+                    characteristicProfile.afterDiscovered(){(characteristic:Characteristic) in
+                        characteristic.write(TISensorTag.Enabled.Yes, afterWriteSuccessCallback:{})
+                    }
+                })
         })
 
         //***************************************************************************************************
