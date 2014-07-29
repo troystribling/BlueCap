@@ -174,8 +174,8 @@ public struct TISensorTag {
                 case XZAxis     = 5
                 case YZAxis     = 6
                 case XYZAxis    = 7
-                static func fromRaw(value:UInt8) -> Value? {
-                    switch value {
+                static func fromRaw(rawValue:UInt8) -> Value? {
+                    switch rawValue {
                     case 0:
                         return Value.No
                     case 1:
@@ -196,8 +196,8 @@ public struct TISensorTag {
                         return nil
                     }
                 }
-                static func fromString(value:String) -> Value? {
-                    switch value {
+                static func fromString(stringValue:String) -> Value? {
+                    switch stringValue {
                     case "No":
                         return Value.No
                     case "XAxis":
@@ -275,17 +275,27 @@ public struct TISensorTag {
             static let uuid = "f000aa01-0451-4000-b000-000000000000"
             static let name = "Temperature Data"
             struct Value : DeserializedStruct {
-                var rawObject   : Int16
-                var rawAmbient  : Int16
+                var objectRaw   : Int16
+                var ambientRaw  : Int16
                 var object      : Double
                 var ambient     : Double
                 static func fromRawValues(rawValues:[Int16]) -> Value? {
-                    let (object, ambient) = self.valuesFromRaw(rawValues[0], rawAmbient:rawValues[1])
-                    return Value(rawObject:rawValues[0], rawAmbient:rawValues[1], object:object, ambient:ambient)
+                    let (object, ambient) = self.valuesFromRaw(rawValues[0], ambientRaw:rawValues[1])
+                    return Value(objectRaw:rawValues[0], ambientRaw:rawValues[1], object:object, ambient:ambient)
                 }
-                static func valuesFromRaw(rawObject:Int16, rawAmbient:Int16) -> (Double, Double) {
-                    let ambient = Double(rawAmbient)/128.0;
-                    let vObj2 = Double(rawObject)*0.00000015625;
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    let objectRaw = BlueCap.int16ValueFromStringValue("objectRaw", values:stringValues)
+                    let ambientRaw = BlueCap.int16ValueFromStringValue("ambientRaw", values:stringValues)
+                    if objectRaw && ambientRaw {
+                        let (object, ambient) = self.valuesFromRaw(objectRaw!, ambientRaw:ambientRaw!)
+                        return Value(objectRaw:objectRaw!, ambientRaw:ambientRaw!, object:object, ambient:ambient)
+                    } else {
+                        return nil
+                    }
+                }
+                static func valuesFromRaw(objectRaw:Int16, ambientRaw:Int16) -> (Double, Double) {
+                    let ambient = Double(ambientRaw)/128.0;
+                    let vObj2 = Double(objectRaw)*0.00000015625;
                     let tDie2 = ambient + 273.15;
                     let s0 = 6.4*pow(10,-14);
                     let a1 = 1.75*pow(10,-3);
@@ -301,14 +311,11 @@ public struct TISensorTag {
                     let object = pow(pow(tDie2,4) + (fObj/s),0.25) - 273.15;
                     return (object, ambient)
                 }
-                static func fromStrings(values:Dictionary<String, String>) -> Value? {
-                    return nil
-                }
                 var stringValues : Dictionary<String,String> {
-                    return ["rawObject":"\(rawObject)", "rawAmbient":"\(rawAmbient)", "object":"\(object)", "ambient":"\(ambient)"]
+                    return ["objectRaw":"\(objectRaw)", "ambientRaw":"\(ambientRaw)", "object":"\(object)", "ambient":"\(ambient)"]
                 }
                 func toRawValues() -> [Int16] {
-                    return [rawObject, rawAmbient]
+                    return [objectRaw, ambientRaw]
                 }
             }
         }
@@ -387,30 +394,30 @@ public struct TISensorTag {
     //***************************************************************************************************
     struct UInt8Period : DeserializedStruct {
         var periodRaw   : UInt8
-        var period      : Int
-        static func fromRawValues(values:[UInt8]) -> UInt8Period? {
-            var period = 10*Int(values[0])
+        var period      : UInt16
+        static func fromRawValues(rawValues:[UInt8]) -> UInt8Period? {
+            var period = 10*UInt16(rawValues[0])
             if period < 10 {
                 period = 10
             }
-            return UInt8Period(periodRaw:values[0], period:period)
+            return UInt8Period(periodRaw:rawValues[0], period:period)
         }
-        static func fromStrings(values:Dictionary<String, String>) -> UInt8Period? {
-            if let period = values["period"]?.toInt() {
-                let rawPeriod = self.periodRawFromPeriod(period)
-                return UInt8Period(periodRaw:rawPeriod, period:10*period)
+        static func fromStrings(stringValues:Dictionary<String, String>) -> UInt8Period? {
+            if let period = BlueCap.uint16ValueFromStringValue("period", values:stringValues) {
+                let periodRaw = self.periodRawFromPeriod(period)
+                return UInt8Period(periodRaw:periodRaw, period:10*period)
             } else {
                 return nil
             }
         }
-        static func periodRawFromPeriod(period:Int) -> UInt8 {
-            let scaledPeriod = period/10
-            if scaledPeriod > 255 {
+        static func periodRawFromPeriod(period:UInt16) -> UInt8 {
+            let periodRaw = period/10
+            if periodRaw > 255 {
                 return 255
-            } else if scaledPeriod < 10 {
+            } else if periodRaw < 10 {
                 return 10
             } else {
-                return UInt8(scaledPeriod)
+                return UInt8(periodRaw)
             }
         }
         var stringValues : Dictionary<String,String> {
@@ -423,8 +430,8 @@ public struct TISensorTag {
     enum Enabled: UInt8, DeserializedEnum {
         case No     = 0
         case Yes    = 1
-        static func fromRaw(value:UInt8) -> Enabled? {
-            switch value {
+        static func fromRaw(rawValue:UInt8) -> Enabled? {
+            switch rawValue {
             case 0:
                 return Enabled.No
             case 1:
@@ -433,8 +440,8 @@ public struct TISensorTag {
                 return nil
             }
         }
-        static func fromString(value:String) -> Enabled? {
-            switch value {
+        static func fromString(stringValue:String) -> Enabled? {
+            switch stringValue {
             case "No":
                 return Enabled.No
             case "Yes":
@@ -529,12 +536,13 @@ public class TISensorTagServiceProfiles {
         // Gyroscope Service
         //***************************************************************************************************
         profileManage.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile:ServiceProfile) in
-            
+            // Gyroscope Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.GyroscopeService.Data.Value>(uuid:TISensorTag.GyroscopeService.Data.uuid, name:TISensorTag.GyroscopeService.Data.name, fromEndianness:.Little)
                 {(characteristicProfile:CharacteristicProfile) in
                     characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.GyroscopeService.Data.Value.fromRawValues([-24, -219, -23]))
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
                 })
+            // Gyroscope Enables
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.GyroscopeService.Enabled.Value>(uuid:TISensorTag.GyroscopeService.Enabled.uuid, name:TISensorTag.GyroscopeService.Enabled.name)
                 {(characteristicProfile:CharacteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.GyroscopeService.Enabled.Value.No)
@@ -550,6 +558,11 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         profileManage.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile:ServiceProfile) in
             // Temperature Data
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.TemperatureService.Data.Value>(uuid:TISensorTag.TemperatureService.Data.uuid, name:TISensorTag.TemperatureService.Data.name, fromEndianness:.Little)
+                {(characteristicProfile:CharacteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serializeToLittleEndian(TISensorTag.GyroscopeService.Data.Value.fromRawValues([-24, -219, -23]))
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+                })
             // Temperature Enabled
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.TemperatureService.Enabled.uuid, name:TISensorTag.TemperatureService.Enabled.name)
                 {(characteristicProfile:EnumCharacteristicProfile<TISensorTag.Enabled>) in

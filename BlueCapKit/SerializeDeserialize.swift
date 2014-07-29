@@ -74,8 +74,8 @@ public protocol Serialized {
 public protocol DeserializedEnum {
     typealias SelfType
     typealias RawType : Deserialized
-    class func fromRaw(value:RawType) -> SelfType?
-    class func fromString(value:String) -> SelfType?
+    class func fromRaw(rawValue:RawType) -> SelfType?
+    class func fromString(stringValue:String) -> SelfType?
     class func stringValues() -> [String]
     var stringValue : String {get}
     func toRaw() -> RawType
@@ -84,8 +84,8 @@ public protocol DeserializedEnum {
 public protocol DeserializedStruct {
     typealias SelfType
     typealias RawType : Deserialized
-    class func fromRawValues(values:[RawType]) -> SelfType?
-    class func fromStrings(values:Dictionary<String, String>) -> SelfType?
+    class func fromRawValues(rawValues:[RawType]) -> SelfType?
+    class func fromStrings(stringValues:Dictionary<String, String>) -> SelfType?
     var stringValues : Dictionary<String,String> {get}
     func toRawValues() -> [RawType]
 }
