@@ -26,13 +26,17 @@ extension UInt8 : Deserialized {
 
     public static func deserialize(data:NSData) -> UInt8 {
         var value : Byte = 0
-        data.getBytes(&value, length:sizeof(Byte))
+        if data.length >= sizeof(UInt8) {
+            data.getBytes(&value, length:sizeof(Byte))
+        }
         return value
     }
     
     public static func deserialize(data:NSData, start:Int) -> UInt8 {
         var value : Byte = 0
-        data.getBytes(&value, range: NSMakeRange(start, sizeof(Byte)))
+        if data.length >= start + sizeof(UInt8) {
+            data.getBytes(&value, range: NSMakeRange(start, sizeof(UInt8)))
+        }
         return value
     }
     

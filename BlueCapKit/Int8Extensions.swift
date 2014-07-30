@@ -25,13 +25,17 @@ extension Int8 : Deserialized {
 
     public static func deserialize(data:NSData) -> Int8 {
         var value : Int8 = 0
-        data.getBytes(&value, length:sizeof(Int8))
+        if data.length >= sizeof(Int8) {
+            data.getBytes(&value, length:sizeof(Int8))
+        }
         return value
     }
     
     public static func deserialize(data:NSData, start:Int) -> Int8 {
         var value : Int8 = 0
-        data.getBytes(&value, range: NSMakeRange(start, sizeof(Int8)))
+        if data.length >= start + sizeof(Int8) {
+            data.getBytes(&value, range: NSMakeRange(start, sizeof(Int8)))
+        }
         return value
     }
     
