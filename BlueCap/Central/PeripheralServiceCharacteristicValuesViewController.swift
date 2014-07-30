@@ -117,14 +117,25 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     // PRIVATE
     func readValues() {
         if let characteristic = self.characteristic {
-            characteristic.read({
-                    self.tableView.reloadData()
-                    self.progressView.remove()
-                },
-                afterReadFailedCallback:{(error) in
-                    self.progressView.remove()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                })
+            if characteristic.propertyEnabled(.Read) {
+                characteristic.read({
+                        self.tableView.reloadData()
+                        self.progressView.remove()
+                    },
+                    afterReadFailedCallback:{(error) in
+                        self.progressView.remove()
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    })
+            } else if characteristic.propertyEnabled(.Notify) {
+                characteristic.startUpdates({
+                        self.tableView.reloadData()
+                        self.progressView.remove()
+                    },
+                    afterUpdateFailedCallback:{(error) in
+                        self.progressView.remove()
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    })
+            }
         }
     }
 }

@@ -414,9 +414,9 @@ public struct TISensorTag {
     struct KeyPressedService {
         static let uuid = "ffe0"
         static let name = "Sensor Tag Key Pressed"
-        struct State {
+        struct Data {
             static let uuid = "ffe1"
-            static let name = "Key Pressed State"
+            static let name = "Key Pressed"
         }
     }
     
@@ -507,12 +507,12 @@ public class TISensorTagServiceProfiles {
     
     public class func create() {
 
-        let profileManage = ProfileManager.sharedInstance()
+        let profileManager = ProfileManager.sharedInstance()
         
         //***************************************************************************************************
         // Accelerometer Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.AccelerometerService.uuid, name:TISensorTag.AccelerometerService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.AccelerometerService.uuid, name:TISensorTag.AccelerometerService.name){(serviceProfile:ServiceProfile) in
             // Accelerometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>(uuid:TISensorTag.AccelerometerService.Data.uuid, name:TISensorTag.AccelerometerService.Data.name)
                 {(characteristicProfile) in
@@ -539,7 +539,7 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Magnetometer Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.MagnetometerService.uuid, name:TISensorTag.MagnetometerService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.MagnetometerService.uuid, name:TISensorTag.MagnetometerService.name){(serviceProfile:ServiceProfile) in
             // Magentometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.MagnetometerService.Data.Value>(uuid:TISensorTag.MagnetometerService.Data.uuid, name:TISensorTag.MagnetometerService.Data.name, fromEndianness:.Little)
                 {(characteristicProfile) in
@@ -566,7 +566,7 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Gyroscope Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile:ServiceProfile) in
             // Gyroscope Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.GyroscopeService.Data.Value>(uuid:TISensorTag.GyroscopeService.Data.uuid, name:TISensorTag.GyroscopeService.Data.name, fromEndianness:.Little)
                 {(characteristicProfile) in
@@ -587,7 +587,7 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Temperature Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile:ServiceProfile) in
             // Temperature Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.TemperatureService.Data.Value>(uuid:TISensorTag.TemperatureService.Data.uuid, name:TISensorTag.TemperatureService.Data.name, fromEndianness:.Little)
                 {(characteristicProfile) in
@@ -608,13 +608,13 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Barometer Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.BarometerService.uuid, name:TISensorTag.BarometerService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.BarometerService.uuid, name:TISensorTag.BarometerService.name){(serviceProfile:ServiceProfile) in
         })
 
         //***************************************************************************************************
         // Hygrometer Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name){(serviceProfile:ServiceProfile) in
             // Hygrometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.HygrometerService.Data.Value>(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name, fromEndianness:.Little)
                 {(characteristicProfile) in
@@ -635,13 +635,25 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Sensor Tag Test Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name){(serviceProfile:ServiceProfile) in
+            // Test Data
+            // Test Enabled
+            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.SensorTagTestService.Enabled.uuid, name:TISensorTag.SensorTagTestService.Enabled.name)
+                {(characteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+                })
         })
 
         //***************************************************************************************************
         // Key Pressed Service
         //***************************************************************************************************
-        profileManage.addService(ServiceProfile(uuid:TISensorTag.KeyPressedService.uuid, name:TISensorTag.KeyPressedService.name){(serviceProfile:ServiceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.KeyPressedService.uuid, name:TISensorTag.KeyPressedService.name){(serviceProfile:ServiceProfile) in
+            serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt8>(uuid:TISensorTag.KeyPressedService.Data.uuid, name:TISensorTag.KeyPressedService.Data.name)
+                {(characteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serialize(0x01 as UInt8)
+                    characteristicProfile.properties = CBCharacteristicProperties.Notify
+                })
         })
 
     }

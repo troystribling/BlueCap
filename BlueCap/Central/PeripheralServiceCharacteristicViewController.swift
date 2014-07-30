@@ -44,7 +44,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
 
-            if !characteristic.propertyEnabled(.Read) {
+            if !characteristic.propertyEnabled(.Read) || !characteristic.propertyEnabled(.Notify) {
                 self.valuesLabel.textColor = UIColor.lightGrayColor()
             }
             
