@@ -46,6 +46,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         self.updateValues()
     }
     
+    override func viewDidDisappear(animated: Bool) {
+        if let characteristic = self.characteristic {
+            if characteristic.isNotifying {
+                characteristic.stopUpdates()
+            }
+        }
+    }
+    
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if let characteristic = self.characteristic {
             if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
@@ -65,7 +73,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     @IBAction func updateValues() {
-        self.progressView.show()
+        if let characteristic = self.characteristic {
+            if !characteristic.isNotifying {
+                self.progressView.show()
+            }
+        }
         self.readValues()
     }
     
@@ -117,21 +129,19 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     // PRIVATE
     func readValues() {
         if let characteristic = self.characteristic {
-            if characteristic.propertyEnabled(.Read) {
+        if characteristic.isNotifying {
+            characteristic.startUpdates({
+                    self.tableView.reloadData()
+                },
+                afterUpdateFailedCallback:{(error) in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                })
+            } else if characteristic.propertyEnabled(.Read) {
                 characteristic.read({
                         self.tableView.reloadData()
                         self.progressView.remove()
                     },
                     afterReadFailedCallback:{(error) in
-                        self.progressView.remove()
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    })
-            } else if characteristic.propertyEnabled(.Notify) {
-                characteristic.startUpdates({
-                        self.tableView.reloadData()
-                        self.progressView.remove()
-                    },
-                    afterUpdateFailedCallback:{(error) in
                         self.progressView.remove()
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                     })

@@ -44,7 +44,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
 
-            if !characteristic.propertyEnabled(.Read) || !characteristic.propertyEnabled(.Notify) {
+            if !characteristic.propertyEnabled(.Read) {
                 self.valuesLabel.textColor = UIColor.lightGrayColor()
             }
             
@@ -82,7 +82,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
         if let characteristic = self.characteristic {
-            return characteristic.propertyEnabled(.Read)
+            return characteristic.propertyEnabled(.Read) || characteristic.isNotifying
         } else {
             return false
         }
@@ -105,11 +105,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             } else {
                 self.notifiyButton.setTitle("Starting Notifications", forState:.Normal)
                 characteristic.startNotifying({
-                    characteristic.startUpdates({
-                            self.setNotifyButtonLabel()
-                        }, afterUpdateFailedCallback:{(error) in
-                            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                        })
+                        self.setNotifyButtonLabel()
                     },
                     notificationStateChangedFailedCallback:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
@@ -125,9 +121,15 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             if characteristic.isNotifying {
                 self.notifiyButton.setTitle("Stop Notifications", forState:.Normal)
                 self.notifiyButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                self.valuesLabel.textColor = UIColor.blackColor()
             } else {
                 self.notifiyButton.setTitle("Start Notifications", forState:.Normal)
                 self.notifiyButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+                if characteristic.propertyEnabled(.Read) {
+                    self.valuesLabel.textColor = UIColor.blackColor()
+                } else {
+                    self.valuesLabel.textColor = UIColor.lightGrayColor()
+                }
             }
         }
     }
