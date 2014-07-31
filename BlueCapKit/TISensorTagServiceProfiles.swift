@@ -401,6 +401,45 @@ public struct TISensorTag {
         struct Data {
             static let uuid = "f000aa61-0451-4000-b000-000000000000"
             static let name = "Test Data"
+            struct Value : DeserializedStruct {
+                var resultRaw : UInt8
+                var test1 : UInt8
+                var test2 : UInt8
+                var test3 : UInt8
+                var test4 : UInt8
+                var test5 : UInt8
+                var test6 : UInt8
+                var test7 : UInt8
+                var test8 : UInt8
+                static func fromRawValues(rawValues:[UInt8]) -> Value? {
+                    return nil
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    return nil
+                }
+                static func valuesFromRaw(rawValue:UInt8) -> [UInt8] {
+                    return [self.testResult(rawValue, position:0), self.testResult(rawValue, position:1),
+                            self.testResult(rawValue, position:2), self.testResult(rawValue, position:3),
+                            self.testResult(rawValue, position:4), self.testResult(rawValue, position:5),
+                            self.testResult(rawValue, position:6), self.testResult(rawValue, position:7)]
+                }
+                static func testResult(rawResult:UInt8, position:UInt8) -> UInt8 {
+                    return rawResult & (1 << position)
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["resultRaw":"\(resultRaw)", "test1":"\(self.testResultStringValue(test1))",
+                            "test2":"\(self.testResultStringValue(test2))", "test3":"\(self.testResultStringValue(test3))",
+                            "test4":"\(self.testResultStringValue(test4))", "test5":"\(self.testResultStringValue(test5))",
+                            "test6":"\(self.testResultStringValue(test6))", "test7":"\(self.testResultStringValue(test7))",
+                            "test8":"\(self.testResultStringValue(test8))"]
+                }
+                func testResultStringValue(value:UInt8) -> String {
+                    return value == 1 ? "PASSED" : "FAILED"
+                }
+                func toRawValues() -> [UInt8] {
+                    return [resultRaw]
+                }
+            }
         }
         struct Enabled {
             static let uuid = "f000aa62-0451-4000-b000-000000000000"
@@ -609,6 +648,9 @@ public class TISensorTagServiceProfiles {
         // Barometer Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.BarometerService.uuid, name:TISensorTag.BarometerService.name){(serviceProfile) in
+            // Barometer Data
+            // Barometer Calibration
+            // Baromter Enabled
         })
 
         //***************************************************************************************************
