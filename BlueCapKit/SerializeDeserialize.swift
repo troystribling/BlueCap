@@ -89,3 +89,13 @@ public protocol DeserializedStruct {
     var stringValues : Dictionary<String,String> {get}
     func toRawValues() -> [RawType]
 }
+
+public protocol DeserializedPairStruct {
+    typealias SelfType
+    typealias RawType1 : Deserialized
+    typealias RawType2 : Deserialized
+    class func fromRawValues(rawValues:([RawType1], [RawType2])) -> SelfType?
+    class func fromStrings(stringValues:Dictionary<String, String>) -> SelfType?
+    var stringValues : Dictionary<String,String> {get}
+    func toRawValues() -> ([RawType1], [RawType2])
+}

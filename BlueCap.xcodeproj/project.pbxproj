@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0507F478198BDEE70036AF2B /* PairStructCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0507F477198BDEE70036AF2B /* PairStructCharacteristicProfile.swift */; };
 		0516666B1944EF9F006A337C /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0516666A1944EF9F006A337C /* Characteristic.swift */; };
 		051886701960861400ED2D3A /* NSDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0518866F1960861400ED2D3A /* NSDataExtensions.swift */; };
 		05277C9F1944CAE50022FB59 /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */; };
@@ -109,6 +110,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0507F477198BDEE70036AF2B /* PairStructCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PairStructCharacteristicProfile.swift; sourceTree = "<group>"; };
 		0516666A1944EF9F006A337C /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		0518866F1960861400ED2D3A /* NSDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataExtensions.swift; sourceTree = "<group>"; };
 		0518867119609B5800ED2D3A /* Bytes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Bytes.playground; sourceTree = "<group>"; };
@@ -249,6 +251,7 @@
 				0552E40C1956055700F33D4E /* CharacteristicProfile.swift */,
 				05F3281C196E2EE700821D14 /* DeserializedCharacteristicProfile.swift */,
 				0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */,
+				0507F477198BDEE70036AF2B /* PairStructCharacteristicProfile.swift */,
 				0552E4081955EFD800F33D4E /* ProfileManager.swift */,
 				0552E40A195604CD00F33D4E /* ServiceProfile.swift */,
 				05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */,
@@ -650,6 +653,7 @@
 				05900F281982AEBD00CEAD0B /* BLESIGGATTProfiles.swift in Sources */,
 				0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */,
 				05AEAF97196C4591009E8A0C /* Int8Extensions.swift in Sources */,
+				0507F478198BDEE70036AF2B /* PairStructCharacteristicProfile.swift in Sources */,
 				05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */,
 				05900F2E1984205A00CEAD0B /* StringCharacteristicProfile.swift in Sources */,
 				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
