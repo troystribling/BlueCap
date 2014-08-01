@@ -403,28 +403,42 @@ public struct TISensorTag {
             static let name = "Test Data"
             struct Value : DeserializedStruct {
                 var resultRaw : UInt8
-                var test1 : UInt8
-                var test2 : UInt8
-                var test3 : UInt8
-                var test4 : UInt8
-                var test5 : UInt8
-                var test6 : UInt8
-                var test7 : UInt8
-                var test8 : UInt8
+                var test1 : Bool
+                var test2 : Bool
+                var test3 : Bool
+                var test4 : Bool
+                var test5 : Bool
+                var test6 : Bool
+                var test7 : Bool
+                var test8 : Bool
                 static func fromRawValues(rawValues:[UInt8]) -> Value? {
-                    return nil
+                    let values = self.valuesFromRaw(rawValues[0])
+                    return Value(resultRaw:rawValues[0], test1:values[0],
+                                 test2:values[1], test3:values[2],
+                                 test4:values[3], test5:values[4],
+                                 test6:values[5], test7:values[6],
+                                 test8:values[7])
                 }
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-                    return nil
+                    if let rawValue = BlueCap.uint8ValueFromStringValue("rawValue", values:stringValues) {
+                        let values = self.valuesFromRaw(rawValue)
+                        return Value(resultRaw:rawValue, test1:values[0],
+                                     test2:values[1], test3:values[2],
+                                     test4:values[3], test5:values[4],
+                                     test6:values[5], test7:values[6],
+                                     test8:values[7])
+                    } else {
+                        return nil
+                    }
                 }
-                static func valuesFromRaw(rawValue:UInt8) -> [UInt8] {
+                static func valuesFromRaw(rawValue:UInt8) -> [Bool] {
                     return [self.testResult(rawValue, position:0), self.testResult(rawValue, position:1),
                             self.testResult(rawValue, position:2), self.testResult(rawValue, position:3),
                             self.testResult(rawValue, position:4), self.testResult(rawValue, position:5),
                             self.testResult(rawValue, position:6), self.testResult(rawValue, position:7)]
                 }
-                static func testResult(rawResult:UInt8, position:UInt8) -> UInt8 {
-                    return rawResult & (1 << position)
+                static func testResult(rawResult:UInt8, position:UInt8) -> Bool {
+                    return (rawResult & (1 << position)) > 0
                 }
                 var stringValues : Dictionary<String,String> {
                     return ["resultRaw":"\(resultRaw)", "test1":"\(self.testResultStringValue(test1))",
@@ -433,8 +447,8 @@ public struct TISensorTag {
                             "test6":"\(self.testResultStringValue(test6))", "test7":"\(self.testResultStringValue(test7))",
                             "test8":"\(self.testResultStringValue(test8))"]
                 }
-                func testResultStringValue(value:UInt8) -> String {
-                    return value == 1 ? "PASSED" : "FAILED"
+                func testResultStringValue(value:Bool) -> String {
+                    return value ? "PASSED" : "FAILED"
                 }
                 func toRawValues() -> [UInt8] {
                     return [resultRaw]
@@ -679,6 +693,11 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name){(serviceProfile) in
             // Test Data
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.SensorTagTestService.Data.Value>(uuid:TISensorTag.SensorTagTestService.Data.uuid, name: TISensorTag.SensorTagTestService.Data.name)
+                {(characteristicProfile) in
+                    characteristicProfile.initialValue = NSData.serialize(0b11110000 as UInt8)
+                    characteristicProfile.properties = CBCharacteristicProperties.Read
+                })
             // Test Enabled
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.SensorTagTestService.Enabled.uuid, name:TISensorTag.SensorTagTestService.Enabled.name)
                 {(characteristicProfile) in
