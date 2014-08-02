@@ -327,6 +327,16 @@ public struct TISensorTag {
 
     //***************************************************************************************************
     // Barometer Service
+    //
+    // Calibrated Pressure and Temperature are computed as follows
+    // C1...C8 = Calibration Coefficients, TR = Raw temperature, PR = Raw Pressure,
+    // T = Calibrated Temperature in Celcius, P = Calibrated Pressure in Pascals
+    //
+    // S = C3 + C4*TR/2^17 + C5*TR^2/2^34
+    // O = C6*2^14 + C7*TR/8 + C8TR^2/2^19
+    // P = (S*PR + O)/2^14
+    // T = C2/2^10 + C1*TR/2^24
+    //
     //***************************************************************************************************
     struct BarometerService {
         static let uuid = "F000AA40-0451-4000-B000-000000000000"
@@ -334,14 +344,103 @@ public struct TISensorTag {
         struct Data {
             static let uuid = "f000aa41-0451-4000-b000-000000000000"
             static let name = "Baraometer Data"
+            struct Value : DeserializedPairStruct {
+                var temperatureRaw  : Int16
+                var pressureRaw     : UInt16
+                static func fromRawValues(rawValues:([Int16], [UInt16])) -> Value? {
+                    return nil
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    return nil
+                }
+                static func rawValueSizes() -> (Int, Int) {
+                    return (0, 0)
+                }
+                var stringValues : Dictionary<String,String> {
+                return [:]
+                }
+                func toRawValues() -> ([Int16], [UInt16]) {
+                    return ([], [])
+                }
+            }
         }
         struct Calibration {
             static let uuid = "f000aa42-0451-4000-b000-000000000000"
             static let name = "Baraometer Calibration Data"
+            struct Value : DeserializedPairStruct {
+                static func fromRawValues(rawValues:([Int16], [UInt16])) -> Value? {
+                    return nil
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    return nil
+                }
+                static func rawValueSizes() -> (Int, Int) {
+                    return (0, 0)
+                }
+                var stringValues : Dictionary<String,String> {
+                return [:]
+                }
+                func toRawValues() -> ([Int16], [UInt16]) {
+                    return ([], [])
+                }
+            }
         }
         struct Enabled {
             static let uuid = "f000aa43-0451-4000-b000-000000000000"
             static let name = "Baraometer Enabled"
+            enum Value : UInt8, DeserializedEnum {
+                case No         = 0
+                case Yes        = 1
+                case Calibrate  = 2
+                static func fromRaw(rawValue:UInt8) -> Value? {
+                    switch rawValue {
+                    case 0:
+                        return Value.No
+                    case 1:
+                        return Value.Yes
+                    case 2:
+                        return Value.Calibrate
+                    default:
+                        return nil
+                    }
+                }
+                static func fromString(stringValue:String) -> Value? {
+                    switch stringValue {
+                    case "No":
+                        return Value.No
+                    case "Yes":
+                        return Value.Yes
+                    case "Calibrate":
+                        return Value.Calibrate
+                    default:
+                        return nil
+                    }
+                }
+                static func stringValues() -> [String] {
+                    return ["No", "Yes", "Calibrate"]
+                }
+                var stringValue : String {
+                    switch self {
+                    case .No:
+                        return "No"
+                    case .Yes:
+                        return "Yes"
+                    case .Calibrate:
+                        return "Calibrate"
+                    }
+                }
+                func toRaw() -> UInt8 {
+                    switch self {
+                    case .No:
+                        return 0
+                    case .Yes:
+                        return 1
+                    case .Calibrate:
+                        return 2
+                    }
+                    
+                }
+            }
         }
     }
 

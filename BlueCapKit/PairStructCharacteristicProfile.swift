@@ -38,10 +38,17 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
     
     // INTERNAL
     internal override func anyValue(data:NSData) -> Any? {
-        let values = self.deserialize(data)
-        if let value = StructType.fromRawValues(values) {
-            Logger.debug("StructCharacteristicProfile#anyValue: data = \(data.hexStringValue()), value = \(value.toRawValues())")
-            return value
+        let (raw1Size, raw2Size) = StructType.rawValueSizes()
+        if raw1Size+raw2Size == data.length {
+            let rawData1 = data.subdataWithRange(NSMakeRange(0, raw1Size))
+            let rawData2 = data.subdataWithRange(NSMakeRange(raw1Size, raw2Size))
+            let values = self.deserialize(rawData1, raw2Data: rawData2)
+            if let value = StructType.fromRawValues(values) {
+                Logger.debug("StructCharacteristicProfile#anyValue: data = \(data.hexStringValue()), value = \(value.toRawValues())")
+                return value
+            } else {
+                return nil
+            }
         } else {
             return nil
         }
@@ -66,16 +73,16 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
     }
     
     // PRIVATE
-    private func deserialize(data:NSData) -> ([StructType.RawType1], [StructType.RawType2]) {
+    private func deserialize(raw1Data:NSData, raw2Data:NSData) -> ([StructType.RawType1], [StructType.RawType2]) {
         switch self.endianness {
         case (Endianness.Little, Endianness.Little):
-            return (StructType.RawType1.deserializeFromLittleEndian(data), StructType.RawType2.deserializeFromLittleEndian(data))
+            return (StructType.RawType1.deserializeFromLittleEndian(raw1Data), StructType.RawType2.deserializeFromLittleEndian(raw2Data))
         case (Endianness.Big, Endianness.Little):
-            return (StructType.RawType1.deserializeFromBigEndian(data), StructType.RawType2.deserializeFromLittleEndian(data))
+            return (StructType.RawType1.deserializeFromBigEndian(raw1Data), StructType.RawType2.deserializeFromLittleEndian(raw2Data))
         case (Endianness.Little, Endianness.Big):
-            return (StructType.RawType1.deserializeFromLittleEndian(data), StructType.RawType2.deserializeFromBigEndian(data))
+            return (StructType.RawType1.deserializeFromLittleEndian(raw1Data), StructType.RawType2.deserializeFromBigEndian(raw2Data))
         case (Endianness.Big, Endianness.Big):
-            return (StructType.RawType1.deserializeFromBigEndian(data), StructType.RawType2.deserializeFromBigEndian(data))
+            return (StructType.RawType1.deserializeFromBigEndian(raw1Data), StructType.RawType2.deserializeFromBigEndian(raw2Data))
         }
     }
     
