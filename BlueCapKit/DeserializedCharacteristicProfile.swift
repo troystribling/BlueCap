@@ -10,20 +10,14 @@ import Foundation
 
 public class DeserializedCharacteristicProfile<DeserializedType:Deserialized where DeserializedType == DeserializedType.SelfType> : CharacteristicProfile {
 
-    // PRIVATE
-    var endianness : Endianness = .Little
-
     // PUBLIC
+    public var endianness : Endianness = .Little
+
     public init(uuid:String, name:String, profile:((characteristic:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runProfile = profile {
             runProfile(characteristic:self)
         }
-    }
-
-    public convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
-        self.init(uuid:uuid, name:name, profile:profile)
-        self.endianness = endianness
     }
 
     // INTERNAL

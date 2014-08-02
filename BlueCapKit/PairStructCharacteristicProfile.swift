@@ -12,22 +12,16 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
                                                                                      StructType.RawType2 == StructType.RawType2.SelfType,
                                                                                      StructType == StructType.SelfType> : CharacteristicProfile {
     
-    // PRIVATE
-    private var endianness : (Endianness, Endianness) = (.Little, .Little)
-    
     // PUBLIC
+    public var endianness : (Endianness, Endianness) = (.Little, .Little)
+
     public init(uuid:String, name:String, profile:((characteristic:PairStructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runProfile = profile {
             runProfile(characteristic:self)
         }
     }
-    
-    public convenience init(uuid:String, name:String, fromEndianness endianness:(Endianness, Endianness), profile:((characteristic:PairStructCharacteristicProfile<StructType>) -> ())? = nil) {
-        self.init(uuid:uuid, name:name, profile:profile)
-        self.endianness = endianness
-    }
-    
+        
     public override func stringValues(data:NSData) -> Dictionary<String, String>? {
         if let value = self.anyValue(data) as? StructType {
             return value.stringValues

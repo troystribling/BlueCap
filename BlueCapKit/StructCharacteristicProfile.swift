@@ -10,10 +10,9 @@ import Foundation
 
 public class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.RawType == StructType.RawType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
     
-    // PRIVATE
-    private var endianness : Endianness = .Little
-
     // PUBLIC
+    public var endianness : Endianness = .Little
+
     public init(uuid:String, name:String, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runProfile = profile {
@@ -21,11 +20,6 @@ public class StructCharacteristicProfile<StructType:DeserializedStruct where Str
         }
     }
 
-    public convenience init(uuid:String, name:String, fromEndianness endianness:Endianness, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
-        self.init(uuid:uuid, name:name, profile:profile)
-        self.endianness = endianness
-    }
-    
     public override func stringValues(data:NSData) -> Dictionary<String, String>? {
         if let value = self.anyValue(data) as? StructType {
             return value.stringValues
