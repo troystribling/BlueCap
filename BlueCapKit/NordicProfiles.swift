@@ -33,10 +33,112 @@ public struct Nordic {
         struct Address {
             static let uuid = "2f0a0006-69aa-f316-3e78-4194989a6c1a"
             static let name = "BLE Addresss"
+            struct Value : DeserializedStruct {
+                var addr1 : UInt8
+                var addr2 : UInt8
+                var addr3 : UInt8
+                var addr4 : UInt8
+                var addr5 : UInt8
+                var addr6 : UInt8
+                static func fromRawValues(rawValues:[UInt8]) -> Value? {
+                    return Value(addr1:rawValues[0], addr2:rawValues[1], addr3:rawValues[2],
+                                 addr4:rawValues[3], addr5:rawValues[4], addr6:rawValues[5])
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    let addr1 = BlueCap.uint8ValueFromStringValue("addr1", values:stringValues)
+                    let addr2 = BlueCap.uint8ValueFromStringValue("addr2", values:stringValues)
+                    let addr3 = BlueCap.uint8ValueFromStringValue("addr3", values:stringValues)
+                    let addr4 = BlueCap.uint8ValueFromStringValue("addr4", values:stringValues)
+                    let addr5 = BlueCap.uint8ValueFromStringValue("addr5", values:stringValues)
+                    let addr6 = BlueCap.uint8ValueFromStringValue("addr6", values:stringValues)
+                    if addr1 && addr2 && addr3 && addr4 && addr5 && addr6 {
+                        return Value(addr1:addr1!, addr2:addr2!, addr3:addr3!, addr4:addr4!, addr5:addr5!, addr6:addr6!)
+                    } else {
+                        return nil
+                    }
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["addr1":"\(addr1)", "addr2":"\(addr2)", "addr3":"\(addr3)",
+                            "addr4":"\(addr4)", "addr5":"\(addr5)", "addr6":"\(addr6)"]
+                }
+                func toRawValues() -> [UInt8] {
+                    return [addr1, addr2, addr3, addr4, addr5, addr5]
+                }
+            }
         }
         struct Type {
             static let uuid = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
             static let name = "BLE Address Type"
+            enum Value : UInt8, DeserializedEnum {
+                case Unknown                    = 0
+                case Public                     = 1
+                case RandomStatic               = 2
+                case RandomPrivateResolvable    = 3
+                case RandomPrivateUnresolvable  = 4
+                static func fromRaw(rawValue:UInt8) -> Value? {
+                    switch rawValue {
+                    case 0:
+                        return Value.Unknown
+                    case 1:
+                        return Value.Public
+                    case 2:
+                        return Value.RandomStatic
+                    case 3:
+                        return Value.RandomPrivateResolvable
+                    case 4:
+                        return Value.RandomPrivateUnresolvable
+                    default:
+                        return nil
+                    }
+                }
+                static func fromString(stringValue:String) -> Value? {
+                    switch stringValue {
+                    case "Unknown":
+                        return Value.Unknown
+                    case "Public":
+                        return Value.Public
+                    case "RandomStatic":
+                        return Value.RandomStatic
+                    case "RandomPrivateResolvable":
+                        return Value.RandomPrivateResolvable
+                    case "RandomPrivateUnresolvable":
+                        return Value.RandomPrivateUnresolvable
+                    default:
+                        return nil
+                    }
+                }
+                static func stringValues() -> [String] {
+                    return ["Unknown", "Public", "RandomStatic", "RandomPrivateResolvable", "RandomPrivateUnresolvable"]
+                }
+                var stringValue : String {
+                    switch self {
+                    case .Unknown:
+                        return "Unknown"
+                    case .Public:
+                        return "Public"
+                    case .RandomStatic:
+                        return "RandomStatic"
+                    case .RandomPrivateResolvable:
+                        return "RandomPrivateResolvable"
+                    case .RandomPrivateUnresolvable:
+                        return "RandomPrivateUnresolvable"
+                    }
+                }
+                func toRaw() -> UInt8 {
+                    switch self {
+                    case .Unknown:
+                        return 0
+                    case .Public:
+                        return 1
+                    case .RandomStatic:
+                        return 2
+                    case .RandomPrivateResolvable:
+                        return 3
+                    case .RandomPrivateUnresolvable:
+                        return 4
+                    }
+                }
+            }
         }
     }
     
