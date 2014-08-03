@@ -25,16 +25,14 @@ public class CharacteristicProfile {
         return []
     }
     
-    public init(uuid:String, name:String) {
+    public init(uuid:String, name:String, initializer:((characteristicProfile:CharacteristicProfile) -> ())? = nil) {
         self.uuid = CBUUID.UUIDWithString(uuid)
         self.name = name
         self.permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
         self.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
-    }
-    
-    public convenience init(uuid:String, name:String, profile:(characteristic:CharacteristicProfile) -> ()) {
-        self.init(uuid:uuid, name:name)
-        profile(characteristic:self)
+        if let runInializer = initializer {
+            runInializer(characteristicProfile:self)
+        }
     }
     
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {

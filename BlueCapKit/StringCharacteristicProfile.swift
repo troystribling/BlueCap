@@ -11,22 +11,16 @@ import CoreBluetooth
 
 public class StringCharacteristicProfile : CharacteristicProfile {
     
-    // PRIVATE
-    private var encoding : NSStringEncoding = NSUTF8StringEncoding
-    
     // PUBLIC
-    public init(uuid:String, name:String, profile:((characteristic:StringCharacteristicProfile) -> ())? = nil) {
+    public var encoding : NSStringEncoding = NSUTF8StringEncoding
+
+    public init(uuid:String, name:String, initializer:((characteristicProfile:StringCharacteristicProfile) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
-        if let runProfile = profile {
-            runProfile(characteristic:self)
+        if let runInitializer = initializer {
+            runInitializer(characteristicProfile:self)
         }
     }
-    
-    public convenience init(uuid: String, name: String, encoding:NSStringEncoding, profile:((characteristic:StringCharacteristicProfile) -> ())? = nil) {
-        self.init(uuid:uuid, name:name, profile:profile)
-        self.encoding = encoding
-    }
-    
+        
     // INTERNAL
     internal override func stringValues(data:NSData) -> Dictionary<String, String>? {
         let value = NSString(data:data, encoding:self.encoding)

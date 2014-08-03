@@ -18,10 +18,10 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
     }
 
     // INTERNAL
-    internal init(uuid:String, name:String, profile:((characteristic:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
+    internal init(uuid:String, name:String, initializer:((characteristicProfile:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
-        if let runProfile = profile {
-            runProfile(characteristic:self)
+        if let runInitializer = initializer {
+            runInitializer(characteristicProfile:self)
         }
     }
 

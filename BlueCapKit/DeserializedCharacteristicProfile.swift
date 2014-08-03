@@ -13,10 +13,10 @@ public class DeserializedCharacteristicProfile<DeserializedType:Deserialized whe
     // PUBLIC
     public var endianness : Endianness = .Little
 
-    public init(uuid:String, name:String, profile:((characteristic:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
+    public init(uuid:String, name:String, initializer:((characteristicProfile:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
-        if let runProfile = profile {
-            runProfile(characteristic:self)
+        if let runInitializer = initializer {
+            runInitializer(characteristicProfile:self)
         }
     }
 

@@ -13,10 +13,10 @@ public class StructCharacteristicProfile<StructType:DeserializedStruct where Str
     // PUBLIC
     public var endianness : Endianness = .Little
 
-    public init(uuid:String, name:String, profile:((characteristic:StructCharacteristicProfile<StructType>) -> ())? = nil) {
+    public init(uuid:String, name:String, initializer:((characteristicProfile:StructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
-        if let runProfile = profile {
-            runProfile(characteristic:self)
+        if let runInitializer = initializer {
+            runInitializer(characteristicProfile:self)
         }
     }
 
