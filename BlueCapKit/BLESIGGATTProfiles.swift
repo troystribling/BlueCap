@@ -80,6 +80,7 @@ public class BLESIGGATTProfiles {
         // Device Information Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:BLESIGGATT.DeviceInformationService.uuid, name:BLESIGGATT.DeviceInformationService.name){(serviceProfile) in
+            serviceProfile.tag = "BLESIGGATT"
             serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.ModelNumber.uuid, name:BLESIGGATT.DeviceInformationService.ModelNumber.name)
                 {(characteristicProfile:StringCharacteristicProfile) in
                     characteristicProfile.properties = CBCharacteristicProperties.Read
@@ -116,6 +117,7 @@ public class BLESIGGATTProfiles {
         // Battery Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:BLESIGGATT.BatteryService.uuid, name:BLESIGGATT.BatteryService.name){(serviceProfile) in
+            serviceProfile.tag = "BLESIGGATT"
             serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt8>(uuid:BLESIGGATT.BatteryService.Level.uuid, name:BLESIGGATT.BatteryService.Level.name)
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(UInt8(100))
@@ -127,6 +129,7 @@ public class BLESIGGATTProfiles {
         // Tx Power Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:BLESIGGATT.TxPowerService.uuid, name:BLESIGGATT.TxPowerService.name){(serviceProfile) in
+            serviceProfile.tag = "BLESIGGATT"
             serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<Int8>(uuid:BLESIGGATT.TxPowerService.uuid, name:BLESIGGATT.TxPowerService.name)
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(Int8(-40))

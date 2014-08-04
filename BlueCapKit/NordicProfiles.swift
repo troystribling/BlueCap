@@ -185,6 +185,7 @@ public class NordicProfiles {
         // Nordic Device Temperature Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:Nordic.DeviceTemperatureService.uuid, name:Nordic.DeviceTemperatureService.name){(serviceProfile) in
+            serviceProfile.tag = "Nordic"
             // Device Temperature Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<Nordic.DeviceTemperatureService.Data.Value>(uuid:Nordic.DeviceTemperatureService.Data.uuid, name:Nordic.DeviceTemperatureService.Data.name)
                 {(characteristicProfile) in
@@ -198,6 +199,7 @@ public class NordicProfiles {
         // Nordic BLE Address Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:Nordic.BLEAddressService.uuid, name:Nordic.BLEAddressService.name){(serviceProfile) in
+            serviceProfile.tag = "Nordic"
             // BLE Address Address
             serviceProfile.addCharacteristic(StructCharacteristicProfile<Nordic.BLEAddressService.Address.Value>(uuid:Nordic.BLEAddressService.Address.uuid, name:Nordic.BLEAddressService.Address.name)
                 {(characteristicProfile) in

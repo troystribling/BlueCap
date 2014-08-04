@@ -702,6 +702,7 @@ public class TISensorTagServiceProfiles {
         // Accelerometer Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.AccelerometerService.uuid, name:TISensorTag.AccelerometerService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             // Accelerometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.AccelerometerService.Data.Value>(uuid:TISensorTag.AccelerometerService.Data.uuid, name:TISensorTag.AccelerometerService.Data.name)
                 {(characteristicProfile) in
@@ -729,6 +730,7 @@ public class TISensorTagServiceProfiles {
         // Magnetometer Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.MagnetometerService.uuid, name:TISensorTag.MagnetometerService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             // Magentometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.MagnetometerService.Data.Value>(uuid:TISensorTag.MagnetometerService.Data.uuid, name:TISensorTag.MagnetometerService.Data.name)
                 {(characteristicProfile) in
@@ -757,6 +759,7 @@ public class TISensorTagServiceProfiles {
         // Gyroscope Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             // Gyroscope Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.GyroscopeService.Data.Value>(uuid:TISensorTag.GyroscopeService.Data.uuid, name:TISensorTag.GyroscopeService.Data.name)
                 {(characteristicProfile) in
@@ -779,6 +782,7 @@ public class TISensorTagServiceProfiles {
         // Temperature Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             // Temperature Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.TemperatureService.Data.Value>(uuid:TISensorTag.TemperatureService.Data.uuid, name:TISensorTag.TemperatureService.Data.name)
                 {(characteristicProfile) in
@@ -801,6 +805,7 @@ public class TISensorTagServiceProfiles {
         // Barometer Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.BarometerService.uuid, name:TISensorTag.BarometerService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             // Barometer Data
             serviceProfile.addCharacteristic(PairStructCharacteristicProfile<TISensorTag.BarometerService.Data.Value>(uuid:TISensorTag.BarometerService.Data.uuid, name:TISensorTag.BarometerService.Data.name)
                 {(characteristicProfile) in
@@ -832,6 +837,7 @@ public class TISensorTagServiceProfiles {
         // Hygrometer Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             // Hygrometer Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.HygrometerService.Data.Value>(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name)
                 {(characteristicProfile) in
@@ -854,6 +860,7 @@ public class TISensorTagServiceProfiles {
         // Sensor Tag Test Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             // Test Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.SensorTagTestService.Data.Value>(uuid:TISensorTag.SensorTagTestService.Data.uuid, name: TISensorTag.SensorTagTestService.Data.name)
                 {(characteristicProfile) in
@@ -872,6 +879,7 @@ public class TISensorTagServiceProfiles {
         // Key Pressed Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:TISensorTag.KeyPressedService.uuid, name:TISensorTag.KeyPressedService.name){(serviceProfile) in
+            serviceProfile.tag = "TI Sensor Tag"
             serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt8>(uuid:TISensorTag.KeyPressedService.Data.uuid, name:TISensorTag.KeyPressedService.Data.name)
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(0x01 as UInt8)

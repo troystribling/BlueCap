@@ -17,6 +17,7 @@ public class ServiceProfile {
     // PUBLIC
     public let uuid : CBUUID!
     public let name : String!
+    public var tag  = "Miscellaneous"
     
     public var characteristics : [CharacteristicProfile] {
         return Array(self.characteristicProfiles.values)

@@ -85,6 +85,7 @@ public class GnosusProfiles {
         // Hello World Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:Gnosus.HelloWorldService.uuid, name:Gnosus.HelloWorldService.name){(serviceProfile) in
+            serviceProfile.tag = "Gnos.us"
             // Greeting
             serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:Gnosus.HelloWorldService.Greeting.uuid, name:Gnosus.HelloWorldService.Greeting.name)
                 {(characteristicProfile) in
@@ -103,6 +104,7 @@ public class GnosusProfiles {
         // Location Service
         //***************************************************************************************************
         profileManager.addService(ServiceProfile(uuid:Gnosus.LocationService.uuid, name:Gnosus.LocationService.name){(serviceProfile) in
+            serviceProfile.tag = "Gnos.us"
             serviceProfile.addCharacteristic(StructCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude.Value>(uuid:Gnosus.LocationService.LatitudeAndLongitude.uuid, name:Gnosus.LocationService.LatitudeAndLongitude.name)
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(Gnosus.LocationService.LatitudeAndLongitude.Value.fromRawValues([3776, -12242])?.toRawValues())
