@@ -720,7 +720,7 @@ public class TISensorTagServiceProfiles {
             // Accelerometer Update Period
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
                 {(characteristicProfile) in
-                    characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
+                    characteristicProfile.initialValue = NSData.serialize(UInt8(0x64))
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                 })
         })
@@ -748,7 +748,7 @@ public class TISensorTagServiceProfiles {
             // Magnetometer Update Period
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.MagnetometerService.UpdatePeriod.uuid, name:TISensorTag.MagnetometerService.UpdatePeriod.name)
                 {(characteristicProfile) in
-                    characteristicProfile.initialValue = NSData.serialize(0x64 as UInt8)
+                    characteristicProfile.initialValue = NSData.serialize(UInt8(0x64))
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                 })
         })
