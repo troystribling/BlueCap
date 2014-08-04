@@ -17,6 +17,7 @@
 		05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA31944CB0E0022FB59 /* Peripheral.swift */; };
 		054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */; };
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
+		0551FFF1198F0BBD00609E66 /* ServiceProfileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551FFF0198F0BBD00609E66 /* ServiceProfileUtils.swift */; };
 		0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E4081955EFD800F33D4E /* ProfileManager.swift */; };
 		0552E40B195604CD00F33D4E /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40A195604CD00F33D4E /* ServiceProfile.swift */; };
 		0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40C1956055700F33D4E /* CharacteristicProfile.swift */; };
@@ -121,6 +122,7 @@
 		05277CA31944CB0E0022FB59 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connectorator.swift; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
+		0551FFF0198F0BBD00609E66 /* ServiceProfileUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfileUtils.swift; sourceTree = "<group>"; };
 		0552E4081955EFD800F33D4E /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		0552E40A195604CD00F33D4E /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
 		0552E40C1956055700F33D4E /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				05900F271982AEBD00CEAD0B /* BLESIGGATTProfiles.swift */,
 				05900F29198368DB00CEAD0B /* GnosusProfiles.swift */,
 				05900F2B198368EC00CEAD0B /* NordicProfiles.swift */,
+				0551FFF0198F0BBD00609E66 /* ServiceProfileUtils.swift */,
 				05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */,
 			);
 			name = "Service Profiles";
@@ -662,6 +665,7 @@
 				05F328211970957200821D14 /* StructCharacteristicProfile.swift in Sources */,
 				05CAF6CD1960E22500F6D598 /* StringExtensions.swift in Sources */,
 				05F3281D196E2EE700821D14 /* DeserializedCharacteristicProfile.swift in Sources */,
+				0551FFF1198F0BBD00609E66 /* ServiceProfileUtils.swift in Sources */,
 				05F929841949498200542A1E /* Service.swift in Sources */,
 				05AEAF93196C44B2009E8A0C /* Uint8Extensions.swift in Sources */,
 			);
