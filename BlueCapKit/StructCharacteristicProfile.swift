@@ -61,18 +61,18 @@ public class StructCharacteristicProfile<StructType:DeserializedStruct where Str
     private func deserialize(data:NSData) -> [StructType.RawType] {
         switch self.endianness {
         case Endianness.Little:
-            return StructType.RawType.deserializeFromLittleEndian(data)
+            return StructType.RawType.deserializeArrayFromLittleEndian(data)
         case Endianness.Big:
-            return StructType.RawType.deserializeFromBigEndian(data)
+            return StructType.RawType.deserializeArrayFromBigEndian(data)
         }
     }
     
     private func serialize(values:[StructType.RawType]) -> NSData {
         switch self.endianness {
         case Endianness.Little:
-            return NSData.serializeToLittleEndian(values)
+            return NSData.serializeArrayToLittleEndian(values)
         case Endianness.Big:
-            return NSData.serializeToBigEndian(values)
+            return NSData.serializeArrayToBigEndian(values)
         }
     }
     

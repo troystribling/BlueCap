@@ -189,7 +189,7 @@ public class NordicProfiles {
             serviceProfile.addCharacteristic(StructCharacteristicProfile<Nordic.DeviceTemperatureService.Data.Value>(uuid:Nordic.DeviceTemperatureService.Data.uuid, name:Nordic.DeviceTemperatureService.Data.name)
                 {(characteristicProfile) in
                     characteristicProfile.endianness = .Big
-                    characteristicProfile.initialValue = NSData.serializeToBigEndian(Nordic.DeviceTemperatureService.Data.Value.fromRawValues([100])?.toRawValues())
+                    characteristicProfile.initialValue = NSData.serializeArrayToBigEndian(Nordic.DeviceTemperatureService.Data.Value.fromRawValues([100])!.toRawValues())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
                 })
         })
@@ -201,7 +201,7 @@ public class NordicProfiles {
             // BLE Address Address
             serviceProfile.addCharacteristic(StructCharacteristicProfile<Nordic.BLEAddressService.Address.Value>(uuid:Nordic.BLEAddressService.Address.uuid, name:Nordic.BLEAddressService.Address.name)
                 {(characteristicProfile) in
-                    characteristicProfile.initialValue = NSData.serialize(Nordic.BLEAddressService.Address.Value.fromRawValues([10, 11, 12, 13, 14, 15])?.toRawValues())
+                    characteristicProfile.initialValue = NSData.serializeArray(Nordic.BLEAddressService.Address.Value.fromRawValues([10, 11, 12, 13, 14, 15])!.toRawValues())
                     characteristicProfile.properties = CBCharacteristicProperties.Read
                 })
             // BLE Address Type

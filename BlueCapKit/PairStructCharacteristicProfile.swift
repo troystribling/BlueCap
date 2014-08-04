@@ -13,7 +13,7 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
                                                                                      StructType == StructType.SelfType> : CharacteristicProfile {
     
     // PUBLIC
-    public var endianness : (Endianness, Endianness) = (.Little, .Little)
+    public var endianness : Endianness = .Little
 
     public init(uuid:String, name:String, initializer:((characteristicProfile:PairStructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
@@ -69,40 +69,19 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
     // PRIVATE
     private func deserialize(raw1Data:NSData, raw2Data:NSData) -> ([StructType.RawType1], [StructType.RawType2]) {
         switch self.endianness {
-        case (Endianness.Little, Endianness.Little):
-            return (StructType.RawType1.deserializeFromLittleEndian(raw1Data), StructType.RawType2.deserializeFromLittleEndian(raw2Data))
-        case (Endianness.Big, Endianness.Little):
-            return (StructType.RawType1.deserializeFromBigEndian(raw1Data), StructType.RawType2.deserializeFromLittleEndian(raw2Data))
-        case (Endianness.Little, Endianness.Big):
-            return (StructType.RawType1.deserializeFromLittleEndian(raw1Data), StructType.RawType2.deserializeFromBigEndian(raw2Data))
-        case (Endianness.Big, Endianness.Big):
-            return (StructType.RawType1.deserializeFromBigEndian(raw1Data), StructType.RawType2.deserializeFromBigEndian(raw2Data))
+        case Endianness.Little:
+            return (StructType.RawType1.deserializeArrayFromLittleEndian(raw1Data), StructType.RawType2.deserializeArrayFromLittleEndian(raw2Data))
+        case Endianness.Big:
+            return (StructType.RawType1.deserializeArrayFromBigEndian(raw1Data), StructType.RawType2.deserializeArrayFromBigEndian(raw2Data))
         }
     }
     
     private func serialize(rawValues:([StructType.RawType1], [StructType.RawType2])) -> NSData {
-        let (rawValues1, rawValues2) = rawValues
         switch self.endianness {
-        case (Endianness.Little, Endianness.Little):
-            let data = NSMutableData()
-            data.setData(NSData.serializeToLittleEndian(rawValues1))
-            data.appendData(NSData.serializeToLittleEndian(rawValues2))
-            return data
-        case (Endianness.Big, Endianness.Little):
-            let data = NSMutableData()
-            data.setData(NSData.serializeToBigEndian(rawValues1))
-            data.appendData(NSData.serializeToLittleEndian(rawValues2))
-            return data
-        case (Endianness.Little, Endianness.Big):
-            let data = NSMutableData()
-            data.setData(NSData.serializeToLittleEndian(rawValues1))
-            data.appendData(NSData.serializeToBigEndian(rawValues2))
-            return data
-        case (Endianness.Big, Endianness.Big):
-            let data = NSMutableData()
-            data.setData(NSData.serializeToBigEndian(rawValues1))
-            data.appendData(NSData.serializeToBigEndian(rawValues2))
-            return data
+        case Endianness.Little:
+            return NSData.serializeArrayPairToLittleEndian(rawValues)
+        case Endianness.Big:
+            return NSData.serializeArrayPairToBigEndian(rawValues)
         }
     }
     

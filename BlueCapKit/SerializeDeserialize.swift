@@ -35,7 +35,7 @@ func byteArrayValue<T>(value:T) -> [Byte] {
 func reverseBytes<T>(value:T) -> T {
     var result = value
     var swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length:sizeof(T))
-    swappedBytes.getBytes(&result, length:sizeof(Int16))
+    swappedBytes.getBytes(&result, length:sizeof(T))
     return result
 }
 
@@ -52,23 +52,25 @@ public protocol Deserialized {
     class func deserialize(data:NSData, start:Int) -> SelfType
     
     class func deserializeFromLittleEndian(data:NSData) -> SelfType
-    class func deserializeFromLittleEndian(data:NSData) -> [SelfType]
+    class func deserializeArrayFromLittleEndian(data:NSData) -> [SelfType]
     class func deserializeFromLittleEndian(data:NSData, start:Int) -> SelfType
 
     class func deserializeFromBigEndian(data:NSData) -> SelfType
-    class func deserializeFromBigEndian(data:NSData) -> [SelfType]
+    class func deserializeArrayFromBigEndian(data:NSData) -> [SelfType]
     class func deserializeFromBigEndian(data:NSData, start:Int) -> SelfType
 }
 
 public protocol Serialized {
     class func serialize<SerializedType>(value:SerializedType) -> NSData
-    class func serialize<SerializedType>(values:[SerializedType]) -> NSData
+    class func serializeArray<SerializedType>(values:[SerializedType]) -> NSData
     
     class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData
-    class func serializeToLittleEndian<SerializedType>(values:[SerializedType]) -> NSData
+    class func serializeArrayToLittleEndian<SerializedType>(values:[SerializedType]) -> NSData
+    class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData
     
     class func serializeToBigEndian<SerializedType>(value:SerializedType) -> NSData
-    class func serializeToBigEndian<SerializedType>(values:[SerializedType]) -> NSData
+    class func serializeArrayToBigEndian<SerializedType>(values:[SerializedType]) -> NSData
+    class func serializeArrayPairToBigEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData
 }
 
 public protocol DeserializedEnum {

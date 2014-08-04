@@ -44,7 +44,7 @@ extension UInt8 : Deserialized {
         return deserialize(data)
     }
     
-    public static func deserializeFromLittleEndian(data:NSData) -> [UInt8] {
+    public static func deserializeArrayFromLittleEndian(data:NSData) -> [UInt8] {
         let count = data.length / sizeof(Byte)
         return [Int](0..<count).map{self.deserializeFromLittleEndian(data, start:$0)}
     }
@@ -57,7 +57,7 @@ extension UInt8 : Deserialized {
         return deserialize(data)
     }
     
-    public static func deserializeFromBigEndian(data:NSData) -> [UInt8] {
+    public static func deserializeArrayFromBigEndian(data:NSData) -> [UInt8] {
         let count = data.length / sizeof(Byte)
         return [Int](0..<count).map{self.deserializeFromBigEndian(data, start:$0)}
     }
