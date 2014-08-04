@@ -982,7 +982,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCell" rowHeight="59" id="MMY-cJ-Btq" customClass="PeripheralServiceCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCell" rowHeight="59" id="MMY-cJ-Btq" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="59"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MMY-cJ-Btq" id="cJP-MO-57Y">
@@ -1006,8 +1006,8 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLabel" destination="2oZ-lh-Mdk" id="DuD-ZP-96i"/>
-                                    <outlet property="uuidLabel" destination="jOq-rh-ub5" id="BTR-FD-W0v"/>
+                                    <outlet property="nameLabel" destination="2oZ-lh-Mdk" id="f4h-s4-ymV"/>
+                                    <outlet property="uuidLabel" destination="jOq-rh-ub5" id="KxB-ib-CDV"/>
                                     <segue destination="flO-6L-RZ3" kind="push" identifier="PeripheralServicesCharacteritics" trigger="accessoryAction" id="z72-Mc-QAG"/>
                                 </connections>
                             </tableViewCell>
@@ -1032,7 +1032,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCharacteristicCell" rowHeight="59" id="cn0-Ns-fTV" customClass="PeripheralServiceCharacteristicCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCharacteristicCell" rowHeight="59" id="cn0-Ns-fTV" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="59"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cn0-Ns-fTV" id="5s7-wR-64c">
@@ -1040,7 +1040,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cDW-hg-LSS">
-                                            <rect key="frame" x="20" y="29" width="250" height="22"/>
+                                            <rect key="frame" x="20" y="28" width="250" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <nil key="highlightedColor"/>
@@ -1055,8 +1055,8 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLabel" destination="cDW-hg-LSS" id="naA-fo-0L2"/>
-                                    <outlet property="uuidLabel" destination="9KI-AZ-e1H" id="PLC-we-dIy"/>
+                                    <outlet property="nameLabel" destination="cDW-hg-LSS" id="UKm-0l-vcR"/>
+                                    <outlet property="uuidLabel" destination="9KI-AZ-e1H" id="kyw-Nc-OAf"/>
                                     <segue destination="qDj-sM-07o" kind="push" identifier="PeripheralServiceCharacteristic" trigger="accessoryAction" id="uuQ-Wv-Q5M"/>
                                 </connections>
                             </tableViewCell>
@@ -1654,32 +1654,32 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceProfileCell" rowHeight="59" id="oXK-Rm-dzd" customClass="ServiceProfileCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceProfileCell" rowHeight="59" id="oXK-Rm-dzd" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="59"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oXK-Rm-dzd" id="NKt-Sf-FuI">
                                     <rect key="frame" x="0.0" y="0.0" width="273" height="58"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FVE-dJ-nL1">
-                                            <rect key="frame" x="20" y="10" width="250" height="21"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UUID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="NuQ-ec-i8p">
-                                            <rect key="frame" x="20" y="32" width="250" height="21"/>
+                                            <rect key="frame" x="23" y="7" width="250" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FVE-dJ-nL1">
+                                            <rect key="frame" x="20" y="28" width="250" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLabel" destination="FVE-dJ-nL1" id="OBK-DW-UfH"/>
-                                    <outlet property="uuidLabel" destination="NuQ-ec-i8p" id="xgE-U4-li0"/>
+                                    <outlet property="nameLabel" destination="FVE-dJ-nL1" id="yaG-sg-I0i"/>
+                                    <outlet property="uuidLabel" destination="NuQ-ec-i8p" id="xOn-KX-IRB"/>
                                     <segue destination="zWl-Dc-J9w" kind="push" identifier="CharacteristicProfiles" trigger="accessoryAction" id="NTR-Lf-tkD"/>
                                 </connections>
                             </tableViewCell>
@@ -1708,13 +1708,13 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="leG-xG-pv0">
-                                            <rect key="frame" x="20" y="10" width="250" height="22"/>
+                                            <rect key="frame" x="20" y="28" width="250" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UUID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="uJ8-kz-tth">
-                                            <rect key="frame" x="20" y="32" width="250" height="21"/>
+                                            <rect key="frame" x="20" y="7" width="250" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>

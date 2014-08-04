@@ -54,7 +54,7 @@ class PeripheralServicesViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCell, forIndexPath: indexPath) as PeripheralServiceCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCell, forIndexPath: indexPath) as NameUUIDCell
         if let peripheral = self.peripheral {
             let service = peripheral.services[indexPath.row]
             cell.nameLabel.text = service.name
