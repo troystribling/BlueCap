@@ -36,7 +36,7 @@ class ServiceProfilesViewController : UITableViewController {
             let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
             let tag = Array(self.serviceProfiles.keys)
             if let profiles = self.serviceProfiles[tag[selectedIndex.section]] {
-                let viewController = segue.destinationViewController as ServiceCharacteristicProfilesView
+                let viewController = segue.destinationViewController as ServiceCharacteristicProfilesViewController
                 viewController.serviceProfile =  profiles[selectedIndex.row]
             }
         }

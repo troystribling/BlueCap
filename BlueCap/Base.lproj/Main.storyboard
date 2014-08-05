@@ -1725,7 +1725,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="leG-xG-pv0" id="6RK-zQ-Iql"/>
                                     <outlet property="uuidLabel" destination="uJ8-kz-tth" id="oyZ-XA-wc5"/>
-                                    <segue destination="zO7-LG-jdj" kind="push" identifier="CharacteristicProfile" trigger="accessoryAction" id="6cg-z1-31w"/>
+                                    <segue destination="zO7-LG-jdj" kind="push" identifier="ServiceCharacteristicProfile" trigger="accessoryAction" id="6cg-z1-31w"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1769,10 +1769,10 @@
             </objects>
             <point key="canvasLocation" x="3735" y="2335"/>
         </scene>
-        <!--Table View Controller-->
+        <!--Characteristic-->
         <scene sceneID="1E2-Dk-o9c">
             <objects>
-                <tableViewController id="zO7-LG-jdj" sceneMemberID="viewController">
+                <tableViewController id="zO7-LG-jdj" customClass="ServiceCharacteristicProfileViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="llB-6v-GZr">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1963,18 +1963,18 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Read" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zg4-iX-Scy">
-                                                    <rect key="frame" x="20" y="11" width="240" height="22"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="R02-Oe-tbm">
                                                     <rect key="frame" x="263" y="11" width="37" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Read" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zg4-iX-Scy">
+                                                    <rect key="frame" x="20" y="11" width="240" height="22"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -2180,22 +2180,23 @@
                             <outlet property="delegate" destination="zO7-LG-jdj" id="gx0-Cu-CtQ"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="tXE-QU-0Hk"/>
+                    <navigationItem key="navigationItem" title="Characteristic" id="tXE-QU-0Hk"/>
                     <connections>
-                        <outlet property="permissionRead" destination="cIh-1F-pzP" id="CZO-0i-UEt"/>
-                        <outlet property="permissionReadEncryption" destination="Heo-g0-iMu" id="TUv-YC-yfp"/>
-                        <outlet property="permissionWrite" destination="lkL-4w-vhA" id="ywV-NA-fub"/>
-                        <outlet property="permissionWriteEncryption" destination="roI-1p-jf8" id="SSZ-Fj-WK9"/>
-                        <outlet property="propertyAuthenticatedSignedWrites" destination="nvF-Zr-S7X" id="bo9-36-5V5"/>
-                        <outlet property="propertyBroadcast" destination="lgK-Kg-Csc" id="VFT-4Z-97g"/>
-                        <outlet property="propertyExtendedProperties" destination="9nQ-6P-lx8" id="Ibj-CZ-O0b"/>
-                        <outlet property="propertyIndicate" destination="VER-tB-am9" id="6EG-f0-29G"/>
-                        <outlet property="propertyIndicateEncryptionRequired" destination="bqh-03-e8R" id="ZCo-NY-SMp"/>
-                        <outlet property="propertyNotify" destination="ADj-LP-fgG" id="cBe-xN-Q7h"/>
-                        <outlet property="propertyNotifyEncryptionRequired" destination="7fU-XV-vrm" id="ZXd-ap-1Gj"/>
-                        <outlet property="propertyRead" destination="R02-Oe-tbm" id="Zop-c7-9vs"/>
-                        <outlet property="propertyWrite" destination="yF4-Me-pUX" id="s14-8V-jCT"/>
-                        <outlet property="propertyWriteWithoutResponse" destination="kwU-2D-icy" id="uZb-cz-CgI"/>
+                        <outlet property="permissionRead" destination="cIh-1F-pzP" id="7Fa-9e-wkW"/>
+                        <outlet property="permissionReadEncryption" destination="Heo-g0-iMu" id="4HD-hA-6kh"/>
+                        <outlet property="permissionWrite" destination="lkL-4w-vhA" id="B7I-04-0Us"/>
+                        <outlet property="permissionWriteEncryption" destination="roI-1p-jf8" id="rLU-PK-Lif"/>
+                        <outlet property="propertyAuthenticatedSignedWritesLabel" destination="nvF-Zr-S7X" id="cn9-VA-8Rf"/>
+                        <outlet property="propertyBroadcastLabel" destination="lgK-Kg-Csc" id="Xt5-qV-9Kr"/>
+                        <outlet property="propertyExtendedPropertiesLabel" destination="9nQ-6P-lx8" id="Ngj-P1-ncl"/>
+                        <outlet property="propertyIndicateEncryptionRequiredLabel" destination="bqh-03-e8R" id="j9L-kO-PQI"/>
+                        <outlet property="propertyIndicateLabel" destination="VER-tB-am9" id="L2u-Og-Vzg"/>
+                        <outlet property="propertyNotifyEncryptionRequiredLabel" destination="7fU-XV-vrm" id="HBA-jn-KrF"/>
+                        <outlet property="propertyNotifyLabel" destination="ADj-LP-fgG" id="v0l-eG-54H"/>
+                        <outlet property="propertyReadLabel" destination="R02-Oe-tbm" id="6dy-ye-hH0"/>
+                        <outlet property="propertyWriteLabel" destination="yF4-Me-pUX" id="1ys-fc-I4Y"/>
+                        <outlet property="propertyWriteWithoutResponseLabel" destination="kwU-2D-icy" id="qgm-Gs-lRb"/>
+                        <outlet property="uuidLabel" destination="5JA-0D-wfk" id="IW1-Qn-3iH"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Fs-4g-G5E" userLabel="First Responder" sceneMemberID="firstResponder"/>

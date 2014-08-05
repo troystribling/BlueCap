@@ -1,5 +1,5 @@
 //
-//  ServiceCharacteristicProfilesView.swift
+//  ServiceCharacteristicProfilesViewController.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/4/14.
@@ -9,12 +9,13 @@
 import UIKit
 import BlueCapKit
 
-class ServiceCharacteristicProfilesView : UITableViewController {
+class ServiceCharacteristicProfilesViewController : UITableViewController {
 
     var serviceProfile : ServiceProfile?
     
     struct MainStoryboard {
-        static let serviceCharacteristicProfileCell = "ServiceCharacteristicProfileCell"
+        static let serviceCharacteristicProfileCell     = "ServiceCharacteristicProfileCell"
+        static let serviceCharacteristicProfileSegue    = "ServiceCharacteristicProfile"
     }
     
     init(coder aDecoder:NSCoder!)  {
@@ -29,6 +30,8 @@ class ServiceCharacteristicProfilesView : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {        
+    }
 
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
@@ -45,6 +48,11 @@ class ServiceCharacteristicProfilesView : UITableViewController {
     
     override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileCell, forIndexPath: indexPath) as NameUUIDCell
+        if let serviceProfile = self.serviceProfile {
+            let characteristicProfile = serviceProfile.characteristics[indexPath.row]
+            cell.nameLabel.text = characteristicProfile.name
+            cell.uuidLabel.text = characteristicProfile.uuid.UUIDString
+        }
         return cell
     }
 

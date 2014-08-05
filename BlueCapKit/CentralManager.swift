@@ -18,6 +18,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     private let cbCentralManager        : CBCentralManager!
 
+    private let centralQueue            = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
+
     private var connecting  = false
     
     // INTERNAL
@@ -133,7 +135,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("CentralManager#didRetrievePeripherals")
     }
     
-    // centrail manager state
+    // central manager state
     public func centralManager(_:CBCentralManager!, willRestoreState dict:NSDictionary!) {
         Logger.debug("CentralManager#willRestoreState")
     }
@@ -193,10 +195,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         dispatch_after(popTime, dispatch_get_main_queue(), request)
     }
     
-    // PRIVATE INTERFACE
+    // PRIVATE
     private init() {
         super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:nil)
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue)
     }
     
     private func unpackAdvertisements(advertDictionary:NSDictionary!) -> Dictionary<String,String> {
