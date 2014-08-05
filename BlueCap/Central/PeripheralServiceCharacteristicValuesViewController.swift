@@ -13,7 +13,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
    
     weak var characteristic     : Characteristic?
     let progressView            : ProgressView!
-    var selectedIndex           : NSIndexPath?
     
     @IBOutlet var refreshButton :UIButton!
     
@@ -63,7 +62,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 if let stringValues = characteristic.stringValues {
                     let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
                     viewController.characteristic = self.characteristic
-                    if let selectedIndex = self.selectedIndex {
+                    if let selectedIndex = sender as? NSIndexPath {
                         let names = Array(stringValues.keys)
                         viewController.valueName = names[selectedIndex.row]
                     }
@@ -114,13 +113,12 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
-        self.selectedIndex = indexPath
         if let characteristic = self.characteristic {
             if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
                 if characteristic.discreteStringValues.isEmpty {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:self)
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:indexPath)
                 } else {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:self)
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
                 }
             }
         }
