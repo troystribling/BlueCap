@@ -1648,11 +1648,11 @@
         <!--Service Profiles-->
         <scene sceneID="YHQ-Rd-s1p">
             <objects>
-                <tableViewController id="zEN-c1-NRB" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="nVc-LP-GhE">
+                <tableViewController id="zEN-c1-NRB" customClass="ServiceProfilesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="59" sectionHeaderHeight="10" sectionFooterHeight="10" id="nVc-LP-GhE">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceProfileCell" rowHeight="59" id="oXK-Rm-dzd" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="59"/>
@@ -1680,7 +1680,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="FVE-dJ-nL1" id="yaG-sg-I0i"/>
                                     <outlet property="uuidLabel" destination="NuQ-ec-i8p" id="xOn-KX-IRB"/>
-                                    <segue destination="zWl-Dc-J9w" kind="push" identifier="CharacteristicProfiles" trigger="accessoryAction" id="NTR-Lf-tkD"/>
+                                    <segue destination="zWl-Dc-J9w" kind="push" identifier="ServiceCharacteristicProfiles" trigger="accessoryAction" id="NTR-Lf-tkD"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1694,13 +1694,13 @@
         <!--Characteristic Profiles-->
         <scene sceneID="pPZ-cj-EZf">
             <objects>
-                <tableViewController id="zWl-Dc-J9w" sceneMemberID="viewController">
+                <tableViewController id="zWl-Dc-J9w" customClass="ServiceCharacteristicProfilesView" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="llw-2h-NAC">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CharacteristicProfileCell" rowHeight="59" id="ohF-qc-mMF" customClass="CharacteristicProfileCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceCharacteristicProfileCell" rowHeight="59" id="ohF-qc-mMF" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="59"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ohF-qc-mMF" id="SbN-10-15W">
@@ -1723,8 +1723,8 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLabel" destination="leG-xG-pv0" id="41T-sl-jul"/>
-                                    <outlet property="uuidLabel" destination="uJ8-kz-tth" id="u87-3X-1mI"/>
+                                    <outlet property="nameLabel" destination="leG-xG-pv0" id="6RK-zQ-Iql"/>
+                                    <outlet property="uuidLabel" destination="uJ8-kz-tth" id="oyZ-XA-wc5"/>
                                     <segue destination="zO7-LG-jdj" kind="push" identifier="CharacteristicProfile" trigger="accessoryAction" id="6cg-z1-31w"/>
                                 </connections>
                             </tableViewCell>

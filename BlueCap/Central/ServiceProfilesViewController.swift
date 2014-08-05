@@ -14,7 +14,8 @@ class ServiceProfilesViewController : UITableViewController {
     var serviceProfiles : Dictionary<String, [ServiceProfile]> = [:]
     
     struct MainStoryboard {
-        static let serviceProfileCell = "ServiceProfileCell"
+        static let serviceProfileCell                   = "ServiceProfileCell"
+        static let serviceCharacteristicProfilesSegue   = "ServiceCharacteristicProfiles"
     }
     
     init(coder aDecoder:NSCoder!)  {
@@ -28,6 +29,17 @@ class ServiceProfilesViewController : UITableViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.serviceCharacteristicProfilesSegue {
+            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
+            let tag = Array(self.serviceProfiles.keys)
+            if let profiles = self.serviceProfiles[tag[selectedIndex.section]] {
+                let viewController = segue.destinationViewController as ServiceCharacteristicProfilesView
+                viewController.serviceProfile =  profiles[selectedIndex.row]
+            }
+        }
     }
 
     func sortServiceProfiles() {
@@ -59,8 +71,17 @@ class ServiceProfilesViewController : UITableViewController {
         return tags[section]
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceProfileCell, forIndexPath: indexPath) as NameUUIDCell
+        let tags = Array(self.serviceProfiles.keys)
+        if let profiles = self.serviceProfiles[tags[indexPath.section]] {
+            let profile = profiles[indexPath.row]
+            cell.nameLabel.text = profile.name
+            cell.uuidLabel.text = profile.uuid.UUIDString
+        } else {
+            cell.nameLabel.text = "Unknown"
+            cell.uuidLabel.text = "Unknown"
+        }
         return cell
     }
 
