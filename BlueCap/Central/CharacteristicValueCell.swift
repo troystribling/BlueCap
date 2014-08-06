@@ -1,5 +1,5 @@
 //
-//  PeripheralServiceCharacteristicValueCell.swift
+//  CharacteristicValueCell.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/5/14.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PeripheralServiceCharacteristicValueCell : UITableViewCell {
+class CharacteristicValueCell : UITableViewCell {
   
     @IBOutlet var valueNameLabel    : UILabel!
     @IBOutlet var valueLable        : UILabel!

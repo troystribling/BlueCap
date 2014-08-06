@@ -94,7 +94,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as PeripheralServiceCharacteristicValueCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as CharacteristicValueCell
         if let characteristic = self.characteristic {
             if let stringValues = characteristic.stringValues {
                 let names = Array(stringValues.keys)

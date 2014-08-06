@@ -24,6 +24,10 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let serviceProfile = self.serviceProfile {
+            self.navigationItem.title = serviceProfile.name
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+        }
     }
     
     override func didReceiveMemoryWarning() {

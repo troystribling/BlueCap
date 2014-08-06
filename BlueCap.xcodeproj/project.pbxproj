@@ -26,7 +26,7 @@
 		05764D7F1969D03B00E6C801 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */; };
 		05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
-		057E6ABD1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */; };
+		057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
 		05840F6C194206F100C744E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6A194206F100C744E6 /* Main.storyboard */; };
 		05840F6E194206F100C744E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6D194206F100C744E6 /* Images.xcassets */; };
@@ -44,6 +44,7 @@
 		05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2B198368EC00CEAD0B /* NordicProfiles.swift */; };
 		05900F2E1984205A00CEAD0B /* StringCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */; };
 		05A47FC81991256E0070E4D8 /* ServiceCharacteristicProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A47FC71991256E0070E4D8 /* ServiceCharacteristicProfileViewController.swift */; };
+		05A47FCA1991CEDF0070E4D8 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A47FC91991CEDF0070E4D8 /* ServiceCharacteristicProfileValuesViewController.swift */; };
 		05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */; };
 		05AEAF93196C44B2009E8A0C /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */; };
 		05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */; };
@@ -133,7 +134,7 @@
 		05764D80196A1E0600E6C801 /* Enums.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Enums.playground; sourceTree = "<group>"; };
 		05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TISensorTagServiceProfiles.swift; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
-		057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValueCell.swift; sourceTree = "<group>"; };
+		057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicValueCell.swift; sourceTree = "<group>"; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F63194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840F64194206F100C744E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -155,6 +156,7 @@
 		05900F2B198368EC00CEAD0B /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
 		05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05A47FC71991256E0070E4D8 /* ServiceCharacteristicProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileViewController.swift; sourceTree = "<group>"; };
+		05A47FC91991CEDF0070E4D8 /* ServiceCharacteristicProfileValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileValuesViewController.swift; sourceTree = "<group>"; };
 		05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeDeserialize.swift; sourceTree = "<group>"; };
 		05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
 		05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
@@ -238,7 +240,7 @@
 				05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */,
 				05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */,
 				05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */,
-				057E6ABC1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift */,
+				057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */,
 				057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */,
 				05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */,
 				05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */,
@@ -431,8 +433,9 @@
 		05E68703195087D0009B38DA /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
-				05A47FC71991256E0070E4D8 /* ServiceCharacteristicProfileViewController.swift */,
 				05B4A332199083CE00CEDB76 /* ServiceCharacteristicProfilesViewController.swift */,
+				05A47FC91991CEDF0070E4D8 /* ServiceCharacteristicProfileValuesViewController.swift */,
+				05A47FC71991256E0070E4D8 /* ServiceCharacteristicProfileViewController.swift */,
 				05277C9E1944CAE50022FB59 /* ServiceProfilesViewController.swift */,
 			);
 			name = Profiles;
@@ -611,6 +614,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05277C9F1944CAE50022FB59 /* PeripheralManagerViewController.swift in Sources */,
+				05A47FCA1991CEDF0070E4D8 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */,
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
 				05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */,
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
@@ -624,7 +628,7 @@
 				057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */,
 				05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */,
 				05277CA11944CAE50022FB59 /* ServiceProfilesViewController.swift in Sources */,
-				057E6ABD1968BA3C009938F4 /* PeripheralServiceCharacteristicValueCell.swift in Sources */,
+				057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */,
 				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,
 				058C134E197CD293008ECD6B /* ProgressView.swift in Sources */,
 				05840F65194206F100C744E6 /* AppDelegate.swift in Sources */,

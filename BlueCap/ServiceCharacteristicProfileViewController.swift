@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreBluetooth
 import BlueCapKit
 
 class ServiceCharacteristicProfileViewController : UITableViewController {
@@ -15,10 +16,10 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
     
     @IBOutlet var uuidLabel                                 : UILabel!
     
-    @IBOutlet var permissionRead                            : UILabel!
-    @IBOutlet var permissionWrite                           : UILabel!
-    @IBOutlet var permissionReadEncryption                  : UILabel!
-    @IBOutlet var permissionWriteEncryption                 : UILabel!
+    @IBOutlet var permissionReadLabel                       : UILabel!
+    @IBOutlet var permissionWriteLabel                      : UILabel!
+    @IBOutlet var permissionReadEncryptionLabel             : UILabel!
+    @IBOutlet var permissionWriteEncryptionLabel            : UILabel!
 
     @IBOutlet var propertyBroadcastLabel                    : UILabel!
     @IBOutlet var propertyReadLabel                         : UILabel!
@@ -41,14 +42,41 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
     
     override func viewDidLoad()  {
         super.viewDidLoad()
+        if let characteristicProfile = self.characteristicProfile {
+
+            self.navigationItem.title = characteristicProfile.name
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+
+            self.permissionReadLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Readable))
+            self.permissionWriteLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Writeable))
+            self.permissionReadEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.ReadEncryptionRequired))
+            self.permissionWriteEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.WriteEncryptionRequired))
+            
+            self.propertyBroadcastLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Broadcast))
+            self.propertyReadLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Read))
+            self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.WriteWithoutResponse))
+            self.propertyWriteLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Write))
+            self.propertyNotifyLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Notify))
+            self.propertyIndicateLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Indicate))
+            self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.AuthenticatedSignedWrites))
+            self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.ExtendedProperties))
+            self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.NotifyEncryptionRequired))
+            self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.IndicateEncryptionRequired))
+            
+        }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.serviceCharacteristicProfileValuesSegue {
+        }
     }
     
+    func booleanStringValue(value:Bool) -> String {
+        return value ? "YES" : "NO"
+    }
 
 }

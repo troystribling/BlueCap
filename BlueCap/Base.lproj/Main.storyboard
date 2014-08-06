@@ -1476,7 +1476,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCharacteristicValueCell" rowHeight="71" id="q9H-Fo-Way" customClass="PeripheralServiceCharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralServiceCharacteristicValueCell" rowHeight="71" id="q9H-Fo-Way" customClass="CharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="71"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="q9H-Fo-Way" id="PAI-wi-1fK">
@@ -1500,8 +1500,8 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="valueLable" destination="UHv-O5-QAn" id="w2k-F4-G2R"/>
-                                    <outlet property="valueNameLabel" destination="6kS-yg-EBr" id="qPd-gE-1xn"/>
+                                    <outlet property="valueLable" destination="UHv-O5-QAn" id="cBR-o7-X1a"/>
+                                    <outlet property="valueNameLabel" destination="6kS-yg-EBr" id="l55-Ch-9Nr"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -2206,7 +2206,7 @@
         <!--Characteristic Values-->
         <scene sceneID="xKB-CJ-bqP">
             <objects>
-                <tableViewController id="KJi-TH-L2L" sceneMemberID="viewController">
+                <tableViewController id="KJi-TH-L2L" customClass="ServiceCharacteristicProfileValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="ntU-6W-CqR">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
