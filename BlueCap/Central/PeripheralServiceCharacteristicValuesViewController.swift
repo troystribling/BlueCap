@@ -80,6 +80,28 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         self.readValues()
     }
     
+    func readValues() {
+        if let characteristic = self.characteristic {
+            if characteristic.isNotifying {
+                characteristic.startUpdates({
+                    self.tableView.reloadData()
+                    },
+                    afterUpdateFailedCallback:{(error) in
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    })
+            } else if characteristic.propertyEnabled(.Read) {
+                characteristic.read({
+                    self.tableView.reloadData()
+                    self.progressView.remove()
+                    },
+                    afterReadFailedCallback:{(error) in
+                        self.progressView.remove()
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    })
+            }
+        }
+    }
+
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
         return 1
@@ -120,29 +142,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 } else {
                     self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
                 }
-            }
-        }
-    }
-    
-    // PRIVATE
-    func readValues() {
-        if let characteristic = self.characteristic {
-        if characteristic.isNotifying {
-            characteristic.startUpdates({
-                    self.tableView.reloadData()
-                },
-                afterUpdateFailedCallback:{(error) in
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                })
-            } else if characteristic.propertyEnabled(.Read) {
-                characteristic.read({
-                        self.tableView.reloadData()
-                        self.progressView.remove()
-                    },
-                    afterReadFailedCallback:{(error) in
-                        self.progressView.remove()
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    })
             }
         }
     }

@@ -28,8 +28,7 @@ public class StructCharacteristicProfile<StructType:DeserializedStruct where Str
         }
     }
     
-    // INTERNAL
-    internal override func anyValue(data:NSData) -> Any? {
+    public override func anyValue(data:NSData) -> Any? {
         let values = self.deserialize(data)
         if let value = StructType.fromRawValues(values) {
             Logger.debug("StructCharacteristicProfile#anyValue: data = \(data.hexStringValue()), value = \(value.toRawValues())")
@@ -39,7 +38,7 @@ public class StructCharacteristicProfile<StructType:DeserializedStruct where Str
         }
     }
     
-    internal override func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let value = StructType.fromStrings(data) {
             Logger.debug("StructCharacteristicProfile#dataValue: data = \(data), value = \(value.toRawValues())")
             return self.serialize(value.toRawValues())
@@ -48,7 +47,7 @@ public class StructCharacteristicProfile<StructType:DeserializedStruct where Str
         }
     }
     
-    internal override func dataValue(object:Any) -> NSData? {
+    public override func dataValue(object:Any) -> NSData? {
         if let value = object as? StructType {
             Logger.debug("StructCharacteristicProfile#dataValue: value = \(value.toRawValues())")
             return self.serialize(value.toRawValues())

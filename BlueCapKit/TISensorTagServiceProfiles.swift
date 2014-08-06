@@ -839,7 +839,7 @@ public class TISensorTagServiceProfiles {
         profileManager.addService(ServiceProfile(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name){(serviceProfile) in
             serviceProfile.tag = "TI Sensor Tag"
             // Hygrometer Data
-            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.HygrometerService.Data.Value>(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name)
+            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.HygrometerService.Data.Value>(uuid:TISensorTag.HygrometerService.Data.uuid, name:TISensorTag.HygrometerService.Data.name)
                 {(characteristicProfile) in
                     characteristicProfile.endianness = .Little
                     characteristicProfile.initialValue = NSData.serializeArrayToLittleEndian(TISensorTag.HygrometerService.Data.Value.fromRawValues([2600, 3500])!.toRawValues())

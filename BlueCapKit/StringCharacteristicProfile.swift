@@ -21,17 +21,16 @@ public class StringCharacteristicProfile : CharacteristicProfile {
         }
     }
         
-    // INTERNAL
-    internal override func stringValues(data:NSData) -> Dictionary<String, String>? {
+    public override func stringValues(data:NSData) -> Dictionary<String, String>? {
         let value = NSString(data:data, encoding:self.encoding)
         return [self.name:value]
     }
     
-    internal override func anyValue(data:NSData) -> Any? {
+    public override func anyValue(data:NSData) -> Any? {
         return NSString(data:data, encoding:self.encoding)
     }
     
-    internal override func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let value = data[self.name] {
             return self.dataValue(value)
         } else {
@@ -39,7 +38,7 @@ public class StringCharacteristicProfile : CharacteristicProfile {
         }
     }
     
-    internal override func dataValue(object:Any) -> NSData? {
+    public override func dataValue(object:Any) -> NSData? {
         if let value = object as? String {
             return value.dataUsingEncoding(self.encoding)
         } else {

@@ -40,27 +40,26 @@ public class CharacteristicProfile {
     }
     
     public func permissionEnabled(permission:CBAttributePermissions) -> Bool {
-        return (self.permissions.toRaw() & permissions.toRaw()) > 0
+        return (self.permissions.toRaw() & permission.toRaw()) > 0
     }
     
     public func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
         self.afterDiscoveredCallback = afterDiscoveredCallback
     }
     
-    // INTERNAL
-    internal func stringValues(data:NSData) -> Dictionary<String, String>? {
+    public func stringValues(data:NSData) -> Dictionary<String, String>? {
         return [self.name:data.hexStringValue()]
     }
     
-    internal func anyValue(data:NSData) -> Any? {
+    public func anyValue(data:NSData) -> Any? {
         return data
     }
     
-    internal func dataValue(object:Any) -> NSData? {
+    public func dataValue(object:Any) -> NSData? {
         return object as? NSData
     }
     
-    internal func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let stringVal = data[self.name] {
             return stringVal.dataFromHexString()
         } else {

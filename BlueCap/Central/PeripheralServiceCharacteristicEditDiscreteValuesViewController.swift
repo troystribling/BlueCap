@@ -34,6 +34,11 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
     }
 
+    func writeComplete() {
+        self.navigationController.popViewControllerAnimated(true)
+        self.progressView.remove()
+    }
+
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
         return 1
@@ -78,9 +83,4 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         }
     }
     
-    // PRIVATE
-    func writeComplete() {
-        self.navigationController.popViewControllerAnimated(true)
-        self.progressView.remove()
-    }
 }

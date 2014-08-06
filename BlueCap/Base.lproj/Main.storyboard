@@ -1694,7 +1694,7 @@
         <!--Characteristic Profiles-->
         <scene sceneID="pPZ-cj-EZf">
             <objects>
-                <tableViewController id="zWl-Dc-J9w" customClass="ServiceCharacteristicProfilesView" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="zWl-Dc-J9w" customClass="ServiceCharacteristicProfilesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="llw-2h-NAC">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1797,7 +1797,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="KJi-TH-L2L" kind="push" identifier="CharacteristicProfileValues" id="G89-n1-Gli"/>
+                                            <segue destination="KJi-TH-L2L" kind="push" identifier="ServiceCharacteristicProfileValues" id="G89-n1-Gli"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -2182,21 +2182,21 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Characteristic" id="tXE-QU-0Hk"/>
                     <connections>
-                        <outlet property="permissionRead" destination="cIh-1F-pzP" id="7Fa-9e-wkW"/>
-                        <outlet property="permissionReadEncryption" destination="Heo-g0-iMu" id="4HD-hA-6kh"/>
-                        <outlet property="permissionWrite" destination="lkL-4w-vhA" id="B7I-04-0Us"/>
-                        <outlet property="permissionWriteEncryption" destination="roI-1p-jf8" id="rLU-PK-Lif"/>
-                        <outlet property="propertyAuthenticatedSignedWritesLabel" destination="nvF-Zr-S7X" id="cn9-VA-8Rf"/>
-                        <outlet property="propertyBroadcastLabel" destination="lgK-Kg-Csc" id="Xt5-qV-9Kr"/>
-                        <outlet property="propertyExtendedPropertiesLabel" destination="9nQ-6P-lx8" id="Ngj-P1-ncl"/>
-                        <outlet property="propertyIndicateEncryptionRequiredLabel" destination="bqh-03-e8R" id="j9L-kO-PQI"/>
-                        <outlet property="propertyIndicateLabel" destination="VER-tB-am9" id="L2u-Og-Vzg"/>
-                        <outlet property="propertyNotifyEncryptionRequiredLabel" destination="7fU-XV-vrm" id="HBA-jn-KrF"/>
-                        <outlet property="propertyNotifyLabel" destination="ADj-LP-fgG" id="v0l-eG-54H"/>
-                        <outlet property="propertyReadLabel" destination="R02-Oe-tbm" id="6dy-ye-hH0"/>
-                        <outlet property="propertyWriteLabel" destination="yF4-Me-pUX" id="1ys-fc-I4Y"/>
-                        <outlet property="propertyWriteWithoutResponseLabel" destination="kwU-2D-icy" id="qgm-Gs-lRb"/>
-                        <outlet property="uuidLabel" destination="5JA-0D-wfk" id="IW1-Qn-3iH"/>
+                        <outlet property="permissionReadEncryptionLabel" destination="Heo-g0-iMu" id="dft-Wh-Qag"/>
+                        <outlet property="permissionReadableLabel" destination="cIh-1F-pzP" id="jIm-rE-OUq"/>
+                        <outlet property="permissionWriteEncryptionLabel" destination="roI-1p-jf8" id="MdE-5Y-BDI"/>
+                        <outlet property="permissionWriteableLabel" destination="lkL-4w-vhA" id="eOc-qP-zV1"/>
+                        <outlet property="propertyAuthenticatedSignedWritesLabel" destination="nvF-Zr-S7X" id="OQ9-RR-CrG"/>
+                        <outlet property="propertyBroadcastLabel" destination="lgK-Kg-Csc" id="LZQ-W9-k56"/>
+                        <outlet property="propertyExtendedPropertiesLabel" destination="9nQ-6P-lx8" id="b5C-oS-hK2"/>
+                        <outlet property="propertyIndicateEncryptionRequiredLabel" destination="bqh-03-e8R" id="Ebx-0v-wDk"/>
+                        <outlet property="propertyIndicateLabel" destination="VER-tB-am9" id="dYs-a0-qFs"/>
+                        <outlet property="propertyNotifyEncryptionRequiredLabel" destination="7fU-XV-vrm" id="zek-bq-XgW"/>
+                        <outlet property="propertyNotifyLabel" destination="ADj-LP-fgG" id="bhu-Ah-CmZ"/>
+                        <outlet property="propertyReadLabel" destination="R02-Oe-tbm" id="m2x-hi-TTD"/>
+                        <outlet property="propertyWriteLabel" destination="yF4-Me-pUX" id="FA8-G4-8ed"/>
+                        <outlet property="propertyWriteWithoutResponseLabel" destination="kwU-2D-icy" id="z1b-dB-fG9"/>
+                        <outlet property="uuidLabel" destination="5JA-0D-wfk" id="fm0-38-hUc"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Fs-4g-G5E" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2212,7 +2212,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CharacteristicProfileValueCell" textLabel="fnf-qW-SuX" style="IBUITableViewCellStyleDefault" id="2uV-za-o9g">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceCharacteristicProfileValueCell" textLabel="fnf-qW-SuX" style="IBUITableViewCellStyleDefault" id="2uV-za-o9g" customClass="CharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2uV-za-o9g" id="eBW-mR-pp7">

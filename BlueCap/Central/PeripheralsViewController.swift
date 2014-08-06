@@ -101,7 +101,6 @@ class PeripheralsViewController : UITableViewController {
     }
     
     // UITableViewDelegate
-    
     func setScanButton() {
         if (CentralManager.sharedinstance().isScanning) {
             self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)

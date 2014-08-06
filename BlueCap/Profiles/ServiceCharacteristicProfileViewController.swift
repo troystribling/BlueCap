@@ -16,8 +16,8 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
     
     @IBOutlet var uuidLabel                                 : UILabel!
     
-    @IBOutlet var permissionReadLabel                       : UILabel!
-    @IBOutlet var permissionWriteLabel                      : UILabel!
+    @IBOutlet var permissionReadableLabel                   : UILabel!
+    @IBOutlet var permissionWriteableLabel                  : UILabel!
     @IBOutlet var permissionReadEncryptionLabel             : UILabel!
     @IBOutlet var permissionWriteEncryptionLabel            : UILabel!
 
@@ -47,8 +47,8 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
             self.navigationItem.title = characteristicProfile.name
             self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
 
-            self.permissionReadLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Readable))
-            self.permissionWriteLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Writeable))
+            self.permissionReadableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Readable))
+            self.permissionWriteableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Writeable))
             self.permissionReadEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.ReadEncryptionRequired))
             self.permissionWriteEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.WriteEncryptionRequired))
             
@@ -72,6 +72,8 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfileValuesSegue {
+            let viewController = segue.destinationViewController as ServiceCharacteristicProfileValuesViewController
+            viewController.characteristicProfile = self.characteristicProfile
         }
     }
     

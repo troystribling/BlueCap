@@ -17,23 +17,15 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
         return EnumType.stringValues()
     }
 
-    // INTERNAL
-    internal init(uuid:String, name:String, initializer:((characteristicProfile:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
-        super.init(uuid:uuid, name:name)
-        if let runInitializer = initializer {
-            runInitializer(characteristicProfile:self)
-        }
-    }
-
-    internal override func stringValues(data:NSData) -> Dictionary<String, String>? {
+    public override func stringValues(data:NSData) -> Dictionary<String, String>? {
         if let value = self.anyValue(data) as? EnumType {
             return [self.name:value.stringValue]
         } else {
             return nil
         }
     }
-
-    internal override func anyValue(data:NSData) -> Any? {
+    
+    public override func anyValue(data:NSData) -> Any? {
         let valueRaw = self.deserialize(data)
         Logger.debug("EnumCharacteristicProfile#anyValue: data = \(data.hexStringValue()), raw value = \(valueRaw)")
         if let value =  EnumType.fromRaw(valueRaw) {
@@ -43,7 +35,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
         }
     }
     
-    internal override func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let dataString = data[self.name] {
             Logger.debug("EnumCharacteristicProfile#dataValue: data = \(data)")
             if let value = EnumType.fromString(dataString) {
@@ -56,7 +48,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
         }
     }
     
-    internal override func dataValue(object:Any) -> NSData? {
+    public override func dataValue(object:Any) -> NSData? {
         if let value = object as? EnumType {
             Logger.debug("EnumCharacteristicProfile#dataValue: data = \(value.toRaw())")
             return self.serialize(value.toRaw())
@@ -65,6 +57,13 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
         }
     }
     
+    // INTERNAL
+    internal init(uuid:String, name:String, initializer:((characteristicProfile:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
+        super.init(uuid:uuid, name:name)
+        if let runInitializer = initializer {
+            runInitializer(characteristicProfile:self)
+        }
+    }
     
     // PRIVATE
     private func deserialize(data:NSData) -> EnumType.RawType {

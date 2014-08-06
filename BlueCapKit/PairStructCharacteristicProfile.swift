@@ -30,8 +30,7 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
         }
     }
     
-    // INTERNAL
-    internal override func anyValue(data:NSData) -> Any? {
+    public override func anyValue(data:NSData) -> Any? {
         let (raw1Size, raw2Size) = StructType.rawValueSizes()
         if raw1Size+raw2Size == data.length {
             let rawData1 = data.subdataWithRange(NSMakeRange(0, raw1Size))
@@ -48,7 +47,7 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
         }
     }
     
-    internal override func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public override func dataValue(data:Dictionary<String, String>) -> NSData? {
         if let value = StructType.fromStrings(data) {
             Logger.debug("StructCharacteristicProfile#dataValue: data = \(data), value = \(value.toRawValues())")
             return self.serialize(value.toRawValues())
@@ -57,7 +56,7 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
         }
     }
     
-    internal override func dataValue(object:Any) -> NSData? {
+    public override func dataValue(object:Any) -> NSData? {
         if let value = object as? StructType {
             Logger.debug("StructCharacteristicProfile#dataValue: value = \(value.toRawValues())")
             return self.serialize(value.toRawValues())

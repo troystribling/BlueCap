@@ -14,6 +14,18 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     
     var characteristicProfile : CharacteristicProfile?
     
+    var  values : Dictionary<String, String>? {
+        if let characteristicProfile = self.characteristicProfile {
+            if let initialValue = characteristicProfile.initialValue {
+                return characteristicProfile.stringValues(initialValue)
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+
     struct MainStoryboard {
         static let serviceCharacteristicProfileValueCell = "ServiceCharacteristicProfileValueCell"
     }
@@ -43,8 +55,8 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        if let characteristicProfile = self.characteristicProfile {
-            return 0
+        if let values = self.values {
+            return values.count
         } else {
             return 0
         }
@@ -52,10 +64,15 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     
     override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileValueCell, forIndexPath: indexPath) as CharacteristicValueCell
-        if let characteristicProfile = self.characteristicProfile {
+        if let values = self.values {
+            let characteristicValueNames = Array(values.keys)
+            let characteristicValues = Array(values.values)
+            cell.valueNameLabel.text = characteristicValueNames[indexPath.row]
+            cell.valueLable.text = characteristicValues[indexPath.row]
         }
         return cell
     }
     
-
+    override func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {        
+    }
 }
