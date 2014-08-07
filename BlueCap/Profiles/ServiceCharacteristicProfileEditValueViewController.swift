@@ -46,11 +46,10 @@ class ServiceCharacteristicProfileEditValueViewController : UIViewController, UI
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {
             if let valueName = self.valueName {
-                if let values = self.values {
-                    var newValues = values
-                    newValues[valueName] = newValue
+                if var values = self.values {
+                    values[valueName] = newValue
                     if let characteristicProfile  = self.characteristicProfile {
-                        characteristicProfile.initialValue = characteristicProfile.dataValue(newValues)
+                        characteristicProfile.initialValue = characteristicProfile.dataValue(values)
                         self.navigationController.popViewControllerAnimated(true)
                     }
                 }

@@ -35,12 +35,11 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         if let newValue = self.valueTextField.text {
             if let valueName = self.valueName {
                 if let characteristic = self.characteristic {
-                    if let values = characteristic.stringValues {
-                        var newValues = values
-                        newValues[valueName] = newValue
+                    if var values = characteristic.stringValues {
+                        values[valueName] = newValue
                         let progressView = ProgressView()
                         progressView.show()
-                        characteristic.write(newValues, afterWriteSuccessCallback: {
+                        characteristic.write(values, afterWriteSuccessCallback: {
                                 progressView.remove()
                                 self.navigationController.popViewControllerAnimated(true)
                             }, afterWriteFailedCallback: {(error) in
