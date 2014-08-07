@@ -515,7 +515,7 @@ public struct TISensorTag {
                     return (-46.86+175.72*Double(temperatureRaw)/65536.0, -6.0+125.0*Double(humidityRaw)/65536.0)
                 }
                 var stringValues : Dictionary<String,String> {
-                    return ["temperatureRae":"\(temperatureRaw)", "humidityRaw":"\(humidityRaw)", "temperature":"\(temperature)", "humidity":"\(humidity)"]
+                    return ["temperatureRaw":"\(temperatureRaw)", "humidityRaw":"\(humidityRaw)", "temperature":"\(temperature)", "humidity":"\(humidity)"]
                 }
                 func toRawValues() -> [UInt16] {
                     return [temperatureRaw, humidityRaw]
