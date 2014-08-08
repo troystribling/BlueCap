@@ -55,16 +55,16 @@ public class CharacteristicProfile {
         return data
     }
     
-    public func dataValue(object:Any) -> NSData? {
-        return object as? NSData
-    }
-    
-    public func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
         if let stringVal = data[self.name] {
             return stringVal.dataFromHexString()
         } else {
             return NSData()
         }
+    }
+
+    public func dataFromAnyValue(object:Any) -> NSData? {
+        return object as? NSData
     }
     
 }

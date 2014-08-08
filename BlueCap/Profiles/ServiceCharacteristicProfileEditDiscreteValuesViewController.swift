@@ -41,13 +41,6 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
-    }
-    
-    func writeComplete() {
-        self.navigationController.popViewControllerAnimated(true)
-    }
-    
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
         return 1
@@ -80,8 +73,8 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
         if let characteristicProfile = self.characteristicProfile {
-            let stringValue = [characteristicProfile.name:characteristicProfile.discreteStringValues[indexPath.row]]
-            characteristicProfile.initialValue = characteristicProfile.dataValue(stringValue)
+            let stringValue : Dictionary<String, String> = [characteristicProfile.name:characteristicProfile.discreteStringValues[indexPath.row]]
+            characteristicProfile.initialValue = characteristicProfile.dataFromStringValue(stringValue)
             self.navigationController.popViewControllerAnimated(true)
         }
     }

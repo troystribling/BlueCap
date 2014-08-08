@@ -26,7 +26,7 @@ public class DeserializedCharacteristicProfile<DeserializedType:Deserialized whe
         return deserializedValue
     }
     
-    public override func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
         if let stringValue = data[self.name] {
             if let value = DeserializedType.fromString(stringValue) {
                 Logger.debug("DeserializedCharacteristicProfile#dataValue: data = \(data), value = \(value)")
@@ -39,7 +39,7 @@ public class DeserializedCharacteristicProfile<DeserializedType:Deserialized whe
         }
     }
     
-    public override func dataValue(object:Any) -> NSData? {
+    public override func dataFromAnyValue(object:Any) -> NSData? {
         if let value = object as? DeserializedType {
             Logger.debug("DeserializedCharacteristicProfile#dataValue: value = \(value)")
             return self.serialize(value)

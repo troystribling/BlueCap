@@ -35,7 +35,8 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
         }
     }
     
-    public override func dataValue(data:Dictionary<String, String>) -> NSData? {
+    public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
+        Logger.debug("EnumCharacteristicProfile#dataValueString: data = \(data)")
         if let dataString = data[self.name] {
             Logger.debug("EnumCharacteristicProfile#dataValue: data = \(data)")
             if let value = EnumType.fromString(dataString) {
@@ -48,7 +49,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
         }
     }
     
-    public override func dataValue(object:Any) -> NSData? {
+    public override func dataFromAnyValue(object:Any) -> NSData? {
         if let value = object as? EnumType {
             Logger.debug("EnumCharacteristicProfile#dataValue: data = \(value.toRaw())")
             return self.serialize(value.toRaw())

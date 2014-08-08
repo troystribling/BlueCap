@@ -155,7 +155,7 @@ public class Characteristic {
     }
 
     public func write(stringValue:Dictionary<String, String>, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
-        if let value = self.profile.dataValue(stringValue) {
+        if let value = self.profile.dataFromStringValue(stringValue) {
             self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
@@ -163,7 +163,7 @@ public class Characteristic {
     }
 
     public func write(stringValue:Dictionary<String, String>, afterWriteFailedCallback:((error:NSError)->())? = nil) {
-        if let value = self.profile.dataValue(stringValue) {
+        if let value = self.profile.dataFromStringValue(stringValue) {
             self.write(value, afterWriteFailedCallback)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
@@ -171,7 +171,7 @@ public class Characteristic {
     }
 
     public func write(anyValue:Any, afterWriteSuccessCallback:()->(), afterWriteFailedCallback:((error:NSError)->())? = nil) {
-        if let value = self.profile.dataValue(anyValue) {
+        if let value = self.profile.dataFromAnyValue(anyValue) {
             self.write(value, afterWriteSucessCallback:afterWriteSuccessCallback, afterWriteFailedCallback:afterWriteFailedCallback)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
@@ -179,7 +179,7 @@ public class Characteristic {
     }
 
     public func write(anyValue:Any, afterWriteFailedCallback:((error:NSError)->())? = nil) {
-        if let value = self.profile.dataValue(anyValue) {
+        if let value = self.profile.dataFromAnyValue(anyValue) {
             self.write(value, afterWriteFailedCallback)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()

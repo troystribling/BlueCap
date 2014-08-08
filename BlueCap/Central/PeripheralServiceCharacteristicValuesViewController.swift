@@ -59,9 +59,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
                 viewController.characteristic = self.characteristic
             } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
+                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
+                viewController.characteristic = self.characteristic
                 if let stringValues = characteristic.stringValues {
-                    let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
-                    viewController.characteristic = self.characteristic
                     if let selectedIndex = sender as? NSIndexPath {
                         let names = Array(stringValues.keys)
                         viewController.valueName = names[selectedIndex.row]
