@@ -15,7 +15,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     var progressView    : ProgressView!
     
     struct MainStoryboard {
-        static let PeripheralServiceCharacteristicDiscreteValueCell  = "PeripheralServiceCharacteristicDiscreteValueCell"
+        static let peripheralServiceCharacteristicDiscreteValueCell  = "PeripheralServiceCharacteristicDiscreteValueCell"
     }
 
     init(coder aDecoder:NSCoder!) {
@@ -52,8 +52,8 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         }
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.PeripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
+    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
         if let characteristic = self.characteristic {
             let stringValue = characteristic.discreteStringValues[indexPath.row]
             cell.textLabel.text = stringValue
