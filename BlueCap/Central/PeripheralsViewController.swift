@@ -64,6 +64,7 @@ class PeripheralsViewController : UITableViewController {
         let central = CentralManager.sharedInstance()
         if (central.isScanning) {
             central.stopScanning()
+            self.setScanButton()
             central.disconnectAllPeripherals()
         } else {
             central.powerOn(){
@@ -71,9 +72,9 @@ class PeripheralsViewController : UITableViewController {
                 central.startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
                     self.connect(peripheral)
                 }
+                self.setScanButton()
             }
         }
-        self.setScanButton()
     }
     
     // UITableViewDataSource
