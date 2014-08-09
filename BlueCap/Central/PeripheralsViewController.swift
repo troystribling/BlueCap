@@ -42,7 +42,7 @@ class PeripheralsViewController : UITableViewController {
         if segue.identifier == "PeripheralDetail" {
             let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
             let viewController = segue.destinationViewController as PeripheralViewController
-            viewController.peripheral = CentralManager.sharedinstance().peripherals[selectedIndex.row]
+            viewController.peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
         }
     }
     
@@ -50,7 +50,7 @@ class PeripheralsViewController : UITableViewController {
         var perform = false
         if identifier == "PeripheralDetail" {
             let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
-            let peripheral = CentralManager.sharedinstance().peripherals[selectedIndex.row]
+            let peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
             if peripheral.state == .Connected {
                 perform = true
             }
@@ -61,7 +61,7 @@ class PeripheralsViewController : UITableViewController {
     // actions
     @IBAction func toggleScan(sender:AnyObject) {
         Logger.debug("toggleScan")
-        let central = CentralManager.sharedinstance()
+        let central = CentralManager.sharedInstance()
         if (central.isScanning) {
             central.stopScanning()
             central.disconnectAllPeripherals()
@@ -82,12 +82,12 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        return CentralManager.sharedinstance().peripherals.count
+        return CentralManager.sharedInstance().peripherals.count
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
-        let peripheral = CentralManager.sharedinstance().peripherals[indexPath.row]
+        let peripheral = CentralManager.sharedInstance().peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         switch(peripheral.state) {
         case .Connected:
@@ -102,7 +102,7 @@ class PeripheralsViewController : UITableViewController {
     
     // UITableViewDelegate
     func setScanButton() {
-        if (CentralManager.sharedinstance().isScanning) {
+        if (CentralManager.sharedInstance().isScanning) {
             self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setRightBarButtonItem(self.startScanBarButtonItem, animated:false)

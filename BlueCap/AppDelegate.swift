@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
-        let central = CentralManager.sharedinstance()
+        let central = CentralManager.sharedInstance()
         central.stopScanning()
         central.disconnectAllPeripherals()
     }

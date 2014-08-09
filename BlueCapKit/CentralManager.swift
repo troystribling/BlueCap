@@ -12,8 +12,8 @@ import CoreBluetooth
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PRIVATE
-    private var afterPowerOn                        : (()->())?
-    private var afterPowerOff                       : (()->())?
+    private var afterPowerOnCallback                : (()->())?
+    private var afterPowerOffCallback               : (()->())?
     private var afterPeripheralDiscoveredCallback   : ((peripheral:Peripheral, rssi:Int)->())?
 
     private let cbCentralManager        : CBCentralManager!
@@ -21,23 +21,25 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private let centralQueue            = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
 
     private var connecting  = false
+    private var scanning    = false
     
     // INTERNAL
     internal var discoveredPeripherals   : Dictionary<CBPeripheral, Peripheral> = [:]
     
-    
     // PUBLIC
-    public var isScanning  = false
-
     public var peripherals : [Peripheral] {
         return Array(self.discoveredPeripherals.values)
     }
     
-    public class func sharedinstance() -> CentralManager {
+    public class func sharedInstance() -> CentralManager {
         if thisCentralManager == nil {
             thisCentralManager = CentralManager()
         }
         return thisCentralManager!
+    }
+    
+    public var isScanning : Bool {
+        return self.scanning
     }
     
     // scanning
@@ -46,18 +48,18 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
-        if !self.isScanning {
+        if !self.scanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDds")
-            self.isScanning = true
+            self.scanning = true
             self.afterPeripheralDiscoveredCallback = afterPeripheralDiscoveredCallback
             self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
     }
     
     public func stopScanning() {
-        if (self.isScanning) {
+        if self.scanning {
             Logger.debug("CentralManager#stopScanning")
-            self.isScanning = false
+            self.scanning = false
             self.cbCentralManager.stopScan()
         }
     }
@@ -83,10 +85,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // power up
     public func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())? = nil) {
         Logger.debug("powerOn")
-        self.afterPowerOn = afterPowerOn
-        self.afterPowerOff = afterPowerOff
-        if self.poweredOn() != nil && self.afterPowerOn != nil {
-            self.afterPowerOn!()
+        self.afterPowerOnCallback = afterPowerOn
+        self.afterPowerOffCallback = afterPowerOff
+        if self.poweredOn() != nil && self.afterPowerOnCallback != nil {
+            asyncCallback(self.afterPowerOnCallback!)
         }
     }
 
@@ -156,14 +158,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
-            if self.afterPowerOff != nil {
-                asyncCallback(self.afterPowerOff!)
+            if self.afterPowerOffCallback != nil {
+                asyncCallback(self.afterPowerOffCallback!)
             }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            if self.afterPowerOn != nil {
-                asyncCallback(self.afterPowerOn!)
+            if self.afterPowerOnCallback != nil {
+                asyncCallback(self.afterPowerOnCallback!)
             }
             break
         }
@@ -171,15 +173,15 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // INTERNAL INTERFACE
     internal class func syncCallback(request:()->()) {
-        CentralManager.sharedinstance().syncCallback(request)
+        CentralManager.sharedInstance().syncCallback(request)
     }
     
     internal class func asyncCallback(request:()->()) {
-        CentralManager.sharedinstance().asyncCallback(request)
+        CentralManager.sharedInstance().asyncCallback(request)
     }
     
     internal class func delayCallback(delay:Float, request:()->()) {
-        CentralManager.sharedinstance().delayCallback(delay, request)
+        CentralManager.sharedInstance().delayCallback(delay, request)
     }
     
     internal func syncCallback(request:()->()) {
