@@ -14,7 +14,7 @@ public class StringCharacteristicProfile : CharacteristicProfile {
     // PUBLIC
     public var encoding : NSStringEncoding = NSUTF8StringEncoding
 
-    public init(uuid:String, name:String, initializer:((characteristicProfile:StringCharacteristicProfile) -> ())? = nil) {
+    public override init(uuid:String, name:String, initializer:((characteristicProfile:StringCharacteristicProfile) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runInitializer = initializer {
             runInitializer(characteristicProfile:self)

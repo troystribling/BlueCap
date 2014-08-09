@@ -36,7 +36,7 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
         static let serviceCharacteristicProfileValuesSegue = "ServiceCharacteristicProfileValues"
     }
 
-    init(coder aDecoder:NSCoder!)  {
+    required init(coder aDecoder:NSCoder!)  {
         super.init(coder:aDecoder)
     }
     

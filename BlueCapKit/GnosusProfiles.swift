@@ -53,7 +53,7 @@ public struct Gnosus {
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
                     let latitudeRaw = BlueCap.int16ValueFromStringValue("latitudeRaw", values:stringValues)
                     let longitudeRaw = BlueCap.int16ValueFromStringValue("longitudeRaw", values:stringValues)
-                    if latitudeRaw && longitudeRaw {
+                    if latitudeRaw != nil && longitudeRaw != nil {
                         let (latitiude, longitude) = self.valuesFromRaw([latitudeRaw!, longitudeRaw!])
                         return Value(latitudeRaw:latitudeRaw!, longitudeRaw:longitudeRaw!, latitude:latitiude, longitude:longitude)
                     } else {

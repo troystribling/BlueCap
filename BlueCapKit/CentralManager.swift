@@ -34,7 +34,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public class func sharedinstance() -> CentralManager {
-        if !thisCentralManager {
+        if thisCentralManager == nil {
             thisCentralManager = CentralManager()
         }
         return thisCentralManager!
@@ -85,7 +85,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("powerOn")
         self.afterPowerOn = afterPowerOn
         self.afterPowerOff = afterPowerOff
-        if self.poweredOn() && self.afterPowerOn {
+        if self.poweredOn() != nil && self.afterPowerOn != nil {
             self.afterPowerOn!()
         }
     }
@@ -110,7 +110,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
-        if !self.discoveredPeripherals[peripheral] {
+        if self.discoveredPeripherals[peripheral] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
@@ -156,13 +156,13 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
-            if (self.afterPowerOff) {
+            if self.afterPowerOff != nil {
                 asyncCallback(self.afterPowerOff!)
             }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            if (self.afterPowerOn) {
+            if self.afterPowerOn != nil {
                 asyncCallback(self.afterPowerOn!)
             }
             break
@@ -196,7 +196,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // PRIVATE
-    private init() {
+    private override init() {
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue)
     }

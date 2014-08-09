@@ -24,7 +24,7 @@ public class ProfileManager {
     }
     
     public class func sharedInstance() -> ProfileManager {
-        if !thisProfileManager {
+        if thisProfileManager == nil {
             thisProfileManager = ProfileManager()
         }
         return thisProfileManager!

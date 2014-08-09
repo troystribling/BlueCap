@@ -20,7 +20,7 @@ class PeripheralViewController : UITableViewController {
         static let peripehralAdvertisementsSegue    = "PeripheralAdvertisements"
     }
     
-    init(coder aDecoder:NSCoder!) {
+    required init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
     }
     

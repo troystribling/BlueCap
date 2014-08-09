@@ -19,7 +19,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
         static let peripheralAdvertisementCell = "PeripheralAdvertisementCell"
     }
     
-    init(coder aDecoder:NSCoder!)  {
+    required init(coder aDecoder:NSCoder!)  {
         super.init(coder:aDecoder)
     }
     

@@ -53,3 +53,6 @@ a["1"] = ["2"]
 if let vals = a["1"] {
     let x = vals + ["3"]
 }
+
+var t : [Int] = []
+t += [1]

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType == EnumType.RawType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
+public class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType == EnumType.RawType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
     
     // PUBLIC
     public var endianness : Endianness = .Little
@@ -59,7 +59,7 @@ class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType
     }
     
     // INTERNAL
-    internal init(uuid:String, name:String, initializer:((characteristicProfile:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
+    internal override init(uuid:String, name:String, initializer:((characteristicProfile:EnumCharacteristicProfile<EnumType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runInitializer = initializer {
             runInitializer(characteristicProfile:self)

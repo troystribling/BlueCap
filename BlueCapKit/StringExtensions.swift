@@ -23,11 +23,11 @@ extension String {
     }
     
     func dataFromHexString() -> NSData {
-        var bytes : [Byte] = []
+        var bytes : [UInt8] = []
         for i in 0..<(countElements(self)/2) {
             let stringBytes = self[2*i..<2*i+2]
-            let byte = strtol(stringBytes.bridgeToObjectiveC().UTF8String, nil, 16)
-            bytes += Byte(byte)
+            let byte = strtol((stringBytes as NSString).UTF8String, nil, 16)
+            bytes += [UInt8(byte)]
         }
         return NSData(bytes:bytes, length:bytes.count)
     }

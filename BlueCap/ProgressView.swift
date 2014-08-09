@@ -18,7 +18,11 @@ class ProgressView : UIView {
     
     var displayed = false
     
-    init(frame:CGRect) {
+    required init(coder aDecoder: NSCoder!) {
+        super.init(coder:aDecoder)
+    }
+    
+    override init(frame:CGRect) {
         super.init(frame:frame)
         self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle:UIActivityIndicatorViewStyle.WhiteLarge)
         self.activityIndicator.center = self.center
@@ -29,7 +33,7 @@ class ProgressView : UIView {
         self.addSubview(self.activityIndicator)
     }
     
-    convenience init() {
+    override convenience init() {
         self.init(frame:UIScreen.mainScreen().bounds)
     }
     

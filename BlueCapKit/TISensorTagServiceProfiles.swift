@@ -37,7 +37,7 @@ public struct TISensorTag {
                     let xRaw = BlueCap.int8ValueFromStringValue("xRaw", values:stringValues)
                     let yRaw = BlueCap.int8ValueFromStringValue("yRaw", values:stringValues)
                     let zRaw = BlueCap.int8ValueFromStringValue("zRaw", values:stringValues)
-                    if xRaw && yRaw && zRaw {
+                    if xRaw != nil && yRaw != nil && zRaw != nil {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
                     } else {
@@ -92,7 +92,7 @@ public struct TISensorTag {
                     let xRaw = BlueCap.int16ValueFromStringValue("xRaw", values:stringValues)
                     let yRaw = BlueCap.int16ValueFromStringValue("yRaw", values:stringValues)
                     let zRaw = BlueCap.int16ValueFromStringValue("zRaw", values:stringValues)
-                    if xRaw && yRaw && zRaw {
+                    if xRaw != nil && yRaw != nil && zRaw != nil {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
                     } else {
@@ -144,7 +144,7 @@ public struct TISensorTag {
                     let xRaw = BlueCap.int16ValueFromStringValue("xRaw", values:stringValues)
                     let yRaw = BlueCap.int16ValueFromStringValue("yRaw", values:stringValues)
                     let zRaw = BlueCap.int16ValueFromStringValue("zRaw", values:stringValues)
-                    if xRaw && yRaw && zRaw {
+                    if xRaw != nil && yRaw != nil && zRaw != nil {
                         let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
                         return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
                     } else {
@@ -286,7 +286,7 @@ public struct TISensorTag {
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
                     let objectRaw = BlueCap.int16ValueFromStringValue("objectRaw", values:stringValues)
                     let ambientRaw = BlueCap.int16ValueFromStringValue("ambientRaw", values:stringValues)
-                    if objectRaw && ambientRaw {
+                    if objectRaw != nil && ambientRaw != nil {
                         let (object, ambient) = self.valuesFromRaw(objectRaw!, ambientRaw:ambientRaw!)
                         return Value(objectRaw:objectRaw!, ambientRaw:ambientRaw!, object:object, ambient:ambient)
                     } else {
@@ -358,7 +358,7 @@ public struct TISensorTag {
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
                     let temperatureRaw = BlueCap.int16ValueFromStringValue("temperatureRaw", values:stringValues)
                     let pressureRaw = BlueCap.uint16ValueFromStringValue("pressureRaw", values:stringValues)
-                    if temperatureRaw && pressureRaw {
+                    if temperatureRaw != nil && pressureRaw != nil {
                         return Value(temperatureRaw:temperatureRaw!, pressureRaw:pressureRaw!)
                     } else {
                         return nil
@@ -405,7 +405,7 @@ public struct TISensorTag {
                     let c6 = BlueCap.int16ValueFromStringValue("c6", values:stringValues)
                     let c7 = BlueCap.int16ValueFromStringValue("c7", values:stringValues)
                     let c8 = BlueCap.int16ValueFromStringValue("c8", values:stringValues)
-                    if c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8 {
+                    if c1 != nil && c2 != nil && c3 != nil && c4 != nil && c5 != nil && c6 != nil && c7 != nil && c8 != nil {
                         return Value(c1:c1!, c2:c2!, c3:c3!, c4:c4!, c5:c5!, c6:c6!, c7:c7!, c8:c8!)
                     } else {
                         return nil
@@ -504,7 +504,7 @@ public struct TISensorTag {
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
                     let temperatureRaw = BlueCap.uint16ValueFromStringValue("temperatureRaw", values:stringValues)
                     let humidityRaw = BlueCap.uint16ValueFromStringValue("humidityRaw", values:stringValues)
-                    if temperatureRaw && humidityRaw {
+                    if temperatureRaw != nil && humidityRaw != nil {
                         let (temperature, humidity) = self.valuesFromRaw(temperatureRaw!, humidityRaw:humidityRaw!)
                         return Value(temperatureRaw:temperatureRaw!, humidityRaw:humidityRaw!, temperature:temperature, humidity:humidity)
                     } else {

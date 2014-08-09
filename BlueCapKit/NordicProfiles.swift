@@ -33,7 +33,7 @@ public struct Nordic {
                 }
                 static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
                     let temperatureRaw = BlueCap.int16ValueFromStringValue("temperatureRaw", values:stringValues)
-                    if temperatureRaw {
+                    if temperatureRaw != nil {
                         return Value(temperatureRaw:temperatureRaw!, temperature:self.valueFromRaw(temperatureRaw!))
                     } else {
                         return nil
@@ -83,7 +83,7 @@ public struct Nordic {
                     let addr4 = BlueCap.uint8ValueFromStringValue("addr4", values:stringValues)
                     let addr5 = BlueCap.uint8ValueFromStringValue("addr5", values:stringValues)
                     let addr6 = BlueCap.uint8ValueFromStringValue("addr6", values:stringValues)
-                    if addr1 && addr2 && addr3 && addr4 && addr5 && addr6 {
+                    if addr1 != nil && addr2 != nil && addr3 != nil && addr4 != nil && addr5 != nil && addr6 != nil {
                         return Value(addr1:addr1!, addr2:addr2!, addr3:addr3!, addr4:addr4!, addr5:addr5!, addr6:addr6!)
                     } else {
                         return nil

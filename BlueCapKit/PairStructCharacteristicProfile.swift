@@ -15,7 +15,7 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
     // PUBLIC
     public var endianness : Endianness = .Little
 
-    public init(uuid:String, name:String, initializer:((characteristicProfile:PairStructCharacteristicProfile<StructType>) -> ())? = nil) {
+    public override init(uuid:String, name:String, initializer:((characteristicProfile:PairStructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runInitializer = initializer {
             runInitializer(characteristicProfile:self)
