@@ -21,7 +21,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private let centralQueue            = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
 
     private var connecting  = false
-    private var scanning    = false
+    private var _isScanning = false
     
     // INTERNAL
     internal var discoveredPeripherals   : Dictionary<CBPeripheral, Peripheral> = [:]
@@ -39,7 +39,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public var isScanning : Bool {
-        return self.scanning
+        return self._isScanning
     }
     
     // scanning
@@ -48,18 +48,18 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
-        if !self.scanning {
+        if !self._isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDds")
-            self.scanning = true
+            self._isScanning = true
             self.afterPeripheralDiscoveredCallback = afterPeripheralDiscoveredCallback
             self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
     }
     
     public func stopScanning() {
-        if self.scanning {
+        if self._isScanning {
             Logger.debug("CentralManager#stopScanning")
-            self.scanning = false
+            self._isScanning = false
             self.cbCentralManager.stopScan()
         }
     }

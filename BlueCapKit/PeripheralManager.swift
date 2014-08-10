@@ -26,7 +26,8 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private let peripheralQueue =  dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
 
     // INTERNAL
-    internal var configuredServices : Dictionary<CBUUID, MutableService> = [:]
+    internal var configuredServices         : Dictionary<CBUUID, MutableService>                    = [:]
+    internal var configuredCharcteristics   : Dictionary<CBCharacteristic, MutableCharacteristic>   = [:]
 
     // PUBLIC
     public var isAdvertising : Bool {
