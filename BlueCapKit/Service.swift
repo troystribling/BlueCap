@@ -29,7 +29,7 @@ public class Service : NSObject {
         }
     }
     
-    public var uuid : CBUUID {
+    public var uuid : CBUUID! {
         return self.cbService.UUID
     }
     

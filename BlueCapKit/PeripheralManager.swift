@@ -12,7 +12,6 @@ import CoreBluetooth
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     // PRIVATE
-    private var cbPeripheralManager : CBPeripheralManager!
     
     private var afterAdvertisingStartedSuccessCallback  : (()->())?
     private var afterAdvertisingStartedFailedCallback   : ((error:NSError!)->())?
@@ -26,6 +25,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private let peripheralQueue =  dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
 
     // INTERNAL
+    internal var cbPeripheralManager         : CBPeripheralManager!
     internal var configuredServices         : Dictionary<CBUUID, MutableService>                    = [:]
     internal var configuredCharcteristics   : Dictionary<CBCharacteristic, MutableCharacteristic>   = [:]
 

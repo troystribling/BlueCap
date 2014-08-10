@@ -38,7 +38,7 @@ public class Characteristic {
         return self.profile.name
     }
     
-    public var uuid : CBUUID {
+    public var uuid : CBUUID! {
         return self.cbCharacteristic.UUID
     }
     

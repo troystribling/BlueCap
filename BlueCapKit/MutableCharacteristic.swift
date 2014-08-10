@@ -18,7 +18,71 @@ public class MutableCharacteristic : NSObject {
     internal let cbMutableChracteristic : CBMutableCharacteristic!
     
     // PUBLIC
-    init(profile:CharacteristicProfile) {
+    public var permissions : CBAttributePermissions {
+        return self.cbMutableChracteristic.permissions
+    }
+    
+    public var properties : CBCharacteristicProperties {
+        return self.cbMutableChracteristic.properties
+    }
+    
+    public var uuid : CBUUID {
+        return self.profile.uuid
+    }
+    
+    public var name : String {
+        return self.profile.name
+    }
+    
+    public var value : NSData! {
+        return self.cbMutableChracteristic.value
+    }
+    
+    public var stringValues : Dictionary<String, String>? {
+        if self.value {
+            return self.profile.stringValues(self.value)
+        } else {
+            return nil
+        }
+    }
+    
+    public var anyValue : Any? {
+        if self.value {
+            return self.profile.anyValue(self.value)
+        } else {
+            return nil
+        }
+    }
+    
+    public var discreteStringValues : [String] {
+        return self.profile.discreteStringValues
+    }
+    
+    public func updateValue(value:NSData) {
+        PeripheralManager.sharedInstance().cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
+    }
+    
+    public func updateValueWithString(value:Dictionary<String, String>) {
+        if let data = self.profile.dataFromStringValue(value) {
+            self.updateValue(data)
+        } else {
+            NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+    
+    public func updateValueWithAny(value:Any) {
+        if let data = self.profile.dataFromAnyValue(value) {
+            self.updateValue(data)
+        } else {
+            NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
+        }
+    }
+    
+    public class func withProfiles(profiles:[CharactertisticProfile]) -> [MutableCharacteristic] {
+        return profiles.map{MutableCharacteristic(profile:$0)}
+    }
+    
+    public init(profile:CharacteristicProfile) {
         super.init()
         self.profile = profile
         self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:profile.initialValue, permissions:profile.permissions)
