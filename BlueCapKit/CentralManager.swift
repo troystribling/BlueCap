@@ -87,7 +87,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("powerOn")
         self.afterPowerOnCallback = afterPowerOn
         self.afterPowerOffCallback = afterPowerOff
-        if self.poweredOn() != nil && self.afterPowerOnCallback != nil {
+        if self.poweredOn() && self.afterPowerOnCallback != nil {
             asyncCallback(self.afterPowerOnCallback!)
         }
     }

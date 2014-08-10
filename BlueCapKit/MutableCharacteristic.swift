@@ -78,7 +78,7 @@ public class MutableCharacteristic : NSObject {
         }
     }
     
-    public class func withProfiles(profiles:[CharactertisticProfile]) -> [MutableCharacteristic] {
+    public class func withProfiles(profiles:[CharacteristicProfile]) -> [MutableCharacteristic] {
         return profiles.map{MutableCharacteristic(profile:$0)}
     }
     

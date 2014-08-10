@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import BlueCapKit
 

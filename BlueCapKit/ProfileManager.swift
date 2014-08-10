@@ -35,6 +35,11 @@ public class ProfileManager {
         self.serviceProfiles[serviceProfile.uuid] = serviceProfile
         return serviceProfile
     }
+    
+    public func service(uuid:CBUUID) -> ServiceProfile? {
+        return self.serviceProfiles[uuid]
+    }
+
 }
 
 var thisProfileManager : ProfileManager?
