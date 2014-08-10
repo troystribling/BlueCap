@@ -34,6 +34,7 @@ public class MutableService : NSObject {
             self.cbMutableService.characteristics = self._characteristics.reduce(Array<CBMutableCharacteristic>())
                                                         {(cbCharacteristics, characteristic) in
                                                             PeripheralManager.sharedInstance().configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
+                                                            cbCharacteristics.append(characteristic.cbMutableChracteristic)
                                                             return cbCharacteristics
                                                         }
         }
