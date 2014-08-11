@@ -11,13 +11,14 @@ import BlueCapKit
 
 class PeripheralManagerViewController : UITableViewController, UITextFieldDelegate {
     
-    @IBOutlet var nameTextField     : UITextField!
-    @IBOutlet var advertiseButton   : UIButton!
+    @IBOutlet var nameTextField         : UITextField!
+    @IBOutlet var advertiseButton       : UIButton!
     
     var peripheral : String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setAdvertiseButtonlabel()
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
@@ -26,25 +27,42 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     @IBAction func toggleAdvertise(sender:AnyObject) {
-        let peripheralManager = PeripheralManager.sharedInstance()
-        if peripheralManager.isAdvertising {
-            self.navigationItem.backBarButtonItem.enabled = true
+        self.setAdvertiseButtonlabel()
+    }
+
+    func setAdvertiseButtonlabel() {
+        if self.nameTextField.text != "" {
+            self.advertiseButton.enabled = false
+            let peripheralManager = PeripheralManager.sharedInstance()
+            if peripheralManager.isAdvertising {
+                self.advertiseButton.setTitle("Start Advertising", forState:.Normal)
+                self.navigationItem.backBarButtonItem.enabled = true
+                self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+            } else {
+                self.advertiseButton.setTitle("Stop Advertising", forState:.Normal)
+                self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                self.navigationItem.backBarButtonItem.enabled = false
+            }
         } else {
-            self.navigationItem.backBarButtonItem.enabled = false
+            self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+            self.advertiseButton.enabled = false
         }
     }
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
+        self.nameTextField.resignFirstResponder()
         if let enteredName = self.nameTextField.text {
-            if let oldname = self.peripheral {
-                let services = PeripheralStore.getPeripheralServices(oldname)
-                PeripheralStore.removePeripheral(oldname)
-                PeripheralStore.addPeripheral(enteredName)
-                PeripheralStore.addPeripheralServices(enteredName, services:services)
-                self.peripheral = enteredName
-            } else {
-                PeripheralStore.addPeripheral(enteredName)
+            if enteredName != "" {
+                if let oldname = self.peripheral {
+                    let services = PeripheralStore.getPeripheralServices(oldname)
+                    PeripheralStore.removePeripheral(oldname)
+                    PeripheralStore.addPeripheral(enteredName)
+                    PeripheralStore.addPeripheralServices(enteredName, services:services)
+                    self.peripheral = enteredName
+                } else {
+                    PeripheralStore.addPeripheral(enteredName)
+                }
             }
         }
         return true

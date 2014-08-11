@@ -127,7 +127,7 @@
             </objects>
             <point key="canvasLocation" x="1697" y="249"/>
         </scene>
-        <!--Peripheral-->
+        <!--Peripheral Manager View Controller-->
         <scene sceneID="liP-61-EJD">
             <objects>
                 <tableViewController id="CAb-bN-tC0" customClass="PeripheralManagerViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -149,7 +149,7 @@
                                                     <rect key="frame" x="20" y="12" width="280" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <textInputTraits key="textInputTraits"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                                     <connections>
                                                         <outlet property="delegate" destination="CAb-bN-tC0" id="sfC-AH-JTe"/>
                                                     </connections>
@@ -177,7 +177,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="toggleAdvertise:" destination="CAb-bN-tC0" eventType="touchUpInside" id="Mt5-gA-WqN"/>
+                                                        <action selector="toggleAdvertise:" destination="CAb-bN-tC0" eventType="touchDown" id="6uS-hX-Wzu"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -215,7 +215,7 @@
                             <outlet property="delegate" destination="CAb-bN-tC0" id="d1v-l5-cTN"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Peripheral" id="fTN-xH-YDe"/>
+                    <navigationItem key="navigationItem" id="fTN-xH-YDe"/>
                     <connections>
                         <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
@@ -2340,19 +2340,19 @@
         <scene sceneID="S9s-jZ-Mz1">
             <objects>
                 <tableViewController id="p2y-aw-7Yl" customClass="PeripheralManagersViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="UH7-Hj-92d">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="53" sectionHeaderHeight="22" sectionFooterHeight="22" id="UH7-Hj-92d">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="PeripheralManagerCell" textLabel="1Z7-aJ-8AV" style="IBUITableViewCellStyleDefault" id="p0s-ht-8fG">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="PeripheralManagerCell" textLabel="1Z7-aJ-8AV" rowHeight="55" style="IBUITableViewCellStyleDefault" id="p0s-ht-8fG">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p0s-ht-8fG" id="6ND-vW-lMo">
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Peripheral Manager Cell" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1Z7-aJ-8AV">
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -2369,7 +2369,6 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Peripherals" id="xb1-g8-yQe">
-                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="iAL-Rc-M4M"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="a6e-mB-PGf">
                             <connections>
                                 <segue destination="CAb-bN-tC0" kind="push" identifier="PeripheralManagerAdd" id="SAS-0t-NBr"/>

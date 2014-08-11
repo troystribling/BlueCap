@@ -23,6 +23,7 @@ class PeripheralManagersViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.leftBarButtonItem = self.editButtonItem()
     }
     
     override func viewWillAppear(animated:Bool) {
@@ -48,6 +49,18 @@ class PeripheralManagersViewController : UITableViewController {
         return PeripheralStore.getPeripherals().count
     }
     
+    override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.Delete
+    }
+    
+    override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+            let peripherals = PeripheralStore.getPeripherals()
+            PeripheralStore.removePeripheral(peripherals[indexPath.row])
+            self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
+        }
+    }
+    
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as UITableViewCell
         let peripherals = PeripheralStore.getPeripherals()
@@ -55,4 +68,6 @@ class PeripheralManagersViewController : UITableViewController {
         return cell
     }
 
+    // UITableViewDelegate
+    
 }
