@@ -1,5 +1,5 @@
 //
-//  PeripheralsStore.swift
+//  PeripheralStore.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/10/14.
@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class PeripheralsStore {
+class PeripheralStore {
     
     class func getPeripherals() -> [String] {
         if let userDefaults = NSUserDefaults.standardUserDefaults() {
@@ -23,10 +23,10 @@ class PeripheralsStore {
         }
     }
     
-    class func getPeripheralServices(peripheral:String) -> [CBUUID!] {
+    class func getPeripheralServices(peripheral:String) -> [String] {
         if let userDefaults = NSUserDefaults.standardUserDefaults() {
             if let services = userDefaults.stringArrayForKey(peripheral) {
-                return services.map{CBUUID.UUIDWithString($0 as String)}
+                return services.map{$0 as String}
             } else {
                 return []
             }
@@ -35,16 +35,24 @@ class PeripheralsStore {
         }
     }
     
-    class func addPeripheral(peripheral:String, services:[String]) {
+    class func addPeripheral(peripheral:String) {
         if let userDefaults = NSUserDefaults.standardUserDefaults() {
-            
+            var peripherals = self.getPeripherals()
+            userDefaults.setObject(peripherals + [peripheral], forKey:"peripherals")
         }
     }
-    
+
+    class func addPeripheralServices(peripheral:String, services:[String]) {
+        if let userDefaults = NSUserDefaults.standardUserDefaults() {
+            userDefaults.setObject(services, forKey:peripheral)
+        }
+    }
+
     class func removePeripheral(peripheral:String) {
         if let userDefaults = NSUserDefaults.standardUserDefaults() {
             userDefaults.removeObjectForKey(peripheral)
-            
+            var peripherals = self.getPeripherals()
+            userDefaults.setObject(peripherals.filter{$0 != peripheral}, forKey:"peripherals")
         }
     }
 

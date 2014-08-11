@@ -12,7 +12,31 @@ import BlueCapKit
 class PeripheralManagersViewController : UITableViewController {
    
     struct MainStoryboard {
-        static let peripheralManagerCell = "PeripheralManagerCell"
+        static let peripheralManagerCell    = "PeripheralManagerCell"
+        static let peripheralManagerView    = "PeripheralManagerView"
+        static let peripheralManagerAdd     = "PeripheralManagerAdd"
+    }
+    
+    required init(coder aDecoder: NSCoder!) {
+        super.init(coder:aDecoder)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(animated:Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.peripheralManagerView {
+            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
+            let viewController = segue.destinationViewController as PeripheralManagerViewController
+            let peripherals = PeripheralStore.getPeripherals()
+            viewController.peripheral = peripherals[selectedIndex.row]
+        } else if segue.identifier == MainStoryboard.peripheralManagerAdd {            
+        }
     }
     
     // UITableViewDataSource
@@ -21,11 +45,13 @@ class PeripheralManagersViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        return CentralManager.sharedInstance().peripherals.count
+        return PeripheralStore.getPeripherals().count
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as PeripheralCell
+    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as UITableViewCell
+        let peripherals = PeripheralStore.getPeripherals()
+        cell.textLabel.text = peripherals[indexPath.row]
         return cell
     }
 

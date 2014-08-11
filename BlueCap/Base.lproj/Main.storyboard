@@ -217,8 +217,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Peripheral" id="fTN-xH-YDe"/>
                     <connections>
-                        <outlet property="advertiseButton" destination="HwI-4l-IZC" id="H70-gY-yRK"/>
-                        <outlet property="nameTextField" destination="Tak-si-bkz" id="wRC-3V-leH"/>
+                        <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
+                        <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UMo-vV-JBu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2334,39 +2334,23 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sRO-rp-Axh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="751" y="3069"/>
+            <point key="canvasLocation" x="742" y="3071"/>
         </scene>
-        <!--Peripheral-->
-        <scene sceneID="Gdg-cU-BBN">
+        <!--Peripherals-->
+        <scene sceneID="S9s-jZ-Mz1">
             <objects>
-                <navigationController definesPresentationContext="YES" id="ysN-jF-arT" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Peripheral" image="Peripheral" id="mB3-kQ-w76"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Hrb-An-DV2">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="V8P-vT-OY1" kind="push" id="FOh-6J-rye"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="712-31-IN1" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="751" y="927"/>
-        </scene>
-        <!--Peripheral Managers View Controller-->
-        <scene sceneID="NJI-bh-Nfb">
-            <objects>
-                <tableViewController id="V8P-vT-OY1" customClass="PeripheralManagersViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="IfI-TR-xQF">
+                <tableViewController id="p2y-aw-7Yl" customClass="PeripheralManagersViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="UH7-Hj-92d">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="PeripheralManagerCell" textLabel="OW5-9n-mLQ" style="IBUITableViewCellStyleDefault" id="CrW-b9-zJJ">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="PeripheralManagerCell" textLabel="1Z7-aJ-8AV" style="IBUITableViewCellStyleDefault" id="p0s-ht-8fG">
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="CrW-b9-zJJ" id="uMS-ay-Nd0">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p0s-ht-8fG" id="6ND-vW-lMo">
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Peripheral Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="OW5-9n-mLQ">
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Peripheral Manager Cell" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1Z7-aJ-8AV">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -2374,25 +2358,45 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="CAb-bN-tC0" kind="push" identifier="PeripheralManagerView" id="OSM-Mb-9b3"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
-                            <outlet property="dataSource" destination="V8P-vT-OY1" id="tFZ-Gj-qjr"/>
-                            <outlet property="delegate" destination="V8P-vT-OY1" id="a2z-B7-DOM"/>
+                            <outlet property="dataSource" destination="p2y-aw-7Yl" id="pLW-AN-zYi"/>
+                            <outlet property="delegate" destination="p2y-aw-7Yl" id="hoV-Po-dJd"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="Dir-Fz-BR6">
-                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="bjk-cm-BAm"/>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="4Sy-0B-jGZ">
+                    <navigationItem key="navigationItem" title="Peripherals" id="xb1-g8-yQe">
+                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="iAL-Rc-M4M"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="a6e-mB-PGf">
                             <connections>
-                                <segue destination="CAb-bN-tC0" kind="push" identifier="PeripheralManagerView" id="Gu1-N7-y3X"/>
+                                <segue destination="CAb-bN-tC0" kind="push" identifier="PeripheralManagerAdd" id="SAS-0t-NBr"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tuc-An-Qqj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qfw-Qr-Zwz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1218" y="927"/>
+        </scene>
+        <!--Peripheral-->
+        <scene sceneID="g5Y-hy-or4">
+            <objects>
+                <navigationController id="2ap-Lu-enV" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Peripheral" image="Peripheral" id="J1A-Yk-x4z"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hNt-X7-Yfh">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="p2y-aw-7Yl" kind="relationship" relationship="rootViewController" id="3DM-Rb-8RB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KDy-Ix-L0d" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="742" y="927"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="QUf-L4-Zem">
@@ -2406,13 +2410,13 @@
                     </tabBar>
                     <connections>
                         <segue destination="ekL-3M-31h" kind="relationship" relationship="viewControllers" id="h88-ZA-rxW"/>
-                        <segue destination="ysN-jF-arT" kind="relationship" relationship="viewControllers" id="sYO-R4-vaT"/>
+                        <segue destination="2ap-Lu-enV" kind="relationship" relationship="viewControllers" id="xTt-P3-sn4"/>
                         <segue destination="6n5-d3-u2z" kind="relationship" relationship="viewControllers" id="H25-Dx-5BK"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iBa-5o-wCk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="210" y="927"/>
+            <point key="canvasLocation" x="223" y="927"/>
         </scene>
         <!--Central-->
         <scene sceneID="9nG-V3-L1A">
@@ -2445,4 +2449,7 @@
             <size key="landscapeSize" width="480" height="320"/>
         </simulatedScreenMetrics>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="SAS-0t-NBr"/>
+    </inferredMetricsTieBreakers>
 </document>
