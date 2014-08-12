@@ -28,6 +28,11 @@ class PeripheralManagersViewController : UITableViewController {
     
     override func viewWillAppear(animated:Bool) {
         super.viewWillAppear(animated)
+        self.navigationItem.title = "Peripherals"
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        self.navigationItem.title = ""
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {

@@ -19,7 +19,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setAdvertiseButtonlabel()
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
     override func didReceiveMemoryWarning() {

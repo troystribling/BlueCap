@@ -27,6 +27,13 @@ class ServiceProfilesViewController : UITableViewController {
         self.sortServiceProfiles()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        self.navigationItem.title = "Service Profiles"
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        self.navigationItem.title = ""
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }

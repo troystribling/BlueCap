@@ -127,7 +127,7 @@
             </objects>
             <point key="canvasLocation" x="1697" y="249"/>
         </scene>
-        <!--Peripheral Manager View Controller-->
+        <!--Peripheral-->
         <scene sceneID="liP-61-EJD">
             <objects>
                 <tableViewController id="CAb-bN-tC0" customClass="PeripheralManagerViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -215,7 +215,7 @@
                             <outlet property="delegate" destination="CAb-bN-tC0" id="d1v-l5-cTN"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="fTN-xH-YDe"/>
+                    <navigationItem key="navigationItem" title="Peripheral" id="fTN-xH-YDe"/>
                     <connections>
                         <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
@@ -259,7 +259,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="xCj-nn-Se8" id="RRu-uS-Yhp"/>
                                     <outlet property="uuidLabel" destination="xMf-oe-dY0" id="rnT-Ab-0Y3"/>
-                                    <segue destination="S3t-Pj-gLJ" kind="push" identifier="PeripheralManagerCharacteristics" trigger="accessoryAction" id="mZP-v5-pEn"/>
+                                    <segue destination="S3t-Pj-gLJ" kind="push" identifier="PeripheralManagerCharacteristics" id="CR6-wZ-NGY"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -365,7 +365,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="1dg-XA-CIT" id="En9-Fn-iOD"/>
                                     <outlet property="uuidLabel" destination="ajF-v1-9SL" id="TvW-5s-2Mi"/>
-                                    <segue destination="xe4-Nh-bLl" kind="push" identifier="PeripheralManagerCharacteristic" id="Y99-t4-psC"/>
+                                    <segue destination="xe4-Nh-bLl" kind="push" identifier="PeripheralManagerCharacteristic" id="0J0-nx-BAa"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1008,7 +1008,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="2oZ-lh-Mdk" id="f4h-s4-ymV"/>
                                     <outlet property="uuidLabel" destination="jOq-rh-ub5" id="KxB-ib-CDV"/>
-                                    <segue destination="flO-6L-RZ3" kind="push" identifier="PeripheralServicesCharacteritics" trigger="accessoryAction" id="z72-Mc-QAG"/>
+                                    <segue destination="flO-6L-RZ3" kind="push" identifier="PeripheralServicesCharacteritics" id="Vlj-pt-Any"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1057,7 +1057,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="cDW-hg-LSS" id="UKm-0l-vcR"/>
                                     <outlet property="uuidLabel" destination="9KI-AZ-e1H" id="kyw-Nc-OAf"/>
-                                    <segue destination="qDj-sM-07o" kind="push" identifier="PeripheralServiceCharacteristic" trigger="accessoryAction" id="uuQ-Wv-Q5M"/>
+                                    <segue destination="qDj-sM-07o" kind="push" identifier="PeripheralServiceCharacteristic" id="ppA-A2-2od"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1627,7 +1627,7 @@
                                 <connections>
                                     <outlet property="connectingActivityIndicator" destination="gqE-d5-je8" id="fPu-OQ-JEN"/>
                                     <outlet property="nameLabel" destination="BsC-C9-NZC" id="cQt-CI-Q0U"/>
-                                    <segue destination="XKG-l0-TPz" kind="push" identifier="PeripheralDetail" trigger="accessoryAction" id="tZw-mu-C7H"/>
+                                    <segue destination="XKG-l0-TPz" kind="push" identifier="PeripheralDetail" id="cG8-kw-64y"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1680,7 +1680,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="FVE-dJ-nL1" id="yaG-sg-I0i"/>
                                     <outlet property="uuidLabel" destination="NuQ-ec-i8p" id="xOn-KX-IRB"/>
-                                    <segue destination="zWl-Dc-J9w" kind="push" identifier="ServiceCharacteristicProfiles" trigger="accessoryAction" id="NTR-Lf-tkD"/>
+                                    <segue destination="zWl-Dc-J9w" kind="push" identifier="ServiceCharacteristicProfiles" id="egg-mQ-FMm"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1725,7 +1725,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="leG-xG-pv0" id="6RK-zQ-Iql"/>
                                     <outlet property="uuidLabel" destination="uJ8-kz-tth" id="oyZ-XA-wc5"/>
-                                    <segue destination="zO7-LG-jdj" kind="push" identifier="ServiceCharacteristicProfile" trigger="accessoryAction" id="6cg-z1-31w"/>
+                                    <segue destination="zO7-LG-jdj" kind="push" identifier="ServiceCharacteristicProfile" id="cSS-D9-JiU"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
