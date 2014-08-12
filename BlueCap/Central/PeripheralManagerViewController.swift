@@ -11,6 +11,10 @@ import BlueCapKit
 
 class PeripheralManagerViewController : UITableViewController, UITextFieldDelegate {
     
+    struct MainStoryboard {
+        static let peripheralManagerServicesSegue = "PeripheralManagerServices"
+    }
+    
     @IBOutlet var nameTextField         : UITextField!
     @IBOutlet var advertiseButton       : UIButton!
     
@@ -19,10 +23,27 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setAdvertiseButtonlabel()
+        if let peripheral = self.peripheral {
+            self.nameTextField.text = peripheral
+        }
     }
     
+    override func viewWillAppear(animated:Bool) {
+        super.viewWillAppear(animated)
+        self.navigationItem.title = "Peripheral"
+    }
+
+    override func viewWillDisappear(animated: Bool) {
+        self.navigationItem.title = ""
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
+        }
     }
 
     @IBAction func toggleAdvertise(sender:AnyObject) {

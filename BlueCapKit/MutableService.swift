@@ -17,15 +17,15 @@ public class MutableService : NSObject {
     private var _characteristics    : [MutableCharacteristic] = []
     
     // PUBLIC
-    var uuid : CBUUID {
+    public var uuid : CBUUID {
         return self.profile.uuid
     }
     
-    var name : String {
+    public var name : String {
         return self.profile.name
     }
     
-    var characteristics : [MutableCharacteristic] {
+    public var characteristics : [MutableCharacteristic] {
         get {
             return self._characteristics
         }

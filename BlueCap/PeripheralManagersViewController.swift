@@ -12,9 +12,9 @@ import BlueCapKit
 class PeripheralManagersViewController : UITableViewController {
    
     struct MainStoryboard {
-        static let peripheralManagerCell    = "PeripheralManagerCell"
-        static let peripheralManagerView    = "PeripheralManagerView"
-        static let peripheralManagerAdd     = "PeripheralManagerAdd"
+        static let peripheralManagerCell        = "PeripheralManagerCell"
+        static let peripheralManagerViewSegue   = "PeripheralManagerView"
+        static let peripheralManagerAddSegue    = "PeripheralManagerAdd"
     }
     
     required init(coder aDecoder: NSCoder!) {
@@ -36,12 +36,12 @@ class PeripheralManagersViewController : UITableViewController {
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
-        if segue.identifier == MainStoryboard.peripheralManagerView {
+        if segue.identifier == MainStoryboard.peripheralManagerViewSegue {
             let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
             let viewController = segue.destinationViewController as PeripheralManagerViewController
             let peripherals = PeripheralStore.getPeripherals()
             viewController.peripheral = peripherals[selectedIndex.row]
-        } else if segue.identifier == MainStoryboard.peripheralManagerAdd {            
+        } else if segue.identifier == MainStoryboard.peripheralManagerAddSegue {
         }
     }
     
@@ -67,9 +67,9 @@ class PeripheralManagersViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as PeripheralManagerCell
         let peripherals = PeripheralStore.getPeripherals()
-        cell.textLabel.text = peripherals[indexPath.row]
+        cell.nameLable.text = peripherals[indexPath.row]
         return cell
     }
 
