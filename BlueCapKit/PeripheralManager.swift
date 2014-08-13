@@ -15,7 +15,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private var afterAdvertisingStartedSuccessCallback  : (()->())?
     private var afterAdvertisingStartedFailedCallback   : ((error:NSError!)->())?
     private var afterAdvertsingStoppedCallback          : (()->())?
-    private var affterPowerOnCallback                   : (()->())?
+    private var afterPowerOnCallback                    : (()->())?
     private var afterPowerOffCallback                   : (()->())?
     private var afterServiceAddSuccessCallback          : (()->())?
     private var afterServiceAddFailedCallback           : ((error:NSError!)->())?
@@ -65,16 +65,16 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     // advertising
     public func startAdvertising(name:String, afterAdvertisingStartedSuccess:()->(), afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
-        self.name = name
+        self._name = name
         self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
-        self.afterAdvertsingStartedfailedCallback = afterAdvertisingStartedFailedCallback
+        self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
         self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:Array(self.configuredServices.keys)])
     }
 
-    public func startAdvertising(name:String, afterAdvertisingStartFailed:(()->())? = nil) {
-        self.name = name
-        self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
-        self.afterAdvertsingStartedfailedCallback = nil
+    public func startAdvertising(name:String, afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
+        self._name = name
+        self.afterAdvertisingStartedSuccessCallback = nil
+        self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
         self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:Array(self.configuredServices.keys)])
     }
     
@@ -103,7 +103,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         case CBPeripheralManagerState.PoweredOn:
             Logger.debug("PeripheralManager#peripheralManagerDidUpdateState: poweredOn")
             self.poweredOn = true
-            if let afterPowerOnCallback = self.affterPowerOnCallback {
+            if let afterPowerOnCallback = self.afterPowerOnCallback {
                 self.asyncCallback(afterPowerOnCallback)
             }
             break
