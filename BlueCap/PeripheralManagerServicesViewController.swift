@@ -36,9 +36,6 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
-            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
-            let viewController = segue.destinationViewController as PeripheralManagerServiceProfilesViewController
-            viewController.service = PeripheralManager.sharedInstance().services[selectedIndex.row]
         }
     }
     

@@ -91,12 +91,12 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                     })
             } else if characteristic.propertyEnabled(.Read) {
                 characteristic.read({
-                    self.tableView.reloadData()
-                    self.progressView.remove()
+                        self.tableView.reloadData()
+                        self.progressView.remove()
                     },
                     afterReadFailedCallback:{(error) in
-                        self.progressView.remove()
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        self.progressView.remove()
                     })
             }
         }

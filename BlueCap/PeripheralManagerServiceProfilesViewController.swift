@@ -8,23 +8,22 @@
 
 import UIKit
 import BlueCapKit
-import CoreBluetooth
 
-class PeripheralManagerServiceProfilesViewController : UITableViewController {
+class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewController {
    
+    var progressView : ProgressView!
+    
     struct MainStoryboard {
         static let peripheralManagerServiceCell = "PeripheralManagerServiceProfileCell"
     }
     
-    var service : MutableService?
-    
+    override var serviceProfileCell : String {
+        return MainStoryboard.peripheralManagerServiceCell
+    }
+
     required init(coder aDecoder: NSCoder!) {
         super.init(coder:aDecoder)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+        self.progressView = ProgressView()
     }
     
     override func viewWillAppear(animated:Bool) {
@@ -34,28 +33,23 @@ class PeripheralManagerServiceProfilesViewController : UITableViewController {
     override func viewWillDisappear(animated: Bool) {
     }
     
-    // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
-        return 1
+    func addServiceComplete() {
+        self.navigationController.popViewControllerAnimated(true)
+        self.progressView.remove()
     }
-    
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        return PeripheralManager.sharedInstance().services.count
-    }
-    
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCell, forIndexPath:indexPath) as NameUUIDCell
-        let service = ProfileManager.sharedInstance().services[indexPath.row]
-        cell.nameLabel.text = service.name
-        cell.uuidLabel.text = service.uuid.UUIDString
-        return cell
-    }
-    
+            
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
-        if let service = self.service {
-            self.navigationController.popViewControllerAnimated(true)
-        }
+        let serviceProfile = ProfileManager.sharedInstance().services[indexPath.row]
+        let service = MutableService(profile:serviceProfile)
+        service.characteristicsFromProfiles(serviceProfile.characteristics)
+        self.progressView.show()
+        PeripheralManager.sharedInstance().addService(service, afterServiceAddedSuccess:{
+                self.addServiceComplete()
+            }, afterServiceAddedFailed: {(error) in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.addServiceComplete()
+            })
     }
 
 }

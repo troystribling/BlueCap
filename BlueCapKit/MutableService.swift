@@ -39,10 +39,14 @@ public class MutableService : NSObject {
         }
     }
     
-    init(profile:ServiceProfile) {
+    public init(profile:ServiceProfile) {
         super.init()
         self.profile = profile
         self.cbMutableService = CBMutableService(type:self.profile.uuid, primary:true)
+    }
+    
+    public func characteristicsFromProfiles(profiles:[CharacteristicProfile]) {
+        self.characteristics = profiles.map{MutableCharacteristic(profile:$0)}
     }
     
 }
