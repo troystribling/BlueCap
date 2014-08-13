@@ -158,14 +158,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
-            if self.afterPowerOffCallback != nil {
-                asyncCallback(self.afterPowerOffCallback!)
+            if let afterPowerOffCallback = self.afterPowerOffCallback {
+                self.asyncCallback(afterPowerOffCallback)
             }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            if self.afterPowerOnCallback != nil {
-                asyncCallback(self.afterPowerOnCallback!)
+            if let afterPowerOnCallback = self.afterPowerOnCallback {
+                self.asyncCallback(afterPowerOnCallback)
             }
             break
         }

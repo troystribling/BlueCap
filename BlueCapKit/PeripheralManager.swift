@@ -12,7 +12,6 @@ import CoreBluetooth
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     // PRIVATE
-    
     private var afterAdvertisingStartedSuccessCallback  : (()->())?
     private var afterAdvertisingStartedFailedCallback   : ((error:NSError!)->())?
     private var afterAdvertsingStoppedCallback          : (()->())?
@@ -23,6 +22,8 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private var afterServiceRemovedCallback             : (()->())?
     
     private let peripheralQueue =  dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
+    private var poweredOn       = false
+    private var _name           = "BlueCapPeripheral"
 
     // INTERNAL
     internal var cbPeripheralManager         : CBPeripheralManager!
@@ -42,6 +43,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return Array(self.configuredServices.values)
     }
     
+    public var name : String {
+        return _name
+    }
+
     public class func sharedInstance() -> PeripheralManager {
         if thisPeripheralManager == nil {
             thisPeripheralManager = PeripheralManager()
@@ -51,13 +56,32 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     // power on
     public func powerOn(afterPowerOn:()->(), afterPowerOff:(()->())?) {
+        self.afterPowerOnCallback = afterPowerOn
+        self.afterPowerOffCallback = afterPowerOff
+        if self.poweredOn && self.afterPowerOnCallback != nil {
+            self.asyncCallback(self.afterPowerOnCallback!)
+        }
     }
     
     // advertising
     public func startAdvertising(name:String, afterAdvertisingStartedSuccess:()->(), afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
+        self.name = name
+        self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
+        self.afterAdvertsingStartedfailedCallback = afterAdvertisingStartedFailedCallback
+        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:Array(self.configuredServices.keys)])
     }
 
     public func startAdvertising(name:String, afterAdvertisingStartFailed:(()->())? = nil) {
+        self.name = name
+        self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
+        self.afterAdvertsingStartedfailedCallback = nil
+        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:Array(self.configuredServices.keys)])
+    }
+    
+    public func stopAdvertising(afterAdvertisingStopped:(()->())? = nil) {
+        self.afterAdvertsingStoppedCallback = afterAdvertisingStopped
+        self.cbPeripheralManager.stopAdvertising()
+        self.lookForAdvertisingToStop()
     }
     
     // services
@@ -75,12 +99,47 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
 
     // CBPeripheralManagerDelegate
     public func peripheralManagerDidUpdateState(_:CBPeripheralManager!) {
+        switch self.state {
+        case CBPeripheralManagerState.PoweredOn:
+            Logger.debug("PeripheralManager#peripheralManagerDidUpdateState: poweredOn")
+            self.poweredOn = true
+            if let afterPowerOnCallback = self.affterPowerOnCallback {
+                self.asyncCallback(afterPowerOnCallback)
+            }
+            break
+        case CBPeripheralManagerState.PoweredOff:
+            Logger.debug("PeripheralManager#peripheralManagerDidUpdateState: poweredOff")
+            self.poweredOn = false
+            if let afterPowerOffCallback = self.afterPowerOffCallback {
+                self.asyncCallback(afterPowerOffCallback)
+            }
+            break
+        case CBPeripheralManagerState.Resetting:
+            break
+        case CBPeripheralManagerState.Unsupported:
+            break
+        case CBPeripheralManagerState.Unauthorized:
+            break
+        case CBPeripheralManagerState.Unknown:
+            break
+        }
     }
     
     public func peripheralManager(_:CBPeripheralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
     }
     
     public func peripheralManagerDidStartAdvertising(_:CBPeripheralManager!, error:NSError!) {
+        if error == nil {
+            Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Success")
+            if let afterAdvertisingStartedSuccessCallback = self.afterAdvertsingStoppedCallback {
+                self.asyncCallback(afterAdvertisingStartedSuccessCallback)
+            }
+        } else {
+            Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Failed")
+            if let afterAdvertisingStartedFailedCallback = self.afterAdvertisingStartedFailedCallback {
+                self.asyncCallback(){afterAdvertisingStartedFailedCallback(error:error)
+            }
+        }
     }
     
     public func peripheralManager(_:CBPeripheralManager!, didAddService service:CBService!, error:NSError!) {

@@ -68,7 +68,7 @@ public class Connectorator {
     internal func didTimeout(peripheral:Peripheral) {
         Logger.debug("Connectorator#didTimeout")
         if let timeoutRetries = self.timeoutRetries {
-            if self.timeoutCount < self.timeoutRetries {
+            if self.timeoutCount < timeoutRetries {
                 self.callOnTimeout(peripheral)
                 ++self.timeoutCount
             } else {
@@ -83,7 +83,7 @@ public class Connectorator {
     internal func didDisconnect(peripheral:Peripheral) {
         Logger.debug("Connectorator#didDisconnect")
         if let disconnectRetries = self.disconnectRetries {
-            if self.disconnectCount < self.disconnectRetries {
+            if self.disconnectCount < disconnectRetries {
                 ++self.disconnectCount
                 self.callOnDisconnect(peripheral)
             } else {
