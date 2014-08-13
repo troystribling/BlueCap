@@ -137,7 +137,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         } else {
             Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Failed")
             if let afterAdvertisingStartedFailedCallback = self.afterAdvertisingStartedFailedCallback {
-                self.asyncCallback(){afterAdvertisingStartedFailedCallback(error:error)
+                self.asyncCallback(){afterAdvertisingStartedFailedCallback(error:error)}
             }
         }
     }
