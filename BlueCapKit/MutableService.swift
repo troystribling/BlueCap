@@ -12,10 +12,12 @@ import CoreBluetooth
 public class MutableService : NSObject {
     
     // PRIVATE
-    private let cbMutableService    : CBMutableService!
     private let profile             : ServiceProfile!
     private var _characteristics    : [MutableCharacteristic] = []
-    
+
+    // INTERNAL
+    internal let cbMutableService   : CBMutableService!
+
     // PUBLIC
     public var uuid : CBUUID {
         return self.profile.uuid

@@ -15,7 +15,8 @@ public class MutableCharacteristic : NSObject {
     private let profile : CharacteristicProfile!
     
     // INTERNAL
-    internal let cbMutableChracteristic : CBMutableCharacteristic!
+    internal let cbMutableChracteristic         : CBMutableCharacteristic!
+    internal var processWriteRequestCallback    : (()->())?
     
     // PUBLIC
     public var permissions : CBAttributePermissions {
@@ -35,7 +36,12 @@ public class MutableCharacteristic : NSObject {
     }
     
     public var value : NSData! {
-        return self.cbMutableChracteristic.value
+        get {
+            return self.cbMutableChracteristic.value
+        }
+        set {
+            self.cbMutableChracteristic.value = newValue
+        }
     }
     
     public var stringValues : Dictionary<String, String>? {
@@ -56,6 +62,10 @@ public class MutableCharacteristic : NSObject {
     
     public var discreteStringValues : [String] {
         return self.profile.discreteStringValues
+    }
+    
+    public func processWriteRequest(processWriteRequestCallback:()->()) {
+        self.processWriteRequestCallback = processWriteRequestCallback
     }
     
     public func updateValue(value:NSData) {
