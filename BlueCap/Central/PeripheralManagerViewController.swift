@@ -22,7 +22,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setAdvertiseButtonlabel()
         if let peripheral = self.peripheral {
             self.nameTextField.text = peripheral
         }
@@ -31,6 +30,11 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     override func viewWillAppear(animated:Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Peripheral"
+        PeripheralManager.sharedInstance().powerOn({
+                self.setAdvertiseButtonlabel()
+            }, afterPowerOff:{
+                self.setAdvertiseButtonlabel()
+            })
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -45,6 +49,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
         }
     }
+    
+    override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
+        if identifier == MainStoryboard.peripheralManagerServicesSegue {
+            return PeripheralManager.sharedInstance().isPoweredOn
+        } else {
+            return true
+        }
+    }
 
     @IBAction func toggleAdvertise(sender:AnyObject) {
         self.setAdvertiseButtonlabel()
@@ -55,13 +67,13 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             self.advertiseButton.enabled = false
             let peripheralManager = PeripheralManager.sharedInstance()
             if peripheralManager.isAdvertising {
-                self.advertiseButton.setTitle("Start Advertising", forState:.Normal)
-                self.navigationItem.backBarButtonItem.enabled = true
-                self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
-            } else {
                 self.advertiseButton.setTitle("Stop Advertising", forState:.Normal)
                 self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
-                self.navigationItem.backBarButtonItem.enabled = false
+                self.navigationItem.setHidesBackButton(true, animated:true)
+            } else {
+                self.advertiseButton.setTitle("Start Advertising", forState:.Normal)
+                self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+                self.navigationItem.setHidesBackButton(false, animated:true)
             }
         } else {
             self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)

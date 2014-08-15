@@ -40,16 +40,21 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
-        let serviceProfile = ProfileManager.sharedInstance().services[indexPath.row]
-        let service = MutableService(profile:serviceProfile)
-        service.characteristicsFromProfiles(serviceProfile.characteristics)
-        self.progressView.show()
-        PeripheralManager.sharedInstance().addService(service, afterServiceAddedSuccess:{
-                self.addServiceComplete()
-            }, afterServiceAddedFailed: {(error) in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                self.addServiceComplete()
-            })
+        let tags = Array(self.serviceProfiles.keys)
+        if let profiles = self.serviceProfiles[tags[indexPath.section]] {
+            let serviceProfile = profiles[indexPath.row]
+            let service = MutableService(profile:serviceProfile)
+            service.characteristicsFromProfiles(serviceProfile.characteristics)
+            self.progressView.show()
+            PeripheralManager.sharedInstance().addService(service, afterServiceAddSuccess:{
+                    self.addServiceComplete()
+                }, afterServiceAddFailed: {(error) in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.addServiceComplete()
+                })
+        } else {
+            self.navigationController.popViewControllerAnimated(true)
+        }
     }
 
 }
