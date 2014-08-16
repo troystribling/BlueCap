@@ -8,6 +8,7 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 class PeripheralManagerViewController : UITableViewController, UITextFieldDelegate {
     
@@ -24,6 +25,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         super.viewDidLoad()
         if let peripheral = self.peripheral {
             self.nameTextField.text = peripheral
+            self.getPeripheral()
         }
     }
     
@@ -74,6 +76,22 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
 
+    func getPeripheral() {
+        let peripheralManager = PeripheralManager.sharedInstance()
+        let profileManager = ProfileManager.sharedInstance()
+        let serviceUUIDs = PeripheralStore.getPeripheralServices(peripheralManager.name)
+        peripheralManager.removeAllServices() {
+            for uuidString in serviceUUIDs {
+                if let uuid = CBUUID.UUIDWithString(uuidString) {
+                    if let serviceProfile = profileManager.service(uuid) {
+                        let service = MutableService(profile:serviceProfile)
+                        service.characteristicsFromProfiles(serviceProfile.characteristics)
+                    }
+                }
+            }
+        }
+    }
+    
     func setAdvertiseButtonlabel() {
         if self.nameTextField.text != "" {
             self.advertiseButton.enabled = true

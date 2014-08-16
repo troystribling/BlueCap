@@ -28,8 +28,12 @@ class PeripheralViewController : UITableViewController {
         super.viewDidLoad()
         if let peripheral = self.peripheral {
             self.navigationItem.title = peripheral.name
-            self.uuidLabel.text = peripheral.uuidString
             self.rssiLabel.text = "\(peripheral.rssi)"
+            if let identifier = peripheral.identifier {
+                self.uuidLabel.text = identifier.UUIDString
+            } else {
+                self.uuidLabel.text = "Unknown"
+            }
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }

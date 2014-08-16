@@ -59,6 +59,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return thisPeripheralManager!
     }
     
+    public func service(uuid:CBUUID) -> MutableService? {
+        return self.configuredServices[uuid]
+    }
+    
     // power on
     public func powerOn(afterPowerOn:()->(), afterPowerOff:(()->())?) {
         self.afterPowerOnCallback = afterPowerOn

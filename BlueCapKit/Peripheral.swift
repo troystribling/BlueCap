@@ -51,12 +51,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         return self.cbPeripheral.state
     }
     
-    public var uuidString : String {
-        if let identifier = self.cbPeripheral.identifier {
-            return self.cbPeripheral.identifier.UUIDString
-        } else {
-            return "Unknown"
-        }
+    public var identifier : NSUUID! {
+        return self.cbPeripheral.identifier
     }
     
     public var services : [Service] {

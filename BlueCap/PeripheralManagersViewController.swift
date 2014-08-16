@@ -43,6 +43,8 @@ class PeripheralManagersViewController : UITableViewController {
             let peripherals = PeripheralStore.getPeripherals()
             viewController.peripheral = peripherals[selectedIndex.row]
         } else if segue.identifier == MainStoryboard.peripheralManagerAddSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerViewController
+            viewController.peripheral = nil
         }
     }
     

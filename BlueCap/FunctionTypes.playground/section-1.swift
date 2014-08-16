@@ -7,7 +7,7 @@ var a : (()->())?
 func heyYou(){println("Hey You")}
 a = heyYou
 
-if (a) {
+if a != nil {
     a!()
 } else {
     println("a undefined")
@@ -17,7 +17,7 @@ class FuncCheck {
     var f:(()->())?
     func setF(f:()->()){self.f = f}
     func callF() {
-        if self.f {
+        if self.f != nil {
             self.f!()
         } else {
             println("f is undefined")

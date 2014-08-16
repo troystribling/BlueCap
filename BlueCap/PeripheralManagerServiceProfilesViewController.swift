@@ -37,6 +37,18 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
         self.navigationController.popViewControllerAnimated(true)
         self.progressView.remove()
     }
+    
+    func updatePripheralStore() {
+        let manager = PeripheralManager.sharedInstance()
+        let serviceUUIDs = manager.services.reduce([String]()){(uuids, service) in
+            if let uuid = service.uuid.UUIDString {
+                return uuids + [uuid]
+            } else {
+                return uuids
+            }
+        }
+        PeripheralStore.addPeripheralServices(manager.name, services:serviceUUIDs)
+    }
             
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
@@ -48,6 +60,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             self.progressView.show()
             PeripheralManager.sharedInstance().addService(service, afterServiceAddSuccess:{
                     self.addServiceComplete()
+                    self.updatePripheralStore()
                 }, afterServiceAddFailed: {(error) in
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                     self.addServiceComplete()
