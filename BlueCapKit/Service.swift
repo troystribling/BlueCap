@@ -16,8 +16,9 @@ public class Service : NSObject {
     private var characteristicsDiscoveredCallback   : (() -> ())?
 
     // INTERNAL
-    internal let perpheral                      : Peripheral!
-    internal let cbService                      : CBService!
+    internal let perpheral                      : Peripheral
+    internal let cbService                      : CBService
+    
     internal var discoveredCharacteristics      = Dictionary<CBUUID, Characteristic>()
     
     // PUBLIC

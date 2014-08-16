@@ -15,10 +15,10 @@ public class CharacteristicProfile {
     internal var afterDiscoveredCallback : ((characteristic:Characteristic) -> ())?
 
     // PUBLIC
-    public let uuid                     : CBUUID!
-    public let name                     : String!
-    public var permissions              : CBAttributePermissions!
-    public var properties               : CBCharacteristicProperties!
+    public let uuid                     : CBUUID
+    public let name                     : String
+    public var permissions              : CBAttributePermissions
+    public var properties               : CBCharacteristicProperties
     public var initialValue             : NSData?
     
     public var discreteStringValues : [String] {

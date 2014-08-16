@@ -12,7 +12,7 @@ import CoreBluetooth
 public class MutableCharacteristic : NSObject {
     
     // PRIVATE
-    private let profile : CharacteristicProfile!
+    private let profile                         : CharacteristicProfile!
     
     // INTERNAL
     internal let cbMutableChracteristic         : CBMutableCharacteristic!

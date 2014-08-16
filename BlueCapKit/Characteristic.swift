@@ -12,8 +12,8 @@ import CoreBluetooth
 public class Characteristic {
 
     // PRIVATE
-    private let CHARACTERISTIC_READ_TIMEOUT : Float  = 10.0
-    private let CHARACTERISTIC_WRITE_TIMEOUT : Float = 10.0
+    private let CHARACTERISTIC_READ_TIMEOUT     : Float  = 10.0
+    private let CHARACTERISTIC_WRITE_TIMEOUT    : Float = 10.0
    
     private var notificationStateChangedSuccessCallback     : (() -> ())?
     private var notificationStateChangedFailedCallback      : ((error:NSError!) -> ())?
@@ -29,9 +29,9 @@ public class Characteristic {
     private var writeSequence   = 0
     
     // INTERNAL
-    internal let cbCharacteristic                    : CBCharacteristic!
-    internal let service                             : Service!
-    internal let profile                             : CharacteristicProfile!
+    internal let cbCharacteristic : CBCharacteristic
+    internal let service          : Service
+    internal let profile          : CharacteristicProfile!
     
     // PUBLIC
     public var name : String {

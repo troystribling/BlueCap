@@ -15,8 +15,8 @@ public class ServiceProfile {
     internal var characteristicProfiles = Dictionary<CBUUID, CharacteristicProfile>()
 
     // PUBLIC
-    public let uuid : CBUUID!
-    public let name : String!
+    public let uuid : CBUUID
+    public let name : String
     public var tag  = "Miscellaneous"
     
     public var characteristics : [CharacteristicProfile] {
