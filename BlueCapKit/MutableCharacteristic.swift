@@ -13,6 +13,7 @@ public class MutableCharacteristic : NSObject {
     
     // PRIVATE
     private let profile                         : CharacteristicProfile!
+    private var _value                          : NSData!
     
     // INTERNAL
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
@@ -37,10 +38,10 @@ public class MutableCharacteristic : NSObject {
     
     public var value : NSData! {
         get {
-            return self.cbMutableChracteristic.value
+            return self._value
         }
         set {
-            self.cbMutableChracteristic.value = newValue
+            self._value = newValue
         }
     }
     
@@ -69,6 +70,7 @@ public class MutableCharacteristic : NSObject {
     }
     
     public func updateValue(value:NSData) {
+        self._value = value
         PeripheralManager.sharedInstance().cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
@@ -95,6 +97,7 @@ public class MutableCharacteristic : NSObject {
     public init(profile:CharacteristicProfile) {
         super.init()
         self.profile = profile
+        self._value = self.profile.initialValue
         self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
     }
     
