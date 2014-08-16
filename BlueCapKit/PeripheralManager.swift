@@ -170,7 +170,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func peripheralManagerDidStartAdvertising(_:CBPeripheralManager!, error:NSError!) {
         if error == nil {
             Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Success")
-            if let afterAdvertisingStartedSuccessCallback = self.afterAdvertsingStoppedCallback {
+            if let afterAdvertisingStartedSuccessCallback = self.afterAdvertisingStartedSuccessCallback {
                 self.asyncCallback(afterAdvertisingStartedSuccessCallback)
             }
         } else {

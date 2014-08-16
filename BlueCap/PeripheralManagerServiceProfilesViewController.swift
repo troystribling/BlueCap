@@ -56,5 +56,19 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             self.navigationController.popViewControllerAnimated(true)
         }
     }
+    
+    override func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        return PeripheralManager.sharedInstance().isAdvertising
+    }
+    
+    override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.Delete
+    }
+    
+    override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+        }
+    }
+
 
 }

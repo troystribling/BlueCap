@@ -52,19 +52,31 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
         if identifier == MainStoryboard.peripheralManagerServicesSegue {
-            return PeripheralManager.sharedInstance().isPoweredOn
+            let manager = PeripheralManager.sharedInstance()
+            return manager.isPoweredOn && !manager.isAdvertising
         } else {
             return true
         }
     }
 
     @IBAction func toggleAdvertise(sender:AnyObject) {
-        self.setAdvertiseButtonlabel()
+        let manager = PeripheralManager.sharedInstance()
+        if manager.isAdvertising {
+            manager.stopAdvertising(){
+                self.setAdvertiseButtonlabel()
+            }
+        } else {
+            manager.startAdvertising(self.nameTextField.text, afterAdvertisingStartedSuccess:{
+                    self.setAdvertiseButtonlabel()
+                }, afterAdvertisingStartFailed:{(error) in
+                    self.setAdvertiseButtonlabel()
+                })
+        }
     }
 
     func setAdvertiseButtonlabel() {
         if self.nameTextField.text != "" {
-            self.advertiseButton.enabled = false
+            self.advertiseButton.enabled = true
             let peripheralManager = PeripheralManager.sharedInstance()
             if peripheralManager.isAdvertising {
                 self.advertiseButton.setTitle("Stop Advertising", forState:.Normal)
@@ -96,6 +108,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                     PeripheralStore.addPeripheral(enteredName)
                 }
             }
+            self.setAdvertiseButtonlabel()
         }
         return true
     }
