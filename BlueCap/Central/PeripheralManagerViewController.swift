@@ -18,6 +18,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     @IBOutlet var nameTextField         : UITextField!
     @IBOutlet var advertiseButton       : UIButton!
+    @IBOutlet var servicesLable         : UILabel!
     
     var peripheral : String?
     
@@ -25,18 +26,17 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         super.viewDidLoad()
         if let peripheral = self.peripheral {
             self.nameTextField.text = peripheral
-            self.getPeripheral()
+            PeripheralManager.sharedInstance().powerOn({
+                    self.getPeripheral()
+                }, afterPowerOff:{
+                    self.setUIState()
+            })
         }
     }
     
     override func viewWillAppear(animated:Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Peripheral"
-        PeripheralManager.sharedInstance().powerOn({
-                self.setAdvertiseButtonlabel()
-            }, afterPowerOff:{
-                self.setAdvertiseButtonlabel()
-            })
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -65,13 +65,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         let manager = PeripheralManager.sharedInstance()
         if manager.isAdvertising {
             manager.stopAdvertising(){
-                self.setAdvertiseButtonlabel()
+                self.setUIState()
             }
         } else {
             manager.startAdvertising(self.nameTextField.text, afterAdvertisingStartedSuccess:{
-                    self.setAdvertiseButtonlabel()
+                    self.setUIState()
                 }, afterAdvertisingStartFailed:{(error) in
-                    self.setAdvertiseButtonlabel()
+                    self.setUIState()
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 })
         }
     }
@@ -81,29 +82,44 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         let profileManager = ProfileManager.sharedInstance()
         let serviceUUIDs = PeripheralStore.getPeripheralServices(peripheralManager.name)
         peripheralManager.removeAllServices() {
-            for uuidString in serviceUUIDs {
+            let services = serviceUUIDs.reduce([MutableService]()){(servs, uuidString) in
                 if let uuid = CBUUID.UUIDWithString(uuidString) {
                     if let serviceProfile = profileManager.service(uuid) {
                         let service = MutableService(profile:serviceProfile)
                         service.characteristicsFromProfiles(serviceProfile.characteristics)
+                        return servs + [service]
+                    } else {
+                        return servs
                     }
+                } else {
+                    return servs
                 }
             }
+            peripheralManager.addServices(services, afterServiceAddSuccess:{
+                    self.setUIState()
+                },  afterServiceAddFailed:{(error) in
+                    self.setUIState()
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                })
         }
     }
     
-    func setAdvertiseButtonlabel() {
+    func setUIState() {
         if self.nameTextField.text != "" {
             self.advertiseButton.enabled = true
             let peripheralManager = PeripheralManager.sharedInstance()
             if peripheralManager.isAdvertising {
                 self.advertiseButton.setTitle("Stop Advertising", forState:.Normal)
+                self.servicesLable.textColor = UIColor.lightGrayColor()
                 self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(true, animated:true)
+                self.nameTextField.enabled = false
             } else {
+                self.servicesLable.textColor = UIColor.blackColor()
                 self.advertiseButton.setTitle("Start Advertising", forState:.Normal)
                 self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(false, animated:true)
+                self.nameTextField.enabled = true
             }
         } else {
             self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
@@ -126,7 +142,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                     PeripheralStore.addPeripheral(enteredName)
                 }
             }
-            self.setAdvertiseButtonlabel()
+            self.setUIState()
         }
         return true
     }

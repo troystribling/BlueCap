@@ -22,9 +22,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private var afterServiceAddSuccessCallback          : (()->())?
     private var afterServiceAddFailedCallback           : ((error:NSError!)->())?
     
-    private let peripheralQueue =  dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
+    private let peripheralQueue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
+    
     private var _isPoweredOn    = false
     private var _name           = "BlueCapPeripheral"
+    private var serviceAdded    = false
 
     // INTERNAL
     internal var cbPeripheralManager        : CBPeripheralManager!
@@ -90,7 +92,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func stopAdvertising(afterAdvertisingStopped:(()->())? = nil) {
         self.afterAdvertsingStoppedCallback = afterAdvertisingStopped
         self.cbPeripheralManager.stopAdvertising()
-        self.lookForAdvertisingToStop()
+        dispatch_async(self.peripheralQueue, {self.lookForAdvertisingToStop()})
     }
     
     // services
@@ -116,8 +118,69 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
+    public func addServices(services:[MutableService], afterServiceAddSuccess:()->(), afterServiceAddFailed:((error:NSError!)->())? = nil) {
+        if services.count > 0 {
+            Logger.debug("PeripheralManager#addServices: service count \(services.count)")
+            self.addService(services[0], afterServiceAddSuccess:{
+                    if services.count > 1 {
+                        let servicesTail = Array(services[1...services.count-1])
+                        Logger.debug("PeripheralManager#addServices: services remaining \(servicesTail.count)")
+                        self.addServices(servicesTail, afterServiceAddSuccess:afterServiceAddSuccess, afterServiceAddFailed:afterServiceAddFailed)
+                    } else {
+                        Logger.debug("PeripheralManager#addServices: completed")
+                        self.asyncCallback(afterServiceAddSuccess)
+                    }
+                }, afterServiceAddFailed:{(error) in
+                    self.removeAllServices() {
+                        Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
+                        if let afterServiceAddFailed = afterServiceAddFailed {
+                            self.asyncCallback(){afterServiceAddFailed(error:error)}
+                        }
+                    }
+                })
+        } else {
+            self.asyncCallback(afterServiceAddSuccess)
+        }
+    }
+
+    public func addServices(services:[MutableService], afterServiceAddFailed:((error:NSError!)->())? = nil) {
+        if services.count > 0 {
+            Logger.debug("PeripheralManager#addServices: service count \(services.count)")
+            self.addService(services[0], afterServiceAddSuccess:{
+                    if services.count > 1 {
+                        let servicesTail = Array(services[1...services.count-1])
+                        Logger.debug("PeripheralManager#addServices: services remaining \(servicesTail.count)")
+                        self.addServices(servicesTail, afterServiceAddFailed:afterServiceAddFailed)
+                    } else {
+                        Logger.debug("PeripheralManager#addServices: completed")
+                    }
+                }, afterServiceAddFailed:{(error) in
+                    self.removeAllServices() {
+                        Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
+                        if let afterServiceAddFailed = afterServiceAddFailed {
+                            self.asyncCallback(){afterServiceAddFailed(error:error)}
+                        }
+                    }
+                })
+        }
+    }
+
     public func removeService(service:MutableService, afterServiceRemoved:(()->())? = nil) {
         if !self.isAdvertising {
+            Logger.debug("PeripheralManager#removeService: \(service.uuid.UUIDString)")
+            let removeCharacteristics = Array(self.configuredCharcteristics.keys).filter{(cbCharacteristic) in
+                                            for bcCharacteristic in service.characteristics {
+                                                if let uuid = cbCharacteristic.UUID {
+                                                    if uuid == bcCharacteristic.uuid {
+                                                        return true
+                                                    }
+                                                }
+                                            }
+                                            return false
+                                        }
+            for cbCharacteristic in removeCharacteristics {
+                self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
+            }
             self.configuredServices.removeValueForKey(service.uuid)
             self.cbPeripheralManager.removeService(service.cbMutableService)
             if let afterServiceRemoved = afterServiceRemoved {
@@ -130,7 +193,9 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     public func removeAllServices(afterServiceRemoved:(()->())? = nil) {
         if !self.isAdvertising {
+            Logger.debug("PeripheralManager#removeAllServices")
             self.configuredServices.removeAll(keepCapacity:false)
+            self.configuredCharcteristics.removeAll(keepCapacity:false)
             self.cbPeripheralManager.removeAllServices()
             if let afterServiceRemoved = afterServiceRemoved {
                 self.asyncCallback(afterServiceRemoved)
@@ -186,7 +251,8 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func peripheralManager(_:CBPeripheralManager!, didAddService service:CBService!, error:NSError!) {
-        if let service = self.configuredServices[service.UUID] {
+        if let bcService = self.configuredServices[service.UUID] {
+            self.serviceAdded = true
             if error == nil {
                 Logger.debug("PeripheralManager#didAddService: Success")
                 if let  afterServiceAddSuccessCallback = self.afterServiceAddSuccessCallback {
@@ -194,6 +260,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 }
             } else {
                 Logger.debug("PeripheralManager#didAddService: Failed '\(error.localizedDescription)'")
+                self.configuredServices.removeValueForKey(service.UUID)
                 if let afterServiceAddFailedCallback = self.afterServiceAddFailedCallback {
                     self.asyncCallback(){afterServiceAddFailedCallback(error:error)}
                 }
@@ -279,14 +346,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private func lookForAdvertisingToStop() {
         if self.isAdvertising && self.afterAdvertsingStoppedCallback != nil {
             let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL * Float(NSEC_PER_SEC)))
-            dispatch_after(popTime, dispatch_get_main_queue(), {
+            dispatch_after(popTime, self.peripheralQueue, {
                 self.lookForAdvertisingToStop()
             })
         } else {
             Logger.debug("Peripheral#lookForAdvertisingToStop: Advertising stopped")
             self.asyncCallback(self.afterAdvertsingStoppedCallback!)
         }
-    }
+    }    
 }
 
 var thisPeripheralManager : PeripheralManager?

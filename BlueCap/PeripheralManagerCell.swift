@@ -10,20 +10,20 @@ import UIKit
 
 class PeripheralManagerCell : UITableViewCell {
 
-    @IBOutlet var nameLable : UILabel!
-    var nameLableFrame      : CGRect?
+    @IBOutlet var nameLabel : UILabel!
+    var nameLabelFrame      : CGRect?
     
     override func layoutSubviews() {
-        if let nameLableFrame = self.nameLableFrame {
+        if let nameLabelFrame = self.nameLabelFrame {
             if self.showingDeleteConfirmation {
                 self.accessoryType = UITableViewCellAccessoryType.None
-                self.nameLable.frame = CGRectMake(nameLableFrame.origin.x+80.0, nameLableFrame.origin.y, nameLableFrame.size.width-80.0, nameLableFrame.size.height)
+                self.nameLabel.frame = CGRectMake(nameLabelFrame.origin.x+80.0, nameLabelFrame.origin.y, nameLabelFrame.size.width-80.0, nameLabelFrame.size.height)
             } else {
-                self.nameLable.frame = nameLableFrame
+                self.nameLabel.frame = nameLabelFrame
                 self.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
             }
         } else {
-            self.nameLableFrame = self.nameLable.frame
+            self.nameLabelFrame = self.nameLabel.frame
         }
         super.layoutSubviews()
     }

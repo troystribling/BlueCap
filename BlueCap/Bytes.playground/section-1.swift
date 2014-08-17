@@ -16,6 +16,3 @@ let byte = Array<UInt8>(count:1, repeatedValue:0)
 var allBytes = [UInt8(clongBytes)]
 let allData = NSData(bytes:allBytes, length:allBytes.count)
 println(allData)
-
-let a = "012345"
-a[1..<3]

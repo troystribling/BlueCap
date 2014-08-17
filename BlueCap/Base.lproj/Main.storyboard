@@ -187,7 +187,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="" id="loh-YE-vi7">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="wDR-Ed-JgW" style="IBUITableViewCellStyleDefault" id="mYl-QU-9Ki">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="wDR-Ed-JgW" style="IBUITableViewCellStyleDefault" id="mYl-QU-9Ki">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mYl-QU-9Ki" id="0uL-Z8-Kq5">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -216,6 +216,7 @@
                     <connections>
                         <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
+                        <outlet property="servicesLable" destination="wDR-Ed-JgW" id="YTw-hi-YOh"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UMo-vV-JBu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2354,7 +2355,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLable" destination="lSx-3c-bBY" id="ih6-ln-a7u"/>
+                                    <outlet property="nameLabel" destination="lSx-3c-bBY" id="893-df-efk"/>
                                     <segue destination="CAb-bN-tC0" kind="push" identifier="PeripheralManagerView" id="XuB-J8-fla"/>
                                 </connections>
                             </tableViewCell>

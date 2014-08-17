@@ -56,6 +56,19 @@ class PeripheralManagerServicesViewController : UITableViewController {
         return cell
     }
     
+    override func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
+        return true
+    }
+    
+    override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.Delete
+    }
+    
+    override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+        }
+    }
+
     // UITableViewDelegate
 
 }
