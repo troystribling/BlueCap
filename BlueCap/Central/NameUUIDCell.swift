@@ -25,7 +25,8 @@ class NameUUIDCell : UITableViewCell {
                     self.uuidLabel.frame = CGRectMake(uuidLabelFrame.origin.x+80.0, uuidLabelFrame.origin.y, uuidLabelFrame.size.width-80.0, uuidLabelFrame.size.height)
                 } else {
                     self.nameLabel.frame = nameLableFrame
-                    self.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+                    self.uuidLabel.frame = uuidLabelFrame
+                    self.accessoryType = UITableViewCellAccessoryType.DetailButton
                 }
             }
         } else {
