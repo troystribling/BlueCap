@@ -12,6 +12,8 @@ import BlueCapKit
 
 class PeripheralManagerServicesViewController : UITableViewController {
     
+    var peripheral : String?
+    
     struct MainStoryboard {
         static let peripheralManagerServiceCell             = "PeripheralManagerServiceCell"
         static let peripheralManagerServiceProfilesSegue    = "PeripheralManagerServiceProfiles"
@@ -36,6 +38,8 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerServiceProfilesViewController
+            viewController.peripheral = self.peripheral
         }
     }
     
@@ -66,6 +70,13 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
+            if let peripheral = self.peripheral {
+                let manager = PeripheralManager.sharedInstance()
+                let service = manager.services[indexPath.row]
+                manager.removeService(service) {
+                    PeripheralStore.removePeripheralService(peripheral, service:service.uuid.UUIDString)
+                }
+            }
         }
     }
 

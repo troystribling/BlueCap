@@ -52,7 +52,7 @@ class PeripheralStore {
             userDefaults.setObject(services, forKey:peripheral)
         }
     }
-
+    
     class func removePeripheral(peripheral:String) {
         if let userDefaults = NSUserDefaults.standardUserDefaults() {
             Logger.debug("PeripheralStore#removePeripheral: \(peripheral)")
@@ -62,4 +62,12 @@ class PeripheralStore {
         }
     }
 
+    class func removePeripheralService(peripheral:String, service:String) {
+        if let userDefaults = NSUserDefaults.standardUserDefaults() {
+            Logger.debug("PeripheralStore#removePeripheralService: \(peripheral), \(service)")
+            var services = self.getPeripheralServices(peripheral).filter(){$0 != service}
+            self.addPeripheralServices(peripheral, services:services)
+        }
+    }
+    
 }

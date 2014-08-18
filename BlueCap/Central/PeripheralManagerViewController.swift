@@ -26,12 +26,12 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         super.viewDidLoad()
         if let peripheral = self.peripheral {
             self.nameTextField.text = peripheral
-            PeripheralManager.sharedInstance().powerOn({
-                    self.getPeripheral()
-                }, afterPowerOff:{
-                    self.setUIState()
-            })
         }
+        PeripheralManager.sharedInstance().powerOn({
+                self.setPeripheralManagerServices()
+            }, afterPowerOff:{
+                self.setUIState()
+        })
     }
     
     override func viewWillAppear(animated:Bool) {
@@ -49,13 +49,19 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerServicesViewController
+            viewController.peripheral = self.peripheral
         }
     }
     
     override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
         if identifier == MainStoryboard.peripheralManagerServicesSegue {
-            let manager = PeripheralManager.sharedInstance()
-            return manager.isPoweredOn && !manager.isAdvertising
+            if let peripheral = self.peripheral {
+                let manager = PeripheralManager.sharedInstance()
+                return manager.isPoweredOn && !manager.isAdvertising
+            } else {
+                return false
+            }
         } else {
             return true
         }
@@ -68,20 +74,34 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 self.setUIState()
             }
         } else {
-            manager.startAdvertising(self.nameTextField.text, afterAdvertisingStartedSuccess:{
-                    self.setUIState()
-                }, afterAdvertisingStartFailed:{(error) in
-                    self.setUIState()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                })
+            if let peripheral = self.peripheral {
+                manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:{
+                        self.setUIState()
+                    }, afterAdvertisingStartFailed:{(error) in
+                        self.setUIState()
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    })
+            }
         }
     }
 
-    func getPeripheral() {
+    func setPeripheralManagerServices() {
         let peripheralManager = PeripheralManager.sharedInstance()
         let profileManager = ProfileManager.sharedInstance()
-        let serviceUUIDs = PeripheralStore.getPeripheralServices(peripheralManager.name)
         peripheralManager.removeAllServices() {
+            if let peripheral = self.peripheral {
+                self.loadPeripheralServicesFromConfig()
+            } else {
+                self.setUIState()
+            }
+        }
+    }
+
+    func loadPeripheralServicesFromConfig() {
+        if let peripheral = self.peripheral {
+            let peripheralManager = PeripheralManager.sharedInstance()
+            let profileManager = ProfileManager.sharedInstance()
+            let serviceUUIDs = PeripheralStore.getPeripheralServices(peripheral)
             let services = serviceUUIDs.reduce([MutableService]()){(servs, uuidString) in
                 if let uuid = CBUUID.UUIDWithString(uuidString) {
                     if let serviceProfile = profileManager.service(uuid) {
@@ -96,16 +116,16 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 }
             }
             peripheralManager.addServices(services, afterServiceAddSuccess:{
-                    self.setUIState()
+                self.setUIState()
                 },  afterServiceAddFailed:{(error) in
                     self.setUIState()
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                })
+            })
         }
     }
-    
+
     func setUIState() {
-        if self.nameTextField.text != "" {
+        if self.peripheral != nil {
             self.advertiseButton.enabled = true
             let peripheralManager = PeripheralManager.sharedInstance()
             if peripheralManager.isAdvertising {
@@ -122,7 +142,8 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 self.nameTextField.enabled = true
             }
         } else {
-            self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+            self.servicesLable.textColor = UIColor.grayColor()
+            self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
             self.advertiseButton.enabled = false
         }
     }
@@ -139,6 +160,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                     PeripheralStore.addPeripheralServices(enteredName, services:services)
                     self.peripheral = enteredName
                 } else {
+                    self.peripheral = enteredName
                     PeripheralStore.addPeripheral(enteredName)
                 }
             }

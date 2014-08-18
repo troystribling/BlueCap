@@ -24,8 +24,9 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     private let peripheralQueue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
     
+    private var _name : String?
+
     private var _isPoweredOn    = false
-    private var _name           = "BlueCapPeripheral"
     private var serviceAdded    = false
 
     // INTERNAL
@@ -46,7 +47,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return Array(self.configuredServices.values)
     }
     
-    public var name : String {
+    public var name : String? {
         return self._name
     }
     
@@ -90,6 +91,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func stopAdvertising(afterAdvertisingStopped:(()->())? = nil) {
+        self._name = nil
         self.afterAdvertsingStoppedCallback = afterAdvertisingStopped
         self.cbPeripheralManager.stopAdvertising()
         dispatch_async(self.peripheralQueue, {self.lookForAdvertisingToStop()})

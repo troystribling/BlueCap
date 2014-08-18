@@ -11,7 +11,8 @@ import BlueCapKit
 
 class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewController {
    
-    var progressView : ProgressView!
+    var progressView    : ProgressView!
+    var peripheral      : String?
     
     struct MainStoryboard {
         static let peripheralManagerServiceCell = "PeripheralManagerServiceProfileCell"
@@ -39,15 +40,17 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     }
     
     func updatePripheralStore() {
-        let manager = PeripheralManager.sharedInstance()
-        let serviceUUIDs = manager.services.reduce([String]()){(uuids, service) in
-            if let uuid = service.uuid.UUIDString {
-                return uuids + [uuid]
-            } else {
-                return uuids
+        if let peripheral = self.peripheral {
+            let manager = PeripheralManager.sharedInstance()
+            let serviceUUIDs = manager.services.reduce([String]()){(uuids, service) in
+                if let uuid = service.uuid.UUIDString {
+                    return uuids + [uuid]
+                } else {
+                    return uuids
+                }
             }
+            PeripheralStore.addPeripheralServices(peripheral, services:serviceUUIDs)
         }
-        PeripheralStore.addPeripheralServices(manager.name, services:serviceUUIDs)
     }
             
     // UITableViewDelegate

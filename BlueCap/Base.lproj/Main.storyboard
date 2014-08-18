@@ -2366,7 +2366,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Peripherals" id="xb1-g8-yQe">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="a6e-mB-PGf"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="a6e-mB-PGf">
+                            <connections>
+                                <segue destination="CAb-bN-tC0" kind="push" identifier="PeripheralManagerAdd" id="DCa-OL-k6g"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qfw-Qr-Zwz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2441,4 +2445,7 @@
             <size key="landscapeSize" width="480" height="320"/>
         </simulatedScreenMetrics>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="DCa-OL-k6g"/>
+    </inferredMetricsTieBreakers>
 </document>
