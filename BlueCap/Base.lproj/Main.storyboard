@@ -335,7 +335,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralManagerServiceChracteristicCell" rowHeight="59" id="O8B-ib-4ik" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralManagerServiceChracteristicCell" rowHeight="59" id="O8B-ib-4ik" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="59"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="O8B-ib-4ik" id="UMT-m9-8ig">
@@ -403,7 +403,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="nUi-RC-SAK" kind="push" identifier="PeripheralManagerCharacteristicValues" id="h84-FH-dX6"/>
+                                            <segue destination="nUi-RC-SAK" kind="push" identifier="PeripheralManagerServiceCharacteristicValues" id="h84-FH-dX6"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -427,27 +427,6 @@
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="aaff" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="p8X-D3-Jg9">
                                                     <rect key="frame" x="80" y="11" width="220" height="22"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection id="9YH-qp-2rV">
-                                <cells>
-                                    <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="pLd-Je-GWu" style="IBUITableViewCellStyleDefault" id="I6A-Tg-vGX">
-                                        <rect key="frame" x="0.0" y="227" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="I6A-Tg-vGX" id="6Hf-8A-9Cg">
-                                            <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Descriptors" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pLd-Je-GWu">
-                                                    <rect key="frame" x="15" y="0.0" width="270" height="43"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -809,7 +788,21 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="CWa-iC-5Y4"/>
                     <connections>
-                        <outlet property="uuidLabel" destination="p8X-D3-Jg9" id="DkT-Wh-aZd"/>
+                        <outlet property="permissionReadEncryptionLabel" destination="Eq4-jB-JLk" id="D1J-Ng-Prc"/>
+                        <outlet property="permissionReadableLabel" destination="Vc5-wX-GSF" id="Cnx-cI-zB0"/>
+                        <outlet property="permissionWriteEncryptionLabel" destination="Cyj-Cj-jlO" id="5fe-ri-ibn"/>
+                        <outlet property="permissionWriteableLabel" destination="OX7-xd-36A" id="7Xg-3W-bzh"/>
+                        <outlet property="propertyAuthenticatedSignedWritesLabel" destination="E5v-nb-JCa" id="sA3-oG-tdQ"/>
+                        <outlet property="propertyBroadcastLabel" destination="WEa-eN-7es" id="QDF-p5-O7J"/>
+                        <outlet property="propertyExtendedPropertiesLabel" destination="fnY-Zd-o8a" id="u62-pV-O5M"/>
+                        <outlet property="propertyIndicateEncryptionRequiredLabel" destination="5lG-fh-L6v" id="aLL-hP-5fn"/>
+                        <outlet property="propertyIndicateLabel" destination="qy2-kz-X7h" id="Mal-ko-ge8"/>
+                        <outlet property="propertyNotifyEncryptionRequiredLabel" destination="zW5-Vf-pJw" id="DDh-OK-J3u"/>
+                        <outlet property="propertyNotifyLabel" destination="Ifq-6N-Dgp" id="VXD-Pv-dQH"/>
+                        <outlet property="propertyReadLabel" destination="cZU-Ll-PeQ" id="5rW-mC-3VN"/>
+                        <outlet property="propertyWriteLabel" destination="y6f-bT-LWN" id="xmd-8k-nJb"/>
+                        <outlet property="propertyWriteWithoutResponseLabel" destination="g0Z-ch-XeR" id="fhk-De-kdT"/>
+                        <outlet property="uuidLabel" destination="p8X-D3-Jg9" id="eOO-FC-Kjv"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JkI-3u-CN4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2326,7 +2319,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="PeripheralManagerCell" rowHeight="55" id="p0s-ht-8fG" customClass="PeripheralManagerCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" indentationWidth="10" reuseIdentifier="PeripheralManagerCell" rowHeight="55" id="p0s-ht-8fG" customClass="PeripheralManagerCell" customModule="BlueCap" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p0s-ht-8fG" id="6ND-vW-lMo">
                                     <autoresizingMask key="autoresizingMask"/>

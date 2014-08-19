@@ -20,7 +20,7 @@ class PeripheralManagerCell : UITableViewCell {
                 self.nameLabel.frame = CGRectMake(nameLabelFrame.origin.x+80.0, nameLabelFrame.origin.y, nameLabelFrame.size.width-80.0, nameLabelFrame.size.height)
             } else {
                 self.nameLabel.frame = nameLabelFrame
-                self.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+                self.accessoryType = UITableViewCellAccessoryType.DetailButton
             }
         } else {
             self.nameLabelFrame = self.nameLabel.frame

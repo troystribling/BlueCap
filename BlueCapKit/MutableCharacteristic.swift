@@ -69,6 +69,14 @@ public class MutableCharacteristic : NSObject {
         self.processWriteRequestCallback = processWriteRequestCallback
     }
     
+    public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
+        return (self.properties.toRaw() & property.toRaw()) > 0
+    }
+    
+    public func permissionEnabled(permission:CBAttributePermissions) -> Bool {
+        return (self.permissions.toRaw() & permission.toRaw()) > 0
+    }
+    
     public func updateValue(value:NSData) {
         self._value = value
         PeripheralManager.sharedInstance().cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
