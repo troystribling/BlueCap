@@ -15,8 +15,9 @@ class PeripheralManagerServicesViewController : UITableViewController {
     var peripheral : String?
     
     struct MainStoryboard {
-        static let peripheralManagerServiceCell             = "PeripheralManagerServiceCell"
-        static let peripheralManagerServiceProfilesSegue    = "PeripheralManagerServiceProfiles"
+        static let peripheralManagerServiceCell                 = "PeripheralManagerServiceCell"
+        static let peripheralManagerServiceProfilesSegue        = "PeripheralManagerServiceProfiles"
+        static let peripheralManagerServiceCharacteristicsSegue = "PeripheralManagerServiceCharacteristics"
     }
     
     required init(coder aDecoder: NSCoder!) {
@@ -40,6 +41,10 @@ class PeripheralManagerServicesViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServiceProfilesViewController
             viewController.peripheral = self.peripheral
+        } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicsSegue {
+            let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell)
+            let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicsViewController
+            viewController.service = PeripheralManager.sharedInstance().services[selectedIndexPath.row]
         }
     }
     
