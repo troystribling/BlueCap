@@ -812,13 +812,13 @@
         <!--Values-->
         <scene sceneID="61L-AP-K3x">
             <objects>
-                <tableViewController id="nUi-RC-SAK" sceneMemberID="viewController">
+                <tableViewController id="nUi-RC-SAK" customClass="PeripheralManagerServicesCharacteristicValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="71" sectionHeaderHeight="22" sectionFooterHeight="22" id="IzX-n1-obj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralManagerCharacteristicValue" rowHeight="59" id="dc4-EZ-z20" customClass="PeripheralManagerCharacteristicValueCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralManagerServicesCharacteristicValueCell" rowHeight="59" id="dc4-EZ-z20" customClass="CharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="71"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dc4-EZ-z20" id="9Ji-tb-4Sj">
@@ -831,7 +831,7 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UVE-XA-EqK">
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UVE-XA-EqK">
                                             <rect key="frame" x="20" y="7" width="250" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -841,8 +841,8 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLabel" destination="UVE-XA-EqK" id="Pzb-J9-tXb"/>
-                                    <outlet property="valuelabel" destination="jfM-kO-dTq" id="GzD-Yy-a2I"/>
+                                    <outlet property="valueLable" destination="jfM-kO-dTq" id="RAy-an-Znd"/>
+                                    <outlet property="valueNameLabel" destination="UVE-XA-EqK" id="UxF-Po-oYr"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -853,8 +853,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Values" id="hm2-Zh-4r9"/>
                     <connections>
-                        <segue destination="F6T-V4-TwS" kind="push" identifier="PeripheralManagerCharacteristicDiscreteValue" id="XMD-7l-oha"/>
-                        <segue destination="eJp-Hv-1Y9" kind="push" identifier="PeripheralManagerCharacteristiceFreeFormValue" id="TUC-8V-UHz"/>
+                        <segue destination="F6T-V4-TwS" kind="push" identifier="PeripheralManagerServiceCharacteristicEditDiscreteValues" id="XMD-7l-oha"/>
+                        <segue destination="eJp-Hv-1Y9" kind="push" identifier="PeripheralManagerServiceCharacteristicEditValue" id="TUC-8V-UHz"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1G6-7f-gW8" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -864,7 +864,7 @@
         <!--New Value-->
         <scene sceneID="PE6-Dt-Q9I">
             <objects>
-                <tableViewController id="F6T-V4-TwS" sceneMemberID="viewController">
+                <tableViewController id="F6T-V4-TwS" customClass="PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="RNV-JH-5Cn">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1515,7 +1515,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                 <connections>
-                                    <outlet property="delegate" destination="Fgs-SR-AAC" id="5JE-om-cbD"/>
+                                    <outlet property="delegate" destination="Fgs-SR-AAC" id="dXP-bl-7BQ"/>
                                 </connections>
                             </textField>
                         </subviews>
@@ -1523,7 +1523,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="New Value" id="qC6-hX-sHJ"/>
                     <connections>
-                        <outlet property="valueTextField" destination="J6D-MW-7oK" id="Uq2-ft-M3J"/>
+                        <outlet property="valueTextField" destination="J6D-MW-7oK" id="coL-y2-9jj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YHC-G5-ek2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1717,7 +1717,7 @@
         <!--New Value-->
         <scene sceneID="DhK-0q-Uwg">
             <objects>
-                <viewController id="eJp-Hv-1Y9" sceneMemberID="viewController">
+                <viewController id="eJp-Hv-1Y9" customClass="PeripheralManagerServiceCharacteristicEditValueViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fJU-72-yJV">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

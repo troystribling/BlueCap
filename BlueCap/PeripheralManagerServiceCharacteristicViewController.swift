@@ -43,7 +43,6 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
     override func viewDidLoad() {
         super.viewDidLoad()
         if let characteristic = self.characteristic {
-            
             self.uuidLabel.text = characteristic.uuid.UUIDString
             
             self.permissionReadableLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.Readable))
@@ -61,7 +60,6 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
             self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.ExtendedProperties))
             self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.NotifyEncryptionRequired))
             self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.IndicateEncryptionRequired))
-            
         }
     }
     
@@ -78,6 +76,10 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicValuesSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerServicesCharacteristicValuesViewController
+            viewController.characteristic = self.characteristic
+        }
     }
     
     func booleanStringValue(value:Bool) -> String {

@@ -1,24 +1,24 @@
 //
-//  PeripheralServiceCharacteristicEditValueViewController.swift
+//  PeripheralManagerServiceCharacteristicEditValueViewController.swift
 //  BlueCap
 //
-//  Created by Troy Stribling on 7/20/14.
+//  Created by Troy Stribling on 8/20/14.
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
 import UIKit
 import BlueCapKit
 
-class PeripheralServiceCharacteristicEditValueViewController : UIViewController, UITextFieldDelegate {
-   
+class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewController, UITextViewDelegate {
+  
     @IBOutlet var valueTextField    : UITextField!
-    var characteristic              : Characteristic?
+    var characteristic              : MutableCharacteristic?
     var valueName                   : String?
     
     required init(coder aDecoder:NSCoder!) {
         super.init(coder:aDecoder)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let valueName = self.valueName {
@@ -27,9 +27,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                 self.valueTextField.text = value
             }
         }
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
-    
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {
@@ -37,15 +35,8 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                 if let characteristic = self.characteristic {
                     if var values = characteristic.stringValues {
                         values[valueName] = newValue
-                        let progressView = ProgressView()
-                        progressView.show()
-                        characteristic.write(values, afterWriteSuccessCallback: {
-                                progressView.remove()
-                                self.navigationController.popViewControllerAnimated(true)
-                            }, afterWriteFailedCallback: {(error) in
-                                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                                self.navigationController.popViewControllerAnimated(true)
-                            })
+                        characteristic.updateValueWithString(values)
+                        self.navigationController.popToRootViewControllerAnimated(true)
                     }
                 }
             }

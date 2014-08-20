@@ -18,14 +18,14 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
     }
     
     var  values : Dictionary<String, String>? {
-    if let characteristicProfile = self.characteristicProfile {
-        if let initialValue = characteristicProfile.initialValue {
-            return characteristicProfile.stringValues(initialValue)
+        if let characteristicProfile = self.characteristicProfile {
+            if let initialValue = characteristicProfile.initialValue {
+                return characteristicProfile.stringValues(initialValue)
+            } else {
+                return nil
+            }
         } else {
             return nil
-        }
-    } else {
-        return nil
         }
     }
     
