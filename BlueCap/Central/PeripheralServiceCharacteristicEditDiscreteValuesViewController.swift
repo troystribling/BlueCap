@@ -15,7 +15,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     var progressView            : ProgressView!
     
     struct MainStoryboard {
-        static let peripheralServiceCharacteristicDiscreteValueCell  = "PeripheralServiceCharacteristicDiscreteValueCell"
+        static let peripheralServiceCharacteristicDiscreteValueCell  = "PeripheraServiceCharacteristicEditDiscreteValueCell"
     }
 
     required init(coder aDecoder:NSCoder!) {

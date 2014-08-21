@@ -29,6 +29,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     
     override func viewWillAppear(animated:Bool) {
         super.viewWillAppear(animated)
+        self.tableView.reloadData()
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
@@ -39,9 +40,18 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue!, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicEditValueViewController
+            viewController.characteristic = self.characteristic
+            let selectedIndex = sender as NSIndexPath
+            if let stringValues = self.characteristic?.stringValues {
+                let values = Array(stringValues.keys)
+                viewController.valueName = values[selectedIndex.row]
+            }
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController
+            viewController.characteristic = self.characteristic
         }
     }
     

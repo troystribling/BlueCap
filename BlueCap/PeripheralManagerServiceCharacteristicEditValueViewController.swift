@@ -36,7 +36,7 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
                     if var values = characteristic.stringValues {
                         values[valueName] = newValue
                         characteristic.updateValueWithString(values)
-                        self.navigationController.popToRootViewControllerAnimated(true)
+                        self.navigationController.popViewControllerAnimated(true)
                     }
                 }
             }

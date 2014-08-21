@@ -57,11 +57,10 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfileEditValueSegue {
             let viewController = segue.destinationViewController as ServiceCharacteristicProfileEditValueViewController
             viewController.characteristicProfile = self.characteristicProfile
-            if let selectedIndex = sender as? NSIndexPath {
-                if let values = self.values {
-                    let valueNames = Array(values.keys)
-                    viewController.valueName = valueNames[selectedIndex.row]
-                }
+            let selectedIndex = sender as NSIndexPath
+            if let values = self.values {
+                let valueNames = Array(values.keys)
+                viewController.valueName = valueNames[selectedIndex.row]
             }
         } else if segue.identifier == MainStoryboard.serviceCharacteristicProfileEditDiscreteValuesSegue {
             let viewController = segue.destinationViewController as ServiceCharacteristicProfileEditDiscreteValuesViewController
