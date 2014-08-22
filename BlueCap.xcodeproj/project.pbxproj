@@ -10,7 +10,6 @@
 		0507F478198BDEE70036AF2B /* PairStructCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0507F477198BDEE70036AF2B /* PairStructCharacteristicProfile.swift */; };
 		0516666B1944EF9F006A337C /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0516666A1944EF9F006A337C /* Characteristic.swift */; };
 		051886701960861400ED2D3A /* NSDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0518866F1960861400ED2D3A /* NSDataExtensions.swift */; };
-		05277C9F1944CAE50022FB59 /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */; };
 		05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */; };
 		05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA21944CB0E0022FB59 /* CentralManager.swift */; };
 		05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277CA31944CB0E0022FB59 /* Peripheral.swift */; };
@@ -22,7 +21,6 @@
 		0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0552E40C1956055700F33D4E /* CharacteristicProfile.swift */; };
 		0555A814196B958600F5E4A0 /* EnumCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */; };
 		05680DC119687D050000FECB /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05680DC019687D050000FECB /* BCErrors.swift */; };
-		05764D7F1969D03B00E6C801 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */; };
 		05764D83196A243F00E6C801 /* TISensorTagServiceProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
 		057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */; };
@@ -40,7 +38,6 @@
 		05840FAB19420B0000C744E6 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; };
 		05840FAD19420B0000C744E6 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
-		058C134E197CD293008ECD6B /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058C134D197CD293008ECD6B /* ProgressView.swift */; };
 		05900F281982AEBD00CEAD0B /* BLESIGGATTProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F271982AEBD00CEAD0B /* BLESIGGATTProfiles.swift */; };
 		05900F2A198368DB00CEAD0B /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F29198368DB00CEAD0B /* GnosusProfiles.swift */; };
 		05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2B198368EC00CEAD0B /* NordicProfiles.swift */; };
@@ -53,21 +50,27 @@
 		05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */; };
 		05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */; };
 		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
-		05B45BD919A3805C009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BD819A3805C009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */; };
-		05B45BDB19A385F8009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BDA19A385F8009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */; };
-		05B45BDD19A4DFAD009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BDC19A4DFAD009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */; };
-		05B45BDF19A4E3FB009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BDE19A4E3FB009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */; };
-		05B45BE119A4E4FA009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE019A4E4FA009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */; };
-		05B460541999BA5B00E6AF71 /* PeripheralManagerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B460531999BA5B00E6AF71 /* PeripheralManagerCell.swift */; };
-		05B46056199A60AE00E6AF71 /* PeripheralManagerServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B46055199A60AE00E6AF71 /* PeripheralManagerServicesViewController.swift */; };
-		05B4605A199A66F200E6AF71 /* PeripheralManagerServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B46059199A66F200E6AF71 /* PeripheralManagerServiceProfilesViewController.swift */; };
-		05B4605C199B06F700E6AF71 /* ServiceProfilesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B4605B199B06F700E6AF71 /* ServiceProfilesTableViewController.swift */; };
+		05B45BE419A78857009DAF6D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE319A78857009DAF6D /* LocationManager.swift */; };
+		05B45BE619A788BC009DAF6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B45BE519A788BC009DAF6D /* CoreLocation.framework */; };
+		05B45BE719A788E0009DAF6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B45BE519A788BC009DAF6D /* CoreLocation.framework */; };
+		05B45BF219A78BA2009DAF6D /* PeripheralManagerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE819A78BA2009DAF6D /* PeripheralManagerCell.swift */; };
+		05B45BF319A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */; };
+		05B45BF419A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */; };
+		05B45BF519A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEB19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */; };
+		05B45BF619A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEC19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */; };
+		05B45BF719A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */; };
+		05B45BF819A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */; };
+		05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */; };
+		05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */; };
+		05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */; };
+		05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */; };
+		05B45C0219A78C6B009DAF6D /* PeripheralStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */; };
+		05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0019A78C6B009DAF6D /* ProgressView.swift */; };
+		05B45C0419A78C6B009DAF6D /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */; };
 		05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */; };
 		05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* NameUUIDCell.swift */; };
 		05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */; };
 		05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */; };
-		05C9F82E1997F1E4001F7EC3 /* PeripheralManagersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C9F82D1997F1E4001F7EC3 /* PeripheralManagersViewController.swift */; };
-		05C9F8301997F383001F7EC3 /* PeripheralStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C9F82F1997F383001F7EC3 /* PeripheralStore.swift */; };
 		05CAF6CD1960E22500F6D598 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CAF6CC1960E22500F6D598 /* StringExtensions.swift */; };
 		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
 		05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */; };
@@ -133,7 +136,6 @@
 		0516666A1944EF9F006A337C /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		0518866F1960861400ED2D3A /* NSDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataExtensions.swift; sourceTree = "<group>"; };
 		0518867119609B5800ED2D3A /* Bytes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Bytes.playground; sourceTree = "<group>"; };
-		05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PeripheralManagerViewController.swift; path = Central/PeripheralManagerViewController.swift; sourceTree = "<group>"; };
 		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
 		05277CA21944CB0E0022FB59 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		05277CA31944CB0E0022FB59 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
@@ -145,7 +147,6 @@
 		0552E40C1956055700F33D4E /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
 		0555A813196B958600F5E4A0 /* EnumCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumCharacteristicProfile.swift; sourceTree = "<group>"; };
 		05680DC019687D050000FECB /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
-		05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 		05764D80196A1E0600E6C801 /* Enums.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Enums.playground; sourceTree = "<group>"; };
 		05764D82196A243F00E6C801 /* TISensorTagServiceProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TISensorTagServiceProfiles.swift; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
@@ -168,7 +169,6 @@
 		05840FA019420B0000C744E6 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840FA619420B0000C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
-		058C134D197CD293008ECD6B /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		05900F271982AEBD00CEAD0B /* BLESIGGATTProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLESIGGATTProfiles.swift; sourceTree = "<group>"; };
 		05900F29198368DB00CEAD0B /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		05900F2B198368EC00CEAD0B /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
@@ -181,23 +181,28 @@
 		05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; };
 		05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		05B45BD819A3805C009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
-		05B45BDA19A385F8009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicViewController.swift; sourceTree = "<group>"; };
-		05B45BDC19A4DFAD009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServicesCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
-		05B45BDE19A4E3FB009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; };
-		05B45BE019A4E4FA009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
-		05B460531999BA5B00E6AF71 /* PeripheralManagerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerCell.swift; sourceTree = "<group>"; };
-		05B46055199A60AE00E6AF71 /* PeripheralManagerServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServicesViewController.swift; sourceTree = "<group>"; };
-		05B46059199A66F200E6AF71 /* PeripheralManagerServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceProfilesViewController.swift; sourceTree = "<group>"; };
-		05B4605B199B06F700E6AF71 /* ServiceProfilesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesTableViewController.swift; sourceTree = "<group>"; };
+		05B45BE319A78857009DAF6D /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		05B45BE519A788BC009DAF6D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		05B45BE819A78BA2009DAF6D /* PeripheralManagerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerCell.swift; sourceTree = "<group>"; };
+		05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
+		05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; };
+		05B45BEB19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
+		05B45BEC19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicViewController.swift; sourceTree = "<group>"; };
+		05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceProfilesViewController.swift; sourceTree = "<group>"; };
+		05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServicesCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
+		05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServicesViewController.swift; sourceTree = "<group>"; };
+		05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagersViewController.swift; sourceTree = "<group>"; };
+		05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerViewController.swift; sourceTree = "<group>"; };
+		05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesTableViewController.swift; sourceTree = "<group>"; };
+		05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralStore.swift; sourceTree = "<group>"; };
+		05B45C0019A78C6B009DAF6D /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 		05B48C7C1971FA3200260F4A /* Structs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Structs.playground; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
 		05B6F0771957ACF300D798CB /* NameUUIDCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameUUIDCell.swift; sourceTree = "<group>"; };
 		05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
 		05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicViewController.swift; sourceTree = "<group>"; };
 		05C3F1C51942159D006F80AD /* FunctionTypes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = FunctionTypes.playground; sourceTree = "<group>"; };
-		05C9F82D1997F1E4001F7EC3 /* PeripheralManagersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagersViewController.swift; sourceTree = "<group>"; };
-		05C9F82F1997F383001F7EC3 /* PeripheralStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralStore.swift; sourceTree = "<group>"; };
 		05CAF6CC1960E22500F6D598 /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
@@ -218,6 +223,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B45BE719A788E0009DAF6D /* CoreLocation.framework in Frameworks */,
 				05840FAB19420B0000C744E6 /* BlueCapKit.framework in Frameworks */,
 				05840F8E1942098300C744E6 /* CoreBluetooth.framework in Frameworks */,
 			);
@@ -234,6 +240,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05B45BE619A788BC009DAF6D /* CoreLocation.framework in Frameworks */,
 				05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -300,12 +307,11 @@
 		05764D7D1969D01900E6C801 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				05C9F82F1997F383001F7EC3 /* PeripheralStore.swift */,
-				058C134D197CD293008ECD6B /* ProgressView.swift */,
-				05B4605B199B06F700E6AF71 /* ServiceProfilesTableViewController.swift */,
-				05764D7E1969D03B00E6C801 /* UIAlertControllerExtensions.swift */,
+				05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */,
+				05B45C0019A78C6B009DAF6D /* ProgressView.swift */,
+				05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */,
 			);
-			name = Utils;
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		05764D81196A23F700E6C801 /* Service Profile Definitions */ = {
@@ -333,6 +339,7 @@
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
+				05B45BE519A788BC009DAF6D /* CoreLocation.framework */,
 				05840F8D1942098300C744E6 /* CoreBluetooth.framework */,
 				05840F61194206F100C744E6 /* BlueCap */,
 				05840F76194206F100C744E6 /* BlueCapTests */,
@@ -356,6 +363,7 @@
 		05840F61194206F100C744E6 /* BlueCap */ = {
 			isa = PBXGroup;
 			children = (
+				05B45BFC19A78BBB009DAF6D /* Configure */,
 				05840F64194206F100C744E6 /* AppDelegate.swift */,
 				05840F6D194206F100C744E6 /* Images.xcassets */,
 				05277C9B1944CAE50022FB59 /* Central */,
@@ -399,6 +407,7 @@
 			children = (
 				05840F9A19420B0000C744E6 /* BlueCapKit.h */,
 				0516666E1944F043006A337C /* Central */,
+				05B45BE219A78257009DAF6D /* Location */,
 				05830532199684660039E858 /* Peripheral */,
 				05B48C7B1971A15800260F4A /* Serialization/Deserialization */,
 				05764D81196A23F700E6C801 /* Service Profile Definitions */,
@@ -443,6 +452,21 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
+		05B45BE219A78257009DAF6D /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				05B45BE319A78857009DAF6D /* LocationManager.swift */,
+			);
+			name = Location;
+			sourceTree = "<group>";
+		};
+		05B45BFC19A78BBB009DAF6D /* Configure */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Configure;
+			sourceTree = "<group>";
+		};
 		05B48C7B1971A15800260F4A /* Serialization/Deserialization */ = {
 			isa = PBXGroup;
 			children = (
@@ -470,23 +494,24 @@
 		05E6870219508799009B38DA /* Peripheral */ = {
 			isa = PBXGroup;
 			children = (
-				05B460531999BA5B00E6AF71 /* PeripheralManagerCell.swift */,
-				05B45BE019A4E4FA009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */,
-				05B45BDE19A4E3FB009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */,
-				05B45BD819A3805C009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */,
-				05B45BDA19A385F8009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */,
-				05B46059199A66F200E6AF71 /* PeripheralManagerServiceProfilesViewController.swift */,
-				05B45BDC19A4DFAD009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */,
-				05B46055199A60AE00E6AF71 /* PeripheralManagerServicesViewController.swift */,
-				05C9F82D1997F1E4001F7EC3 /* PeripheralManagersViewController.swift */,
-				05277C9C1944CAE50022FB59 /* PeripheralManagerViewController.swift */,
+				05B45BE819A78BA2009DAF6D /* PeripheralManagerCell.swift */,
+				05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */,
+				05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */,
+				05B45BEB19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */,
+				05B45BEC19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */,
+				05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */,
+				05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */,
+				05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */,
+				05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */,
+				05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */,
 			);
-			name = Peripheral;
+			path = Peripheral;
 			sourceTree = "<group>";
 		};
 		05E68703195087D0009B38DA /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
+				05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */,
 				05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */,
 				05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */,
 				05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */,
@@ -669,40 +694,40 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05B45BDB19A385F8009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */,
-				05277C9F1944CAE50022FB59 /* PeripheralManagerViewController.swift in Sources */,
-				05B460541999BA5B00E6AF71 /* PeripheralManagerCell.swift in Sources */,
+				05B45BF419A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */,
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
-				05B45BD919A3805C009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */,
-				05C9F82E1997F1E4001F7EC3 /* PeripheralManagersViewController.swift in Sources */,
 				05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */,
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
-				05B4605C199B06F700E6AF71 /* ServiceProfilesTableViewController.swift in Sources */,
+				05B45BF719A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift in Sources */,
+				05B45BF519A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */,
 				05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */,
+				05B45BF619A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */,
 				05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */,
+				05B45C0219A78C6B009DAF6D /* PeripheralStore.swift in Sources */,
+				05B45BF819A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */,
 				05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */,
 				05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */,
+				05B45BF319A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */,
 				05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */,
 				05F2A8DA199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift in Sources */,
+				05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */,
 				05F2A8E11993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift in Sources */,
-				05B45BE119A4E4FA009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */,
-				05764D7F1969D03B00E6C801 /* UIAlertControllerExtensions.swift in Sources */,
+				05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */,
+				05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */,
 				057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */,
-				05B45BDF19A4E3FB009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */,
+				05B45BF219A78BA2009DAF6D /* PeripheralManagerCell.swift in Sources */,
+				05B45C0419A78C6B009DAF6D /* UIAlertControllerExtensions.swift in Sources */,
 				05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */,
 				057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */,
-				05C9F8301997F383001F7EC3 /* PeripheralStore.swift in Sources */,
 				05F2A8DB199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */,
 				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,
-				058C134E197CD293008ECD6B /* ProgressView.swift in Sources */,
 				05F2A8DF1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift in Sources */,
 				05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */,
 				05F2A8DC199271FA00004260 /* ServiceCharacteristicProfileViewController.swift in Sources */,
-				05B4605A199A66F200E6AF71 /* PeripheralManagerServiceProfilesViewController.swift in Sources */,
 				05840F65194206F100C744E6 /* AppDelegate.swift in Sources */,
-				05B45BDD19A4DFAD009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */,
 				05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */,
-				05B46056199A60AE00E6AF71 /* PeripheralManagerServicesViewController.swift in Sources */,
+				05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */,
+				05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,6 +750,7 @@
 				05830538199684F70039E858 /* MutableService.swift in Sources */,
 				05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */,
 				05830534199684950039E858 /* PeripheralManager.swift in Sources */,
+				05B45BE419A78857009DAF6D /* LocationManager.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */,
 				05680DC119687D050000FECB /* BCErrors.swift in Sources */,

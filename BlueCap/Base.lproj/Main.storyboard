@@ -899,6 +899,54 @@
             </objects>
             <point key="canvasLocation" x="4130" y="1384"/>
         </scene>
+        <!--Configure-->
+        <scene sceneID="KQG-cK-xCm">
+            <objects>
+                <tableViewController id="z0r-2o-HqO" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Pjm-P8-fha">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection id="gGd-fN-SEn">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="0HI-MV-ohr">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0HI-MV-ohr" id="ihf-7o-wWK">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="z0r-2o-HqO" id="DWm-cy-L4r"/>
+                            <outlet property="delegate" destination="z0r-2o-HqO" id="Rnm-Pz-N8m"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Configure" id="RE9-39-6QO"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Txq-Jg-Rtt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1218" y="-1054"/>
+        </scene>
+        <!--Configure-->
+        <scene sceneID="jXa-TD-cFx">
+            <objects>
+                <navigationController id="Nrt-kH-UJi" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Configure" image="Configure" id="f0j-8s-vuy"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="5ws-Jj-Ebj">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="z0r-2o-HqO" kind="relationship" relationship="rootViewController" id="kCL-F7-dL4"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="c27-GX-6uh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="742" y="-1062"/>
+        </scene>
         <!--Advertisements-->
         <scene sceneID="UIA-LO-yfN">
             <objects>
@@ -2387,11 +2435,12 @@
                         <segue destination="ekL-3M-31h" kind="relationship" relationship="viewControllers" id="h88-ZA-rxW"/>
                         <segue destination="2ap-Lu-enV" kind="relationship" relationship="viewControllers" id="xTt-P3-sn4"/>
                         <segue destination="6n5-d3-u2z" kind="relationship" relationship="viewControllers" id="H25-Dx-5BK"/>
+                        <segue destination="Nrt-kH-UJi" kind="relationship" relationship="viewControllers" id="LpX-ku-a5r"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iBa-5o-wCk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="223" y="927"/>
+            <point key="canvasLocation" x="102" y="927"/>
         </scene>
         <!--Central-->
         <scene sceneID="9nG-V3-L1A">
@@ -2413,8 +2462,9 @@
     </scenes>
     <resources>
         <image name="Central" width="30" height="30"/>
-        <image name="Peripheral" width="30" height="30"/>
-        <image name="Profiles" width="30" height="30"/>
+        <image name="Configure" width="26" height="26"/>
+        <image name="Peripheral" width="24" height="20"/>
+        <image name="Profiles" width="26" height="22"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
