@@ -50,7 +50,7 @@
 		05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */; };
 		05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */; };
 		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
-		05B45BE419A78857009DAF6D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE319A78857009DAF6D /* LocationManager.swift */; };
+		05B45BE419A78857009DAF6D /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE319A78857009DAF6D /* RegionManager.swift */; };
 		05B45BE619A788BC009DAF6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B45BE519A788BC009DAF6D /* CoreLocation.framework */; };
 		05B45BE719A788E0009DAF6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B45BE519A788BC009DAF6D /* CoreLocation.framework */; };
 		05B45BF219A78BA2009DAF6D /* PeripheralManagerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE819A78BA2009DAF6D /* PeripheralManagerCell.swift */; };
@@ -182,7 +182,7 @@
 		05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; };
 		05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		05B45BE319A78857009DAF6D /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		05B45BE319A78857009DAF6D /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
 		05B45BE519A788BC009DAF6D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		05B45BE819A78BA2009DAF6D /* PeripheralManagerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerCell.swift; sourceTree = "<group>"; };
 		05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
@@ -458,7 +458,7 @@
 			isa = PBXGroup;
 			children = (
 				05B45C0519A859A2009DAF6D /* BeaconManager.swift */,
-				05B45BE319A78857009DAF6D /* LocationManager.swift */,
+				05B45BE319A78857009DAF6D /* RegionManager.swift */,
 			);
 			name = Location;
 			sourceTree = "<group>";
@@ -753,7 +753,7 @@
 				05830538199684F70039E858 /* MutableService.swift in Sources */,
 				05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */,
 				05830534199684950039E858 /* PeripheralManager.swift in Sources */,
-				05B45BE419A78857009DAF6D /* LocationManager.swift in Sources */,
+				05B45BE419A78857009DAF6D /* RegionManager.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */,
 				05680DC119687D050000FECB /* BCErrors.swift in Sources */,

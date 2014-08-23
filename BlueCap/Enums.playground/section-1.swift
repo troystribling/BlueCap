@@ -54,4 +54,14 @@ if let vals = a["1"] {
     let x = vals + ["3"]
 }
 
+var callbacks : Dictionary<Int, (value:Int)->Int> = [:]
+
+func f(value:Int) -> Int {
+    return value + 2
+}
+
+callbacks[1] = f
+var h = callbacks[1]
+callbacks[1]
+h!(value: 2)
 
