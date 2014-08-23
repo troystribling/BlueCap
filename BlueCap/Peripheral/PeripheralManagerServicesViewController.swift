@@ -31,6 +31,11 @@ class PeripheralManagerServicesViewController : UITableViewController {
     override func viewWillAppear(animated:Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Services"
+        if PeripheralManager.sharedInstance().isAdvertising {
+            self.navigationItem.rightBarButtonItem.enabled = false
+        } else {
+            self.navigationItem.rightBarButtonItem.enabled = true
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {

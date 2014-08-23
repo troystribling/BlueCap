@@ -18,7 +18,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     @IBOutlet var nameTextField         : UITextField!
     @IBOutlet var advertiseButton       : UIButton!
-    @IBOutlet var servicesLable         : UILabel!
     
     var peripheral : String?
     
@@ -58,7 +57,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if identifier == MainStoryboard.peripheralManagerServicesSegue {
             if let peripheral = self.peripheral {
                 let manager = PeripheralManager.sharedInstance()
-                return manager.isPoweredOn && !manager.isAdvertising
+                return manager.isPoweredOn
             } else {
                 return false
             }
@@ -130,19 +129,16 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             let peripheralManager = PeripheralManager.sharedInstance()
             if peripheralManager.isAdvertising {
                 self.advertiseButton.setTitle("Stop Advertising", forState:.Normal)
-                self.servicesLable.textColor = UIColor.lightGrayColor()
                 self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(true, animated:true)
                 self.nameTextField.enabled = false
             } else {
-                self.servicesLable.textColor = UIColor.blackColor()
                 self.advertiseButton.setTitle("Start Advertising", forState:.Normal)
                 self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(false, animated:true)
                 self.nameTextField.enabled = true
             }
         } else {
-            self.servicesLable.textColor = UIColor.grayColor()
             self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
             self.advertiseButton.enabled = false
         }

@@ -216,7 +216,6 @@
                     <connections>
                         <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
-                        <outlet property="servicesLable" destination="wDR-Ed-JgW" id="YTw-hi-YOh"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UMo-vV-JBu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -928,7 +927,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Txq-Jg-Rtt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1218" y="-1054"/>
+            <point key="canvasLocation" x="1218" y="-1062"/>
         </scene>
         <!--Configure-->
         <scene sceneID="jXa-TD-cFx">

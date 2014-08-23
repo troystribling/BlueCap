@@ -67,6 +67,7 @@
 		05B45C0219A78C6B009DAF6D /* PeripheralStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */; };
 		05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0019A78C6B009DAF6D /* ProgressView.swift */; };
 		05B45C0419A78C6B009DAF6D /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */; };
+		05B45C0619A859A2009DAF6D /* BeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0519A859A2009DAF6D /* BeaconManager.swift */; };
 		05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */; };
 		05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* NameUUIDCell.swift */; };
 		05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */; };
@@ -197,6 +198,7 @@
 		05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralStore.swift; sourceTree = "<group>"; };
 		05B45C0019A78C6B009DAF6D /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
+		05B45C0519A859A2009DAF6D /* BeaconManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconManager.swift; sourceTree = "<group>"; };
 		05B48C7C1971FA3200260F4A /* Structs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Structs.playground; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
 		05B6F0771957ACF300D798CB /* NameUUIDCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameUUIDCell.swift; sourceTree = "<group>"; };
@@ -455,6 +457,7 @@
 		05B45BE219A78257009DAF6D /* Location */ = {
 			isa = PBXGroup;
 			children = (
+				05B45C0519A859A2009DAF6D /* BeaconManager.swift */,
 				05B45BE319A78857009DAF6D /* LocationManager.swift */,
 			);
 			name = Location;
@@ -760,6 +763,7 @@
 				0552E40D1956055700F33D4E /* CharacteristicProfile.swift in Sources */,
 				05900F281982AEBD00CEAD0B /* BLESIGGATTProfiles.swift in Sources */,
 				0552E4091955EFD800F33D4E /* ProfileManager.swift in Sources */,
+				05B45C0619A859A2009DAF6D /* BeaconManager.swift in Sources */,
 				05AEAF97196C4591009E8A0C /* Int8Extensions.swift in Sources */,
 				0507F478198BDEE70036AF2B /* PairStructCharacteristicProfile.swift in Sources */,
 				05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */,

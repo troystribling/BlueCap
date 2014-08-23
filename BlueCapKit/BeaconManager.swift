@@ -1,5 +1,5 @@
 //
-//  LocationManager.swift
+//  BeaconManager.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/22/14.
@@ -9,8 +9,8 @@
 import Foundation
 import CoreLocation
 
-public class LocationManager : NSObject,  CLLocationManagerDelegate {
-
+public class BeaconManager : NSObject, CLLocationManagerDelegate {
+    
     var clLocationManager : CLLocationManager!
     
     public override init() {
@@ -18,25 +18,12 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         self.clLocationManager = CLLocationManager()
         self.clLocationManager.delegate = self
     }
-    
-    public class func authorizationStatus() -> CLAuthorizationStatus {
-        return CLLocationManager.authorizationStatus()
-    }
-    
-    public class func locationServicesEnabled() -> Bool {
-        return CLLocationManager.locationServicesEnabled()
+
+    public class func isRangingAvailable() -> Bool {
+        return CLLocationManager.isRangingAvailable()
     }
     
     // CLLocationManagerDelegate
-    public func locationManager(_: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-    }
-    
-    public func locationManager(_:CLLocationManager!, didFailWithError error:NSError!) {
-    }
-    
-    public func locationManager(_: CLLocationManager!, didFinishDeferredUpdatesWithError error:NSError!) {
-    }
-    
     public func locationManagerDidPauseLocationUpdates(_:CLLocationManager!) {
     }
     
@@ -55,9 +42,16 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     public func locationManager(_:CLLocationManager!, didStartMonitoringForRegion region:CLRegion!) {
     }
     
+    public func locationManager(_:CLLocationManager!, didRangeBeacons beacons:[AnyObject]!, inRegion region:CLBeaconRegion!) {
+    }
+    
+    public func locationManager(_:CLLocationManager!, rangingBeaconsDidFailForRegion region:CLBeaconRegion!, withError error:NSError!) {
+    }
+    
     public func locationManager(_:CLLocationManager!,  didVisit visit:CLVisit!) {
     }
     
     public func locationManager(_:CLLocationManager!, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
     }
+
 }
