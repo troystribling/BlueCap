@@ -235,11 +235,8 @@ public class Characteristic {
     
     internal func didDiscover() {
         Logger.debug("Characteristic#didDiscover:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-        if let afterDiscoveredCallback = self.profile.afterDiscoveredCallback {
-            CentralManager.asyncCallback(){afterDiscoveredCallback(characteristic:self)}
-        }
-        if let profileAfterDiscoveredCallback = self.profile.afterDiscoveredCallback {
-            profileAfterDiscoveredCallback(characteristic:self)
+        if let afterDiscovered = self.profile.afterDiscovered {
+            CentralManager.asyncCallback(){afterDiscovered(characteristic:self)}
         }
     }
     

@@ -11,16 +11,15 @@ import CoreBluetooth
 
 public class CharacteristicProfile {
     
-    // INTERNAL
-    internal var afterDiscoveredCallback : ((characteristic:Characteristic) -> ())?
-
     // PUBLIC
-    public let uuid                     : CBUUID
-    public let name                     : String
-    public var permissions              : CBAttributePermissions
-    public var properties               : CBCharacteristicProperties
-    public var initialValue             : NSData?
-    
+    public let uuid                 : CBUUID
+    public let name                 : String
+    public var permissions          : CBAttributePermissions
+    public var properties           : CBCharacteristicProperties
+    public var initialValue         : NSData?
+
+    public var afterDiscovered      : ((characteristic:Characteristic) -> ())?
+
     public var discreteStringValues : [String] {
         return []
     }
@@ -42,11 +41,7 @@ public class CharacteristicProfile {
     public func permissionEnabled(permission:CBAttributePermissions) -> Bool {
         return (self.permissions.toRaw() & permission.toRaw()) > 0
     }
-    
-    public func afterDiscovered(afterDiscoveredCallback:(characteristic:Characteristic) -> ()) {
-        self.afterDiscoveredCallback = afterDiscoveredCallback
-    }
-    
+        
     public func stringValues(data:NSData) -> Dictionary<String, String>? {
         return [self.name:data.hexStringValue()]
     }
