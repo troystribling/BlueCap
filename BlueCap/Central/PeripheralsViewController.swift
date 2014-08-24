@@ -112,21 +112,21 @@ class PeripheralsViewController : UITableViewController {
     
     func connect(peripheral:Peripheral) {
         peripheral.connect(Connectorator() {(connectorator:Connectorator) -> () in
-            connectorator.onDisconnect() {(periphear:Peripheral) -> () in
+            connectorator.onDisconnect = {(periphear:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onDisconnect")
                 peripheral.reconnect()
                 self.tableView.reloadData()
             }
-            connectorator.onConnect() {(peipheral:Peripheral) -> () in
+            connectorator.onConnect = {(peipheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onConnect")
                 self.tableView.reloadData()
             }
-            connectorator.onTimeout() {(peripheral:Peripheral) -> () in
+            connectorator.onTimeout = {(peripheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onTimeout")
                 peripheral.reconnect()
                 self.tableView.reloadData()
             }
-            connectorator.onForcedDisconnect() {(peripheral:Peripheral) -> () in
+            connectorator.onForcedDisconnect = {(peripheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onForcedDisconnect")
                 self.tableView.reloadData()
             }

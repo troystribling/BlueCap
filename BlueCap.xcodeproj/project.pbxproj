@@ -43,6 +43,7 @@
 		05900F2A198368DB00CEAD0B /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F29198368DB00CEAD0B /* GnosusProfiles.swift */; };
 		05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2B198368EC00CEAD0B /* NordicProfiles.swift */; };
 		05900F2E1984205A00CEAD0B /* StringCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */; };
+		05AD0DED19AA72BF001E8299 /* Scannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AD0DEC19AA72BF001E8299 /* Scannerator.swift */; };
 		05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */; };
 		05AEAF93196C44B2009E8A0C /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */; };
 		05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */; };
@@ -176,6 +177,7 @@
 		05900F29198368DB00CEAD0B /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		05900F2B198368EC00CEAD0B /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
 		05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCharacteristicProfile.swift; sourceTree = "<group>"; };
+		05AD0DEC19AA72BF001E8299 /* Scannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scannerator.swift; sourceTree = "<group>"; };
 		05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeDeserialize.swift; sourceTree = "<group>"; };
 		05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
 		05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
@@ -263,12 +265,13 @@
 		0516666E1944F043006A337C /* Central */ = {
 			isa = PBXGroup;
 			children = (
+				05680DC019687D050000FECB /* BCErrors.swift */,
 				05277CA21944CB0E0022FB59 /* CentralManager.swift */,
 				0516666A1944EF9F006A337C /* Characteristic.swift */,
 				054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */,
 				05277CA31944CB0E0022FB59 /* Peripheral.swift */,
+				05AD0DEC19AA72BF001E8299 /* Scannerator.swift */,
 				05F929831949498200542A1E /* Service.swift */,
-				05680DC019687D050000FECB /* BCErrors.swift */,
 			);
 			name = Central;
 			sourceTree = "<group>";
@@ -775,6 +778,7 @@
 				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
 				054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */,
 				05900F2A198368DB00CEAD0B /* GnosusProfiles.swift in Sources */,
+				05AD0DED19AA72BF001E8299 /* Scannerator.swift in Sources */,
 				05F328211970957200821D14 /* StructCharacteristicProfile.swift in Sources */,
 				05CAF6CD1960E22500F6D598 /* StringExtensions.swift in Sources */,
 				05F3281D196E2EE700821D14 /* DeserializedCharacteristicProfile.swift in Sources */,
