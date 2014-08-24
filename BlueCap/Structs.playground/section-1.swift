@@ -56,4 +56,3 @@ let a = [1,2,3,4,5]
 let b = a[1...a.count-1]
 
 println(Array(1...4).map{$0+2})
-

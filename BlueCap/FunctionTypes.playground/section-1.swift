@@ -1,6 +1,5 @@
 // Playground - noun: a place where people can play
 import Foundation
-import CoreBluetooth
 
 // function types
 var a : (()->())?
@@ -63,5 +62,30 @@ f2!(j:Junk(), s:"Test")
 var x = ["1":"a", "2":"b", "3":"c"]
 Array(x.values)
 
-let cc : CBCharacteristicProperties = .Read
-cc.toRaw() | CBCharacteristicProperties.Write.toRaw()
+var z = {(value:Int) -> Int in
+    return value + 3
+}
+
+z(3)
+
+// store closues in dictionary
+class Methods {
+    var meths : Dictionary<Int, (Int)->Int> = [:]
+    func addMeth(val:Int, meth:(Int)->Int) {
+        meths[val] = meth
+    }
+}
+
+var holder = Methods()
+holder.addMeth(2){(value) in
+    return value + 1
+}
+holder.addMeth(4){(value) in
+    return value * 2
+}
+if let f = holder.meths[2] {
+    f(2)
+}
+if let v = holder.meths[4] {
+    v(4)
+}

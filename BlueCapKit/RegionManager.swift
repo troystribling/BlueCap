@@ -11,13 +11,14 @@ import CoreLocation
 
 public class RegionManager : NSObject,  CLLocationManagerDelegate {
 
-    private var clLocationManager               : CLLocationManager!
-    private var locationsUpdateSuccessCallback  : ((locations:[AnyObject]!) -> ())?
-    private var locationsUpdateFailedCallback   : ((error:NSError!) -> ())?
-    private var pausedLocationUpdatesCallback   : (() -> ())?
-    private var resumedLocationUpdatesCallback  : (() -> ())?
-    private var enterRegionCallbacks            : Dictionary<CLRegion, ()->()> = [:]
-    private var exitRegionCallbacks             : Dictionary<CLRegion, ()->()> = [:]
+    private var clLocationManager   : CLLocationManager!
+    private var regionMonitors      : Dictionary<CLRegion, RegionMonitor> = [:]
+    
+    public var locationsUpdateSuccess      : ((locations:[AnyObject]!) -> ())?
+    public var locationsUpdateFailed       : ((error:NSError!) -> ())?
+    public var pausedLocationUpdates       : (() -> ())?
+    public var resumedLocationUpdates      : (() -> ())?
+    public var authorizationStatusChanged  : (() -> ())?
     
     public var distanceFilter : CLLocationDistance {
         get {
@@ -38,7 +39,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public var monitoredRegions : [CLRegion] {
-        return Array(self.enterRegionCallbacks.keys)
+        return Array(self.regionMonitors.keys)
     }
     
     public var maximumRegionMonitoringDistance : CLLocationDistance {
@@ -60,23 +61,6 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         return CLLocationManager.locationServicesEnabled()
     }
     
-    // callbacks
-    public func onlocationsUpdateSuccess(locationsUpdateSuccess:(locations:[AnyObject]!) -> ()) {
-        self.locationsUpdateSuccessCallback = locationsUpdateSuccess
-    }
-    
-    public func onlocationsUpdateFailed(locationsUpdateFailed:(error:NSError!) -> ()) {
-        self.locationsUpdateFailedCallback = locationsUpdateFailed
-    }
-
-    public func onPausedLocationUpdates(pausedLocationUpdates:() -> ()) {
-        self.pausedLocationUpdatesCallback = pausedLocationUpdates
-    }
-
-    public func onResumedLocationUpdates(resumedLocationUpdates:() -> ()) {
-        self.resumedLocationUpdatesCallback = resumedLocationUpdates
-    }
-
     // control
     public func startUpdatingLocation() {
         self.clLocationManager.startUpdatingLocation()
@@ -86,22 +70,28 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         self.clLocationManager.stopUpdatingLocation()
     }
     
-    public func startMonitoringForRegion(region:CLRegion!) {
+    public func startMonitoringForRegion(region:CLRegion, regionMonitor:RegionMonitor) {
+        self.regionMonitors[region] = regionMonitor
+        self.clLocationManager.startMonitoringForRegion(region)
     }
 
-    public func stopMonitoringForRegion(region:CLRegion!) {
+    public func stopMonitoringForRegion(region:CLRegion) {
+        self.regionMonitors.removeValueForKey(region)
+        self.clLocationManager.stopMonitoringForRegion(region)
     }
 
     // CLLocationManagerDelegate
     public func locationManager(_: CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
-        if let locationsUpdateSuccessCallback = self.locationsUpdateSuccessCallback {
-            locationsUpdateSuccessCallback(locations:locations)
+        if let locationsUpdateSuccess = self.locationsUpdateSuccess {
+            Logger.debug("RegionManager#didUpdateLocations")
+            locationsUpdateSuccess(locations:locations)
         }
     }
     
     public func locationManager(_:CLLocationManager!, didFailWithError error:NSError!) {
-        if let locationsUpdateFaliedCallback = self.locationsUpdateFailedCallback {
-            locationsUpdateFaliedCallback(error:error)
+        if let locationsUpdateFalied = self.locationsUpdateFailed {
+            Logger.debug("RegionManager#didFailWithError: \(error.localizedDescription)")
+            locationsUpdateFalied(error:error)
         }
     }
     
@@ -109,26 +99,68 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public func locationManagerDidPauseLocationUpdates(_:CLLocationManager!) {
+        if let pausedLocationUpdates = self.pausedLocationUpdates {
+            Logger.debug("RegionManager#locationManagerDidPauseLocationUpdates")
+            pausedLocationUpdates()
+        }
     }
     
     public func locationManagerDidResumeLocationUpdates(_:CLLocationManager!) {
-    }
-    
-    public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
-    }
-    
-    public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
-    }
-    
-    public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
-    }
-    
-    public func locationManager(_:CLLocationManager!, didStartMonitoringForRegion region:CLRegion!) {
-    }
-    
-    public func locationManager(_:CLLocationManager!,  didVisit visit:CLVisit!) {
+        if let resumedLocationUpdates = self.resumedLocationUpdates {
+            Logger.debug("RegionManager#locationManagerDidResumeLocationUpdates")
+            resumedLocationUpdates()
+        }
     }
     
     public func locationManager(_:CLLocationManager!, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
+        if let authorizationStatusChanged = self.authorizationStatusChanged {
+            Logger.debug("RegionManager#didChangeAuthorizationStatus")
+            authorizationStatusChanged()
+        }
+    }
+
+    // regions
+    public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
+        if let regionMonitor = self.regionMonitors[region] {
+            if let enterRegion = regionMonitor.enterRegion {
+                Logger.debug("RegionManager#didEnterRegion")
+                enterRegion()
+            }
+        }
+    }
+    
+    public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
+        if let regionMonitor = self.regionMonitors[region] {
+            if let exitRegion = regionMonitor.exitRegion {
+                Logger.debug("RegionManager#didExitRegion")
+                exitRegion()
+            }
+        }
+    }
+    
+    public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
+        if let regionMonitor = self.regionMonitors[region] {
+            if let regionStateChanged = regionMonitor.regionStateChanged {
+                Logger.debug("RegionManager#didDetermineState")
+                regionStateChanged(state:state)
+            }
+        }
+    }
+    
+    public func locationManager(_:CLLocationManager!, monitoringDidFailForRegion region:CLRegion!, withError error:NSError!) {
+        if let regionMonitor = self.regionMonitors[region] {
+            if let errorMonitoringRegion = regionMonitor.errorMonitoringRegion {
+                errorMonitoringRegion(error:error)
+            }
+        }
+    }
+    
+    public func locationManager(_:CLLocationManager!, didStartMonitoringForRegion region:CLRegion!) {
+        if let regionMonitor = self.regionMonitors[region] {
+            if let startMonitoringRegion = regionMonitor.startMonitoringRegion {
+                Logger.debug("RegionManager#didStartMonitoringForRegion")
+                startMonitoringRegion()
+            }
+        }
     }
 }
