@@ -9,6 +9,22 @@
 import Foundation
 import CoreBluetooth
 
-class Scannerator {
+public class Scannerator {
     
+    private var timeoutRetries              = 0
+    
+    internal var timeoutSeconds : Float    = 10.0
+    
+    public var onTimeout : (() -> ())?
+    
+    public init() {
+    }
+    
+    public init(timeoutSeconds:Float, timeoutRetries:Int) {
+        self.timeoutRetries = timeoutRetries
+        self.timeoutSeconds = timeoutSeconds
+    }
+    
+    internal func didTimeout() {
+    }
 }

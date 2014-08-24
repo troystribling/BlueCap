@@ -16,12 +16,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private var afterPowerOffCallback               : (()->())?
     private var afterPeripheralDiscoveredCallback   : ((peripheral:Peripheral, rssi:Int)->())?
 
-    private let cbCentralManager        : CBCentralManager!
+    private let cbCentralManager    : CBCentralManager!
+    private var scannerator         : Scannerator?
 
     private let centralQueue            = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
-
-    private var connecting  = false
-    private var _isScanning = false
+    
+    private var _isScanning     = false
     
     // INTERNAL
     internal var discoveredPeripherals   : Dictionary<CBPeripheral, Peripheral> = [:]
@@ -230,6 +230,22 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("CentralManager#unpackAdvertisements unpacked \(advertisements.count) advertisements")
         return advertisements
     }
+    
+    private func timeoutScan() {
+        if let scannerator = self.scannerator {
+            Logger.debug("CentralManager#timeoutScan: starting")
+            self.delayCallback(scannerator.timeoutSeconds) {
+                if self.discoveredPeripherals.count == 0 {
+                    Logger.debug("CentralManager#timeoutScan: timing out")
+                    self.stopScanning()
+                    scannerator.didTimeout()
+                } else {
+                    Logger.debug("CentralManager#timeoutScan: expired")
+                }
+            }
+        }
+    }
+
     
 }
 
