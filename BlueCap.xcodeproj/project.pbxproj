@@ -43,7 +43,7 @@
 		05900F2A198368DB00CEAD0B /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F29198368DB00CEAD0B /* GnosusProfiles.swift */; };
 		05900F2C198368EC00CEAD0B /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2B198368EC00CEAD0B /* NordicProfiles.swift */; };
 		05900F2E1984205A00CEAD0B /* StringCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */; };
-		05AD0DED19AA72BF001E8299 /* Scannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AD0DEC19AA72BF001E8299 /* Scannerator.swift */; };
+		05AD0DED19AA72BF001E8299 /* TimedScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AD0DEC19AA72BF001E8299 /* TimedScannerator.swift */; };
 		05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */; };
 		05AEAF93196C44B2009E8A0C /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */; };
 		05AEAF95196C457C009E8A0C /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */; };
@@ -52,6 +52,7 @@
 		05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */; };
 		05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */; };
 		05B24330194536A400E8E878 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2432F194536A400E8E878 /* Logger.swift */; };
+		05B24E3B19AB8C000034BDC9 /* RegionScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B24E3A19AB8C000034BDC9 /* RegionScannerator.swift */; };
 		05B45BE419A78857009DAF6D /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE319A78857009DAF6D /* RegionManager.swift */; };
 		05B45BE619A788BC009DAF6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B45BE519A788BC009DAF6D /* CoreLocation.framework */; };
 		05B45BE719A788E0009DAF6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B45BE519A788BC009DAF6D /* CoreLocation.framework */; };
@@ -177,7 +178,7 @@
 		05900F29198368DB00CEAD0B /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		05900F2B198368EC00CEAD0B /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
 		05900F2D1984205A00CEAD0B /* StringCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCharacteristicProfile.swift; sourceTree = "<group>"; };
-		05AD0DEC19AA72BF001E8299 /* Scannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scannerator.swift; sourceTree = "<group>"; };
+		05AD0DEC19AA72BF001E8299 /* TimedScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScannerator.swift; sourceTree = "<group>"; };
 		05AEAF90196C3909009E8A0C /* SerializeDeserialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeDeserialize.swift; sourceTree = "<group>"; };
 		05AEAF92196C44B2009E8A0C /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
 		05AEAF94196C457C009E8A0C /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
@@ -186,6 +187,7 @@
 		05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; };
 		05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
 		05B2432F194536A400E8E878 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		05B24E3A19AB8C000034BDC9 /* RegionScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionScannerator.swift; sourceTree = "<group>"; };
 		05B45BE319A78857009DAF6D /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
 		05B45BE519A788BC009DAF6D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		05B45BE819A78BA2009DAF6D /* PeripheralManagerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerCell.swift; sourceTree = "<group>"; };
@@ -270,7 +272,8 @@
 				0516666A1944EF9F006A337C /* Characteristic.swift */,
 				054D47B6194CDC9F00C6B7D0 /* Connectorator.swift */,
 				05277CA31944CB0E0022FB59 /* Peripheral.swift */,
-				05AD0DEC19AA72BF001E8299 /* Scannerator.swift */,
+				05B24E3A19AB8C000034BDC9 /* RegionScannerator.swift */,
+				05AD0DEC19AA72BF001E8299 /* TimedScannerator.swift */,
 				05F929831949498200542A1E /* Service.swift */,
 			);
 			name = Central;
@@ -762,6 +765,7 @@
 				05B45BE419A78857009DAF6D /* RegionManager.swift in Sources */,
 				0516666B1944EF9F006A337C /* Characteristic.swift in Sources */,
 				05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */,
+				05B24E3B19AB8C000034BDC9 /* RegionScannerator.swift in Sources */,
 				051963CF19AA59730090CF0A /* RegionMonitor.swift in Sources */,
 				05680DC119687D050000FECB /* BCErrors.swift in Sources */,
 				05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */,
@@ -778,7 +782,7 @@
 				05277CA51944CB0E0022FB59 /* Peripheral.swift in Sources */,
 				054D47B7194CDC9F00C6B7D0 /* Connectorator.swift in Sources */,
 				05900F2A198368DB00CEAD0B /* GnosusProfiles.swift in Sources */,
-				05AD0DED19AA72BF001E8299 /* Scannerator.swift in Sources */,
+				05AD0DED19AA72BF001E8299 /* TimedScannerator.swift in Sources */,
 				05F328211970957200821D14 /* StructCharacteristicProfile.swift in Sources */,
 				05CAF6CD1960E22500F6D598 /* StringExtensions.swift in Sources */,
 				05F3281D196E2EE700821D14 /* DeserializedCharacteristicProfile.swift in Sources */,

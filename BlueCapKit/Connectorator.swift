@@ -28,15 +28,15 @@ public class Connectorator {
     public init () {
     }
     
-    public init(initConnector:(connector:Connectorator) -> ()) {
-        initConnector(connector:self)
+    public init(initializer:(connector:Connectorator) -> ()) {
+        initializer(connector:self)
     }
     
-    public init(timeoutRetries:Int, disconnectRetries:Int, initConnector:((connector:Connectorator) -> ())? = nil) {
+    public init(timeoutRetries:Int, disconnectRetries:Int, initializer:((connector:Connectorator) -> ())? = nil) {
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
-        if let runInitConnector = initConnector {
-            runInitConnector(connector:self)
+        if let initializer = initializer {
+            initializer(connector:self)
         }
     }
     
