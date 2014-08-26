@@ -11,13 +11,20 @@ import CoreLocation
 
 public class RegionMonitor {
     
+    private var _region : CLRegion
+    
     public var enterRegion              : (() -> ())?
     public var exitRegion               : (() -> ())?
     public var startMonitoringRegion    : (() -> ())?
     public var regionStateChanged       : ((state:CLRegionState) -> ())?
     public var errorMonitoringRegion    : ((error:NSError!) -> ())?
     
-    init(initializer:(monitor:RegionMonitor) -> ()) {
+    public var region : CLRegion {
+        return self._region
+    }
+    
+    public init(region:CLRegion, initializer:(monitor:RegionMonitor) -> ()) {
+        self._region = region
         initializer(monitor:self)
     }
 }

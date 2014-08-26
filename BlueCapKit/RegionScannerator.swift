@@ -12,14 +12,18 @@ import CoreBluetooth
 
 public class RegionScannerator {
  
-    private let _regions : [CLRegion]
+    private let _regionManager : RegionManager
     
     public var regions : [CLRegion] {
-        return self._regions
+        return self._regionManager.regions
+    }
+
+    public var regionManager : RegionManager {
+        return self._regionManager
     }
     
-    public init(regions:[CLRegion], initializer:((scannerator:RegionScannerator) -> ())? = nil) {
-        self._regions = regions
+    public init(initializer:((scannerator:RegionScannerator) -> ())? = nil) {
+        self._regionManager = RegionManager()
         if let initializer = initializer {
             initializer(scannerator:self)
         }
@@ -35,6 +39,13 @@ public class RegionScannerator {
     
     public func stopScanning() {
         CentralManager.sharedInstance().stopScanning()
+    }
+    
+    public func addRegion(region:RegionMonitor) {
+    }
+    
+    public func removeRegion(region:RegionMonitor) {
+        
     }
 
 }

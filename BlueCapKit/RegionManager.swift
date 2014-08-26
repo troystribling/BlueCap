@@ -11,8 +11,8 @@ import CoreLocation
 
 public class RegionManager : NSObject,  CLLocationManagerDelegate {
 
-    private var clLocationManager   : CLLocationManager!
-    private var regionMonitors      : Dictionary<CLRegion, RegionMonitor> = [:]
+    private var clLocationManager           : CLLocationManager!
+    private var configuredRegionMonitors    : Dictionary<CLRegion, RegionMonitor> = [:]
     
     public var locationsUpdateSuccess      : ((locations:[AnyObject]!) -> ())?
     public var locationsUpdateFailed       : ((error:NSError!) -> ())?
@@ -38,19 +38,25 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         }
     }
     
-    public var monitoredRegions : [CLRegion] {
-        return Array(self.regionMonitors.keys)
+    public var regions : [CLRegion] {
+        return Array(self.configuredRegionMonitors.keys)
+    }
+    
+    public var regionMonitors : [RegionMonitor] {
+        return Array(self.configuredRegionMonitors.values)
     }
     
     public var maximumRegionMonitoringDistance : CLLocationDistance {
         return self.clLocationManager.maximumRegionMonitoringDistance
     }
     
-    public init(initializer:(manager:RegionManager) -> ()) {
+    public init(initializer:((manager:RegionManager) -> ())? = nil) {
         super.init()
         self.clLocationManager = CLLocationManager()
         self.clLocationManager.delegate = self
-        initializer(manager:self)
+        if let initializer = initializer {
+            initializer(manager:self)
+        }
     }
     
     public class func authorizationStatus() -> CLAuthorizationStatus {
@@ -70,13 +76,13 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         self.clLocationManager.stopUpdatingLocation()
     }
     
-    public func startMonitoringForRegion(region:CLRegion, regionMonitor:RegionMonitor) {
-        self.regionMonitors[region] = regionMonitor
-        self.clLocationManager.startMonitoringForRegion(region)
+    public func startMonitoringForRegion(regionMonitor:RegionMonitor) {
+        self.configuredRegionMonitors[regionMonitor.region] = regionMonitor
+        self.clLocationManager.startMonitoringForRegion(regionMonitor.region)
     }
 
     public func stopMonitoringForRegion(region:CLRegion) {
-        self.regionMonitors.removeValueForKey(region)
+        self.configuredRegionMonitors.removeValueForKey(region)
         self.clLocationManager.stopMonitoringForRegion(region)
     }
 
@@ -121,7 +127,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
 
     // regions
     public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
-        if let regionMonitor = self.regionMonitors[region] {
+        if let regionMonitor = self.configuredRegionMonitors[region] {
             if let enterRegion = regionMonitor.enterRegion {
                 Logger.debug("RegionManager#didEnterRegion")
                 enterRegion()
@@ -130,7 +136,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
-        if let regionMonitor = self.regionMonitors[region] {
+        if let regionMonitor = self.configuredRegionMonitors[region] {
             if let exitRegion = regionMonitor.exitRegion {
                 Logger.debug("RegionManager#didExitRegion")
                 exitRegion()
@@ -139,7 +145,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
-        if let regionMonitor = self.regionMonitors[region] {
+        if let regionMonitor = self.configuredRegionMonitors[region] {
             if let regionStateChanged = regionMonitor.regionStateChanged {
                 Logger.debug("RegionManager#didDetermineState")
                 regionStateChanged(state:state)
@@ -148,7 +154,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public func locationManager(_:CLLocationManager!, monitoringDidFailForRegion region:CLRegion!, withError error:NSError!) {
-        if let regionMonitor = self.regionMonitors[region] {
+        if let regionMonitor = self.configuredRegionMonitors[region] {
             if let errorMonitoringRegion = regionMonitor.errorMonitoringRegion {
                 errorMonitoringRegion(error:error)
             }
@@ -156,7 +162,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public func locationManager(_:CLLocationManager!, didStartMonitoringForRegion region:CLRegion!) {
-        if let regionMonitor = self.regionMonitors[region] {
+        if let regionMonitor = self.configuredRegionMonitors[region] {
             if let startMonitoringRegion = regionMonitor.startMonitoringRegion {
                 Logger.debug("RegionManager#didStartMonitoringForRegion")
                 startMonitoringRegion()
