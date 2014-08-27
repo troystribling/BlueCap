@@ -46,7 +46,7 @@ public class MutableCharacteristic : NSObject {
     }
     
     public var stringValues : Dictionary<String, String>? {
-        if self.value {
+        if self.value != nil {
             return self.profile.stringValues(self.value)
         } else {
             return nil
@@ -54,7 +54,7 @@ public class MutableCharacteristic : NSObject {
     }
     
     public var anyValue : Any? {
-        if self.value {
+        if self.value != nil {
             return self.profile.anyValue(self.value)
         } else {
             return nil

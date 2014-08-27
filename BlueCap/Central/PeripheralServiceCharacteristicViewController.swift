@@ -36,7 +36,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     @IBOutlet var propertyNotifyEncryptionRequiredLabel     : UILabel!
     @IBOutlet var propertyIndicateEncryptionRequiredLabel   : UILabel!
     
-    required init(coder aDecoder:NSCoder!) {
+    required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

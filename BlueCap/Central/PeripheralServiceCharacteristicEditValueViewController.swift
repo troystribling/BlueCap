@@ -15,7 +15,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     var characteristic              : Characteristic?
     var valueName                   : String?
     
-    required init(coder aDecoder:NSCoder!) {
+    required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
 

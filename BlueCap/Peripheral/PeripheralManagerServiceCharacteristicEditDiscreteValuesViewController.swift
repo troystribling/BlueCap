@@ -17,7 +17,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         static let peripheralManagerServiceCharacteristicDiscreteValueCell  = "PeripheralManagerServiceCharacteristicEditDiscreteValueCell"
     }
     
-    required init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
     }
     

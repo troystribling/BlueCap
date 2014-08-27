@@ -22,7 +22,7 @@ class PeripheralsViewController : UITableViewController {
         static let peripheralCell = "PeripheralCell"
     }
     
-    required init(coder aDecoder:NSCoder!) {
+    required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleScan:")

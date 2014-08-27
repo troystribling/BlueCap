@@ -59,7 +59,7 @@ public class Characteristic {
     }
 
     public var stringValues : Dictionary<String, String>? {
-        if self.value {
+        if self.value != nil {
             return self.profile.stringValues(self.value)
         } else {
             return nil
@@ -67,7 +67,7 @@ public class Characteristic {
     }
     
     public var anyValue : Any? {
-        if self.value {
+        if self.value != nil {
             return self.profile.anyValue(self.value)
         } else {
             return nil
@@ -241,7 +241,7 @@ public class Characteristic {
     }
     
     internal func didUpdateNotificationState(error:NSError!) {
-        if error {
+        if error != nil {
             Logger.debug("Characteristic#didUpdateNotificationState Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let notificationStateChangedFailedCallback = self.notificationStateChangedFailedCallback {
                 CentralManager.asyncCallback(){notificationStateChangedFailedCallback(error:error)}
@@ -256,7 +256,7 @@ public class Characteristic {
     
     internal func didUpdate(error:NSError!) {
         self.reading = false
-        if error {
+        if error != nil {
             Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
                 CentralManager.asyncCallback(){afterUpdateFailedCallback(error:error)}
@@ -271,7 +271,7 @@ public class Characteristic {
     
     internal func didWrite(error:NSError!) {
         self.writing = false
-        if error {
+        if error != nil {
             Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterWriteFailedCallback = self.afterWriteFailedCallback {
                 CentralManager.asyncCallback(){afterWriteFailedCallback(error:error)}

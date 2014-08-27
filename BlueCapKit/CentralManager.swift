@@ -213,7 +213,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             }
             Logger.debug("CentralManager#unpackAdvertisements key:\(key), value:\(advertisements[key])")
         }
-        if (advertDictionary) {
+        if advertDictionary != nil {
             for keyObject : AnyObject in advertDictionary.allKeys {
                 let key = keyObject as String
                 let value : AnyObject! = advertDictionary.objectForKey(keyObject)

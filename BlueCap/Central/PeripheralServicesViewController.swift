@@ -18,7 +18,7 @@ class PeripheralServicesViewController : UITableViewController {
         static let peripheralServicesCharacteritics = "PeripheralServicesCharacteritics"
     }
     
-    required init(coder aDecoder:NSCoder!) {
+    required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

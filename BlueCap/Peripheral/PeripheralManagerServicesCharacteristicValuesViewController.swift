@@ -19,7 +19,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         static let peripheralManagerServicesCharacteristicValueCell                 = "PeripheralManagerServicesCharacteristicValueCell"
     }
     
-    required init(coder aDecoder:NSCoder!) {
+    required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

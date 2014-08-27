@@ -18,7 +18,7 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         static let peripheralManagerServiceCharacteristicSegue  = "PeripheralManagerServiceCharacteristic"
     }
     
-    required init(coder aDecoder:NSCoder!) {
+    required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

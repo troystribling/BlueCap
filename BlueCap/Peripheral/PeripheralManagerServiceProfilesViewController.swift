@@ -22,7 +22,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
         return MainStoryboard.peripheralManagerServiceCell
     }
 
-    required init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
         self.progressView = ProgressView()
     }

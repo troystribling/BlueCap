@@ -17,7 +17,7 @@ class ServiceProfilesTableViewController : UITableViewController {
     
     var serviceProfiles : Dictionary<String, [ServiceProfile]> = [:]
     
-    required init(coder aDecoder:NSCoder!)  {
+    required init(coder aDecoder:NSCoder)  {
         super.init(coder:aDecoder)
     }
     
