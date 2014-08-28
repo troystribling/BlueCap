@@ -14,16 +14,16 @@ public class RegionScannerator {
  
     internal class RegionScanneratorMonitor : RegionMonitor {
         
-        private var regionMonitor : RegionMonitor
+        internal var regionMonitor : RegionMonitor
         
         internal override var region : CLRegion {
             return self.regionMonitor.region
         }
         
-        internal init(regionMonitor:RegionMonitor, initializer:(monitor:RegionScanneratorMonitor) -> ()) {
+        internal init(regionMonitor:RegionMonitor, initializer:(regionMonitor:RegionScanneratorMonitor) -> ()) {
             self.regionMonitor = regionMonitor
             super.init(region:regionMonitor.region)
-            initializer(monitor:self)
+            initializer(regionMonitor:self)
         }
 
     }
@@ -57,7 +57,37 @@ public class RegionScannerator {
         CentralManager.sharedInstance().stopScanning()
     }
     
-    public func addRegion(region:RegionMonitor) {
+    public func addRegion(regionMonitor:RegionMonitor) {
+        let scanneratorMonitor = RegionScanneratorMonitor(regionMonitor:regionMonitor) {(regionMonitor) in
+            regionMonitor.exitRegion            = {
+                if let exitRegion = regionMonitor.regionMonitor.exitRegion {
+                    exitRegion()
+                } else {
+                }
+            }
+            regionMonitor.enterRegion           = {
+                if let enterRegion = regionMonitor.regionMonitor.enterRegion {
+                    enterRegion()
+                } else {                    
+                }
+            }
+            regionMonitor.startMonitoringRegion = {
+                if let startMonitoringRegion = regionMonitor.regionMonitor.startMonitoringRegion {
+                    startMonitoringRegion()
+                }
+            }
+            regionMonitor.regionStateChanged    = {(state) in
+                if let regionStateChanged = regionMonitor.regionMonitor.regionStateChanged {
+                    regionStateChanged(state:state)
+                }
+            }
+            regionMonitor.errorMonitoringRegion = {(error) in
+                if let errorMonitoringRegion = regionMonitor.regionMonitor.errorMonitoringRegion {
+                    errorMonitoringRegion(error:error)
+                }
+            }
+        }
+        self.regionManager.startMonitoringForRegion(regionMonitor)
     }
     
     public func removeRegion(regionMonitor:RegionMonitor) {

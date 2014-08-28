@@ -23,10 +23,10 @@ public class RegionMonitor {
         return self._region
     }
     
-    public init(region:CLRegion, initializer:((monitor:RegionMonitor) -> ())? = nil) {
+    public init(region:CLRegion, initializer:((regionMonitor:RegionMonitor) -> ())? = nil) {
         self._region = region
         if let initializer = initializer {
-            initializer(monitor:self)
+            initializer(regionMonitor:self)
         }
     }
 }
