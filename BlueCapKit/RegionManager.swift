@@ -81,9 +81,9 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         self.clLocationManager.startMonitoringForRegion(regionMonitor.region)
     }
 
-    public func stopMonitoringForRegion(region:CLRegion) {
-        self.configuredRegionMonitors.removeValueForKey(region)
-        self.clLocationManager.stopMonitoringForRegion(region)
+    public func stopMonitoringForRegion(regionMonitor:RegionMonitor) {
+        self.configuredRegionMonitors.removeValueForKey(regionMonitor.region)
+        self.clLocationManager.stopMonitoringForRegion(regionMonitor.region)
     }
 
     // CLLocationManagerDelegate

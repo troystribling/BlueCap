@@ -12,6 +12,22 @@ import CoreBluetooth
 
 public class RegionScannerator {
  
+    internal class RegionScanneratorMonitor : RegionMonitor {
+        
+        private var regionMonitor : RegionMonitor
+        
+        internal override var region : CLRegion {
+            return self.regionMonitor.region
+        }
+        
+        internal init(regionMonitor:RegionMonitor, initializer:(monitor:RegionScanneratorMonitor) -> ()) {
+            self.regionMonitor = regionMonitor
+            super.init(region:regionMonitor.region)
+            initializer(monitor:self)
+        }
+
+    }
+    
     private let _regionManager : RegionManager
     
     public var regions : [CLRegion] {
@@ -44,8 +60,8 @@ public class RegionScannerator {
     public func addRegion(region:RegionMonitor) {
     }
     
-    public func removeRegion(region:RegionMonitor) {
-        
+    public func removeRegion(regionMonitor:RegionMonitor) {
+        self.regionManager.stopMonitoringForRegion(regionMonitor)
     }
 
 }
