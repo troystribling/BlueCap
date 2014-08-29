@@ -12,9 +12,9 @@ import CoreBluetooth
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PRIVATE
-    private var afterPowerOnCallback                : (()->())?
-    private var afterPowerOffCallback               : (()->())?
-    private var afterPeripheralDiscoveredCallback   : ((peripheral:Peripheral, rssi:Int)->())?
+    private var afterPowerOn                    : (()->())?
+    private var afterPowerOff                   : (()->())?
+    private var afterPeripheralDiscovered       : ((peripheral:Peripheral, rssi:Int)->())?
 
     private let cbCentralManager    : CBCentralManager!
 
@@ -46,11 +46,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
     }
     
-    public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         if !self._isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDds")
             self._isScanning = true
-            self.afterPeripheralDiscoveredCallback = afterPeripheralDiscoveredCallback
+            self.afterPeripheralDiscovered = afterPeripheralDiscovered
             self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
     }
@@ -84,10 +84,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // power up
     public func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())? = nil) {
         Logger.debug("powerOn")
-        self.afterPowerOnCallback = afterPowerOn
-        self.afterPowerOffCallback = afterPowerOff
-        if self.poweredOn() && self.afterPowerOnCallback != nil {
-            asyncCallback(self.afterPowerOnCallback!)
+        self.afterPowerOn = afterPowerOn
+        self.afterPowerOff = afterPowerOff
+        if self.poweredOn() && self.afterPowerOn != nil {
+            asyncCallback(self.afterPowerOn!)
         }
     }
 
@@ -115,8 +115,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
-            if let afterPeripheralDiscoveredCallback = self.afterPeripheralDiscoveredCallback {
-                afterPeripheralDiscoveredCallback(peripheral:bcPeripheral, rssi:RSSI.integerValue)
+            if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
+                afterPeripheralDiscovered(peripheral:bcPeripheral, rssi:RSSI.integerValue)
             }
         }
     }
@@ -157,14 +157,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
-            if let afterPowerOffCallback = self.afterPowerOffCallback {
-                self.asyncCallback(afterPowerOffCallback)
+            if let afterPowerOff = self.afterPowerOff {
+                self.asyncCallback(afterPowerOff)
             }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            if let afterPowerOnCallback = self.afterPowerOnCallback {
-                self.asyncCallback(afterPowerOnCallback)
+            if let afterPowerOn = self.afterPowerOn {
+                self.asyncCallback(afterPowerOn)
             }
             break
         }
