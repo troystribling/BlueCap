@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import CoreBluetooth
 import BlueCapKit
 
 class PeripheralStore {
