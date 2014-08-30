@@ -50,13 +50,17 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         return self.clLocationManager.maximumRegionMonitoringDistance
     }
     
-    public init(initializer:((manager:RegionManager) -> ())? = nil) {
+    public class func sharedInstance() -> RegionManager {
+        if thisRegionManager == nil {
+            thisRegionManager = RegionManager()
+        }
+        return thisRegionManager!
+    }
+    
+    public override init() {
         super.init()
         self.clLocationManager = CLLocationManager()
         self.clLocationManager.delegate = self
-        if let initializer = initializer {
-            initializer(manager:self)
-        }
     }
     
     public class func authorizationStatus() -> CLAuthorizationStatus {
@@ -68,7 +72,10 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
     
     // control
-    public func startUpdatingLocation() {
+    public func startUpdatingLocation(initializer:((manager:RegionManager) -> ())? = nil) {
+        if let initializer = initializer {
+            initializer(manager:self)
+        }
         self.clLocationManager.startUpdatingLocation()
     }
     
@@ -170,3 +177,5 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         }
     }
 }
+
+var thisRegionManager : RegionManager?

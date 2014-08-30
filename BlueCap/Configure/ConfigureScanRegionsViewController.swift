@@ -1,21 +1,19 @@
 //
-//  ConfigureScanServicesViewController.swift
+//  ConfigureScanRegionsViewController.swift
 //  BlueCap
 //
-//  Created by Troy Stribling on 8/29/14.
+//  Created by Troy Stribling on 8/30/14.
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
-
 import UIKit
 import BlueCapKit
 
-class ConfigureScanServicesViewController : UITableViewController {
-   
+class ConfigureScanRegionsViewController : UITableViewController {
+    
     struct MainStoryboard {
-        static let configureScanServicesCell        = "ConfigureScanServicesCell"
-        static let configureScanServiceProfilesSegue    = "ConfigureScanServiceProfiles"
+        static let configureScanRegionsCell = "ConfigureScanRegionsCell"
     }
-
+    
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
@@ -25,15 +23,13 @@ class ConfigureScanServicesViewController : UITableViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        self.navigationItem.title = "Scanned Services"
         super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationItem.title = ""
     }
-
+    
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
         return 1
@@ -54,10 +50,10 @@ class ConfigureScanServicesViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanServicesCell, forIndexPath: indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanRegionsCell, forIndexPath: indexPath) as PeripheralManagerCell
         return cell
     }
     
     // UITableViewDelegate
-
+    
 }

@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BLESIGGATTProfiles.create()
         GnosusProfiles.create()
         NordicProfiles.create()
+        ConfigStore.setScanMode("Promiscuous")
         return true
     }
 

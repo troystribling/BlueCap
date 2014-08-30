@@ -11,6 +11,8 @@ import BlueCapKit
 
 class ConfigureScanModeViewController : UITableViewController {
     
+    let scanModes = ["Promiscuous", "Service"]
+    
     struct MainStoryboard {
         static let configureScanModeCell = "ConfigureScanModeCell"
     }
@@ -21,26 +23,30 @@ class ConfigureScanModeViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        return 0
-    }
-    
-    override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
-        return UITableViewCellEditingStyle.Delete
-    }
-    
-    override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
-            self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
-        }
+        return self.scanModes.count
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
+        let scanMode = scanModes[indexPath.row]
+        cell.textLabel.text = scanMode
+        if let configScanMode = ConfigStore.getScanMode() {
+            if scanMode == configScanMode {
+                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryType.None
+            }
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryType.None
+        }
         return cell
     }
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+        let scanMode = self.scanModes[indexPath.row]
+        ConfigStore.setScanMode(scanMode)
+        self.navigationController.popViewControllerAnimated(true)
     }
 
 }

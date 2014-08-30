@@ -20,6 +20,13 @@ class PeripheralStore {
             return []
         }
     }
+
+    class func addPeripheral(peripheral:String) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        var peripherals = self.getPeripherals()
+        Logger.debug("PeripheralStore#addPeripheral: \(peripheral)")
+        userDefaults.setObject(peripherals + [peripheral], forKey:"peripherals")
+    }
     
     class func getPeripheralServices(peripheral:String) -> [String] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
@@ -31,13 +38,6 @@ class PeripheralStore {
         }
     }
     
-    class func addPeripheral(peripheral:String) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        var peripherals = self.getPeripherals()
-        Logger.debug("PeripheralStore#addPeripheral: \(peripheral)")
-        userDefaults.setObject(peripherals + [peripheral], forKey:"peripherals")
-    }
-
     class func addPeripheralServices(peripheral:String, services:[String]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         Logger.debug("PeripheralStore#addPeripheralServices: \(peripheral), \(services)")

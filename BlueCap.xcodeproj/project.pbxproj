@@ -80,7 +80,8 @@
 		05D9D50E19B0DA4C001DBEBC /* ConfigureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */; };
 		05D9D51419B0E36B001DBEBC /* ConfigureScanModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */; };
 		05D9D51619B0E464001DBEBC /* ConfigureScanServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */; };
-		05D9D51819B0E502001DBEBC /* ConfigureScanModeServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51719B0E502001DBEBC /* ConfigureScanModeServiceProfilesViewController.swift */; };
+		05D9D51819B0E502001DBEBC /* ConfigureScanServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51719B0E502001DBEBC /* ConfigureScanServiceProfilesViewController.swift */; };
+		05D9D51A19B2266D001DBEBC /* ConfigureScanRegionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51919B2266D001DBEBC /* ConfigureScanRegionsViewController.swift */; };
 		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
 		05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */; };
 		05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */; };
@@ -221,7 +222,8 @@
 		05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureViewController.swift; sourceTree = "<group>"; };
 		05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanModeViewController.swift; sourceTree = "<group>"; };
 		05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanServicesViewController.swift; sourceTree = "<group>"; };
-		05D9D51719B0E502001DBEBC /* ConfigureScanModeServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanModeServiceProfilesViewController.swift; sourceTree = "<group>"; };
+		05D9D51719B0E502001DBEBC /* ConfigureScanServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanServiceProfilesViewController.swift; sourceTree = "<group>"; };
+		05D9D51919B2266D001DBEBC /* ConfigureScanRegionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanRegionsViewController.swift; sourceTree = "<group>"; };
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
 		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
@@ -487,7 +489,8 @@
 			isa = PBXGroup;
 			children = (
 				05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */,
-				05D9D51719B0E502001DBEBC /* ConfigureScanModeServiceProfilesViewController.swift */,
+				05D9D51919B2266D001DBEBC /* ConfigureScanRegionsViewController.swift */,
+				05D9D51719B0E502001DBEBC /* ConfigureScanServiceProfilesViewController.swift */,
 				05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */,
 				05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */,
 			);
@@ -729,6 +732,7 @@
 				05D9D50E19B0DA4C001DBEBC /* ConfigureViewController.swift in Sources */,
 				05D9D50A19B0D7B0001DBEBC /* ConfigStore.swift in Sources */,
 				05B45BF519A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */,
+				05D9D51A19B2266D001DBEBC /* ConfigureScanRegionsViewController.swift in Sources */,
 				05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */,
 				05B45BF619A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */,
 				05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */,
@@ -741,7 +745,7 @@
 				05D9D51419B0E36B001DBEBC /* ConfigureScanModeViewController.swift in Sources */,
 				05F2A8DA199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift in Sources */,
 				05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */,
-				05D9D51819B0E502001DBEBC /* ConfigureScanModeServiceProfilesViewController.swift in Sources */,
+				05D9D51819B0E502001DBEBC /* ConfigureScanServiceProfilesViewController.swift in Sources */,
 				05F2A8E11993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift in Sources */,
 				05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */,
 				05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */,

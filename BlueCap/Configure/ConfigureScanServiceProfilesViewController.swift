@@ -1,5 +1,5 @@
 //
-//  ConfigureScanModeServiceProfilesViewController.swift
+//  ConfigureScanServiceProfilesViewController.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/29/14.
@@ -9,14 +9,14 @@
 import UIKit
 import BlueCapKit
 
-class ConfigureScanModeServiceProfilesViewController :  ServiceProfilesTableViewController {
+class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewController {
     
     struct MainStoryboard {
-        static let configureScanModeServiceProfiles = "ConfigureScanModeServiceProfiles"
+        static let configureScanServiceProfileCell = "ConfigureScanServiceProfileCell"
     }
     
     override var serviceProfileCell : String {
-        return MainStoryboard.configureScanModeServiceProfiles
+        return MainStoryboard.configureScanServiceProfileCell
     }
     
     required init(coder aDecoder: NSCoder) {
