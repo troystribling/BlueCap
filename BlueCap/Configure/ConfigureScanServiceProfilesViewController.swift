@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import BlueCapKit
+import CoreBluetooth
 
 class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewController {
     
@@ -15,6 +15,16 @@ class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewCont
         static let configureScanServiceProfileCell = "ConfigureScanServiceProfileCell"
     }
     
+    override var excludedServices : Array<CBUUID> {
+        return ConfigStore.getScannedServices().reduce(Array<CBUUID>()){(uuids, uuidString) in
+            if let uuid = CBUUID.UUIDWithString(uuidString) {
+                return uuids + [uuid]
+            } else {
+                return uuids
+            }
+        }
+    }
+
     override var serviceProfileCell : String {
         return MainStoryboard.configureScanServiceProfileCell
     }
@@ -35,9 +45,8 @@ class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewCont
         let tags = Array(self.serviceProfiles.keys)
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let serviceProfile = profiles[indexPath.row]
-            let service = MutableService(profile:serviceProfile)
-            service.characteristicsFromProfiles(serviceProfile.characteristics)
-        } else {
+            let services = ConfigStore.getScannedServices()
+            ConfigStore.setScannedServices(services + [serviceProfile.uuid.UUIDString])
             self.navigationController.popViewControllerAnimated(true)
         }
     }

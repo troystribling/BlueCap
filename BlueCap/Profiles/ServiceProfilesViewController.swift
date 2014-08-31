@@ -25,10 +25,12 @@ class ServiceProfilesViewController : ServiceProfilesTableViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         self.navigationItem.title = "Service Profiles"
     }
     
     override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
         self.navigationItem.title = ""
     }
     override func didReceiveMemoryWarning() {

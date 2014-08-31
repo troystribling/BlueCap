@@ -8,14 +8,19 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 class ServiceProfilesTableViewController : UITableViewController {
+    
+    var serviceProfiles : Dictionary<String, [ServiceProfile]> = [:]
+
+    var excludedServices : Array<CBUUID> {
+        return []
+    }
     
     var serviceProfileCell : String {
         return ""
     }
-    
-    var serviceProfiles : Dictionary<String, [ServiceProfile]> = [:]
     
     required init(coder aDecoder:NSCoder)  {
         super.init(coder:aDecoder)
@@ -26,12 +31,18 @@ class ServiceProfilesTableViewController : UITableViewController {
         self.sortServiceProfiles()
     }
     
+    override func viewWillAppear(animated:Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     func sortServiceProfiles() {
         for profile in ProfileManager.sharedInstance().services {
-            if let profiles = self.serviceProfiles[profile.tag] {
-                self.serviceProfiles[profile.tag] = profiles + [profile]
-            } else {
-                self.serviceProfiles[profile.tag] = [profile]
+            if !contains(self.excludedServices, profile.uuid) {
+                if let profiles = self.serviceProfiles[profile.tag] {
+                    self.serviceProfiles[profile.tag] = profiles + [profile]
+                } else {
+                    self.serviceProfiles[profile.tag] = [profile]
+                }
             }
         }
     }

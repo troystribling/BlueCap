@@ -42,7 +42,7 @@ func addOne(j:Junk) -> Int {
 
 func addOnePlus(j:Junk, s:String!) -> String {
     println("addOnePlus")
-    if s {
+    if s != nil {
         println("Custom")
         return "\(s):\(j.v+1)"
     } else {
@@ -89,3 +89,4 @@ if let f = holder.meths[2] {
 if let v = holder.meths[4] {
     v(4)
 }
+

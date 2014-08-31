@@ -15,6 +15,7 @@ class NameUUIDCell : UITableViewCell {
     @IBOutlet var uuidLabel : UILabel!
     var nameLableFrame      : CGRect?
     var uuidLabelFrame      : CGRect?
+    var accessoryTypeShown  = true
 
     override func layoutSubviews() {
         if let nameLableFrame = self.nameLableFrame {
@@ -26,12 +27,15 @@ class NameUUIDCell : UITableViewCell {
                 } else {
                     self.nameLabel.frame = nameLableFrame
                     self.uuidLabel.frame = uuidLabelFrame
-                    self.accessoryType = UITableViewCellAccessoryType.DetailButton
+                    if self.accessoryTypeShown {
+                        self.accessoryType = UITableViewCellAccessoryType.DetailButton
+                    }
                 }
             }
         } else {
             self.nameLableFrame = self.nameLabel.frame
             self.uuidLabelFrame = self.uuidLabel.frame
+            self.accessoryTypeShown = self.accessoryType != UITableViewCellAccessoryType.None
         }
         super.layoutSubviews()
     }

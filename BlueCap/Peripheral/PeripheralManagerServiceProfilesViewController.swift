@@ -8,6 +8,7 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewController {
    
@@ -16,6 +17,10 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     
     struct MainStoryboard {
         static let peripheralManagerServiceCell = "PeripheralManagerServiceProfileCell"
+    }
+    
+    override var excludedServices : Array<CBUUID> {
+        return PeripheralManager.sharedInstance().services.map{$0.uuid}
     }
     
     override var serviceProfileCell : String {
