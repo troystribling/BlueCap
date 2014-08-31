@@ -14,7 +14,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     private var clLocationManager           : CLLocationManager!
     private var configuredRegionMonitors    : Dictionary<CLRegion, RegionMonitor> = [:]
     
-    public var locationsUpdateSuccess      : ((locations:[AnyObject]!) -> ())?
+    public var locationsUpdateSuccess      : ((locations:[CLLocation]) -> ())?
     public var locationsUpdateFailed       : ((error:NSError!) -> ())?
     public var pausedLocationUpdates       : (() -> ())?
     public var resumedLocationUpdates      : (() -> ())?
@@ -36,6 +36,10 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         set {
             self.clLocationManager.desiredAccuracy = newValue
         }
+    }
+    
+    public var location : CLLocation! {
+        return self.clLocationManager.location
     }
     
     public var regions : [CLRegion] {
@@ -71,6 +75,10 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         return CLLocationManager.locationServicesEnabled()
     }
     
+    // reverse geocode
+    public func reverseGeocodeLocation(location:CLLocation, reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())?)  {
+    }
+    
     // control
     public func startUpdatingLocation(initializer:((manager:RegionManager) -> ())? = nil) {
         if let initializer = initializer {
@@ -94,10 +102,19 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
     }
 
     // CLLocationManagerDelegate
-    public func locationManager(_: CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
+    public func locationManager(_:CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
         if let locationsUpdateSuccess = self.locationsUpdateSuccess {
-            Logger.debug("RegionManager#didUpdateLocations")
-            locationsUpdateSuccess(locations:locations)
+            if let locations = locations {
+                Logger.debug("RegionManager#didUpdateLocations")
+                let cllocations = locations.reduce(Array<CLLocation>()) {(result, location) in
+                    if let location = location as? CLLocation {
+                        return result + [location]
+                    } else {
+                        return result
+                    }
+                }
+                locationsUpdateSuccess(locations:cllocations)
+            }
         }
     }
     
@@ -108,7 +125,7 @@ public class RegionManager : NSObject,  CLLocationManagerDelegate {
         }
     }
     
-    public func locationManager(_: CLLocationManager!, didFinishDeferredUpdatesWithError error:NSError!) {
+    public func locationManager(_:CLLocationManager!, didFinishDeferredUpdatesWithError error:NSError!) {
     }
     
     public func locationManagerDidPauseLocationUpdates(_:CLLocationManager!) {
