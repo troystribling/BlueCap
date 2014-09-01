@@ -7,6 +7,7 @@
 //
 import UIKit
 import BlueCapKit
+import CoreLocation
 
 class ConfigureScanRegionsViewController : UITableViewController {
     
@@ -28,6 +29,28 @@ class ConfigureScanRegionsViewController : UITableViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+    }
+    
+    @IBAction func addRegion(sender:AnyObject) {
+        let progressView = ProgressView()
+        progressView.show()
+        if LocationManager.authorizationStatus() != CLAuthorizationStatus.Authorized {
+            LocationManager.sharedInstance().requestAlwaysAuthorization()
+        }
+        LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in
+            locationManager.locationsUpdateSuccess = {(locations:[CLLocation]) in
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                for location in locations {
+                    Logger.debug("location update received: \(location)")
+                }
+                locationManager.stopUpdatingLocation()
+                progressView.remove()
+            }
+            locationManager.locationsUpdateFailed = {(error:NSError!) in
+                progressView.remove()
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
+        }
     }
     
     // UITableViewDataSource

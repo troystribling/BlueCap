@@ -20,7 +20,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BLESIGGATTProfiles.create()
         GnosusProfiles.create()
         NordicProfiles.create()
-        ConfigStore.setScanMode("Promiscuous")
         return true
     }
 
@@ -40,6 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(application: UIApplication) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.synchronize()
     }
 
 

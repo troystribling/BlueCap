@@ -11,9 +11,13 @@ import BlueCapKit
 
 class ConfigStore {
   
-    class func getScanMode() -> String? {
+    class func getScanMode() -> String {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        return userDefaults.stringForKey("scanMode")
+        if let scanMode = userDefaults.stringForKey("scanMode") {
+            return scanMode
+        } else {
+            return "Promiscuous"
+        }
     }
     
     class func setScanMode(scanMode:String) {
@@ -21,14 +25,14 @@ class ConfigStore {
         userDefaults.setObject(scanMode, forKey:"scanMode")
     }
     
-    class func getRegionScanEnabled() -> Bool? {
+    class func getRegionScanEnabled() -> Bool {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        return userDefaults.boolForKey("scanMode")
+        return userDefaults.boolForKey("regionScanEnabled")
     }
     
     class func setRegionScanEnabled(regionScanEnabled:Bool) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setBool(regionScanEnabled, forKey:"scanMode")
+        userDefaults.setBool(regionScanEnabled, forKey:"regionScanEnabled")
     }
 
     class func getScannedServices() -> [String] {
@@ -43,6 +47,7 @@ class ConfigStore {
     class func setScannedServices(services:[String]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setObject(services, forKey:"scannedServices")
+        userDefaults.synchronize()
     }
     
 

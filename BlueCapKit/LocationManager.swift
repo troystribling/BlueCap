@@ -47,19 +47,28 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         }
         return thisLocationManager!
     }
-    
-    public override init() {
-        super.init()
-        self.clLocationManager = CLLocationManager()
-        self.clLocationManager.delegate = self
-    }
-    
+
     public class func authorizationStatus() -> CLAuthorizationStatus {
         return CLLocationManager.authorizationStatus()
     }
     
     public class func locationServicesEnabled() -> Bool {
         return CLLocationManager.locationServicesEnabled()
+    }
+    
+    public override init() {
+        super.init()
+        self.clLocationManager = CLLocationManager()
+        self.clLocationManager.delegate = self
+        self.clLocationManager.requestAlwaysAuthorization()
+    }
+    
+    public func requestWhenInUseAuthorization() {
+        self.clLocationManager.requestWhenInUseAuthorization()
+    }
+    
+    public func requestAlwaysAuthorization() {
+        self.clLocationManager.requestAlwaysAuthorization()
     }
     
     // reverse geocode

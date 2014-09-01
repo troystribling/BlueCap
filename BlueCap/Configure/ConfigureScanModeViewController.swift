@@ -30,12 +30,8 @@ class ConfigureScanModeViewController : UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
         let scanMode = scanModes[indexPath.row]
         cell.textLabel.text = scanMode
-        if let configScanMode = ConfigStore.getScanMode() {
-            if scanMode == configScanMode {
-                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-            } else {
-                cell.accessoryType = UITableViewCellAccessoryType.None
-            }
+        if scanMode == ConfigStore.getScanMode() {
+            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
         } else {
             cell.accessoryType = UITableViewCellAccessoryType.None
         }

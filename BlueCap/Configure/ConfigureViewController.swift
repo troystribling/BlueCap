@@ -33,16 +33,11 @@ class ConfigureViewController : UITableViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        if let scanMode = ConfigStore.getScanMode() {
-            self.scanModeLabel.text = scanMode
-            self.scanMode = scanMode
-        }
-        if self.scanMode == "Service" {
-            self.servicesLabel.textColor = UIColor.blackColor()
-        } else {
-            self.servicesLabel.textColor = UIColor.lightGrayColor()
-        }
+        self.scanMode = ConfigStore.getScanMode()
+        self.scanModeLabel.text = self.scanMode
+        self.scanModeLabel.text = ConfigStore.getScanMode()
         self.navigationItem.title = "Configure"
+        self.configUI()
         super.viewWillAppear(animated)
     }
     
@@ -59,7 +54,7 @@ class ConfigureViewController : UITableViewController {
         case MainStroryboard.configureScanModeSegue:
             return true
         case MainStroryboard.configureScanRegionsSegue:
-            return true
+            return ConfigStore.getRegionScanEnabled()
         case MainStroryboard.configureScanServicesSegue:
             if self.scanMode == "Service" {
                 return true
@@ -72,5 +67,22 @@ class ConfigureViewController : UITableViewController {
     }
     
     @IBAction func toggleScanRegion(sender:AnyObject) {
+        ConfigStore.setRegionScanEnabled(!ConfigStore.getRegionScanEnabled())
+        self.configUI()
+    }
+    
+    func configUI() {
+        if self.scanMode == "Service" {
+            self.servicesLabel.textColor = UIColor.blackColor()
+        } else {
+            self.servicesLabel.textColor = UIColor.lightGrayColor()
+        }
+        if ConfigStore.getRegionScanEnabled() {
+            self.scanRegionsLabel.textColor = UIColor.blackColor()
+            self.scanRegionButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
+        } else {
+            self.scanRegionsLabel.textColor = UIColor.lightGrayColor()
+            self.scanRegionButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
+        }
     }
 }

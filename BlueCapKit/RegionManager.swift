@@ -34,7 +34,6 @@ public class RegionManager : LocationManager {
     
     public override init() {
         super.init()
-        self.clLocationManager.delegate = self
     }
     
     // control

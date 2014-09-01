@@ -963,7 +963,7 @@
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <state key="normal" title="Region Scanning">
-                                                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="titleColor" red="0.84825501820000004" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
@@ -1001,6 +1001,8 @@
                     <navigationItem key="navigationItem" title="Configure" id="RE9-39-6QO"/>
                     <connections>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
+                        <outlet property="scanRegionButton" destination="t3k-TC-0OT" id="59f-uz-Pc0"/>
+                        <outlet property="scanRegionsLabel" destination="coN-e3-XtF" id="4as-jg-2rb"/>
                         <outlet property="servicesLabel" destination="clG-Jf-3IE" id="aUq-tQ-2B2"/>
                     </connections>
                 </tableViewController>
@@ -1137,7 +1139,13 @@
                             <outlet property="delegate" destination="g8K-CX-5xt" id="RUo-Rh-XNW"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Scan Regions" id="8KZ-GS-k1b"/>
+                    <navigationItem key="navigationItem" title="Scan Regions" id="8KZ-GS-k1b">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="RoT-Vs-CBN">
+                            <connections>
+                                <action selector="addRegion:" destination="g8K-CX-5xt" id="YSs-Uh-fV5"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8f8-6l-Vty" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
