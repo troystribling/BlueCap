@@ -16,13 +16,7 @@ class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewCont
     }
     
     override var excludedServices : Array<CBUUID> {
-        return ConfigStore.getScannedServices().reduce(Array<CBUUID>()){(uuids, uuidString) in
-            if let uuid = CBUUID.UUIDWithString(uuidString) {
-                return uuids + [uuid]
-            } else {
-                return uuids
-            }
-        }
+        return ConfigStore.getScannedServices()
     }
 
     override var serviceProfileCell : String {
@@ -45,8 +39,7 @@ class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewCont
         let tags = Array(self.serviceProfiles.keys)
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let serviceProfile = profiles[indexPath.row]
-            let services = ConfigStore.getScannedServices()
-            ConfigStore.setScannedServices(services + [serviceProfile.uuid.UUIDString])
+            ConfigStore.addScannedService(serviceProfile.uuid)
             self.navigationController.popViewControllerAnimated(true)
         }
     }

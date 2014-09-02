@@ -8,6 +8,8 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
+import CoreLocation
 
 class ConfigStore {
   
@@ -35,20 +37,64 @@ class ConfigStore {
         userDefaults.setBool(regionScanEnabled, forKey:"regionScanEnabled")
     }
 
-    class func getScannedServices() -> [String] {
+    class func getScannedServices() -> [CBUUID] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let services = userDefaults.stringArrayForKey("scannedServices") {
-            return services.map{$0 as String}
+            return services.reduce(Array<CBUUID>()) {(uuids, uuid) in
+                if let uuid = uuid as? CBUUID {
+                    return uuids + [uuid]
+                } else {
+                    return uuids
+                }
+            }
         } else {
             return []
         }
     }
     
-    class func setScannedServices(services:[String]) {
+    class func setScannedServices(services:[CBUUID]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setObject(services, forKey:"scannedServices")
         userDefaults.synchronize()
     }
     
-
+    class func addScannedService(service:CBUUID) {
+        let services = self.getScannedServices()
+        self.setScannedServices(services + [service])
+    }
+    
+    class func removeScannedService(service:CBUUID) {
+        let services = self.getScannedServices()
+        self.setScannedServices(services.filter{$0 != service})
+    }
+    
+    class func getScanRegions() -> [CLLocation] {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let regions = userDefaults.arrayForKey("regions") {
+            return regions.reduce(Array<CLLocation>()) {(locations, location) in
+                if let region = location as? CLLocation {
+                   return locations + [region]
+                } else {
+                    return locations
+                }
+            }
+        } else {
+            return []
+        }
+    }
+    
+    class func setScanRegions(regions:[CLLocation]) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setObject(regions, forKey:"regions")
+    }
+    
+    class func addScanRegion(region:CLLocation) {
+        let regions = self.getScanRegions()
+        self.setScanRegions(regions + [region])
+    }
+    
+    class func removeScanRegion(region:CLLocation) {
+        let regions = self.getScanRegions()
+        self.setScanRegions(regions.filter{$0 != region})
+    }
 }

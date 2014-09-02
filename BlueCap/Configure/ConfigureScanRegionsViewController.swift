@@ -34,17 +34,15 @@ class ConfigureScanRegionsViewController : UITableViewController {
     @IBAction func addRegion(sender:AnyObject) {
         let progressView = ProgressView()
         progressView.show()
-        if LocationManager.authorizationStatus() != CLAuthorizationStatus.Authorized {
-            LocationManager.sharedInstance().requestAlwaysAuthorization()
-        }
         LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in
             locationManager.locationsUpdateSuccess = {(locations:[CLLocation]) in
                 locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                for location in locations {
+                if let location = locations.last {
                     Logger.debug("location update received: \(location)")
+                    ConfigStore.addScanRegion(location)
+                    locationManager.stopUpdatingLocation()
+                    progressView.remove()
                 }
-                locationManager.stopUpdatingLocation()
-                progressView.remove()
             }
             locationManager.locationsUpdateFailed = {(error:NSError!) in
                 progressView.remove()

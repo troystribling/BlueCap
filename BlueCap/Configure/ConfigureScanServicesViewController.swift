@@ -52,8 +52,7 @@ class ConfigureScanServicesViewController : UITableViewController {
     override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
             let services = ConfigStore.getScannedServices()
-            let service = services[indexPath.row]
-            ConfigStore.setScannedServices(services.filter{$0 != service})
+            ConfigStore.removeScannedService(services[indexPath.row])
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
         }
     }
@@ -61,15 +60,15 @@ class ConfigureScanServicesViewController : UITableViewController {
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanServicesCell, forIndexPath: indexPath) as NameUUIDCell
         let serviceUUID = ConfigStore.getScannedServices()[indexPath.row]
-        cell.uuidLabel.text = serviceUUID
-        if let uuid = CBUUID.UUIDWithString(serviceUUID) {
-            if let serviceProfile = ProfileManager.sharedInstance().service(uuid) {
-                cell.nameLabel.text = serviceProfile.name
-            } else {
-                cell.nameLabel.text = "Unknown"
-            }
+        if let uuidString = serviceUUID.UUIDString {
+            cell.uuidLabel.text = uuidString
         } else {
-            cell.nameLabel.text = "Unknwn"
+            cell.uuidLabel.text = "Unknown"
+        }
+        if let serviceProfile = ProfileManager.sharedInstance().service(serviceUUID) {
+            cell.nameLabel.text = serviceProfile.name
+        } else {
+            cell.nameLabel.text = "Unknown"
         }
         return cell
     }
