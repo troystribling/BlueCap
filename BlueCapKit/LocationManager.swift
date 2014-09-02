@@ -106,11 +106,19 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     }
     
     // control
-    public func startUpdatingLocation(initializer:((manager:LocationManager) -> ())? = nil) {
+    public func startUpdatingLocation(authorization:CLAuthorizationStatus, initializer:((manager:LocationManager) -> ())? = nil) {
         if let initializer = initializer {
             initializer(manager:self)
         }
-        self.clLocationManager.startUpdatingLocation()
+        if LocationManager.authorizationStatus() != authorization {
+            LocationManager.sharedInstance().requestAlwaysAuthorization()
+        } else {
+            self.clLocationManager.startUpdatingLocation()
+        }
+    }
+    
+    public func startUpdatingLocation(initializer:((manager:LocationManager) -> ())? = nil) {
+        self.startUpdatingLocation(CLAuthorizationStatus.Authorized, initializer:initializer)
     }
     
     public func stopUpdatingLocation() {
