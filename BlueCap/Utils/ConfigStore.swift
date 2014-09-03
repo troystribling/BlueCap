@@ -41,8 +41,12 @@ class ConfigStore {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let services = userDefaults.stringArrayForKey("scannedServices") {
             return services.reduce(Array<CBUUID>()) {(uuids, uuid) in
-                if let uuid = uuid as? CBUUID {
-                    return uuids + [uuid]
+                if let uuid = uuid as? String {
+                    if let uuid = CBUUID.UUIDWithString(uuid) {
+                        return uuids + [uuid]
+                    } else {
+                        return uuids
+                    }
                 } else {
                     return uuids
                 }
@@ -54,7 +58,14 @@ class ConfigStore {
     
     class func setScannedServices(services:[CBUUID]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(services, forKey:"scannedServices")
+        let stringUUIDs = services.reduce([String]()){(strings, service) in
+            if let stringUUID = service.UUIDString {
+                return strings + [stringUUID]
+            } else {
+                return strings
+            }
+        }
+        userDefaults.setObject(stringUUIDs, forKey:"scannedServices")
         userDefaults.synchronize()
     }
     
@@ -85,6 +96,7 @@ class ConfigStore {
     
     class func setScanRegions(regions:[CLLocation]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
+        
         userDefaults.setObject(regions, forKey:"regions")
     }
     
