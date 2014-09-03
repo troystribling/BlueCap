@@ -13,6 +13,7 @@ import CoreLocation
 
 class ConfigStore {
   
+    // scan mode
     class func getScanMode() -> String {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let scanMode = userDefaults.stringForKey("scanMode") {
@@ -27,6 +28,7 @@ class ConfigStore {
         userDefaults.setObject(scanMode, forKey:"scanMode")
     }
     
+    // region scan enabled
     class func getRegionScanEnabled() -> Bool {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         return userDefaults.boolForKey("regionScanEnabled")
@@ -37,6 +39,7 @@ class ConfigStore {
         userDefaults.setBool(regionScanEnabled, forKey:"regionScanEnabled")
     }
 
+    // scanned services
     class func getScannedServices() -> [CBUUID] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let services = userDefaults.stringArrayForKey("scannedServices") {
@@ -79,34 +82,35 @@ class ConfigStore {
         self.setScannedServices(services.filter{$0 != service})
     }
     
-    class func getScanRegions() -> [CLLocation] {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let regions = userDefaults.arrayForKey("regions") {
-            return regions.reduce(Array<CLLocation>()) {(locations, location) in
-                if let region = location as? CLLocation {
-                   return locations + [region]
-                } else {
-                    return locations
-                }
-            }
-        } else {
-            return []
-        }
-    }
-    
-    class func setScanRegions(regions:[CLLocation]) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        
-        userDefaults.setObject(regions, forKey:"regions")
-    }
-    
-    class func addScanRegion(region:CLLocation) {
-        let regions = self.getScanRegions()
-        self.setScanRegions(regions + [region])
-    }
-    
-    class func removeScanRegion(region:CLLocation) {
-        let regions = self.getScanRegions()
-        self.setScanRegions(regions.filter{$0 != region})
-    }
+    // scan regions
+//    class func getScanRegions() -> [CLLocationCoordinate2D] {
+//        let userDefaults = NSUserDefaults.standardUserDefaults()
+//        if let regions = userDefaults.arrayForKey("regions") {
+//            return regions.reduce([CLLocationCoordinate2D]()) {(locations, location) in
+//                if let region = location as? CLLocationCoordinate2D {
+//                   return locations + [region]
+//                } else {
+//                    return locations
+//                }
+//            }
+//        } else {
+//            return []
+//        }
+//    }
+//    
+//    class func setScanRegions(regions:[CLLocationCoordinate2D]) {
+//        let userDefaults = NSUserDefaults.standardUserDefaults()
+//        
+//        userDefaults.setObject(regions, forKey:"regions")
+//    }
+//    
+//    class func addScanRegion(region:CLLocationCoordinate2D) {
+//        let regions = self.getScanRegions()
+//        self.setScanRegions(regions + [region])
+//    }
+//    
+//    class func removeScanRegion(region:CLLocationCoordinate2D) {
+//        let regions = self.getScanRegions()
+//        self.setScanRegions(regions.filter{$0 != region})
+//    }
 }

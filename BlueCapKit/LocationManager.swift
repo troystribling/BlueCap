@@ -11,13 +11,14 @@ import CoreLocation
 
 public class LocationManager : NSObject,  CLLocationManagerDelegate {
     
-    internal var clLocationManager           : CLLocationManager!
+    private var authorizationStatusChanged  : ((status:CLAuthorizationStatus) -> ())?
+
+    internal var clLocationManager          : CLLocationManager!
     
-    public var locationsUpdateSuccess      : ((locations:[CLLocation]) -> ())?
-    public var locationsUpdateFailed       : ((error:NSError!) -> ())?
-    public var pausedLocationUpdates       : (() -> ())?
-    public var resumedLocationUpdates      : (() -> ())?
-    public var authorizationStatusChanged  : (() -> ())?
+    public var locationsUpdateSuccess       : ((locations:[CLLocation]) -> ())?
+    public var locationsUpdateFailed        : ((error:NSError!) -> ())?
+    public var pausedLocationUpdates        : (() -> ())?
+    public var resumedLocationUpdates       : (() -> ())?
     
     public var distanceFilter : CLLocationDistance {
         get {
@@ -111,7 +112,35 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
             initializer(manager:self)
         }
         if LocationManager.authorizationStatus() != authorization {
-            LocationManager.sharedInstance().requestAlwaysAuthorization()
+            switch authorization {
+            case .Authorized:
+                self.authorizationStatusChanged = {(status) in
+                    if status == .Authorized {
+                        Logger.debug("LocationManager#startUpdatingLocation: Location Authorized succcess")
+                        self.clLocationManager.startUpdatingLocation()
+                    } else {
+                        Logger.debug("LocationManager#startUpdatingLocation: Location Authorized failed")
+                        if let locationsUpdateFailed = self.locationsUpdateFailed {
+                            locationsUpdateFailed(error:NSError.errorWithDomain("BlueCap", code:408, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"]))
+                        }
+                    }
+                }
+                LocationManager.sharedInstance().requestAlwaysAuthorization()
+                break
+            case .AuthorizedWhenInUse:
+                self.authorizationStatusChanged = {(status) in
+                    if status == .AuthorizedWhenInUse {
+                        Logger.debug("LocationManager#startUpdatingLocation: Location AuthorizedWhenInUse success")
+                        self.clLocationManager.startUpdatingLocation()
+                    } else {
+                        Logger.debug("LocationManager#startUpdatingLocation: Location AuthorizedWhenInUse failed")
+                    }
+                }
+                LocationManager.sharedInstance().requestWhenInUseAuthorization()
+                break
+            default:
+                break
+            }
         } else {
             self.clLocationManager.startUpdatingLocation()
         }
@@ -127,24 +156,24 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     
     // CLLocationManagerDelegate
     public func locationManager(_:CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
-        if let locationsUpdateSuccess = self.locationsUpdateSuccess {
-            if let locations = locations {
-                Logger.debug("RegionManager#didUpdateLocations")
-                let cllocations = locations.reduce(Array<CLLocation>()) {(result, location) in
-                    if let location = location as? CLLocation {
-                        return result + [location]
-                    } else {
-                        return result
-                    }
+        Logger.debug("LocationManager#didUpdateLocations")
+        if let locations = locations {
+            let cllocations = locations.reduce([CLLocation]()) {(result, location) in
+                if let location = location as? CLLocation {
+                    return result + [location]
+                } else {
+                    return result
                 }
+            }
+            if let locationsUpdateSuccess = self.locationsUpdateSuccess {
                 locationsUpdateSuccess(locations:cllocations)
             }
         }
     }
     
     public func locationManager(_:CLLocationManager!, didFailWithError error:NSError!) {
+        Logger.debug("LocationManager#didFailWithError: \(error.localizedDescription)")
         if let locationsUpdateFalied = self.locationsUpdateFailed {
-            Logger.debug("RegionManager#didFailWithError: \(error.localizedDescription)")
             locationsUpdateFalied(error:error)
         }
     }
@@ -153,23 +182,23 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public func locationManagerDidPauseLocationUpdates(_:CLLocationManager!) {
+        Logger.debug("LocationManager#locationManagerDidPauseLocationUpdates")
         if let pausedLocationUpdates = self.pausedLocationUpdates {
-            Logger.debug("RegionManager#locationManagerDidPauseLocationUpdates")
             pausedLocationUpdates()
         }
     }
     
     public func locationManagerDidResumeLocationUpdates(_:CLLocationManager!) {
+        Logger.debug("LocationManager#locationManagerDidResumeLocationUpdates")
         if let resumedLocationUpdates = self.resumedLocationUpdates {
-            Logger.debug("RegionManager#locationManagerDidResumeLocationUpdates")
             resumedLocationUpdates()
         }
     }
     
     public func locationManager(_:CLLocationManager!, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
+        Logger.debug("LocationManager#didChangeAuthorizationStatus: \(status)")
         if let authorizationStatusChanged = self.authorizationStatusChanged {
-            Logger.debug("RegionManager#didChangeAuthorizationStatus")
-            authorizationStatusChanged()
+            authorizationStatusChanged(status:status)
         }
     }
 }

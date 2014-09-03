@@ -39,7 +39,6 @@ class ConfigureScanRegionsViewController : UITableViewController {
                 locationManager.desiredAccuracy = kCLLocationAccuracyBest
                 if let location = locations.last {
                     Logger.debug("location update received: \(location)")
-                    ConfigStore.addScanRegion(location)
                     locationManager.stopUpdatingLocation()
                     progressView.remove()
                 }
