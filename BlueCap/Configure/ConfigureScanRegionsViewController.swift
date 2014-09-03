@@ -25,10 +25,12 @@ class ConfigureScanRegionsViewController : UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationItem.title = "Scan Regions"
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        self.navigationItem.title = ""
     }
     
     @IBAction func addRegion(sender:AnyObject) {
