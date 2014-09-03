@@ -71,6 +71,8 @@
 		05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0019A78C6B009DAF6D /* ProgressView.swift */; };
 		05B45C0419A78C6B009DAF6D /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */; };
 		05B45C0619A859A2009DAF6D /* BeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0519A859A2009DAF6D /* BeaconManager.swift */; };
+		05B56E1819B76C25005B22AC /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B56E1719B76C25005B22AC /* Utils.swift */; };
+		05B56E1A19B76D52005B22AC /* ConfigureAddScanRegionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B56E1919B76D52005B22AC /* ConfigureAddScanRegionViewController.swift */; };
 		05B6AD3819B4DA92007C226B /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6AD3719B4DA92007C226B /* LocationManager.swift */; };
 		05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */; };
 		05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* NameUUIDCell.swift */; };
@@ -213,6 +215,8 @@
 		05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 		05B45C0519A859A2009DAF6D /* BeaconManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconManager.swift; sourceTree = "<group>"; };
 		05B48C7C1971FA3200260F4A /* Structs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Structs.playground; sourceTree = "<group>"; };
+		05B56E1719B76C25005B22AC /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		05B56E1919B76D52005B22AC /* ConfigureAddScanRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureAddScanRegionViewController.swift; sourceTree = "<group>"; };
 		05B6AD3719B4DA92007C226B /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
 		05B6F0771957ACF300D798CB /* NameUUIDCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameUUIDCell.swift; sourceTree = "<group>"; };
@@ -473,6 +477,7 @@
 			children = (
 				05B2432F194536A400E8E878 /* Logger.swift */,
 				05CAF6CC1960E22500F6D598 /* StringExtensions.swift */,
+				05B56E1719B76C25005B22AC /* Utils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -491,6 +496,7 @@
 		05B45BFC19A78BBB009DAF6D /* Configure */ = {
 			isa = PBXGroup;
 			children = (
+				05B56E1919B76D52005B22AC /* ConfigureAddScanRegionViewController.swift */,
 				05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */,
 				05D9D51919B2266D001DBEBC /* ConfigureScanRegionsViewController.swift */,
 				05D9D51719B0E502001DBEBC /* ConfigureScanServiceProfilesViewController.swift */,
@@ -736,6 +742,7 @@
 				05D9D50A19B0D7B0001DBEBC /* ConfigStore.swift in Sources */,
 				05B45BF519A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */,
 				05D9D51A19B2266D001DBEBC /* ConfigureScanRegionsViewController.swift in Sources */,
+				05B56E1A19B76D52005B22AC /* ConfigureAddScanRegionViewController.swift in Sources */,
 				05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */,
 				05B45BF619A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */,
 				05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */,
@@ -795,6 +802,7 @@
 				05AEAF99196C45A1009E8A0C /* Int16Extensions.swift in Sources */,
 				05B24E3B19AB8C000034BDC9 /* RegionScannerator.swift in Sources */,
 				051963CF19AA59730090CF0A /* RegionMonitor.swift in Sources */,
+				05B56E1819B76C25005B22AC /* Utils.swift in Sources */,
 				05680DC119687D050000FECB /* BCErrors.swift in Sources */,
 				05277CA41944CB0E0022FB59 /* CentralManager.swift in Sources */,
 				05AEAF91196C3909009E8A0C /* SerializeDeserialize.swift in Sources */,

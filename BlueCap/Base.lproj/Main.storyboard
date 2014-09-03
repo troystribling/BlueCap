@@ -1110,6 +1110,29 @@
             </objects>
             <point key="canvasLocation" x="2114" y="-1642"/>
         </scene>
+        <!--Add Scan Region-->
+        <scene sceneID="lnJ-65-EBf">
+            <objects>
+                <viewController id="fpf-pP-hp5" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wCg-Uo-7Mc">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Region Name" minimumFontSize="17" clearButtonMode="whileEditing" id="80Z-Ee-Abo">
+                                <rect key="frame" x="16" y="94" width="288" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Add Scan Region" id="b1w-rN-c64"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ekM-HC-aML" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2105" y="-1067"/>
+        </scene>
         <!--Scan Regions-->
         <scene sceneID="MWX-qQ-dwS">
             <objects>
@@ -1142,7 +1165,7 @@
                     <navigationItem key="navigationItem" title="Scan Regions" id="8KZ-GS-k1b">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="RoT-Vs-CBN">
                             <connections>
-                                <action selector="addRegion:" destination="g8K-CX-5xt" id="YSs-Uh-fV5"/>
+                                <segue destination="fpf-pP-hp5" kind="push" id="kRA-El-PzT"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
