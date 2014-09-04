@@ -32,27 +32,30 @@ class ConfigureAddScanRegionViewController : UIViewController, UITextFieldDelega
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        return true
-    }
-    
-    func addRegion(sender:AnyObject) {
-        let progressView = ProgressView()
-        progressView.show()
-        LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in
-            locationManager.locationsUpdateSuccess = {(locations:[CLLocation]) in
-                locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                if let location = locations.last {
-                    Logger.debug("location update received: \(location)")
-                    locationManager.stopUpdatingLocation()
-                    progressView.remove()
+        if let name = self.nameTextField.text {
+            if !name.isEmpty {
+                Logger.debug("ConfigureAddScanRegionViewController#textFieldShouldReturn: \(name)")
+                let progressView = ProgressView()
+                progressView.show()
+                LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in
+                    locationManager.locationsUpdateSuccess = {(locations:[CLLocation]) in
+                        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                        if let location = locations.last {
+                            Logger.debug("location update received: \(location)")
+                            locationManager.stopUpdatingLocation()
+                        }
+                        progressView.remove()
+                        self.navigationController.popViewControllerAnimated(true)
+                    }
+                    locationManager.locationsUpdateFailed = {(error:NSError!) in
+                        progressView.remove()
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        self.navigationController.popViewControllerAnimated(true)
+                    }
                 }
             }
-            locationManager.locationsUpdateFailed = {(error:NSError!) in
-                progressView.remove()
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-            }
         }
+        return true
     }
-  
     
 }

@@ -1113,7 +1113,7 @@
         <!--Add Scan Region-->
         <scene sceneID="lnJ-65-EBf">
             <objects>
-                <viewController id="fpf-pP-hp5" sceneMemberID="viewController">
+                <viewController id="fpf-pP-hp5" customClass="ConfigureAddScanRegionViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wCg-Uo-7Mc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1123,11 +1123,17 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                <connections>
+                                    <outlet property="delegate" destination="fpf-pP-hp5" id="PgO-Qv-hTO"/>
+                                </connections>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Add Scan Region" id="b1w-rN-c64"/>
+                    <connections>
+                        <outlet property="nameTextField" destination="80Z-Ee-Abo" id="81l-CX-7cB"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ekM-HC-aML" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1165,7 +1171,7 @@
                     <navigationItem key="navigationItem" title="Scan Regions" id="8KZ-GS-k1b">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="RoT-Vs-CBN">
                             <connections>
-                                <segue destination="fpf-pP-hp5" kind="push" id="kRA-El-PzT"/>
+                                <segue destination="fpf-pP-hp5" kind="push" identifier="ConfigureAddScanRegion" id="kRA-El-PzT"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -2049,7 +2055,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" id="Udk-V1-rmr">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" id="Udk-V1-rmr">
                                 <rect key="frame" x="20" y="95" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>

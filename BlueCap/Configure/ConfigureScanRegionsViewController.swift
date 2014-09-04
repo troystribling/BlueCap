@@ -12,7 +12,8 @@ import CoreLocation
 class ConfigureScanRegionsViewController : UITableViewController {
     
     struct MainStoryboard {
-        static let configureScanRegionsCell = "ConfigureScanRegionsCell"
+        static let configureScanRegionsCell     = "ConfigureScanRegionsCell"
+        static let configureAddScanRegionSegue  = "ConfigureAddScanRegion"
     }
     
     required init(coder aDecoder:NSCoder) {

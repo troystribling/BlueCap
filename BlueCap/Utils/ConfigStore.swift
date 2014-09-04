@@ -83,33 +83,31 @@ class ConfigStore {
     }
     
     // scan regions
-//    class func getScanRegions() -> [CLLocationCoordinate2D] {
+    class func getScanRegions() -> [String:CLLocationCoordinate2D] {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let regions = userDefaults.dictionaryForKey("regions") {
+            var result = Dictionary<String, CLLocationCoordinate2D>()
+            for (name, location) in regions {
+                if let latlon = location as? [Double] {
+                }
+            }
+            return result
+        } else {
+            return [:]
+        }
+    }
+    
+//    class func setScanRegions(regions:[String:CLLocationCoordinate2D]) {
 //        let userDefaults = NSUserDefaults.standardUserDefaults()
-//        if let regions = userDefaults.arrayForKey("regions") {
-//            return regions.reduce([CLLocationCoordinate2D]()) {(locations, location) in
-//                if let region = location as? CLLocationCoordinate2D {
-//                   return locations + [region]
-//                } else {
-//                    return locations
-//                }
-//            }
-//        } else {
-//            return []
-//        }
-//    }
-//    
-//    class func setScanRegions(regions:[CLLocationCoordinate2D]) {
-//        let userDefaults = NSUserDefaults.standardUserDefaults()
-//        
 //        userDefaults.setObject(regions, forKey:"regions")
 //    }
 //    
-//    class func addScanRegion(region:CLLocationCoordinate2D) {
+//    class func addScanRegion(name:String, region:CLLocationCoordinate2D) {
 //        let regions = self.getScanRegions()
 //        self.setScanRegions(regions + [region])
 //    }
 //    
-//    class func removeScanRegion(region:CLLocationCoordinate2D) {
+//    class func removeScanRegion(name:String) {
 //        let regions = self.getScanRegions()
 //        self.setScanRegions(regions.filter{$0 != region})
 //    }

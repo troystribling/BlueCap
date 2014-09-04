@@ -34,18 +34,20 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {
             if let valueName = self.valueName {
-                if let characteristic = self.characteristic {
-                    if var values = characteristic.stringValues {
-                        values[valueName] = newValue
-                        let progressView = ProgressView()
-                        progressView.show()
-                        characteristic.write(values, afterWriteSuccessCallback: {
-                                progressView.remove()
-                                self.navigationController.popViewControllerAnimated(true)
-                            }, afterWriteFailedCallback: {(error) in
-                                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                                self.navigationController.popViewControllerAnimated(true)
-                            })
+                if !valueName.isEmpty {
+                    if let characteristic = self.characteristic {
+                        if var values = characteristic.stringValues {
+                            values[valueName] = newValue
+                            let progressView = ProgressView()
+                            progressView.show()
+                            characteristic.write(values, afterWriteSuccessCallback: {
+                                    progressView.remove()
+                                    self.navigationController.popViewControllerAnimated(true)
+                                }, afterWriteFailedCallback: {(error) in
+                                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                                    self.navigationController.popViewControllerAnimated(true)
+                                })
+                        }
                     }
                 }
             }

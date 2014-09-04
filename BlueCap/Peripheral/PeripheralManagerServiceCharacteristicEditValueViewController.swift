@@ -32,11 +32,13 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {
             if let valueName = self.valueName {
-                if let characteristic = self.characteristic {
-                    if var values = characteristic.stringValues {
-                        values[valueName] = newValue
-                        characteristic.updateValueWithString(values)
-                        self.navigationController.popViewControllerAnimated(true)
+                if !valueName.isEmpty {
+                    if let characteristic = self.characteristic {
+                        if var values = characteristic.stringValues {
+                            values[valueName] = newValue
+                            characteristic.updateValueWithString(values)
+                            self.navigationController.popViewControllerAnimated(true)
+                        }
                     }
                 }
             }

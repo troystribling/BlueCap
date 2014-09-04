@@ -151,21 +151,25 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     }
     
     public func stopUpdatingLocation() {
+        self.locationsUpdateSuccess     = nil
+        self.locationsUpdateFailed      = nil
+        self.pausedLocationUpdates      = nil
+        self.resumedLocationUpdates     = nil
         self.clLocationManager.stopUpdatingLocation()
     }
     
     // CLLocationManagerDelegate
     public func locationManager(_:CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
         Logger.debug("LocationManager#didUpdateLocations")
-        if let locations = locations {
-            let cllocations = locations.reduce([CLLocation]()) {(result, location) in
-                if let location = location as? CLLocation {
-                    return result + [location]
-                } else {
-                    return result
+        if let locationsUpdateSuccess = self.locationsUpdateSuccess {
+            if let locations = locations {
+                let cllocations = locations.reduce([CLLocation]()) {(result, location) in
+                    if let location = location as? CLLocation {
+                        return result + [location]
+                    } else {
+                        return result
+                    }
                 }
-            }
-            if let locationsUpdateSuccess = self.locationsUpdateSuccess {
                 locationsUpdateSuccess(locations:cllocations)
             }
         }
