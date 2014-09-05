@@ -8,55 +8,83 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 class PeripheralStore {
     
-    class func getPeripherals() -> [String] {
+    class func getPeripherals() -> [String:[CBUUID]] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let peripherals = userDefaults.stringArrayForKey("peripherals") {
-            Logger.debug("PeripheralStore#getPeripherals: \(peripherals)")
-            return peripherals.map{$0 as String}
+        if let storedPeripherals = userDefaults.dictionaryForKey("peripherals") {
+            var peripherals = Dictionary<String,[CBUUID]>()
+            for (name, services) in storedPeripherals {
+                if let name = name as? String {
+                    if let services = services as? [String] {
+                        let uuids = services.reduce([CBUUID]()){(uuids, uuidString) in
+                            if let uuid = CBUUID.UUIDWithString(uuidString) {
+                                return uuids + [uuid]
+                            } else {
+                                return uuids
+                            }
+                        }
+                    }
+                }
+            }
+            return peripherals
+        } else {
+            return [:]
+        }
+    }
+
+    class func setPeripherals(peripherals:[String:[CBUUID]]) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setObject(peripherals, forKey:"peripherals")
+    }
+    
+    class func removePeripheral(name:String) {
+        var peripherals = self.getPeripherals()
+        peripherals.removeValueForKey(name)
+        self.setPeripherals(peripherals)
+    }
+    
+    class func addPeripheral(name:String) {
+        var peripherals = self.getPeripherals()
+        peripherals[name] = [CBUUID]()
+        self.setPeripherals(peripherals)
+    }
+    
+    class func getPeripheralNames() -> [String] {
+        return Array(self.getPeripherals().keys)
+    }
+
+    class func getPeripheralServices(peripheral:String) -> [CBUUID] {
+        let peripherals = self.getPeripherals()
+        if let services = peripherals[peripheral] {
+            return services
         } else {
             return []
         }
     }
-
-    class func addPeripheral(peripheral:String) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        var peripherals = self.getPeripherals()
-        Logger.debug("PeripheralStore#addPeripheral: \(peripheral)")
-        userDefaults.setObject(peripherals + [peripheral], forKey:"peripherals")
-    }
-
-    class func removePeripheral(peripheral:String) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        Logger.debug("PeripheralStore#removePeripheral: \(peripheral)")
-        userDefaults.removeObjectForKey(peripheral)
-        var peripherals = self.getPeripherals()
-        userDefaults.setObject(peripherals.filter{$0 != peripheral}, forKey:"peripherals")
-    }
     
-    class func getPeripheralServices(peripheral:String) -> [String] {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let services = userDefaults.stringArrayForKey(peripheral) {
-            Logger.debug("PeripheralStore#getPeripheralServices: \(peripheral), \(services)")
-            return services.map{$0 as String}
-        } else {
-            return []
+    class func setPeripheralServices(name:String, services:[CBUUID]) {
+        var peripherals = self.getPeripherals()
+        peripherals[name] = services
+        self.setPeripherals(peripherals)
+    }
+
+    class func addPeripheralService(name:String, service:CBUUID) {
+        var peripherals = self.getPeripherals()
+        if let services = peripherals[name] {
+            peripherals[name] = services + [service]
         }
+        self.setPeripherals(peripherals)
     }
     
-    class func addPeripheralServices(peripheral:String, services:[String]) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        Logger.debug("PeripheralStore#addPeripheralServices: \(peripheral), \(services)")
-        userDefaults.setObject(services, forKey:peripheral)
-    }
-    
-    class func removePeripheralService(peripheral:String, service:String) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        Logger.debug("PeripheralStore#removePeripheralService: \(peripheral), \(service)")
-        var services = self.getPeripheralServices(peripheral).filter(){$0 != service}
-        self.addPeripheralServices(peripheral, services:services)
+    class func removePeripheralService(name:String, service:CBUUID) {
+        var peripherals = self.getPeripherals()
+        if let services = peripherals[name] {
+            peripherals[name] = services.filter{$0 != service}
+        }
+        self.setPeripherals(peripherals)
     }
     
 }

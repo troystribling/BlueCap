@@ -85,30 +85,48 @@ class ConfigStore {
     // scan regions
     class func getScanRegions() -> [String:CLLocationCoordinate2D] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let regions = userDefaults.dictionaryForKey("regions") {
-            var result = Dictionary<String, CLLocationCoordinate2D>()
-            for (name, location) in regions {
+        if let storedRegions = userDefaults.dictionaryForKey("regions") {
+            var regions = Dictionary<String, CLLocationCoordinate2D>()
+            for (name, location) in storedRegions {
                 if let latlon = location as? [Double] {
+                    if let name = name as? String {
+                        regions[name] = CLLocationCoordinate2D(latitude:latlon[0] , longitude:latlon[1])
+                    }
                 }
             }
-            return result
+            return regions
         } else {
             return [:]
         }
     }
     
-//    class func setScanRegions(regions:[String:CLLocationCoordinate2D]) {
-//        let userDefaults = NSUserDefaults.standardUserDefaults()
-//        userDefaults.setObject(regions, forKey:"regions")
-//    }
-//    
-//    class func addScanRegion(name:String, region:CLLocationCoordinate2D) {
-//        let regions = self.getScanRegions()
-//        self.setScanRegions(regions + [region])
-//    }
-//    
-//    class func removeScanRegion(name:String) {
-//        let regions = self.getScanRegions()
-//        self.setScanRegions(regions.filter{$0 != region})
-//    }
+    class func getScanRegionNames() -> [String] {
+        return Array(self.getScanRegions().keys)
+    }
+    
+    class func getScanRegion(name:String) -> CLLocationCoordinate2D? {
+        let regions = self.getScanRegions()
+        return regions[name]
+    }
+    
+    class func setScanRegions(regions:[String:CLLocationCoordinate2D]) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        var storeRegions = Dictionary<String, [Double]>()
+        for (name, location) in regions {
+            storeRegions[name] = [location.latitude, location.longitude]
+        }
+        userDefaults.setObject(storeRegions, forKey:"regions")
+    }
+    
+    class func addScanRegion(name:String, region:CLLocationCoordinate2D) {
+        var regions = self.getScanRegions()
+        regions[name] = region
+        self.setScanRegions(regions)
+    }
+
+    class func removeScanRegion(name:String) {
+        var regions = self.getScanRegions()
+        regions.removeValueForKey(name)
+        self.setScanRegions(regions)
+    }
 }

@@ -43,6 +43,7 @@ class ConfigureAddScanRegionViewController : UIViewController, UITextFieldDelega
                         if let location = locations.last {
                             Logger.debug("location update received: \(location)")
                             locationManager.stopUpdatingLocation()
+                            ConfigStore.addScanRegion(name, region:location.coordinate)
                         }
                         progressView.remove()
                         self.navigationController.popViewControllerAnimated(true)

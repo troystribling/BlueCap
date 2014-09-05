@@ -59,7 +59,7 @@ class ConfigureScanRegionsViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        return 0
+        return ConfigStore.getScanRegions().count
     }
     
     override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
@@ -73,7 +73,9 @@ class ConfigureScanRegionsViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanRegionsCell, forIndexPath: indexPath) as PeripheralManagerCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanRegionsCell, forIndexPath: indexPath) as UITableViewCell
+        let regions = Array(ConfigStore.getScanRegions().keys)
+        cell.textLabel.text = regions[indexPath.row]
         return cell
     }
     

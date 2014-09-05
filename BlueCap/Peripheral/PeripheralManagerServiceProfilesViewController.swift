@@ -39,11 +39,6 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     override func viewWillDisappear(animated: Bool) {
     }
     
-    func addServiceComplete() {
-        self.navigationController.popViewControllerAnimated(true)
-        self.progressView.remove()
-    }
-    
     func updatePripheralStore() {
         if let peripheral = self.peripheral {
             let manager = PeripheralManager.sharedInstance()
@@ -54,7 +49,6 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
                     return uuids
                 }
             }
-            PeripheralStore.addPeripheralServices(peripheral, services:serviceUUIDs)
         }
     }
             
@@ -67,11 +61,15 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             service.characteristicsFromProfiles(serviceProfile.characteristics)
             self.progressView.show()
             PeripheralManager.sharedInstance().addService(service, afterServiceAddSuccess:{
-                    self.addServiceComplete()
-                    self.updatePripheralStore()
+                if let peripheral = self.peripheral {
+                    PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
+                }
+                self.navigationController.popViewControllerAnimated(true)
+                self.progressView.remove()
                 }, afterServiceAddFailed: {(error) in
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    self.addServiceComplete()
+                    self.navigationController.popViewControllerAnimated(true)
+                    self.progressView.remove()
                 })
         } else {
             self.navigationController.popViewControllerAnimated(true)
