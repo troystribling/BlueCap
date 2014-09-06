@@ -54,7 +54,7 @@ class PeripheralManagersViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        return PeripheralStore.getPeripherals().count
+        return PeripheralStore.getPeripheralNames().count
     }
     
     override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {

@@ -148,12 +148,12 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 if let oldname = self.peripheral {
                     let services = PeripheralStore.getPeripheralServices(oldname)
                     PeripheralStore.removePeripheral(oldname)
-                    PeripheralStore.addPeripheral(enteredName)
-                    PeripheralStore.setPeripheralServices(enteredName, services:services)
+                    PeripheralStore.addPeripheralName(enteredName)
+                    PeripheralStore.addPeripheralServices(enteredName, services:services)
                     self.peripheral = enteredName
                 } else {
                     self.peripheral = enteredName
-                    PeripheralStore.addPeripheral(enteredName)
+                    PeripheralStore.addPeripheralName(enteredName)
                 }
             }
             self.setUIState()
