@@ -14,6 +14,7 @@ class ConfigureScanRegionsViewController : UITableViewController {
     struct MainStoryboard {
         static let configureScanRegionsCell     = "ConfigureScanRegionsCell"
         static let configureAddScanRegionSegue  = "ConfigureAddScanRegion"
+        static let configureScanRegionSegue     = "ConfigureScanRegion"
     }
     
     required init(coder aDecoder:NSCoder) {
@@ -34,22 +35,11 @@ class ConfigureScanRegionsViewController : UITableViewController {
         self.navigationItem.title = ""
     }
     
-    @IBAction func addRegion(sender:AnyObject) {
-        let progressView = ProgressView()
-        progressView.show()
-        LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in
-            locationManager.locationsUpdateSuccess = {(locations:[CLLocation]) in
-                locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                if let location = locations.last {
-                    Logger.debug("location update received: \(location)")
-                    locationManager.stopUpdatingLocation()
-                    progressView.remove()
-                }
-            }
-            locationManager.locationsUpdateFailed = {(error:NSError!) in
-                progressView.remove()
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-            }
+    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+        if segue.identifier == MainStoryboard.configureScanRegionSegue {
+            let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell)
+            let viewController = segue.destinationViewController as ConfigureScanRegionViewController
+            viewController.regionName = ConfigStore.getScanRegionNames()[selectedIndexPath.row]
         }
     }
     
@@ -59,7 +49,7 @@ class ConfigureScanRegionsViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
-        return ConfigStore.getScanRegions().count
+        return ConfigStore.getScanRegionNames().count
     }
     
     override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
@@ -68,14 +58,15 @@ class ConfigureScanRegionsViewController : UITableViewController {
     
     override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
+            let regionName = ConfigStore.getScanRegionNames()[indexPath.row]
+            ConfigStore.removeScanRegion(regionName)
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
         }
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanRegionsCell, forIndexPath: indexPath) as UITableViewCell
-        let regions = Array(ConfigStore.getScanRegions().keys)
-        cell.textLabel.text = regions[indexPath.row]
+        cell.textLabel.text = ConfigStore.getScanRegionNames()[indexPath.row]
         return cell
     }
     

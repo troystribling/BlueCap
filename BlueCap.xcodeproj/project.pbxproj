@@ -73,6 +73,7 @@
 		05B45C0619A859A2009DAF6D /* BeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0519A859A2009DAF6D /* BeaconManager.swift */; };
 		05B56E1819B76C25005B22AC /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B56E1719B76C25005B22AC /* Utils.swift */; };
 		05B56E1A19B76D52005B22AC /* ConfigureAddScanRegionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B56E1919B76D52005B22AC /* ConfigureAddScanRegionViewController.swift */; };
+		05B56E1C19BB8278005B22AC /* ConfigureScanRegionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B56E1B19BB8278005B22AC /* ConfigureScanRegionViewController.swift */; };
 		05B6AD3819B4DA92007C226B /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6AD3719B4DA92007C226B /* LocationManager.swift */; };
 		05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */; };
 		05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* NameUUIDCell.swift */; };
@@ -217,6 +218,7 @@
 		05B48C7C1971FA3200260F4A /* Structs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Structs.playground; sourceTree = "<group>"; };
 		05B56E1719B76C25005B22AC /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		05B56E1919B76D52005B22AC /* ConfigureAddScanRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureAddScanRegionViewController.swift; sourceTree = "<group>"; };
+		05B56E1B19BB8278005B22AC /* ConfigureScanRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanRegionViewController.swift; sourceTree = "<group>"; };
 		05B6AD3719B4DA92007C226B /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
 		05B6F0771957ACF300D798CB /* NameUUIDCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameUUIDCell.swift; sourceTree = "<group>"; };
@@ -499,6 +501,7 @@
 				05B56E1919B76D52005B22AC /* ConfigureAddScanRegionViewController.swift */,
 				05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */,
 				05D9D51919B2266D001DBEBC /* ConfigureScanRegionsViewController.swift */,
+				05B56E1B19BB8278005B22AC /* ConfigureScanRegionViewController.swift */,
 				05D9D51719B0E502001DBEBC /* ConfigureScanServiceProfilesViewController.swift */,
 				05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */,
 				05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */,
@@ -765,6 +768,7 @@
 				05D9D51619B0E464001DBEBC /* ConfigureScanServicesViewController.swift in Sources */,
 				05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */,
 				057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */,
+				05B56E1C19BB8278005B22AC /* ConfigureScanRegionViewController.swift in Sources */,
 				05F2A8DB199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */,
 				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,
 				05F2A8DF1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift in Sources */,

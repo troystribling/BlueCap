@@ -61,15 +61,14 @@ class ConfigStore {
     
     class func setScannedServices(services:[CBUUID]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        let stringUUIDs = services.reduce([String]()){(strings, service) in
+        let stringUUIDs = services.reduce([String]()){(stringUUIDs, service) in
             if let stringUUID = service.UUIDString {
-                return strings + [stringUUID]
+                return stringUUIDs + [stringUUID]
             } else {
-                return strings
+                return stringUUIDs
             }
         }
         userDefaults.setObject(stringUUIDs, forKey:"scannedServices")
-        userDefaults.synchronize()
     }
     
     class func addScannedService(service:CBUUID) {
@@ -85,7 +84,7 @@ class ConfigStore {
     // scan regions
     class func getScanRegions() -> [String:CLLocationCoordinate2D] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let storedRegions = userDefaults.dictionaryForKey("regions") {
+        if let storedRegions = userDefaults.dictionaryForKey("scannedRegions") {
             var regions = Dictionary<String, CLLocationCoordinate2D>()
             for (name, location) in storedRegions {
                 if let latlon = location as? [Double] {
@@ -113,9 +112,9 @@ class ConfigStore {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         var storeRegions = Dictionary<String, [Double]>()
         for (name, location) in regions {
-            storeRegions[name] = [location.latitude, location.longitude]
+            storeRegions[name] = [location.latitude as Double, location.longitude as Double]
         }
-        userDefaults.setObject(storeRegions, forKey:"regions")
+        userDefaults.setObject(storeRegions, forKey:"scannedRegions")
     }
     
     class func addScanRegion(name:String, region:CLLocationCoordinate2D) {

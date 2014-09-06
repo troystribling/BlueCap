@@ -34,7 +34,6 @@ class ConfigureAddScanRegionViewController : UIViewController, UITextFieldDelega
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let name = self.nameTextField.text {
             if !name.isEmpty {
-                Logger.debug("ConfigureAddScanRegionViewController#textFieldShouldReturn: \(name)")
                 let progressView = ProgressView()
                 progressView.show()
                 LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in

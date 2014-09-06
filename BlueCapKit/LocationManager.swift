@@ -73,7 +73,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     }
     
     // reverse geocode
-    public class func reverseGeocodeLocation(location:CLLocation, reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())?)  {
+    public class func reverseGeocodeLocation(location:CLLocation, reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())? = nil)  {
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location){(placemarks:[AnyObject]!, error:NSError!) in
             if error == nil {
@@ -96,7 +96,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         }
     }
     
-    public func reverseGeocodeLocation(reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())?)  {
+    public func reverseGeocodeLocation(reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())? = nil)  {
         if let location = self.location {
             RegionManager.reverseGeocodeLocation(self.location, reverseGeocodeSuccess, reverseGeocodeFailed)
         } else {

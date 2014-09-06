@@ -24,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(application: UIApplication) {
+        NSUserDefaults.standardUserDefaults().synchronize()
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
@@ -39,8 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(application: UIApplication) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.synchronize()
+         NSUserDefaults.standardUserDefaults().synchronize()
     }
 
 

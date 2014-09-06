@@ -49,8 +49,8 @@ class PeripheralStore {
                 }
             }
         }
-        Logger.debug("setPeripheralServices as strings peripheralServices: \(storedPeripherals)")
-        NSUserDefaults.standardUserDefaults().setObject(storedPeripherals, forKey:"peripheralServices")
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setObject(storedPeripherals, forKey:"peripheralServices")
     }
     
     class func addPeripheralServices(name:String, services:[CBUUID]) {
@@ -102,7 +102,8 @@ class PeripheralStore {
     }
 
     class func setPeripheralNames(names:[String]) {
-        NSUserDefaults.standardUserDefaults().setObject(names, forKey:"peripheralNames")
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setObject(names, forKey:"peripheralNames")
     }
     
     class func addPeripheralName(name:String) {
