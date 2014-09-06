@@ -101,17 +101,13 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             let peripheralManager = PeripheralManager.sharedInstance()
             let profileManager = ProfileManager.sharedInstance()
             let serviceUUIDs = PeripheralStore.getPeripheralServices(peripheral)
-            let services = serviceUUIDs.reduce([MutableService]()){(servs, uuidString) in
-                if let uuid = CBUUID.UUIDWithString(uuidString) {
-                    if let serviceProfile = profileManager.service(uuid) {
-                        let service = MutableService(profile:serviceProfile)
-                        service.characteristicsFromProfiles(serviceProfile.characteristics)
-                        return servs + [service]
-                    } else {
-                        return servs
-                    }
+            let services = serviceUUIDs.reduce([MutableService]()){(services, uuid) in
+                if let serviceProfile = profileManager.service(uuid) {
+                    let service = MutableService(profile:serviceProfile)
+                    service.characteristicsFromProfiles(serviceProfile.characteristics)
+                    return services + [service]
                 } else {
-                    return servs
+                    return services
                 }
             }
             peripheralManager.addServices(services, afterServiceAddSuccess:{
@@ -148,12 +144,12 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         self.nameTextField.resignFirstResponder()
         if let enteredName = self.nameTextField.text {
-            if enteredName != "" {
+            if !enteredName.isEmpty {
                 if let oldname = self.peripheral {
                     let services = PeripheralStore.getPeripheralServices(oldname)
                     PeripheralStore.removePeripheral(oldname)
                     PeripheralStore.addPeripheral(enteredName)
-                    PeripheralStore.addPeripheralServices(enteredName, services:services)
+                    PeripheralStore.setPeripheralServices(enteredName, services:services)
                     self.peripheral = enteredName
                 } else {
                     self.peripheral = enteredName

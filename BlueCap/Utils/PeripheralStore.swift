@@ -37,7 +37,17 @@ class PeripheralStore {
 
     class func setPeripherals(peripherals:[String:[CBUUID]]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(peripherals, forKey:"peripherals")
+        var storedPeripherals = Dictionary<String, [String]>()
+        for (name, uuids) in peripherals {
+            let storedUUIDs = uuids.reduce([String]()) {(storedUUIDs, uuid) in
+                if let storedUUID = uuid.UUIDString {
+                    return storedUUIDs + [storedUUID]
+                } else {
+                    return storedUUIDs
+                }
+            }
+        }
+        userDefaults.setObject(storedPeripherals, forKey:"peripherals")
     }
     
     class func removePeripheral(name:String) {

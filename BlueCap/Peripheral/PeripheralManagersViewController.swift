@@ -40,7 +40,7 @@ class PeripheralManagersViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralManagerViewSegue {
             let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
             let viewController = segue.destinationViewController as PeripheralManagerViewController
-            let peripherals = PeripheralStore.getPeripherals()
+            let peripherals = PeripheralStore.getPeripheralNames()
             viewController.peripheral = peripherals[selectedIndex.row]
         } else if segue.identifier == MainStoryboard.peripheralManagerAddSegue {
             let viewController = segue.destinationViewController as PeripheralManagerViewController
@@ -63,7 +63,7 @@ class PeripheralManagersViewController : UITableViewController {
     
     override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
-            let peripherals = PeripheralStore.getPeripherals()
+            let peripherals = PeripheralStore.getPeripheralNames()
             PeripheralStore.removePeripheral(peripherals[indexPath.row])
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
         }
@@ -71,7 +71,7 @@ class PeripheralManagersViewController : UITableViewController {
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as PeripheralManagerCell
-        let peripherals = PeripheralStore.getPeripherals()
+        let peripherals = PeripheralStore.getPeripheralNames()
         cell.nameLabel.text = peripherals[indexPath.row]
         return cell
     }

@@ -71,7 +71,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
-        return true
+        return !PeripheralManager.sharedInstance().isAdvertising
     }
     
     override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
@@ -84,7 +84,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
                 let manager = PeripheralManager.sharedInstance()
                 let service = manager.services[indexPath.row]
                 manager.removeService(service) {
-                    PeripheralStore.removePeripheralService(peripheral, service:service.uuid.UUIDString)
+                    PeripheralStore.removePeripheralService(peripheral, service:service.uuid)
                     self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
                 }
             }
