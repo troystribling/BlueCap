@@ -85,11 +85,13 @@ class ConfigStore {
     class func getScanRegions() -> [String:CLLocationCoordinate2D] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let storedRegions = userDefaults.dictionaryForKey("scannedRegions") {
-            var regions = Dictionary<String, CLLocationCoordinate2D>()
+            var regions = [String:CLLocationCoordinate2D]()
             for (name, location) in storedRegions {
-                if let latlon = location as? [Double] {
-                    if let name = name as? String {
-                        regions[name] = CLLocationCoordinate2D(latitude:latlon[0] , longitude:latlon[1])
+                if let name = name as? String {
+                    if location.count == 2 {
+                        let lat = location[0] as NSNumber
+                        let lon = location[1] as NSNumber
+                        regions[name] = CLLocationCoordinate2D(latitude:lat.doubleValue, longitude:lon.doubleValue)
                     }
                 }
             }
@@ -110,9 +112,9 @@ class ConfigStore {
     
     class func setScanRegions(regions:[String:CLLocationCoordinate2D]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        var storeRegions = Dictionary<String, [Double]>()
+        var storeRegions = [String:[NSNumber]]()
         for (name, location) in regions {
-            storeRegions[name] = [location.latitude as Double, location.longitude as Double]
+            storeRegions[name] = [NSNumber(double:location.latitude), NSNumber(double:location.longitude)]
         }
         userDefaults.setObject(storeRegions, forKey:"scannedRegions")
     }

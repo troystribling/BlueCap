@@ -12,8 +12,11 @@ import CoreLocation
 
 class ConfigureScanRegionViewController : UITableViewController {
     
-    @IBOutlet var latitudeLable   : UILabel!
-    @IBOutlet var longitudeLable  : UILabel!
+    @IBOutlet var latitudeLabel     : UILabel!
+    @IBOutlet var longitudeLabel    : UILabel!
+    @IBOutlet var address1Label     : UILabel!
+    @IBOutlet var address2Label     : UILabel!
+    @IBOutlet var address3Label     : UILabel!
 
     var regionName : String?
     
@@ -26,15 +29,23 @@ class ConfigureScanRegionViewController : UITableViewController {
         if let regionName = self.regionName {
             self.navigationItem.title = regionName
             if let region = ConfigStore.getScanRegion(regionName) {
-                self.latitudeLable.text = "\(region.latitude)"
-                self.longitudeLable.text = "\(region.longitude)"
+                self.latitudeLabel.text = "\(region.latitude)"
+                self.longitudeLabel.text = "\(region.longitude)"
                 let location = CLLocation(latitude:region.latitude, longitude:region.longitude)
                 let progressView = ProgressView()
                 progressView.show()
                 LocationManager.reverseGeocodeLocation(location,
                     reverseGeocodeSuccess:{(placemarks) in
                         if let placemark = placemarks.first {
-                            Logger.debug("\(placemark)")
+                            if let address:AnyObject = placemark.addressDictionary["FormattedAddressLines"] {
+                                if let address = address as? [String] {
+                                    if address.count == 3 {
+                                        self.address1Label.text = address[0]
+                                        self.address2Label.text = address[1]
+                                        self.address3Label.text = address[2]
+                                    }
+                                }
+                            }
                         }
                         progressView.remove()
                     }, reverseGeocodeFailed:{(error) in
