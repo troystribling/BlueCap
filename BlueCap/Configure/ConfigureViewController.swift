@@ -54,13 +54,9 @@ class ConfigureViewController : UITableViewController {
         case MainStroryboard.configureScanModeSegue:
             return true
         case MainStroryboard.configureScanRegionsSegue:
-            return ConfigStore.getRegionScanEnabled()
+            return  !RegionScannerator.sharedInstance().isScanning
         case MainStroryboard.configureScanServicesSegue:
-            if self.scanMode == "Service" {
-                return true
-            } else {
-                return false
-            }
+            return !CentralManager.sharedInstance().isScanning && !RegionScannerator.sharedInstance().isScanning
         default:
             return true
         }
@@ -72,16 +68,19 @@ class ConfigureViewController : UITableViewController {
     }
     
     func configUI() {
-        if self.scanMode == "Service" {
-            self.servicesLabel.textColor = UIColor.blackColor()
-        } else {
+        if  CentralManager.sharedInstance().isScanning {
             self.servicesLabel.textColor = UIColor.lightGrayColor()
+        } else {
+            self.servicesLabel.textColor = UIColor.blackColor()
+        }
+        if  RegionScannerator.sharedInstance().isScanning {
+            self.scanRegionsLabel.textColor = UIColor.lightGrayColor()
+        } else {
+            self.scanRegionsLabel.textColor = UIColor.blackColor()
         }
         if ConfigStore.getRegionScanEnabled() {
-            self.scanRegionsLabel.textColor = UIColor.blackColor()
             self.scanRegionButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
         } else {
-            self.scanRegionsLabel.textColor = UIColor.lightGrayColor()
             self.scanRegionButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
         }
     }

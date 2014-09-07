@@ -1002,8 +1002,8 @@
                     <connections>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
                         <outlet property="scanRegionButton" destination="t3k-TC-0OT" id="59f-uz-Pc0"/>
-                        <outlet property="scanRegionsLabel" destination="coN-e3-XtF" id="4as-jg-2rb"/>
-                        <outlet property="servicesLabel" destination="clG-Jf-3IE" id="aUq-tQ-2B2"/>
+                        <outlet property="scanRegionsLabel" destination="coN-e3-XtF" id="XY8-pt-Mi2"/>
+                        <outlet property="servicesLabel" destination="clG-Jf-3IE" id="hgE-nK-ZWM"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Txq-Jg-Rtt" userLabel="First Responder" sceneMemberID="firstResponder"/>

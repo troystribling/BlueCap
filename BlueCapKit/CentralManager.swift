@@ -48,7 +48,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         if !self._isScanning {
-            Logger.debug("CentralManager#startScanningForServiceUUIDds")
+            Logger.debug("CentralManager#startScanningForServiceUUIDs: \(uuids)")
             self._isScanning = true
             self.afterPeripheralDiscovered = afterPeripheralDiscovered
             self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)

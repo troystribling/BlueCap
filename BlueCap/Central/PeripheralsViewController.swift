@@ -63,15 +63,17 @@ class PeripheralsViewController : UITableViewController {
         Logger.debug("toggleScan")
         let central = CentralManager.sharedInstance()
         if (central.isScanning) {
-            central.stopScanning()
+            if ConfigStore.getRegionScanEnabled() {
+                RegionScannerator.sharedInstance().stopScanning()
+            } else {
+                central.stopScanning()
+            }
             self.setScanButton()
             central.disconnectAllPeripherals()
         } else {
             central.powerOn(){
                 Logger.debug("powerOn Callback")
-                central.startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
-                    self.connect(peripheral)
-                }
+                self.startScan()
                 self.setScanButton()
             }
         }
@@ -131,5 +133,53 @@ class PeripheralsViewController : UITableViewController {
                 self.tableView.reloadData()
             }
         })
+    }
+    
+    // Private
+    func startScan() {
+        let scanMode = ConfigStore.getScanMode()
+        if ConfigStore.getRegionScanEnabled() {
+            switch scanMode {
+            case "Promiscuous" :
+                RegionScannerator.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
+                    self.connect(peripheral)
+                }
+                break
+            case "Service" :
+                let scannedServices = ConfigStore.getScannedServices()
+                if scannedServices.isEmpty {
+                    self.presentViewController(UIAlertController.alertOnError("No scan services configured"), animated:true, completion:nil)
+                } else {
+                    RegionScannerator.sharedInstance().startScanningForServiceUUIDds(scannedServices){(peripheral:Peripheral, rssi:Int) -> () in
+                        self.connect(peripheral)
+                    }
+                }
+                break
+            default:
+                Logger.debug("Scan Mode :'\(scanMode)' invalid")
+                break
+            }
+        } else {
+            switch scanMode {
+            case "Promiscuous" :
+                CentralManager.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
+                    self.connect(peripheral)
+                }
+                break
+            case "Service" :
+                let scannedServices = ConfigStore.getScannedServices()
+                if scannedServices.isEmpty {
+                    self.presentViewController(UIAlertController.alertOnError("No scan services configured"), animated:true, completion:nil)
+                } else {
+                    CentralManager.sharedInstance().startScanningForServiceUUIDds(scannedServices){(peripheral:Peripheral, rssi:Int) -> () in
+                        self.connect(peripheral)
+                    }
+                }
+                break
+            default:
+                Logger.debug("Scan Mode :'\(scanMode)' invalid")
+                break
+            }
+        }
     }
 }

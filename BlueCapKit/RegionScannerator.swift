@@ -31,6 +31,8 @@ public class RegionScannerator {
     private let regionManager                   : RegionManager
     private var services                        : [CBUUID]?
     private var afterPeripheralDiscovered       : ((peripheral:Peripheral, rssi:Int)->())?
+
+    private var _isScanning = false
     
     public var distanceFilter : CLLocationDistance {
         get {
@@ -54,30 +56,48 @@ public class RegionScannerator {
         return self.regionManager.regions
     }
 
+    public var isScanning : Bool {
+        return self._isScanning
+    }
+    
+    public class func sharedInstance() -> RegionScannerator {
+        if thisRegionScannerator == nil {
+            thisRegionScannerator = RegionScannerator()
+        }
+        return thisRegionScannerator!
+    }
+    
     public init(initializer:((scannerator:RegionScannerator) -> ())? = nil) {
-        self.regionManager = RegionManager()
+        self.regionManager = RegionManager.sharedInstance()
         if let initializer = initializer {
             initializer(scannerator:self)
         }
     }
 
     public func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+        Logger.debug("RegionScannerator#startScanning")
         self.afterPeripheralDiscovered = afterPeripheralDiscovered
+        self._isScanning = true
         self.regionManager.startUpdatingLocation()
     }
     
     public func startScanningForServiceUUIDds(uuids:[CBUUID], afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+        Logger.debug("RegionScannerator#startScanningForServiceUUIDs: \(uuids)")
         self.afterPeripheralDiscovered = afterPeripheralDiscovered
+        self._isScanning = true
         self.services = uuids
         self.regionManager.startUpdatingLocation()
     }
     
     public func stopScanning() {
+        Logger.debug("RegionScannerator#stopScanning")
         CentralManager.sharedInstance().stopScanning()
+        self._isScanning = false
         self.regionManager.stopUpdatingLocation()
     }
     
     public func startMonitoringForRegion(regionMonitor:RegionMonitor) {
+        Logger.debug("RegionScannerator#startMonitoringForRegion")
         let scanneratorMonitor = RegionScanneratorMonitor(regionMonitor:regionMonitor) {(regionMonitor) in
             regionMonitor.exitRegion = {
                 if let exitRegion = regionMonitor.regionMonitor.exitRegion {
@@ -115,7 +135,10 @@ public class RegionScannerator {
     }
     
     public func stopMonitoringForRegion(regionMonitor:RegionMonitor) {
+        Logger.debug("RegionScannerator#stopMonitoringForRegion")
         self.regionManager.stopMonitoringForRegion(regionMonitor)
     }
 
 }
+
+var thisRegionScannerator : RegionScannerator?
