@@ -55,6 +55,10 @@ public class RegionScannerator {
     public var regions : [CLRegion] {
         return self.regionManager.regions
     }
+    
+    public var regionMonitors : [RegionMonitor] {
+        return self.regionManager.regionMonitors
+    }
 
     public var isScanning : Bool {
         return self._isScanning
@@ -111,7 +115,11 @@ public class RegionScannerator {
                     enterRegion()
                 } else {
                     if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
-                        CentralManager.sharedInstance().startScanningForServiceUUIDds(self.services, afterPeripheralDiscovered:afterPeripheralDiscovered)
+                        if let services = self.services {
+                            CentralManager.sharedInstance().startScanningForServiceUUIDds(services, afterPeripheralDiscovered:afterPeripheralDiscovered)
+                        } else {
+                            CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
+                        }
                     }
                 }
             }

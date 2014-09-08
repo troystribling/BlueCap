@@ -64,6 +64,7 @@ class PeripheralsViewController : UITableViewController {
         let central = CentralManager.sharedInstance()
         if (central.isScanning) {
             if ConfigStore.getRegionScanEnabled() {
+                self.stopMonitoringRegions()
                 RegionScannerator.sharedInstance().stopScanning()
             } else {
                 central.stopScanning()
@@ -112,6 +113,7 @@ class PeripheralsViewController : UITableViewController {
         }
     }
     
+    // utils
     func connect(peripheral:Peripheral) {
         peripheral.connect(Connectorator() {(connectorator:Connectorator) -> () in
             connectorator.disconnect = {(periphear:Peripheral) -> () in
@@ -135,7 +137,6 @@ class PeripheralsViewController : UITableViewController {
         })
     }
     
-    // Private
     func startScan() {
         let scanMode = ConfigStore.getScanMode()
         if ConfigStore.getRegionScanEnabled() {
@@ -144,6 +145,7 @@ class PeripheralsViewController : UITableViewController {
                 RegionScannerator.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
                     self.connect(peripheral)
                 }
+                self.startMonitoringRegions()
                 break
             case "Service" :
                 let scannedServices = ConfigStore.getScannedServices()
@@ -154,12 +156,12 @@ class PeripheralsViewController : UITableViewController {
                         self.connect(peripheral)
                     }
                 }
+                self.startMonitoringRegions()
                 break
             default:
                 Logger.debug("Scan Mode :'\(scanMode)' invalid")
                 break
             }
-            let regions = ConfigStore.getScanRegions()
         } else {
             switch scanMode {
             case "Promiscuous" :
@@ -183,4 +185,34 @@ class PeripheralsViewController : UITableViewController {
             }
         }
     }
+    
+    func startMonitoringRegions() {
+        for (name, location) in ConfigStore.getScanRegions() {
+            RegionScannerator.sharedInstance().startMonitoringForRegion(RegionMonitor(center:location, identifier:name) {(regionMonitor) in
+                regionMonitor.exitRegion = {
+                    CentralManager.sharedInstance().stopScanning()
+                }
+                regionMonitor.enterRegion = {
+                    let services = ConfigStore.getScannedServices()
+                    let afterPeripheralDiscovered = {(peripheral:Peripheral, rssi:Int) -> () in
+                        self.connect(peripheral)
+                    }
+                    if  services.isEmpty {
+                        CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
+                    } else {
+                        CentralManager.sharedInstance().startScanningForServiceUUIDds(services, afterPeripheralDiscovered:afterPeripheralDiscovered)
+                    }
+                }
+                regionMonitor.startMonitoringRegion = {
+                }
+            })
+        }
+    }
+    
+    func stopMonitoringRegions() {
+        for regionMonitors in RegionScannerator.sharedInstance().regionMonitors {
+            RegionScannerator.sharedInstance().stopMonitoringForRegion(regionMonitors)
+        }
+    }
+
 }
