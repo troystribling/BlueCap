@@ -27,7 +27,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PUBLIC
     public var peripherals : [Peripheral] {
-        return Array(self.discoveredPeripherals.values)
+        return self.discoveredPeripherals.values.array
     }
     
     public class func sharedInstance() -> CentralManager {

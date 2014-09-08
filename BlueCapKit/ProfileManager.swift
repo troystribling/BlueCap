@@ -20,7 +20,7 @@ public class ProfileManager {
     
     // PUBLIC
     public var services : [ServiceProfile] {
-        return Array(self.serviceProfiles.values)
+        return self.serviceProfiles.values.array
     }
     
     public class func sharedInstance() -> ProfileManager {

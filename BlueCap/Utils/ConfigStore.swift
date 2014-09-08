@@ -102,7 +102,7 @@ class ConfigStore {
     }
     
     class func getScanRegionNames() -> [String] {
-        return Array(self.getScanRegions().keys)
+        return self.getScanRegions().keys.array
     }
     
     class func getScanRegion(name:String) -> CLLocationCoordinate2D? {

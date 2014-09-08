@@ -20,7 +20,7 @@ public class ServiceProfile {
     public var tag  = "Miscellaneous"
     
     public var characteristics : [CharacteristicProfile] {
-        return Array(self.characteristicProfiles.values)
+        return self.characteristicProfiles.values.array
     }
     
     public init(uuid:String, name:String, profile:(service:ServiceProfile) -> ()) {

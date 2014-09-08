@@ -14,11 +14,11 @@ public class RegionManager : LocationManager {
     private var configuredRegionMonitors    : Dictionary<CLRegion, RegionMonitor> = [:]
     
     public var regions : [CLRegion] {
-        return Array(self.configuredRegionMonitors.keys)
+        return self.configuredRegionMonitors.keys.array
     }
     
     public var regionMonitors : [RegionMonitor] {
-        return Array(self.configuredRegionMonitors.values)
+        return self.configuredRegionMonitors.values.array
     }
     
     public var maximumRegionMonitoringDistance : CLLocationDistance {

@@ -44,7 +44,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public var services : [MutableService] {
-        return Array(self.configuredServices.values)
+        return self.configuredServices.values.array
     }
     
     public var name : String? {
@@ -80,14 +80,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self._name = name
         self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
         self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
-        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:Array(self.configuredServices.keys)])
+        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:self.configuredServices.keys.array])
     }
 
     public func startAdvertising(name:String, afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
         self._name = name
         self.afterAdvertisingStartedSuccessCallback = nil
         self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
-        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:Array(self.configuredServices.keys)])
+        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:self.configuredServices.keys.array])
     }
     
     public func stopAdvertising(afterAdvertisingStopped:(()->())? = nil) {

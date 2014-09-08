@@ -9,6 +9,8 @@
 import Foundation
 import CoreLocation
 
+let DEFAULT_REGION_RADIUS = 100.0
+
 public class RegionMonitor {
     
     private var _region : CLRegion
@@ -29,5 +31,16 @@ public class RegionMonitor {
             initializer(regionMonitor:self)
         }
     }
+    
+    public convenience init(center: CLLocationCoordinate2D, radius:CLLocationDistance, identifier:String, initializer:((regionMonitor:RegionMonitor) -> ())? = nil) {
+        let circularRegion = CLCircularRegion(center:center, radius:radius, identifier:identifier)
+        self.init(region:circularRegion, initializer:initializer)
+    }
+    
+    public convenience init(center: CLLocationCoordinate2D, identifier:String, initializer:((regionMonitor:RegionMonitor) -> ())? = nil) {
+        let circularRegion = CLCircularRegion(center:center, radius:DEFAULT_REGION_RADIUS, identifier:identifier)
+        self.init(region:circularRegion, initializer:initializer)
+    }
+
 }
 

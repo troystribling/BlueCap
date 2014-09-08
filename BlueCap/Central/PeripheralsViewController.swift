@@ -159,6 +159,7 @@ class PeripheralsViewController : UITableViewController {
                 Logger.debug("Scan Mode :'\(scanMode)' invalid")
                 break
             }
+            let regions = ConfigStore.getScanRegions()
         } else {
             switch scanMode {
             case "Promiscuous" :

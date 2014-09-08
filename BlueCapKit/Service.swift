@@ -35,7 +35,7 @@ public class Service : NSObject {
     }
     
     public var characteristics : [Characteristic] {
-        return Array(self.discoveredCharacteristics.values)
+        return self.discoveredCharacteristics.values.array
     }
     
     // PUBLIC

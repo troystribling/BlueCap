@@ -36,7 +36,7 @@ class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewCont
         
     // UITableViewDelegate
     override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
-        let tags = Array(self.serviceProfiles.keys)
+        let tags = self.serviceProfiles.keys.array
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let serviceProfile = profiles[indexPath.row]
             ConfigStore.addScannedService(serviceProfile.uuid)

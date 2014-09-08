@@ -26,8 +26,8 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let peripheral = self.peripheral {
-            self.names = Array(peripheral.advertisements.keys)
-            self.values = Array(peripheral.advertisements.values)
+            self.names = peripheral.advertisements.keys.array
+            self.values = peripheral.advertisements.values.array
         }
     }
     

@@ -56,7 +56,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public var services : [Service] {
-        return Array(self.discoveredServices.values)
+        return self.discoveredServices.values.array
     }
     
     public init(cbPeripheral:CBPeripheral, advertisements:Dictionary<String, String>, rssi:Int) {
