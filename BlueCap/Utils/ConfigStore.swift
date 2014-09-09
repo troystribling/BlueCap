@@ -15,8 +15,7 @@ class ConfigStore {
   
     // scan mode
     class func getScanMode() -> String {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let scanMode = userDefaults.stringForKey("scanMode") {
+        if let scanMode = NSUserDefaults.standardUserDefaults().stringForKey("scanMode") {
             return scanMode
         } else {
             return "Promiscuous"
@@ -24,21 +23,40 @@ class ConfigStore {
     }
     
     class func setScanMode(scanMode:String) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(scanMode, forKey:"scanMode")
+        NSUserDefaults.standardUserDefaults().setObject(scanMode, forKey:"scanMode")
     }
     
     // region scan enabled
     class func getRegionScanEnabled() -> Bool {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        return userDefaults.boolForKey("regionScanEnabled")
+        return NSUserDefaults.standardUserDefaults().boolForKey("regionScanEnabled")
     }
     
     class func setRegionScanEnabled(regionScanEnabled:Bool) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setBool(regionScanEnabled, forKey:"regionScanEnabled")
+        NSUserDefaults.standardUserDefaults().setBool(regionScanEnabled, forKey:"regionScanEnabled")
     }
 
+    // scan timeout
+    class func getTimeoutEnabled() -> Bool {
+        return NSUserDefaults.standardUserDefaults().boolForKey("scanTimeoutEnabled")
+    }
+    
+    class func setTimeoutEnabled(timeoutEnabled:Bool) {
+        NSUserDefaults.standardUserDefaults().setBool(timeoutEnabled, forKey:"scanTimeoutEnabled")
+    }
+    
+    class func getScanTimeout() -> Int {
+        let timeout = NSUserDefaults.standardUserDefaults().integerForKey("scanTimeout")
+        if timeout == 0 {
+            return 10
+        } else {
+            return timeout
+        }
+    }
+    
+    class func setScanTimeout(timeout:Int) {
+        NSUserDefaults.standardUserDefaults().setInteger(timeout, forKey:"scanTimeout")
+    }
+    
     // scanned services
     class func getScannedServices() -> [CBUUID] {
         let userDefaults = NSUserDefaults.standardUserDefaults()

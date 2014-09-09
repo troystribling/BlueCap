@@ -1033,6 +1033,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="rwA-dJ-l4h" kind="push" identifier="ConfigureScanTimeout" id="ANK-7s-Saa"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1047,6 +1050,8 @@
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
                         <outlet property="scanRegionButton" destination="t3k-TC-0OT" id="59f-uz-Pc0"/>
                         <outlet property="scanRegionsLabel" destination="coN-e3-XtF" id="XY8-pt-Mi2"/>
+                        <outlet property="scanTimeoutButton" destination="lnl-lB-zzO" id="jsK-ro-xnU"/>
+                        <outlet property="scanTimeoutLabel" destination="1mj-Pi-WdG" id="ZUP-94-yf9"/>
                         <outlet property="servicesLabel" destination="clG-Jf-3IE" id="hgE-nK-ZWM"/>
                     </connections>
                 </tableViewController>
@@ -1153,6 +1158,32 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vLI-rG-tw0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2105" y="-2256"/>
+        </scene>
+        <!--Scan Timeout-->
+        <scene sceneID="c49-tc-ZcB">
+            <objects>
+                <viewController id="rwA-dJ-l4h" customClass="ConfigureScanTimeoutViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TBs-e2-KmL">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Scan Timeout" minimumFontSize="17" clearButtonMode="whileEditing" id="bXs-1u-5M7">
+                                <rect key="frame" x="20" y="100" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Scan Timeout" id="F7d-Yf-M7D"/>
+                    <connections>
+                        <outlet property="timeoutTextField" destination="bXs-1u-5M7" id="fdb-hU-YYB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qx4-Gn-PXd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1647" y="-1648"/>
         </scene>
         <!--Configure Scan Region View Controller-->
         <scene sceneID="dRc-VH-NF2">
@@ -1288,7 +1319,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Region Name" minimumFontSize="17" clearButtonMode="whileEditing" id="80Z-Ee-Abo">
-                                <rect key="frame" x="16" y="94" width="288" height="30"/>
+                                <rect key="frame" x="20" y="100" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
@@ -2228,7 +2259,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" id="Udk-V1-rmr">
-                                <rect key="frame" x="20" y="95" width="280" height="30"/>
+                                <rect key="frame" x="20" y="100" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -2744,7 +2775,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" id="scK-cN-VWY">
-                                <rect key="frame" x="20" y="95" width="280" height="30"/>
+                                <rect key="frame" x="20" y="100" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>

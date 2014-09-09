@@ -11,10 +11,12 @@ import BlueCapKit
 
 class ConfigureViewController : UITableViewController {
     
-    @IBOutlet var scanModeLabel     : UILabel!
-    @IBOutlet var servicesLabel     : UILabel!
-    @IBOutlet var scanRegionsLabel  : UILabel!
-    @IBOutlet var scanRegionButton  : UIButton!
+    @IBOutlet var scanModeLabel         : UILabel!
+    @IBOutlet var servicesLabel         : UILabel!
+    @IBOutlet var scanRegionsLabel      : UILabel!
+    @IBOutlet var scanRegionButton      : UIButton!
+    @IBOutlet var scanTimeoutLabel      : UILabel!
+    @IBOutlet var scanTimeoutButton     : UIButton!
     
     var scanMode = "None"
     
@@ -22,6 +24,7 @@ class ConfigureViewController : UITableViewController {
         static let configureScanServicesSegue   = "ConfigureScanServices"
         static let configureScanRegionsSegue    = "ConfigureScanRegions"
         static let configureScanModeSegue       = "ConfigureScanMode"
+        static let configureScanTimeoutSegue    = "ConfigureScanTimeout"
     }
     
     required init(coder aDecoder:NSCoder) {
@@ -35,7 +38,7 @@ class ConfigureViewController : UITableViewController {
     override func viewWillAppear(animated: Bool) {
         self.scanMode = ConfigStore.getScanMode()
         self.scanModeLabel.text = self.scanMode
-        self.scanModeLabel.text = ConfigStore.getScanMode()
+        self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.navigationItem.title = "Configure"
         self.configUI()
         super.viewWillAppear(animated)

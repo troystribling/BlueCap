@@ -71,11 +71,9 @@ public class RegionScannerator {
         return thisRegionScannerator!
     }
     
-    public init(initializer:((scannerator:RegionScannerator) -> ())? = nil) {
+    public init() {
         self.regionManager = RegionManager.sharedInstance()
-        if let initializer = initializer {
-            initializer(scannerator:self)
-        }
+        self.desiredAccuracy = kCLLocationAccuracyBest
     }
 
     public func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
