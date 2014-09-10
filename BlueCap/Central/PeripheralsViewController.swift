@@ -165,8 +165,12 @@ class PeripheralsViewController : UITableViewController {
         } else {
             switch scanMode {
             case "Promiscuous" :
-                CentralManager.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
-                    self.connect(peripheral)
+                if ConfigStore.getScanTimeoutEnabled() {
+                    
+                } else {
+                    CentralManager.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
+                        self.connect(peripheral)
+                    }
                 }
                 break
             case "Service" :
@@ -174,8 +178,11 @@ class PeripheralsViewController : UITableViewController {
                 if scannedServices.isEmpty {
                     self.presentViewController(UIAlertController.alertOnError("No scan services configured"), animated:true, completion:nil)
                 } else {
-                    CentralManager.sharedInstance().startScanningForServiceUUIDds(scannedServices){(peripheral:Peripheral, rssi:Int) -> () in
-                        self.connect(peripheral)
+                    if ConfigStore.getScanTimeoutEnabled() {
+                    } else {
+                        CentralManager.sharedInstance().startScanningForServiceUUIDds(scannedServices){(peripheral:Peripheral, rssi:Int) -> () in
+                            self.connect(peripheral)
+                        }
                     }
                 }
                 break

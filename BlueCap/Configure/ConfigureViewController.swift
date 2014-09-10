@@ -70,6 +70,11 @@ class ConfigureViewController : UITableViewController {
         self.configUI()
     }
     
+    @IBAction func toggleScanTimeout(sender:AnyObject) {
+        ConfigStore.setScanTimeoutEnabled(!ConfigStore.getScanTimeoutEnabled())
+        self.configUI()
+    }
+    
     func configUI() {
         if  CentralManager.sharedInstance().isScanning {
             self.servicesLabel.textColor = UIColor.lightGrayColor()
@@ -80,6 +85,11 @@ class ConfigureViewController : UITableViewController {
             self.scanRegionsLabel.textColor = UIColor.lightGrayColor()
         } else {
             self.scanRegionsLabel.textColor = UIColor.blackColor()
+        }
+        if ConfigStore.getScanTimeoutEnabled() {
+            self.scanTimeoutButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
+        } else {
+            self.scanTimeoutButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
         }
         if ConfigStore.getRegionScanEnabled() {
             self.scanRegionButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:UIControlState.Normal)

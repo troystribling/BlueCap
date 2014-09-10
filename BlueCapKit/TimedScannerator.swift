@@ -11,27 +11,29 @@ import CoreBluetooth
 
 public class TimedScannerator {
     
-    internal var timeoutSeconds : Float?
+    internal var timeoutSeconds : Float = 10.0
     
     public var onTimeout : (() -> ())?
     
+    class func sharedInstance() -> TimedScannerator {
+        if thisTimedScannerator == nil {
+            thisTimedScannerator = TimedScannerator()
+        }
+        return thisTimedScannerator!
+    }
+
     public init() {
     }
     
-    public init(timeoutSeconds:Float, initializer:((scannerator:TimedScannerator) -> ())? = nil) {
-        self.timeoutSeconds = timeoutSeconds
-        if let initializer = initializer {
-            initializer(scannerator:self)
-        }
-    }
-    
-    public func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanning(timeoutSeconds:Float, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
+        self.timeoutSeconds = timeoutSeconds
         self.timeoutScan()
     }
     
-    public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanningForServiceUUIDds(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->()) {
         CentralManager.sharedInstance().startScanningForServiceUUIDds(uuids, afterPeripheralDiscoveredCallback)
+        self.timeoutSeconds = timeoutSeconds
         self.timeoutScan()
     }
     
@@ -40,20 +42,18 @@ public class TimedScannerator {
     }
 
     private func timeoutScan() {
-        if let timeoutSeconds = self.timeoutSeconds {
-            if let onTimeout = self.onTimeout {
-                Logger.debug("Scannerator#timeoutScan: \(timeoutSeconds)s")
-                let central = CentralManager.sharedInstance()
-                central.delayCallback(timeoutSeconds) {
-                    if central.peripherals.count == 0 {
-                        Logger.debug("Scannerator#timeoutScan: timing out")
-                        onTimeout()
-                    } else {
-                        Logger.debug("Scannerator#timeoutScan: expired")
-                    }
-                }
+        Logger.debug("Scannerator#timeoutScan: \(self.timeoutSeconds)s")
+        let central = CentralManager.sharedInstance()
+        central.delayCallback(self.timeoutSeconds) {
+            if central.peripherals.count == 0 {
+                Logger.debug("Scannerator#timeoutScan: timing out")
+                central.stopScanning()
+            } else {
+                Logger.debug("Scannerator#timeoutScan: expired")
             }
         }
     }
 
 }
+
+var thisTimedScannerator : TimedScannerator?

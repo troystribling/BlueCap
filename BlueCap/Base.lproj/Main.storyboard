@@ -1008,7 +1008,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="toggleScanRegion:" destination="z0r-2o-HqO" eventType="touchDown" id="pG9-fv-nlI"/>
+                                                        <action selector="toggleScanTimeout:" destination="z0r-2o-HqO" eventType="touchUpInside" id="ghC-rM-iuj"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -1172,6 +1172,9 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="rwA-dJ-l4h" id="WcH-w5-hv9"/>
+                                </connections>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

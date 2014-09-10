@@ -36,11 +36,11 @@ class ConfigStore {
     }
 
     // scan timeout
-    class func getTimeoutEnabled() -> Bool {
+    class func getScanTimeoutEnabled() -> Bool {
         return NSUserDefaults.standardUserDefaults().boolForKey("scanTimeoutEnabled")
     }
     
-    class func setTimeoutEnabled(timeoutEnabled:Bool) {
+    class func setScanTimeoutEnabled(timeoutEnabled:Bool) {
         NSUserDefaults.standardUserDefaults().setBool(timeoutEnabled, forKey:"scanTimeoutEnabled")
     }
     
