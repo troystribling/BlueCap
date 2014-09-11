@@ -142,8 +142,11 @@ class PeripheralsViewController : UITableViewController {
         if ConfigStore.getRegionScanEnabled() {
             switch scanMode {
             case "Promiscuous" :
-                RegionScannerator.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
-                    self.connect(peripheral)
+                if ConfigStore.getScanTimeoutEnabled() {
+                } else {
+                    RegionScannerator.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
+                        self.connect(peripheral)
+                    }
                 }
                 self.startMonitoringRegions()
                 break
@@ -152,11 +155,14 @@ class PeripheralsViewController : UITableViewController {
                 if scannedServices.isEmpty {
                     self.presentViewController(UIAlertController.alertOnError("No scan services configured"), animated:true, completion:nil)
                 } else {
-                    RegionScannerator.sharedInstance().startScanningForServiceUUIDds(scannedServices){(peripheral:Peripheral, rssi:Int) -> () in
-                        self.connect(peripheral)
+                    if ConfigStore.getScanTimeoutEnabled() {
+                    } else {
+                        RegionScannerator.sharedInstance().startScanningForServiceUUIDds(scannedServices){(peripheral:Peripheral, rssi:Int) -> () in
+                            self.connect(peripheral)
+                        }
                     }
+                    self.startMonitoringRegions()
                 }
-                self.startMonitoringRegions()
                 break
             default:
                 Logger.debug("Scan Mode :'\(scanMode)' invalid")
@@ -166,7 +172,6 @@ class PeripheralsViewController : UITableViewController {
             switch scanMode {
             case "Promiscuous" :
                 if ConfigStore.getScanTimeoutEnabled() {
-                    
                 } else {
                     CentralManager.sharedInstance().startScanning(){(peripheral:Peripheral, rssi:Int) -> () in
                         self.connect(peripheral)

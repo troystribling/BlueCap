@@ -10,7 +10,7 @@ import Foundation
 import CoreLocation
 import CoreBluetooth
 
-public class RegionScannerator {
+public class RegionScannerator : TimedScannerator {
  
     internal class RegionScanneratorMonitor : RegionMonitor {
         
@@ -28,11 +28,9 @@ public class RegionScannerator {
 
     }
     
-    private let regionManager                   : RegionManager
+    private let regionManager                   : RegionManager!
     private var services                        : [CBUUID]?
     private var afterPeripheralDiscovered       : ((peripheral:Peripheral, rssi:Int)->())?
-
-    private var _isScanning = false
     
     public var distanceFilter : CLLocationDistance {
         get {
@@ -60,18 +58,15 @@ public class RegionScannerator {
         return self.regionManager.regionMonitors
     }
 
-    public var isScanning : Bool {
-        return self._isScanning
-    }
-    
-    public class func sharedInstance() -> RegionScannerator {
+    override public class func sharedInstance() -> RegionScannerator {
         if thisRegionScannerator == nil {
             thisRegionScannerator = RegionScannerator()
         }
         return thisRegionScannerator!
     }
     
-    public init() {
+    override public init() {
+        super.init()
         self.regionManager = RegionManager.sharedInstance()
         self.desiredAccuracy = kCLLocationAccuracyBest
     }
@@ -80,6 +75,8 @@ public class RegionScannerator {
         Logger.debug("RegionScannerator#startScanning")
         self.afterPeripheralDiscovered = afterPeripheralDiscovered
         self._isScanning = true
+        self.services = nil
+        self.afterTimeout = nil
         self.regionManager.startUpdatingLocation()
     }
     
@@ -88,13 +85,32 @@ public class RegionScannerator {
         self.afterPeripheralDiscovered = afterPeripheralDiscovered
         self._isScanning = true
         self.services = uuids
+        self.afterTimeout = nil
         self.regionManager.startUpdatingLocation()
     }
     
-    public func stopScanning() {
+    override public func startScanning(timeoutSeconds:Float, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+        self.timeoutSeconds = timeoutSeconds
+        self.services = nil
+        self._isScanning = true
+        self.afterTimeout = afterTimeout
+        self.timeoutScan()
+    }
+    
+    override public func startScanningForServiceUUIDds(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+        self._isScanning = true
+        self.services = uuids
+        self.afterTimeout = afterTimeout
+        self.timeoutSeconds = timeoutSeconds
+        self.timeoutScan()
+    }
+
+    override public func stopScanning() {
         Logger.debug("RegionScannerator#stopScanning")
-        CentralManager.sharedInstance().stopScanning()
         self._isScanning = false
+        self.afterTimeout = nil
+        self.services = nil
+        CentralManager.sharedInstance().stopScanning()
         self.regionManager.stopUpdatingLocation()
     }
     
