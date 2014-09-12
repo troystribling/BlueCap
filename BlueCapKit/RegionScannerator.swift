@@ -80,7 +80,7 @@ public class RegionScannerator : TimedScannerator {
         self.regionManager.startUpdatingLocation()
     }
     
-    public func startScanningForServiceUUIDds(uuids:[CBUUID], afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanningForServiceUUIDs(uuids:[CBUUID], afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         Logger.debug("RegionScannerator#startScanningForServiceUUIDs: \(uuids)")
         self.afterPeripheralDiscovered = afterPeripheralDiscovered
         self._isScanning = true
@@ -97,7 +97,7 @@ public class RegionScannerator : TimedScannerator {
         self.timeoutScan()
     }
     
-    override public func startScanningForServiceUUIDds(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+    override public func startScanningForServiceUUIDs(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
         self._isScanning = true
         self.services = uuids
         self.afterTimeout = afterTimeout
@@ -130,7 +130,7 @@ public class RegionScannerator : TimedScannerator {
                 } else {
                     if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
                         if let services = self.services {
-                            CentralManager.sharedInstance().startScanningForServiceUUIDds(services, afterPeripheralDiscovered:afterPeripheralDiscovered)
+                            CentralManager.sharedInstance().startScanningForServiceUUIDs(services, afterPeripheralDiscovered:afterPeripheralDiscovered)
                         } else {
                             CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
                         }

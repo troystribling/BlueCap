@@ -21,7 +21,7 @@ public class TimedScannerator {
         return self._isScanning
     }
     
-    class func sharedInstance() -> TimedScannerator {
+    public class func sharedInstance() -> TimedScannerator {
         if thisTimedScannerator == nil {
             thisTimedScannerator = TimedScannerator()
         }
@@ -38,8 +38,8 @@ public class TimedScannerator {
         self.timeoutScan()
     }
     
-    public func startScanningForServiceUUIDds(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
-        CentralManager.sharedInstance().startScanningForServiceUUIDds(uuids, afterPeripheralDiscoveredCallback)
+    public func startScanningForServiceUUIDs(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+        CentralManager.sharedInstance().startScanningForServiceUUIDs(uuids, afterPeripheralDiscoveredCallback)
         self.afterTimeout = afterTimeout
         self.timeoutSeconds = timeoutSeconds
         self.timeoutScan()

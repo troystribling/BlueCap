@@ -43,10 +43,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // scanning
     public func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
-        startScanningForServiceUUIDds(nil, afterPeripheralDiscovered)
+        self.startScanningForServiceUUIDs(nil, afterPeripheralDiscovered)
     }
     
-    public func startScanningForServiceUUIDds(uuids:[CBUUID]!, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         if !self._isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDs: \(uuids)")
             self._isScanning = true
