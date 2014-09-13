@@ -120,20 +120,18 @@ public class RegionScannerator : TimedScannerator {
             regionMonitor.exitRegion = {
                 if let exitRegion = regionMonitor.regionMonitor.exitRegion {
                     exitRegion()
-                } else {
-                    CentralManager.sharedInstance().stopScanning()
                 }
+                CentralManager.sharedInstance().stopScanning()
             }
             regionMonitor.enterRegion = {
                 if let enterRegion = regionMonitor.regionMonitor.enterRegion {
                     enterRegion()
-                } else {
-                    if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
-                        if let services = self.services {
-                            CentralManager.sharedInstance().startScanningForServiceUUIDs(services, afterPeripheralDiscovered:afterPeripheralDiscovered)
-                        } else {
-                            CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
-                        }
+                }
+                if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
+                    if let services = self.services {
+                        CentralManager.sharedInstance().startScanningForServiceUUIDs(services, afterPeripheralDiscovered:afterPeripheralDiscovered)
+                    } else {
+                        CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
                     }
                 }
             }

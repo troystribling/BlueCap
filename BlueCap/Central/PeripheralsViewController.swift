@@ -215,22 +215,13 @@ class PeripheralsViewController : UITableViewController {
         for (name, location) in ConfigStore.getScanRegions() {
             RegionScannerator.sharedInstance().startMonitoringForRegion(RegionMonitor(center:location, identifier:name) {(regionMonitor) in
                 regionMonitor.exitRegion = {
-                    CentralManager.sharedInstance().stopScanning()
-                    self.presentViewController(UIAlertController.alertWithMessage("Exiting Region"), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertWithMessage("Exiting Region: \(name)"), animated:true, completion:nil)
                 }
                 regionMonitor.enterRegion = {
-                    self.presentViewController(UIAlertController.alertWithMessage("Entering Region"), animated:true, completion:nil)
-                    let services = ConfigStore.getScannedServices()
-                    let afterPeripheralDiscovered = {(peripheral:Peripheral, rssi:Int) -> () in
-                        self.connect(peripheral)
-                    }
-                    if  services.isEmpty {
-                        CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
-                    } else {
-                        CentralManager.sharedInstance().startScanningForServiceUUIDs(services, afterPeripheralDiscovered:afterPeripheralDiscovered)
-                    }
+                    self.presentViewController(UIAlertController.alertWithMessage("Entering Region: \(name)"), animated:true, completion:nil)
                 }
                 regionMonitor.startMonitoringRegion = {
+                    self.presentViewController(UIAlertController.alertWithMessage("Started Monitoring Region: \(name)"), animated:true, completion:nil)
                 }
             })
         }
