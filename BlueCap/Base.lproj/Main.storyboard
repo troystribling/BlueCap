@@ -2204,20 +2204,31 @@
             </objects>
             <point key="canvasLocation" x="1264" y="2581"/>
         </scene>
-        <!--Root View Controller-->
+        <!--Beacons-->
         <scene sceneID="tCE-uv-JXc">
             <objects>
-                <tableViewController id="U1h-CL-I2C" sceneMemberID="viewController">
+                <tableViewController id="U1h-CL-I2C" customClass="BeaconViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LOa-2C-hQZ">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="BeaconsCell" id="JSG-wp-Jnr">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="detailButton" indentationWidth="10" reuseIdentifier="BeaconCell" textLabel="E1g-tB-Z7E" rowHeight="60" style="IBUITableViewCellStyleDefault" id="JSG-wp-Jnr" customClass="B">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="JSG-wp-Jnr" id="2Ef-AO-iFz">
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="E1g-tB-Z7E">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="RQU-wv-wrU" kind="push" id="Mjf-Jf-u0L"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -2225,17 +2236,110 @@
                             <outlet property="delegate" destination="U1h-CL-I2C" id="77E-0P-KgP"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="RkV-qn-VFl"/>
+                    <navigationItem key="navigationItem" title="Beacons" id="RkV-qn-VFl">
+                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="qS8-SH-AhK"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="4iH-uT-jZV">
+                            <connections>
+                                <segue destination="cOz-R6-i26" kind="push" id="mgD-1s-aKK"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q0l-Of-Bdu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1255" y="3749"/>
+            <point key="canvasLocation" x="1247" y="3741"/>
         </scene>
-        <!--Item-->
+        <!--Beacon-->
+        <scene sceneID="mKY-4M-xbS">
+            <objects>
+                <tableViewController id="RQU-wv-wrU" customClass="BeaconViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="c5r-d4-Y7H">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection id="pGg-sf-IeB">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="eAt-Fc-rwK">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eAt-Fc-rwK" id="UCA-ce-pvT">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="LBL-hh-M0E">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LBL-hh-M0E" id="WtI-H5-aJg">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="uGx-1D-q2J">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="uGx-1D-q2J" id="O5t-Qd-6gR">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="RQU-wv-wrU" id="hxI-cX-wX7"/>
+                            <outlet property="delegate" destination="RQU-wv-wrU" id="2ZZ-Qc-dGc"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Beacon" id="oHT-9Y-GbN"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="57e-Kk-F9l" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1741" y="3741"/>
+        </scene>
+        <!--Add Beacon-->
+        <scene sceneID="Mo1-O5-hjU">
+            <objects>
+                <tableViewController id="cOz-R6-i26" customClass="BeaconAddViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lAs-n6-zdc">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection id="lN9-Au-xNe">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="DjK-dN-el7">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="DjK-dN-el7" id="OFG-MK-qGy">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="PTa-Ze-W0E">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PTa-Ze-W0E" id="3Jp-xr-46C">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="hKN-7B-XQq">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hKN-7B-XQq" id="nX0-BI-wT1">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="cOz-R6-i26" id="f3V-pJ-24r"/>
+                            <outlet property="delegate" destination="cOz-R6-i26" id="Apf-Vf-Zbg"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Add Beacon" id="m7H-5B-uCj"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IP6-L1-hoy" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1741" y="3167"/>
+        </scene>
+        <!--Beacons-->
         <scene sceneID="qkx-gB-Z3A">
             <objects>
                 <navigationController id="tr1-EH-bbr" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="DCy-qn-vZN"/>
+                    <tabBarItem key="tabBarItem" title="Beacons" image="Beacons" id="DCy-qn-vZN"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="QcJ-Mm-AxF">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -2939,11 +3043,11 @@
             </objects>
             <point key="canvasLocation" x="1218" y="927"/>
         </scene>
-        <!--Peripheral-->
+        <!--Peripherals-->
         <scene sceneID="g5Y-hy-or4">
             <objects>
                 <navigationController id="2ap-Lu-enV" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Peripheral" image="Peripheral" id="J1A-Yk-x4z"/>
+                    <tabBarItem key="tabBarItem" title="Peripherals" image="Peripheral" id="J1A-Yk-x4z"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="hNt-X7-Yfh">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -2970,8 +3074,8 @@
                         <segue destination="ekL-3M-31h" kind="relationship" relationship="viewControllers" id="h88-ZA-rxW"/>
                         <segue destination="2ap-Lu-enV" kind="relationship" relationship="viewControllers" id="xTt-P3-sn4"/>
                         <segue destination="6n5-d3-u2z" kind="relationship" relationship="viewControllers" id="H25-Dx-5BK"/>
-                        <segue destination="Nrt-kH-UJi" kind="relationship" relationship="viewControllers" id="LpX-ku-a5r"/>
                         <segue destination="tr1-EH-bbr" kind="relationship" relationship="viewControllers" id="KAu-Sv-53j"/>
+                        <segue destination="Nrt-kH-UJi" kind="relationship" relationship="viewControllers" id="LpX-ku-a5r"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iBa-5o-wCk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2997,6 +3101,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Beacons" width="28" height="28"/>
         <image name="Central" width="30" height="30"/>
         <image name="Configure" width="26" height="26"/>
         <image name="Peripheral" width="24" height="20"/>

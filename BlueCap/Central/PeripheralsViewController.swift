@@ -106,7 +106,7 @@ class PeripheralsViewController : UITableViewController {
         return cell
     }
     
-    // UITableViewDelegate
+    // utils
     func setScanButton() {
         if (CentralManager.sharedInstance().isScanning) {
             self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)
@@ -115,7 +115,6 @@ class PeripheralsViewController : UITableViewController {
         }
     }
     
-    // utils
     func connect(peripheral:Peripheral) {
         peripheral.connect(Connectorator() {(connectorator:Connectorator) -> () in
             connectorator.disconnect = {(periphear:Peripheral) -> () in
