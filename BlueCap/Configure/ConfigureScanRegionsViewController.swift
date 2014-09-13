@@ -35,28 +35,29 @@ class ConfigureScanRegionsViewController : UITableViewController {
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.configureScanRegionSegue {
-            let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell)
-            let viewController = segue.destinationViewController as ConfigureScanRegionViewController
-            viewController.regionName = ConfigStore.getScanRegionNames()[selectedIndexPath.row]
+            if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                let viewController = segue.destinationViewController as ConfigureScanRegionViewController
+                viewController.regionName = ConfigStore.getScanRegionNames()[selectedIndexPath.row]
+            }
         }
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         return ConfigStore.getScanRegionNames().count
     }
     
-    override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
+    override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
         return UITableViewCellEditingStyle.Delete
     }
     
-    override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
             let regionName = ConfigStore.getScanRegionNames()[indexPath.row]
             ConfigStore.removeScanRegion(regionName)
@@ -64,9 +65,9 @@ class ConfigureScanRegionsViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanRegionsCell, forIndexPath: indexPath) as UITableViewCell
-        cell.textLabel.text = ConfigStore.getScanRegionNames()[indexPath.row]
+        cell.textLabel!.text = ConfigStore.getScanRegionNames()[indexPath.row]
         return cell
     }
     

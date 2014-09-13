@@ -32,16 +32,16 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         println("Count:\(self.names.count)")
         return self.names.count
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementCell, forIndexPath: indexPath) as PeripheralAdvertisementCell
         cell.nameLabel.text = self.names[indexPath.row]
         cell.valueLabel.text = self.values[indexPath.row]

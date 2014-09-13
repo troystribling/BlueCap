@@ -73,14 +73,14 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
         if let characteristic = self.characteristic {
             return characteristic.propertyEnabled(.Read) || characteristic.isNotifying
         } else {

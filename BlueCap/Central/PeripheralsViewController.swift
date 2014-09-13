@@ -38,21 +38,23 @@ class PeripheralsViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == "PeripheralDetail" {
-            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
-            let viewController = segue.destinationViewController as PeripheralViewController
-            viewController.peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
+            if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                let viewController = segue.destinationViewController as PeripheralViewController
+                viewController.peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
+            }
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
         var perform = false
         if identifier == "PeripheralDetail" {
-            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
-            let peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
-            if peripheral.state == .Connected {
-                perform = true
+            if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                let peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
+                if peripheral.state == .Connected {
+                    perform = true
+                }
             }
         }
         return perform
@@ -81,15 +83,15 @@ class PeripheralsViewController : UITableViewController {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         return CentralManager.sharedInstance().peripherals.count
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
         let peripheral = CentralManager.sharedInstance().peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name

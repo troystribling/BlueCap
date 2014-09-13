@@ -32,9 +32,9 @@ class PeripheralManagerServicesViewController : UITableViewController {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Services"
         if PeripheralManager.sharedInstance().isAdvertising {
-            self.navigationItem.rightBarButtonItem.enabled = false
+            self.navigationItem.rightBarButtonItem!.enabled = false
         } else {
-            self.navigationItem.rightBarButtonItem.enabled = true
+            self.navigationItem.rightBarButtonItem!.enabled = true
         }
     }
     
@@ -42,27 +42,28 @@ class PeripheralManagerServicesViewController : UITableViewController {
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServiceProfilesViewController
             viewController.peripheral = self.peripheral
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicsSegue {
-            let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell)
-            let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicsViewController
-            viewController.service = PeripheralManager.sharedInstance().services[selectedIndexPath.row]
+            if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicsViewController
+                viewController.service = PeripheralManager.sharedInstance().services[selectedIndexPath.row]
+            }
         }
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         return PeripheralManager.sharedInstance().services.count
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCell, forIndexPath:indexPath) as NameUUIDCell
         let service = PeripheralManager.sharedInstance().services[indexPath.row]
         cell.nameLabel.text = service.name
@@ -70,15 +71,15 @@ class PeripheralManagerServicesViewController : UITableViewController {
         return cell
     }
     
-    override func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
+    override func tableView(tableView:UITableView, canEditRowAtIndexPath indexPath:NSIndexPath) -> Bool {
         return !PeripheralManager.sharedInstance().isAdvertising
     }
     
-    override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
+    override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
         return UITableViewCellEditingStyle.Delete
     }
     
-    override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
             if let peripheral = self.peripheral {
                 let manager = PeripheralManager.sharedInstance()

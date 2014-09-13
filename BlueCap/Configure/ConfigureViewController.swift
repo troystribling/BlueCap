@@ -49,10 +49,10 @@ class ConfigureViewController : UITableViewController {
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
         switch(identifier) {
         case MainStroryboard.configureScanModeSegue:
             return true

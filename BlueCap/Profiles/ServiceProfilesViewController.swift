@@ -37,13 +37,14 @@ class ServiceProfilesViewController : ServiceProfilesTableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfilesSegue {
-            let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
-            let tag = self.serviceProfiles.keys.array
-            if let profiles = self.serviceProfiles[tag[selectedIndex.section]] {
-                let viewController = segue.destinationViewController as ServiceCharacteristicProfilesViewController
-                viewController.serviceProfile =  profiles[selectedIndex.row]
+            if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                let tag = self.serviceProfiles.keys.array
+                if let profiles = self.serviceProfiles[tag[selectedIndex.section]] {
+                    let viewController = segue.destinationViewController as ServiceCharacteristicProfilesViewController
+                    viewController.serviceProfile =  profiles[selectedIndex.row]
+                }
             }
         }
     }

@@ -31,20 +31,20 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
     }
 
     func writeComplete() {
-        self.navigationController.popViewControllerAnimated(true)
+        self.navigationController!.popViewControllerAnimated(true)
         self.progressView.remove()
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         if let characteristic = self.characteristic {
             return characteristic.discreteStringValues.count
         } else {
@@ -52,11 +52,11 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         }
     }
     
-    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
         if let characteristic = self.characteristic {
             let stringValue = characteristic.discreteStringValues[indexPath.row]
-            cell.textLabel.text = stringValue
+            cell.textLabel!.text = stringValue
             if let value = characteristic.stringValues?[characteristic.name] {
                 if value == stringValue {
                     cell.accessoryType = UITableViewCellAccessoryType.Checkmark
@@ -69,7 +69,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         self.progressView.show()
         if let characteristic = self.characteristic {
             let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]

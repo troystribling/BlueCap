@@ -50,7 +50,7 @@ class ServiceCharacteristicProfileEditValueViewController : UIViewController, UI
                     values[valueName] = newValue
                     if let characteristicProfile  = self.characteristicProfile {
                         characteristicProfile.initialValue = characteristicProfile.dataFromStringValue(values)
-                        self.navigationController.popViewControllerAnimated(true)
+                        self.navigationController!.popViewControllerAnimated(true)
                     }
                 }
             }

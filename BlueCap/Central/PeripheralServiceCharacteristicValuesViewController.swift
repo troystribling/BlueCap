@@ -53,7 +53,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
@@ -100,11 +100,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         if let values = self.characteristic?.stringValues {
             return values.count
         } else {
@@ -112,7 +112,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
     }
     
-    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as CharacteristicValueCell
         if let characteristic = self.characteristic {
             if let stringValues = characteristic.stringValues {
@@ -131,7 +131,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         if let characteristic = self.characteristic {
             if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
                 if characteristic.discreteStringValues.isEmpty {

@@ -37,19 +37,19 @@ class ConfigureScanServicesViewController : UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         return ConfigStore.getScannedServices().count
     }
     
-    override func tableView(tableView: UITableView!, editingStyleForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCellEditingStyle {
+    override func tableView(tableView:UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
         return UITableViewCellEditingStyle.Delete
     }
     
-    override func tableView(tableView:UITableView!, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
             let services = ConfigStore.getScannedServices()
             ConfigStore.removeScannedService(services[indexPath.row])
@@ -57,7 +57,7 @@ class ConfigureScanServicesViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanServicesCell, forIndexPath: indexPath) as NameUUIDCell
         let serviceUUID = ConfigStore.getScannedServices()[indexPath.row]
         if let uuidString = serviceUUID.UUIDString {

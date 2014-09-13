@@ -38,7 +38,7 @@ class PeripheralViewController : UITableViewController {
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
         
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
             let viewController = segue.destinationViewController as PeripheralServicesViewController
             viewController.peripheral = self.peripheral

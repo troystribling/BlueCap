@@ -72,7 +72,7 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfileValuesSegue {
             let viewController = segue.destinationViewController as ServiceCharacteristicProfileValuesViewController
             viewController.characteristicProfile = self.characteristicProfile

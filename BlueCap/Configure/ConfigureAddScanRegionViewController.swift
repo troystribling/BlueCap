@@ -45,12 +45,12 @@ class ConfigureAddScanRegionViewController : UIViewController, UITextFieldDelega
                             ConfigStore.addScanRegion(name, region:location.coordinate)
                         }
                         progressView.remove()
-                        self.navigationController.popViewControllerAnimated(true)
+                        self.navigationController?.popViewControllerAnimated(true)
                     }
                     locationManager.locationsUpdateFailed = {(error:NSError!) in
                         progressView.remove()
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                        self.navigationController.popViewControllerAnimated(true)
+                        self.navigationController?.popViewControllerAnimated(true)
                     }
                 }
             }

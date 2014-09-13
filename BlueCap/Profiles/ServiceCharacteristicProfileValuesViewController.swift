@@ -52,7 +52,7 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         let selectedIndex = sender as NSIndexPath
         if segue.identifier == MainStoryboard.serviceCharacteristicProfileEditValueSegue {
             let viewController = segue.destinationViewController as ServiceCharacteristicProfileEditValueViewController
@@ -69,11 +69,11 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         if let values = self.values {
             return values.count
         } else {
@@ -81,7 +81,7 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileValueCell, forIndexPath: indexPath) as CharacteristicValueCell
         if let values = self.values {
             let characteristicValueNames = values.keys.array
@@ -92,7 +92,7 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         return cell
     }
     
-    override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         if let characteristicProfile = self.characteristicProfile {
             if characteristicProfile.discreteStringValues.isEmpty {
                 self.performSegueWithIdentifier(MainStoryboard.serviceCharacteristicProfileEditValueSegue, sender:indexPath)

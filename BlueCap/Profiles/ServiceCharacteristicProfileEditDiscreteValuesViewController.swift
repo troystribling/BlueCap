@@ -42,11 +42,11 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         if let characteristicProfile = self.characteristicProfile {
             return characteristicProfile.discreteStringValues.count
         } else {
@@ -54,11 +54,11 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
         }
     }
     
-    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileEditDiscreteValuesCell, forIndexPath:indexPath) as UITableViewCell
         if let characteristicProfile = self.characteristicProfile {
             let stringValue = characteristicProfile.discreteStringValues[indexPath.row]
-            cell.textLabel.text = stringValue
+            cell.textLabel!.text = stringValue
             if let value = self.values?[characteristicProfile.name] {
                 if value == stringValue {
                     cell.accessoryType = UITableViewCellAccessoryType.Checkmark
@@ -71,11 +71,11 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         if let characteristicProfile = self.characteristicProfile {
             let stringValue : Dictionary<String, String> = [characteristicProfile.name:characteristicProfile.discreteStringValues[indexPath.row]]
             characteristicProfile.initialValue = characteristicProfile.dataFromStringValue(stringValue)
-            self.navigationController.popViewControllerAnimated(true)
+            self.navigationController!.popViewControllerAnimated(true)
         }
     }
     

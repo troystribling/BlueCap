@@ -48,11 +48,11 @@ class ServiceProfilesTableViewController : UITableViewController {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return self.serviceProfiles.count
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         let tags = self.serviceProfiles.keys.array
         if let profiles = self.serviceProfiles[tags[section]] {
             return profiles.count
@@ -61,12 +61,12 @@ class ServiceProfilesTableViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView:UITableView!, titleForHeaderInSection section:Int) -> String! {
+    override func tableView(tableView:UITableView, titleForHeaderInSection section:Int) -> String? {
         let tags = self.serviceProfiles.keys.array
         return tags[section]
     }
     
-    override func tableView(tableView:UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(self.serviceProfileCell, forIndexPath: indexPath) as NameUUIDCell
         let tags = self.serviceProfiles.keys.array
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {

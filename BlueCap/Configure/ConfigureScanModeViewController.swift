@@ -18,18 +18,18 @@ class ConfigureScanModeViewController : UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         return self.scanModes.count
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath:NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
         let scanMode = scanModes[indexPath.row]
-        cell.textLabel.text = scanMode
+        cell.textLabel!.text = scanMode
         if scanMode == ConfigStore.getScanMode() {
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
         } else {
@@ -39,10 +39,10 @@ class ConfigureScanModeViewController : UITableViewController {
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView!, didSelectRowAtIndexPath indexPath:NSIndexPath!) {
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         let scanMode = self.scanModes[indexPath.row]
         ConfigStore.setScanMode(scanMode)
-        self.navigationController.popViewControllerAnimated(true)
+        self.navigationController!.popViewControllerAnimated(true)
     }
 
 }

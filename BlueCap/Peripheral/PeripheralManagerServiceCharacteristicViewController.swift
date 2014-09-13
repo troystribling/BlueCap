@@ -75,7 +75,7 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicValuesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServicesCharacteristicValuesViewController
             viewController.characteristic = self.characteristic

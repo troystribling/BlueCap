@@ -35,22 +35,23 @@ class PeripheralServicesViewController : UITableViewController {
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServicesCharacteritics {
             if let peripheral = self.peripheral {
-                let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell)
-                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicsViewController
-                viewController.service = peripheral.services[selectedIndex.row]
+                if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                    let viewController = segue.destinationViewController as PeripheralServiceCharacteristicsViewController
+                    viewController.service = peripheral.services[selectedIndex.row]
+                }
             }
         }
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView!, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
         if let peripheral = self.peripheral {
             return peripheral.services.count
         } else {
@@ -58,7 +59,7 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCell, forIndexPath: indexPath) as NameUUIDCell
         if let peripheral = self.peripheral {
             let service = peripheral.services[indexPath.row]

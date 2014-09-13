@@ -46,14 +46,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue!, sender:AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServicesViewController
             viewController.peripheral = self.peripheral
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String!, sender:AnyObject!) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
         if identifier == MainStoryboard.peripheralManagerServicesSegue {
             if let peripheral = self.peripheral {
                 let manager = PeripheralManager.sharedInstance()
