@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.8" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Gm5-G9-oBc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Gm5-G9-oBc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
         <!--Name-->
@@ -2202,7 +2202,51 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dMN-lM-Vvm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1260" y="3069"/>
+            <point key="canvasLocation" x="1264" y="2581"/>
+        </scene>
+        <!--Root View Controller-->
+        <scene sceneID="tCE-uv-JXc">
+            <objects>
+                <tableViewController id="U1h-CL-I2C" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LOa-2C-hQZ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="BeaconsCell" id="JSG-wp-Jnr">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="JSG-wp-Jnr" id="2Ef-AO-iFz">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="U1h-CL-I2C" id="HjM-ab-AfV"/>
+                            <outlet property="delegate" destination="U1h-CL-I2C" id="77E-0P-KgP"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="RkV-qn-VFl"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="q0l-Of-Bdu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1255" y="3749"/>
+        </scene>
+        <!--Item-->
+        <scene sceneID="qkx-gB-Z3A">
+            <objects>
+                <navigationController id="tr1-EH-bbr" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="DCy-qn-vZN"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="QcJ-Mm-AxF">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="U1h-CL-I2C" kind="relationship" relationship="rootViewController" id="c9S-ea-p12"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="efh-nm-z99" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="777" y="3741"/>
         </scene>
         <!--Characteristic Profiles-->
         <scene sceneID="pPZ-cj-EZf">
@@ -2251,7 +2295,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hE8-Nu-VNF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1737" y="3071"/>
+            <point key="canvasLocation" x="1741" y="2583"/>
         </scene>
         <!--New Value-->
         <scene sceneID="DhK-0q-Uwg">
@@ -2714,7 +2758,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Fs-4g-G5E" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2218" y="3071"/>
+            <point key="canvasLocation" x="2222" y="2583"/>
         </scene>
         <!--Characteristic Values-->
         <scene sceneID="xKB-CJ-bqP">
@@ -2767,7 +2811,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dsp-Mq-Xro" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2706" y="3071"/>
+            <point key="canvasLocation" x="2710" y="2583"/>
         </scene>
         <!--New Value-->
         <scene sceneID="xqR-u1-WkI">
@@ -2796,7 +2840,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rn6-yj-Klj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3284" y="2750"/>
+            <point key="canvasLocation" x="3288" y="2262"/>
         </scene>
         <!--New Values-->
         <scene sceneID="zDk-7u-dMh">
@@ -2831,7 +2875,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Flh-Gy-Dvi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3284" y="3408"/>
+            <point key="canvasLocation" x="3288" y="2920"/>
         </scene>
         <!--Profiles-->
         <scene sceneID="qez-Id-BOC">
@@ -2847,7 +2891,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sRO-rp-Axh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="742" y="3071"/>
+            <point key="canvasLocation" x="777" y="2581"/>
         </scene>
         <!--Peripherals-->
         <scene sceneID="S9s-jZ-Mz1">
@@ -2927,6 +2971,7 @@
                         <segue destination="2ap-Lu-enV" kind="relationship" relationship="viewControllers" id="xTt-P3-sn4"/>
                         <segue destination="6n5-d3-u2z" kind="relationship" relationship="viewControllers" id="H25-Dx-5BK"/>
                         <segue destination="Nrt-kH-UJi" kind="relationship" relationship="viewControllers" id="LpX-ku-a5r"/>
+                        <segue destination="tr1-EH-bbr" kind="relationship" relationship="viewControllers" id="KAu-Sv-53j"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iBa-5o-wCk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2960,10 +3005,7 @@
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination">
-            <size key="portraitSize" width="320" height="480"/>
-            <size key="landscapeSize" width="480" height="320"/>
-        </simulatedScreenMetrics>
+        <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="DCa-OL-k6g"/>
