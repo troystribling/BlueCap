@@ -16,7 +16,7 @@ public class RegionScannerator : TimedScannerator {
         
         internal var regionMonitor : RegionMonitor
         
-        internal override var region : CLRegion {
+        internal override var region : CLCircularRegion {
             return self.regionMonitor.region
         }
         
@@ -50,10 +50,6 @@ public class RegionScannerator : TimedScannerator {
         }
     }
 
-    public var regions : [CLRegion] {
-        return self.regionManager.regions
-    }
-    
     public var regionMonitors : [RegionMonitor] {
         return self.regionManager.regionMonitors
     }

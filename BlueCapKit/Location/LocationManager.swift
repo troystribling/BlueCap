@@ -163,11 +163,11 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         Logger.debug("LocationManager#didUpdateLocations")
         if let locationsUpdateSuccess = self.locationsUpdateSuccess {
             if let locations = locations {
-                let cllocations = locations.reduce([CLLocation]()) {(result, location) in
+                let cllocations = locations.reduce([CLLocation]()) {(cllocations, location) in
                     if let location = location as? CLLocation {
-                        return result + [location]
+                        return cllocations + [location]
                     } else {
-                        return result
+                        return cllocations
                     }
                 }
                 locationsUpdateSuccess(locations:cllocations)

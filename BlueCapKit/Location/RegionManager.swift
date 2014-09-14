@@ -13,10 +13,6 @@ public class RegionManager : LocationManager {
 
     private var configuredRegionMonitors    : Dictionary<CLRegion, RegionMonitor> = [:]
     
-    public var regions : [CLRegion] {
-        return self.configuredRegionMonitors.keys.array
-    }
-    
     public var regionMonitors : [RegionMonitor] {
         return self.configuredRegionMonitors.values.array
     }
@@ -45,6 +41,18 @@ public class RegionManager : LocationManager {
     public func stopMonitoringForRegion(regionMonitor:RegionMonitor) {
         self.configuredRegionMonitors.removeValueForKey(regionMonitor.region)
         self.clLocationManager.stopMonitoringForRegion(regionMonitor.region)
+    }
+    
+    public func startMonitoringAllRegions() {
+        for regionMonitor in regionMonitors {
+            self.clLocationManager.startMonitoringForRegion(regionMonitor.region)
+        }
+    }
+    
+    public func stopMonitoringAllRegions() {
+        for regionMonitor in regionMonitors {
+            self.clLocationManager.stopMonitoringForRegion(regionMonitor.region)
+        }
     }
 
     // CLLocationManagerDelegate
