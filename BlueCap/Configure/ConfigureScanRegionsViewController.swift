@@ -66,8 +66,8 @@ class ConfigureScanRegionsViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanRegionsCell, forIndexPath: indexPath) as UITableViewCell
-        cell.textLabel!.text = ConfigStore.getScanRegionNames()[indexPath.row]
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanRegionsCell, forIndexPath: indexPath) as SimpleCell
+        cell.nameLabel.text = ConfigStore.getScanRegionNames()[indexPath.row]
         return cell
     }
     

@@ -1,5 +1,5 @@
 //
-//  PeripheralManagerCell.swift
+//  SimpleCell.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/11/14.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PeripheralManagerCell : UITableViewCell {
+class SimpleCell : UITableViewCell {
 
     @IBOutlet var nameLabel : UILabel!
     var nameLabelFrame      : CGRect?

@@ -76,22 +76,33 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     // advertising
-    public func startAdvertising(name:String, afterAdvertisingStartedSuccess:()->(), afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
+    public func startAdvertising(name:String, uuids:[CBUUID]?, afterAdvertisingStartedSuccess:(()->())? = nil, afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
         self._name = name
         self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
         self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
-        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:self.configuredServices.keys.array])
+        var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+        if let uuids = uuids {
+            advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+        }
+        self.cbPeripheralManager.startAdvertising(advertisementData)
+    }
+    
+    public func startAdvertising(name:String, uuids:[CBUUID], afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
+        self.startAdvertising(name, uuids:uuids, afterAdvertisingStartedSuccess:nil, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
+    }
+
+    public func startAdvertising(name:String, afterAdvertisingStartedSuccess:(()->())? = nil, afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
+        self.startAdvertising(name, uuids:nil, afterAdvertisingStartedSuccess:afterAdvertisingStartedSuccess, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
     }
 
     public func startAdvertising(name:String, afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
-        self._name = name
-        self.afterAdvertisingStartedSuccessCallback = nil
-        self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
-        self.cbPeripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey:name, CBAdvertisementDataServiceUUIDsKey:self.configuredServices.keys.array])
+        self.startAdvertising(name, uuids:nil, afterAdvertisingStartedSuccess:nil, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
     }
     
     public func stopAdvertising(afterAdvertisingStopped:(()->())? = nil) {
         self._name = nil
+        self.afterAdvertisingStartedSuccessCallback = nil
+        self.afterAdvertisingStartedFailedCallback = nil
         self.afterAdvertsingStoppedCallback = afterAdvertisingStopped
         self.cbPeripheralManager.stopAdvertising()
         dispatch_async(self.peripheralQueue, {self.lookForAdvertisingToStop()})

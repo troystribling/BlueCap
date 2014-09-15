@@ -71,7 +71,7 @@ class PeripheralManagersViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as PeripheralManagerCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as SimpleCell
         let peripherals = PeripheralStore.getPeripheralNames()
         cell.nameLabel.text = peripherals[indexPath.row]
         return cell
