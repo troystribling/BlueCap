@@ -38,7 +38,8 @@ class BeaconsViewController: UITableViewController {
         self.navigationItem.title = ""
     }
     
-    @IBAction func toggleScan(sender:AnyObject) {        
+    @IBAction func toggleScan(sender:AnyObject) {
+        self.startMonitoring()
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
@@ -72,6 +73,24 @@ class BeaconsViewController: UITableViewController {
             self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setRightBarButtonItem(self.startScanBarButtonItem, animated:false)
+        }
+    }
+    
+    func startMonitoring() {
+        let uuids = ["estimote":"B9407F30-F5F8-466E-AFF9-25556B57FE6D"]
+        for (name, uuid) in uuids {
+            let nsuuid = NSUUID(UUIDString:uuid)
+            let beacon = BeaconMonitor(proximityUUID:nsuuid, identifier:name) {(beaconMonitor) in
+                beaconMonitor.startMonitoringRegion = {
+                    BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconMonitor)
+                }
+                beaconMonitor.rangedBeacons = {(beacons) in
+                    for beacon in beacons {
+                        Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
+                    }
+                }
+            }
+            BeaconManager.sharedInstance().startMonitoringForRegion(beacon)
         }
     }
 

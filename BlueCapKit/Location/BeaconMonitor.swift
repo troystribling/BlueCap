@@ -15,7 +15,9 @@ public class BeaconMonitor {
     
     public var rangedBeacons            : ((beacons:[CLBeacon]) -> ())?
     public var errorRangingBeacons      : ((error:NSError!) -> ())?
+    public var startMonitoringRegion    : (() -> ())?
     public var regionStateChanged       : ((state:CLRegionState) -> ())?
+    public var errorMonitoringRegion    : ((error:NSError!) -> ())?
 
     internal var region : CLBeaconRegion {
         return self._region
@@ -50,24 +52,24 @@ public class BeaconMonitor {
         }
     }
     
-    public init(region:CLBeaconRegion, initializer:((beaconMonitor:BeaconMonitor) -> ())?) {
+    public init(region:CLBeaconRegion, initializer:((beaconMonitor:BeaconMonitor) -> ())? = nil) {
         self._region = region
         if let initializer = initializer {
             initializer(beaconMonitor:self)
         }
     }
     
-    public convenience init(proximityUUID:NSUUID, identifier:String, initializer:((beaconMonitor:BeaconMonitor) -> ())?) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, initializer:((beaconMonitor:BeaconMonitor) -> ())? = nil) {
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, identifier:identifier)
         self.init(region:beaconRegion, initializer)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:CLBeaconMajorValue, initializer:((beaconMonitor:BeaconMonitor) -> ())?) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:CLBeaconMajorValue, initializer:((beaconMonitor:BeaconMonitor) -> ())? = nil) {
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:major, identifier:identifier)
         self.init(region:beaconRegion, initializer)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:CLBeaconMajorValue, minor:CLBeaconMinorValue, initializer:((beaconMonitor:BeaconMonitor) -> ())?) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:CLBeaconMajorValue, minor:CLBeaconMinorValue, initializer:((beaconMonitor:BeaconMonitor) -> ())? = nil) {
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:major, minor:minor, identifier:identifier)
         self.init(region:beaconRegion, initializer)
     }

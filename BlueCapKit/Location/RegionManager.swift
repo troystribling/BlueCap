@@ -44,46 +44,47 @@ public class RegionManager : LocationManager {
     }
     
     public func startMonitoringAllRegions() {
-        for regionMonitor in regionMonitors {
+        for regionMonitor in self.regionMonitors {
             self.clLocationManager.startMonitoringForRegion(regionMonitor.region)
         }
     }
     
     public func stopMonitoringAllRegions() {
-        for regionMonitor in regionMonitors {
+        for regionMonitor in self.regionMonitors {
             self.clLocationManager.stopMonitoringForRegion(regionMonitor.region)
         }
     }
 
     // CLLocationManagerDelegate
     public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
+        Logger.debug("RegionManager#didEnterRegion: \(region.identifier)")
         if let regionMonitor = self.configuredRegionMonitors[region] {
             if let enterRegion = regionMonitor.enterRegion {
-                Logger.debug("RegionManager#didEnterRegion")
                 enterRegion()
             }
         }
     }
     
     public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
+        Logger.debug("RegionManager#didExitRegion: \(region.identifier)")
         if let regionMonitor = self.configuredRegionMonitors[region] {
             if let exitRegion = regionMonitor.exitRegion {
-                Logger.debug("RegionManager#didExitRegion")
                 exitRegion()
             }
         }
     }
     
     public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
+        Logger.debug("RegionManager#didDetermineState: \(region.identifier)")
         if let regionMonitor = self.configuredRegionMonitors[region] {
             if let regionStateChanged = regionMonitor.regionStateChanged {
-                Logger.debug("RegionManager#didDetermineState")
                 regionStateChanged(state:state)
             }
         }
     }
     
     public func locationManager(_:CLLocationManager!, monitoringDidFailForRegion region:CLRegion!, withError error:NSError!) {
+        Logger.debug("RegionManager#monitoringDidFailForRegion: \(region.identifier)")
         if let regionMonitor = self.configuredRegionMonitors[region] {
             if let errorMonitoringRegion = regionMonitor.errorMonitoringRegion {
                 errorMonitoringRegion(error:error)
@@ -92,9 +93,9 @@ public class RegionManager : LocationManager {
     }
     
     public func locationManager(_:CLLocationManager!, didStartMonitoringForRegion region:CLRegion!) {
+        Logger.debug("RegionManager#didStartMonitoringForRegion: \(region.identifier)")
         if let regionMonitor = self.configuredRegionMonitors[region] {
             if let startMonitoringRegion = regionMonitor.startMonitoringRegion {
-                Logger.debug("RegionManager#didStartMonitoringForRegion")
                 startMonitoringRegion()
             }
         }

@@ -2262,7 +2262,7 @@
         <!--Beacons-->
         <scene sceneID="tCE-uv-JXc">
             <objects>
-                <tableViewController id="U1h-CL-I2C" customClass="BeaconViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="U1h-CL-I2C" customClass="BeaconsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LOa-2C-hQZ">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2298,13 +2298,20 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Beacons" id="RkV-qn-VFl">
-                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="qS8-SH-AhK"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="qS8-SH-AhK">
+                            <connections>
+                                <action selector="toggleScan:" destination="U1h-CL-I2C" id="ga0-Ly-bK7"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="4iH-uT-jZV">
                             <connections>
                                 <segue destination="cOz-R6-i26" kind="push" id="mgD-1s-aKK"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="view" destination="LOa-2C-hQZ" id="EcN-eA-6Jm"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q0l-Of-Bdu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
