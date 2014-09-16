@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import BlueCapKit
 import CoreBluetooth
 

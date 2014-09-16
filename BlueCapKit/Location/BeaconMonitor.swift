@@ -15,6 +15,8 @@ public class BeaconMonitor {
     
     public var rangedBeacons            : ((beacons:[CLBeacon]) -> ())?
     public var errorRangingBeacons      : ((error:NSError!) -> ())?
+    public var enterRegion              : (() -> ())?
+    public var exitRegion               : (() -> ())?
     public var startMonitoringRegion    : (() -> ())?
     public var regionStateChanged       : ((state:CLRegionState) -> ())?
     public var errorMonitoringRegion    : ((error:NSError!) -> ())?

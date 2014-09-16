@@ -1,5 +1,5 @@
 //
-//  BeaconAddViewController.swift
+//  BeaconRegionAddViewController.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 9/13/14.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BeaconAddViewController: UITableViewController {
+class BeaconRegionAddViewController: UIViewController {
 
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
