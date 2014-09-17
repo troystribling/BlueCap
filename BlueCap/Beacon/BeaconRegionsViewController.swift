@@ -61,7 +61,13 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconRegionCell, forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconRegionCell, forIndexPath: indexPath) as BeaconRegionCell
+        let name = BeaconStore.getBeaconNames()[indexPath.row]
+        let beacons = BeaconStore.getBeacons()
+        if let beacon = beacons[name] {
+            cell.nameLabel.text = name
+            cell.uuidLabel.text = beacon.UUIDString
+        }
         return cell
     }
     
@@ -84,10 +90,8 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func startMonitoring() {
-        let uuids = ["estimote":"B9407F30-F5F8-466E-AFF9-25556B57FE6D"]
-        for (name, uuid) in uuids {
-            let nsuuid = NSUUID(UUIDString:uuid)
-            let beacon = BeaconMonitor(proximityUUID:nsuuid, identifier:name) {(beaconMonitor) in
+        for (name, uuid) in BeaconStore.getBeacons() {
+            let beacon = BeaconMonitor(proximityUUID:uuid, identifier:name) {(beaconMonitor) in
                 beaconMonitor.startMonitoringRegion = {
                     BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconMonitor)
                 }

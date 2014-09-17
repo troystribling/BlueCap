@@ -15,7 +15,6 @@ class BeaconsViewController: UITableViewController {
 
     struct MainStoryBoard {
         static let beaconCell   = "BeaconCell"
-        static let beaconSegue  = "BeaconSegue"
     }
     
     required init(coder aDecoder:NSCoder) {
