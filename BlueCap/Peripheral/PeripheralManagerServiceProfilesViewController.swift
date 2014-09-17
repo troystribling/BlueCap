@@ -64,15 +64,15 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
                 if let peripheral = self.peripheral {
                     PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
                 }
-                self.navigationController!.popViewControllerAnimated(true)
+                self.navigationController?.popViewControllerAnimated(true)
                 self.progressView.remove()
                 }, afterServiceAddFailed: {(error) in
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    self.navigationController!.popViewControllerAnimated(true)
+                    self.navigationController?.popViewControllerAnimated(true)
                     self.progressView.remove()
                 })
         } else {
-            self.navigationController!.popViewControllerAnimated(true)
+            self.navigationController?.popViewControllerAnimated(true)
         }
     }
 

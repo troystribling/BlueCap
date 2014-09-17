@@ -24,8 +24,12 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         self.nameTextField.resignFirstResponder()
-        if let enteredName = self.nameTextField.text {
-            if !enteredName.isEmpty {
+        let enteredUUID = self.uuidTextField.text
+        let enteredName = self.nameTextField.text
+        if enteredName != nil && enteredUUID != nil  {
+            if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
+                BeaconStore.addBeacon(enteredName, uuid:NSUUID(UUIDString:enteredUUID))
+                self.navigationController?.popViewControllerAnimated(true)
             }
         }
         return true

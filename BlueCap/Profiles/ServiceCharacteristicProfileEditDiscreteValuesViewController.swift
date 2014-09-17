@@ -75,7 +75,7 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
         if let characteristicProfile = self.characteristicProfile {
             let stringValue : Dictionary<String, String> = [characteristicProfile.name:characteristicProfile.discreteStringValues[indexPath.row]]
             characteristicProfile.initialValue = characteristicProfile.dataFromStringValue(stringValue)
-            self.navigationController!.popViewControllerAnimated(true)
+            self.navigationController?.popViewControllerAnimated(true)
         }
     }
     

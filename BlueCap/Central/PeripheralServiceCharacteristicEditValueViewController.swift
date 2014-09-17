@@ -42,10 +42,10 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                             progressView.show()
                             characteristic.write(values, afterWriteSuccessCallback: {
                                     progressView.remove()
-                                    self.navigationController!.popViewControllerAnimated(true)
+                                    self.navigationController?.popViewControllerAnimated(true)
                                 }, afterWriteFailedCallback: {(error) in
                                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                                    self.navigationController!.popViewControllerAnimated(true)
+                                    self.navigationController?.popViewControllerAnimated(true)
                                 })
                         }
                     }

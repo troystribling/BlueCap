@@ -304,9 +304,9 @@
 			isa = PBXGroup;
 			children = (
 				05B48B5719C9B7DF00800327 /* BeaconCell.swift */,
-				0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */,
 				05B48B5519C9B69400800327 /* BeaconRegionCell.swift */,
 				05B48B5119C8527100800327 /* BeaconRegionsViewController.swift */,
+				0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */,
 				0507973019C4CEEC00A4D547 /* BeaconsViewController.swift */,
 			);
 			path = Beacon;

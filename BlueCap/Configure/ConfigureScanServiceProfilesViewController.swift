@@ -40,7 +40,7 @@ class ConfigureScanServiceProfilesViewController :  ServiceProfilesTableViewCont
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let serviceProfile = profiles[indexPath.row]
             ConfigStore.addScannedService(serviceProfile.uuid)
-            self.navigationController!.popViewControllerAnimated(true)
+            self.navigationController?.popViewControllerAnimated(true)
         }
     }
     
