@@ -86,14 +86,15 @@ public class BeaconManager : LocationManager {
         Logger.debug("BeaconManager#didRangeBeacons: \(region.identifier)")
         if let beaconMonitor = self.configuredBeaconMonitors[region] {
             if let rangedBeacons = beaconMonitor.rangedBeacons {
-                let clbeacons = beacons.reduce([CLBeacon]()) {(clbeacons, beacon) in
+                let bcbeacons = beacons.reduce([Beacon]()) {(bcbeacons, beacon) in
                     if let beacon = beacon as? CLBeacon {
-                        return clbeacons + [beacon]
+                        return bcbeacons + [Beacon(clbeacon:beacon)]
                     } else {
-                        return clbeacons
+                        return bcbeacons
                     }
                 }
-                rangedBeacons(beacons:clbeacons)
+                beaconMonitor._beacons = bcbeacons
+                rangedBeacons(beacons:bcbeacons)
             }
         }
     }

@@ -106,6 +106,7 @@
 		05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */; };
 		05F2A8DF1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */; };
 		05F2A8E11993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */; };
+		05FAFC3319CC7620003725B0 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FAFC3219CC7620003725B0 /* Beacon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -260,6 +261,7 @@
 		05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileEditValueViewController.swift; sourceTree = "<group>"; };
 		05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
+		05FAFC3219CC7620003725B0 /* Beacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -518,6 +520,7 @@
 		05B45BE219A78257009DAF6D /* Location */ = {
 			isa = PBXGroup;
 			children = (
+				05FAFC3219CC7620003725B0 /* Beacon.swift */,
 				050796F619C4C8D800A4D547 /* BeaconManager.swift */,
 				056C719919C5F1D0009068CC /* BeaconMonitor.swift */,
 				050796F719C4C8D800A4D547 /* LocationManager.swift */,
@@ -865,6 +868,7 @@
 				050796EF19C4C8CE00A4D547 /* CentralManager.swift in Sources */,
 				050796F319C4C8CE00A4D547 /* RegionScannerator.swift in Sources */,
 				050796FD19C4C8D800A4D547 /* RegionMonitor.swift in Sources */,
+				05FAFC3319CC7620003725B0 /* Beacon.swift in Sources */,
 				0507970119C4C8E600A4D547 /* MutableCharacteristic.swift in Sources */,
 				0507971619C4C8FC00A4D547 /* GnosusProfiles.swift in Sources */,
 				0507972219C4C90C00A4D547 /* CharacteristicProfile.swift in Sources */,

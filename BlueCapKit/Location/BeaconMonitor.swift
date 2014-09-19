@@ -11,9 +11,11 @@ import CoreLocation
 
 public class BeaconMonitor {
     
-    private let _region : CLBeaconRegion
+    private let _region     : CLBeaconRegion
     
-    public var rangedBeacons            : ((beacons:[CLBeacon]) -> ())?
+    internal var _beacons   = [Beacon]()
+    
+    public var rangedBeacons            : ((beacons:[Beacon]) -> ())?
     public var errorRangingBeacons      : ((error:NSError!) -> ())?
     public var enterRegion              : (() -> ())?
     public var exitRegion               : (() -> ())?

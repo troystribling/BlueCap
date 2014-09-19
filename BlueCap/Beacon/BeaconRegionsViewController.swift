@@ -15,9 +15,10 @@ class BeaconRegionsViewController: UITableViewController {
     var startScanBarButtonItem  : UIBarButtonItem!
     
     struct MainStoryBoard {
-        static let beaconRegionCell     = "BeaconRegionCell"
-        static let beaconSegue          = "BeaconSegue"
-        static let beaconRegionAddSegue = "BeaconRegionAdd"
+        static let beaconRegionCell         = "BeaconRegionCell"
+        static let beaconsSegue             = "Beacons"
+        static let beaconRegionAddSegue     = "BeaconRegionAdd"
+        static let beaconRegionEditSegue    = "BeaconRegionEdit"
     }
     
     required init(coder aDecoder:NSCoder) {
@@ -32,6 +33,7 @@ class BeaconRegionsViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.tableView.reloadData()
         self.navigationItem.title = "Beacon Regions"
     }
     
@@ -42,13 +44,14 @@ class BeaconRegionsViewController: UITableViewController {
     
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
-        if segue.identifier == MainStoryBoard.beaconSegue {            
+        if segue.identifier == MainStoryBoard.beaconsSegue {
         } else if segue.identifier == MainStoryBoard.beaconRegionAddSegue {
+        } else if segue.identifier == MainStoryBoard.beaconRegionEditSegue {            
         }
     }
     
-    @IBAction func toggleScan(sender:AnyObject) {
-        self.startMonitoring()
+    @IBAction func toggleRanging(sender:AnyObject) {
+        self.startRanging()
     }
     
     // UITableViewDataSource
@@ -77,6 +80,8 @@ class BeaconRegionsViewController: UITableViewController {
     
     override func tableView(tableView:UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
         if editingStyle == .Delete {
+            let name = BeaconStore.getBeaconNames()[indexPath.row]
+            BeaconStore.removeBeacon(name)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:.Fade)
         }
     }
@@ -89,7 +94,7 @@ class BeaconRegionsViewController: UITableViewController {
         }
     }
     
-    func startMonitoring() {
+    func startRanging() {
         for (name, uuid) in BeaconStore.getBeacons() {
             let beacon = BeaconMonitor(proximityUUID:uuid, identifier:name) {(beaconMonitor) in
                 beaconMonitor.startMonitoringRegion = {
@@ -105,5 +110,8 @@ class BeaconRegionsViewController: UITableViewController {
         }
     }
     
+    // UITableViewDelegate
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+    }
 
 }
