@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import BlueCapKit
 
 class BeaconStore {
     
@@ -33,6 +34,7 @@ class BeaconStore {
     class func setBeacons(beacons:[String:NSUUID]) {
         var storedBeacons = [String:String]()
         for (name, uuid) in beacons {
+            Logger.debug("BeaconStore#setBeacons: \(name):\(uuid.UUIDString)")
             storedBeacons[name] = uuid.UUIDString
         }
         NSUserDefaults.standardUserDefaults().setObject(storedBeacons, forKey:"beacons")

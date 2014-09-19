@@ -17,7 +17,7 @@ extension UIAlertController {
     }
 
 
-    class func alertOnError(message:String) -> UIAlertController {
+    class func alertOnErrorWithMessage(message:String) -> UIAlertController {
         var alert = UIAlertController(title: "Error", message:message, preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
         return alert

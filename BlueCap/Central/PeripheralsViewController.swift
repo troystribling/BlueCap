@@ -163,7 +163,7 @@ class PeripheralsViewController : UITableViewController {
             case "Service" :
                 let scannedServices = ConfigStore.getScannedServices()
                 if scannedServices.isEmpty {
-                    self.presentViewController(UIAlertController.alertOnError("No scan services configured"), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
                 } else {
                     // Region Service Scan with Timeout Enabled
                     if ConfigStore.getScanTimeoutEnabled() {
@@ -192,7 +192,7 @@ class PeripheralsViewController : UITableViewController {
             case "Service" :
                 let scannedServices = ConfigStore.getScannedServices()
                 if scannedServices.isEmpty {
-                    self.presentViewController(UIAlertController.alertOnError("No scan services configured"), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
                 } else {
                     // Service Scan with Timeout Enabled
                     if ConfigStore.getScanTimeoutEnabled() {

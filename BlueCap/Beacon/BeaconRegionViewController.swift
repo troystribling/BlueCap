@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BlueCapKit
 
 class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
 
@@ -28,8 +29,15 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         let enteredName = self.nameTextField.text
         if enteredName != nil && enteredUUID != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
-                BeaconStore.addBeacon(enteredName, uuid:NSUUID(UUIDString:enteredUUID))
-                self.navigationController?.popViewControllerAnimated(true)
+                if let uuid = Optional(NSUUID(UUIDString:enteredUUID)) {
+                    Logger.debug("uuid:\(uuid)")
+                    BeaconStore.addBeacon(enteredName, uuid:uuid)
+                    self.navigationController?.popViewControllerAnimated(true)
+                    return true
+                } else {
+                    self.presentViewController(UIAlertController.alertWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                    return false
+                }
             }
         }
         return true
