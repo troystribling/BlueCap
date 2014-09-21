@@ -212,14 +212,14 @@ class PeripheralsViewController : UITableViewController {
     
     func startMonitoringRegions() {
         for (name, location) in ConfigStore.getScanRegions() {
-            RegionScannerator.sharedInstance().startMonitoringForRegion(RegionMonitor(center:location, identifier:name) {(regionMonitor) in
-                regionMonitor.exitRegion = {
+            RegionScannerator.sharedInstance().startMonitoringForRegion(Region(center:location, identifier:name) {(region) in
+                region.exitRegion = {
                     self.presentViewController(UIAlertController.alertWithMessage("Exiting Region: \(name)"), animated:true, completion:nil)
                 }
-                regionMonitor.enterRegion = {
+                region.enterRegion = {
                     self.presentViewController(UIAlertController.alertWithMessage("Entering Region: \(name)"), animated:true, completion:nil)
                 }
-                regionMonitor.startMonitoringRegion = {
+                region.startMonitoringRegion = {
                     self.presentViewController(UIAlertController.alertWithMessage("Started Monitoring Region: \(name)"), animated:true, completion:nil)
                 }
             })
@@ -227,8 +227,8 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func stopMonitoringRegions() {
-        for regionMonitors in RegionScannerator.sharedInstance().regionMonitors {
-            RegionScannerator.sharedInstance().stopMonitoringForRegion(regionMonitors)
+        for region in RegionScannerator.sharedInstance().regions {
+            RegionScannerator.sharedInstance().stopMonitoringForRegion(region)
         }
     }
 

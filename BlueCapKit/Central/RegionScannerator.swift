@@ -12,18 +12,18 @@ import CoreBluetooth
 
 public class RegionScannerator : TimedScannerator {
  
-    internal class RegionScanneratorMonitor : RegionMonitor {
+    internal class ScanneratorRegion : Region {
         
-        internal var regionMonitor : RegionMonitor
+        internal var scanRegion : Region
         
-        internal override var region : CLCircularRegion {
-            return self.regionMonitor.region
+        internal override var region : CLRegion {
+            return self.scanRegion.region
         }
         
-        internal init(regionMonitor:RegionMonitor, initializer:(regionMonitor:RegionScanneratorMonitor) -> ()) {
-            self.regionMonitor = regionMonitor
-            super.init(region:regionMonitor.region)
-            initializer(regionMonitor:self)
+        internal init(scanRegion:Region, initializer:(scanneratorRegion:ScanneratorRegion) -> ()) {
+            self.scanRegion = scanRegion
+            super.init(region:scanRegion.region)
+            initializer(scanneratorRegion:self)
         }
 
     }
@@ -50,8 +50,8 @@ public class RegionScannerator : TimedScannerator {
         }
     }
 
-    public var regionMonitors : [RegionMonitor] {
-        return self.regionManager.regionMonitors
+    public var regions : [Region] {
+        return self.regionManager.regions
     }
 
     override public class func sharedInstance() -> RegionScannerator {
@@ -110,17 +110,17 @@ public class RegionScannerator : TimedScannerator {
         self.regionManager.stopUpdatingLocation()
     }
     
-    public func startMonitoringForRegion(regionMonitor:RegionMonitor) {
+    public func startMonitoringForRegion(region:Region) {
         Logger.debug("RegionScannerator#startMonitoringForRegion")
-        let scanneratorMonitor = RegionScanneratorMonitor(regionMonitor:regionMonitor) {(regionMonitor) in
-            regionMonitor.exitRegion = {
-                if let exitRegion = regionMonitor.regionMonitor.exitRegion {
+        let region = ScanneratorRegion(scanRegion:region) {(scanneratorRegion) in
+            scanneratorRegion.exitRegion = {
+                if let exitRegion = scanneratorRegion.scanRegion.exitRegion {
                     exitRegion()
                 }
                 CentralManager.sharedInstance().stopScanning()
             }
-            regionMonitor.enterRegion = {
-                if let enterRegion = regionMonitor.regionMonitor.enterRegion {
+            scanneratorRegion.enterRegion = {
+                if let enterRegion = scanneratorRegion.scanRegion.enterRegion {
                     enterRegion()
                 }
                 if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
@@ -131,28 +131,28 @@ public class RegionScannerator : TimedScannerator {
                     }
                 }
             }
-            regionMonitor.startMonitoringRegion = {
-                if let startMonitoringRegion = regionMonitor.regionMonitor.startMonitoringRegion {
+            scanneratorRegion.startMonitoringRegion = {
+                if let startMonitoringRegion = scanneratorRegion.scanRegion.startMonitoringRegion {
                     startMonitoringRegion()
                 }
             }
-            regionMonitor.regionStateChanged = {(state) in
-                if let regionStateChanged = regionMonitor.regionMonitor.regionStateChanged {
+            scanneratorRegion.regionStateChanged = {(state) in
+                if let regionStateChanged = scanneratorRegion.scanRegion.regionStateChanged {
                     regionStateChanged(state:state)
                 }
             }
-            regionMonitor.errorMonitoringRegion = {(error) in
-                if let errorMonitoringRegion = regionMonitor.regionMonitor.errorMonitoringRegion {
+            scanneratorRegion.errorMonitoringRegion = {(error) in
+                if let errorMonitoringRegion = scanneratorRegion.scanRegion.errorMonitoringRegion {
                     errorMonitoringRegion(error:error)
                 }
             }
         }
-        self.regionManager.startMonitoringForRegion(regionMonitor)
+        self.regionManager.startMonitoringForRegion(region)
     }
     
-    public func stopMonitoringForRegion(regionMonitor:RegionMonitor) {
+    public func stopMonitoringForRegion(region:Region) {
         Logger.debug("RegionScannerator#stopMonitoringForRegion")
-        self.regionManager.stopMonitoringForRegion(regionMonitor)
+        self.regionManager.stopMonitoringForRegion(region)
     }
 
 }

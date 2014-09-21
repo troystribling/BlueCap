@@ -96,23 +96,23 @@ class BeaconRegionsViewController: UITableViewController {
     
     func startRanging() {
         for (name, uuid) in BeaconStore.getBeacons() {
-            let beacon = BeaconMonitor(proximityUUID:uuid, identifier:name) {(beaconMonitor) in
-                beaconMonitor.startMonitoringRegion = {
-                    BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconMonitor)
+            let beacon = BeaconRegion(proximityUUID:uuid, identifier:name) {(beaconRegion) in
+                beaconRegion.startMonitoringRegion = {
+                    BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconRegion)
                     self.presentViewController(UIAlertController.alertWithMessage("Started monitoring region \(name). Ranging beacons."), animated:true, completion:nil)
                 }
-                beaconMonitor.enterRegion = {
+                beaconRegion.enterRegion = {
                     self.presentViewController(UIAlertController.alertWithMessage("Did enter region \(name). Ranging beacons."), animated:true, completion:nil)
                 }
-                beaconMonitor.exitRegion = {
-                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconMonitor)
+                beaconRegion.exitRegion = {
+                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
                     self.presentViewController(UIAlertController.alertWithMessage("Did exit region \(name). Stop ranging beacons."), animated:true, completion:nil)
                 }
-                beaconMonitor.errorMonitoringRegion = {(error) in
-                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconMonitor)
+                beaconRegion.errorMonitoringRegion = {(error) in
+                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }
-                beaconMonitor.rangedBeacons = {(beacons) in
+                beaconRegion.rangedBeacons = {(beacons) in
                     for beacon in beacons {
                         Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
                     }
