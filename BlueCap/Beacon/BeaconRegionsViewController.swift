@@ -99,6 +99,18 @@ class BeaconRegionsViewController: UITableViewController {
             let beacon = BeaconMonitor(proximityUUID:uuid, identifier:name) {(beaconMonitor) in
                 beaconMonitor.startMonitoringRegion = {
                     BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconMonitor)
+                    self.presentViewController(UIAlertController.alertWithMessage("Started monitoring region \(name). Ranging beacons."), animated:true, completion:nil)
+                }
+                beaconMonitor.enterRegion = {
+                    self.presentViewController(UIAlertController.alertWithMessage("Did enter region \(name). Ranging beacons."), animated:true, completion:nil)
+                }
+                beaconMonitor.exitRegion = {
+                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconMonitor)
+                    self.presentViewController(UIAlertController.alertWithMessage("Did exit region \(name). Stop ranging beacons."), animated:true, completion:nil)
+                }
+                beaconMonitor.errorMonitoringRegion = {(error) in
+                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconMonitor)
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }
                 beaconMonitor.rangedBeacons = {(beacons) in
                     for beacon in beacons {

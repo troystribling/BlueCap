@@ -11,12 +11,14 @@ import CoreLocation
 
 public class BeaconManager : LocationManager {
     
-    private var configuredBeaconMonitors    : Dictionary<CLRegion, BeaconMonitor> = [:]
-    
+    private var configuredBeaconMonitors    : [CLRegion:BeaconMonitor]  = [:]
+    private var isRangingRegion             : [NSUUID:Bool]             = [:]
+    private var isMonitoringRegion          : [NSUUID:Bool]             = [:]
+
     public var beaconMonitors : [BeaconMonitor] {
         return self.configuredBeaconMonitors.values.array
     }
-    
+
     public override init() {
         super.init()
     }
@@ -32,13 +34,62 @@ public class BeaconManager : LocationManager {
         return thisBeaconManager!
     }
     
+    public func isRangingAllRegions() -> Bool {
+        var status = true
+        for regionStatus in self.isRangingRegion.values.array {
+            if !regionStatus {
+                status = false
+                break
+            }
+        }
+        return status
+    }
+    
+    public func isRangingRegion(beaconMonitor:BeaconMonitor) -> Bool {
+        return self.isRangingRegion(beaconMonitor.proximityUUID)
+    }
+
+    public func isRangingRegion(proximityUUID:NSUUID) -> Bool {
+        if let status = self.isRangingRegion[proximityUUID] {
+            return status
+        } else {
+            return false
+        }
+    }
+
+    public func isMonitoringAllRegions() -> Bool {
+        var status = true
+        for regionStatus in self.isMonitoringRegion.values.array {
+            if !regionStatus {
+                
+                status = false
+                break
+            }
+        }
+        return status
+    }
+    
+    public func isMonitoringRegion(beaconMonitor:BeaconMonitor) -> Bool {
+        return self.isMonitoringRegion(beaconMonitor.proximityUUID)
+    }
+    
+    public func isMonitoringRegion(proximityUUID:NSUUID) -> Bool {
+        if let status = self.isMonitoringRegion[proximityUUID] {
+            return status
+        } else {
+            return false
+        }
+    }
+    
     // control
     public func startMonitoringForRegion(beaconMonitor:BeaconMonitor) {
+        self.isMonitoringRegion[beaconMonitor.proximityUUID] = true
         self.configuredBeaconMonitors[beaconMonitor.region] = beaconMonitor
         self.clLocationManager.startMonitoringForRegion(beaconMonitor.region)
     }
     
     public func stopMonitoringForRegion(beaconMonitor:BeaconMonitor) {
+        self.isMonitoringRegion[beaconMonitor.proximityUUID] = false
         self.configuredBeaconMonitors.removeValueForKey(beaconMonitor.region)
         self.clLocationManager.stopMonitoringForRegion(beaconMonitor.region)
     }
@@ -108,6 +159,24 @@ public class BeaconManager : LocationManager {
         }
     }
     
+    public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
+        Logger.debug("BeaconManager#didEnterRegion: \(region.identifier)")
+        if let regionMonitor = self.configuredBeaconMonitors[region] {
+            if let enterRegion = regionMonitor.enterRegion {
+                enterRegion()
+            }
+        }
+    }
+    
+    public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
+        Logger.debug("BeaconManager#didExitRegion: \(region.identifier)")
+        if let regionMonitor = self.configuredBeaconMonitors[region] {
+            if let exitRegion = regionMonitor.exitRegion {
+                exitRegion()
+            }
+        }
+    }
+
     public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
         Logger.debug("BeaconManager#didDetermineState: \(region.identifier)")
         if let beaconMonitor = self.configuredBeaconMonitors[region] {

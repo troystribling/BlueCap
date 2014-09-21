@@ -35,7 +35,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
                     self.navigationController?.popViewControllerAnimated(true)
                     return true
                 } else {
-                    self.presentViewController(UIAlertController.alertWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
                     return false
                 }
             }

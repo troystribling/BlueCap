@@ -11,7 +11,9 @@ import CoreLocation
 
 public class RegionManager : LocationManager {
 
-    private var configuredRegionMonitors    : Dictionary<CLRegion, RegionMonitor> = [:]
+    private var configuredRegionMonitors    : [CLRegion:RegionMonitor]  = [:]
+    private var isMonitoringRegion          : [CLRegion:Bool]             = [:]
+
     
     public var regionMonitors : [RegionMonitor] {
         return self.configuredRegionMonitors.values.array
@@ -32,13 +34,34 @@ public class RegionManager : LocationManager {
         super.init()
     }
     
+    public func isMonitoringAllRegions() -> Bool {
+        var status = true
+        for regionStatus in self.isMonitoringRegion.values.array {
+            if !regionStatus {
+                status = false
+                break
+            }
+        }
+        return status
+    }
+    
+    public func isMonitoringRegion(regionMonitor:RegionMonitor) -> Bool {
+        if let status = self.isMonitoringRegion[regionMonitor.region] {
+            return status
+        } else {
+            return false
+        }
+    }
+    
     // control
     public func startMonitoringForRegion(regionMonitor:RegionMonitor) {
+        self.isMonitoringRegion[regionMonitor.region] = true
         self.configuredRegionMonitors[regionMonitor.region] = regionMonitor
         self.clLocationManager.startMonitoringForRegion(regionMonitor.region)
     }
 
     public func stopMonitoringForRegion(regionMonitor:RegionMonitor) {
+        self.isMonitoringRegion[regionMonitor.region] = false
         self.configuredRegionMonitors.removeValueForKey(regionMonitor.region)
         self.clLocationManager.stopMonitoringForRegion(regionMonitor.region)
     }
