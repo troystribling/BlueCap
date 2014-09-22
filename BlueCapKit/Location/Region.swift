@@ -21,7 +21,7 @@ public class Region {
     public var regionStateChanged       : ((state:CLRegionState) -> ())?
     public var errorMonitoringRegion    : ((error:NSError!) -> ())?
     
-    public var idenitifier : String {
+    public var identifier : String {
         return self._region.identifier
     }
     

@@ -28,11 +28,11 @@ public class BeaconManager : RegionManager {
         return thisBeaconManager!
     }
     
-    public func isRangingAllRegions() -> Bool {
-        var status = true
+    public func isRanging() -> Bool {
+        var status = false
         for regionStatus in self.regionRangingStatus.values.array {
-            if !regionStatus {
-                status = false
+            if regionStatus {
+                status = true
                 break
             }
         }
@@ -48,28 +48,44 @@ public class BeaconManager : RegionManager {
     }
 
     // control
-    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
-        self.configuredRegions[beaconRegion.region] = beaconRegion
-        self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
+    public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion) {
+        self.authorize(authorization) {
+            self.regionRangingStatus[beaconRegion.identifier] = true
+            self.configuredRegions[beaconRegion.region] = beaconRegion
+            self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
+        }
     }
-    
+
+    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
+        self.startRangingBeaconsInRegion(CLAuthorizationStatus.Authorized, beaconRegion:beaconRegion)
+    }
+
     public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
+        self.regionRangingStatus.removeValueForKey(beaconRegion.identifier)
         self.configuredRegions.removeValueForKey(beaconRegion.region)
         self.clLocationManager.stopMonitoringForRegion(beaconRegion.region as CLBeaconRegion)
     }
     
-    public func startRangingAllBeacons() {
+    public func resumeRangingAllBeacons() {
         for beaconRegion in self.regions {
+            self.regionRangingStatus[beaconRegion.identifier] = true
             self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
         }
     }
     
-    public func stopRangingAllBeacons() {
+    public func pauseRangingAllBeacons() {
         for beaconRegion in self.regions {
+            self.regionRangingStatus[beaconRegion.identifier] = false
             self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
         }
     }
-    
+
+    public func stopRangingAllBeacons() {
+        for beaconRegion in self.regions {
+            self.startMonitoringForRegion(beaconRegion)
+        }
+    }
+
     public func requestStateForRegion(beaconMonitor:BeaconRegion) {
         self.clLocationManager.requestStateForRegion(beaconMonitor.region)
     }

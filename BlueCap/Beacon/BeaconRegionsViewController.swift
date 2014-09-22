@@ -23,8 +23,8 @@ class BeaconRegionsViewController: UITableViewController {
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
-        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleScan:")
-        self.startScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Refresh, target:self, action:"toggleScan:")
+        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleMonitoring:")
+        self.startScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Refresh, target:self, action:"toggleMonitoring:")
     }
     
     override func viewDidLoad() {
@@ -35,6 +35,7 @@ class BeaconRegionsViewController: UITableViewController {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         self.navigationItem.title = "Beacon Regions"
+        self.setScanButton()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -50,8 +51,14 @@ class BeaconRegionsViewController: UITableViewController {
         }
     }
     
-    @IBAction func toggleRanging(sender:AnyObject) {
-        self.startRanging()
+    func toggleMonitoring(sender:AnyObject) {
+        if BeaconManager.sharedInstance().isMonitoring() {
+            BeaconManager.sharedInstance().stopRangingAllBeacons()
+            BeaconManager.sharedInstance().stopMonitoringAllRegions()
+            self.setScanButton()
+        } else {
+            self.startMonitoring()
+        }
     }
     
     // UITableViewDataSource
@@ -87,19 +94,20 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func setScanButton() {
-        if (CentralManager.sharedInstance().isScanning) {
-            self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)
+        if BeaconManager.sharedInstance().isMonitoring() {
+            self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
-            self.navigationItem.setRightBarButtonItem(self.startScanBarButtonItem, animated:false)
+            self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
         }
     }
     
-    func startRanging() {
+    func startMonitoring() {
         for (name, uuid) in BeaconStore.getBeacons() {
             let beacon = BeaconRegion(proximityUUID:uuid, identifier:name) {(beaconRegion) in
                 beaconRegion.startMonitoringRegion = {
                     BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconRegion)
-                    self.presentViewController(UIAlertController.alertWithMessage("Started monitoring region \(name). Ranging beacons."), animated:true, completion:nil)
+                    self.setScanButton()
+                    Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")
                 }
                 beaconRegion.enterRegion = {
                     self.presentViewController(UIAlertController.alertWithMessage("Did enter region \(name). Ranging beacons."), animated:true, completion:nil)

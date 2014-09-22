@@ -111,39 +111,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         if let initializer = initializer {
             initializer(manager:self)
         }
-        if LocationManager.authorizationStatus() != authorization {
-            switch authorization {
-            case .Authorized:
-                self.authorizationStatusChanged = {(status) in
-                    if status == .Authorized {
-                        Logger.debug("LocationManager#startUpdatingLocation: Location Authorized succcess")
-                        self.clLocationManager.startUpdatingLocation()
-                    } else {
-                        Logger.debug("LocationManager#startUpdatingLocation: Location Authorized failed")
-                        if let locationsUpdateFailed = self.locationsUpdateFailed {
-                            locationsUpdateFailed(error:NSError.errorWithDomain("BlueCap", code:408, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"]))
-                        }
-                    }
-                }
-                LocationManager.sharedInstance().requestAlwaysAuthorization()
-                break
-            case .AuthorizedWhenInUse:
-                self.authorizationStatusChanged = {(status) in
-                    if status == .AuthorizedWhenInUse {
-                        Logger.debug("LocationManager#startUpdatingLocation: Location AuthorizedWhenInUse success")
-                        self.clLocationManager.startUpdatingLocation()
-                    } else {
-                        Logger.debug("LocationManager#startUpdatingLocation: Location AuthorizedWhenInUse failed")
-                    }
-                }
-                LocationManager.sharedInstance().requestWhenInUseAuthorization()
-                break
-            default:
-                break
-            }
-        } else {
-            self.clLocationManager.startUpdatingLocation()
-        }
+        self.authorize(authorization){self.clLocationManager.startUpdatingLocation()}
     }
     
     public func startUpdatingLocation(initializer:((manager:LocationManager) -> ())? = nil) {
@@ -204,6 +172,43 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         if let authorizationStatusChanged = self.authorizationStatusChanged {
             authorizationStatusChanged(status:status)
         }
+    }
+    
+    internal func authorize(authorization:CLAuthorizationStatus, andExecute:() -> ()) {
+        if LocationManager.authorizationStatus() != authorization {
+            switch authorization {
+            case .Authorized:
+                self.authorizationStatusChanged = {(status) in
+                    if status == .Authorized {
+                        Logger.debug("LocationManager#authorize: Location Authorized succcess")
+                        andExecute()
+                    } else {
+                        Logger.debug("LocationManager#authorize: Location Authorized failed")
+                        if let locationsUpdateFailed = self.locationsUpdateFailed {
+                            locationsUpdateFailed(error:NSError.errorWithDomain("BlueCap", code:408, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"]))
+                        }
+                    }
+                }
+                LocationManager.sharedInstance().requestAlwaysAuthorization()
+                break
+            case .AuthorizedWhenInUse:
+                self.authorizationStatusChanged = {(status) in
+                    if status == .AuthorizedWhenInUse {
+                        Logger.debug("LocationManager#authorize: Location AuthorizedWhenInUse success")
+                        andExecute()
+                    } else {
+                        Logger.debug("LocationManager#authorize: Location AuthorizedWhenInUse failed")
+                    }
+                }
+                LocationManager.sharedInstance().requestWhenInUseAuthorization()
+                break
+            default:
+                break
+            }
+        } else {
+            andExecute()
+        }
+        
     }
 }
 

@@ -61,7 +61,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     // actions
-    @IBAction func toggleScan(sender:AnyObject) {
+    func toggleScan(sender:AnyObject) {
         Logger.debug("toggleScan")
         let central = CentralManager.sharedInstance()
         if (central.isScanning) {

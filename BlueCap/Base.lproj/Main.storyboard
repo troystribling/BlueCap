@@ -2307,11 +2307,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Beacon Reagions" id="RkV-qn-VFl">
-                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="qS8-SH-AhK">
-                            <connections>
-                                <action selector="toggleScan:" destination="U1h-CL-I2C" id="ga0-Ly-bK7"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="qS8-SH-AhK"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="4iH-uT-jZV">
                             <connections>
                                 <segue destination="odx-cy-OyH" kind="push" identifier="BeaconRegionAdd" id="vhM-yw-b5Q"/>

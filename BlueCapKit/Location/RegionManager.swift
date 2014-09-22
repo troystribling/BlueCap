@@ -34,11 +34,11 @@ public class RegionManager : LocationManager {
         super.init()
     }
     
-    public func isMonitoringAllRegions() -> Bool {
-        var status = true
+    public func isMonitoring() -> Bool {
+        var status = false
         for regionStatus in self.regionMonitorStatus.values.array {
-            if !regionStatus {
-                status = false
+            if regionStatus {
+                status = true
                 break
             }
         }
@@ -54,27 +54,41 @@ public class RegionManager : LocationManager {
     }
     
     // control
+    public func startMonitoringForRegion(authorization:CLAuthorizationStatus, region:Region) {
+        self.authorize(authorization){
+            self.regionMonitorStatus[region.identifier] = true
+            self.configuredRegions[region.region] = region
+            self.clLocationManager.startMonitoringForRegion(region.region)
+        }
+    }
+
     public func startMonitoringForRegion(region:Region) {
-        self.regionMonitorStatus[region.idenitifier] = true
-        self.configuredRegions[region.region] = region
-        self.clLocationManager.startMonitoringForRegion(region.region)
+        self.startMonitoringForRegion(CLAuthorizationStatus.Authorized, region:region)
     }
 
     public func stopMonitoringForRegion(region:Region) {
-        self.regionMonitorStatus[region.idenitifier] = false
+        self.regionMonitorStatus.removeValueForKey(region.identifier)
         self.configuredRegions.removeValueForKey(region.region)
         self.clLocationManager.stopMonitoringForRegion(region.region)
     }
     
-    public func startMonitoringAllRegions() {
-        for regionMonitor in self.regions {
-            self.clLocationManager.startMonitoringForRegion(regionMonitor.region)
+    public func resumeMonitoringAllRegions() {
+        for region in self.regions {
+            self.regionMonitorStatus[region.identifier] = true
+            self.clLocationManager.startMonitoringForRegion(region.region)
         }
     }
     
+    public func pauseMonitoringAllRegions() {
+        for region in self.regions {
+            self.regionMonitorStatus[region.identifier] = false
+            self.clLocationManager.stopMonitoringForRegion(region.region)
+        }
+    }
+
     public func stopMonitoringAllRegions() {
-        for regionMonitor in self.regions {
-            self.clLocationManager.stopMonitoringForRegion(regionMonitor.region)
+        for region in self.regions {
+            self.stopMonitoringForRegion(region)
         }
     }
 
