@@ -11,8 +11,13 @@ import CoreLocation
 
 public class BeaconManager : RegionManager {
     
-    private var regionRangingStatus : [String:Bool]  = [:]
+    private var regionRangingStatus         : [String:Bool]             = [:]
+    internal var configuredBeaconRegions    : [CLRegion:Region]    = [:]
 
+    public var beaconRegions : [Region] {
+        return self.configuredBeaconRegions.values.array
+    }
+    
     public override init() {
         super.init()
     }
@@ -51,7 +56,7 @@ public class BeaconManager : RegionManager {
     public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion) {
         self.authorize(authorization) {
             self.regionRangingStatus[beaconRegion.identifier] = true
-            self.configuredRegions[beaconRegion.region] = beaconRegion
+            self.configuredBeaconRegions[beaconRegion.region] = beaconRegion
             self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
         }
     }
@@ -62,8 +67,8 @@ public class BeaconManager : RegionManager {
 
     public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
         self.regionRangingStatus.removeValueForKey(beaconRegion.identifier)
-        self.configuredRegions.removeValueForKey(beaconRegion.region)
-        self.clLocationManager.stopMonitoringForRegion(beaconRegion.region as CLBeaconRegion)
+        self.configuredBeaconRegions.removeValueForKey(beaconRegion.region)
+        self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
     }
     
     public func resumeRangingAllBeacons() {
@@ -82,7 +87,7 @@ public class BeaconManager : RegionManager {
 
     public func stopRangingAllBeacons() {
         for beaconRegion in self.regions {
-            self.startMonitoringForRegion(beaconRegion)
+            self.stopRangingBeaconsInRegion(beaconRegion as BeaconRegion)
         }
     }
 
