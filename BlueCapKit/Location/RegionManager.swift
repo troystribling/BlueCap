@@ -53,6 +53,15 @@ public class RegionManager : LocationManager {
         }
     }
     
+    public func region(identifier:String) -> Region? {
+        let regions = self.configuredRegions.keys.array.filter{$0.identifier == identifier}
+        if let region = regions.first {
+            return self.configuredRegions[region]
+        } else {
+            return nil
+        }
+    }
+
     // control
     public func startMonitoringForRegion(authorization:CLAuthorizationStatus, region:Region) {
         self.authorize(authorization){

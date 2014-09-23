@@ -12,7 +12,7 @@ import CoreLocation
 public class BeaconManager : RegionManager {
     
     private var regionRangingStatus         : [String:Bool]             = [:]
-    internal var configuredBeaconRegions    : [CLRegion:Region]    = [:]
+    internal var configuredBeaconRegions    : [CLRegion:BeaconRegion]   = [:]
 
     public var beaconRegions : [Region] {
         return self.configuredBeaconRegions.values.array
@@ -52,6 +52,15 @@ public class BeaconManager : RegionManager {
         }
     }
 
+    public func beaconRegion(identifier:String) -> BeaconRegion? {
+        let regions = self.configuredBeaconRegions.keys.array.filter{$0.identifier == identifier}
+        if let region = regions.first {
+            return self.configuredBeaconRegions[region]
+        } else {
+            return nil
+        }
+    }
+    
     // control
     public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion) {
         self.authorize(authorization) {

@@ -52,10 +52,11 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func toggleMonitoring(sender:AnyObject) {
-        if BeaconManager.sharedInstance().isMonitoring() {
+        if BeaconManager.sharedInstance().isRanging() {
             BeaconManager.sharedInstance().stopRangingAllBeacons()
             BeaconManager.sharedInstance().stopMonitoringAllRegions()
             self.setScanButton()
+            self.tableView.reloadData()
         } else {
             self.startMonitoring()
         }
@@ -73,10 +74,25 @@ class BeaconRegionsViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconRegionCell, forIndexPath: indexPath) as BeaconRegionCell
         let name = BeaconStore.getBeaconNames()[indexPath.row]
-        let beacons = BeaconStore.getBeacons()
-        if let beacon = beacons[name] {
+        let beaconRegions = BeaconStore.getBeacons()
+        cell.rangingActivityIndicator.stopAnimating()
+        if let beaconRegionUUID = beaconRegions[name] {
             cell.nameLabel.text = name
-            cell.uuidLabel.text = beacon.UUIDString
+            cell.uuidLabel.text = beaconRegionUUID.UUIDString
+        }
+        if BeaconManager.sharedInstance().isRangingRegion(name) {
+            if let region = BeaconManager.sharedInstance().beaconRegion(name) {
+                if region.beacons.count == 0 {
+                    cell.rangingActivityIndicator.startAnimating()
+                    cell.accessoryType = UITableViewCellAccessoryType.None
+                } else {
+                    cell.accessoryType = UITableViewCellAccessoryType.DetailButton
+                }
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+            }
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
         }
         return cell
     }
@@ -94,7 +110,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func setScanButton() {
-        if BeaconManager.sharedInstance().isMonitoring() {
+        if BeaconManager.sharedInstance().isRanging() {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -110,20 +126,28 @@ class BeaconRegionsViewController: UITableViewController {
                     Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")
                 }
                 beaconRegion.enterRegion = {
+                    let beaconManager = BeaconManager.sharedInstance()
+                    if !beaconManager.isRangingRegion(beaconRegion.identifier) {
+                        beaconManager.startRangingBeaconsInRegion(beaconRegion)
+                        self.tableView.reloadData()
+                    }
                     self.presentViewController(UIAlertController.alertWithMessage("Did enter region \(name). Ranging beacons."), animated:true, completion:nil)
                 }
                 beaconRegion.exitRegion = {
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
+                    self.tableView.reloadData()
                     self.presentViewController(UIAlertController.alertWithMessage("Did exit region \(name). Stop ranging beacons."), animated:true, completion:nil)
                 }
                 beaconRegion.errorMonitoringRegion = {(error) in
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
+                    self.tableView.reloadData()
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }
                 beaconRegion.rangedBeacons = {(beacons) in
                     for beacon in beacons {
                         Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
                     }
+                    self.tableView.reloadData()
                 }
             }
             BeaconManager.sharedInstance().startMonitoringForRegion(beacon)

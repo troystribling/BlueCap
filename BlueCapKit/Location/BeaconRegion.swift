@@ -20,6 +20,10 @@ public class BeaconRegion : Region {
         return self._region as CLBeaconRegion
     }
     
+    public var beacons : [Beacon] {
+        return self._beacons
+    }
+    
     public var proximityUUID : NSUUID! {
         return (self._region as CLBeaconRegion).proximityUUID
     }
