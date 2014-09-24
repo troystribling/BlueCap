@@ -14,7 +14,7 @@ class BeaconRegionsViewController: UITableViewController {
     var stopScanBarButtonItem   : UIBarButtonItem!
     var startScanBarButtonItem  : UIBarButtonItem!
     var isRanging               = false
-    var isInRegion              = false
+    var isInRegion              = true
     
     struct MainStoryBoard {
         static let beaconRegionCell         = "BeaconRegionCell"
@@ -46,10 +46,13 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryBoard.beaconsSegue {
         } else if segue.identifier == MainStoryBoard.beaconRegionAddSegue {
-        } else if segue.identifier == MainStoryBoard.beaconRegionEditSegue {            
+        } else if segue.identifier == MainStoryBoard.beaconRegionEditSegue {
+            let selectedIndexPath = sender as NSIndexPath
+            let viewController = segue.destinationViewController as BeaconRegionViewController
+            viewController.regionName = BeaconStore.getBeaconNames()[selectedIndexPath.row]
         }
     }
     
@@ -96,10 +99,10 @@ class BeaconRegionsViewController: UITableViewController {
             }
         } else {
             if self.isInRegion {
+                cell.accessoryType = .DisclosureIndicator
+            } else {
                 cell.accessoryType = .None
                 cell.rangingActivityIndicator.startAnimating()
-            } else {
-                cell.accessoryType = .DisclosureIndicator
             }
         }
         return cell
@@ -140,14 +143,14 @@ class BeaconRegionsViewController: UITableViewController {
                         self.tableView.reloadData()
                     }
                     self.isInRegion = true
-                    self.presentViewController(UIAlertController.alertWithMessage("Did enter region \(name). Ranging beacons."), animated:true, completion:nil)
+                    Notify.withMessage("Did enter region \(name). Ranging beacons.", eventCount:1, viewController:self)
                 }
                 beaconRegion.exitRegion = {
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
                     self.isRanging = false
                     self.isInRegion = false
                     self.tableView.reloadData()
-                    self.presentViewController(UIAlertController.alertWithMessage("Did exit region \(name). Stop ranging beacons."), animated:true, completion:nil)
+                    Notify.withMessage("Did exit region \(name). Stop ranging beacons.", eventCount:1, viewController:self)
                 }
                 beaconRegion.errorMonitoringRegion = {(error) in
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
@@ -170,6 +173,12 @@ class BeaconRegionsViewController: UITableViewController {
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+        let name = BeaconStore.getBeaconNames()[indexPath.row]
+        if BeaconManager.sharedInstance().isRangingRegion(name) {
+            self.performSegueWithIdentifier(MainStoryBoard.beaconsSegue, sender:indexPath)
+        } else {
+            self.performSegueWithIdentifier(MainStoryBoard.beaconRegionEditSegue, sender:indexPath)
+        }
     }
 
 }

@@ -13,6 +13,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var nameTextField : UITextField!
     @IBOutlet var uuidTextField : UITextField!
+    var regionName              : String?
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -20,6 +21,13 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let regionName = self.regionName {
+            self.nameTextField.text = regionName
+            let beacons = BeaconStore.getBeacons()
+            if let uuid = beacons[regionName] {
+                self.uuidTextField.text = uuid.UUIDString
+            }
+        }
     }
 
     // UITextFieldDelegate
@@ -30,8 +38,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         if enteredName != nil && enteredUUID != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
                 if let uuid = Optional(NSUUID(UUIDString:enteredUUID)) {
-                    Logger.debug("uuid:\(uuid)")
-                    BeaconStore.addBeacon(enteredName, uuid:uuid)
+                    BeaconStore.addBeacon(enteredName!, uuid:uuid)
                     self.navigationController?.popViewControllerAnimated(true)
                     return true
                 } else {
