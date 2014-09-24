@@ -107,6 +107,7 @@
 		05F2A8DF1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */; };
 		05F2A8E11993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */; };
 		05FAFC3319CC7620003725B0 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FAFC3219CC7620003725B0 /* Beacon.swift */; };
+		05FAFC3519D30247003725B0 /* Notify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FAFC3419D30247003725B0 /* Notify.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -262,6 +263,7 @@
 		05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileEditValueViewController.swift; sourceTree = "<group>"; };
 		05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
 		05FAFC3219CC7620003725B0 /* Beacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
+		05FAFC3419D30247003725B0 /* Notify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notify.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +374,7 @@
 				05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */,
 				05B45C0019A78C6B009DAF6D /* ProgressView.swift */,
 				05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */,
+				05FAFC3419D30247003725B0 /* Notify.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -807,6 +810,7 @@
 				057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */,
 				05B45BF219A78BA2009DAF6D /* SimpleCell.swift in Sources */,
 				05B45C0419A78C6B009DAF6D /* UIAlertControllerExtensions.swift in Sources */,
+				05FAFC3519D30247003725B0 /* Notify.swift in Sources */,
 				05D9D51619B0E464001DBEBC /* ConfigureScanServicesViewController.swift in Sources */,
 				05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */,
 				057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */,
