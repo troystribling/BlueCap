@@ -55,6 +55,7 @@ public class BeaconRegion : Region {
     
     internal init(region:CLRegion, initializer:((beaconRegion:BeaconRegion) -> ())? = nil) {
         super.init(region:region)
+        self.notifyEntryStateOnDisplay = true
         if let initializer = initializer {
             initializer(beaconRegion:self)
         }

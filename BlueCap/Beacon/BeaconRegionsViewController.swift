@@ -140,7 +140,7 @@ class BeaconRegionsViewController: UITableViewController {
                     let beaconManager = BeaconManager.sharedInstance()
                     if !beaconManager.isRangingRegion(beaconRegion.identifier) {
                         beaconManager.startRangingBeaconsInRegion(beaconRegion)
-                        self.tableView.reloadData()
+                        self.updateDisplay()
                     }
                     self.isInRegion = true
                     Notify.withMessage("Did enter region \(name). Ranging beacons.", eventCount:1, viewController:self)
@@ -149,12 +149,12 @@ class BeaconRegionsViewController: UITableViewController {
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
                     self.isRanging = false
                     self.isInRegion = false
-                    self.tableView.reloadData()
+                    self.updateDisplay()
                     Notify.withMessage("Did exit region \(name). Stop ranging beacons.", eventCount:1, viewController:self)
                 }
                 beaconRegion.errorMonitoringRegion = {(error) in
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
-                    self.tableView.reloadData()
+                    self.updateDisplay()
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }
                 beaconRegion.rangedBeacons = {(beacons) in
@@ -163,11 +163,17 @@ class BeaconRegionsViewController: UITableViewController {
                     }
                     if !self.isRanging {
                         self.isRanging = true
-                        self.tableView.reloadData()
+                        self.updateDisplay()
                     }
                 }
             }
             BeaconManager.sharedInstance().startMonitoringForRegion(beacon)
+        }
+    }
+    
+    func updateDisplay() {
+        if UIApplication.sharedApplication().applicationState == .Active {
+            self.tableView.reloadData()
         }
     }
     

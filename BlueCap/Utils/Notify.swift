@@ -11,13 +11,15 @@ import UIKit
 class Notify {
     
     class func withMessage(message:String, eventCount:Int, viewController:UIViewController) {
-        if UIApplication.sharedApplication().applicationState == .Background {
+        if UIApplication.sharedApplication().applicationState == .Active {
+            viewController.presentViewController(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
+        } else {
             let localNotification = UILocalNotification()
             localNotification.fireDate = nil
             localNotification.alertBody = message
             localNotification.soundName = UILocalNotificationDefaultSoundName
             localNotification.applicationIconBadgeNumber = eventCount
-        } else {
+            UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
             viewController.presentViewController(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
         }
 
