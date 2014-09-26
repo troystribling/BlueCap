@@ -9,5 +9,10 @@
 import UIKit
 
 class BeaconCell: UITableViewCell {
-
+    @IBOutlet var proximityUUIDLabel    : UILabel!
+    @IBOutlet var majorLabel            : UILabel!
+    @IBOutlet var minorLabel            : UILabel!
+    @IBOutlet var proximityLabel        : UILabel!
+    @IBOutlet var accuracyLabel         : UILabel!
+    @IBOutlet var rssiLabel             : UILabel!
 }
