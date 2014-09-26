@@ -53,3 +53,19 @@ public class Beacon {
         return self.clbeacon.rssi
     }
 }
+
+extension CLProximity {
+    
+    var stringValue : String {
+        switch self {
+        case .Unknown:
+            return "Unknown"
+        case .Immediate:
+            return "Immediate"
+        case .Near:
+            return "Near"
+        case .Far:
+            return "Far"
+        }
+    }
+}

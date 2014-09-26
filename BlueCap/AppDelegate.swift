@@ -20,6 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BLESIGGATTProfiles.create()
         GnosusProfiles.create()
         NordicProfiles.create()
+        application.registerUserNotificationSettings(
+            UIUserNotificationSettings(forTypes:UIUserNotificationType.Sound|UIUserNotificationType.Alert|UIUserNotificationType.Badge,
+                categories:nil))
         return true
     }
 
@@ -34,6 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
+        Notify.resetEventCount()
     }
 
     func applicationWillTerminate(application: UIApplication) {

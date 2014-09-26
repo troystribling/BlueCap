@@ -10,18 +10,24 @@ import UIKit
 
 class Notify {
     
-    class func withMessage(message:String, eventCount:Int, viewController:UIViewController) {
+    class func resetEventCount() {
+        eventCount = 0;
+        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+    }
+    
+    class func withMessage(message:String, viewController:UIViewController) {
         if UIApplication.sharedApplication().applicationState == .Active {
             viewController.presentViewController(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
         } else {
+            eventCount += 1
             let localNotification = UILocalNotification()
-            localNotification.fireDate = nil
             localNotification.alertBody = message
             localNotification.soundName = UILocalNotificationDefaultSoundName
             localNotification.applicationIconBadgeNumber = eventCount
-            UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
-            viewController.presentViewController(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
+            UIApplication.sharedApplication().presentLocalNotificationNow(localNotification)
         }
 
     }
 }
+
+var eventCount = 0
