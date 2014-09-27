@@ -49,6 +49,16 @@ class BeaconsViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
+    func sortBeacons(b1:Beacon, b2:Beacon) -> Bool {
+        if b1.major > b2.major {
+            return true
+        } else if b1.major == b2.major && b1.minor > b2.minor {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
@@ -60,7 +70,7 @@ class BeaconsViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconCell, forIndexPath: indexPath) as BeaconCell
-        let beacon = self.beacons[indexPath.row]
+        let beacon = sorted(self.beacons, self.sortBeacons)[indexPath.row]
         if let uuid = beacon.proximityUUID {
             cell.proximityUUIDLabel.text = uuid.UUIDString
         } else {
@@ -69,14 +79,17 @@ class BeaconsViewController: UITableViewController {
         if let major = beacon.major {
             cell.majorLabel.text = "\(major)"
         } else {
-            cell.majorLabel.text = "0"
+            cell.majorLabel.text = "Unknown"
         }
         if let minor = beacon.minor {
             cell.minorLabel.text = "\(minor)"
         } else {
-            cell.minorLabel.text = "0"
+            cell.minorLabel.text = "Unknown"
         }
-//        cell.proximityLabel.text = beacon.proximity.stringValue
+        cell.proximityLabel.text = beacon.proximity.stringValue
+        cell.rssiLabel.text = "\(beacon.rssi)"
+        let accuracy = NSString(format:"%.4f", beacon.accuracy)
+        cell.accuracyLabel.text = "\(accuracy)m"
         return cell
     }
 

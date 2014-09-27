@@ -63,6 +63,7 @@
 		05840FAB19420B0000C744E6 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; };
 		05840FAD19420B0000C744E6 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F9619420B0000C744E6 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05840FB719420B2C00C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
+		059F670619D7262D00F53D56 /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059F670519D7262D00F53D56 /* CLProximityExtension.swift */; };
 		05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */; };
 		05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */; };
 		05B45BE619A788BC009DAF6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B45BE519A788BC009DAF6D /* CoreLocation.framework */; };
@@ -218,6 +219,7 @@
 		05840FA019420B0000C744E6 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840FA619420B0000C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840FA719420B0000C744E6 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
+		059F670519D7262D00F53D56 /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
 		05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; };
 		05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
 		05B45BE519A788BC009DAF6D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -526,9 +528,10 @@
 				05FAFC3219CC7620003725B0 /* Beacon.swift */,
 				050796F619C4C8D800A4D547 /* BeaconManager.swift */,
 				056C719919C5F1D0009068CC /* BeaconRegion.swift */,
+				059F670519D7262D00F53D56 /* CLProximityExtension.swift */,
 				050796F719C4C8D800A4D547 /* LocationManager.swift */,
-				050796F819C4C8D800A4D547 /* RegionManager.swift */,
 				050796F919C4C8D800A4D547 /* Region.swift */,
+				050796F819C4C8D800A4D547 /* RegionManager.swift */,
 			);
 			path = Location;
 			sourceTree = "<group>";
@@ -879,6 +882,7 @@
 				0507972219C4C90C00A4D547 /* CharacteristicProfile.swift in Sources */,
 				0507970D19C4C8F300A4D547 /* SerializeDeserialize.swift in Sources */,
 				0507970F19C4C8F300A4D547 /* UInt16Extensions.swift in Sources */,
+				059F670619D7262D00F53D56 /* CLProximityExtension.swift in Sources */,
 				050796F119C4C8CE00A4D547 /* Connectorator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -99,14 +99,14 @@ class BeaconRegionsViewController: UITableViewController {
                         self.updateDisplay()
                     }
                     self.isInRegion = true
-                    Notify.withMessage("Did enter region '\(name)'. Ranging beacons.")
+                    Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
                 }
                 beaconRegion.exitRegion = {
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
                     self.isRanging = false
                     self.isInRegion = false
                     self.updateDisplay()
-                    Notify.withMessage("Did exit region '\(name)'. Stoped ranging beacons.")
+                    Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
                 }
                 beaconRegion.errorMonitoringRegion = {(error) in
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
