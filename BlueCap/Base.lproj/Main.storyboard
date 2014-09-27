@@ -1148,7 +1148,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ConfigureScanServicesCell" rowHeight="60" id="PUD-do-Hzr" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="ConfigureScanServicesCell" rowHeight="60" id="PUD-do-Hzr" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PUD-do-Hzr" id="OI2-4S-Lw5">
                                     <autoresizingMask key="autoresizingMask"/>
@@ -1172,6 +1172,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="r2q-Iw-0yn" id="6GM-AE-CIR"/>
                                     <outlet property="uuidLabel" destination="vJn-1h-6Er" id="xye-Oe-Oqg"/>
+                                    <segue destination="3PM-LA-Dj9" kind="push" identifier="ConfigureEditScanService" id="1tB-ws-lpc"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1183,7 +1184,7 @@
                     <navigationItem key="navigationItem" title="Scanned Services" id="i3n-hb-Q5g">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="0TT-BT-blB">
                             <connections>
-                                <segue destination="2XO-8i-fdZ" kind="push" identifier="ConfigureScanServiceProfiles" id="1gf-fG-HNN"/>
+                                <segue destination="3PM-LA-Dj9" kind="push" identifier="ConfigureAddScanService" id="Wml-hJ-ThX"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1192,52 +1193,44 @@
             </objects>
             <point key="canvasLocation" x="1647" y="-2256"/>
         </scene>
-        <!--Service Profiles-->
-        <scene sceneID="meo-dh-3qA">
+        <!--Add Scannned Service-->
+        <scene sceneID="okP-gO-1sW">
             <objects>
-                <tableViewController id="2XO-8i-fdZ" customClass="ConfigureScanServiceProfilesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="60" sectionHeaderHeight="10" sectionFooterHeight="10" id="F5W-Cy-oaV">
+                <viewController id="3PM-LA-Dj9" customClass="ConfigureScanServiceController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="oq4-Uh-ksU">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ConfigureScanServiceProfileCell" rowHeight="60" id="ba5-AD-gla" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ba5-AD-gla" id="Vs3-H0-jpT">
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UUID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="H39-hs-PTK">
-                                            <rect key="frame" x="20" y="8" width="250" height="21"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zbb-VW-E29">
-                                            <rect key="frame" x="20" y="29" width="250" height="21"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" id="O80-fg-Tzk">
+                                <rect key="frame" x="20" y="100" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
                                 <connections>
-                                    <outlet property="nameLabel" destination="Zbb-VW-E29" id="Mxz-6j-mgw"/>
-                                    <outlet property="uuidLabel" destination="H39-hs-PTK" id="WXH-nf-ojW"/>
+                                    <outlet property="delegate" destination="3PM-LA-Dj9" id="I2v-iC-1jM"/>
                                 </connections>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="2XO-8i-fdZ" id="pKy-zC-HnQ"/>
-                            <outlet property="delegate" destination="2XO-8i-fdZ" id="oLc-kk-duy"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Service Profiles" id="Hbg-hT-I3l"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vLI-rG-tw0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" minimumFontSize="17" clearButtonMode="whileEditing" id="miI-Av-eDH">
+                                <rect key="frame" x="20" y="145" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="3PM-LA-Dj9" id="48w-Fp-Rkm"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Add Scannned Service" id="iFM-4r-lNV"/>
+                    <connections>
+                        <outlet property="nameTextField" destination="O80-fg-Tzk" id="yOg-RJ-Ybk"/>
+                        <outlet property="uuidTextField" destination="miI-Av-eDH" id="RLz-0z-HjC"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vpd-ft-dA8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2105" y="-2256"/>
+            <point key="canvasLocation" x="2108" y="-2259"/>
         </scene>
         <!--Scan Timeout-->
         <scene sceneID="c49-tc-ZcB">
@@ -2369,7 +2362,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" minimumFontSize="17" clearButtonMode="whileEditing" id="6ag-fF-frh">
-                                <rect key="frame" x="20" y="143" width="280" height="30"/>
+                                <rect key="frame" x="20" y="145" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -3283,7 +3276,8 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="XuB-J8-fla"/>
         <segue reference="bx3-VR-D5c"/>
+        <segue reference="1tB-ws-lpc"/>
+        <segue reference="XuB-J8-fla"/>
     </inferredMetricsTieBreakers>
 </document>

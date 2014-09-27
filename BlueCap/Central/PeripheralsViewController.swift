@@ -116,14 +116,16 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        peripheral.connect(Connectorator() {(connectorator:Connectorator) -> () in
-            connectorator.disconnect = {(periphear:Peripheral) -> () in
+        peripheral.connect(Connectorator(){(connectorator:Connectorator) -> () in
+            connectorator.disconnect = {(periphearl:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onDisconnect")
+                Notify.withMessage("Disconnected peripheral '\(peripheral.name)'")
                 peripheral.reconnect()
                 self.updateWhenActive()
             }
             connectorator.connect = {(peipheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onConnect")
+                Notify.withMessage("Connected peripheral '\(peripheral.name)'")
                 self.updateWhenActive()
             }
             connectorator.timeout = {(peripheral:Peripheral) -> () in
@@ -133,6 +135,7 @@ class PeripheralsViewController : UITableViewController {
             }
             connectorator.forceDisconnect = {(peripheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onForcedDisconnect")
+                Notify.withMessage("Force disconnection of peripheral '\(peripheral.name)'")
                 self.updateWhenActive()
             }
         })
@@ -141,6 +144,7 @@ class PeripheralsViewController : UITableViewController {
     func startScan() {
         let scanMode = ConfigStore.getScanMode()
         let afterPeripheralDiscovered = {(peripheral:Peripheral, rssi:Int) -> () in
+            Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
             self.connect(peripheral)
         }
         let afterTimeout = {
@@ -214,13 +218,13 @@ class PeripheralsViewController : UITableViewController {
         for (name, location) in ConfigStore.getScanRegions() {
             RegionScannerator.sharedInstance().startMonitoringForRegion(Region(center:location, identifier:name) {(region) in
                 region.exitRegion = {
-                    self.presentViewController(UIAlertController.alertWithMessage("Exiting Region: \(name)"), animated:true, completion:nil)
+                    Notify.withMessage("Exiting Region: \(name)")
                 }
                 region.enterRegion = {
-                    self.presentViewController(UIAlertController.alertWithMessage("Entering Region: \(name)"), animated:true, completion:nil)
+                    Notify.withMessage("Entering Region: \(name)")
                 }
                 region.startMonitoringRegion = {
-                    self.presentViewController(UIAlertController.alertWithMessage("Started Monitoring Region: \(name)"), animated:true, completion:nil)
+                    Logger.debug("Started Monitoring Region: \(name)")
                 }
             })
         }

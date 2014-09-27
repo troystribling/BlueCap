@@ -117,6 +117,7 @@ public class RegionScannerator : TimedScannerator {
                 if let exitRegion = scanneratorRegion.scanRegion.exitRegion {
                     exitRegion()
                 }
+                CentralManager.sharedInstance().disconnectAllPeripherals()
                 CentralManager.sharedInstance().stopScanning()
             }
             scanneratorRegion.enterRegion = {

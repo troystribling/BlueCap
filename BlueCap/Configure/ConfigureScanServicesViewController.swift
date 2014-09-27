@@ -14,7 +14,8 @@ class ConfigureScanServicesViewController : UITableViewController {
    
     struct MainStoryboard {
         static let configureScanServicesCell            = "ConfigureScanServicesCell"
-        static let configureScanServiceProfilesSegue    = "ConfigureScanServiceProfiles"
+        static let configureAddScanServiceSegue         = "ConfigureAddScanService"
+        static let configureEdirScanServiceSegue        = "ConfigureEditScanService"
     }
 
     required init(coder aDecoder:NSCoder) {
