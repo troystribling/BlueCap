@@ -105,12 +105,12 @@ class BeaconRegionsViewController: UITableViewController {
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
                     self.isRanging = false
                     self.isInRegion = false
-                    self.updateDisplay()
+                    self.updateWhenActive()
                     Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
                 }
                 beaconRegion.errorMonitoringRegion = {(error) in
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
-                    self.updateDisplay()
+                    self.updateWhenActive()
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }
                 beaconRegion.rangedBeacons = {(beacons) in
@@ -119,7 +119,7 @@ class BeaconRegionsViewController: UITableViewController {
                     }
                     if !self.isRanging {
                         self.isRanging = true
-                        self.updateDisplay()
+                        self.updateWhenActive()
                     }
                     if UIApplication.sharedApplication().applicationState == .Active {
                         if let beaconsViewController = self.beaconsViewController {

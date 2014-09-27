@@ -81,14 +81,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
                 characteristic.startUpdates({
-                    self.tableView.reloadData()
+                    self.updateWhenActive()
                     },
                     afterUpdateFailedCallback:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                     })
             } else if characteristic.propertyEnabled(.Read) {
                 characteristic.read({
-                        self.tableView.reloadData()
+                        self.updateWhenActive()
                         self.progressView.remove()
                     },
                     afterReadFailedCallback:{(error) in

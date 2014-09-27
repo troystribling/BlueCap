@@ -46,7 +46,7 @@ class BeaconsViewController: UITableViewController {
 
     func updateBeacons(beacons:[Beacon]) {
         self.beacons = beacons
-        self.tableView.reloadData()
+        self.updateWhenActive()
     }
     
     func sortBeacons(b1:Beacon, b2:Beacon) -> Bool {
