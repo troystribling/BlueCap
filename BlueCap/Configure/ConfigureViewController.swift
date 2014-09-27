@@ -17,6 +17,7 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var scanRegionButton      : UIButton!
     @IBOutlet var scanTimeoutLabel      : UILabel!
     @IBOutlet var scanTimeoutButton     : UIButton!
+    @IBOutlet var notifySwitch          : UISwitch!
     
     var scanMode = "None"
     
@@ -33,6 +34,7 @@ class ConfigureViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.notifySwitch.on = Notify.getEnabled()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -73,6 +75,10 @@ class ConfigureViewController : UITableViewController {
     @IBAction func toggleScanTimeout(sender:AnyObject) {
         ConfigStore.setScanTimeoutEnabled(!ConfigStore.getScanTimeoutEnabled())
         self.configUI()
+    }
+    
+    @IBAction func toggelNotification(sender:AnyObject) {
+        Notify.setEnable(enabled:self.notifySwitch.on)
     }
     
     func configUI() {

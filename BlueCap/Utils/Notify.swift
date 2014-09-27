@@ -15,10 +15,8 @@ class Notify {
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
     }
     
-    class func withMessage(message:String, viewController:UIViewController) {
-        if UIApplication.sharedApplication().applicationState == .Active {
-            viewController.presentViewController(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
-        } else {
+    class func withMessage(message:String) {
+        if UIApplication.sharedApplication().applicationState != .Active && self.getEnabled(){
             eventCount += 1
             let localNotification = UILocalNotification()
             localNotification.alertBody = message
@@ -28,6 +26,15 @@ class Notify {
         }
 
     }
+    
+    class func setEnable(enabled:Bool = true) {
+        NSUserDefaults.standardUserDefaults().setBool(enabled, forKey:"notifications")
+    }
+    
+    class func getEnabled() -> Bool {
+        return NSUserDefaults.standardUserDefaults().boolForKey("notifications")
+    }
+    
 }
 
 var eventCount = 0
