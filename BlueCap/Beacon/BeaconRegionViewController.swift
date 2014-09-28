@@ -38,15 +38,15 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         if enteredName != nil && enteredUUID != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
                 if let uuid = Optional(NSUUID(UUIDString:enteredUUID)) {
-                    // new region
-                    if self.regionName == nil {
-                        BeaconStore.addBeacon(enteredName!, uuid:uuid)
-                    } else {
+                    if let regionName = self.regionName {
                         // updating
                         BeaconStore.addBeacon(enteredName!, uuid:uuid)
-                        if self.regionName! != enteredName! {
-                            BeaconStore.removeBeacon(self.regionName!)
+                        if regionName != enteredName! {
+                            BeaconStore.removeBeacon(regionName)
                         }
+                    } else {
+                        // new region
+                        BeaconStore.addBeacon(enteredName!, uuid:uuid)
                     }
                     self.navigationController?.popViewControllerAnimated(true)
                     return true

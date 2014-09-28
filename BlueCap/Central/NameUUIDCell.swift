@@ -11,11 +11,11 @@ import BlueCapKit
 
 class NameUUIDCell : UITableViewCell {
     
-    @IBOutlet var nameLabel : UILabel!
-    @IBOutlet var uuidLabel : UILabel!
-    var nameLableFrame      : CGRect?
-    var uuidLabelFrame      : CGRect?
-    var accessoryTypeShown  = true
+    @IBOutlet var nameLabel     : UILabel!
+    @IBOutlet var uuidLabel     : UILabel!
+    var nameLableFrame          : CGRect?
+    var uuidLabelFrame          : CGRect?
+    var configuredAccessoryType : UITableViewCellAccessoryType?
 
     override func layoutSubviews() {
         if let nameLableFrame = self.nameLableFrame {
@@ -27,15 +27,15 @@ class NameUUIDCell : UITableViewCell {
                 } else {
                     self.nameLabel.frame = nameLableFrame
                     self.uuidLabel.frame = uuidLabelFrame
-                    if self.accessoryTypeShown {
-                        self.accessoryType = UITableViewCellAccessoryType.DetailButton
+                    if let configuredAccessoryType = self.configuredAccessoryType {
+                        self.accessoryType = configuredAccessoryType
                     }
                 }
             }
         } else {
             self.nameLableFrame = self.nameLabel.frame
             self.uuidLabelFrame = self.uuidLabel.frame
-            self.accessoryTypeShown = self.accessoryType != UITableViewCellAccessoryType.None
+            self.configuredAccessoryType = self.accessoryType
         }
         super.layoutSubviews()
     }

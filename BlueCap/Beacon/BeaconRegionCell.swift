@@ -15,8 +15,7 @@ class BeaconRegionCell: UITableViewCell {
     @IBOutlet var rangingActivityIndicator      : UIActivityIndicatorView!
     var nameLableFrame                          : CGRect?
     var uuidLabelFrame                          : CGRect?
-    var accessoryTypeShown                      = true
-    var configuredAccessory                     = UITableViewCellAccessoryType.None
+    var configuredAccessoryType                 : UITableViewCellAccessoryType?
     
     override func layoutSubviews() {
         if let nameLableFrame = self.nameLableFrame {
@@ -28,18 +27,21 @@ class BeaconRegionCell: UITableViewCell {
                 } else {
                     self.nameLabel.frame = nameLableFrame
                     self.uuidLabel.frame = uuidLabelFrame
-                    if self.accessoryTypeShown {
-                        self.accessoryType = self.accessoryType
+                    if let configuredAccessoryType = self.configuredAccessoryType {
+                        self.accessoryType = configuredAccessoryType
                     }
                 }
             }
         } else {
             self.nameLableFrame = self.nameLabel.frame
             self.uuidLabelFrame = self.uuidLabel.frame
-            self.accessoryTypeShown = self.accessoryType != .None
-            self.configuredAccessory = self.accessoryType
         }
         super.layoutSubviews()
+    }
+    
+    func updateAccessoryType(accessory:UITableViewCellAccessoryType) {
+        self.accessoryType = accessory
+        self.configuredAccessoryType = accessory
     }
 
 }

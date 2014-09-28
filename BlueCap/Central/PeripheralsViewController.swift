@@ -165,7 +165,7 @@ class PeripheralsViewController : UITableViewController {
                 break
             // Region Service Scan Enabled
             case "Service" :
-                let scannedServices = ConfigStore.getScannedServices()
+                let scannedServices = ConfigStore.getScannedServiceUUIDs()
                 if scannedServices.isEmpty {
                     self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
                 } else {
@@ -194,7 +194,7 @@ class PeripheralsViewController : UITableViewController {
                     CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)                }
                 break
             case "Service" :
-                let scannedServices = ConfigStore.getScannedServices()
+                let scannedServices = ConfigStore.getScannedServiceUUIDs()
                 if scannedServices.isEmpty {
                     self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
                 } else {

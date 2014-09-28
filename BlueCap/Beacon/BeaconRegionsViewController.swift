@@ -16,7 +16,7 @@ class BeaconRegionsViewController: UITableViewController {
     var beaconsViewController   : BeaconsViewController?
 
     var isRanging               = false
-    var isInRegion              = true
+    var isInRegion              = false
     
     struct MainStoryBoard {
         static let beaconRegionCell         = "BeaconRegionCell"
@@ -70,6 +70,7 @@ class BeaconRegionsViewController: UITableViewController {
             BeaconManager.sharedInstance().stopMonitoringAllRegions()
             self.setScanButton()
             self.isRanging = false
+            self.isInRegion = false
         } else {
             self.startMonitoring()
         }
@@ -159,27 +160,26 @@ class BeaconRegionsViewController: UITableViewController {
         if BeaconManager.sharedInstance().isRangingRegion(name) {
             if let region = BeaconManager.sharedInstance().beaconRegion(name) {
                 if region.beacons.count == 0 {
-                    cell.accessoryType = .None
+                    cell.updateAccessoryType(.None)
                     cell.rangingActivityIndicator.startAnimating()
                 } else {
-                    cell.accessoryType = .DetailButton
+                    cell.updateAccessoryType(.DetailButton)
                 }
             } else {
-                cell.accessoryType = .DisclosureIndicator
+                cell.updateAccessoryType(.DisclosureIndicator)
             }
+        } else  if self.isInRegion {
+            cell.updateAccessoryType(.None)
+            cell.rangingActivityIndicator.startAnimating()
         } else {
-            if self.isInRegion {
-                cell.accessoryType = .DisclosureIndicator
-            } else {
-                cell.accessoryType = .None
-                cell.rangingActivityIndicator.startAnimating()
-            }
+            cell.updateAccessoryType(.DisclosureIndicator)
         }
         return cell
     }
     
     override func tableView(tableView:UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
+        let name = BeaconStore.getBeaconNames()[indexPath.row]
+        return !BeaconManager.sharedInstance().isRangingRegion(name)
     }
     
     override func tableView(tableView:UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {

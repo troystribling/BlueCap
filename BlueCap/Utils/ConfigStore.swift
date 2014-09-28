@@ -58,45 +58,57 @@ class ConfigStore {
     }
     
     // scanned services
-    class func getScannedServices() -> [CBUUID] {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let services = userDefaults.stringArrayForKey("scannedServices") {
-            return services.reduce(Array<CBUUID>()) {(uuids, uuid) in
-                if let uuid = uuid as? String {
-                    if let uuid = CBUUID.UUIDWithString(uuid) {
-                        return uuids + [uuid]
-                    } else {
-                        return uuids
+    class func getScannedServices() -> [String:CBUUID] {
+        if let storedServices = NSUserDefaults.standardUserDefaults().dictionaryForKey("services") {
+            var services = [String:CBUUID]()
+            for (name, uuid) in storedServices {
+                if let name = name as? String {
+                    if let uuid = uuid as? String {
+                        services[name] = CBUUID.UUIDWithString(uuid)
                     }
-                } else {
-                    return uuids
                 }
             }
+            return services
         } else {
-            return []
+            return [:]
         }
     }
     
-    class func setScannedServices(services:[CBUUID]) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let stringUUIDs = services.reduce([String]()){(stringUUIDs, service) in
-            if let stringUUID = service.UUIDString {
-                return stringUUIDs + [stringUUID]
-            } else {
-                return stringUUIDs
-            }
+    class func getScannedServiceNames() -> [String] {
+        return self.getScannedServices().keys.array
+    }
+    
+    class func getScannedServiceUUIDs() -> [CBUUID] {
+        return self.getScannedServices().values.array
+    }
+    
+    class func getScannedServiceUUID(name:String) -> CBUUID? {
+        let services = self.getScannedServices()
+        if let uuid = services[name] {
+            return uuid
+        } else {
+            return nil
         }
-        userDefaults.setObject(stringUUIDs, forKey:"scannedServices")
     }
     
-    class func addScannedService(service:CBUUID) {
-        let services = self.getScannedServices()
-        self.setScannedServices(services + [service])
+    class func setScannedServices(services:[String:CBUUID]) {
+        var storedServices = [String:String]()
+        for (name, uuid) in services {
+            storedServices[name] = uuid.UUIDString
+        }
+        NSUserDefaults.standardUserDefaults().setObject(storedServices, forKey:"services")
     }
     
-    class func removeScannedService(service:CBUUID) {
-        let services = self.getScannedServices()
-        self.setScannedServices(services.filter{$0 != service})
+    class func addScannedService(name:String, uuid:CBUUID) {
+        var services = self.getScannedServices()
+        services[name] = uuid
+        self.setScannedServices(services)
+    }
+    
+    class func removeScannedService(name:String) {
+        var beacons = self.getScannedServices()
+        beacons.removeValueForKey(name)
+        self.setScannedServices(beacons)
     }
     
     // scan regions

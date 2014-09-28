@@ -1,5 +1,5 @@
 //
-//  ConfigureScanServiceController.swift
+//  ConfigureScanServiceViewController.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 9/27/14.
@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class ConfigureScanServiceController: UIViewController, UITextFieldDelegate {
+class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var nameTextField : UITextField!
     @IBOutlet var uuidTextField : UITextField!
@@ -23,6 +23,9 @@ class ConfigureScanServiceController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         if let serviceName = self.serviceName {
             self.nameTextField.text = serviceName
+            if let uuid = ConfigStore.getScannedServiceUUID(serviceName) {
+                self.uuidTextField.text = uuid.UUIDString
+            }
         }
     }
 
@@ -34,12 +37,15 @@ class ConfigureScanServiceController: UIViewController, UITextFieldDelegate {
         if enteredName != nil && enteredUUID != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
                 if let uuid = CBUUID.UUIDWithString(enteredUUID!) {
-                    // new region
-                    if self.serviceName == nil {
-                    } else {
+                    if let serviceName = self.serviceName {
                         // updating
-                        if self.serviceName! != enteredName! {
+                        ConfigStore.addScannedService(enteredName!, uuid:uuid)
+                        if serviceName != enteredName! {
+                            ConfigStore.removeScannedService(self.serviceName!)
                         }
+                    } else {
+                        // new region
+                        ConfigStore.addScannedService(enteredName!, uuid:uuid)
                     }
                     self.navigationController?.popViewControllerAnimated(true)
                     return true
