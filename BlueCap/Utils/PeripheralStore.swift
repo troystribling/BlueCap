@@ -30,7 +30,6 @@ class PeripheralStore {
                     }
                 }
             }
-            Logger.debug("getPeripheralServices peripheralServices: \(peripherals)")
             return peripherals
         } else {
             return [:]
@@ -38,7 +37,6 @@ class PeripheralStore {
     }
 
     class func setPeripheralServices(peripheralServices:[String:[CBUUID]]) {
-        Logger.debug("setPeripheralServices peripheralServices: \(peripheralServices)")
         var storedPeripherals = Dictionary<String, [String]>()
         for (name, uuids) in peripheralServices {
             storedPeripherals[name] = uuids.reduce([String]()) {(storedUUIDs, uuid) in
@@ -92,7 +90,7 @@ class PeripheralStore {
         }
     }
     
-    // periphear names
+    // periphearl names
     class func getPeripheralNames() -> [String] {
         if let peripheral = NSUserDefaults.standardUserDefaults().arrayForKey("peripheralNames") {
             return peripheral.map{$0 as String}
@@ -122,4 +120,87 @@ class PeripheralStore {
         self.removePeripheralName(name)
     }
     
+    // peripheral beacon
+    class func getBeacons() -> [String:NSUUID] {
+        if let storedBeacons = NSUserDefaults.standardUserDefaults().dictionaryForKey("peripheralBeacons") {
+            var beacons = [String:NSUUID]()
+            for (name, uuid) in storedBeacons {
+                if let name = name as? String {
+                    if let uuid = uuid as? String {
+                        beacons[name] = NSUUID(UUIDString:uuid)
+                    }
+                }
+            }
+            return beacons
+        } else {
+            return [:]
+        }
+    }
+    
+    class func setBeacons(beacons:[String:NSUUID]) {
+        var storedBeacons = [String:String]()
+        for (name, uuid) in beacons {
+            storedBeacons[name] = uuid.UUIDString
+        }
+        NSUserDefaults.standardUserDefaults().setObject(storedBeacons, forKey:"peripheralBeacons")
+    }
+    
+    class func getBeaconNames() -> [String] {
+        return self.getBeacons().keys.array
+    }
+    
+    class func addBeacon(name:String, uuid:NSUUID) {
+        var beacons = self.getBeacons()
+        beacons[name] = uuid
+        self.setBeacons(beacons)
+    }
+    
+    class func removeBeacon(name:String) {
+        var beacons = self.getBeacons()
+        beacons.removeValueForKey(name)
+        self.setBeacons(beacons)
+    }
+
+    class func getBeaconConfigs() -> [String:[Int]] {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let storedConfigs = userDefaults.dictionaryForKey("peipheralBeaconConfigs") {
+            var configs = [String:[Int]]()
+            for (name, config) in storedConfigs {
+                if let name = name as? String {
+                    if config.count == 2 {
+                        let major = config[0] as NSNumber
+                        let minor = config[1] as NSNumber
+                        configs[name] = [major, minor]
+                    }
+                }
+            }
+            return configs
+        } else {
+            return [:]
+        }
+    }
+    
+    class func setBeaconConfigs(configs:[String:[Int]]) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        var storeConfigs = [String:[NSNumber]]()
+        for (name, config) in configs {
+            storeConfigs[name] = [NSNumber(integer:config[0]), NSNumber(integer:config[1])]
+        }
+        userDefaults.setObject(storeConfigs, forKey:"peipheralBeaconConfigs")
+    }
+    
+    class func getBeaconConfig(name:String) -> [Int] {
+        let configs = self.getBeaconConfigs()
+        if let config = configs[name] {
+            return config
+        } else {
+            return [0.0]
+        }
+    }
+    
+    class func removeBeaconConfig(name:String) {
+        var configs = self.getBeaconConfigs()
+        configs.removeValueForKey(name)
+        self.setBeaconConfigs(configs)
+    }
 }

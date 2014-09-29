@@ -27,16 +27,16 @@ class BeaconStore {
         }
     }
     
-    class func getBeaconNames() -> [String] {
-        return self.getBeacons().keys.array
-    }
-    
     class func setBeacons(beacons:[String:NSUUID]) {
         var storedBeacons = [String:String]()
         for (name, uuid) in beacons {
             storedBeacons[name] = uuid.UUIDString
         }
         NSUserDefaults.standardUserDefaults().setObject(storedBeacons, forKey:"beacons")
+    }
+
+    class func getBeaconNames() -> [String] {
+        return self.getBeacons().keys.array
     }
     
     class func addBeacon(name:String, uuid:NSUUID) {

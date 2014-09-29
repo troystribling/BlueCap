@@ -12,12 +12,14 @@ import CoreBluetooth
 
 class PeripheralManagerViewController : UITableViewController, UITextFieldDelegate {
     
+    @IBOutlet var nameTextField         : UITextField!
+    @IBOutlet var advertiseButton       : UIButton!
+    @IBOutlet var iBeaconButton         : UIButton!
+    @IBOutlet var iBeaconLabel          : UILabel!
+
     struct MainStoryboard {
         static let peripheralManagerServicesSegue = "PeripheralManagerServices"
     }
-    
-    @IBOutlet var nameTextField         : UITextField!
-    @IBOutlet var advertiseButton       : UIButton!
     
     var peripheral : String?
     
