@@ -132,7 +132,7 @@
             <objects>
                 <tableViewController id="CAb-bN-tC0" customClass="PeripheralManagerViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="hnD-Xa-gy8">
-                        <rect key="frame" x="0.0" y="64" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -243,19 +243,28 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="eVO-L6-T7V" style="IBUITableViewCellStyleDefault" id="Uer-Fh-uew">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="eVO-L6-T7V" detailTextLabel="dAO-KR-e1W" style="IBUITableViewCellStyleValue1" id="Uer-Fh-uew">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Uer-Fh-uew" id="jyb-m9-4HW">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Advertisements" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eVO-L6-T7V">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Beacon" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eVO-L6-T7V">
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dAO-KR-e1W">
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="Gl9-1G-1mb" kind="push" identifier="PeripheralManagerBeacons" id="dLe-Y1-4g6"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -265,6 +274,7 @@
                             <outlet property="delegate" destination="CAb-bN-tC0" id="d1v-l5-cTN"/>
                         </connections>
                     </tableView>
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" title="Peripheral" id="fTN-xH-YDe"/>
                     <connections>
                         <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
@@ -377,6 +387,109 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mH7-CP-Jfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2628" y="927"/>
+        </scene>
+        <!--Beacons-->
+        <scene sceneID="s0y-4H-ELm">
+            <objects>
+                <tableViewController id="Gl9-1G-1mb" customClass="PeripheralManagerBeaconsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Ow0-py-ZKX">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="PeripheralmanagerBeaconCell" textLabel="QNA-cy-jPa" rowHeight="60" style="IBUITableViewCellStyleDefault" id="Xrw-OR-hel">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xrw-OR-hel" id="YTC-4C-ws1">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QNA-cy-jPa">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="9v2-Hm-PfD" kind="push" identifier="PeripheralManagerEditBeacon" id="aN5-cv-7mb"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Gl9-1G-1mb" id="GiN-gI-UZq"/>
+                            <outlet property="delegate" destination="Gl9-1G-1mb" id="hhc-Tp-FJB"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Beacons" id="dz5-xh-YPo">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="8lV-VR-wI3">
+                            <connections>
+                                <segue destination="9v2-Hm-PfD" kind="push" identifier="PeripheralManagerAddBeacon" id="MDp-T9-a3R"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BFn-rn-6y3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1697" y="2346"/>
+        </scene>
+        <!--Add Beacon-->
+        <scene sceneID="Td0-ka-CYX">
+            <objects>
+                <viewController id="9v2-Hm-PfD" customClass="PeripheralManagerBeaconViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="e9A-e1-aSM">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" id="nKF-JZ-SbS">
+                                <rect key="frame" x="20" y="100" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" minimumFontSize="17" id="vtq-b0-PTE">
+                                <rect key="frame" x="20" y="145" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Major" minimumFontSize="17" id="TuQ-vR-aPz">
+                                <rect key="frame" x="20" y="190" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Minor" minimumFontSize="17" id="e4o-js-103">
+                                <rect key="frame" x="20" y="235" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7Fg-O7-uH0">
+                                <rect key="frame" x="20" y="280" width="280" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <state key="normal" title="Generate UUID">
+                                    <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="generateUUID:" destination="9v2-Hm-PfD" eventType="touchDown" id="PfG-y3-jBR"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Add Beacon" id="1RF-pS-Np1"/>
+                    <connections>
+                        <outlet property="majotTextField" destination="TuQ-vR-aPz" id="djR-x7-diR"/>
+                        <outlet property="minorTextField" destination="e4o-js-103" id="i58-Tz-Viy"/>
+                        <outlet property="nameTextField" destination="nKF-JZ-SbS" id="Vmk-jx-BTF"/>
+                        <outlet property="uuidTextField" destination="vtq-b0-PTE" id="a7W-oe-mQM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="a2O-RK-NoK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2125" y="2342"/>
         </scene>
         <!--Peripheral Manager Service Characteristics View Controller-->
         <scene sceneID="RLB-Zf-et3">
@@ -2124,7 +2237,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" id="J6D-MW-7oK">
-                                <rect key="frame" x="20" y="95" width="280" height="30"/>
+                                <rect key="frame" x="20" y="100" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
@@ -2277,7 +2390,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dMN-lM-Vvm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1264" y="2581"/>
+            <point key="canvasLocation" x="1284" y="3253"/>
         </scene>
         <!--Beacon Reagions-->
         <scene sceneID="tCE-uv-JXc">
@@ -2342,7 +2455,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q0l-Of-Bdu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1247" y="3741"/>
+            <point key="canvasLocation" x="1267" y="4413"/>
         </scene>
         <!--Beacon Region-->
         <scene sceneID="kxH-qV-CMo">
@@ -2381,7 +2494,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bpr-g4-Vf8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1741" y="3179"/>
+            <point key="canvasLocation" x="1761" y="3851"/>
         </scene>
         <!--Beacons-->
         <scene sceneID="mKY-4M-xbS">
@@ -2496,7 +2609,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="57e-Kk-F9l" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1741" y="3741"/>
+            <point key="canvasLocation" x="1761" y="4413"/>
         </scene>
         <!--Beacons-->
         <scene sceneID="qkx-gB-Z3A">
@@ -2513,7 +2626,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="efh-nm-z99" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="777" y="3741"/>
+            <point key="canvasLocation" x="797" y="4413"/>
         </scene>
         <!--Characteristic Profiles-->
         <scene sceneID="pPZ-cj-EZf">
@@ -2562,7 +2675,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hE8-Nu-VNF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1741" y="2583"/>
+            <point key="canvasLocation" x="1761" y="3255"/>
         </scene>
         <!--New Value-->
         <scene sceneID="DhK-0q-Uwg">
@@ -3025,7 +3138,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Fs-4g-G5E" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2222" y="2583"/>
+            <point key="canvasLocation" x="2242" y="3255"/>
         </scene>
         <!--Characteristic Values-->
         <scene sceneID="xKB-CJ-bqP">
@@ -3078,7 +3191,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dsp-Mq-Xro" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2710" y="2583"/>
+            <point key="canvasLocation" x="2730" y="3255"/>
         </scene>
         <!--New Value-->
         <scene sceneID="xqR-u1-WkI">
@@ -3107,7 +3220,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rn6-yj-Klj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3288" y="2262"/>
+            <point key="canvasLocation" x="3308" y="2934"/>
         </scene>
         <!--New Values-->
         <scene sceneID="zDk-7u-dMh">
@@ -3142,7 +3255,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Flh-Gy-Dvi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3288" y="2920"/>
+            <point key="canvasLocation" x="3308" y="3592"/>
         </scene>
         <!--Profiles-->
         <scene sceneID="qez-Id-BOC">
@@ -3158,7 +3271,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sRO-rp-Axh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="777" y="2581"/>
+            <point key="canvasLocation" x="797" y="3253"/>
         </scene>
         <!--Peripherals-->
         <scene sceneID="S9s-jZ-Mz1">
@@ -3276,8 +3389,9 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="bx3-VR-D5c"/>
+        <segue reference="vhM-yw-b5Q"/>
         <segue reference="1tB-ws-lpc"/>
         <segue reference="XuB-J8-fla"/>
+        <segue reference="MDp-T9-a3R"/>
     </inferredMetricsTieBreakers>
 </document>

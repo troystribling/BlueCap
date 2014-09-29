@@ -13,6 +13,7 @@ class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate 
 
     @IBOutlet var nameTextField : UITextField!
     @IBOutlet var uuidTextField : UITextField!
+    
     var serviceName             : String?
     
     required init(coder aDecoder:NSCoder) {

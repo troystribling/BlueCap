@@ -47,6 +47,8 @@
 		0507973119C4CEEC00A4D547 /* BeaconsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0507973019C4CEEC00A4D547 /* BeaconsViewController.swift */; };
 		0507973519C4D0B100A4D547 /* BeaconRegionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */; };
 		05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */; };
+		0530B62919D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */; };
+		0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */; };
 		053B0CC219BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053B0CC119BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift */; };
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
 		056C719A19C5F1D0009068CC /* BeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056C719919C5F1D0009068CC /* BeaconRegion.swift */; };
@@ -199,6 +201,8 @@
 		0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegionViewController.swift; sourceTree = "<group>"; };
 		0518867119609B5800ED2D3A /* Bytes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Bytes.playground; sourceTree = "<group>"; };
 		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
+		0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconsViewController.swift; sourceTree = "<group>"; };
+		0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconViewController.swift; sourceTree = "<group>"; };
 		053B0CC119BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanTimeoutViewController.swift; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
 		056C719919C5F1D0009068CC /* BeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegion.swift; sourceTree = "<group>"; };
@@ -581,7 +585,8 @@
 		05E6870219508799009B38DA /* Peripheral */ = {
 			isa = PBXGroup;
 			children = (
-				05B45BE819A78BA2009DAF6D /* SimpleCell.swift */,
+				0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */,
+				0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */,
 				05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */,
 				05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */,
 				05B45BEB19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */,
@@ -591,6 +596,7 @@
 				05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */,
 				05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */,
 				05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */,
+				05B45BE819A78BA2009DAF6D /* SimpleCell.swift */,
 			);
 			path = Peripheral;
 			sourceTree = "<group>";
@@ -786,6 +792,7 @@
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
 				05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */,
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
+				0530B62919D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift in Sources */,
 				05B45BF719A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift in Sources */,
 				05D9D50E19B0DA4C001DBEBC /* ConfigureViewController.swift in Sources */,
 				05D9D50A19B0D7B0001DBEBC /* ConfigStore.swift in Sources */,
@@ -832,6 +839,7 @@
 				05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */,
 				05B48B5619C9B69400800327 /* BeaconRegionCell.swift in Sources */,
 				05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */,
+				0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */,
 				05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
