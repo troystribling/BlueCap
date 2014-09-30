@@ -22,6 +22,7 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.tableView.reloadData()
         self.navigationItem.title = "Beacons"
     }
     
@@ -36,7 +37,8 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         } else if segue.identifier == MainStoryboard.peripheralManagerEditBeaconSegue {
             if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
                 let viewController = segue.destinationViewController as PeripheralManagerBeaconViewController
-                viewController.beaconName = PeripheralStore.getBeaconNames()[selectedIndexPath.row]
+                let beaconNames = PeripheralStore.getBeaconNames()
+                viewController.beaconName = beaconNames[selectedIndexPath.row]
             }
         }
     }

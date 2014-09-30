@@ -422,7 +422,7 @@
                                 <connections>
                                     <outlet property="nameLabel" destination="Vwx-Gg-IzB" id="oJB-mG-9h7"/>
                                     <outlet property="uuidLabel" destination="0KX-YA-4Us" id="KjY-wv-RyG"/>
-                                    <segue destination="9v2-Hm-PfD" kind="push" identifier="PeripheralManagerEditBeacon" id="aN5-cv-7mb"/>
+                                    <segue destination="9v2-Hm-PfD" kind="push" identifier="PeripheralManagerEditBeacon" id="svJ-AA-2cD"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -434,7 +434,7 @@
                     <navigationItem key="navigationItem" title="Beacons" id="dz5-xh-YPo">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="8lV-VR-wI3">
                             <connections>
-                                <segue destination="9v2-Hm-PfD" kind="push" identifier="PeripheralManagerAddBeacon" id="MDp-T9-a3R"/>
+                                <segue destination="9v2-Hm-PfD" kind="push" identifier="PeripheralManagerAddBeacon" id="25n-i9-EBa"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -504,7 +504,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Add Beacon" id="1RF-pS-Np1"/>
                     <connections>
-                        <outlet property="majotTextField" destination="TuQ-vR-aPz" id="djR-x7-diR"/>
+                        <outlet property="majorTextField" destination="TuQ-vR-aPz" id="aW5-g0-JiM"/>
                         <outlet property="minorTextField" destination="e4o-js-103" id="i58-Tz-Viy"/>
                         <outlet property="nameTextField" destination="nKF-JZ-SbS" id="Vmk-jx-BTF"/>
                         <outlet property="uuidTextField" destination="vtq-b0-PTE" id="a7W-oe-mQM"/>
@@ -512,7 +512,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a2O-RK-NoK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2125" y="2342"/>
+            <point key="canvasLocation" x="2195" y="2346"/>
         </scene>
         <!--Peripheral Manager Service Characteristics View Controller-->
         <scene sceneID="RLB-Zf-et3">
@@ -3413,7 +3413,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="XuB-J8-fla"/>
-        <segue reference="MDp-T9-a3R"/>
+        <segue reference="svJ-AA-2cD"/>
         <segue reference="vhM-yw-b5Q"/>
         <segue reference="1tB-ws-lpc"/>
     </inferredMetricsTieBreakers>

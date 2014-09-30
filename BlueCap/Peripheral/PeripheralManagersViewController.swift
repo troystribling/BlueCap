@@ -33,6 +33,7 @@ class PeripheralManagersViewController : UITableViewController {
     }
     
     override func viewWillDisappear(animated:Bool) {
+        super.viewWillDisappear(animated)
         self.navigationItem.title = ""
     }
     
