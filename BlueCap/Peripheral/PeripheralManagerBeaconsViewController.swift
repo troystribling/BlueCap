@@ -10,11 +10,35 @@ import UIKit
 
 class PeripheralManagerBeaconsViewController: UITableViewController {
 
+    struct MainStoryboard {
+        static let peripheralManagerBeaconCell      = "PeripheralManagerBeaconCell"
+        static let peripheralManagerEditBeaconSegue = "PeripheralManagerEditBeacon"
+        static let peripheralManagerAddBeaconSegue  = "PeripheralManagerAddBeacon"
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationItem.title = "Beacons"
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationItem.title = ""
+    }
 
-    override func performSegueWithIdentifier(identifier: String, sender: AnyObject?) {
+
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
+        if segue.identifier == MainStoryboard.peripheralManagerAddBeaconSegue {
+        } else if segue.identifier == MainStoryboard.peripheralManagerEditBeaconSegue {
+            if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                let viewController = segue.destinationViewController as PeripheralManagerBeaconViewController
+                viewController.beaconName = PeripheralStore.getBeaconNames()[selectedIndexPath.row]
+            }
+        }
     }
     
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
@@ -22,11 +46,16 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     }
 
     override func tableView(tableView:UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return PeripheralStore.getBeaconNames().count
     }
 
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerBeaconCell, forIndexPath: indexPath) as NameUUIDCell
+        let name = PeripheralStore.getBeaconNames()[indexPath.row]
+        cell.nameLabel.text = name
+        if let uuid = PeripheralStore.getBeacon(name) {
+            cell.uuidLabel.text = uuid.UUIDString
+        }
         return cell
     }
 

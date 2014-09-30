@@ -161,6 +161,11 @@ class PeripheralStore {
         self.setBeacons(beacons)
     }
 
+    class func getBeacon(name:String) -> NSUUID? {
+        let beacons = self.getBeacons()
+        return beacons[name]
+    }
+    
     class func getBeaconConfigs() -> [String:[Int]] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let storedConfigs = userDefaults.dictionaryForKey("peipheralBeaconConfigs") {
@@ -189,12 +194,18 @@ class PeripheralStore {
         userDefaults.setObject(storeConfigs, forKey:"peipheralBeaconConfigs")
     }
     
+    class func addBeaconConfig(name:String, config:[Int]) {
+        var configs = self.getBeaconConfigs()
+        configs[name] = config
+        self.setBeaconConfigs(configs)
+    }
+    
     class func getBeaconConfig(name:String) -> [Int] {
         let configs = self.getBeaconConfigs()
         if let config = configs[name] {
             return config
         } else {
-            return [0.0]
+            return [0,0]
         }
     }
     

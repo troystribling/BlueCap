@@ -53,9 +53,13 @@ class ConfigureAddScanRegionViewController : UIViewController, UITextFieldDelega
                         self.navigationController?.popViewControllerAnimated(true)
                     }
                 }
+                return true
+            } else {
+                return false
             }
+        } else {
+            return false
         }
-        return true
     }
     
 }

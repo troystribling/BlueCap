@@ -22,6 +22,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let regionName = self.regionName {
+            self.navigationItem.title = regionName
             self.nameTextField.text = regionName
             let beacons = BeaconStore.getBeacons()
             if let uuid = beacons[regionName] {
@@ -38,15 +39,11 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         if enteredName != nil && enteredUUID != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
                 if let uuid = Optional(NSUUID(UUIDString:enteredUUID)) {
+                    BeaconStore.addBeacon(enteredName!, uuid:uuid)
                     if let regionName = self.regionName {
-                        // updating
-                        BeaconStore.addBeacon(enteredName!, uuid:uuid)
                         if regionName != enteredName! {
                             BeaconStore.removeBeacon(regionName)
                         }
-                    } else {
-                        // new region
-                        BeaconStore.addBeacon(enteredName!, uuid:uuid)
                     }
                     self.navigationController?.popViewControllerAnimated(true)
                     return true
@@ -54,9 +51,12 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
                     self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
                     return false
                 }
+            } else {
+                return false
             }
+        } else {
+            return false
         }
-        return true
     }
 
 }
