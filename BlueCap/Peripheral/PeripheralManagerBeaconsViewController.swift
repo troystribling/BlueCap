@@ -65,8 +65,16 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         return true
     }
 
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+        let beaconNames = PeripheralStore.getBeaconNames()
+        PeripheralStore.setAdvertisedBeacon(beaconNames[indexPath.row])
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+    
+    override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
         if editingStyle == .Delete {
+            let beaconNames = PeripheralStore.getBeaconNames()
+            PeripheralStore.removeBeacon(beaconNames[indexPath.row])
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
         }
     }

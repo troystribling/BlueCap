@@ -99,6 +99,17 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self.startAdvertising(name, uuids:nil, afterAdvertisingStartedSuccess:nil, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
     }
     
+    public func startAdvertising(region:BeaconRegion, afterAdvertisingStartedSuccess:(()->())? = nil, afterAdvertisingStartFailed:((error:NSError!)->())? = nil) {
+        self._name = region.identifier
+        self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
+        self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
+        self.cbPeripheralManager.startAdvertising(region.clBeaconRegion.peripheralDataWithMeasuredPower(nil))
+    }
+    
+    public func startAdvertising(region:BeaconRegion, afterAdvertisingStartFailed:(error:NSError!)->()) {
+        self.startAdvertising(region, afterAdvertisingStartedSuccess:nil, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
+    }
+    
     public func stopAdvertising(afterAdvertisingStopped:(()->())? = nil) {
         self._name = nil
         self.afterAdvertisingStartedSuccessCallback = nil

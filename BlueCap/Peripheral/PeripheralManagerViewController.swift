@@ -12,10 +12,10 @@ import CoreBluetooth
 
 class PeripheralManagerViewController : UITableViewController, UITextFieldDelegate {
     
-    @IBOutlet var nameTextField         : UITextField!
-    @IBOutlet var advertiseButton       : UIButton!
-    @IBOutlet var iBeaconButton         : UIButton!
-    @IBOutlet var iBeaconLabel          : UILabel!
+    @IBOutlet var nameTextField             : UITextField!
+    @IBOutlet var advertiseButton           : UIButton!
+    @IBOutlet var advertisedBeaconButton    : UIButton!
+    @IBOutlet var advertisedBeaconLabel     : UILabel!
 
     struct MainStoryboard {
         static let peripheralManagerServicesSegue = "PeripheralManagerServices"
@@ -38,6 +38,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     override func viewWillAppear(animated:Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Peripheral"
+        self.advertisedBeaconLabel.text = PeripheralStore.getAdvertisedBeacon()
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -85,6 +86,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             }
         }
     }
+    
+    @IBAction func toggleBeacon(sender:AnyObject) {
+        if PeripheralStore.getBeaconEnabled() {
+            PeripheralStore.setBeaconEnabled(false)
+        } else {
+            PeripheralStore.setBeaconEnabled(true)
+        }
+    }
 
     func setPeripheralManagerServices() {
         let peripheralManager = PeripheralManager.sharedInstance()
@@ -126,13 +135,11 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             self.advertiseButton.enabled = true
             let peripheralManager = PeripheralManager.sharedInstance()
             if peripheralManager.isAdvertising {
-                self.advertiseButton.setTitle("Stop Advertising", forState:.Normal)
-                self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(true, animated:true)
                 self.nameTextField.enabled = false
             } else {
-                self.advertiseButton.setTitle("Start Advertising", forState:.Normal)
-                self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+                self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(false, animated:true)
                 self.nameTextField.enabled = true
             }

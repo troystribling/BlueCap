@@ -214,4 +214,26 @@ class PeripheralStore {
         configs.removeValueForKey(name)
         self.setBeaconConfigs(configs)
     }
+    
+    // ibeacon
+    class func getAdvertisedBeacon() -> String {
+        if let beacon = NSUserDefaults.standardUserDefaults().stringForKey("peripheralAdvertisedBeacon") {
+            return beacon
+        } else {
+            return "None"
+        }
+    }
+    
+    class func setAdvertisedBeacon(name:String) {
+        NSUserDefaults.standardUserDefaults().setObject(name, forKey:"peripheralAdvertisedBeacon")
+    }
+    
+    class func getBeaconEnabled() -> Bool {
+        return NSUserDefaults.standardUserDefaults().boolForKey("peipheralBeaconEnabled")
+    }
+    
+    class func setBeaconEnabled(enabled:Bool) {
+        NSUserDefaults.standardUserDefaults().setBool(enabled, forKey:"peipheralBeaconEnabled")
+    }
+
 }

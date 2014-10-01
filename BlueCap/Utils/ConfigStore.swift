@@ -160,4 +160,5 @@ class ConfigStore {
         regions.removeValueForKey(name)
         self.setScanRegions(regions)
     }
+    
 }
