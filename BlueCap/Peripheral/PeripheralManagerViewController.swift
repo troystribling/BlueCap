@@ -77,12 +77,27 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             }
         } else {
             if let peripheral = self.peripheral {
-                manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:{
-                        self.setUIState()
-                    }, afterAdvertisingStartFailed:{(error) in
-                        self.setUIState()
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    })
+                if PeripheralStore.getBeaconEnabled() {
+                    if let name = self.advertisedBeaconLabel.text {
+                        if let uuid = PeripheralStore.getBeacon(name) {
+                            let beaconConfig = PeripheralStore.getBeaconConfig(name)
+//                            let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:beaconConfig[1], minor:beaconConfig[0])
+                            manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:{
+                                self.setUIState()
+                                }, afterAdvertisingStartFailed:{(error) in
+                                    self.setUIState()
+                                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                            })
+                        }
+                    }
+                } else {
+                    manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:{
+                            self.setUIState()
+                        }, afterAdvertisingStartFailed:{(error) in
+                            self.setUIState()
+                            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        })
+                }
             }
         }
     }
@@ -93,6 +108,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         } else {
             PeripheralStore.setBeaconEnabled(true)
         }
+        self.setUIState()
     }
 
     func setPeripheralManagerServices() {
@@ -133,6 +149,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     func setUIState() {
         if self.peripheral != nil {
             self.advertiseButton.enabled = true
+            self.advertisedBeaconButton.enabled = true
             let peripheralManager = PeripheralManager.sharedInstance()
             if peripheralManager.isAdvertising {
                 self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
@@ -143,9 +160,16 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 self.navigationItem.setHidesBackButton(false, animated:true)
                 self.nameTextField.enabled = true
             }
+            if PeripheralStore.getBeaconEnabled() {
+                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+            } else {
+                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+            }
         } else {
             self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
+            self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
             self.advertiseButton.enabled = false
+            self.advertisedBeaconButton.enabled = false
         }
     }
     

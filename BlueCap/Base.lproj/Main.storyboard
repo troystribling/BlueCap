@@ -233,7 +233,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="toggleBeacon:" destination="CAb-bN-tC0" eventType="touchUpInside" id="dOD-rX-NX3"/>
+                                                        <action selector="toggleBeacon:" destination="CAb-bN-tC0" eventType="touchDown" id="vGO-iZ-0r8"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
