@@ -77,26 +77,23 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             }
         } else {
             if let peripheral = self.peripheral {
+                let afterAdvertisingStarted = {
+                    self.setUIState()
+                }
+                let afterAdvertisingStartFailed:(error:NSError!)->() = {(error) in
+                    self.setUIState()
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                }
                 if PeripheralStore.getBeaconEnabled() {
                     if let name = self.advertisedBeaconLabel.text {
                         if let uuid = PeripheralStore.getBeacon(name) {
                             let beaconConfig = PeripheralStore.getBeaconConfig(name)
-//                            let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:beaconConfig[1], minor:beaconConfig[0])
-                            manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:{
-                                self.setUIState()
-                                }, afterAdvertisingStartFailed:{(error) in
-                                    self.setUIState()
-                                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                            })
+                            let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:beaconConfig[1], minor:beaconConfig[0])
+                            manager.startAdvertising(beaconRegion, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
                         }
                     }
                 } else {
-                    manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:{
-                            self.setUIState()
-                        }, afterAdvertisingStartFailed:{(error) in
-                            self.setUIState()
-                            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                        })
+                    manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
                 }
             }
         }
