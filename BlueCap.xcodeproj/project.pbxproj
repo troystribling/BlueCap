@@ -51,11 +51,12 @@
 		0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */; };
 		053B0CC219BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053B0CC119BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift */; };
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
+		056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 056B7C7419DE4E52001B7F95 /* Main.storyboard */; };
+		056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */; };
 		056C719A19C5F1D0009068CC /* BeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056C719919C5F1D0009068CC /* BeaconRegion.swift */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
 		057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
-		05840F6C194206F100C744E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6A194206F100C744E6 /* Main.storyboard */; };
 		05840F6E194206F100C744E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6D194206F100C744E6 /* Images.xcassets */; };
 		05840F7A194206F100C744E6 /* BlueCapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F79194206F100C744E6 /* BlueCapTests.swift */; };
 		05840F8E1942098300C744E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05840F8D1942098300C744E6 /* CoreBluetooth.framework */; };
@@ -96,6 +97,7 @@
 		05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* NameUUIDCell.swift */; };
 		05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */; };
 		05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */; };
+		05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */; };
 		05D9D50A19B0D7B0001DBEBC /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D50919B0D7B0001DBEBC /* ConfigStore.swift */; };
 		05D9D50E19B0DA4C001DBEBC /* ConfigureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */; };
 		05D9D51419B0E36B001DBEBC /* ConfigureScanModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */; };
@@ -205,6 +207,8 @@
 		0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconViewController.swift; sourceTree = "<group>"; };
 		053B0CC119BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanTimeoutViewController.swift; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
+		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerAddAdvertisedServiceViewController.swift; sourceTree = "<group>"; };
 		056C719919C5F1D0009068CC /* BeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegion.swift; sourceTree = "<group>"; };
 		05764D80196A1E0600E6C801 /* Enums.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Enums.playground; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
@@ -212,7 +216,6 @@
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F63194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05840F64194206F100C744E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		05840F6B194206F100C744E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		05840F6D194206F100C744E6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		05840F73194206F100C744E6 /* BlueCapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F78194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -255,6 +258,7 @@
 		05B6F0771957ACF300D798CB /* NameUUIDCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameUUIDCell.swift; sourceTree = "<group>"; };
 		05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
 		05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicViewController.swift; sourceTree = "<group>"; };
+		05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerAdvertisedServicesViewController.swift; sourceTree = "<group>"; };
 		05C3F1C51942159D006F80AD /* FunctionTypes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = FunctionTypes.playground; sourceTree = "<group>"; };
 		05D9D50919B0D7B0001DBEBC /* ConfigStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
 		05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureViewController.swift; sourceTree = "<group>"; };
@@ -438,12 +442,12 @@
 		05840F61194206F100C744E6 /* BlueCap */ = {
 			isa = PBXGroup;
 			children = (
+				056B7C7419DE4E52001B7F95 /* Main.storyboard */,
 				050796E519C4C42100A4D547 /* Beacon */,
 				05840F64194206F100C744E6 /* AppDelegate.swift */,
 				05840F6D194206F100C744E6 /* Images.xcassets */,
 				05277C9B1944CAE50022FB59 /* Central */,
 				05B45BFC19A78BBB009DAF6D /* Configure */,
-				05840F6A194206F100C744E6 /* Main.storyboard */,
 				05E6870219508799009B38DA /* Peripheral */,
 				05BB68BA195C71F200434136 /* Playgrounds */,
 				05E68703195087D0009B38DA /* Profiles */,
@@ -585,6 +589,8 @@
 		05E6870219508799009B38DA /* Peripheral */ = {
 			isa = PBXGroup;
 			children = (
+				056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */,
+				05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */,
 				0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */,
 				0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */,
 				05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */,
@@ -755,8 +761,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05840F6C194206F100C744E6 /* Main.storyboard in Resources */,
 				05840F6E194206F100C744E6 /* Images.xcassets in Resources */,
+				056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -789,10 +795,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				05B45BF419A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */,
+				05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */,
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
 				05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */,
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
 				0530B62919D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift in Sources */,
+				056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */,
 				05B45BF719A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift in Sources */,
 				05D9D50E19B0DA4C001DBEBC /* ConfigureViewController.swift in Sources */,
 				05D9D50A19B0D7B0001DBEBC /* ConfigStore.swift in Sources */,
@@ -931,17 +939,6 @@
 			targetProxy = 05840FAE19420B0000C744E6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		05840F6A194206F100C744E6 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				05840F6B194206F100C744E6 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		05840F7B194206F100C744E6 /* Debug */ = {

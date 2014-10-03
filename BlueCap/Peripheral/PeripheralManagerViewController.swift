@@ -16,9 +16,12 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBOutlet var advertiseButton           : UIButton!
     @IBOutlet var advertisedBeaconButton    : UIButton!
     @IBOutlet var advertisedBeaconLabel     : UILabel!
+    @IBOutlet var advertisedServices        : UILabel!
 
     struct MainStoryboard {
-        static let peripheralManagerServicesSegue = "PeripheralManagerServices"
+        static let peripheralManagerServicesSegue           = "PeripheralManagerServices"
+        static let peripheralManagerAdvertisedServicesSegue = "PeripheralManagerAdvertisedServices"
+        static let peripheralManagerBeaconsSegue            = "PeripheralManagerBeacons"
     }
     
     var peripheral : String?
@@ -124,7 +127,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if let peripheral = self.peripheral {
             let peripheralManager = PeripheralManager.sharedInstance()
             let profileManager = ProfileManager.sharedInstance()
-            let serviceUUIDs = PeripheralStore.getPeripheralServices(peripheral)
+            let serviceUUIDs = PeripheralStore.getPeripheralServicesForPeripheral(peripheral)
             let services = serviceUUIDs.reduce([MutableService]()){(services, uuid) in
                 if let serviceProfile = profileManager.service(uuid) {
                     let service = MutableService(profile:serviceProfile)
@@ -176,7 +179,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if let enteredName = self.nameTextField.text {
             if !enteredName.isEmpty {
                 if let oldname = self.peripheral {
-                    let services = PeripheralStore.getPeripheralServices(oldname)
+                    let services = PeripheralStore.getPeripheralServicesForPeripheral(oldname)
                     PeripheralStore.removePeripheral(oldname)
                     PeripheralStore.addPeripheralName(enteredName)
                     PeripheralStore.addPeripheralServices(enteredName, services:services)
