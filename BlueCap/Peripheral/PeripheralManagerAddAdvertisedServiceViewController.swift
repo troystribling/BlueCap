@@ -35,6 +35,11 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(animated:Bool) {
+        super.viewWillAppear(animated)
+        self.tableView.reloadData()
+    }
+    
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
     }
     
@@ -49,7 +54,6 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAddAdverstisedServiceCell, forIndexPath:indexPath) as NameUUIDCell
         if let peripheral = self.peripheral {
-            let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
             let service = self.services[indexPath.row]
             cell.nameLabel.text = service.name
             cell.uuidLabel.text = service.uuid.UUIDString
@@ -62,7 +66,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if let peripheral = self.peripheral {
-            let service = PeripheralManager.sharedInstance().services[indexPath.row]
+            let service = self.services[indexPath.row]
             PeripheralStore.addAdvertisedPeripheralService(peripheral, service:service.uuid)
         }
         self.navigationController?.popViewControllerAnimated(true)

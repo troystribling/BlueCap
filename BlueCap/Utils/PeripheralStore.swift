@@ -113,10 +113,15 @@ class PeripheralStore {
     }
     
     class func removeAdvertisedPeripheralService(name:String, service:CBUUID) {
+        Logger.debug("PeripheralStore#removeAdvertisedPeripheralService \(name), \(service)")
         var peripherals = self.getPeripheralServices("advertisedPeripheralServices")
+        Logger.debug("PeripheralStore#removeAdvertisedPeripheralService \(peripherals)")
         if let services = peripherals[name] {
+            Logger.debug("PeripheralStore#removeAdvertisedPeripheralService \(services)")
             peripherals[name] = services.filter{$0 != service}
+            Logger.debug("PeripheralStore#removeAdvertisedPeripheralService \(services)")
         }
+        Logger.debug("PeripheralStore#removeAdvertisedPeripheralService \(peripherals)")
         self.setPeripheralServices("advertisedPeripheralServices", peripheralServices:peripherals)
     }
     

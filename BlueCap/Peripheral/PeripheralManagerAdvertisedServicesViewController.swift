@@ -29,6 +29,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Advertised Services"
+        self.tableView.reloadData()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -58,10 +59,13 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAdvertisedServiceCell, forIndexPath: indexPath) as NameUUIDCell
         if let peripheral = self.peripheral {
-            let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-            let service = PeripheralManager.sharedInstance().services[indexPath.row]
-            cell.uuidLabel.text = serviceUUIDs[indexPath.row].UUIDString
-            cell.nameLabel.text = service.name
+            let serviceUUID = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)[indexPath.row]
+            cell.uuidLabel.text = serviceUUID.UUIDString
+            if let service = PeripheralManager.sharedInstance().service(serviceUUID) {
+                cell.nameLabel.text = service.name
+            } else {
+                cell.nameLabel.text = "Unknown"
+            }
         } else {
             cell.uuidLabel.text = "Unknown"
             cell.nameLabel.text = "Unknown"
