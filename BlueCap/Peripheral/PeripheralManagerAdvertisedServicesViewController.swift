@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BlueCapKit
 
 class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
 
@@ -36,7 +37,9 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == MainStoryboard.peripheralManagerAddAdvertisedServiceSegue {            
+        if segue.identifier == MainStoryboard.peripheralManagerAddAdvertisedServiceSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerAddAdvertisedServiceViewController
+            viewController.peripheral = self.peripheral
         }
     }
     
@@ -45,11 +48,24 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     }
 
     override func tableView(tableView:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return 0
+        if let peripheral = self.peripheral {
+            return PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral).count
+        } else {
+            return 0
+        }
     }
 
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAdvertisedServiceCell, forIndexPath: indexPath) as NameUUIDCell
+        if let peripheral = self.peripheral {
+            let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
+            let service = PeripheralManager.sharedInstance().services[indexPath.row]
+            cell.uuidLabel.text = serviceUUIDs[indexPath.row].UUIDString
+            cell.nameLabel.text = service.name
+        } else {
+            cell.uuidLabel.text = "Unknown"
+            cell.nameLabel.text = "Unknown"
+        }
         return cell
     }
 
@@ -59,7 +75,11 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
 
     override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
         if editingStyle == .Delete {
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            if let peripheral = self.peripheral {
+                let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
+                PeripheralStore.removeAdvertisedPeripheralService(peripheral, service:serviceUUIDs[indexPath.row])
+                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:.Fade)
+            }
         }
     }
 

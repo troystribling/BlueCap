@@ -59,7 +59,7 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         cell.nameLabel.text = name
         if let uuid = PeripheralStore.getBeacon(name) {
             let beaconConfig = PeripheralStore.getBeaconConfig(name)
-            cell.UUIDLabel.text = uuid.UUIDString
+            cell.uuidLabel.text = uuid.UUIDString
             cell.majorLabel.text = "\(beaconConfig[0])"
             cell.minorLabel.text = "\(beaconConfig[1])"
             cell.accessoryType = .None

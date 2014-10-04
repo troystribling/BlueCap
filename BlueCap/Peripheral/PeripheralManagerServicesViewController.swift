@@ -85,6 +85,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
                 let manager = PeripheralManager.sharedInstance()
                 let service = manager.services[indexPath.row]
                 manager.removeService(service) {
+                    PeripheralStore.removeAdvertisedPeripheralService(peripheral, service:service.uuid)
                     PeripheralStore.removePeripheralService(peripheral, service:service.uuid)
                     self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
                 }

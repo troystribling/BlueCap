@@ -10,7 +10,7 @@ import UIKit
 
 class PeripheralManagerBeaconCell: UITableViewCell {
 
-    @IBOutlet var UUIDLabel             : UILabel!
+    @IBOutlet var uuidLabel             : UILabel!
     @IBOutlet var majorLabel            : UILabel!
     @IBOutlet var minorLabel            : UILabel!
     @IBOutlet var nameLabel             : UILabel!

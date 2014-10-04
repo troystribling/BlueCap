@@ -438,10 +438,10 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="UUIDLabel" destination="0KX-YA-4Us" id="kOg-Fs-HXE"/>
                                     <outlet property="majorLabel" destination="4eq-fe-S8Q" id="qoS-fg-s5i"/>
                                     <outlet property="minorLabel" destination="weX-Wh-cd1" id="of6-b0-5eS"/>
                                     <outlet property="nameLabel" destination="Vwx-Gg-IzB" id="PaG-fE-oZl"/>
+                                    <outlet property="uuidLabel" destination="0KX-YA-4Us" id="AB7-O7-2RP"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
