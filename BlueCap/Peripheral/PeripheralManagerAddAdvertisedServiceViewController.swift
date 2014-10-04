@@ -24,7 +24,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         super.viewDidLoad()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
     }
     
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {

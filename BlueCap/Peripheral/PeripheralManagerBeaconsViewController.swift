@@ -16,6 +16,8 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         static let peripheralManagerAddBeaconSegue  = "PeripheralManagerAddBeacon"
     }
     
+    var peripheral : String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -66,9 +68,11 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        let beaconNames = PeripheralStore.getBeaconNames()
-        PeripheralStore.setAdvertisedBeacon(beaconNames[indexPath.row])
-        self.navigationController?.popViewControllerAnimated(true)
+        if let peripheral = self.peripheral {
+            let beaconNames = PeripheralStore.getBeaconNames()
+            PeripheralStore.setAdvertisedBeaconConfig(peripheral, beacon:beaconNames[indexPath.row])
+            self.navigationController?.popViewControllerAnimated(true)
+        }
     }
     
     override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
