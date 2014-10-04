@@ -389,18 +389,18 @@
         <scene sceneID="s0y-4H-ELm">
             <objects>
                 <tableViewController id="Gl9-1G-1mb" customClass="PeripheralManagerBeaconsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="Ow0-py-ZKX">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="87" sectionHeaderHeight="22" sectionFooterHeight="22" id="Ow0-py-ZKX">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralManagerBeaconCell" rowHeight="60" id="Xrw-OR-hel" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralManagerBeaconCell" rowHeight="87" id="Xrw-OR-hel" customClass="PeripheralManagerBeaconCell" customModule="BlueCap" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xrw-OR-hel" id="YTC-4C-ws1">
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vwx-Gg-IzB">
-                                            <rect key="frame" x="20" y="28" width="250" height="21"/>
+                                            <rect key="frame" x="20" y="56" width="280" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -411,11 +411,37 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="major:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yyz-Oc-J6q">
+                                            <rect key="frame" x="20" y="21" width="48" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="minor:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Din-gO-phQ">
+                                            <rect key="frame" x="20" y="34" width="49" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="weX-Wh-cd1">
+                                            <rect key="frame" x="61" y="34" width="210" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4eq-fe-S8Q">
+                                            <rect key="frame" x="61" y="21" width="210" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="nameLabel" destination="Vwx-Gg-IzB" id="oJB-mG-9h7"/>
-                                    <outlet property="uuidLabel" destination="0KX-YA-4Us" id="KjY-wv-RyG"/>
+                                    <outlet property="UUIDLabel" destination="0KX-YA-4Us" id="kOg-Fs-HXE"/>
+                                    <outlet property="majorLabel" destination="4eq-fe-S8Q" id="qoS-fg-s5i"/>
+                                    <outlet property="minorLabel" destination="weX-Wh-cd1" id="of6-b0-5eS"/>
+                                    <outlet property="nameLabel" destination="Vwx-Gg-IzB" id="PaG-fE-oZl"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -467,7 +493,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Major" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="TuQ-vR-aPz">
                                 <rect key="frame" x="20" y="190" width="280" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <connections>
                                     <outlet property="delegate" destination="9v2-Hm-PfD" id="sy7-eN-TBa"/>
                                 </connections>
@@ -475,7 +501,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Minor" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="e4o-js-103">
                                 <rect key="frame" x="20" y="235" width="280" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <connections>
                                     <outlet property="delegate" destination="9v2-Hm-PfD" id="LEn-hq-9Oo"/>
                                 </connections>
@@ -506,10 +532,10 @@
             </objects>
             <point key="canvasLocation" x="1543" y="1666"/>
         </scene>
-        <!--Advertised Service-->
+        <!--Advertised Services-->
         <scene sceneID="4kJ-Xx-CXx">
             <objects>
-                <tableViewController id="Xo0-0k-OH2" customClass="PeripheralManagerAdvertisedServiceViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="Xo0-0k-OH2" customClass="PeripheralManagerAdvertisedServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="LFr-oz-zzd">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -545,7 +571,7 @@
                             <outlet property="delegate" destination="Xo0-0k-OH2" id="VC5-be-fnt"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Advertised Service" id="Wkv-6I-N3N">
+                    <navigationItem key="navigationItem" title="Advertised Services" id="Wkv-6I-N3N">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="9LH-8l-SJ5">
                             <connections>
                                 <segue destination="lD9-bb-G98" kind="push" identifier="PeripheralManagerAddAdvertisedService" id="4Bd-ec-GDk"/>

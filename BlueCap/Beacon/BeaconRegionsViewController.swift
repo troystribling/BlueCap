@@ -160,19 +160,19 @@ class BeaconRegionsViewController: UITableViewController {
         if BeaconManager.sharedInstance().isRangingRegion(name) {
             if let region = BeaconManager.sharedInstance().beaconRegion(name) {
                 if region.beacons.count == 0 {
-                    cell.updateAccessoryType(.None)
+                    cell.accessoryType = .None
                     cell.rangingActivityIndicator.startAnimating()
                 } else {
-                    cell.updateAccessoryType(.DetailButton)
+                    cell.accessoryType = .DetailButton
                 }
             } else {
-                cell.updateAccessoryType(.DisclosureIndicator)
+                cell.accessoryType = .DisclosureIndicator
             }
         } else  if self.isInRegion {
-            cell.updateAccessoryType(.None)
+            cell.accessoryType = .None
             cell.rangingActivityIndicator.startAnimating()
         } else {
-            cell.updateAccessoryType(.DisclosureIndicator)
+            cell.accessoryType = .DisclosureIndicator
         }
         return cell
     }

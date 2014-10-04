@@ -24,6 +24,16 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationItem.title = "Advertised Services"
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationItem.title = ""
+    }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == MainStoryboard.peripheralManagerAddAdvertisedServiceSegue {            

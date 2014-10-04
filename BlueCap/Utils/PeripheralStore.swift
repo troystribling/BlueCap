@@ -261,7 +261,7 @@ class PeripheralStore {
     }
     
     // ibeacon
-    class func getAdvertisedBeaconsConfigs() -> [String:String] {
+    class func getAdvertisedBeacons() -> [String:String] {
         var beacons : [String:String] = [:]
         if let storedBeacons = NSUserDefaults.standardUserDefaults().dictionaryForKey("peripheralAdvertisedBeaconConfigs") {
             for (peripheral, beacon) in storedBeacons {
@@ -277,25 +277,25 @@ class PeripheralStore {
         }
     }
     
-    class func setAdvertisedBeaconConfigs(beacons:[String:String]) {
+    class func setAdvertisedBeacons(beacons:[String:String]) {
         NSUserDefaults.standardUserDefaults().setObject(beacons, forKey:"peripheralAdvertisedBeaconConfigs")
     }
     
-    class func getAdvertisedBeaconConfig(peripheral:String) -> String? {
-        let beacons = self.getAdvertisedBeaconsConfigs()
+    class func getAdvertisedBeacon(peripheral:String) -> String? {
+        let beacons = self.getAdvertisedBeacons()
         return beacons[peripheral]
     }
     
-    class func setAdvertisedBeaconConfig(peripheral:String, beacon:String) {
-        var beacons = getAdvertisedBeaconsConfigs()
+    class func setAdvertisedBeacon(peripheral:String, beacon:String) {
+        var beacons = getAdvertisedBeacons()
         beacons[peripheral] = beacon
-        self.setAdvertisedBeaconConfigs(beacons)
+        self.setAdvertisedBeacons(beacons)
     }
     
-    class func removeAdvertisedBeaconConfig(peripheral:String) {
-        var beacons = getAdvertisedBeaconsConfigs()
+    class func removeAdvertisedBeacon(peripheral:String) {
+        var beacons = getAdvertisedBeacons()
         beacons.removeValueForKey(peripheral)
-        self.setAdvertisedBeaconConfigs(beacons)
+        self.setAdvertisedBeacons(beacons)
     }
     
     // ibeacon enabled

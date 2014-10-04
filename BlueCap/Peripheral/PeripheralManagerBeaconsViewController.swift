@@ -54,11 +54,22 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     }
 
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerBeaconCell, forIndexPath: indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerBeaconCell, forIndexPath: indexPath) as PeripheralManagerBeaconCell
         let name = PeripheralStore.getBeaconNames()[indexPath.row]
         cell.nameLabel.text = name
         if let uuid = PeripheralStore.getBeacon(name) {
-            cell.uuidLabel.text = uuid.UUIDString
+            let beaconConfig = PeripheralStore.getBeaconConfig(name)
+            cell.UUIDLabel.text = uuid.UUIDString
+            cell.majorLabel.text = "\(beaconConfig[0])"
+            cell.minorLabel.text = "\(beaconConfig[1])"
+            cell.accessoryType = .None
+            if let peripheral = self.peripheral {
+                if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
+                    if advertisedBeacon == name {
+                        cell.accessoryType = .Checkmark
+                    }
+                }
+            }
         }
         return cell
     }
@@ -70,7 +81,7 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         if let peripheral = self.peripheral {
             let beaconNames = PeripheralStore.getBeaconNames()
-            PeripheralStore.setAdvertisedBeaconConfig(peripheral, beacon:beaconNames[indexPath.row])
+            PeripheralStore.setAdvertisedBeacon(peripheral, beacon:beaconNames[indexPath.row])
             self.navigationController?.popViewControllerAnimated(true)
         }
     }
@@ -79,7 +90,11 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         if editingStyle == .Delete {
             let beaconNames = PeripheralStore.getBeaconNames()
             PeripheralStore.removeBeacon(beaconNames[indexPath.row])
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            if let peripheral = self.peripheral {
+                PeripheralStore.removeAdvertisedBeacon(peripheral)
+                PeripheralStore.removeBeaconEnabled(peripheral)
+            }
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:.Fade)
         }
     }
 }

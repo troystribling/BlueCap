@@ -53,6 +53,7 @@
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
 		056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 056B7C7419DE4E52001B7F95 /* Main.storyboard */; };
 		056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */; };
+		056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */; };
 		056C719A19C5F1D0009068CC /* BeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056C719919C5F1D0009068CC /* BeaconRegion.swift */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
 		057E6ABD1968BA3C009938F4 /* CharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */; };
@@ -201,7 +202,6 @@
 		0507972C19C4C91800A4D547 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		0507973019C4CEEC00A4D547 /* BeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconsViewController.swift; sourceTree = "<group>"; };
 		0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegionViewController.swift; sourceTree = "<group>"; };
-		0518867119609B5800ED2D3A /* Bytes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Bytes.playground; sourceTree = "<group>"; };
 		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralsViewController.swift; sourceTree = "<group>"; };
 		0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconsViewController.swift; sourceTree = "<group>"; };
 		0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconViewController.swift; sourceTree = "<group>"; };
@@ -209,8 +209,9 @@
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
 		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerAddAdvertisedServiceViewController.swift; sourceTree = "<group>"; };
+		056B7C7819E0600A001B7F95 /* Testit.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Testit.playground; sourceTree = "<group>"; };
+		056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconCell.swift; sourceTree = "<group>"; };
 		056C719919C5F1D0009068CC /* BeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegion.swift; sourceTree = "<group>"; };
-		05764D80196A1E0600E6C801 /* Enums.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Enums.playground; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
 		057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicValueCell.swift; sourceTree = "<group>"; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -251,7 +252,6 @@
 		05B48B5319C85B6900800327 /* BeaconStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconStore.swift; sourceTree = "<group>"; };
 		05B48B5519C9B69400800327 /* BeaconRegionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegionCell.swift; sourceTree = "<group>"; };
 		05B48B5719C9B7DF00800327 /* BeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconCell.swift; sourceTree = "<group>"; };
-		05B48C7C1971FA3200260F4A /* Structs.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Structs.playground; sourceTree = "<group>"; };
 		05B56E1919B76D52005B22AC /* ConfigureAddScanRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureAddScanRegionViewController.swift; sourceTree = "<group>"; };
 		05B56E1B19BB8278005B22AC /* ConfigureScanRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanRegionViewController.swift; sourceTree = "<group>"; };
 		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; };
@@ -259,7 +259,6 @@
 		05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicsViewController.swift; sourceTree = "<group>"; };
 		05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicViewController.swift; sourceTree = "<group>"; };
 		05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerAdvertisedServicesViewController.swift; sourceTree = "<group>"; };
-		05C3F1C51942159D006F80AD /* FunctionTypes.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = FunctionTypes.playground; sourceTree = "<group>"; };
 		05D9D50919B0D7B0001DBEBC /* ConfigStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
 		05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureViewController.swift; sourceTree = "<group>"; };
 		05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanModeViewController.swift; sourceTree = "<group>"; };
@@ -578,10 +577,7 @@
 		05BB68BA195C71F200434136 /* Playgrounds */ = {
 			isa = PBXGroup;
 			children = (
-				05C3F1C51942159D006F80AD /* FunctionTypes.playground */,
-				0518867119609B5800ED2D3A /* Bytes.playground */,
-				05764D80196A1E0600E6C801 /* Enums.playground */,
-				05B48C7C1971FA3200260F4A /* Structs.playground */,
+				056B7C7819E0600A001B7F95 /* Testit.playground */,
 			);
 			name = Playgrounds;
 			sourceTree = "<group>";
@@ -591,6 +587,7 @@
 			children = (
 				056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */,
 				05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */,
+				056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */,
 				0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */,
 				0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */,
 				05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */,
@@ -795,6 +792,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05B45BF419A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */,
+				056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */,
 				05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */,
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
 				05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */,

@@ -42,11 +42,12 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         super.viewWillAppear(animated)
         self.navigationItem.title = "Peripheral"
         if let peripheral = self.peripheral {
-            if let advertisedBeacon = PeripheralStore.getAdvertisedBeaconConfig(peripheral) {
+            if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
                 self.advertisedBeaconLabel.text = advertisedBeacon
             } else {
                 self.advertisedBeaconLabel.text = "None"
             }
+            self.setUIState()
         }
     }
 
@@ -62,19 +63,25 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServicesViewController
             viewController.peripheral = self.peripheral
+        } else if segue.identifier == MainStoryboard.peripheralManagerAdvertisedServicesSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerAdvertisedServicesViewController
+            viewController.peripheral = self.peripheral
+        } else if segue.identifier == MainStoryboard.peripheralManagerBeaconsSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerBeaconsViewController
+            viewController.peripheral = self.peripheral
         }
     }
     
     override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
-        if identifier == MainStoryboard.peripheralManagerServicesSegue {
-            if let peripheral = self.peripheral {
+        if let peripheral = self.peripheral {
+            if identifier == MainStoryboard.peripheralManagerServicesSegue {
                 let manager = PeripheralManager.sharedInstance()
                 return manager.isPoweredOn
             } else {
-                return false
+                return true
             }
         } else {
-            return true
+            return false
         }
     }
 
@@ -168,10 +175,15 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 self.navigationItem.setHidesBackButton(false, animated:true)
                 self.nameTextField.enabled = true
             }
-            if PeripheralStore.getBeaconEnabled(peripheral) {
-                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+            if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
+                if PeripheralStore.getBeaconEnabled(peripheral) {
+                    self.advertisedBeaconButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+                } else {
+                    self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                }
             } else {
-                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
+                self.advertisedBeaconButton.enabled = false
             }
         } else {
             self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
