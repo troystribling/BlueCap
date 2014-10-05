@@ -278,7 +278,7 @@
                         <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
                         <outlet property="advertisedBeaconButton" destination="pXL-7P-0gs" id="wYU-mA-el5"/>
                         <outlet property="advertisedBeaconLabel" destination="dAO-KR-e1W" id="Mex-Eb-85N"/>
-                        <outlet property="advertisedServices" destination="Nl4-1O-xwR" id="KMd-jm-l4b"/>
+                        <outlet property="advertisedServicesLabel" destination="Nl4-1O-xwR" id="eQY-aK-LBr"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
                     </connections>
                 </tableViewController>

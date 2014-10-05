@@ -16,7 +16,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBOutlet var advertiseButton           : UIButton!
     @IBOutlet var advertisedBeaconButton    : UIButton!
     @IBOutlet var advertisedBeaconLabel     : UILabel!
-    @IBOutlet var advertisedServices        : UILabel!
+    @IBOutlet var advertisedServicesLabel   : UILabel!
 
     struct MainStoryboard {
         static let peripheralManagerServicesSegue           = "PeripheralManagerServices"
@@ -100,6 +100,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                     self.setUIState()
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }
+                let advertisedServices = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
                 if PeripheralStore.getBeaconEnabled(peripheral) {
                     if let name = self.advertisedBeaconLabel.text {
                         if let uuid = PeripheralStore.getBeacon(name) {
@@ -108,6 +109,8 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                             manager.startAdvertising(beaconRegion, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
                         }
                     }
+                } else if advertisedServices.count > 0 {
+                    manager.startAdvertising(peripheral, uuids:advertisedServices, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
                 } else {
                     manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
                 }
