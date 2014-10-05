@@ -66,13 +66,16 @@ public class BeaconRegion : Region {
         self.init(region:beaconRegion, initializer:initializer)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:Int, initializer:((beaconMonitor:BeaconRegion) -> ())? = nil) {
-        let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:UInt16(major), identifier:identifier)
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, initializer:((beaconMonitor:BeaconRegion) -> ())? = nil) {
+        let beaconMajor : CLBeaconMajorValue = major
+        let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, identifier:identifier)
         self.init(region:beaconRegion, initializer:initializer)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:Int, minor:Int, initializer:((beaconRegion:BeaconRegion) -> ())? = nil) {
-        let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:UInt16(major), minor:UInt16(minor), identifier:identifier)
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16, initializer:((beaconRegion:BeaconRegion) -> ())? = nil) {
+        let beaconMinor : CLBeaconMinorValue = minor
+        let beaconMajor : CLBeaconMajorValue = major
+        let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, minor:beaconMinor, identifier:identifier)
         self.init(region:beaconRegion, initializer:initializer)
     }
     

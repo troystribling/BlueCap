@@ -53,11 +53,18 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
                 if let uuid = Optional(NSUUID(UUIDString:enteredUUID)) {
                     if let minor = enteredMinor!.toInt() {
                         if let major = enteredMajor!.toInt() {
-                            PeripheralStore.addBeaconConfig(enteredName!, config:[minor, major])
+                            if minor < 65536 && major < 65536 {
+                                PeripheralStore.addBeaconConfig(enteredName!, config:[UInt16(minor), UInt16(major)])
+                            } else {
+                                self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor must be less than 65536"), animated:true, completion:nil)
+                                return false
+                            }
                         } else {
+                            self.presentViewController(UIAlertController.alertOnErrorWithMessage("major is not convertable to a num ber"), animated:true, completion:nil)
                             return false
                         }
                     } else {
+                        self.presentViewController(UIAlertController.alertOnErrorWithMessage("minor is not convertable to a num ber"), animated:true, completion:nil)
                         return false
                     }
                     PeripheralStore.addBeacon(enteredName!, uuid:uuid)

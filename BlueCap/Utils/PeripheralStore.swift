@@ -303,16 +303,16 @@ class PeripheralStore {
         return beacons[name]
     }
     
-    class func getBeaconConfigs() -> [String:[Int]] {
+    class func getBeaconConfigs() -> [String:[UInt16]] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let storedConfigs = userDefaults.dictionaryForKey("peipheralBeaconConfigs") {
-            var configs = [String:[Int]]()
+            var configs = [String:[UInt16]]()
             for (name, config) in storedConfigs {
                 if let name = name as? String {
                     if config.count == 2 {
                         let major = config[0] as NSNumber
                         let minor = config[1] as NSNumber
-                        configs[name] = [major, minor]
+                        configs[name] = [major.unsignedShortValue, minor.unsignedShortValue]
                     }
                 }
             }
@@ -322,22 +322,22 @@ class PeripheralStore {
         }
     }
     
-    class func setBeaconConfigs(configs:[String:[Int]]) {
+    class func setBeaconConfigs(configs:[String:[UInt16]]) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         var storeConfigs = [String:[NSNumber]]()
         for (name, config) in configs {
-            storeConfigs[name] = [NSNumber(integer:config[0]), NSNumber(integer:config[1])]
+            storeConfigs[name] = [NSNumber(unsignedShort:config[0]), NSNumber(unsignedShort:config[1])]
         }
         userDefaults.setObject(storeConfigs, forKey:"peipheralBeaconConfigs")
     }
     
-    class func addBeaconConfig(name:String, config:[Int]) {
+    class func addBeaconConfig(name:String, config:[UInt16]) {
         var configs = self.getBeaconConfigs()
         configs[name] = config
         self.setBeaconConfigs(configs)
     }
     
-    class func getBeaconConfig(name:String) -> [Int] {
+    class func getBeaconConfig(name:String) -> [UInt16] {
         let configs = self.getBeaconConfigs()
         if let config = configs[name] {
             return config
