@@ -108,7 +108,7 @@ class PeripheralsViewController : UITableViewController {
     
     // utils
     func setScanButton() {
-        if (CentralManager.sharedInstance().isScanning) {
+        if CentralManager.sharedInstance().isScanning || RegionScannerator.sharedInstance().isScanning || TimedScannerator.sharedInstance().isScanning {
             self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setRightBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -156,12 +156,12 @@ class PeripheralsViewController : UITableViewController {
             // Region Promiscuous Scan Enabled
             case "Promiscuous" :
                 // Region Promiscuous Scan with Timeout Enabled
+                self.startMonitoringRegions()
                 if ConfigStore.getScanTimeoutEnabled() {
                     RegionScannerator.sharedInstance().startScanning(Float(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                 } else {
                     RegionScannerator.sharedInstance().startScanning(afterPeripheralDiscovered)
                 }
-                self.startMonitoringRegions()
                 break
             // Region Service Scan Enabled
             case "Service" :
@@ -176,7 +176,6 @@ class PeripheralsViewController : UITableViewController {
                     } else {
                         RegionScannerator.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
                     }
-                    self.startMonitoringRegions()
                 }
                 break
             default:
@@ -217,7 +216,7 @@ class PeripheralsViewController : UITableViewController {
     func startMonitoringRegions() {
         RegionScannerator.sharedInstance().distanceFilter = 10.0
         for (name, location) in ConfigStore.getScanRegions() {
-            RegionScannerator.sharedInstance().startMonitoringForRegion(Region(center:location, identifier:name) {(region) in
+            RegionScannerator.sharedInstance().startMonitoringForRegion(CircularRegion(center:location, identifier:name) {(region) in
                 region.exitRegion = {
                     Notify.withMessage("Exiting Region: \(name)")
                 }

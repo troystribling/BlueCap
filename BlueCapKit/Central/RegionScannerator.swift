@@ -12,7 +12,7 @@ import CoreBluetooth
 
 public class RegionScannerator : TimedScannerator {
  
-    internal class ScanneratorRegion : Region {
+    internal class ScanneratorRegion : CircularRegion {
         
         internal var scanRegion : Region
         
@@ -31,6 +31,7 @@ public class RegionScannerator : TimedScannerator {
     private let regionManager                   : RegionManager!
     private var services                        : [CBUUID]?
     private var afterPeripheralDiscovered       : ((peripheral:Peripheral, rssi:Int)->())?
+    private var lastLocation                    : CLLocation?
     
     public var distanceFilter : CLLocationDistance {
         get {
@@ -73,7 +74,7 @@ public class RegionScannerator : TimedScannerator {
         self._isScanning = true
         self.services = nil
         self.afterTimeout = nil
-        self.regionManager.startUpdatingLocation()
+        self.startUpdatingLocation()
     }
     
     public func startScanningForServiceUUIDs(uuids:[CBUUID], afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
@@ -82,7 +83,7 @@ public class RegionScannerator : TimedScannerator {
         self._isScanning = true
         self.services = uuids
         self.afterTimeout = nil
-        self.regionManager.startUpdatingLocation()
+        self.startUpdatingLocation()
     }
     
     override public func startScanning(timeoutSeconds:Float, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
@@ -90,6 +91,7 @@ public class RegionScannerator : TimedScannerator {
         self.services = nil
         self._isScanning = true
         self.afterTimeout = afterTimeout
+        self.startUpdatingLocation()
         self.timeoutScan()
     }
     
@@ -98,6 +100,7 @@ public class RegionScannerator : TimedScannerator {
         self.services = uuids
         self.afterTimeout = afterTimeout
         self.timeoutSeconds = timeoutSeconds
+        self.startUpdatingLocation()
         self.timeoutScan()
     }
 
@@ -110,7 +113,7 @@ public class RegionScannerator : TimedScannerator {
         self.regionManager.stopUpdatingLocation()
     }
     
-    public func startMonitoringForRegion(region:Region) {
+    public func startMonitoringForRegion(region:CircularRegion) {
         Logger.debug("RegionScannerator#startMonitoringForRegion")
         let region = ScanneratorRegion(scanRegion:region) {(scanneratorRegion) in
             scanneratorRegion.exitRegion = {
@@ -154,6 +157,29 @@ public class RegionScannerator : TimedScannerator {
     public func stopMonitoringForRegion(region:Region) {
         Logger.debug("RegionScannerator#stopMonitoringForRegion")
         self.regionManager.stopMonitoringForRegion(region)
+    }
+    
+    private func startUpdatingLocation() {
+        var isFirst = true
+        self.regionManager.startUpdatingLocation(){(locationManager) in
+            locationManager.locationsUpdateSuccess = {(locations) in
+                self.lastLocation = locations.last
+                if isFirst {
+                    if let location = locations.last {
+                        isFirst = false
+                        for region in self.regionManager.regions {
+                            if let scanneratorRegion = region as? ScanneratorRegion {
+                                if scanneratorRegion.containsCoordinate(location.coordinate) {
+                                    if let enterRegion = scanneratorRegion.enterRegion {
+                                        enterRegion()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

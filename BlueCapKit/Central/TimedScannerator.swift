@@ -35,6 +35,7 @@ public class TimedScannerator {
         CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
         self.timeoutSeconds = timeoutSeconds
         self.afterTimeout = afterTimeout
+        self._isScanning = true
         self.timeoutScan()
     }
     
@@ -42,10 +43,12 @@ public class TimedScannerator {
         CentralManager.sharedInstance().startScanningForServiceUUIDs(uuids, afterPeripheralDiscoveredCallback)
         self.afterTimeout = afterTimeout
         self.timeoutSeconds = timeoutSeconds
+        self._isScanning = true
         self.timeoutScan()
     }
     
     public func stopScanning() {
+        self._isScanning = false
         CentralManager.sharedInstance().stopScanning()
     }
 
@@ -55,7 +58,7 @@ public class TimedScannerator {
         central.delayCallback(self.timeoutSeconds) {
             if central.peripherals.count == 0 {
                 Logger.debug("Scannerator#timeoutScan: timing out")
-                central.stopScanning()
+                self.stopScanning()
                 if let afterTimeout = self.afterTimeout {
                     afterTimeout()
                 }

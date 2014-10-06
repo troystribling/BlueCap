@@ -58,15 +58,5 @@ public class Region {
         self._region = region
     }
     
-    public convenience init(center:CLLocationCoordinate2D, radius:CLLocationDistance, identifier:String, initializer:((region:Region) -> ())? = nil) {
-        let circularRegion = CLCircularRegion(center:center, radius:radius, identifier:identifier)
-        self.init(region:circularRegion, initializer:initializer)
-    }
-    
-    public convenience init(center:CLLocationCoordinate2D, identifier:String, initializer:((region:Region) -> ())? = nil) {
-        let circularRegion = CLCircularRegion(center:center, radius:DEFAULT_REGION_RADIUS, identifier:identifier)
-        self.init(region:circularRegion, initializer:initializer)
-    }
-
 }
 

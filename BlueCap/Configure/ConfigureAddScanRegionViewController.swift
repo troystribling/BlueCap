@@ -37,7 +37,7 @@ class ConfigureAddScanRegionViewController : UIViewController, UITextFieldDelega
                 let progressView = ProgressView()
                 progressView.show()
                 LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in
-                    locationManager.locationsUpdateSuccess = {(locations:[CLLocation]) in
+                    locationManager.locationsUpdateSuccess = {(locations) in
                         locationManager.desiredAccuracy = kCLLocationAccuracyBest
                         if let location = locations.last {
                             Logger.debug("location update received: \(location)")
