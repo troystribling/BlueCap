@@ -195,7 +195,8 @@ public class Characteristic {
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
                     CentralManager.asyncCallback(){
-                        afterUpdateFailedCallback(error:NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
+                        afterUpdateFailedCallback(error:
+                            NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
                     }
                 }
             } else {
@@ -212,7 +213,8 @@ public class Characteristic {
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 if let afterWriteFailedCallback = self.afterWriteFailedCallback {
                     CentralManager.asyncCallback(){
-                        afterWriteFailedCallback(error:NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
+                        afterWriteFailedCallback(error:
+                            NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
                     }
                 }
             } else {

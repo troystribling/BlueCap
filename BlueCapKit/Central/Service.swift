@@ -12,8 +12,10 @@ import CoreBluetooth
 public class Service : NSObject {
     
     // PRIVATE
-    private let profile                             : ServiceProfile?
-    private var characteristicsDiscoveredCallback   : (() -> ())?
+    private let profile                                 : ServiceProfile?
+    private var characteristicsDiscoveredCallback       : (() -> ())?
+    private var characteristicDiscoveryTimeoutCallback  : (() -> ())?
+    private var characteristicDiscoveryTimeout          : Float?
 
     // INTERNAL
     internal let perpheral                      : Peripheral
