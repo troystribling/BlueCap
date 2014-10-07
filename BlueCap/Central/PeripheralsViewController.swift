@@ -156,12 +156,12 @@ class PeripheralsViewController : UITableViewController {
             // Region Promiscuous Scan Enabled
             case "Promiscuous" :
                 // Region Promiscuous Scan with Timeout Enabled
-                self.startMonitoringRegions()
                 if ConfigStore.getScanTimeoutEnabled() {
                     RegionScannerator.sharedInstance().startScanning(Float(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                 } else {
                     RegionScannerator.sharedInstance().startScanning(afterPeripheralDiscovered)
                 }
+                self.startMonitoringRegions()
                 break
             // Region Service Scan Enabled
             case "Service" :
@@ -176,6 +176,7 @@ class PeripheralsViewController : UITableViewController {
                     } else {
                         RegionScannerator.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
                     }
+                    self.startMonitoringRegions()
                 }
                 break
             default:

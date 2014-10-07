@@ -128,9 +128,9 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     
     // CLLocationManagerDelegate
     public func locationManager(_:CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
-        Logger.debug("LocationManager#didUpdateLocations")
-        if let locationsUpdateSuccess = self.locationsUpdateSuccess {
-            if let locations = locations {
+        if let locations = locations {
+            Logger.debug("LocationManager#didUpdateLocations")
+            if let locationsUpdateSuccess = self.locationsUpdateSuccess {
                 let cllocations = locations.reduce([CLLocation]()) {(cllocations, location) in
                     if let location = location as? CLLocation {
                         return cllocations + [location]

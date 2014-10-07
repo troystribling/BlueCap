@@ -109,6 +109,7 @@ public class RegionScannerator : TimedScannerator {
         self._isScanning = false
         self.afterTimeout = nil
         self.services = nil
+        self.lastLocation = nil
         CentralManager.sharedInstance().stopScanning()
         self.regionManager.stopUpdatingLocation()
     }
@@ -152,6 +153,13 @@ public class RegionScannerator : TimedScannerator {
             }
         }
         self.regionManager.startMonitoringForRegion(region)
+        if let lastLocation = self.lastLocation {
+            if let enterRegion = region.enterRegion {
+                if region.containsCoordinate(lastLocation.coordinate) {
+                    enterRegion()
+                }
+            }
+        }
     }
     
     public func stopMonitoringForRegion(region:Region) {
