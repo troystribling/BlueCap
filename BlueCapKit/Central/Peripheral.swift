@@ -129,13 +129,15 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     public func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
         Logger.debug("Peripheral#didDiscoverServices")
         self.discoveredServices.removeAll()
-        for cbService : AnyObject in peripheral.services {
-            let bcService = Service(cbService:cbService as CBService, peripheral:self)
-            self.discoveredServices[bcService.uuid] = bcService
-            Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
-        }
-        if let servicesDiscoveredCallback = self.servicesDiscoveredCallback {
-            CentralManager.asyncCallback(servicesDiscoveredCallback)
+        if let cbServices = peripheral.services {
+            for cbService : AnyObject in cbServices {
+                let bcService = Service(cbService:cbService as CBService, peripheral:self)
+                self.discoveredServices[bcService.uuid] = bcService
+                Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+            }
+            if let servicesDiscoveredCallback = self.servicesDiscoveredCallback {
+                CentralManager.asyncCallback(servicesDiscoveredCallback)
+            }
         }
     }
     
@@ -146,36 +148,46 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // characteristics
     public func peripheral(_:CBPeripheral!, didDiscoverCharacteristicsForService service:CBService!, error:NSError!) {
         Logger.debug("Peripheral#didDiscoverCharacteristicsForService")
-        if let bcService = self.discoveredServices[service.UUID] {
-            bcService.didDiscoverCharacteristics()
-            for characteristic : AnyObject in service.characteristics {
-                let cbCharacteristic = characteristic as CBCharacteristic
-                self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+        if let service = service {
+            if let bcService = self.discoveredServices[service.UUID] {
+                if let cbCharacteristic = service.characteristics {
+                    bcService.didDiscoverCharacteristics()
+                    for characteristic : AnyObject in cbCharacteristic {
+                        let cbCharacteristic = characteristic as CBCharacteristic
+                        self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+                    }
+                }
             }
         }
     }
     
     public func peripheral(_:CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
         Logger.debug("Peripheral#didUpdateNotificationStateForCharacteristic")
-        if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
-            Logger.debug("Peripheral#didUpdateNotificationStateForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-            bcCharacteristic.didUpdateNotificationState(error)
+        if let characteristic = characteristic {
+            if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
+                Logger.debug("Peripheral#didUpdateNotificationStateForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                bcCharacteristic.didUpdateNotificationState(error)
+            }
         }
     }
 
     public func peripheral(_:CBPeripheral!, didUpdateValueForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
         Logger.debug("Peripheral#didUpdateValueForCharacteristic")
-        if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
-            Logger.debug("Peripheral#didUpdateValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-            bcCharacteristic.didUpdate(error)
+        if let characteristic = characteristic {
+            if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
+                Logger.debug("Peripheral#didUpdateValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                bcCharacteristic.didUpdate(error)
+            }
         }
     }
 
     public func peripheral(_:CBPeripheral!, didWriteValueForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
         Logger.debug("Peripheral#didWriteValueForCharacteristic")
-        if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
-            Logger.debug("Peripheral#didWriteValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-            bcCharacteristic.didWrite(error)
+        if let characteristic = characteristic {
+            if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
+                Logger.debug("Peripheral#didWriteValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                bcCharacteristic.didWrite(error)
+            }
         }
     }
     

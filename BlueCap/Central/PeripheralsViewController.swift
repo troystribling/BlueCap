@@ -214,7 +214,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func startMonitoringRegions() {
-        RegionScannerator.sharedInstance().distanceFilter = 10.0
+        RegionScannerator.sharedInstance().distanceFilter = 50.0
         for (name, location) in ConfigStore.getScanRegions() {
             RegionScannerator.sharedInstance().startMonitoringForRegion(CircularRegion(center:location, identifier:name) {(region) in
                 region.exitRegion = {

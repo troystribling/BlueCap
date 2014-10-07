@@ -60,14 +60,16 @@ public class Service : NSObject {
     
     internal func didDiscoverCharacteristics() {
         self.discoveredCharacteristics.removeAll()
-        for cbCharacteristic : AnyObject in self.cbService.characteristics {
-            let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic as CBCharacteristic, service:self)
-            self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-            bcCharacteristic.didDiscover()
-            Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-        }
-        if let characteristicsDiscoveredCallback = self.characteristicsDiscoveredCallback {
-            CentralManager.asyncCallback(characteristicsDiscoveredCallback)
+        if let cbCharacteristics = self.cbService.characteristics {
+            for cbCharacteristic : AnyObject in cbCharacteristics {
+                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic as CBCharacteristic, service:self)
+                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+                bcCharacteristic.didDiscover()
+                Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            }
+            if let characteristicsDiscoveredCallback = self.characteristicsDiscoveredCallback {
+                CentralManager.asyncCallback(characteristicsDiscoveredCallback)
+            }
         }
     }
 }
