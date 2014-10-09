@@ -452,6 +452,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Beacons" id="dz5-xh-YPo">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="8lV-VR-wI3">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <segue destination="9v2-Hm-PfD" kind="push" identifier="PeripheralManagerAddBeacon" id="25n-i9-EBa"/>
                             </connections>
@@ -573,6 +574,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Advertised Services" id="Wkv-6I-N3N">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="9LH-8l-SJ5">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <segue destination="lD9-bb-G98" kind="push" identifier="PeripheralManagerAddAdvertisedService" id="4Bd-ec-GDk"/>
                             </connections>
@@ -1714,6 +1716,8 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="5ws-Jj-Ebj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.16470588743686676" green="0.55294120311737061" blue="0.79607850313186646" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <connections>
                         <segue destination="z0r-2o-HqO" kind="relationship" relationship="rootViewController" id="kCL-F7-dL4"/>
@@ -2275,6 +2279,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Values" id="kKL-KP-SaW">
                         <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="Ujk-4y-jRa">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="updateValues" destination="ljK-JQ-Agv" id="oTf-Ab-MDv"/>
                             </connections>
@@ -2498,8 +2503,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Beacon Reagions" id="RkV-qn-VFl">
-                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="qS8-SH-AhK"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="refresh" id="qS8-SH-AhK">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="4iH-uT-jZV">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <segue destination="odx-cy-OyH" kind="push" identifier="BeaconRegionAdd" id="vhM-yw-b5Q"/>
                             </connections>
@@ -2668,6 +2676,8 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="QcJ-Mm-AxF">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.0" green="0.55294117647058827" blue="0.82745098039215681" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <connections>
                         <segue destination="U1h-CL-I2C" kind="relationship" relationship="rootViewController" id="c9S-ea-p12"/>
@@ -3285,6 +3295,8 @@
                     <tabBarItem key="tabBarItem" title="Profiles" image="Profiles" id="UGG-m5-JJE"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="i9N-nT-Ltn">
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.0" green="0.55294117647058827" blue="0.82745098039215681" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <connections>
                         <segue destination="zEN-c1-NRB" kind="relationship" relationship="rootViewController" id="tVV-ZI-QZ3"/>
@@ -3329,6 +3341,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Peripherals" id="xb1-g8-yQe">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="a6e-mB-PGf">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <segue destination="CAb-bN-tC0" kind="push" identifier="PeripheralManagerAdd" id="DCa-OL-k6g"/>
                             </connections>
@@ -3339,14 +3352,16 @@
             </objects>
             <point key="canvasLocation" x="1218" y="927"/>
         </scene>
-        <!--Peripherals-->
+        <!--Peripheral-->
         <scene sceneID="g5Y-hy-or4">
             <objects>
                 <navigationController id="2ap-Lu-enV" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Peripherals" image="Peripheral" id="J1A-Yk-x4z"/>
+                    <tabBarItem key="tabBarItem" title="Peripheral" image="Peripheral" id="J1A-Yk-x4z"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="hNt-X7-Yfh">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.0" green="0.55294117647058827" blue="0.82745098039215681" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <connections>
                         <segue destination="p2y-aw-7Yl" kind="relationship" relationship="rootViewController" id="3DM-Rb-8RB"/>
@@ -3365,6 +3380,7 @@
                         <rect key="frame" x="129" y="330" width="163" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="selectedImageTintColor" red="0.0" green="0.55294117647058827" blue="0.82745098039215681" alpha="1" colorSpace="deviceRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="ekL-3M-31h" kind="relationship" relationship="viewControllers" id="h88-ZA-rxW"/>
@@ -3386,6 +3402,8 @@
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4Qv-4W-Kpb">
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.08235294371843338" green="0.58823531866073608" blue="0.83137261867523193" alpha="1" colorSpace="deviceRGB"/>
                     </navigationBar>
                     <connections>
                         <segue destination="Iax-qU-br4" kind="relationship" relationship="rootViewController" id="A8z-z0-YdY"/>
@@ -3398,7 +3416,7 @@
     </scenes>
     <resources>
         <image name="Beacons" width="28" height="28"/>
-        <image name="Central" width="30" height="30"/>
+        <image name="Central" width="32" height="32"/>
         <image name="Configure" width="26" height="26"/>
         <image name="Peripheral" width="24" height="20"/>
         <image name="Profiles" width="26" height="22"/>

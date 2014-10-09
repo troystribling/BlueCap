@@ -27,6 +27,8 @@ class PeripheralsViewController : UITableViewController {
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleScan:")
         self.startScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Refresh, target:self, action:"toggleScan:")
+        self.stopScanBarButtonItem.tintColor = UIColor.blackColor()
+        self.startScanBarButtonItem.tintColor = UIColor.blackColor()
     }
     
     override func viewDidLoad() {
