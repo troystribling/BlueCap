@@ -18,6 +18,13 @@ struct BCError {
         static let code = 2
         static let description = "Characteristic write timeout"
     }
-
+    struct PeripheralDisconnected {
+        static let code = 3
+        static let description = "Peripheral Disconnected"
+    }
+    struct ServiceDiscoveryTimeout {
+        static let code = 4
+        static let description = "Service Discovery Timeout"
+    }
 }
 

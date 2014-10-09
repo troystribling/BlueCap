@@ -118,7 +118,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        peripheral.connect(Connectorator(){(connectorator:Connectorator) -> () in
+        peripheral.connect(connectorator:Connectorator(){(connectorator:Connectorator) -> () in
             connectorator.disconnect = {(periphearl:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onDisconnect")
                 Notify.withMessage("Disconnected peripheral '\(peripheral.name)'")

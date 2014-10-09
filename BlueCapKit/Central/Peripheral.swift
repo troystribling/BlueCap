@@ -19,8 +19,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // PRIVATE
     private let PERIPHERAL_CONNECTION_TIMEOUT : Float  = 10.0
 
-    private var servicesDiscoveredCallback          : (() -> ())?
-    private var serviceDiscoveryTimeoutCallback     : (() -> ())?
+    private var servicesDiscoveredSuccessCallback   : (() -> ())?
+    private var serviceDiscoveryFailedCallback      : ((error:NSError!) -> ())?
     private var peripheralDiscoveredCallback        : (() -> ())?
     private var peripheralDiscoveryTimeoutCallback  : (() -> ())?
     private var serviceDiscoveryTimeout             : Float?
@@ -79,13 +79,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
      
-    public func connect() {
-        Logger.debug("Peripheral#connect")
-        self.connectorator = nil
-        self.reconnect()
-    }
-    
-    public func connect(connectorator:Connectorator) {
+    public func connect(connectorator:Connectorator?=nil) {
         Logger.debug("Peripheral#connect")
         self.connectorator = connectorator
         self.reconnect()
@@ -100,30 +94,38 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // service discovery
-    public func discoverAllServices(servicesDiscoveredCallback:()->()) {
+    public func discoverAllServices(servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())?=nil) {
         Logger.debug("Peripheral#discoverAllServices")
-        self.servicesDiscoveredCallback = servicesDiscoveredCallback
-        self.serviceDiscoveryTimeoutCallback = nil
+        self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
+        self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
         self.serviceDiscoveryTimeout = nil
-        self.cbPeripheral.discoverServices(nil)
+        self.discoverIfConnected(nil)
     }
 
-    public func discoverAllServicesWithTimeout(timeout:Float, servicesDiscoveredCallback:()->(), serviceDiscoveryTimeoutCallback:()->()) {
+    public func discoverAllServicesWithTimeout(timeout:Float, servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:(error:NSError!) -> ()) {
         Logger.debug("Peripheral#discoverAllServicesWithTimeout")
-        self.servicesDiscoveredCallback = servicesDiscoveredCallback
-        self.serviceDiscoveryTimeoutCallback = serviceDiscoveryTimeoutCallback
+        self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
+        self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
         self.serviceDiscoveryTimeout = timeout
-        self.cbPeripheral.discoverServices(nil)
+        self.discoverIfConnected(nil)
     }
 
-    public func discoverServices(services:[CBUUID]!, servicesDiscoveredCallback:()->()) {
+    public func discoverServices(services:[CBUUID]!, servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())?=nil) {
         Logger.debug("Peripheral#discoverAllServices")
-        self.servicesDiscoveredCallback = servicesDiscoveredCallback
-        self.serviceDiscoveryTimeoutCallback = nil
+        self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
+        self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
         self.serviceDiscoveryTimeout = nil
-        self.cbPeripheral.discoverServices(services)
+        self.discoverIfConnected(services)
     }
-    
+
+    public func discoverServicesWithTimeout(timeout:Float, services:[CBUUID]!, servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:(error:NSError!) -> ()) {
+        Logger.debug("Peripheral#discoverAllServicesWithTimeout")
+        self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
+        self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
+        self.serviceDiscoveryTimeout = timeout
+        self.discoverIfConnected(nil)
+    }
+
     public func discoverPeripheral(peripheralDiscovered:(error:NSError!)->()) {
     }
     
@@ -147,8 +149,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 self.discoveredServices[bcService.uuid] = bcService
                 Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
             }
-            if let servicesDiscoveredCallback = self.servicesDiscoveredCallback {
-                CentralManager.asyncCallback(servicesDiscoveredCallback)
+            if let servicesDiscoveredSuccessCallback = self.servicesDiscoveredSuccessCallback {
+                CentralManager.asyncCallback(servicesDiscoveredSuccessCallback)
             }
         }
     }
@@ -227,6 +229,17 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 central.cancelPeripheralConnection(self)
             } else {
                 Logger.debug("Peripheral#timeoutConnection: expired")
+            }
+        }
+    }
+    
+    private func discoverIfConnected(services:[CBUUID]!) {
+        if self.state == .Connected {
+            self.cbPeripheral.discoverServices(services)
+        } else {
+            if let serviceDiscoveryFailedCallback = self.serviceDiscoveryFailedCallback {
+                CentralManager.asyncCallback(){serviceDiscoveryFailedCallback(error:
+                    NSError.errorWithDomain(BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
             }
         }
     }

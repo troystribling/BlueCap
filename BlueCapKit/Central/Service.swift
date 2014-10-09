@@ -12,10 +12,10 @@ import CoreBluetooth
 public class Service : NSObject {
     
     // PRIVATE
-    private let profile                                 : ServiceProfile?
-    private var characteristicsDiscoveredCallback       : (() -> ())?
-    private var characteristicDiscoveryTimeoutCallback  : (() -> ())?
-    private var characteristicDiscoveryTimeout          : Float?
+    private let profile                                     : ServiceProfile?
+    private var characteristicsDiscoveredSuccessCallback    : (() -> ())?
+    private var characteristicDiscoveryFailedCallback       : ((error:NSError!) -> ())?
+    private var characteristicDiscoveryTimeout              : Float?
 
     // INTERNAL
     internal let perpheral                      : Peripheral
@@ -41,15 +41,15 @@ public class Service : NSObject {
     }
     
     // PUBLIC
-    public func discoverAllCharacteristics(characteristicsDiscoveredCallback:() -> ()) {
+    public func discoverAllCharacteristics(characteristicsDiscoveredSuccessCallback:() -> ()) {
         Logger.debug("Service#discoverAllCharacteristics")
-        self.characteristicsDiscoveredCallback = characteristicsDiscoveredCallback
+        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
         self.perpheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
     }
     
-    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscovered:() -> ()) {
+    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscoveredSuccessCallback:() -> ()) {
         Logger.debug("Service#discoverCharacteristics")
-        self.characteristicsDiscoveredCallback = characteristicsDiscovered
+        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
         self.perpheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)
     }
     
@@ -69,8 +69,8 @@ public class Service : NSObject {
                 bcCharacteristic.didDiscover()
                 Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
             }
-            if let characteristicsDiscoveredCallback = self.characteristicsDiscoveredCallback {
-                CentralManager.asyncCallback(characteristicsDiscoveredCallback)
+            if let characteristicsDiscoveredSuccessCallback = self.characteristicsDiscoveredSuccessCallback {
+                CentralManager.asyncCallback(characteristicsDiscoveredSuccessCallback)
             }
         }
     }

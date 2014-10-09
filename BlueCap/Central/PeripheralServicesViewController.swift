@@ -27,10 +27,12 @@ class PeripheralServicesViewController : UITableViewController {
         if let peripheral = self.peripheral {
             let progressView = ProgressView()
             progressView.show()
-            peripheral.discoverAllServices(){
-                self.tableView.reloadData()
-                progressView.remove()
-            }
+            peripheral.discoverAllServices({
+                    self.tableView.reloadData()
+                    progressView.remove()},
+                serviceDiscoveryFailedCallback:{(error) in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }

@@ -81,7 +81,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
                 characteristic.startUpdates({
-                    self.updateWhenActive()
+                        self.updateWhenActive()
                     },
                     afterUpdateFailedCallback:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
