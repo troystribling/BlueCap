@@ -94,7 +94,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // service discovery
-    public func discoverAllServices(servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())?=nil) {
+    public func discoverAllServices(servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
         Logger.debug("Peripheral#discoverAllServices")
         self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
         self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
@@ -110,7 +110,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self.discoverIfConnected(nil)
     }
 
-    public func discoverServices(services:[CBUUID]!, servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())?=nil) {
+    public func discoverServices(services:[CBUUID]!, servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
         Logger.debug("Peripheral#discoverAllServices")
         self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
         self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
@@ -247,6 +247,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // INTERNAL
     internal func didDisconnectPeripheral() {
         Logger.debug("Peripheral#didDisconnectPeripheral")
+        self.discoveredServices.removeAll()
+        self.discoveredCharacteristics.removeAll()
         if let connectorator = self.connectorator {
             if (self.forcedDisconnect) {
                 CentralManager.asyncCallback() {

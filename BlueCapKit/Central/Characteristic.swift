@@ -82,7 +82,7 @@ public class Characteristic {
         if self.propertyEnabled(.Notify) {
             self.notificationStateChangedSuccessCallback = notificationStateChangedSuccessCallback
             self.notificationStateChangedFailedCallback = notificationStateChangedFailedCallback
-            self.service.perpheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
+            self.service.peripheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
         }
     }
 
@@ -90,7 +90,7 @@ public class Characteristic {
         if self.propertyEnabled(.Notify) {
             self.notificationStateChangedSuccessCallback = notificationStateChangedSuccessCallback
             self.notificationStateChangedFailedCallback = notificationStateChangedFailedCallback
-            self.service.perpheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
+            self.service.peripheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
         }
     }
 
@@ -117,7 +117,7 @@ public class Characteristic {
             Logger.debug("Characteristic#read: \(self.uuid.UUIDString)")
             self.afterUpdateSuccessCallback = afterReadSuccessCallback
             self.afterUpdateFailedCallback = afterReadFailedCallback
-            self.service.perpheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
+            self.service.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
             self.reading = true
             ++self.readSequence
             self.timeoutRead(self.readSequence)
@@ -131,7 +131,7 @@ public class Characteristic {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.afterWriteSuccessCallback = afterWriteSucessCallback
             self.afterWriteFailedCallback = afterWriteFailedCallback
-            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
+            self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
             self.writing = true
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
@@ -145,7 +145,7 @@ public class Characteristic {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.afterWriteSuccessCallback = nil
             self.afterWriteFailedCallback = afterWriteFailedCallback
-            self.service.perpheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
+            self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
             self.writing = true
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)

@@ -18,7 +18,7 @@ public class Service : NSObject {
     private var characteristicDiscoveryTimeout              : Float?
 
     // INTERNAL
-    internal let perpheral                      : Peripheral
+    internal let peripheral                     : Peripheral
     internal let cbService                      : CBService
     
     internal var discoveredCharacteristics      = Dictionary<CBUUID, Characteristic>()
@@ -41,22 +41,54 @@ public class Service : NSObject {
     }
     
     // PUBLIC
-    public func discoverAllCharacteristics(characteristicsDiscoveredSuccessCallback:() -> ()) {
+    public func discoverAllCharacteristics(characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
         Logger.debug("Service#discoverAllCharacteristics")
         self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
-        self.perpheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
+        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
+        self.characteristicDiscoveryTimeout = nil
+        self.discoverIfConnected(nil)
     }
-    
-    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscoveredSuccessCallback:() -> ()) {
+
+    public func discoverAllCharacteristicsWithTimeout(timeout:Float, characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:(error:NSError!) -> ()) {
+        Logger.debug("Service#discoverAllCharacteristics")
+        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
+        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
+        self.characteristicDiscoveryTimeout = timeout
+        self.discoverIfConnected(nil)
+    }
+
+    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
         Logger.debug("Service#discoverCharacteristics")
         self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
-        self.perpheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)
+        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
+        self.characteristicDiscoveryTimeout = nil
+        self.discoverIfConnected(characteristics)
     }
-    
+
+    public func discoverCharacteristicsWithTimeout(timeout:Float, characteristics:[CBUUID], characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
+        Logger.debug("Service#discoverCharacteristics")
+        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
+        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
+        self.characteristicDiscoveryTimeout = timeout
+        self.discoverIfConnected(characteristics)
+    }
+
+    // PRIVATE
+    private func discoverIfConnected(services:[CBUUID]!) {
+        if self.peripheral.state == .Connected {
+            self.peripheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
+        } else {
+            if let characteristicDiscoveryFailedCallback = self.characteristicDiscoveryFailedCallback {
+                CentralManager.asyncCallback(){characteristicDiscoveryFailedCallback(error:
+                    NSError.errorWithDomain(BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
+            }
+        }
+    }
+
     // INTERNAL
     internal init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
-        self.perpheral = peripheral
+        self.peripheral = peripheral
         self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
     }
     

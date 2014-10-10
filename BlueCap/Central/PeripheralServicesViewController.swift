@@ -50,6 +50,10 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
+    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+        return peripheral?.services.count > 0
+    }
+    
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

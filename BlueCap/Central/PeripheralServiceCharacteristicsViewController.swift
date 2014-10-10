@@ -28,10 +28,14 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             self.navigationItem.title = service.name
             let progressView = ProgressView()
             progressView.show()
-            service.discoverAllCharacteristics(){
-                self.tableView.reloadData()
-                progressView.remove()
-            }
+            service.discoverAllCharacteristics({
+                    self.tableView.reloadData()
+                    progressView.remove()},
+                characteristicDiscoveryFailedCallback:{(error) in
+                    progressView.remove()
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.navigationController?.popViewControllerAnimated(true)
+                })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
