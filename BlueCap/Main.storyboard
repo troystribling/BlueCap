@@ -3376,10 +3376,11 @@
             <objects>
                 <tabBarController definesPresentationContext="YES" id="Gm5-G9-oBc" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="duC-6S-kA2">
+                    <tabBar key="tabBar" contentMode="scaleToFill" selectionIndicatorImage="Beacons" id="duC-6S-kA2">
                         <rect key="frame" x="129" y="330" width="163" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" red="0.0" green="0.55294117647058827" blue="0.82745098039215681" alpha="1" colorSpace="deviceRGB"/>
                         <color key="selectedImageTintColor" red="0.0" green="0.55294117647058827" blue="0.82745098039215681" alpha="1" colorSpace="deviceRGB"/>
                     </tabBar>
                     <connections>
@@ -3415,11 +3416,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Beacons" width="28" height="28"/>
+        <image name="Beacons" width="32" height="32"/>
         <image name="Central" width="32" height="32"/>
-        <image name="Configure" width="26" height="26"/>
-        <image name="Peripheral" width="24" height="20"/>
-        <image name="Profiles" width="26" height="22"/>
+        <image name="Configure" width="32" height="32"/>
+        <image name="Peripheral" width="32" height="32"/>
+        <image name="Profiles" width="32" height="32"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

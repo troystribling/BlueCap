@@ -3,15 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "77-ekg.png"
+      "filename" : "bullet_list-1.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "bullet_list@2x.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x"
+      "scale" : "3x",
+      "filename" : "bullet_list.png"
     }
   ],
   "info" : {
