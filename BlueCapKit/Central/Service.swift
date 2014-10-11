@@ -15,7 +15,6 @@ public class Service : NSObject {
     private let profile                                     : ServiceProfile?
     private var characteristicsDiscoveredSuccessCallback    : (() -> ())?
     private var characteristicDiscoveryFailedCallback       : ((error:NSError!) -> ())?
-    private var characteristicDiscoveryTimeout              : Float?
 
     // INTERNAL
     internal let peripheral                     : Peripheral
@@ -45,15 +44,6 @@ public class Service : NSObject {
         Logger.debug("Service#discoverAllCharacteristics")
         self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
         self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
-        self.characteristicDiscoveryTimeout = nil
-        self.discoverIfConnected(nil)
-    }
-
-    public func discoverAllCharacteristicsWithTimeout(timeout:Float, characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:(error:NSError!) -> ()) {
-        Logger.debug("Service#discoverAllCharacteristics")
-        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
-        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
-        self.characteristicDiscoveryTimeout = timeout
         self.discoverIfConnected(nil)
     }
 
@@ -61,15 +51,6 @@ public class Service : NSObject {
         Logger.debug("Service#discoverCharacteristics")
         self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
         self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
-        self.characteristicDiscoveryTimeout = nil
-        self.discoverIfConnected(characteristics)
-    }
-
-    public func discoverCharacteristicsWithTimeout(timeout:Float, characteristics:[CBUUID], characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
-        Logger.debug("Service#discoverCharacteristics")
-        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
-        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
-        self.characteristicDiscoveryTimeout = timeout
         self.discoverIfConnected(characteristics)
     }
 
