@@ -225,11 +225,15 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
+    private func clearAll() {
+        self.discoveredServices.removeAll()
+        self.discoveredCharacteristics.removeAll()
+    }
+    
     // INTERNAL
     internal func didDisconnectPeripheral() {
         Logger.debug("Peripheral#didDisconnectPeripheral")
-        self.discoveredServices.removeAll()
-        self.discoveredCharacteristics.removeAll()
+        self.clearAll()
         if let connectorator = self.connectorator {
             if (self.forcedDisconnect) {
                 CentralManager.asyncCallback() {
