@@ -30,6 +30,31 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func peripheralDisconnected() {
+        Logger.debug("PeripheralServiceCharacteristicEditValueViewController#peripheralDisconnected")
+    }
+
+    func didResignActive() {
+        self.navigationController?.popToRootViewControllerAnimated(false)
+        Logger.debug("PeripheralServiceCharacteristicEditValueViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralServiceCharacteristicEditValueViewController#didBecomeActive")
+    }
+
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {

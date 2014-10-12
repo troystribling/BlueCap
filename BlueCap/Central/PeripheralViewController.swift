@@ -24,6 +24,18 @@ class PeripheralViewController : UITableViewController {
         super.init(coder:aDecoder)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let peripheral = self.peripheral {
@@ -48,6 +60,17 @@ class PeripheralViewController : UITableViewController {
         }
     }
     
-    // PRIVATE INTERFACE
+    func peripheralDisconnected() {        
+        Logger.debug("PeripheralViewController#peripheralDisconnected")
+    }
     
+    func didResignActive() {
+        Logger.debug("PeripheralViewController#didResignActive")
+        self.navigationController?.popToRootViewControllerAnimated(false)
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralViewController#didBecomeActive")
+    }
+
 }

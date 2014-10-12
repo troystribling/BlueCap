@@ -31,7 +31,32 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    }
+
+    func peripheralDisconnected() {
+        Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#peripheralDisconnected")
+    }
+
+    func didResignActive() {
+        self.navigationController?.popToRootViewControllerAnimated(false)
+        Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#didBecomeActive")
     }
 
     func writeComplete() {

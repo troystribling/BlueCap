@@ -85,10 +85,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public func disconnect() {
+        self.forcedDisconnect = true
         if self.state == .Connected {
-            self.forcedDisconnect = true
             Logger.debug("Peripheral#disconnect")
             CentralManager.sharedInstance().cancelPeripheralConnection(self)
+        } else {
+            self.didDisconnectPeripheral()
         }
     }
     
@@ -236,9 +238,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self.clearAll()
         if let connectorator = self.connectorator {
             if (self.forcedDisconnect) {
+                self.forcedDisconnect = false
                 CentralManager.asyncCallback() {
                     Logger.debug("Peripheral#didFailToConnectPeripheral: forced disconnect")
-                    CentralManager.sharedInstance().discoveredPeripherals.removeAll(keepCapacity:false)
+                    CentralManager.sharedInstance().discoveredPeripherals.removeValueForKey(self.cbPeripheral)
                     connectorator.didForceDisconnect(self)
                 }
             } else {

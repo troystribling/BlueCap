@@ -36,6 +36,17 @@ class PeripheralsViewController : UITableViewController {
         self.setScanButton()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -109,6 +120,15 @@ class PeripheralsViewController : UITableViewController {
     }
     
     // utils
+    func didResignActive() {
+        Logger.debug("PeripheralsViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralsViewController#didBecomeActive")
+        self.tableView.reloadData()
+    }
+    
     func setScanButton() {
         if CentralManager.sharedInstance().isScanning || RegionScannerator.sharedInstance().isScanning || TimedScannerator.sharedInstance().isScanning {
             self.navigationItem.setRightBarButtonItem(self.stopScanBarButtonItem, animated:false)
@@ -123,6 +143,7 @@ class PeripheralsViewController : UITableViewController {
                 Logger.debug("PeripheralsViewController#onDisconnect")
                 Notify.withMessage("Disconnected peripheral '\(peripheral.name)'")
                 peripheral.reconnect()
+                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
             connectorator.connect = {(peipheral:Peripheral) -> () in
@@ -133,11 +154,13 @@ class PeripheralsViewController : UITableViewController {
             connectorator.timeout = {(peripheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onTimeout")
                 peripheral.reconnect()
+                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
             connectorator.forceDisconnect = {(peripheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onForcedDisconnect")
                 Notify.withMessage("Force disconnection of peripheral '\(peripheral.name)'")
+                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
         })

@@ -9,6 +9,13 @@
 import UIKit
 import BlueCapKit
 
+struct BlueCapNotification {
+    static let peripheralDisconnected   = "PeripheralDisconnected"
+    static let didBecomeActive          = "DidBecomeActive"
+    static let didResignActive          = "DidResignActive"
+}
+
+
 @UIApplicationMain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -31,6 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(application: UIApplication) {
         NSUserDefaults.standardUserDefaults().synchronize()
+        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didResignActive, object:nil)
     }
 
     func applicationWillEnterForeground(application: UIApplication) {
@@ -38,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(application: UIApplication) {
         Notify.resetEventCount()
+        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didBecomeActive, object:nil)
     }
 
     func applicationWillTerminate(application: UIApplication) {

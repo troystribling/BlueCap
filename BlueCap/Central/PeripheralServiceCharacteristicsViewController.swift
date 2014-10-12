@@ -40,6 +40,18 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicSegue {
             if let service = self.service {
@@ -50,6 +62,20 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             }
         }
     }
+    
+    func peripheralDisconnected() {
+        Logger.debug("PeripheralServiceCharacteristicsViewController#peripheralDisconnected")
+    }
+    
+    func didResignActive() {
+        self.navigationController?.popToRootViewControllerAnimated(false)
+        Logger.debug("PeripheralServiceCharacteristicsViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralServiceCharacteristicsViewController#didBecomeActive")
+    }
+
     
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {

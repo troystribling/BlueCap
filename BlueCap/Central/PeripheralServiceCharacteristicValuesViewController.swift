@@ -42,6 +42,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func viewDidAppear(animated:Bool)  {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
         self.updateValues()
     }
     
@@ -51,6 +54,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 characteristic.stopUpdates()
             }
         }
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
@@ -97,6 +101,19 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                     })
             }
         }
+    }
+    
+    func peripheralDisconnected() {
+        Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
+    }
+
+    func didResignActive() {
+        self.navigationController?.popToRootViewControllerAnimated(false)
+       Logger.debug("PeripheralServiceCharacteristicValuesViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralServiceCharacteristicValuesViewController#didBecomeActive")
     }
 
     // UITableViewDataSource
