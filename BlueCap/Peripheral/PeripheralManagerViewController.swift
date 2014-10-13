@@ -76,7 +76,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
         if let peripheral = self.peripheral {
-            return !PeripheralManager.sharedInstance().isPoweredOn
+            return !PeripheralManager.sharedInstance().isAdvertising
         } else {
             return false
         }
@@ -170,20 +170,27 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(true, animated:true)
                 self.nameTextField.enabled = false
+                self.beaconLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
+                self.advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
+                self.servicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
+                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
             } else {
                 self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                self.beaconLabel.textColor = UIColor.blackColor()
+                self.advertisedServicesLabel.textColor = UIColor.blackColor()
+                self.servicesLabel.textColor = UIColor.blackColor()
                 self.navigationItem.setHidesBackButton(false, animated:true)
-                self.nameTextField.enabled = true
-            }
-            if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
-                if PeripheralStore.getBeaconEnabled(peripheral) {
-                    self.advertisedBeaconButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+                if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
+                    if PeripheralStore.getBeaconEnabled(peripheral) {
+                        self.advertisedBeaconButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
+                    } else {
+                        self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                    }
                 } else {
-                    self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                    self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
+                    self.advertisedBeaconButton.enabled = false
                 }
-            } else {
-                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
-                self.advertisedBeaconButton.enabled = false
+                self.nameTextField.enabled = true
             }
         } else {
             self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)

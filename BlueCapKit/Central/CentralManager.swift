@@ -63,6 +63,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
+    public func removeAllPeripherals() {
+        self.discoveredPeripherals.removeAll(keepCapacity:false)
+    }
+    
     // connection
     public func disconnectAllPeripherals() {
         Logger.debug("CentralManager#disconnectAllPeripherals")

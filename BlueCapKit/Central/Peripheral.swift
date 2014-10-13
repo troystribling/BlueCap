@@ -241,7 +241,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 self.forcedDisconnect = false
                 CentralManager.asyncCallback() {
                     Logger.debug("Peripheral#didFailToConnectPeripheral: forced disconnect")
-                    CentralManager.sharedInstance().discoveredPeripherals.removeValueForKey(self.cbPeripheral)
                     connectorator.didForceDisconnect(self)
                 }
             } else {
