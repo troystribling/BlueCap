@@ -34,11 +34,14 @@ class BeaconsViewController: UITableViewController {
         } else {
             self.navigationItem.title = "Beacons"
         }
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
@@ -57,6 +60,15 @@ class BeaconsViewController: UITableViewController {
         } else {
             return false
         }
+    }
+    
+    func didResignActive() {
+        Logger.debug("BeaconRegionsViewController#didResignActive")
+        self.navigationController?.popToRootViewControllerAnimated(false)
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("BeaconRegionsViewController#didBecomeActive")
     }
     
     // UITableViewDataSource

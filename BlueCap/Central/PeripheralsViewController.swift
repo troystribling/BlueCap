@@ -95,30 +95,6 @@ class PeripheralsViewController : UITableViewController {
         }
     }
     
-    // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
-        return 1
-    }
-    
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return CentralManager.sharedInstance().peripherals.count
-    }
-    
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
-        let peripheral = CentralManager.sharedInstance().peripherals[indexPath.row]
-        cell.nameLabel.text = peripheral.name
-        switch(peripheral.state) {
-        case .Connected:
-            cell.connectingActivityIndicator.stopAnimating()
-            cell.accessoryType = .DetailButton
-        default:
-            cell.connectingActivityIndicator.startAnimating()
-            cell.accessoryType = .None
-        }
-        return cell
-    }
-    
     // utils
     func didResignActive() {
         Logger.debug("PeripheralsViewController#didResignActive")
@@ -163,7 +139,7 @@ class PeripheralsViewController : UITableViewController {
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
-        })
+            })
     }
     
     func startScan() {
@@ -178,7 +154,7 @@ class PeripheralsViewController : UITableViewController {
         // Region Scan Enabled
         if ConfigStore.getRegionScanEnabled() {
             switch scanMode {
-            // Region Promiscuous Scan Enabled
+                // Region Promiscuous Scan Enabled
             case "Promiscuous" :
                 // Region Promiscuous Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
@@ -188,7 +164,7 @@ class PeripheralsViewController : UITableViewController {
                 }
                 self.startMonitoringRegions()
                 break
-            // Region Service Scan Enabled
+                // Region Service Scan Enabled
             case "Service" :
                 let scannedServices = ConfigStore.getScannedServiceUUIDs()
                 if scannedServices.isEmpty {
@@ -252,7 +228,7 @@ class PeripheralsViewController : UITableViewController {
                 region.startMonitoringRegion = {
                     Logger.debug("Started Monitoring Region: \(name)")
                 }
-            })
+                })
         }
     }
     
@@ -261,5 +237,30 @@ class PeripheralsViewController : UITableViewController {
             RegionScannerator.sharedInstance().stopMonitoringForRegion(region)
         }
     }
+
+    // UITableViewDataSource
+    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+        return 1
+    }
+    
+    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
+        return CentralManager.sharedInstance().peripherals.count
+    }
+    
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
+        let peripheral = CentralManager.sharedInstance().peripherals[indexPath.row]
+        cell.nameLabel.text = peripheral.name
+        switch(peripheral.state) {
+        case .Connected:
+            cell.connectingActivityIndicator.stopAnimating()
+            cell.accessoryType = .DetailButton
+        default:
+            cell.connectingActivityIndicator.startAnimating()
+            cell.accessoryType = .None
+        }
+        return cell
+    }
+    
 
 }

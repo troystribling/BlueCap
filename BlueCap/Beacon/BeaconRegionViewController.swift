@@ -31,6 +31,26 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         }
     }
 
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func didResignActive() {
+        Logger.debug("BeaconRegionsViewController#didResignActive")
+        self.navigationController?.popToRootViewControllerAnimated(false)
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("BeaconRegionsViewController#didBecomeActive")
+    }
+
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         self.nameTextField.resignFirstResponder()

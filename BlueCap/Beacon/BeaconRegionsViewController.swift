@@ -42,11 +42,14 @@ class BeaconRegionsViewController: UITableViewController {
         self.tableView.reloadData()
         self.navigationItem.title = "Beacon Regions"
         self.setScanButton()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
         self.beaconsViewController = nil
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
         self.navigationItem.title = ""
     }
     
@@ -139,6 +142,15 @@ class BeaconRegionsViewController: UITableViewController {
         if UIApplication.sharedApplication().applicationState == .Active {
             self.tableView.reloadData()
         }
+    }
+
+    func didResignActive() {
+        Logger.debug("BeaconRegionsViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("BeaconRegionsViewController#didBecomeActive")
+        self.tableView.reloadData()
     }
 
     // UITableViewDataSource
