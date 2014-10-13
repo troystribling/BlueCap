@@ -303,7 +303,9 @@
                         <outlet property="advertisedBeaconButton" destination="pXL-7P-0gs" id="wYU-mA-el5"/>
                         <outlet property="advertisedBeaconLabel" destination="dAO-KR-e1W" id="Mex-Eb-85N"/>
                         <outlet property="advertisedServicesLabel" destination="Nl4-1O-xwR" id="eQY-aK-LBr"/>
+                        <outlet property="beaconLabel" destination="eVO-L6-T7V" id="cTO-dH-TQn"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
+                        <outlet property="servicesLabel" destination="wDR-Ed-JgW" id="qYb-vj-2Ei"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UMo-vV-JBu" userLabel="First Responder" sceneMemberID="firstResponder"/>

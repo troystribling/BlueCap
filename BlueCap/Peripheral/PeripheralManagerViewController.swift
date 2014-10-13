@@ -17,6 +17,8 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBOutlet var advertisedBeaconButton    : UIButton!
     @IBOutlet var advertisedBeaconLabel     : UILabel!
     @IBOutlet var advertisedServicesLabel   : UILabel!
+    @IBOutlet var servicesLabel             : UILabel!
+    @IBOutlet var beaconLabel               : UILabel!
 
     struct MainStoryboard {
         static let peripheralManagerServicesSegue           = "PeripheralManagerServices"
@@ -74,12 +76,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
         if let peripheral = self.peripheral {
-            if identifier == MainStoryboard.peripheralManagerServicesSegue {
-                let manager = PeripheralManager.sharedInstance()
-                return manager.isPoweredOn
-            } else {
-                return true
-            }
+            return !PeripheralManager.sharedInstance().isPoweredOn
         } else {
             return false
         }
