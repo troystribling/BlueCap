@@ -129,7 +129,9 @@ class BeaconRegionsViewController: UITableViewController {
                     }
                     if UIApplication.sharedApplication().applicationState == .Active {
                         if let beaconsViewController = self.beaconsViewController {
-                            beaconsViewController.updateBeacons(beacons)
+                            if beaconsViewController.beaconRegion == beaconRegion.identifier {
+                                beaconsViewController.updateBeacons(beacons)
+                            }
                         }
                     }
                 }

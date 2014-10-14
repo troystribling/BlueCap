@@ -11,6 +11,7 @@ import BlueCapKit
 
 struct BlueCapNotification {
     static let peripheralDisconnected   = "PeripheralDisconnected"
+    static let didUpdateBeacon          = "DidUpdateBeacon"
     static let didBecomeActive          = "DidBecomeActive"
     static let didResignActive          = "DidResignActive"
 }

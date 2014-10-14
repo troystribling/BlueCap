@@ -174,6 +174,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 self.advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
                 self.servicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
                 self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
+                self.advertisedBeaconButton.enabled = false
             } else {
                 self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
                 self.beaconLabel.textColor = UIColor.blackColor()
