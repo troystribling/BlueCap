@@ -438,7 +438,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vwx-Gg-IzB">
-                                            <rect key="frame" x="20" y="56" width="48" height="22"/>
+                                            <rect key="frame" x="20" y="55" width="48" height="22"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -450,39 +450,39 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="major:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yyz-Oc-J6q">
-                                            <rect key="frame" x="20" y="19" width="48" height="21"/>
+                                            <rect key="frame" x="20" y="18" width="48" height="21"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="13"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="minor:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Din-gO-phQ">
-                                            <rect key="frame" x="20" y="34" width="49" height="21"/>
+                                            <rect key="frame" x="20" y="33" width="49" height="21"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="13"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="weX-Wh-cd1">
-                                            <rect key="frame" x="62" y="37" width="8" height="16"/>
+                                            <rect key="frame" x="62" y="36" width="8" height="16"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="12"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4eq-fe-S8Q">
-                                            <rect key="frame" x="62" y="22" width="8" height="16"/>
+                                            <rect key="frame" x="62" y="21" width="8" height="16"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="12"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="weX-Wh-cd1" firstAttribute="top" secondItem="YTC-4C-ws1" secondAttribute="topMargin" constant="29" id="56a-Tn-uGZ"/>
-                                        <constraint firstItem="4eq-fe-S8Q" firstAttribute="top" secondItem="YTC-4C-ws1" secondAttribute="topMargin" constant="14" id="A2i-hp-yEX"/>
+                                        <constraint firstItem="weX-Wh-cd1" firstAttribute="top" secondItem="YTC-4C-ws1" secondAttribute="topMargin" constant="28" id="56a-Tn-uGZ"/>
+                                        <constraint firstItem="4eq-fe-S8Q" firstAttribute="top" secondItem="YTC-4C-ws1" secondAttribute="topMargin" constant="13" id="A2i-hp-yEX"/>
                                         <constraint firstItem="4eq-fe-S8Q" firstAttribute="leading" secondItem="YTC-4C-ws1" secondAttribute="leadingMargin" constant="54" id="E8j-xz-5lZ"/>
                                         <constraint firstItem="0KX-YA-4Us" firstAttribute="leading" secondItem="YTC-4C-ws1" secondAttribute="leadingMargin" constant="12" id="FYa-C0-aKd"/>
                                         <constraint firstItem="weX-Wh-cd1" firstAttribute="leading" secondItem="YTC-4C-ws1" secondAttribute="leadingMargin" constant="54" id="MtW-eM-DwE"/>
                                         <constraint firstItem="Vwx-Gg-IzB" firstAttribute="leading" secondItem="YTC-4C-ws1" secondAttribute="leadingMargin" constant="12" id="jO7-Jk-hpe"/>
                                         <constraint firstItem="0KX-YA-4Us" firstAttribute="top" secondItem="YTC-4C-ws1" secondAttribute="topMargin" id="nJz-NT-SjK"/>
-                                        <constraint firstItem="Vwx-Gg-IzB" firstAttribute="top" secondItem="YTC-4C-ws1" secondAttribute="topMargin" constant="48" id="uDG-Ay-CBO"/>
+                                        <constraint firstItem="Vwx-Gg-IzB" firstAttribute="top" secondItem="YTC-4C-ws1" secondAttribute="topMargin" constant="47" id="uDG-Ay-CBO"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -2892,19 +2892,19 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UtL-W3-8me">
-                                            <rect key="frame" x="20" y="7" width="243" height="15"/>
-                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="11"/>
+                                            <rect key="frame" x="20" y="7" width="287" height="18"/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="13"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="major:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ot8-4P-dQH">
-                                            <rect key="frame" x="20" y="21" width="48" height="21"/>
+                                            <rect key="frame" x="20" y="19" width="48" height="21"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SSh-rD-fKq">
-                                            <rect key="frame" x="70" y="22" width="10" height="20"/>
+                                            <rect key="frame" x="70" y="20" width="10" height="20"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
@@ -2934,43 +2934,43 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Accuracy:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="azN-xh-pSt">
-                                            <rect key="frame" x="23" y="103" width="87" height="21"/>
+                                            <rect key="frame" x="23" y="104" width="87" height="21"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="50" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Amd-vC-qb1">
-                                            <rect key="frame" x="124" y="103" width="23" height="23"/>
+                                            <rect key="frame" x="124" y="104" width="23" height="23"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="minor:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Tr-x7-5C0">
-                                            <rect key="frame" x="20" y="38" width="49" height="21"/>
+                                            <rect key="frame" x="20" y="35" width="49" height="21"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fd4-Qh-csI">
-                                            <rect key="frame" x="70" y="39" width="10" height="20"/>
+                                            <rect key="frame" x="70" y="37" width="10" height="20"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="Amd-vC-qb1" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="95" id="3cq-cY-s8R"/>
+                                        <constraint firstItem="Amd-vC-qb1" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="96" id="3cq-cY-s8R"/>
                                         <constraint firstItem="CtP-pK-nDu" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="116" id="77n-rC-IX0"/>
                                         <constraint firstItem="CtP-pK-nDu" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="73" id="94k-RA-V78"/>
                                         <constraint firstItem="Amd-vC-qb1" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="116" id="FEB-om-gZJ"/>
                                         <constraint firstItem="fd4-Qh-csI" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="62" id="Gko-Hh-hOX"/>
-                                        <constraint firstItem="SSh-rD-fKq" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="14" id="RUb-ix-BFk"/>
+                                        <constraint firstItem="SSh-rD-fKq" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="12" id="RUb-ix-BFk"/>
                                         <constraint firstItem="UtL-W3-8me" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="12" id="W8I-Za-SGr"/>
                                         <constraint firstItem="F3S-YJ-d0O" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="116" id="bzd-M2-UiT"/>
                                         <constraint firstItem="UtL-W3-8me" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="-1" id="cBE-Vh-LQ6"/>
                                         <constraint firstItem="F3S-YJ-d0O" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="52" id="gLu-QM-UmF"/>
                                         <constraint firstItem="SSh-rD-fKq" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="62" id="mPK-TV-7wv"/>
-                                        <constraint firstItem="fd4-Qh-csI" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="31" id="rov-jZ-I8s"/>
+                                        <constraint firstItem="fd4-Qh-csI" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="29" id="rov-jZ-I8s"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
