@@ -13,7 +13,7 @@ class BeaconRegionsViewController: UITableViewController {
 
     var stopScanBarButtonItem   : UIBarButtonItem!
     var startScanBarButtonItem  : UIBarButtonItem!
-    var beaconsViewController   : BeaconsViewController?
+    var beaconRegions           = [String:BeaconRegion]()
 
     var isRanging               = false
     var isInRegion              = false
@@ -44,7 +44,6 @@ class BeaconRegionsViewController: UITableViewController {
         self.setScanButton()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
-        self.beaconsViewController = nil
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -57,9 +56,10 @@ class BeaconRegionsViewController: UITableViewController {
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryBoard.beaconsSegue {
             let selectedIndexPath = sender as NSIndexPath
-            self.beaconsViewController = segue.destinationViewController as? BeaconsViewController
-            if let beaconsViewController = self.beaconsViewController {
-                beaconsViewController.beaconRegion = BeaconStore.getBeaconNames()[selectedIndexPath.row]
+            let beaconsViewController = segue.destinationViewController as BeaconsViewController
+            let beaconName = BeaconStore.getBeaconNames()[selectedIndexPath.row]
+            if let beaconRegion = self.beaconRegions[beaconName] {
+                beaconsViewController.beaconRegion = beaconRegion
             }
         } else if segue.identifier == MainStoryBoard.beaconRegionAddSegue {
         } else if segue.identifier == MainStoryBoard.beaconRegionEditSegue {
@@ -73,6 +73,7 @@ class BeaconRegionsViewController: UITableViewController {
         if BeaconManager.sharedInstance().isRanging() {
             BeaconManager.sharedInstance().stopRangingAllBeacons()
             BeaconManager.sharedInstance().stopMonitoringAllRegions()
+            self.beaconRegions.removeAll(keepCapacity:false)
             self.setScanButton()
             self.isRanging = false
             self.isInRegion = false
@@ -128,15 +129,12 @@ class BeaconRegionsViewController: UITableViewController {
                         self.updateWhenActive()
                     }
                     if UIApplication.sharedApplication().applicationState == .Active {
-                        if let beaconsViewController = self.beaconsViewController {
-                            if beaconsViewController.beaconRegion == beaconRegion.identifier {
-                                beaconsViewController.updateBeacons(beacons)
-                            }
-                        }
+                        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didUpdateBeacon, object:beaconRegion)
                     }
                 }
             }
             BeaconManager.sharedInstance().startMonitoringForRegion(beacon)
+            self.beaconRegions[name] = beacon
         }
     }
     

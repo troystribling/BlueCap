@@ -11,8 +11,7 @@ import BlueCapKit
 
 class BeaconsViewController: UITableViewController {
 
-    var beaconRegion    : String?
-    var beacons         = [Beacon]()
+    var beaconRegion    : BeaconRegion?
 
     struct MainStoryBoard {
         static let beaconCell   = "BeaconCell"
@@ -30,7 +29,8 @@ class BeaconsViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if let beaconRegion = self.beaconRegion {
-            self.navigationItem.title = beaconRegion
+            self.navigationItem.title = beaconRegion.identifier
+            NSNotificationCenter.defaultCenter().addObserver(self, selector:"updateBeacons", name:BlueCapNotification.didUpdateBeacon, object:beaconRegion)
         } else {
             self.navigationItem.title = "Beacons"
         }
@@ -47,9 +47,9 @@ class BeaconsViewController: UITableViewController {
     override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
     }
 
-    func updateBeacons(beacons:[Beacon]) {
-        self.beacons = beacons
-        self.updateWhenActive()
+    func updateBeacons() {
+        Logger.debug("BeaconRegionsViewController#updateBeacons")
+        self.tableView.reloadData()
     }
     
     func sortBeacons(b1:Beacon, b2:Beacon) -> Bool {
@@ -77,31 +77,37 @@ class BeaconsViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.beacons.count
+        if let beaconRegion = self.beaconRegion {
+            return beaconRegion.beacons.count
+        } else {
+            return 0
+        }
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconCell, forIndexPath: indexPath) as BeaconCell
-        let beacon = sorted(self.beacons, self.sortBeacons)[indexPath.row]
-        if let uuid = beacon.proximityUUID {
-            cell.proximityUUIDLabel.text = uuid.UUIDString
-        } else {
-            cell.proximityUUIDLabel.text = "Unknown"
+        if let beaconRegion = self.beaconRegion {
+            let beacon = sorted(beaconRegion.beacons, self.sortBeacons)[indexPath.row]
+            if let uuid = beacon.proximityUUID {
+                cell.proximityUUIDLabel.text = uuid.UUIDString
+            } else {
+                cell.proximityUUIDLabel.text = "Unknown"
+            }
+            if let major = beacon.major {
+                cell.majorLabel.text = "\(major)"
+            } else {
+                cell.majorLabel.text = "Unknown"
+            }
+            if let minor = beacon.minor {
+                cell.minorLabel.text = "\(minor)"
+            } else {
+                cell.minorLabel.text = "Unknown"
+            }
+            cell.proximityLabel.text = beacon.proximity.stringValue
+            cell.rssiLabel.text = "\(beacon.rssi)"
+            let accuracy = NSString(format:"%.4f", beacon.accuracy)
+            cell.accuracyLabel.text = "\(accuracy)m"
         }
-        if let major = beacon.major {
-            cell.majorLabel.text = "\(major)"
-        } else {
-            cell.majorLabel.text = "Unknown"
-        }
-        if let minor = beacon.minor {
-            cell.minorLabel.text = "\(minor)"
-        } else {
-            cell.minorLabel.text = "Unknown"
-        }
-        cell.proximityLabel.text = beacon.proximity.stringValue
-        cell.rssiLabel.text = "\(beacon.rssi)"
-        let accuracy = NSString(format:"%.4f", beacon.accuracy)
-        cell.accuracyLabel.text = "\(accuracy)m"
         return cell
     }
 
