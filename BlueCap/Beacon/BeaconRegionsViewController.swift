@@ -15,8 +15,8 @@ class BeaconRegionsViewController: UITableViewController {
     var startScanBarButtonItem  : UIBarButtonItem!
     var beaconRegions           = [String:BeaconRegion]()
 
-    var isRanging               = false
-    var isInRegion              = false
+    var isRanging               = [String:Bool]()
+    var isInRegion              = [String:Bool]()
     
     struct MainStoryBoard {
         static let beaconRegionCell         = "BeaconRegionCell"
@@ -75,8 +75,6 @@ class BeaconRegionsViewController: UITableViewController {
             BeaconManager.sharedInstance().stopMonitoringAllRegions()
             self.beaconRegions.removeAll(keepCapacity:false)
             self.setScanButton()
-            self.isRanging = false
-            self.isInRegion = false
         } else {
             self.startMonitoring()
         }
@@ -97,6 +95,8 @@ class BeaconRegionsViewController: UITableViewController {
                 beaconRegion.startMonitoringRegion = {
                     BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconRegion)
                     self.setScanButton()
+                    self.isRanging[name] = false
+                    self.isInRegion[name] = false
                     Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")
                 }
                 beaconRegion.enterRegion = {
@@ -105,13 +105,12 @@ class BeaconRegionsViewController: UITableViewController {
                         beaconManager.startRangingBeaconsInRegion(beaconRegion)
                         self.updateDisplay()
                     }
-                    self.isInRegion = true
+                    self.isInRegion[name] = true
                     Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
                 }
                 beaconRegion.exitRegion = {
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
-                    self.isRanging = false
-                    self.isInRegion = false
+                    self.isInRegion[name] = false
                     self.updateWhenActive()
                     Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
                 }
@@ -124,9 +123,11 @@ class BeaconRegionsViewController: UITableViewController {
                     for beacon in beacons {
                         Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
                     }
-                    if !self.isRanging {
-                        self.isRanging = true
-                        self.updateWhenActive()
+                    if let isRanging = self.isRanging[name] {
+                        if !isRanging && beacons.count > 0 {
+                            self.isRanging[name] = true
+                            self.updateWhenActive()
+                        }
                     }
                     if UIApplication.sharedApplication().applicationState == .Active {
                         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didUpdateBeacon, object:beaconRegion)
@@ -171,6 +172,10 @@ class BeaconRegionsViewController: UITableViewController {
             cell.nameLabel.text = name
             cell.uuidLabel.text = beaconRegionUUID.UUIDString
         }
+        var isBeaconInRegion = false
+        if let isInRegion = self.isInRegion[name] {
+            isBeaconInRegion = isInRegion
+        }
         if BeaconManager.sharedInstance().isRangingRegion(name) {
             if let region = BeaconManager.sharedInstance().beaconRegion(name) {
                 if region.beacons.count == 0 {
@@ -182,7 +187,7 @@ class BeaconRegionsViewController: UITableViewController {
             } else {
                 cell.accessoryType = .DisclosureIndicator
             }
-        } else  if self.isInRegion {
+        } else  if isBeaconInRegion {
             cell.accessoryType = .None
             cell.rangingActivityIndicator.startAnimating()
         } else {
