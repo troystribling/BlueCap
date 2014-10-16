@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BlueCapKit
 
 class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelegate {
 
@@ -15,7 +16,9 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
     @IBOutlet var majorTextField    : UITextField!
     @IBOutlet var minorTextField    : UITextField!
     
-    var beaconName : String?
+    var beaconName                      : String?
+    var peripheralManagerViewController : PeripheralManagerViewController?
+
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -33,6 +36,25 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
             self.minorTextField.text = "\(beaconConfig[0])"
             self.majorTextField.text = "\(beaconConfig[1])"
         }
+    }
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func didResignActive() {
+        Logger.debug("PeripheralManagerBeaconViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerBeaconViewController#didBecomeActive")
     }
 
     @IBAction func generateUUID(sender:AnyObject) {

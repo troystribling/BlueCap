@@ -12,7 +12,9 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicViewController : UITableViewController {
     
-    var characteristic : MutableCharacteristic?
+    var characteristic                  : MutableCharacteristic?
+    var peripheralManagerViewController : PeripheralManagerViewController?
+
     
     @IBOutlet var uuidLabel                                 : UILabel!
     
@@ -68,11 +70,14 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
@@ -82,6 +87,14 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
         }
     }
     
+    func didResignActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicViewController#didBecomeActive")
+    }
+
     func booleanStringValue(value:Bool) -> String {
         return value ? "YES" : "NO"
     }

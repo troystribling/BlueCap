@@ -51,10 +51,13 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             }
             self.setUIState()
         }
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
 
     override func viewWillDisappear(animated: Bool) {
         self.navigationItem.title = ""
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,18 +68,25 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServicesViewController
             viewController.peripheral = self.peripheral
+            viewController.peripheralManagerViewController = self
         } else if segue.identifier == MainStoryboard.peripheralManagerAdvertisedServicesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerAdvertisedServicesViewController
             viewController.peripheral = self.peripheral
+            viewController.peripheralManagerViewController = self
         } else if segue.identifier == MainStoryboard.peripheralManagerBeaconsSegue {
             let viewController = segue.destinationViewController as PeripheralManagerBeaconsViewController
             viewController.peripheral = self.peripheral
+            viewController.peripheralManagerViewController = self
         }
     }
     
     override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
         if let peripheral = self.peripheral {
-            return !PeripheralManager.sharedInstance().isAdvertising
+            if identifier != MainStoryboard.peripheralManagerServicesSegue {
+                return !PeripheralManager.sharedInstance().isAdvertising
+            } else {
+                return true
+            }
         } else {
             return false
         }
@@ -172,14 +182,12 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 self.nameTextField.enabled = false
                 self.beaconLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
                 self.advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
-                self.servicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
                 self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
                 self.advertisedBeaconButton.enabled = false
             } else {
                 self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
                 self.beaconLabel.textColor = UIColor.blackColor()
                 self.advertisedServicesLabel.textColor = UIColor.blackColor()
-                self.servicesLabel.textColor = UIColor.blackColor()
                 self.navigationItem.setHidesBackButton(false, animated:true)
                 if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
                     if PeripheralStore.getBeaconEnabled(peripheral) {
@@ -201,6 +209,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
     
+    func didResignActive() {
+        Logger.debug("PeripheralManagerViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerViewController#didBecomeActive")
+    }
+
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         self.nameTextField.resignFirstResponder()

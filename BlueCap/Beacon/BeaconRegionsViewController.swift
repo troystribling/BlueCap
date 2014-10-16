@@ -129,7 +129,7 @@ class BeaconRegionsViewController: UITableViewController {
                             self.updateWhenActive()
                         }
                     }
-                    if UIApplication.sharedApplication().applicationState == .Active {
+                    if UIApplication.sharedApplication().applicationState == .Active && beacons.count > 0 {
                         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didUpdateBeacon, object:beaconRegion)
                     }
                 }

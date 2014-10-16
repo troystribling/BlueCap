@@ -11,9 +11,11 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewController, UITextViewDelegate {
   
-    @IBOutlet var valueTextField    : UITextField!
-    var characteristic              : MutableCharacteristic?
-    var valueName                   : String?
+    @IBOutlet var valueTextField        : UITextField!
+    var characteristic                  : MutableCharacteristic?
+    var valueName                       : String?
+    var peripheralManagerViewController : PeripheralManagerViewController?
+
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -28,6 +30,26 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
             }
         }
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+
+    func didResignActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicEditValueViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicEditValueViewController#didBecomeActive")
+    }
+
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {

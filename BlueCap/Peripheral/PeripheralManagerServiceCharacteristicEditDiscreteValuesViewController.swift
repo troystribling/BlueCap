@@ -11,8 +11,9 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
     
-    var characteristic : MutableCharacteristic?
-    
+    var characteristic                  : MutableCharacteristic?
+    var peripheralManagerViewController : PeripheralManagerViewController?
+
     struct MainStoryboard {
         static let peripheralManagerServiceCharacteristicDiscreteValueCell  = "PeripheralManagerServiceCharacteristicEditDiscreteValueCell"
     }
@@ -28,6 +29,25 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func didResignActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController#didBecomeActive")
+    }
+
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

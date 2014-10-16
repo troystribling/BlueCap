@@ -12,8 +12,10 @@ import CoreBluetooth
 
 class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewController {
    
-    var progressView    : ProgressView!
-    var peripheral      : String?
+    var progressView                    : ProgressView!
+    var peripheral                      : String?
+    var peripheralManagerViewController : PeripheralManagerViewController?
+
     
     struct MainStoryboard {
         static let peripheralManagerServiceCell = "PeripheralManagerServiceProfileCell"
@@ -34,9 +36,13 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     
     override func viewWillAppear(animated:Bool) {
         super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     func updatePripheralStore() {
@@ -51,7 +57,15 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             }
         }
     }
-            
+    
+    func didResignActive() {
+        Logger.debug("PeripheralManagerServiceProfilesViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerServiceProfilesViewController#didBecomeActive")
+    }
+    
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         let tags = self.serviceProfiles.keys.array

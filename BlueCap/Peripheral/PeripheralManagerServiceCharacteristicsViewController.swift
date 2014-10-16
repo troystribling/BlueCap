@@ -11,7 +11,9 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicsViewController : UITableViewController {
  
-    var service : MutableService?
+    var service                         : MutableService?
+    var peripheralManagerViewController : PeripheralManagerViewController?
+
     
     struct MainStoryboard {
         static let peripheralManagerServiceChracteristicCell    = "PeripheralManagerServiceChracteristicCell"
@@ -31,11 +33,14 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         if let service = self.service {
             self.navigationItem.title = service.name
         }
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
@@ -49,6 +54,14 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         }
     }
     
+    func didResignActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerServiceCharacteristicViewController#didBecomeActive")
+    }
+
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BlueCapKit
 
 class PeripheralManagerBeaconsViewController: UITableViewController {
 
@@ -16,7 +17,9 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         static let peripheralManagerAddBeaconSegue  = "PeripheralManagerAddBeacon"
     }
     
-    var peripheral : String?
+    var peripheral                      : String?
+    var peripheralManagerViewController : PeripheralManagerViewController?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,11 +29,14 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         self.navigationItem.title = "Beacons"
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
 
@@ -45,6 +51,14 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         }
     }
     
+    func didResignActive() {
+        Logger.debug("PeripheralManagerBeaconsViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerBeaconsViewController#didBecomeActive")
+    }
+
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }

@@ -16,7 +16,8 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         static let peripheralManagerAdvertisedServiceCell       = "PeripheralManagerAdvertisedServiceCell"
     }
     
-    var peripheral : String?
+    var peripheral                      : String?
+    var peripheralManagerViewController : PeripheralManagerViewController?
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -29,12 +30,15 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Advertised Services"
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
         self.tableView.reloadData()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -44,6 +48,14 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         }
     }
     
+    func didResignActive() {
+        Logger.debug("PeripheralManagerAdvertisedServicesViewController#didResignActive")
+    }
+    
+    func didBecomeActive() {
+        Logger.debug("PeripheralManagerAdvertisedServicesViewController#didBecomeActive")
+    }
+
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
