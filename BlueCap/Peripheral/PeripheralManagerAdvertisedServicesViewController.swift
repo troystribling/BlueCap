@@ -45,11 +45,17 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         if segue.identifier == MainStoryboard.peripheralManagerAddAdvertisedServiceSegue {
             let viewController = segue.destinationViewController as PeripheralManagerAddAdvertisedServiceViewController
             viewController.peripheral = self.peripheral
+            if let peripheralManagerViewController = self.peripheralManagerViewController {
+                viewController.peripheralManagerViewController = peripheralManagerViewController
+            }
         }
     }
     
     func didResignActive() {
         Logger.debug("PeripheralManagerAdvertisedServicesViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

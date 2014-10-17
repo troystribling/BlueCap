@@ -44,6 +44,9 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
 
     func didResignActive() {
         Logger.debug("PeripheralManagerServiceCharacteristicEditValueViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

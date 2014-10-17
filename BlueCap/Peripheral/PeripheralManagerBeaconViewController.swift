@@ -51,6 +51,9 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
     
     func didResignActive() {
         Logger.debug("PeripheralManagerBeaconViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

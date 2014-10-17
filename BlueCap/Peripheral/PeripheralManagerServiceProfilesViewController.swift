@@ -60,6 +60,9 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     
     func didResignActive() {
         Logger.debug("PeripheralManagerServiceProfilesViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

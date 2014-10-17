@@ -84,11 +84,17 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicValuesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServicesCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
+            if let peripheralManagerViewController = self.peripheralManagerViewController {
+                viewController.peripheralManagerViewController = peripheralManagerViewController
+            }
         }
     }
     
     func didResignActive() {
         Logger.debug("PeripheralManagerServiceCharacteristicViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

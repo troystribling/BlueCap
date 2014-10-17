@@ -54,6 +54,9 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     
     func didResignActive() {
         Logger.debug("PeripheralManagerAdvertisedServicesViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

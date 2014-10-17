@@ -50,16 +50,25 @@ class PeripheralManagerServicesViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServiceProfilesViewController
             viewController.peripheral = self.peripheral
+            if let peripheralManagerViewController = self.peripheralManagerViewController {
+                viewController.peripheralManagerViewController = peripheralManagerViewController
+            }
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicsSegue {
             if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
                 let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicsViewController
                 viewController.service = PeripheralManager.sharedInstance().services[selectedIndexPath.row]
+                if let peripheralManagerViewController = self.peripheralManagerViewController {
+                    viewController.peripheralManagerViewController = peripheralManagerViewController
+                }
             }
         }
     }
     
     func didResignActive() {
         Logger.debug("PeripheralManagerServicesViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

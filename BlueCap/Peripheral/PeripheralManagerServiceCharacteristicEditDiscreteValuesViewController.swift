@@ -42,6 +42,9 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     func didResignActive() {
         Logger.debug("PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

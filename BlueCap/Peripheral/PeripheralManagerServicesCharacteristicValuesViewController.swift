@@ -54,14 +54,23 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
                 let values = stringValues.keys.array
                 viewController.valueName = values[selectedIndex.row]
             }
+            if let peripheralManagerViewController = self.peripheralManagerViewController {
+                viewController.peripheralManagerViewController = peripheralManagerViewController
+            }
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
+            if let peripheralManagerViewController = self.peripheralManagerViewController {
+                viewController.peripheralManagerViewController = peripheralManagerViewController
+            }
         }
     }
     
     func didResignActive() {
         Logger.debug("PeripheralManagerServicesViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

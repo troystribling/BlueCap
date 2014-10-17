@@ -47,12 +47,18 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
                 let viewController = segue.destinationViewController as PeripheralManagerBeaconViewController
                 let beaconNames = PeripheralStore.getBeaconNames()
                 viewController.beaconName = beaconNames[selectedIndexPath.row]
+                if let peripheralManagerViewController = self.peripheralManagerViewController {
+                    viewController.peripheralManagerViewController = peripheralManagerViewController
+                }
             }
         }
     }
     
     func didResignActive() {
         Logger.debug("PeripheralManagerBeaconsViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {

@@ -49,6 +49,9 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
                 if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
                     let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicViewController
                     viewController.characteristic = service.characteristics[selectedIndex.row]
+                    if let peripheralManagerViewController = self.peripheralManagerViewController {
+                        viewController.peripheralManagerViewController = peripheralManagerViewController
+                    }
                 }
             }
         }
@@ -56,6 +59,9 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
     
     func didResignActive() {
         Logger.debug("PeripheralManagerServiceCharacteristicViewController#didResignActive")
+        if let peripheralManagerViewController = self.peripheralManagerViewController {
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        }
     }
     
     func didBecomeActive() {
