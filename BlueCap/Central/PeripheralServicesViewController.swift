@@ -12,7 +12,8 @@ import BlueCapKit
 class PeripheralServicesViewController : UITableViewController {
     
     weak var peripheral : Peripheral?
-    var progressView     = ProgressView()
+    var progressView    = ProgressView()
+    var hasDisconnected = false
     
     struct MainStoryboard {
         static let peripheralServiceCell            = "PeripheralServiceCell"
@@ -31,10 +32,6 @@ class PeripheralServicesViewController : UITableViewController {
                     self.tableView.reloadData()
                     self.progressView.remove()},
                 serviceDiscoveryFailedCallback:{(error) in
-//                    self.progressView.remove()
-//                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-//                            self.updateDidFail()
-//                        }, animated:true, completion:nil)
                 })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
@@ -42,6 +39,7 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.hasDisconnected = false
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -68,11 +66,14 @@ class PeripheralServicesViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {
-        Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
-        self.progressView.remove()
-        self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
-                self.updateDidFail()
-            }, animated:true, completion:nil)
+        if self.hasDisconnected == false {
+            self.hasDisconnected = true
+            Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
+            self.progressView.remove()
+            self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
+                    self.updateDidFail()
+                }, animated:true, completion:nil)
+        }
     }
 
     func didResignActive() {
