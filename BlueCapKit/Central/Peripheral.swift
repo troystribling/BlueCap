@@ -70,7 +70,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // connect
     public func reconnect() {
         if self.state == .Disconnected {
-            Logger.debug("Peripheral#reconnect")
+            Logger.debug("Peripheral#reconnect: \(self.name)")
             CentralManager.sharedInstance().connectPeripheral(self)
             self.forcedDisconnect = false
             ++self.connectionSequence
@@ -79,7 +79,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
      
     public func connect(connectorator:Connectorator?=nil) {
-        Logger.debug("Peripheral#connect")
+        Logger.debug("Peripheral#connect: \(self.name)")
         self.connectorator = connectorator
         self.reconnect()
     }
@@ -87,7 +87,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     public func disconnect() {
         self.forcedDisconnect = true
         if self.state == .Connected {
-            Logger.debug("Peripheral#disconnect")
+            Logger.debug("Peripheral#disconnect: \(self.name)")
             CentralManager.sharedInstance().cancelPeripheralConnection(self)
         } else {
             self.didDisconnectPeripheral()
@@ -96,14 +96,14 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     // service discovery
     public func discoverAllServices(servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
-        Logger.debug("Peripheral#discoverAllServices")
+        Logger.debug("Peripheral#discoverAllServices: \(self.name)")
         self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
         self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
         self.discoverIfConnected(nil)
     }
 
     public func discoverServices(services:[CBUUID]!, servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
-        Logger.debug("Peripheral#discoverAllServices")
+        Logger.debug("Peripheral#discoverAllServices: \(self.name)")
         self.servicesDiscoveredSuccessCallback = servicesDiscoveredSuccessCallback
         self.serviceDiscoveryFailedCallback = serviceDiscoveryFailedCallback
         self.discoverIfConnected(services)
@@ -124,7 +124,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     // services
     public func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
-        Logger.debug("Peripheral#didDiscoverServices")
+        Logger.debug("Peripheral#didDiscoverServices: \(self.name)")
         self.discoveredServices.removeAll()
         if let cbServices = peripheral.services {
             for cbService : AnyObject in cbServices {
@@ -139,12 +139,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public func peripheral(_:CBPeripheral!, didDiscoverIncludedServicesForService service:CBService!, error:NSError!) {
-        Logger.debug("Peripheral#didDiscoverIncludedServicesForService")
+        Logger.debug("Peripheral#didDiscoverIncludedServicesForService: \(self.name)")
     }
     
     // characteristics
     public func peripheral(_:CBPeripheral!, didDiscoverCharacteristicsForService service:CBService!, error:NSError!) {
-        Logger.debug("Peripheral#didDiscoverCharacteristicsForService")
+        Logger.debug("Peripheral#didDiscoverCharacteristicsForService: \(self.name)")
         if let service = service {
             if let bcService = self.discoveredServices[service.UUID] {
                 if let cbCharacteristic = service.characteristics {

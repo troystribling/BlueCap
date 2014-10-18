@@ -101,14 +101,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // CBCentralManagerDelegate
     public func centralManager(_:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
-        Logger.debug("CentralManager#didConnectPeripheral")
+        Logger.debug("CentralManager#didConnectPeripheral: \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     public func centralManager(_:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
-        Logger.debug("CentralManager#didDisconnectPeripheral")
+        Logger.debug("CentralManager#didDisconnectPeripheral: \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }

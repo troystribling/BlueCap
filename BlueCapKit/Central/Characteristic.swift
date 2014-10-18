@@ -30,10 +30,14 @@ public class Characteristic {
     
     // INTERNAL
     internal let cbCharacteristic : CBCharacteristic
-    internal let service          : Service
+    internal let _service         : Service
     internal let profile          : CharacteristicProfile!
     
     // PUBLIC
+    public var service : Service {
+        return self._service
+    }
+    
     public var name : String {
         return self.profile.name
     }
@@ -226,7 +230,7 @@ public class Characteristic {
     // INTERNAL
     internal init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
-        self.service = service
+        self._service = service
         self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString, name:"Unknown")
         if let serviceProfile = ProfileManager.sharedInstance().serviceProfiles[service.uuid] {
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {

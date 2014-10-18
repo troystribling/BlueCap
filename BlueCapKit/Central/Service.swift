@@ -17,8 +17,8 @@ public class Service : NSObject {
     private var characteristicDiscoveryFailedCallback       : ((error:NSError!) -> ())?
 
     // INTERNAL
-    internal let peripheral                     : Peripheral
-    internal let cbService                      : CBService
+    internal let _peripheral                                : Peripheral
+    internal let cbService                                  : CBService
     
     internal var discoveredCharacteristics      = Dictionary<CBUUID, Characteristic>()
     
@@ -37,6 +37,10 @@ public class Service : NSObject {
     
     public var characteristics : [Characteristic] {
         return self.discoveredCharacteristics.values.array
+    }
+    
+    public var peripheral : Peripheral {
+        return self._peripheral
     }
     
     // PUBLIC
@@ -69,7 +73,7 @@ public class Service : NSObject {
     // INTERNAL
     internal init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
-        self.peripheral = peripheral
+        self._peripheral = peripheral
         self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
     }
     

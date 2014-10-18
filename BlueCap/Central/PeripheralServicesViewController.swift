@@ -14,6 +14,7 @@ class PeripheralServicesViewController : UITableViewController {
     weak var peripheral : Peripheral?
     var progressView    = ProgressView()
     var hasDisconnected = false
+    var hasUpdated      = false
     
     struct MainStoryboard {
         static let peripheralServiceCell            = "PeripheralServiceCell"
@@ -26,12 +27,19 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidLoad()  {
         super.viewDidLoad()
+        self.hasUpdated = false
         if let peripheral = self.peripheral {
             self.progressView.show()
             peripheral.discoverAllServices({
                     self.tableView.reloadData()
+                    self.hasUpdated = true
                     self.progressView.remove()},
                 serviceDiscoveryFailedCallback:{(error) in
+                    self.progressView.remove()
+                    self.hasUpdated = true
+                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                        self.updateDidFail()
+                        }, animated:true, completion:nil)
                 })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
@@ -40,7 +48,7 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self.hasDisconnected = false
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.peripheral!)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
@@ -62,17 +70,16 @@ class PeripheralServicesViewController : UITableViewController {
     }
     
     override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
-        return peripheral?.services.count > 0
+        return self.peripheral?.services.count > 0 && !self.hasDisconnected
     }
     
     func peripheralDisconnected() {
         if self.hasDisconnected == false {
             self.hasDisconnected = true
             Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
-            self.progressView.remove()
-            self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
-                    self.updateDidFail()
-                }, animated:true, completion:nil)
+            if self.hasUpdated == false {
+                self.disconnectAlert()
+            }
         }
     }
 
@@ -83,6 +90,13 @@ class PeripheralServicesViewController : UITableViewController {
     
     func didBecomeActive() {
         Logger.debug("PeripheralServicesViewController#didBecomeActive")
+    }
+
+    func disconnectAlert() {
+        self.progressView.remove()
+        self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
+            self.updateDidFail()
+        }, animated:true, completion:nil)
     }
 
     func updateDidFail() {
@@ -105,11 +119,19 @@ class PeripheralServicesViewController : UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCell, forIndexPath: indexPath) as NameUUIDCell
         if let peripheral = self.peripheral {
-            let service = peripheral.services[indexPath.row]
-            cell.nameLabel.text = service.name
-            cell.uuidLabel.text = service.uuid.UUIDString
+            if peripheral.services.count >= indexPath.row {
+                let service = peripheral.services[indexPath.row]
+                cell.nameLabel.text = service.name
+                cell.uuidLabel.text = service.uuid.UUIDString
+            }
         }
         return cell
+    }
+    
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+        if self.hasDisconnected {
+            self.disconnectAlert()
+        }
     }
     
     // UITableViewDelegate
