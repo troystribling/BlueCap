@@ -10,22 +10,21 @@ import UIKit
 
 extension UIAlertController {
  
-    class func alertOnError(error:NSError) -> UIAlertController {
+    class func alertOnError(error:NSError, handler:((UIAlertAction!) -> Void)? = nil) -> UIAlertController {
         var alert = UIAlertController(title: "Error", message:error.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:handler))
         return alert
     }
 
-
-    class func alertOnErrorWithMessage(message:String) -> UIAlertController {
+    class func alertOnErrorWithMessage(message:String, handler:((UIAlertAction!) -> Void)? = nil) -> UIAlertController {
         var alert = UIAlertController(title: "Error", message:message, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:handler))
         return alert
     }
 
-    class func alertWithMessage(message:String) -> UIAlertController {
+    class func alertWithMessage(message:String, handler:((UIAlertAction!) -> Void)? = nil) -> UIAlertController {
         var alert = UIAlertController(title: "Message", message:message, preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:handler))
         return alert
     }
 

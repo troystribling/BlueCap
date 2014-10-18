@@ -33,8 +33,9 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
                     progressView.remove()},
                 characteristicDiscoveryFailedCallback:{(error) in
                     progressView.remove()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    self.navigationController?.popViewControllerAnimated(true)
+                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                            self.updateDidFail()
+                        }, animated:true, completion:nil)
                 })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
@@ -76,7 +77,10 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         Logger.debug("PeripheralServiceCharacteristicsViewController#didBecomeActive")
     }
 
-    
+    func updateDidFail() {
+        self.navigationController?.popToRootViewControllerAnimated(true)
+    }
+
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

@@ -12,6 +12,7 @@ import BlueCapKit
 class PeripheralServicesViewController : UITableViewController {
     
     weak var peripheral : Peripheral?
+    var progressView     = ProgressView()
     
     struct MainStoryboard {
         static let peripheralServiceCell            = "PeripheralServiceCell"
@@ -25,15 +26,15 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidLoad()  {
         super.viewDidLoad()
         if let peripheral = self.peripheral {
-            let progressView = ProgressView()
-            progressView.show()
+            self.progressView.show()
             peripheral.discoverAllServices({
                     self.tableView.reloadData()
-                    progressView.remove()},
+                    self.progressView.remove()},
                 serviceDiscoveryFailedCallback:{(error) in
-                    progressView.remove()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    self.navigationController?.popViewControllerAnimated(true)
+//                    self.progressView.remove()
+//                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+//                            self.updateDidFail()
+//                        }, animated:true, completion:nil)
                 })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
@@ -68,6 +69,10 @@ class PeripheralServicesViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
+        self.progressView.remove()
+        self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
+                self.updateDidFail()
+            }, animated:true, completion:nil)
     }
 
     func didResignActive() {
@@ -79,6 +84,10 @@ class PeripheralServicesViewController : UITableViewController {
         Logger.debug("PeripheralServicesViewController#didBecomeActive")
     }
 
+    func updateDidFail() {
+        self.navigationController?.popToRootViewControllerAnimated(true)
+    }
+    
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
