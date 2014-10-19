@@ -10,7 +10,9 @@ import Foundation
 
 public class Logger {
     public class func debug(message:String) {
+#if !DEBUG
         println("\(message)")
+#endif
     }
 
 }
