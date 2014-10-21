@@ -80,7 +80,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
         if let characteristic = self.characteristic {
             let stringValue = characteristic.discreteStringValues[indexPath.row]
-            cell.textLabel!.text = stringValue
+            cell.textLabel.text = stringValue
             if let value = characteristic.stringValues?[characteristic.name] {
                 if value == stringValue {
                     cell.accessoryType = UITableViewCellAccessoryType.Checkmark

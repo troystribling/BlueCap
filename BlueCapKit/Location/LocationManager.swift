@@ -101,7 +101,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
             RegionManager.reverseGeocodeLocation(self.location, reverseGeocodeSuccess, reverseGeocodeFailed)
         } else {
             if let reverseGeocodeFailed = reverseGeocodeFailed {
-                reverseGeocodeFailed(error:NSError.errorWithDomain("BlueCap", code:408, userInfo:[NSLocalizedDescriptionKey:"location not available"]))
+                reverseGeocodeFailed(error:NSError(domain:"BlueCap", code:408, userInfo:[NSLocalizedDescriptionKey:"location not available"]))
             }
         }
     }
@@ -185,7 +185,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
                     } else {
                         Logger.debug("LocationManager#authorize: Location Authorized failed")
                         if let locationsUpdateFailed = self.locationsUpdateFailed {
-                            locationsUpdateFailed(error:NSError.errorWithDomain("BlueCap", code:408, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"]))
+                            locationsUpdateFailed(error:NSError(domain:"BlueCap", code:408, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"]))
                         }
                     }
                 }

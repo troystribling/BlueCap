@@ -25,7 +25,7 @@ public class ServiceProfile {
     
     public init(uuid:String, name:String, profile:(service:ServiceProfile) -> ()) {
         self.name = name
-        self.uuid = CBUUID.UUIDWithString(uuid)
+        self.uuid = CBUUID(string:uuid)
         profile(service:self)
     }
     

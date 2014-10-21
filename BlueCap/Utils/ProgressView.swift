@@ -38,7 +38,9 @@ class ProgressView : UIView {
     }
     
     func show() {
-        self.show(UIApplication.sharedApplication().keyWindow)
+        if let keyWindow =  UIApplication.sharedApplication().keyWindow {
+            self.show(keyWindow)
+        }
     }
     
     func show(view:UIView) {

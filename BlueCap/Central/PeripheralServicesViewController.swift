@@ -69,7 +69,7 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
         return self.peripheral?.services.count > 0 && !self.hasDisconnected
     }
     

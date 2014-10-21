@@ -20,7 +20,7 @@ class PeripheralStore {
                 if let name = name as? String {
                     if let services = services as? [String] {
                         let uuids = services.reduce([CBUUID]()){(uuids, uuidString) in
-                            if let uuid = CBUUID.UUIDWithString(uuidString) {
+                            if let uuid = CBUUID(string:uuidString) {
                                 return uuids + [uuid]
                             } else {
                                 return uuids

@@ -113,7 +113,7 @@ public class Characteristic {
     }
 
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
-        return (self.properties.toRaw() & property.toRaw()) > 0
+        return (self.properties.rawValue & property.rawValue) > 0
     }
     
     public func read(afterReadSuccessCallback:() -> (), afterReadFailedCallback:((error:NSError)->())?) {
@@ -200,7 +200,7 @@ public class Characteristic {
                 if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
                     CentralManager.asyncCallback(){
                         afterUpdateFailedCallback(error:
-                            NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
+                            NSError(domain:BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
                     }
                 }
             } else {
@@ -218,7 +218,7 @@ public class Characteristic {
                 if let afterWriteFailedCallback = self.afterWriteFailedCallback {
                     CentralManager.asyncCallback(){
                         afterWriteFailedCallback(error:
-                            NSError.errorWithDomain(BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
+                            NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
                     }
                 }
             } else {

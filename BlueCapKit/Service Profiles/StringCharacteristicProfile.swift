@@ -21,8 +21,8 @@ public class StringCharacteristicProfile : CharacteristicProfile {
         }
     }
         
-    public override func stringValues(data:NSData) -> Dictionary<String, String>? {
-        let value = NSString(data:data, encoding:self.encoding)
+    public override func stringValues(data:NSData) -> [String:String]? {
+        let value = NSString(data:data, encoding:self.encoding) as String
         return [self.name:value]
     }
     

@@ -54,16 +54,20 @@ class ConfigureViewController : UITableViewController {
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
-        switch(identifier) {
-        case MainStroryboard.configureScanModeSegue:
-            return true
-        case MainStroryboard.configureScanRegionsSegue:
-            return  !RegionScannerator.sharedInstance().isScanning
-        case MainStroryboard.configureScanServicesSegue:
-            return !CentralManager.sharedInstance().isScanning && !RegionScannerator.sharedInstance().isScanning
-        default:
-            return true
+    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
+        if let identifier = identifier {
+            switch(identifier) {
+            case MainStroryboard.configureScanModeSegue:
+                return true
+            case MainStroryboard.configureScanRegionsSegue:
+                return  !RegionScannerator.sharedInstance().isScanning
+            case MainStroryboard.configureScanServicesSegue:
+                return !CentralManager.sharedInstance().isScanning && !RegionScannerator.sharedInstance().isScanning
+            default:
+                return true
+            }
+        } else {
+            return false
         }
     }
     

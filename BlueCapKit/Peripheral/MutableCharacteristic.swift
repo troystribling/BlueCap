@@ -70,11 +70,11 @@ public class MutableCharacteristic : NSObject {
     }
     
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
-        return (self.properties.toRaw() & property.toRaw()) > 0
+        return (self.properties.rawValue & property.rawValue) > 0
     }
     
     public func permissionEnabled(permission:CBAttributePermissions) -> Bool {
-        return (self.permissions.toRaw() & permission.toRaw()) > 0
+        return (self.permissions.rawValue & permission.rawValue) > 0
     }
     
     public func updateValue(value:NSData) {

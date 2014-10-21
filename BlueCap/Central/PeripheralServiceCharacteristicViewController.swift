@@ -91,9 +91,13 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
-        if let characteristic = self.characteristic {
-            return characteristic.propertyEnabled(.Read) || characteristic.isNotifying
+    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
+        if let identifier = identifier {
+            if let characteristic = self.characteristic {
+                return characteristic.propertyEnabled(.Read) || characteristic.isNotifying
+            } else {
+                return false
+            }
         } else {
             return false
         }

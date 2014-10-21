@@ -100,7 +100,10 @@ public struct TISensorTag {
                     }
                 }
                 static func valuesFromRaw(values:[Int16]) -> [Double] {
-                    return [-Double(values[0])*Double(2000.0)/65536.0, -Double(values[1])*Double(2000.0)/65536.0, Double(values[2])*Double(2000.0)/65536.0]
+                    let x = -Double(values[0])*Double(2000.0)/65536.0
+                    let y = -Double(values[1])*Double(2000.0)/65536.0
+                    let z = Double(values[2])*Double(2000.0)/65536.0
+                    return [x, y, z]
                 }
                 var stringValues : Dictionary<String,String> {
                     return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
@@ -152,7 +155,10 @@ public struct TISensorTag {
                     }
                 }
                 static func valuesFromRaw(values:[Int16]) -> [Double] {
-                    return [-Double(values[0])*Double(500.0)/65536.0, -Double(values[1])*Double(500.0)/65536.0, Double(values[2])*Double(500.0)/65536.0]
+                    let x = -Double(values[0])*Double(500.0)/65536.0
+                    let y = -Double(values[1])*Double(500.0)/65536.0
+                    let z = Double(values[2])*Double(500.0)/65536.0
+                    return [x, y, z]
                 }
                 var stringValues : Dictionary<String,String> {
                     return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]

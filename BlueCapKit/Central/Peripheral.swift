@@ -222,7 +222,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         } else {
             if let serviceDiscoveryFailedCallback = self.serviceDiscoveryFailedCallback {
                 CentralManager.asyncCallback(){serviceDiscoveryFailedCallback(error:
-                    NSError.errorWithDomain(BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
+                    NSError(domain:BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
             }
         }
     }

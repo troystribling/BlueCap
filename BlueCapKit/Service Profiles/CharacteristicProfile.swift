@@ -25,7 +25,7 @@ public class CharacteristicProfile {
     }
     
     public init(uuid:String, name:String, initializer:((characteristicProfile:CharacteristicProfile) -> ())? = nil) {
-        self.uuid = CBUUID.UUIDWithString(uuid)
+        self.uuid = CBUUID(string:uuid)
         self.name = name
         self.permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
         self.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
@@ -35,11 +35,11 @@ public class CharacteristicProfile {
     }
     
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
-        return (self.properties.toRaw() & property.toRaw()) > 0
+        return (self.properties.rawValue & property.rawValue) > 0
     }
     
     public func permissionEnabled(permission:CBAttributePermissions) -> Bool {
-        return (self.permissions.toRaw() & permission.toRaw()) > 0
+        return (self.permissions.rawValue & permission.rawValue) > 0
     }
         
     public func stringValues(data:NSData) -> Dictionary<String, String>? {

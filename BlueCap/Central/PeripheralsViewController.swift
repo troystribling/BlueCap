@@ -60,13 +60,15 @@ class PeripheralsViewController : UITableViewController {
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
         var perform = false
-        if identifier == "PeripheralDetail" {
-            if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                let peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
-                if peripheral.state == .Connected {
-                    perform = true
+        if let identifier = identifier {
+            if identifier == "PeripheralDetail" {
+                if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                    let peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
+                    if peripheral.state == .Connected {
+                        perform = true
+                    }
                 }
             }
         }

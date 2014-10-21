@@ -65,7 +65,7 @@ public class Service : NSObject {
         } else {
             if let characteristicDiscoveryFailedCallback = self.characteristicDiscoveryFailedCallback {
                 CentralManager.asyncCallback(){characteristicDiscoveryFailedCallback(error:
-                    NSError.errorWithDomain(BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
+                    NSError(domain:BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
             }
         }
     }

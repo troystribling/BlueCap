@@ -80,10 +80,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject!) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
         if let peripheral = self.peripheral {
-            if identifier != MainStoryboard.peripheralManagerServicesSegue {
-                return !PeripheralManager.sharedInstance().isAdvertising
+            if let identifier = identifier {
+                if identifier != MainStoryboard.peripheralManagerServicesSegue {
+                    return !PeripheralManager.sharedInstance().isAdvertising
+                } else {
+                    return true
+                }
             } else {
                 return true
             }

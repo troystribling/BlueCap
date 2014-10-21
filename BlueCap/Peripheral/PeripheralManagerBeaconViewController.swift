@@ -92,7 +92,7 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
                         self.presentViewController(UIAlertController.alertOnErrorWithMessage("minor is not convertable to a num ber"), animated:true, completion:nil)
                         return false
                     }
-                    PeripheralStore.addBeacon(enteredName!, uuid:uuid)
+                    PeripheralStore.addBeacon(enteredName!, uuid:uuid!)
                     if let beaconName = self.beaconName {
                         if self.beaconName != enteredName! {
                             PeripheralStore.removeBeacon(beaconName)
