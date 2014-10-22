@@ -70,15 +70,19 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func toggleMonitoring(sender:AnyObject) {
-        if BeaconManager.sharedInstance().isRanging() {
-            BeaconManager.sharedInstance().stopRangingAllBeacons()
-            BeaconManager.sharedInstance().stopMonitoringAllRegions()
-            self.beaconRegions.removeAll(keepCapacity:false)
-            self.setScanButton()
+        if CentralManager.sharedInstance().isScanning == false {
+            if BeaconManager.sharedInstance().isRanging() {
+                BeaconManager.sharedInstance().stopRangingAllBeacons()
+                BeaconManager.sharedInstance().stopMonitoringAllRegions()
+                self.beaconRegions.removeAll(keepCapacity:false)
+                self.setScanButton()
+            } else {
+                self.startMonitoring()
+            }
+            self.tableView.reloadData()
         } else {
-            self.startMonitoring()
+            self.presentViewController(UIAlertController.alertWithMessage("Central is scan is active. Cannot scan and range simutaneously. Stop scan to start ranging"), animated:true, completion:nil)
         }
-        self.tableView.reloadData()
     }
     
     func setScanButton() {
