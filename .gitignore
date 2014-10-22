@@ -3,4 +3,5 @@
 *.xcbkptlist
 BlueCap.xcodeproj/xcuserdata/*
 BlueCap.xcodeproj/project.xcworkspace/xcuserdata/*
+BlueCapKit.xcodeproj/project.xcworkspace/xcshareddata/*
 .DS_Store
