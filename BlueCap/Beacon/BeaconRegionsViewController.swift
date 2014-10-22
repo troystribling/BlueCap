@@ -81,7 +81,7 @@ class BeaconRegionsViewController: UITableViewController {
             }
             self.tableView.reloadData()
         } else {
-            self.presentViewController(UIAlertController.alertWithMessage("Central is scan is active. Cannot scan and range simutaneously. Stop scan to start ranging"), animated:true, completion:nil)
+            self.presentViewController(UIAlertController.alertWithMessage("Central scan is active. Cannot scan and monitor simutaneously. Stop scan to start monitoring"), animated:true, completion:nil)
         }
     }
     

@@ -77,7 +77,7 @@ class PeripheralsViewController : UITableViewController {
     
     // actions
     func toggleScan(sender:AnyObject) {
-        if BeaconManager.sharedInstance().isRanging() == false {
+        if BeaconManager.sharedInstance().isMonitoring() == false {
             Logger.debug("toggleScan")
             let central = CentralManager.sharedInstance()
             if (central.isScanning) {
@@ -98,7 +98,7 @@ class PeripheralsViewController : UITableViewController {
                 }
             }
         } else {
-            self.presentViewController(UIAlertController.alertWithMessage("iBeacon ranging is active. Cannot scan and range simutaneously. Stop ranging to start scan"), animated:true, completion:nil)
+            self.presentViewController(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
         }
     }
     
