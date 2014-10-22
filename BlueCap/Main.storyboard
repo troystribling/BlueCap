@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Gm5-G9-oBc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Gm5-G9-oBc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -310,7 +310,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UMo-vV-JBu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3181.875" y="1158.75"/>
+            <point key="canvasLocation" x="3134" y="1158"/>
         </scene>
         <!--Services-->
         <scene sceneID="BwA-CH-XMP">
@@ -1479,6 +1479,33 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection id="khN-Sv-olX">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qrc-QP-hIY" detailTextLabel="4dO-vw-8Qf" style="IBUITableViewCellStyleValue1" id="1yW-3g-tr9">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1yW-3g-tr9" id="WlY-oX-rF3">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Peripheral Reconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qrc-QP-hIY">
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="5" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4dO-vw-8Qf">
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="qNM-jR-e9y" kind="show" identifier="ConfigurePeripheralReconnections" id="ZGV-zq-pST"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="z0r-2o-HqO" id="DWm-cy-L4r"/>
@@ -1488,6 +1515,7 @@
                     <navigationItem key="navigationItem" title="Configure" id="RE9-39-6QO"/>
                     <connections>
                         <outlet property="notifySwitch" destination="0Qo-VB-F4m" id="Qt0-oE-hNV"/>
+                        <outlet property="peripheralReconnectionsLabel" destination="4dO-vw-8Qf" id="URm-PR-AL9"/>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
                         <outlet property="scanRegionButton" destination="t3k-TC-0OT" id="59f-uz-Pc0"/>
                         <outlet property="scanRegionsLabel" destination="coN-e3-XtF" id="XY8-pt-Mi2"/>
@@ -3826,6 +3854,43 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jyK-sN-HCh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1391.25" y="311.25"/>
+        </scene>
+        <!--Peripheral Reconnections-->
+        <scene sceneID="0fw-zi-j5i">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cca-8q-tIP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="qNM-jR-e9y" customClass="ConfigurePeripheralReconnectionsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="XM8-Ge-AOG"/>
+                        <viewControllerLayoutGuide type="bottom" id="oNa-em-hNM"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="GH9-j8-PYf">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Peripheral Reconnections" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="obe-QH-yps">
+                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="qNM-jR-e9y" id="5hP-z3-A5L"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="obe-QH-yps" secondAttribute="trailing" constant="4" id="WU9-KJ-Wvc"/>
+                            <constraint firstItem="obe-QH-yps" firstAttribute="leading" secondItem="GH9-j8-PYf" secondAttribute="leadingMargin" constant="4" id="jkv-d7-TYO"/>
+                            <constraint firstItem="obe-QH-yps" firstAttribute="top" secondItem="XM8-Ge-AOG" secondAttribute="bottom" constant="36" id="qQF-tJ-J1D"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Peripheral Reconnections" id="IDu-qG-Zdj"/>
+                    <connections>
+                        <outlet property="maximumReconnectionsTextField" destination="obe-QH-yps" id="rAy-4y-Goh"/>
+                    </connections>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="3105" y="-582"/>
         </scene>
     </scenes>
     <resources>

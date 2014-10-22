@@ -80,7 +80,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
     }
     
-    public func cancelPeripheralConnection(peripheral:Peripheral) {
+    internal func cancelPeripheralConnection(peripheral:Peripheral) {
         Logger.debug("CentralManager#cancelPeripheralConnection")
         self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }

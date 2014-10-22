@@ -86,6 +86,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     public func disconnect() {
         self.forcedDisconnect = true
+        CentralManager.sharedInstance().discoveredPeripherals.removeValueForKey(self.cbPeripheral)
         if self.state == .Connected {
             Logger.debug("Peripheral#disconnect: \(self.name)")
             CentralManager.sharedInstance().cancelPeripheralConnection(self)
@@ -93,6 +94,11 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             self.didDisconnectPeripheral()
         }
     }
+    
+    public func terminate() {
+        self.disconnect()
+    }
+
     
     // service discovery
     public func discoverAllServices(servicesDiscoveredSuccessCallback:()->(), serviceDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {

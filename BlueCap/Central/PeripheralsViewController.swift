@@ -10,8 +10,6 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
-let MAX_FAILED_RECONNECTS = 0
-
 class PeripheralsViewController : UITableViewController {
     
     var stopScanBarButtonItem   : UIBarButtonItem!
@@ -121,32 +119,39 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        peripheral.connect(connectorator:Connectorator(){(connectorator:Connectorator) -> () in
+        peripheral.connect(connectorator:Connectorator(timeoutRetries:ConfigStore.getMaximumReconnections()){(connectorator:Connectorator) -> () in
+            var reconectAttempts = 0
             connectorator.disconnect = {(periphearl:Peripheral) -> () in
-                Logger.debug("PeripheralsViewController#onDisconnect")
-                Notify.withMessage("Disconnected peripheral '\(peripheral.name)'")
+                Logger.debug("PeripheralsViewController#disconnect")
+                Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.reconnect()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
             connectorator.connect = {(peipheral:Peripheral) -> () in
-                Logger.debug("PeripheralsViewController#onConnect")
-                Notify.withMessage("Connected peripheral '\(peripheral.name)'")
+                Logger.debug("PeripheralsViewController#connect")
+                Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+                reconectAttempts = 0
                 self.updateWhenActive()
             }
             connectorator.timeout = {(peripheral:Peripheral) -> () in
-                Logger.debug("PeripheralsViewController#onTimeout")
-                peripheral.reconnect()
+                Logger.debug("PeripheralsViewController#timeout: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                peripheral.reconnect()
                 self.updateWhenActive()
             }
             connectorator.forceDisconnect = {(peripheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onForcedDisconnect")
-                Notify.withMessage("Force disconnection of peripheral '\(peripheral.name)'")
+                Notify.withMessage("Force disconnection of forceDisconnect '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
-            })
+            connectorator.giveUp = {(peripheral:Peripheral) -> () in
+                Logger.debug("PeripheralsViewController#giveUp")
+                peripheral.terminate()
+                self.updateWhenActive()
+            }
+        })
     }
     
     func startScan() {
@@ -235,7 +240,7 @@ class PeripheralsViewController : UITableViewController {
                 region.startMonitoringRegion = {
                     Logger.debug("Started Monitoring Region: \(name)")
                 }
-                })
+            })
         }
     }
     

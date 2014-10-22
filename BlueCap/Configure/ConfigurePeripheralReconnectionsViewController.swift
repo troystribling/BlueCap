@@ -1,17 +1,16 @@
 //
-//  ConfigureScanTimeoutViewController.swift
+//  ConfigurePeripheralReconnectionsViewController.swift
 //  BlueCap
 //
-//  Created by Troy Stribling on 9/9/14.
+//  Created by Troy Stribling on 10/22/14.
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
 import UIKit
-import BlueCapKit
 
-class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate {
-    
-    @IBOutlet var timeoutTextField    : UITextField!
+class ConfigurePeripheralReconnectionsViewController: UIViewController {
+
+    @IBOutlet var maximumReconnectionsTextField    : UITextField!
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -19,7 +18,7 @@ class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.timeoutTextField.text = "\(ConfigStore.getScanTimeout())"
+        self.maximumReconnectionsTextField.text = "\(ConfigStore.getMaximumReconnections())"
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -32,15 +31,15 @@ class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let timeout = self.timeoutTextField.text {
-            if !timeout.isEmpty {
-                if let timeoutInt = timeout.toInt() {
-                    ConfigStore.setScanTimeout(timeoutInt)
+        if let maximumReconnections = self.maximumReconnectionsTextField.text {
+            if !maximumReconnections.isEmpty {
+                if let maximumReconnections = maximumReconnections.toInt() {
+                    ConfigStore.setMaximumReconnections(maximumReconnections)
                     self.navigationController?.popToRootViewControllerAnimated(true)
                 }
             }
         }
         return true
     }
-    
+
 }

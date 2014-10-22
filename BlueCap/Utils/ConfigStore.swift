@@ -57,6 +57,20 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setInteger(timeout, forKey:"scanTimeout")
     }
     
+    // maximum reconnections
+    class func getMaximumReconnections() -> Int {
+        let maximumReconnetions = NSUserDefaults.standardUserDefaults().integerForKey("maximumReconnections")
+        if maximumReconnetions == 0 {
+            return 5
+        } else {
+            return maximumReconnetions
+        }
+    }
+    
+    class func setMaximumReconnections(maximumReconnetions:Int) {
+        NSUserDefaults.standardUserDefaults().setInteger(maximumReconnetions, forKey:"maximumReconnections")
+    }
+    
     // scanned services
     class func getScannedServices() -> [String:CBUUID] {
         if let storedServices = NSUserDefaults.standardUserDefaults().dictionaryForKey("services") {

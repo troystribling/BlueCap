@@ -32,14 +32,22 @@ public class Connectorator {
         initializer(connector:self)
     }
     
-    public init(timeoutRetries:Int, disconnectRetries:Int, initializer:((connector:Connectorator) -> ())? = nil) {
+    public init(timeoutRetries:Int?, disconnectRetries:Int?, initializer:((connector:Connectorator) -> ())? = nil) {
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         if let initializer = initializer {
             initializer(connector:self)
         }
     }
-    
+
+    public convenience init(timeoutRetries:Int, initializer:((connector:Connectorator) -> ())? = nil) {
+        self.init(timeoutRetries:timeoutRetries, disconnectRetries:nil, initializer:initializer)
+    }
+
+    public convenience init(disconnectRetries:Int, initializer:((connector:Connectorator) -> ())? = nil) {
+        self.init(timeoutRetries:nil, disconnectRetries:disconnectRetries, initializer:initializer)
+    }
+
     // INTERNAL
     internal func didTimeout(peripheral:Peripheral) {
         Logger.debug("Connectorator#didTimeout")
