@@ -2,5 +2,5 @@
 *.xcscheme
 *.xcbkptlist
 BlueCap.xcodeproj/xcuserdata/*
-BlueCap.xcodeproj/project.xcworkspace/xcuserdata
+BlueCap.xcodeproj/project.xcworkspace/xcuserdata/*
 .DS_Store
