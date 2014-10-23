@@ -14,6 +14,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     @IBOutlet var valueTextField    : UITextField!
     var characteristic              : Characteristic?
     var valueName                   : String?
+    var hasDisconnected             = false
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -32,6 +33,8 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.hasDisconnected = false
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service.peripheral)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
@@ -43,6 +46,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicEditValueViewController#peripheralDisconnected")
+        self.hasDisconnected = true
     }
 
     func didResignActive() {
@@ -69,7 +73,11 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                                     self.navigationController?.popViewControllerAnimated(true)
                                 }, afterWriteFailedCallback: {(error) in
                                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                                    self.navigationController?.popViewControllerAnimated(true)
+                                    if self.hasDisconnected {
+                                        self.navigationController?.popToRootViewControllerAnimated(true)
+                                    } else {
+                                        self.navigationController?.popViewControllerAnimated(true)
+                                    }
                                 })
                         }
                     }

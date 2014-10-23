@@ -12,6 +12,7 @@ import BlueCapKit
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
    
     weak var characteristic     : Characteristic?
+    var hasDisconnected         = false
     let progressView            : ProgressView!
     
     @IBOutlet var refreshButton :UIButton!
@@ -42,6 +43,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func viewDidAppear(animated:Bool)  {
+        self.hasDisconnected = false
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service.peripheral)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
         self.updateValues()
@@ -97,6 +100,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                     afterReadFailedCallback:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                         self.progressView.remove()
+                        if self.hasDisconnected {
+                            self.navigationController?.popToRootViewControllerAnimated(true)
+                        }
                     })
             }
         }
@@ -104,6 +110,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
+        self.hasDisconnected = true
     }
 
     func didResignActive() {
