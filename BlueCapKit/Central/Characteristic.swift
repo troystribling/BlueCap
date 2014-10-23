@@ -12,8 +12,7 @@ import CoreBluetooth
 public class Characteristic {
 
     // PRIVATE
-    private let CHARACTERISTIC_READ_TIMEOUT     : Float  = 10.0
-    private let CHARACTERISTIC_WRITE_TIMEOUT    : Float = 10.0
+    private let CHARACTERISTIC_READ_WRITE_TIMEOUT   = 10.0
    
     private var notificationStateChangedSuccessCallback     : (() -> ())?
     private var notificationStateChangedFailedCallback      : ((error:NSError!) -> ())?
@@ -193,7 +192,7 @@ public class Characteristic {
     // PRIVATE
     private func timeoutRead(sequence:Int) {
         Logger.debug("Characteristic#timeoutRead: sequence \(sequence)")
-        CentralManager.delayCallback(CHARACTERISTIC_READ_TIMEOUT) {
+        CentralManager.delayCallback(CHARACTERISTIC_READ_WRITE_TIMEOUT) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
@@ -211,7 +210,7 @@ public class Characteristic {
 
     private func timeoutWrite(sequence:Int) {
         Logger.debug("Characteristic#timeoutWrite: sequence \(sequence)")
-        CentralManager.delayCallback(CHARACTERISTIC_WRITE_TIMEOUT) {
+        CentralManager.delayCallback(CHARACTERISTIC_READ_WRITE_TIMEOUT) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")

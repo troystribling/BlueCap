@@ -86,7 +86,7 @@ public class RegionScannerator : TimedScannerator {
         self.startUpdatingLocation()
     }
     
-    override public func startScanning(timeoutSeconds:Float, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+    override public func startScanning(timeoutSeconds:Double, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
         self.timeoutSeconds = timeoutSeconds
         self.services = nil
         self._isScanning = true
@@ -95,7 +95,7 @@ public class RegionScannerator : TimedScannerator {
         self.timeoutScan()
     }
     
-    override public func startScanningForServiceUUIDs(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+    override public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
         self._isScanning = true
         self.services = uuids
         self.afterTimeout = afterTimeout

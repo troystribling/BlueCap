@@ -183,7 +183,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         CentralManager.sharedInstance().asyncCallback(request)
     }
     
-    internal class func delayCallback(delay:Float, request:()->()) {
+    internal class func delayCallback(delay:Double, request:()->()) {
         CentralManager.sharedInstance().delayCallback(delay, request)
     }
     
@@ -195,8 +195,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         dispatch_async(dispatch_get_main_queue(), request)
     }
     
-    internal func delayCallback(delay:Float, request:()->()) {
-        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
+    internal func delayCallback(delay:Double, request:()->()) {
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, dispatch_get_main_queue(), request)
     }
     

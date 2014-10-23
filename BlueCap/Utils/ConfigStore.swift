@@ -57,6 +57,20 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setInteger(timeout, forKey:"scanTimeout")
     }
     
+    // peripheral connection timeout
+    class func getPeripheralConnectionTimeout() -> Int {
+        let peripheralConnectionTimeout = NSUserDefaults.standardUserDefaults().integerForKey("peripheralConnectionTimeout")
+        if peripheralConnectionTimeout == 0 {
+            return 10
+        } else {
+            return peripheralConnectionTimeout
+        }
+    }
+    
+    class func setPeripheralConnectionTimeout(peripheralConnectionTimeout:Int) {
+        NSUserDefaults.standardUserDefaults().setInteger(peripheralConnectionTimeout, forKey:"peripheralConnectionTimeout")
+    }
+    
     // maximum reconnections
     class func getMaximumReconnections() -> Int {
         let maximumReconnetions = NSUserDefaults.standardUserDefaults().integerForKey("maximumReconnections")

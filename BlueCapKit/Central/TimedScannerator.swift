@@ -11,7 +11,7 @@ import CoreBluetooth
 
 public class TimedScannerator {
     
-    internal var timeoutSeconds : Float = 10.0
+    internal var timeoutSeconds = 10.0
 
     internal var _isScanning = false
     
@@ -31,7 +31,7 @@ public class TimedScannerator {
     public init() {
     }
     
-    public func startScanning(timeoutSeconds:Float, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+    public func startScanning(timeoutSeconds:Double, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
         CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
         self.timeoutSeconds = timeoutSeconds
         self.afterTimeout = afterTimeout
@@ -39,7 +39,7 @@ public class TimedScannerator {
         self.timeoutScan()
     }
     
-    public func startScanningForServiceUUIDs(timeoutSeconds:Float, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
+    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
         CentralManager.sharedInstance().startScanningForServiceUUIDs(uuids, afterPeripheralDiscoveredCallback)
         self.afterTimeout = afterTimeout
         self.timeoutSeconds = timeoutSeconds

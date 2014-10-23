@@ -22,8 +22,9 @@ public class Connectorator {
     public var failedConnect     : ((peripheral:Peripheral, error:NSError!) -> ())?
     public var giveUp            : ((peripheral:Peripheral) -> ())?
 
-    public let timeoutRetries       : Int?
-    public let disconnectRetries    : Int?
+    public var timeoutRetries       = -1
+    public var disconnectRetries    = -1
+    public var connectionTimeout    = 10.0
 
     public init () {
     }
@@ -32,27 +33,11 @@ public class Connectorator {
         initializer(connector:self)
     }
     
-    public init(timeoutRetries:Int?, disconnectRetries:Int?, initializer:((connector:Connectorator) -> ())? = nil) {
-        self.timeoutRetries = timeoutRetries
-        self.disconnectRetries = disconnectRetries
-        if let initializer = initializer {
-            initializer(connector:self)
-        }
-    }
-
-    public convenience init(timeoutRetries:Int, initializer:((connector:Connectorator) -> ())? = nil) {
-        self.init(timeoutRetries:timeoutRetries, disconnectRetries:nil, initializer:initializer)
-    }
-
-    public convenience init(disconnectRetries:Int, initializer:((connector:Connectorator) -> ())? = nil) {
-        self.init(timeoutRetries:nil, disconnectRetries:disconnectRetries, initializer:initializer)
-    }
-
     // INTERNAL
     internal func didTimeout(peripheral:Peripheral) {
         Logger.debug("Connectorator#didTimeout")
-        if let timeoutRetries = self.timeoutRetries {
-            if self.timeoutCount < timeoutRetries {
+        if self.timeoutRetries > 0 {
+            if self.timeoutCount < self.timeoutRetries {
                 self.callDidTimeout(peripheral)
                 ++self.timeoutCount
             } else {
@@ -66,8 +51,8 @@ public class Connectorator {
 
     internal func didDisconnect(peripheral:Peripheral) {
         Logger.debug("Connectorator#didDisconnect")
-        if let disconnectRetries = self.disconnectRetries {
-            if self.disconnectCount < disconnectRetries {
+        if self.disconnectRetries > 0 {
+            if self.disconnectCount < self.disconnectRetries {
                 ++self.disconnectCount
                 self.callDidDisconnect(peripheral)
             } else {

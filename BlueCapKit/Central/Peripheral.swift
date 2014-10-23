@@ -17,8 +17,6 @@ enum PeripheralConnectionError {
 public class Peripheral : NSObject, CBPeripheralDelegate {
 
     // PRIVATE
-    private let PERIPHERAL_CONNECTION_TIMEOUT : Float  = 10.0
-
     private var servicesDiscoveredSuccessCallback   : (() -> ())?
     private var serviceDiscoveryFailedCallback      : ((error:NSError!) -> ())?
     private var peripheralDiscoveredCallback        : (() -> ())?
@@ -30,6 +28,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var discoveredCharacteristics   = Dictionary<CBCharacteristic, Characteristic>()
     private var currentError                = PeripheralConnectionError.None
     private var forcedDisconnect            = false
+    
+    private let defaultConnectionTimeout    = Double(10.0)
 
     // INTERNAL
     internal let cbPeripheral    : CBPeripheral!
@@ -211,7 +211,11 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedInstance()
         Logger.debug("Peripheral#timeoutConnection: sequence \(sequence)")
-        central.delayCallback(PERIPHERAL_CONNECTION_TIMEOUT) {
+        var timeout = self.defaultConnectionTimeout
+        if let connectorator = self.connectorator {
+            timeout = connectorator.connectionTimeout
+        }
+        central.delayCallback(timeout) {
             if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("Peripheral#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout

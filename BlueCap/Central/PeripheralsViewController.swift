@@ -119,8 +119,9 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        peripheral.connect(connectorator:Connectorator(timeoutRetries:ConfigStore.getMaximumReconnections()){(connectorator:Connectorator) -> () in
-            var reconectAttempts = 0
+        peripheral.connect(connectorator:Connectorator(){(connectorator:Connectorator) -> () in
+            connectorator.timeoutRetries = ConfigStore.getMaximumReconnections()
+            connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
             connectorator.disconnect = {(periphearl:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#disconnect")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
@@ -131,7 +132,6 @@ class PeripheralsViewController : UITableViewController {
             connectorator.connect = {(peipheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#connect")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
-                reconectAttempts = 0
                 self.updateWhenActive()
             }
             connectorator.timeout = {(peripheral:Peripheral) -> () in
@@ -142,12 +142,12 @@ class PeripheralsViewController : UITableViewController {
             }
             connectorator.forceDisconnect = {(peripheral:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#onForcedDisconnect")
-                Notify.withMessage("Force disconnection of forceDisconnect '\(peripheral.name)'")
+                Notify.withMessage("Force disconnection of forceDisconnect: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
             connectorator.giveUp = {(peripheral:Peripheral) -> () in
-                Logger.debug("PeripheralsViewController#giveUp")
+                Logger.debug("PeripheralsViewController#giveUp: '\(peripheral.name)'")
                 peripheral.terminate()
                 self.updateWhenActive()
             }
@@ -170,7 +170,7 @@ class PeripheralsViewController : UITableViewController {
             case "Promiscuous" :
                 // Region Promiscuous Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
-                    RegionScannerator.sharedInstance().startScanning(Float(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
+                    RegionScannerator.sharedInstance().startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                 } else {
                     RegionScannerator.sharedInstance().startScanning(afterPeripheralDiscovered)
                 }
@@ -184,7 +184,7 @@ class PeripheralsViewController : UITableViewController {
                 } else {
                     // Region Service Scan with Timeout Enabled
                     if ConfigStore.getScanTimeoutEnabled() {
-                        RegionScannerator.sharedInstance().startScanningForServiceUUIDs(Float(ConfigStore.getScanTimeout()), uuids:scannedServices,
+                        RegionScannerator.sharedInstance().startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
                             afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                     } else {
                         RegionScannerator.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
@@ -202,7 +202,7 @@ class PeripheralsViewController : UITableViewController {
             case "Promiscuous" :
                 // Promiscuous Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
-                    TimedScannerator.sharedInstance().startScanning(Float(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
+                    TimedScannerator.sharedInstance().startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                 } else {
                     CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)                }
                 break
@@ -213,7 +213,7 @@ class PeripheralsViewController : UITableViewController {
                 } else {
                     // Service Scan with Timeout Enabled
                     if ConfigStore.getScanTimeoutEnabled() {
-                        TimedScannerator.sharedInstance().startScanningForServiceUUIDs(Float(ConfigStore.getScanTimeout()), uuids:scannedServices,
+                        TimedScannerator.sharedInstance().startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
                             afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                     } else {
                         CentralManager.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
