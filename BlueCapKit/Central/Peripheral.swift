@@ -21,7 +21,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var serviceDiscoveryFailedCallback      : ((error:NSError!) -> ())?
     private var peripheralDiscoveredCallback        : (() -> ())?
     private var peripheralDiscoveryFailedCallback   : ((error:NSError!) -> ())?
-    private var connectorator                       : Connectorator?
     
     private var connectionSequence          = 0
     private var discoveredServices          = Dictionary<CBUUID, Service>()
@@ -33,6 +32,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
 
     // INTERNAL
     internal let cbPeripheral    : CBPeripheral!
+    internal var connectorator   : Connectorator?
 
     // PUBLIC
     public let advertisements  : Dictionary<String, String>!

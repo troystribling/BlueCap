@@ -90,7 +90,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                         self.updateWhenActive()
                     },
                     afterUpdateFailedCallback:{(error) in
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        self.presentViewController(UIAlertController.alertOnError(error, {(action) in
+                            if self.hasDisconnected {
+                                self.navigationController?.popToRootViewControllerAnimated(true)
+                            }
+                        }), animated:true, completion:nil)
                     })
             } else if characteristic.propertyEnabled(.Read) {
                 characteristic.read({
@@ -98,11 +102,12 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                         self.progressView.remove()
                     },
                     afterReadFailedCallback:{(error) in
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                         self.progressView.remove()
-                        if self.hasDisconnected {
-                            self.navigationController?.popToRootViewControllerAnimated(true)
-                        }
+                        self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                            if self.hasDisconnected {
+                                self.navigationController?.popToRootViewControllerAnimated(true)
+                            }
+                        }, animated:true, completion:nil)
                     })
             }
         }

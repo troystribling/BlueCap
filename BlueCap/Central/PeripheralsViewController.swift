@@ -122,6 +122,7 @@ class PeripheralsViewController : UITableViewController {
         peripheral.connect(connectorator:Connectorator(){(connectorator:Connectorator) -> () in
             connectorator.timeoutRetries = ConfigStore.getMaximumReconnections()
             connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
+            connectorator.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
             connectorator.disconnect = {(periphearl:Peripheral) -> () in
                 Logger.debug("PeripheralsViewController#disconnect")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")

@@ -12,8 +12,6 @@ import CoreBluetooth
 public class Characteristic {
 
     // PRIVATE
-    private let CHARACTERISTIC_READ_WRITE_TIMEOUT   = 10.0
-   
     private var notificationStateChangedSuccessCallback     : (() -> ())?
     private var notificationStateChangedFailedCallback      : ((error:NSError!) -> ())?
     private var afterUpdateSuccessCallback                  : (() -> ())?
@@ -26,6 +24,7 @@ public class Characteristic {
     
     private var readSequence    = 0
     private var writeSequence   = 0
+    private let defaultTimeout  = 10.0
     
     // INTERNAL
     internal let cbCharacteristic : CBCharacteristic
@@ -192,7 +191,7 @@ public class Characteristic {
     // PRIVATE
     private func timeoutRead(sequence:Int) {
         Logger.debug("Characteristic#timeoutRead: sequence \(sequence)")
-        CentralManager.delayCallback(CHARACTERISTIC_READ_WRITE_TIMEOUT) {
+        CentralManager.delayCallback(self.readWriteTimeout()) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
@@ -210,7 +209,7 @@ public class Characteristic {
 
     private func timeoutWrite(sequence:Int) {
         Logger.debug("Characteristic#timeoutWrite: sequence \(sequence)")
-        CentralManager.delayCallback(CHARACTERISTIC_READ_WRITE_TIMEOUT) {
+        CentralManager.delayCallback(self.readWriteTimeout()) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
@@ -223,6 +222,14 @@ public class Characteristic {
             } else {
                 Logger.debug("Characteristic#timeoutWrite: expired")
             }
+        }
+    }
+    
+    private func readWriteTimeout() -> Double {
+        if let connectorator = self.service.peripheral.connectorator {
+            return connectorator.characteristicTimeout
+        } else {
+            return self.defaultTimeout
         }
     }
 

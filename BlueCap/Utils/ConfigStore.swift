@@ -70,7 +70,21 @@ class ConfigStore {
     class func setPeripheralConnectionTimeout(peripheralConnectionTimeout:Int) {
         NSUserDefaults.standardUserDefaults().setInteger(peripheralConnectionTimeout, forKey:"peripheralConnectionTimeout")
     }
+
+    // characteristic read write timeout
+    class func getCharacteristicReadWriteTimeout() -> Int {
+        let characteristicReadWriteTimeout = NSUserDefaults.standardUserDefaults().integerForKey("characteristicReadWriteTimeout")
+        if characteristicReadWriteTimeout == 0 {
+            return 10
+        } else {
+            return characteristicReadWriteTimeout
+        }
+    }
     
+    class func setCharacteristicReadWriteTimeout(characteristicReadWriteTimeout:Int) {
+        NSUserDefaults.standardUserDefaults().setInteger(characteristicReadWriteTimeout, forKey:"characteristicReadWriteTimeout")
+    }
+
     // maximum reconnections
     class func getMaximumReconnections() -> Int {
         let maximumReconnetions = NSUserDefaults.standardUserDefaults().integerForKey("maximumReconnections")

@@ -22,9 +22,10 @@ public class Connectorator {
     public var failedConnect     : ((peripheral:Peripheral, error:NSError!) -> ())?
     public var giveUp            : ((peripheral:Peripheral) -> ())?
 
-    public var timeoutRetries       = -1
-    public var disconnectRetries    = -1
-    public var connectionTimeout    = 10.0
+    public var timeoutRetries           = -1
+    public var disconnectRetries        = -1
+    public var connectionTimeout        = 10.0
+    public var characteristicTimeout    = 10.0
 
     public init () {
     }
