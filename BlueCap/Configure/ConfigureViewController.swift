@@ -11,14 +11,16 @@ import BlueCapKit
 
 class ConfigureViewController : UITableViewController {
     
-    @IBOutlet var scanModeLabel                 : UILabel!
-    @IBOutlet var servicesLabel                 : UILabel!
-    @IBOutlet var scanRegionsLabel              : UILabel!
-    @IBOutlet var scanRegionButton              : UIButton!
-    @IBOutlet var scanTimeoutLabel              : UILabel!
-    @IBOutlet var peripheralReconnectionsLabel  : UILabel!
-    @IBOutlet var scanTimeoutButton             : UIButton!
-    @IBOutlet var notifySwitch                  : UISwitch!
+    @IBOutlet var scanModeLabel                     : UILabel!
+    @IBOutlet var servicesLabel                     : UILabel!
+    @IBOutlet var scanRegionsLabel                  : UILabel!
+    @IBOutlet var scanRegionButton                  : UIButton!
+    @IBOutlet var scanTimeoutLabel                  : UILabel!
+    @IBOutlet var peripheralReconnectionsLabel      : UILabel!
+    @IBOutlet var peripheralConnectionTimeout       : UILabel!
+    @IBOutlet var characteristicReadWriteTimeout    : UILabel!
+    @IBOutlet var scanTimeoutButton                 : UIButton!
+    @IBOutlet var notifySwitch                      : UISwitch!
     
     var scanMode = "None"
     
@@ -43,6 +45,8 @@ class ConfigureViewController : UITableViewController {
         self.scanModeLabel.text = self.scanMode
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.peripheralReconnectionsLabel.text = "\(ConfigStore.getMaximumReconnections())"
+        self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
+        self.characteristicReadWriteTimeout.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
         self.navigationItem.title = "Configure"
         self.configUI()
         super.viewWillAppear(animated)

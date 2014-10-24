@@ -1,16 +1,16 @@
 //
-//  ConfigurePeripheralReconnectionsViewController.swift
+//  ConfigureCharacteristicReadWriteTimeoutViewController.swift
 //  BlueCap
 //
-//  Created by Troy Stribling on 10/22/14.
+//  Created by Troy Stribling on 10/24/14.
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
 import UIKit
 
-class ConfigurePeripheralReconnectionsViewController: UIViewController {
+class ConfigureCharacteristicReadWriteTimeoutViewController: UIViewController {
 
-    @IBOutlet var maximumReconnectionsTextField    : UITextField!
+    @IBOutlet var readWriteTimeoutTextField : UITextField!
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -18,7 +18,7 @@ class ConfigurePeripheralReconnectionsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.maximumReconnectionsTextField.text = "\(ConfigStore.getMaximumReconnections())"
+        self.readWriteTimeoutTextField.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())"
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -31,10 +31,10 @@ class ConfigurePeripheralReconnectionsViewController: UIViewController {
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let maximumReconnections = self.maximumReconnectionsTextField.text {
-            if !maximumReconnections.isEmpty {
-                if let maximumReconnectionsInt = maximumReconnections.toInt() {
-                    ConfigStore.setMaximumReconnections(maximumReconnectionsInt)
+        if let readWriteTimeout = self.readWriteTimeoutTextField.text {
+            if !readWriteTimeout.isEmpty {
+                if let readWriteTimeoutInt = readWriteTimeout.toInt() {
+                    ConfigStore.setCharacteristicReadWriteTimeout(readWriteTimeoutInt)
                     self.navigationController?.popToRootViewControllerAnimated(true)
                 }
             }
