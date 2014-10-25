@@ -1307,7 +1307,7 @@
             <objects>
                 <tableViewController id="z0r-2o-HqO" customClass="ConfigureViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Pjm-P8-fha">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -1523,6 +1523,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="SvA-DH-tna" kind="show" identifier="PeripheralConnectionTimeout" id="hvr-qI-F8Z"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
                                         <autoresizingMask key="autoresizingMask"/>
@@ -1543,6 +1546,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="YVL-nm-gv9" kind="show" identifier="CharacteristicReadWriteTimeout" id="51g-c2-fcX"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1552,6 +1558,7 @@
                             <outlet property="delegate" destination="z0r-2o-HqO" id="Rnm-Pz-N8m"/>
                         </connections>
                     </tableView>
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" title="Configure" id="RE9-39-6QO"/>
                     <connections>
                         <outlet property="characteristicReadWriteTimeout" destination="60B-HI-lJ8" id="bpY-3j-cRC"/>
@@ -3896,6 +3903,80 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jyK-sN-HCh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1391.25" y="311.25"/>
+        </scene>
+        <!--Characteristic Read/Write Timeout-->
+        <scene sceneID="kCd-UL-Ngb">
+            <objects>
+                <viewController id="YVL-nm-gv9" customClass="ConfigureCharacteristicReadWriteTimeoutViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="fgh-P5-HpF"/>
+                        <viewControllerLayoutGuide type="bottom" id="u27-cW-ZtZ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="89i-92-rUZ">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Read/Write Timeout" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="z5P-8Y-1fe">
+                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="YVL-nm-gv9" id="EbL-lC-Z1J"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="z5P-8Y-1fe" firstAttribute="leading" secondItem="89i-92-rUZ" secondAttribute="leadingMargin" constant="4" id="7Yw-ff-Vm2"/>
+                            <constraint firstItem="z5P-8Y-1fe" firstAttribute="top" secondItem="fgh-P5-HpF" secondAttribute="bottom" constant="36" id="Koo-cm-83f"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="z5P-8Y-1fe" secondAttribute="trailing" constant="4" id="wUb-yY-EAN"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Characteristic Read/Write Timeout" id="ZeU-1v-VJM"/>
+                    <connections>
+                        <outlet property="readWriteTimeoutTextField" destination="z5P-8Y-1fe" id="6zN-Tl-6Ey"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sKa-YH-bMT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1526" y="-582"/>
+        </scene>
+        <!--Peripheral Timeout-->
+        <scene sceneID="qSy-r0-zg9">
+            <objects>
+                <viewController title="Peripheral Timeout" id="SvA-DH-tna" customClass="ConfigurePeripheralConnectionTimeoutViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ui9-mr-By2"/>
+                        <viewControllerLayoutGuide type="bottom" id="Rbk-pC-NDP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ihS-97-xHw">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Peripheral Connection Timeout" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eim-KF-Yw4">
+                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="SvA-DH-tna" id="KLP-OL-u4C"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="eim-KF-Yw4" secondAttribute="trailing" constant="4" id="88s-0S-d5N"/>
+                            <constraint firstItem="eim-KF-Yw4" firstAttribute="leading" secondItem="ihS-97-xHw" secondAttribute="leadingMargin" constant="4" id="MJE-4C-LY7"/>
+                            <constraint firstItem="eim-KF-Yw4" firstAttribute="top" secondItem="ui9-mr-By2" secondAttribute="bottom" constant="36" id="qJd-sw-6SK"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Peripheral Connection Timeout" id="aJv-SE-h18"/>
+                    <connections>
+                        <outlet property="peripheralConnectionTimeoutTextField" destination="eim-KF-Yw4" id="ncF-13-Siv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="twy-aE-u6K" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2283" y="-582"/>
         </scene>
         <!--Peripheral Reconnections-->
         <scene sceneID="0fw-zi-j5i">
