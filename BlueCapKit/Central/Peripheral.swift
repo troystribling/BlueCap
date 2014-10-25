@@ -210,11 +210,11 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // PRIVATE
     private func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedInstance()
-        Logger.debug("Peripheral#timeoutConnection: sequence \(sequence)")
         var timeout = self.defaultConnectionTimeout
         if let connectorator = self.connectorator {
             timeout = connectorator.connectionTimeout
         }
+        Logger.debug("Peripheral#timeoutConnection: sequence \(sequence), timeout:\(timeout)")
         central.delayCallback(timeout) {
             if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("Peripheral#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")

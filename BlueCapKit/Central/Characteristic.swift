@@ -190,7 +190,7 @@ public class Characteristic {
 
     // PRIVATE
     private func timeoutRead(sequence:Int) {
-        Logger.debug("Characteristic#timeoutRead: sequence \(sequence)")
+        Logger.debug("Characteristic#timeoutRead: sequence \(sequence), timeout:\(self.readWriteTimeout())")
         CentralManager.delayCallback(self.readWriteTimeout()) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
@@ -208,7 +208,7 @@ public class Characteristic {
     }
 
     private func timeoutWrite(sequence:Int) {
-        Logger.debug("Characteristic#timeoutWrite: sequence \(sequence)")
+        Logger.debug("Characteristic#timeoutWrite: sequence \(sequence), timeout:\(self.readWriteTimeout())")
         CentralManager.delayCallback(self.readWriteTimeout()) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
