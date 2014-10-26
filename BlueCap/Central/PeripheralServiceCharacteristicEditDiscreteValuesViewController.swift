@@ -12,8 +12,7 @@ import BlueCapKit
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
    
     weak var characteristic     : Characteristic?
-    var progressView            : ProgressView!
-    var hasDisconnected         = false
+    var progressView            = ProgressView()
     
     struct MainStoryboard {
         static let peripheralServiceCharacteristicDiscreteValueCell  = "PeripheraServiceCharacteristicEditDiscreteValueCell"
@@ -21,7 +20,6 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
-        self.progressView = ProgressView()
     }
     
     override func viewDidLoad() {
@@ -34,7 +32,6 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        self.hasDisconnected = false
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service.peripheral)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -50,7 +47,11 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#peripheralDisconnected")
-        self.hasDisconnected = true
+        self.progressView.remove()
+        self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                self.navigationController?.popViewControllerAnimated(true)
+                return
+            }, animated:true, completion:nil)
     }
 
     func didResignActive() {
@@ -60,15 +61,6 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     func didBecomeActive() {
         Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#didBecomeActive")
-    }
-
-    func writeComplete() {
-        self.progressView.remove()
-        if self.hasDisconnected {
-            self.navigationController?.popToRootViewControllerAnimated(true)
-        } else {
-            self.navigationController?.popViewControllerAnimated(true)
-        }
     }
 
     // UITableViewDataSource
@@ -106,11 +98,15 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         if let characteristic = self.characteristic {
             let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]
             characteristic.write(stringValue, afterWriteSuccessCallback:{
-                    self.writeComplete()
+                    self.progressView.remove()
+                    self.navigationController?.popViewControllerAnimated(true)
+                    return
                 },
                 afterWriteFailedCallback:{(error) in
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    self.writeComplete()
+                    self.progressView.remove()
+                    self.navigationController?.popViewControllerAnimated(true)
+                    return
             })
         }
     }

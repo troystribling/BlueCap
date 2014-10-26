@@ -28,26 +28,27 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidLoad()  {
         super.viewDidLoad()
         self.hasUpdated = false
+        self.hasDisconnected = false
         if let peripheral = self.peripheral {
             self.progressView.show()
             peripheral.discoverAllServices({
-                    self.tableView.reloadData()
                     self.hasUpdated = true
+                    self.tableView.reloadData()
                     self.progressView.remove()},
                 serviceDiscoveryFailedCallback:{(error) in
-                    self.progressView.remove()
                     self.hasUpdated = true
+                    self.progressView.remove()
                     self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                        self.updateDidFail()
+                            self.navigationController?.popViewControllerAnimated(true)
+                            return
                         }, animated:true, completion:nil)
-                })
+            })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        self.hasDisconnected = false
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.peripheral!)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -70,16 +71,20 @@ class PeripheralServicesViewController : UITableViewController {
     }
     
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
-        return self.peripheral?.services.count > 0 && !self.hasDisconnected
+        return !self.hasDisconnected
     }
     
     func peripheralDisconnected() {
         if self.hasDisconnected == false {
-            self.hasDisconnected = true
             Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
-            if self.hasUpdated == false {
-                self.disconnectAlert()
-            }
+            self.hasDisconnected = true
+            self.progressView.remove()
+            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                    if self.hasUpdated == false {
+                        self.navigationController?.popViewControllerAnimated(true)
+                        return
+                    }
+                }, animated:true, completion:nil)
         }
     }
 
@@ -92,17 +97,6 @@ class PeripheralServicesViewController : UITableViewController {
         Logger.debug("PeripheralServicesViewController#didBecomeActive")
     }
 
-    func disconnectAlert() {
-        self.progressView.remove()
-        self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
-            self.updateDidFail()
-        }, animated:true, completion:nil)
-    }
-
-    func updateDidFail() {
-        self.navigationController?.popToRootViewControllerAnimated(true)
-    }
-    
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
@@ -129,9 +123,6 @@ class PeripheralServicesViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        if self.hasDisconnected {
-            self.disconnectAlert()
-        }
     }
     
     // UITableViewDelegate

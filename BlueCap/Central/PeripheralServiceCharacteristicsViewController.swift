@@ -28,18 +28,20 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let service = self.service {
+            self.hasUpdated = false
+            self.hasDisconnected = false
             self.navigationItem.title = service.name
             self.progressView.show()
-            self.hasUpdated = false
             service.discoverAllCharacteristics({
-                    self.tableView.reloadData()
                     self.hasUpdated = true
+                    self.tableView.reloadData()
                     self.progressView.remove()},
                 characteristicDiscoveryFailedCallback:{(error) in
-                    self.progressView.remove()
                     self.hasUpdated = true
+                    self.progressView.remove()
                     self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                            self.updateDidFail()
+                            self.navigationController?.popViewControllerAnimated(true)
+                            return
                         }, animated:true, completion:nil)
                 })
         }
@@ -48,7 +50,6 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        self.hasDisconnected = false
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.service?.peripheral)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -71,7 +72,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
 
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
-        return self.service?.characteristics.count > 0 && !self.hasDisconnected
+        return !self.hasDisconnected
     }
     
     func peripheralDisconnected() {
@@ -79,7 +80,13 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             self.hasDisconnected = true
             Logger.debug("PeripheralServiceCharacteristicsViewController#peripheralDisconnected")
             if self.hasUpdated == false {
-                self.disconnectAlert()
+                self.progressView.remove()
+                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                    if self.hasUpdated == false {
+                        self.navigationController?.popViewControllerAnimated(true)
+                        return
+                    }
+                    }, animated:true, completion:nil)
             }
         }
     }
@@ -91,17 +98,6 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     func didBecomeActive() {
         Logger.debug("PeripheralServiceCharacteristicsViewController#didBecomeActive")
-    }
-
-    func disconnectAlert() {
-        self.progressView.remove()
-        self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
-            self.updateDidFail()
-            }, animated:true, completion:nil)
-    }
-
-    func updateDidFail() {
-        self.navigationController?.popToRootViewControllerAnimated(true)
     }
 
     // UITableViewDataSource
@@ -128,12 +124,6 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        if self.hasDisconnected {
-            self.progressView.remove()
-            self.presentViewController(UIAlertController.alertOnErrorWithMessage("Peripheral disconnected") {(action) in
-                    self.updateDidFail()
-                }, animated:true, completion:nil)
-        }
     }
 
     // UITableViewDelegate

@@ -12,8 +12,9 @@ import BlueCapKit
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
    
     weak var characteristic     : Characteristic?
-    var hasDisconnected         = false
     let progressView            : ProgressView!
+    var hasUpdated              = false
+    var hasDisconnected         = false
     
     @IBOutlet var refreshButton :UIButton!
     
@@ -37,13 +38,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             } else {
                 self.refreshButton.enabled = true
             }
-            self.updateValues()
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
     override func viewDidAppear(animated:Bool)  {
-        self.hasDisconnected = false
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service.peripheral)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -76,46 +75,47 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     @IBAction func updateValues() {
         if let characteristic = self.characteristic {
-            if !characteristic.isNotifying {
-                self.progressView.show()
-            }
-        }
-        self.readValues()
-    }
-    
-    func readValues() {
-        if let characteristic = self.characteristic {
+            self.hasUpdated = false
+            self.hasDisconnected = false
             if characteristic.isNotifying {
                 characteristic.startUpdates({
+                        self.hasUpdated = true
                         self.updateWhenActive()
-                    },
-                    afterUpdateFailedCallback:{(error) in
-                        self.presentViewController(UIAlertController.alertOnError(error, {(action) in
-                            if self.hasDisconnected {
-                                self.navigationController?.popToRootViewControllerAnimated(true)
-                            }
-                        }), animated:true, completion:nil)
-                    })
-            } else if characteristic.propertyEnabled(.Read) {
-                characteristic.read({
-                        self.updateWhenActive()
-                        self.progressView.remove()
-                    },
-                    afterReadFailedCallback:{(error) in
-                        self.progressView.remove()
+                    }, afterUpdateFailedCallback:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                            if self.hasDisconnected {
-                                self.navigationController?.popToRootViewControllerAnimated(true)
+                            if !self.hasUpdated {
+                                self.navigationController?.popViewControllerAnimated(true)
                             }
                         }, animated:true, completion:nil)
-                    })
+                })
+            } else if characteristic.propertyEnabled(.Read) {
+                self.progressView.show()
+                characteristic.read({
+                        self.hasUpdated = true
+                        self.updateWhenActive()
+                        self.progressView.remove()
+                    }, afterReadFailedCallback:{(error) in
+                        self.progressView.remove()
+                        self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                            self.navigationController?.popViewControllerAnimated(true)
+                            return
+                        }, animated:true, completion:nil)
+                })
             }
         }
     }
     
     func peripheralDisconnected() {
-        Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
-        self.hasDisconnected = true
+        if self.hasDisconnected == false {
+            self.hasDisconnected = true
+            Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
+            self.progressView.remove()
+            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                if self.hasUpdated == false {
+                    self.navigationController?.popViewControllerAnimated(true)
+                }
+            }, animated:true, completion:nil)
+        }
     }
 
     func didResignActive() {
@@ -160,12 +160,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        if let characteristic = self.characteristic {
-            if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
-                if characteristic.discreteStringValues.isEmpty {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:indexPath)
-                } else {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
+        if self.hasDisconnected == false {
+            if let characteristic = self.characteristic {
+                if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+                    if characteristic.discreteStringValues.isEmpty {
+                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:indexPath)
+                    } else {
+                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
+                    }
                 }
             }
         }
