@@ -12,9 +12,6 @@ import BlueCapKit
 class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
     weak var service    : Service?
-    var progressView    = ProgressView()
-    var hasDisconnected = false
-    var hasUpdated      = false
     
     struct MainStoryboard {
         static let peripheralServiceCharacteristicCell  = "PeripheralServiceCharacteristicCell"
@@ -28,22 +25,6 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let service = self.service {
-            self.hasUpdated = false
-            self.hasDisconnected = false
-            self.navigationItem.title = service.name
-            self.progressView.show()
-            service.discoverAllCharacteristics({
-                    self.hasUpdated = true
-                    self.tableView.reloadData()
-                    self.progressView.remove()},
-                characteristicDiscoveryFailedCallback:{(error) in
-                    self.hasUpdated = true
-                    self.progressView.remove()
-                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                            self.navigationController?.popViewControllerAnimated(true)
-                            return
-                        }, animated:true, completion:nil)
-                })
         }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
@@ -72,23 +53,12 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
 
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
-        return !self.hasDisconnected
+        return true
     }
     
     func peripheralDisconnected() {
-        if self.hasDisconnected == false {
-            self.hasDisconnected = true
-            Logger.debug("PeripheralServiceCharacteristicsViewController#peripheralDisconnected")
-            if self.hasUpdated == false {
-                self.progressView.remove()
-                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                    if self.hasUpdated == false {
-                        self.navigationController?.popViewControllerAnimated(true)
-                        return
-                    }
-                    }, animated:true, completion:nil)
-            }
-        }
+        Logger.debug("PeripheralServiceCharacteristicsViewController#peripheralDisconnected")
+        self.tableView.reloadData()
     }
     
     func didResignActive() {
@@ -119,6 +89,11 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name
             cell.uuidLabel.text = characteristic.uuid.UUIDString
+            if service.peripheral.state == .Connected {
+                cell.nameLabel.textColor = UIColor.blackColor()
+            } else {
+                cell.nameLabel.textColor = UIColor.lightGrayColor()
+            }
         }
         return cell
     }

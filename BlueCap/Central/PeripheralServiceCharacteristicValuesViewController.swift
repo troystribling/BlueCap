@@ -13,8 +13,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
    
     weak var characteristic     : Characteristic?
     let progressView            : ProgressView!
-    var hasUpdated              = false
-    var hasDisconnected         = false
     
     @IBOutlet var refreshButton :UIButton!
     
@@ -75,23 +73,16 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     @IBAction func updateValues() {
         if let characteristic = self.characteristic {
-            self.hasUpdated = false
-            self.hasDisconnected = false
             if characteristic.isNotifying {
                 characteristic.startUpdates({
-                        self.hasUpdated = true
                         self.updateWhenActive()
                     }, afterUpdateFailedCallback:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                            if !self.hasUpdated {
-                                self.navigationController?.popViewControllerAnimated(true)
-                            }
                         }, animated:true, completion:nil)
                 })
             } else if characteristic.propertyEnabled(.Read) {
                 self.progressView.show()
                 characteristic.read({
-                        self.hasUpdated = true
                         self.updateWhenActive()
                         self.progressView.remove()
                     }, afterReadFailedCallback:{(error) in
@@ -106,16 +97,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     func peripheralDisconnected() {
-        if self.hasDisconnected == false {
-            self.hasDisconnected = true
-            Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
-            self.progressView.remove()
-            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                if self.hasUpdated == false {
-                    self.navigationController?.popViewControllerAnimated(true)
-                }
-            }, animated:true, completion:nil)
-        }
+        Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
     }
 
     func didResignActive() {
@@ -160,14 +142,12 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        if self.hasDisconnected == false {
-            if let characteristic = self.characteristic {
-                if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
-                    if characteristic.discreteStringValues.isEmpty {
-                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:indexPath)
-                    } else {
-                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
-                    }
+        if let characteristic = self.characteristic {
+            if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+                if characteristic.discreteStringValues.isEmpty {
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:indexPath)
+                } else {
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
                 }
             }
         }

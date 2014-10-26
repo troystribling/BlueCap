@@ -47,11 +47,6 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#peripheralDisconnected")
-        self.progressView.remove()
-        self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                self.navigationController?.popViewControllerAnimated(true)
-                return
-            }, animated:true, completion:nil)
     }
 
     func didResignActive() {

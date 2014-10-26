@@ -10,14 +10,19 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
+enum PeripheralStatus {
+    case Connecting, Connected, Discovered, Disconnected, Error
+}
+
 class PeripheralsViewController : UITableViewController {
     
     var stopScanBarButtonItem   : UIBarButtonItem!
     var startScanBarButtonItem  : UIBarButtonItem!
-    var connectionSequence      : Dictionary<Peripheral, Int> = [:]
+    var periphearStatus         = [Peripheral:PeripheralStatus]()
     
     struct MainStoryboard {
-        static let peripheralCell = "PeripheralCell"
+        static let peripheralCell   = "PeripheralCell"
+        static let peripheralSegue  = "Peripheral"
     }
     
     required init(coder aDecoder:NSCoder) {
@@ -50,7 +55,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
-        if segue.identifier == "PeripheralDetail" {
+        if segue.identifier == MainStoryboard.peripheralSegue {
             if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
                 let viewController = segue.destinationViewController as PeripheralViewController
                 viewController.peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
@@ -61,11 +66,13 @@ class PeripheralsViewController : UITableViewController {
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
         var perform = false
         if let identifier = identifier {
-            if identifier == "PeripheralDetail" {
+            if identifier == MainStoryboard.peripheralSegue {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
                     let peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
-                    if peripheral.state == .Connected {
-                        perform = true
+                    if let peripheralStatus = self.periphearStatus[peripheral] {
+                        if peripheralStatus == .Discovered || peripheralStatus == .Disconnected {
+                            perform = true
+                        }
                     }
                 }
             }
@@ -119,37 +126,68 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        peripheral.connect(connectorator:Connectorator(){(connectorator:Connectorator) -> () in
+        self.periphearStatus[peripheral] = .Connecting
+        peripheral.connect(connectorator:Connectorator(){(connectorator) in
             connectorator.timeoutRetries = ConfigStore.getMaximumReconnections()
             connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
             connectorator.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
-            connectorator.disconnect = {(periphearl:Peripheral) -> () in
+            connectorator.disconnect = {(periphearl) in
                 Logger.debug("PeripheralsViewController#disconnect")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.reconnect()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                self.periphearStatus[peripheral] = .Disconnected
                 self.updateWhenActive()
             }
-            connectorator.connect = {(peipheral:Peripheral) -> () in
+            connectorator.connect = {(peipheral) in
                 Logger.debug("PeripheralsViewController#connect")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+                if let peripheralStatus = self.periphearStatus[peripheral] {
+                    if peripheralStatus == .Connecting {
+                        self.periphearStatus[peripheral] = .Connected
+                    } else {
+                        self.periphearStatus[peripheral] = .Disconnected
+                    }
+                } else {
+                    self.periphearStatus[peripheral] = .Connected
+                }
                 self.updateWhenActive()
+                peripheral.discoverAllPeripheralServices({
+                        self.updateWhenActive()
+                        self.periphearStatus[peripheral] = .Discovered
+                    },
+                    peripheralDiscoveryFailedCallback:{(error) in
+                        self.updateWhenActive()
+                        self.periphearStatus[peripheral] = .Error
+                    }
+                )
             }
-            connectorator.timeout = {(peripheral:Peripheral) -> () in
+            connectorator.timeout = {(peripheral) in
                 Logger.debug("PeripheralsViewController#timeout: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                if let peripheralStatus = self.periphearStatus[peripheral] {
+                    if peripheralStatus == .Connecting {
+                        self.periphearStatus[peripheral] = .Connecting
+                    } else {
+                        self.periphearStatus[peripheral] = .Disconnected
+                    }
+                } else {
+                    self.periphearStatus[peripheral] = .Connecting
+                }
                 peripheral.reconnect()
                 self.updateWhenActive()
             }
-            connectorator.forceDisconnect = {(peripheral:Peripheral) -> () in
+            connectorator.forceDisconnect = {(peripheral) in
                 Logger.debug("PeripheralsViewController#onForcedDisconnect")
                 Notify.withMessage("Force disconnection of forceDisconnect: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                self.periphearStatus[peripheral] = .Disconnected
                 self.updateWhenActive()
             }
-            connectorator.giveUp = {(peripheral:Peripheral) -> () in
+            connectorator.giveUp = {(peripheral) in
                 Logger.debug("PeripheralsViewController#giveUp: '\(peripheral.name)'")
                 peripheral.terminate()
+                self.periphearStatus.removeValueForKey(peripheral)
                 self.updateWhenActive()
             }
         })
@@ -160,6 +198,7 @@ class PeripheralsViewController : UITableViewController {
         let afterPeripheralDiscovered = {(peripheral:Peripheral, rssi:Int) -> () in
             Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
             self.connect(peripheral)
+            self.updateWhenActive()
         }
         let afterTimeout = {
             self.setScanButton()
@@ -264,13 +303,27 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
         let peripheral = CentralManager.sharedInstance().peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        switch(peripheral.state) {
-        case .Connected:
-            cell.connectingActivityIndicator.stopAnimating()
-            cell.accessoryType = .DetailButton
-        default:
-            cell.connectingActivityIndicator.startAnimating()
-            cell.accessoryType = .None
+        if let peripheralStatus = self.periphearStatus[peripheral] {
+            switch(peripheralStatus) {
+            case .Discovered:
+                cell.nameLabel.textColor = UIColor.blackColor()
+                cell.accessoryType = .DisclosureIndicator
+            case .Connected:
+                cell.nameLabel.textColor = UIColor.lightGrayColor()
+                cell.accessoryType = .None
+            case .Disconnected:
+                cell.nameLabel.textColor = UIColor.lightGrayColor()
+                cell.accessoryType = .DisclosureIndicator
+            case .Error:
+                cell.nameLabel.textColor = UIColor.redColor()
+                cell.accessoryType = .None
+            case .Connecting:
+                cell.nameLabel.textColor = UIColor.lightGrayColor()
+                cell.accessoryType = .None
+            default:
+                cell.nameLabel.textColor = UIColor.redColor()
+                cell.accessoryType = .None
+            }
         }
         return cell
     }
