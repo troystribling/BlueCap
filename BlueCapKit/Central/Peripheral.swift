@@ -121,27 +121,13 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                         peripheralDiscoveredCallback:peripheralDiscoveredCallback,
                         peripheralDiscoveryFailedCallback:peripheralDiscoveryFailedCallback)
                 } else {
-                    self.discoverService(self.services[0], tail:[Service](), peripheralDiscoveredCallback:peripheralDiscoveredCallback, peripheralDiscoveryFailedCallback:peripheralDiscoveryFailedCallback)
+                    self.services[0].discoverAllCharacteristics(peripheralDiscoveredCallback, characteristicDiscoveryFailedCallback:peripheralDiscoveryFailedCallback)
                 }
             }, serviceDiscoveryFailedCallback:{(error) in
                 if let peripheralDiscoveryFailedCallback = peripheralDiscoveryFailedCallback {
                     CentralManager.asyncCallback(){peripheralDiscoveryFailedCallback(error:error)}
                 }
             })
-    }
-    
-    internal func discoverService(head:Service?, tail:[Service], peripheralDiscoveredCallback:()->(), peripheralDiscoveryFailedCallback:((error:NSError!)->())? = nil) {
-        if let head = head {
-            if tail.count > 1 {
-                head.discoverAllCharacteristics({
-                        self.discoverService(tail[0], tail:Array(tail[1..<tail.count]), peripheralDiscoveredCallback:peripheralDiscoveredCallback, peripheralDiscoveryFailedCallback: peripheralDiscoveryFailedCallback)
-                    }, characteristicDiscoveryFailedCallback:peripheralDiscoveryFailedCallback)
-            } else {
-                head.discoverAllCharacteristics(peripheralDiscoveredCallback, characteristicDiscoveryFailedCallback:peripheralDiscoveryFailedCallback)
-            }
-        } else {
-            CentralManager.asyncCallback(peripheralDiscoveredCallback)
-        }
     }
     
     // CBPeripheralDelegate
@@ -306,6 +292,16 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug("PeripheralConnectionError#didFailToConnectPeripheral")
         if let connectorator = self.connectorator {
             connectorator.didFailConnect(self, error:error)
+        }
+    }
+    
+    internal func discoverService(head:Service, tail:[Service], peripheralDiscoveredCallback:()->(), peripheralDiscoveryFailedCallback:((error:NSError!)->())? = nil) {
+        if tail.count > 1 {
+            head.discoverAllCharacteristics({
+                self.discoverService(tail[0], tail:Array(tail[1..<tail.count]), peripheralDiscoveredCallback:peripheralDiscoveredCallback, peripheralDiscoveryFailedCallback: peripheralDiscoveryFailedCallback)
+                }, characteristicDiscoveryFailedCallback:peripheralDiscoveryFailedCallback)
+        } else {
+            tail[0].discoverAllCharacteristics(peripheralDiscoveredCallback, characteristicDiscoveryFailedCallback:peripheralDiscoveryFailedCallback)
         }
     }
 }
