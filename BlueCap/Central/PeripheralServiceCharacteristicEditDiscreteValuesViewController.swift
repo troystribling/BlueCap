@@ -11,8 +11,10 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
    
-    weak var characteristic     : Characteristic?
-    var progressView            = ProgressView()
+    weak var characteristic         : Characteristic?
+    var peripheralViewController    : PeripheralViewController?
+
+    var progressView                = ProgressView()
     
     struct MainStoryboard {
         static let peripheralServiceCharacteristicDiscreteValueCell  = "PeripheraServiceCharacteristicEditDiscreteValueCell"
@@ -47,6 +49,9 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#peripheralDisconnected")
+        if let peripheralViewController = self.peripheralViewController {
+            peripheralViewController.peripehealConnected = false
+        }
     }
 
     func didResignActive() {

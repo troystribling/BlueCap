@@ -11,8 +11,10 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
    
-    weak var characteristic     : Characteristic?
-    let progressView            : ProgressView!
+    weak var characteristic         : Characteristic?
+    let progressView                : ProgressView!
+    var peripheralViewController    : PeripheralViewController?
+
     
     @IBOutlet var refreshButton :UIButton!
     
@@ -98,6 +100,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
+        if let peripheralViewController = self.peripheralViewController {
+            peripheralViewController.peripehealConnected = false
+        }
     }
 
     func didResignActive() {

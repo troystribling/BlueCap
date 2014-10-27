@@ -13,6 +13,8 @@ class PeripheralViewController : UITableViewController {
     
     weak var peripheral             : Peripheral?
     var progressView                = ProgressView()
+    var peripehealConnected         = true
+    
     @IBOutlet var uuidLabel         : UILabel!
     @IBOutlet var rssiLabel         : UILabel!
     @IBOutlet var stateLabel        : UILabel!
@@ -37,7 +39,7 @@ class PeripheralViewController : UITableViewController {
             } else {
                 self.uuidLabel.text = "Unknown"
             }
-            self.setState()
+            self.peripehealConnected = (peripheral.state == .Connected)
             peripheral.discoverAllPeripheralServices({
                     self.progressView.remove()
                 },
@@ -55,6 +57,7 @@ class PeripheralViewController : UITableViewController {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.setStateLabel()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -69,6 +72,7 @@ class PeripheralViewController : UITableViewController {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
             let viewController = segue.destinationViewController as PeripheralServicesViewController
             viewController.peripheral = self.peripheral
+            viewController.peripheralViewController = self
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destinationViewController as PeripheralAdvertisementsViewController
             viewController.peripheral = self.peripheral
@@ -77,8 +81,9 @@ class PeripheralViewController : UITableViewController {
     
     func peripheralDisconnected() {        
         Logger.debug("PeripheralViewController#peripheralDisconnected")
+        self.peripehealConnected = false
         self.progressView.remove()
-        self.setState()
+        self.setStateLabel()
     }
     
     func didResignActive() {
@@ -90,9 +95,9 @@ class PeripheralViewController : UITableViewController {
         Logger.debug("PeripheralViewController#didBecomeActive")
     }
     
-    func setState() {
+    func setStateLabel() {
         if let peripheral = self.peripheral {
-            if peripheral.state == .Connected {
+            if self.peripehealConnected {
                 self.stateLabel.text = "Connected"
                 self.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0)
             } else {

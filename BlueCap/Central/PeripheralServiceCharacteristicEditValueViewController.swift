@@ -13,7 +13,9 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
    
     @IBOutlet var valueTextField    : UITextField!
     var characteristic              : Characteristic?
+    var peripheralViewController    : PeripheralViewController?
     var valueName                   : String?
+    
     var progressView                = ProgressView()
     
     required init(coder aDecoder:NSCoder) {
@@ -45,6 +47,9 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicEditValueViewController#peripheralDisconnected")
+        if let peripheralViewController = self.peripheralViewController {
+            peripheralViewController.peripehealConnected = false
+        }
     }
 
     func didResignActive() {

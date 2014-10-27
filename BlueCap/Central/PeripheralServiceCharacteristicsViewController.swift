@@ -11,9 +11,10 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
-    weak var service    : Service?
-    var dataValid       = false
-    
+    weak var service                : Service?
+    var dataValid                   = false
+    var peripheralViewController    : PeripheralViewController?
+
     struct MainStoryboard {
         static let peripheralServiceCharacteristicCell  = "PeripheralServiceCharacteristicCell"
         static let peripheralServiceCharacteristicSegue = "PeripheralServiceCharacteristic"
@@ -46,7 +47,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
                     let viewController = segue.destinationViewController as PeripheralServiceCharacteristicViewController
                     viewController.characteristic = service.characteristics[selectedIndex.row]
-                    viewController.dataValid = self.dataValid
+                    viewController.peripheralViewController = self.peripheralViewController
                 }
             }
         }
@@ -58,8 +59,10 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicsViewController#peripheralDisconnected")
-        self.dataValid = false
         self.tableView.reloadData()
+        if let peripheralViewController = self.peripheralViewController {
+            peripheralViewController.peripehealConnected = false
+        }
     }
     
     func didResignActive() {
@@ -90,10 +93,14 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name
             cell.uuidLabel.text = characteristic.uuid.UUIDString
-            if service.peripheral.state == .Connected {
-                cell.nameLabel.textColor = UIColor.blackColor()
+            if let peripheralViewController = self.peripheralViewController {
+                if peripheralViewController.peripehealConnected {
+                    cell.nameLabel.textColor = UIColor.blackColor()
+                } else {
+                    cell.nameLabel.textColor = UIColor.lightGrayColor()
+                }
             } else {
-                cell.nameLabel.textColor = UIColor.lightGrayColor()
+                cell.nameLabel.textColor = UIColor.blackColor()
             }
         }
         return cell

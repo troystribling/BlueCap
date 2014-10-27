@@ -11,9 +11,9 @@ import BlueCapKit
 
 class PeripheralServicesViewController : UITableViewController {
     
-    weak var peripheral : Peripheral?
-    var progressView    = ProgressView()
-    var dataValid       = false
+    weak var peripheral             : Peripheral?
+    var progressView                = ProgressView()
+    var peripheralViewController    : PeripheralViewController?
     
     struct MainStoryboard {
         static let peripheralServiceCell            = "PeripheralServiceCell"
@@ -28,7 +28,6 @@ class PeripheralServicesViewController : UITableViewController {
         super.viewDidLoad()
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
         if let peripheral = self.peripheral {
-            self.dataValid = (peripheral.state == .Connected)
         }
     }
     
@@ -50,7 +49,8 @@ class PeripheralServicesViewController : UITableViewController {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
                     let viewController = segue.destinationViewController as PeripheralServiceCharacteristicsViewController
                     viewController.service = peripheral.services[selectedIndex.row]
-                    viewController.dataValid = self.dataValid
+                    viewController.peripheralViewController = self.peripheralViewController
+
                 }
             }
         }
@@ -62,7 +62,9 @@ class PeripheralServicesViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
-        self.dataValid = false
+        if let peripheralViewController = self.peripheralViewController {
+            peripheralViewController.peripehealConnected = false
+        }
         self.tableView.reloadData()
     }
 
@@ -94,10 +96,14 @@ class PeripheralServicesViewController : UITableViewController {
             let service = peripheral.services[indexPath.row]
             cell.nameLabel.text = service.name
             cell.uuidLabel.text = service.uuid.UUIDString
-            if self.dataValid {
-                cell.nameLabel.textColor = UIColor.blackColor()
+            if let peripheralViewController = self.peripheralViewController {
+                if peripheralViewController.peripehealConnected {
+                    cell.nameLabel.textColor = UIColor.blackColor()
+                } else {
+                    cell.nameLabel.textColor = UIColor.lightGrayColor()
+                }
             } else {
-                cell.nameLabel.textColor = UIColor.lightGrayColor()
+                cell.nameLabel.textColor = UIColor.blackColor()
             }
         }
         return cell

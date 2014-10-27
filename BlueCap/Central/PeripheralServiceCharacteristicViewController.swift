@@ -16,7 +16,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     weak var characteristic                                 : Characteristic?
-    var dataValid                                           = false
+    var peripheralViewController                            : PeripheralViewController?
     
     @IBOutlet var valuesLabel                               : UILabel!
 
@@ -45,8 +45,14 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
 
-            if !characteristic.propertyEnabled(.Read) {
-                self.valuesLabel.textColor = UIColor.lightGrayColor()
+            if let peripheralViewController = self.peripheralViewController {
+                if !characteristic.propertyEnabled(.Read) && peripheralViewController.peripehealConnected {
+                    self.valuesLabel.textColor = UIColor.lightGrayColor()
+                }
+            } else {
+                if !characteristic.propertyEnabled(.Read) {
+                    self.valuesLabel.textColor = UIColor.lightGrayColor()
+                }
             }
             
             if characteristic.propertyEnabled(.Notify) {
@@ -95,7 +101,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
         if let identifier = identifier {
             if let characteristic = self.characteristic {
-                return (characteristic.propertyEnabled(.Read) || characteristic.isNotifying) && self.dataValid
+                if let peripheralViewController = self.peripheralViewController {
+                    return (characteristic.propertyEnabled(.Read) || characteristic.isNotifying) && peripheralViewController.peripehealConnected
+                } else {
+                    return characteristic.propertyEnabled(.Read) || characteristic.isNotifying
+                }
             } else {
                 return false
             }
@@ -126,7 +136,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
                     notificationStateChangedFailedCallback:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                         self.setNotifyButtonLabel()
-                    })
+                    }
+                )
             }
         }
     }
@@ -156,7 +167,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicViewController#peripheralDisconnected")
-        self.dataValid = false
+        if let peripheralViewController = self.peripheralViewController {
+            peripheralViewController.peripehealConnected = false
+        }
     }
 
     func didResignActive() {
