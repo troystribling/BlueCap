@@ -12,8 +12,10 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
     
     weak var peripheral             : Peripheral?
+    var progressView                = ProgressView()
     @IBOutlet var uuidLabel         : UILabel!
     @IBOutlet var rssiLabel         : UILabel!
+    @IBOutlet var stateLabel        : UILabel!
     
     struct MainStoryBoard {
         static let peripheralServicesSegue          = "PeripheralServices"
@@ -24,6 +26,33 @@ class PeripheralViewController : UITableViewController {
         super.init(coder:aDecoder)
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if let peripheral = self.peripheral {
+            self.progressView.show()
+            self.navigationItem.title = peripheral.name
+            self.rssiLabel.text = "\(peripheral.rssi)"
+            if let identifier = peripheral.identifier {
+                self.uuidLabel.text = identifier.UUIDString
+            } else {
+                self.uuidLabel.text = "Unknown"
+            }
+            self.setState()
+            peripheral.discoverAllPeripheralServices({
+                    self.progressView.remove()
+                },
+                peripheralDiscoveryFailedCallback:{(error) in
+                    self.progressView.remove()
+                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                            self.navigationController?.popViewControllerAnimated(true)
+                            return
+                        }, animated:true, completion:nil)
+                }
+            )
+        }
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+    }
+
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
@@ -36,20 +65,6 @@ class PeripheralViewController : UITableViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if let peripheral = self.peripheral {
-            self.navigationItem.title = peripheral.name
-            self.rssiLabel.text = "\(peripheral.rssi)"
-            if let identifier = peripheral.identifier {
-                self.uuidLabel.text = identifier.UUIDString
-            } else {
-                self.uuidLabel.text = "Unknown"
-            }
-        }
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
-    }
-        
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
             let viewController = segue.destinationViewController as PeripheralServicesViewController
@@ -62,6 +77,8 @@ class PeripheralViewController : UITableViewController {
     
     func peripheralDisconnected() {        
         Logger.debug("PeripheralViewController#peripheralDisconnected")
+        self.progressView.remove()
+        self.setState()
     }
     
     func didResignActive() {
@@ -71,6 +88,18 @@ class PeripheralViewController : UITableViewController {
     
     func didBecomeActive() {
         Logger.debug("PeripheralViewController#didBecomeActive")
+    }
+    
+    func setState() {
+        if let peripheral = self.peripheral {
+            if peripheral.state == .Connected {
+                self.stateLabel.text = "Connected"
+                self.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0)
+            } else {
+                self.stateLabel.text = "Disconnected"
+                self.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0)
+            }
+        }
     }
 
 }
