@@ -16,6 +16,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     weak var characteristic                                 : Characteristic?
+    var dataValid                                           = false
     
     @IBOutlet var valuesLabel                               : UILabel!
 
@@ -94,7 +95,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
         if let identifier = identifier {
             if let characteristic = self.characteristic {
-                return characteristic.propertyEnabled(.Read) || characteristic.isNotifying
+                return (characteristic.propertyEnabled(.Read) || characteristic.isNotifying) && self.dataValid
             } else {
                 return false
             }
@@ -155,6 +156,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicViewController#peripheralDisconnected")
+        self.dataValid = false
     }
 
     func didResignActive() {

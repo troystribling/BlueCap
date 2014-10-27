@@ -12,6 +12,7 @@ import BlueCapKit
 class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
     weak var service    : Service?
+    var dataValid       = false
     
     struct MainStoryboard {
         static let peripheralServiceCharacteristicCell  = "PeripheralServiceCharacteristicCell"
@@ -24,8 +25,6 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let service = self.service {
-        }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
@@ -47,6 +46,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
                     let viewController = segue.destinationViewController as PeripheralServiceCharacteristicViewController
                     viewController.characteristic = service.characteristics[selectedIndex.row]
+                    viewController.dataValid = self.dataValid
                 }
             }
         }
@@ -58,6 +58,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicsViewController#peripheralDisconnected")
+        self.dataValid = false
         self.tableView.reloadData()
     }
     
