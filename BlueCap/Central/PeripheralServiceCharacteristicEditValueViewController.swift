@@ -48,7 +48,12 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     func peripheralDisconnected() {
         Logger.debug("PeripheralServiceCharacteristicEditValueViewController#peripheralDisconnected")
         if let peripheralViewController = self.peripheralViewController {
-            peripheralViewController.peripehealConnected = false
+            if peripheralViewController.peripehealConnected {
+                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                        peripheralViewController.peripehealConnected = false
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }, animated:true, completion:nil)
+            }
         }
     }
 

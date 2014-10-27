@@ -81,9 +81,13 @@ class PeripheralViewController : UITableViewController {
     
     func peripheralDisconnected() {        
         Logger.debug("PeripheralViewController#peripheralDisconnected")
-        self.peripehealConnected = false
         self.progressView.remove()
-        self.setStateLabel()
+        if self.peripehealConnected {
+            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                    self.peripehealConnected = false
+                    self.setStateLabel()
+                }, animated:true, completion:nil)
+        }
     }
     
     func didResignActive() {
