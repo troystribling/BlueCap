@@ -86,6 +86,7 @@ class PeripheralsViewController : UITableViewController {
                 self.setScanButton()
                 central.disconnectAllPeripherals()
                 central.removeAllPeripherals()
+                self.updateWhenActive()
             } else {
                 central.powerOn(){
                     Logger.debug("powerOn Callback")
