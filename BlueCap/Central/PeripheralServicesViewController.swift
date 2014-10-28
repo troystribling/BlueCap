@@ -11,9 +11,9 @@ import BlueCapKit
 
 class PeripheralServicesViewController : UITableViewController {
     
-    weak var peripheral             : Peripheral?
+    weak var peripheral             : Peripheral!
+    var peripheralViewController    : PeripheralViewController!
     var progressView                = ProgressView()
-    var peripheralViewController    : PeripheralViewController?
     
     struct MainStoryboard {
         static let peripheralServiceCell            = "PeripheralServiceCell"
@@ -61,12 +61,10 @@ class PeripheralServicesViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
-        if let peripheralViewController = self.peripheralViewController {
-            if peripheralViewController.peripehealConnected {
-                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
-                peripheralViewController.peripehealConnected = false
-                self.updateWhenActive()
-            }
+        if self.peripheralViewController.peripehealConnected {
+            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
+            self.peripheralViewController.peripehealConnected = false
+            self.updateWhenActive()
         }
     }
 
@@ -94,19 +92,17 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCell, forIndexPath: indexPath) as NameUUIDCell
-        if let peripheral = self.peripheral {
-            let service = peripheral.services[indexPath.row]
-            cell.nameLabel.text = service.name
-            cell.uuidLabel.text = service.uuid.UUIDString
-            if let peripheralViewController = self.peripheralViewController {
-                if peripheralViewController.peripehealConnected {
-                    cell.nameLabel.textColor = UIColor.blackColor()
-                } else {
-                    cell.nameLabel.textColor = UIColor.lightGrayColor()
-                }
-            } else {
+        let service = peripheral.services[indexPath.row]
+        cell.nameLabel.text = service.name
+        cell.uuidLabel.text = service.uuid.UUIDString
+        if let peripheralViewController = self.peripheralViewController {
+            if peripheralViewController.peripehealConnected {
                 cell.nameLabel.textColor = UIColor.blackColor()
+            } else {
+                cell.nameLabel.textColor = UIColor.lightGrayColor()
             }
+        } else {
+            cell.nameLabel.textColor = UIColor.blackColor()
         }
         return cell
     }

@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralViewController : UITableViewController {
     
-    weak var peripheral             : Peripheral?
+    weak var peripheral             : Peripheral!
     var progressView                = ProgressView()
     var peripehealConnected         = true
     var hasData                     = false
@@ -33,29 +33,28 @@ class PeripheralViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hasData = false
-        if let peripheral = self.peripheral {
-            self.progressView.show()
-            self.navigationItem.title = peripheral.name
-            self.serviceLabel.textColor = UIColor.lightGrayColor()
-            if let identifier = peripheral.identifier {
-                self.uuidLabel.text = identifier.UUIDString
-            } else {
-                self.uuidLabel.text = "Unknown"
-            }
-            self.peripehealConnected = (peripheral.state == .Connected)
-            peripheral.discoverAllPeripheralServices({
-                    self.hasData = true
-                    self.serviceLabel.textColor = UIColor.blackColor()
-                    self.progressView.remove()
-                },
-                peripheralDiscoveryFailedCallback:{(error) in
-                    self.progressView.remove()
-                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                            return
-                        }, animated:true, completion:nil)
-                }
-            )
+        self.setStateLabel()
+        self.progressView.show()
+        self.navigationItem.title = peripheral.name
+        self.serviceLabel.textColor = UIColor.lightGrayColor()
+        if let identifier = peripheral.identifier {
+            self.uuidLabel.text = identifier.UUIDString
+        } else {
+            self.uuidLabel.text = "Unknown"
         }
+        self.peripehealConnected = (peripheral.state == .Connected)
+        self.peripheral.discoverAllPeripheralServices({
+                self.hasData = true
+                self.serviceLabel.textColor = UIColor.blackColor()
+                self.progressView.remove()
+            },
+            peripheralDiscoveryFailedCallback:{(error) in
+                self.progressView.remove()
+                self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                        return
+                    }, animated:true, completion:nil)
+            }
+        )
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
 
@@ -116,14 +115,12 @@ class PeripheralViewController : UITableViewController {
     }
     
     func setStateLabel() {
-        if let peripheral = self.peripheral {
-            if self.peripehealConnected {
-                self.stateLabel.text = "Connected"
-                self.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0)
-            } else {
-                self.stateLabel.text = "Disconnected"
-                self.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0)
-            }
+        if self.peripehealConnected {
+            self.stateLabel.text = "Connected"
+            self.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0)
+        } else {
+            self.stateLabel.text = "Disconnected"
+            self.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0)
         }
     }
 

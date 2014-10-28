@@ -267,9 +267,13 @@ class PeripheralsViewController : UITableViewController {
         if peripheral.state == .Connected {
             cell.nameLabel.textColor = UIColor.blackColor()
             cell.accessoryType = .DisclosureIndicator
+            cell.rssiLabel.text = "\(peripheral.rssi)"
+            cell.stateLabel.text = "Connected"
         } else {
             cell.nameLabel.textColor = UIColor.lightGrayColor()
             cell.accessoryType = .None
+            cell.rssiLabel.text = "\(0)"
+            cell.stateLabel.text = "Disconnected"
         }
         return cell
     }
