@@ -78,10 +78,10 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Connected" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="olY-hM-y4A">
-                                                    <rect key="frame" x="491" y="12" width="89" height="22"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disconnected" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="olY-hM-y4A">
+                                                    <rect key="frame" x="468" y="12" width="112" height="22"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" red="0.25501788679999998" green="0.50596552309999998" blue="0.25768211359999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" red="0.84825501820000004" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -150,6 +150,7 @@
                     <navigationItem key="navigationItem" title="Name" id="meN-Xl-hWE"/>
                     <connections>
                         <outlet property="rssiLabel" destination="q4d-zx-jkB" id="wYN-NU-crN"/>
+                        <outlet property="serviceLabel" destination="STM-Ax-Kfc" id="RVc-Mk-tVw"/>
                         <outlet property="stateLabel" destination="olY-hM-y4A" id="oJf-bp-5OS"/>
                         <outlet property="uuidLabel" destination="Fuu-e0-HWI" id="dyO-0Q-jlO"/>
                     </connections>
@@ -2209,7 +2210,7 @@
                                                     <rect key="frame" x="15" y="0.0" width="270" height="43"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>

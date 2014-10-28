@@ -45,23 +45,6 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
 
-            if let peripheralViewController = self.peripheralViewController {
-                if !characteristic.propertyEnabled(.Read) && peripheralViewController.peripehealConnected {
-                    self.valuesLabel.textColor = UIColor.lightGrayColor()
-                }
-            } else {
-                if !characteristic.propertyEnabled(.Read) {
-                    self.valuesLabel.textColor = UIColor.lightGrayColor()
-                }
-            }
-            
-            if characteristic.propertyEnabled(.Notify) {
-                self.notifiyButton.enabled = true
-                self.setNotifyButtonLabel()
-            } else {
-                self.notifiyButton.enabled = false
-            }
-            
             self.uuidLabel.text = characteristic.uuid.UUIDString
             self.notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
             self.broadcastingLabel.text = self.booleanStringValue(characteristic.isBroadcasted)
@@ -82,6 +65,26 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        if let characteristic = self.characteristic {
+            if let peripheralViewController = self.peripheralViewController {
+                if !characteristic.propertyEnabled(.Read) || !peripheralViewController.peripehealConnected {
+                    self.valuesLabel.textColor = UIColor.lightGrayColor()
+                }
+                if characteristic.propertyEnabled(.Notify)  && peripheralViewController.peripehealConnected {
+                    self.notifiyButton.enabled = true
+                    self.setNotifyButtonLabel()
+                } else {
+                    self.notifiyButton.enabled = false
+                }
+            } else {
+                if !characteristic.propertyEnabled(.Read) {
+                    self.valuesLabel.textColor = UIColor.lightGrayColor()
+                }
+                if !characteristic.propertyEnabled(.Notify) {
+                    self.notifiyButton.enabled = false
+                }
+            }
+        }
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }

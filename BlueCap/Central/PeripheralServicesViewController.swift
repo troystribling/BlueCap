@@ -27,12 +27,11 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidLoad()  {
         super.viewDidLoad()
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
-        if let peripheral = self.peripheral {
-        }
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.updateWhenActive()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.peripheral!)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -64,10 +63,9 @@ class PeripheralServicesViewController : UITableViewController {
         Logger.debug("PeripheralServicesViewController#peripheralDisconnected")
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
-                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                        peripheralViewController.peripehealConnected = false
-                        self.tableView.reloadData()
-                    }, animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
+                peripheralViewController.peripehealConnected = false
+                self.updateWhenActive()
             }
         }
     }

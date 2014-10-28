@@ -14,10 +14,12 @@ class PeripheralViewController : UITableViewController {
     weak var peripheral             : Peripheral?
     var progressView                = ProgressView()
     var peripehealConnected         = true
+    var hasData                     = false
     
     @IBOutlet var uuidLabel         : UILabel!
     @IBOutlet var rssiLabel         : UILabel!
     @IBOutlet var stateLabel        : UILabel!
+    @IBOutlet var serviceLabel      : UILabel!
     
     struct MainStoryBoard {
         static let peripheralServicesSegue          = "PeripheralServices"
@@ -30,10 +32,11 @@ class PeripheralViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hasData = false
         if let peripheral = self.peripheral {
             self.progressView.show()
             self.navigationItem.title = peripheral.name
-            self.rssiLabel.text = "\(peripheral.rssi)"
+            self.serviceLabel.textColor = UIColor.lightGrayColor()
             if let identifier = peripheral.identifier {
                 self.uuidLabel.text = identifier.UUIDString
             } else {
@@ -41,12 +44,13 @@ class PeripheralViewController : UITableViewController {
             }
             self.peripehealConnected = (peripheral.state == .Connected)
             peripheral.discoverAllPeripheralServices({
+                    self.hasData = true
+                    self.serviceLabel.textColor = UIColor.blackColor()
                     self.progressView.remove()
                 },
                 peripheralDiscoveryFailedCallback:{(error) in
                     self.progressView.remove()
                     self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                            self.navigationController?.popViewControllerAnimated(true)
                             return
                         }, animated:true, completion:nil)
                 }
@@ -58,7 +62,7 @@ class PeripheralViewController : UITableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self.setStateLabel()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.peripheral!)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
@@ -79,14 +83,26 @@ class PeripheralViewController : UITableViewController {
         }
     }
     
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
+        if let identifier = identifier {
+            if identifier == MainStoryBoard.peripheralServicesSegue {
+                return self.hasData
+            } else {
+                return true
+            }
+        } else {
+            return true
+        }
+    }
+    
     func peripheralDisconnected() {        
         Logger.debug("PeripheralViewController#peripheralDisconnected")
         self.progressView.remove()
         if self.peripehealConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                    self.peripehealConnected = false
-                    self.setStateLabel()
-                }, animated:true, completion:nil)
+                self.peripehealConnected = false
+                self.setStateLabel()
+            }, animated:true, completion:nil)
         }
     }
     
