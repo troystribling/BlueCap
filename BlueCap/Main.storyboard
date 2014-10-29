@@ -10,7 +10,7 @@
             <objects>
                 <tableViewController id="XKG-l0-TPz" customClass="PeripheralViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Uag-bF-daR">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -164,7 +164,7 @@
             <objects>
                 <tableViewController id="CAb-bN-tC0" customClass="PeripheralManagerViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="hnD-Xa-gy8">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -344,7 +344,7 @@
             <objects>
                 <tableViewController id="daR-Mz-YiG" customClass="PeripheralManagerServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="xJp-mg-Y0b">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -403,7 +403,7 @@
             <objects>
                 <tableViewController id="RDl-GN-TkA" customClass="PeripheralManagerServiceProfilesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="60" sectionHeaderHeight="10" sectionFooterHeight="10" id="m0K-3r-hcU">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -455,7 +455,7 @@
             <objects>
                 <tableViewController id="Gl9-1G-1mb" customClass="PeripheralManagerBeaconsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="87" sectionHeaderHeight="22" sectionFooterHeight="22" id="Ow0-py-ZKX">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -547,11 +547,11 @@
                         <viewControllerLayoutGuide type="bottom" id="84R-8B-SEF"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="e9A-e1-aSM">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="nKF-JZ-SbS">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <rect key="frame" x="20" y="68" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -559,7 +559,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="vtq-b0-PTE">
-                                <rect key="frame" x="20" y="145" width="560" height="30"/>
+                                <rect key="frame" x="20" y="113" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -567,7 +567,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Major" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="TuQ-vR-aPz">
-                                <rect key="frame" x="20" y="190" width="560" height="30"/>
+                                <rect key="frame" x="20" y="158" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -575,7 +575,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Minor" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="e4o-js-103">
-                                <rect key="frame" x="20" y="235" width="560" height="30"/>
+                                <rect key="frame" x="20" y="203" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -583,7 +583,7 @@
                                 </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Fg-O7-uH0">
-                                <rect key="frame" x="20" y="278" width="560" height="34"/>
+                                <rect key="frame" x="20" y="246" width="560" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <state key="normal" title="Generate UUID">
                                     <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -630,7 +630,7 @@
             <objects>
                 <tableViewController id="Xo0-0k-OH2" customClass="PeripheralManagerAdvertisedServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="LFr-oz-zzd">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -682,7 +682,7 @@
             <objects>
                 <tableViewController id="S3t-Pj-gLJ" customClass="PeripheralManagerServiceCharacteristicsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="ddH-3N-P2Q">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -735,7 +735,7 @@
             <objects>
                 <tableViewController id="lD9-bb-G98" customClass="PeripheralManagerAddAdvertisedServiceViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="3d0-wJ-iFH">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -780,7 +780,7 @@
             <objects>
                 <tableViewController id="xe4-Nh-bLl" customClass="PeripheralManagerServiceCharacteristicViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="pk8-ad-haT">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -1240,7 +1240,7 @@
             <objects>
                 <tableViewController id="nUi-RC-SAK" customClass="PeripheralManagerServicesCharacteristicValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="71" sectionHeaderHeight="22" sectionFooterHeight="22" id="IzX-n1-obj">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -1296,7 +1296,7 @@
             <objects>
                 <tableViewController id="F6T-V4-TwS" customClass="PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="RNV-JH-5Cn">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -1609,7 +1609,7 @@
             <objects>
                 <tableViewController id="FBS-jX-VLZ" customClass="ConfigureScanServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="7DW-52-h8U">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -1671,7 +1671,7 @@
                         <viewControllerLayoutGuide type="bottom" id="v8a-8a-uZY"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="oq4-Uh-ksU">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="O80-fg-Tzk">
@@ -1693,7 +1693,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="O80-fg-Tzk" firstAttribute="top" secondItem="Zgr-h9-SZX" secondAttribute="bottom" constant="36" id="HSh-n3-NlZ"/>
+                            <constraint firstItem="O80-fg-Tzk" firstAttribute="top" secondItem="Zgr-h9-SZX" secondAttribute="bottom" constant="100" id="HSh-n3-NlZ"/>
                             <constraint firstItem="miI-Av-eDH" firstAttribute="leading" secondItem="oq4-Uh-ksU" secondAttribute="leadingMargin" constant="4" id="URV-ce-xcl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="O80-fg-Tzk" secondAttribute="trailing" constant="4" id="UjH-wi-dRY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="miI-Av-eDH" secondAttribute="trailing" constant="4" id="WET-PM-ocJ"/>
@@ -1720,7 +1720,7 @@
                         <viewControllerLayoutGuide type="bottom" id="fhv-1o-rc4"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="TBs-e2-KmL">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Scan Timeout" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="bXs-1u-5M7">
@@ -1734,7 +1734,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="bXs-1u-5M7" firstAttribute="top" secondItem="YSU-Cr-1O5" secondAttribute="bottom" constant="36" id="3wk-jA-jNJ"/>
+                            <constraint firstItem="bXs-1u-5M7" firstAttribute="top" secondItem="YSU-Cr-1O5" secondAttribute="bottom" constant="100" id="3wk-jA-jNJ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bXs-1u-5M7" secondAttribute="trailing" constant="4" id="Xdo-KW-pNS"/>
                             <constraint firstItem="bXs-1u-5M7" firstAttribute="leading" secondItem="TBs-e2-KmL" secondAttribute="leadingMargin" constant="4" id="eC4-Qy-vqL"/>
                         </constraints>
@@ -1753,7 +1753,7 @@
             <objects>
                 <tableViewController id="iuJ-ez-JB9" customClass="ConfigureScanRegionViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="8Mu-Oh-Hzo">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -1898,7 +1898,7 @@
                         <viewControllerLayoutGuide type="bottom" id="ScW-LK-RSr"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="wCg-Uo-7Mc">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Region Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="80Z-Ee-Abo">
@@ -1913,7 +1913,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="80Z-Ee-Abo" firstAttribute="leading" secondItem="wCg-Uo-7Mc" secondAttribute="leadingMargin" constant="4" id="38k-6z-Sbf"/>
-                            <constraint firstItem="80Z-Ee-Abo" firstAttribute="top" secondItem="gwD-FR-ZnS" secondAttribute="bottom" constant="36" id="cO1-3a-J7z"/>
+                            <constraint firstItem="80Z-Ee-Abo" firstAttribute="top" secondItem="gwD-FR-ZnS" secondAttribute="bottom" constant="100" id="cO1-3a-J7z"/>
                             <constraint firstAttribute="trailingMargin" secondItem="80Z-Ee-Abo" secondAttribute="trailing" constant="4" id="uQm-Qm-MW0"/>
                         </constraints>
                     </view>
@@ -1931,7 +1931,7 @@
             <objects>
                 <tableViewController id="g8K-CX-5xt" customClass="ConfigureScanRegionsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="VWA-1D-WOq">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -1980,7 +1980,7 @@
             <objects>
                 <tableViewController id="3GU-aY-66s" customClass="ConfigureScanModeViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="iHE-Vu-LIx">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2015,7 +2015,7 @@
             <objects>
                 <navigationController id="Nrt-kH-UJi" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Configure" image="Configure" id="f0j-8s-vuy"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="5ws-Jj-Ebj">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="5ws-Jj-Ebj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -2034,7 +2034,7 @@
             <objects>
                 <tableViewController id="LBb-So-p2j" customClass="PeripheralAdvertisementsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="vzp-FS-Cw6">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2086,7 +2086,7 @@
             <objects>
                 <tableViewController id="VpE-cb-2P0" customClass="PeripheralServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="dsq-AI-jTA">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2140,7 +2140,7 @@
             <objects>
                 <tableViewController id="flO-6L-RZ3" customClass="PeripheralServiceCharacteristicsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="Vxs-H7-BUj">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2193,7 +2193,7 @@
             <objects>
                 <tableViewController id="qDj-sM-07o" customClass="PeripheralServiceCharacteristicViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="hmv-lf-o2k">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -2618,7 +2618,7 @@
             <objects>
                 <tableViewController id="ljK-JQ-Agv" customClass="PeripheralServiceCharacteristicValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="71" sectionHeaderHeight="22" sectionFooterHeight="22" id="ryT-Ue-dbY">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2687,7 +2687,7 @@
                         <viewControllerLayoutGuide type="bottom" id="knC-Sx-u3U"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="MOZ-6m-7pg">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="J6D-MW-7oK">
@@ -2703,7 +2703,7 @@
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="J6D-MW-7oK" secondAttribute="trailing" constant="4" id="KJA-Ej-sb2"/>
                             <constraint firstItem="J6D-MW-7oK" firstAttribute="leading" secondItem="MOZ-6m-7pg" secondAttribute="leadingMargin" constant="4" id="Q2d-OW-TYR"/>
-                            <constraint firstItem="J6D-MW-7oK" firstAttribute="top" secondItem="uz8-vY-NqO" secondAttribute="bottom" constant="36" id="uwj-nj-c62"/>
+                            <constraint firstItem="J6D-MW-7oK" firstAttribute="top" secondItem="uz8-vY-NqO" secondAttribute="bottom" constant="100" id="uwj-nj-c62"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Value" id="qC6-hX-sHJ"/>
@@ -2720,7 +2720,7 @@
             <objects>
                 <tableViewController id="Ab0-DZ-mXp" customClass="PeripheralServiceCharacteristicEditDiscreteValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Jnh-PR-nUt">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2758,7 +2758,7 @@
             <objects>
                 <tableViewController id="Iax-qU-br4" customClass="PeripheralsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="95" sectionHeaderHeight="22" sectionFooterHeight="22" id="QuF-dc-4mj">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2836,7 +2836,7 @@
             <objects>
                 <tableViewController id="zEN-c1-NRB" customClass="ServiceProfilesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="59" sectionHeaderHeight="10" sectionFooterHeight="10" id="nVc-LP-GhE">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -2886,7 +2886,7 @@
             <objects>
                 <tableViewController id="U1h-CL-I2C" customClass="BeaconRegionsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="LOa-2C-hQZ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2963,7 +2963,7 @@
                         <viewControllerLayoutGuide type="bottom" id="07a-2w-LZy"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="RAZ-d4-mOC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="sBx-UE-gAq">
@@ -2990,7 +2990,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="sBx-UE-gAq" secondAttribute="trailing" constant="4" id="AqI-Xf-1R9"/>
                             <constraint firstItem="sBx-UE-gAq" firstAttribute="leading" secondItem="RAZ-d4-mOC" secondAttribute="leadingMargin" constant="4" id="IeO-Hd-Ccb"/>
                             <constraint firstItem="6ag-fF-frh" firstAttribute="leading" secondItem="RAZ-d4-mOC" secondAttribute="leadingMargin" constant="4" id="LyY-bh-sz7"/>
-                            <constraint firstItem="sBx-UE-gAq" firstAttribute="top" secondItem="Xjj-1u-HC1" secondAttribute="bottom" constant="36" id="TWI-2i-r0T"/>
+                            <constraint firstItem="sBx-UE-gAq" firstAttribute="top" secondItem="Xjj-1u-HC1" secondAttribute="bottom" constant="100" id="TWI-2i-r0T"/>
                             <constraint firstAttribute="centerX" secondItem="sBx-UE-gAq" secondAttribute="centerX" id="h3D-p3-KvN"/>
                         </constraints>
                     </view>
@@ -3009,7 +3009,7 @@
             <objects>
                 <tableViewController id="RQU-wv-wrU" customClass="BeaconsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="135" sectionHeaderHeight="22" sectionFooterHeight="22" id="c5r-d4-Y7H">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -3127,7 +3127,7 @@
             <objects>
                 <navigationController id="tr1-EH-bbr" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Beacons" image="Beacons" id="DCy-qn-vZN"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="QcJ-Mm-AxF">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="QcJ-Mm-AxF">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -3146,7 +3146,7 @@
             <objects>
                 <tableViewController id="zWl-Dc-J9w" customClass="ServiceCharacteristicProfilesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="llw-2h-NAC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -3203,7 +3203,7 @@
                         <viewControllerLayoutGuide type="bottom" id="8n2-La-ogt"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="fJU-72-yJV">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Udk-V1-rmr">
@@ -3218,7 +3218,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Udk-V1-rmr" firstAttribute="leading" secondItem="fJU-72-yJV" secondAttribute="leadingMargin" constant="4" id="F1e-Hk-Bjg"/>
-                            <constraint firstItem="Udk-V1-rmr" firstAttribute="top" secondItem="Af2-Ks-cqn" secondAttribute="bottom" constant="36" id="ffZ-fc-iaP"/>
+                            <constraint firstItem="Udk-V1-rmr" firstAttribute="top" secondItem="Af2-Ks-cqn" secondAttribute="bottom" constant="100" id="ffZ-fc-iaP"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Udk-V1-rmr" secondAttribute="trailing" constant="4" id="i3x-DI-EzA"/>
                         </constraints>
                     </view>
@@ -3236,7 +3236,7 @@
             <objects>
                 <tableViewController id="zO7-LG-jdj" customClass="ServiceCharacteristicProfileViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="llB-6v-GZr">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -3700,7 +3700,7 @@
             <objects>
                 <tableViewController id="KJi-TH-L2L" customClass="ServiceCharacteristicProfileValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="ntU-6W-CqR">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -3761,7 +3761,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Vsq-HU-9c9"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="mPU-0P-MCc">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="scK-cN-VWY">
@@ -3775,7 +3775,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="scK-cN-VWY" firstAttribute="top" secondItem="MFb-Gv-zdP" secondAttribute="bottom" constant="36" id="3KK-wS-wX0"/>
+                            <constraint firstItem="scK-cN-VWY" firstAttribute="top" secondItem="MFb-Gv-zdP" secondAttribute="bottom" constant="100" id="3KK-wS-wX0"/>
                             <constraint firstAttribute="trailingMargin" secondItem="scK-cN-VWY" secondAttribute="trailing" constant="4" id="Whe-E2-vMa"/>
                             <constraint firstItem="scK-cN-VWY" firstAttribute="leading" secondItem="mPU-0P-MCc" secondAttribute="leadingMargin" constant="4" id="r8V-L2-xym"/>
                         </constraints>
@@ -3794,7 +3794,7 @@
             <objects>
                 <tableViewController id="ymu-CQ-WDc" customClass="ServiceCharacteristicProfileEditDiscreteValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="9Nu-EN-OAR">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -3829,7 +3829,7 @@
             <objects>
                 <navigationController definesPresentationContext="YES" id="6n5-d3-u2z" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Profiles" image="Profiles" id="UGG-m5-JJE"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="i9N-nT-Ltn">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="i9N-nT-Ltn">
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="barTintColor" red="0.0" green="0.55294117647058827" blue="0.82745098039215681" alpha="1" colorSpace="deviceRGB"/>
@@ -3847,7 +3847,7 @@
             <objects>
                 <tableViewController id="p2y-aw-7Yl" customClass="PeripheralManagersViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="UH7-Hj-92d">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -3897,7 +3897,7 @@
             <objects>
                 <navigationController id="2ap-Lu-enV" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Peripheral" image="Peripheral" id="J1A-Yk-x4z"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hNt-X7-Yfh">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="hNt-X7-Yfh">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -3941,7 +3941,7 @@
                 <navigationController definesPresentationContext="YES" id="ekL-3M-31h" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Central" image="Central" id="07S-vg-Fo9"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="4Qv-4W-Kpb">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="4Qv-4W-Kpb">
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="barTintColor" red="0.08235294371843338" green="0.58823531866073608" blue="0.83137261867523193" alpha="1" colorSpace="deviceRGB"/>
@@ -3963,7 +3963,7 @@
                         <viewControllerLayoutGuide type="bottom" id="u27-cW-ZtZ"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="89i-92-rUZ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Read/Write Timeout" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="z5P-8Y-1fe">
@@ -3978,7 +3978,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="z5P-8Y-1fe" firstAttribute="leading" secondItem="89i-92-rUZ" secondAttribute="leadingMargin" constant="4" id="7Yw-ff-Vm2"/>
-                            <constraint firstItem="z5P-8Y-1fe" firstAttribute="top" secondItem="fgh-P5-HpF" secondAttribute="bottom" constant="36" id="Koo-cm-83f"/>
+                            <constraint firstItem="z5P-8Y-1fe" firstAttribute="top" secondItem="fgh-P5-HpF" secondAttribute="bottom" constant="100" id="Koo-cm-83f"/>
                             <constraint firstAttribute="trailingMargin" secondItem="z5P-8Y-1fe" secondAttribute="trailing" constant="4" id="wUb-yY-EAN"/>
                         </constraints>
                     </view>
@@ -4000,7 +4000,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Rbk-pC-NDP"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ihS-97-xHw">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Peripheral Connection Timeout" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eim-KF-Yw4">
@@ -4016,7 +4016,7 @@
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="eim-KF-Yw4" secondAttribute="trailing" constant="4" id="88s-0S-d5N"/>
                             <constraint firstItem="eim-KF-Yw4" firstAttribute="leading" secondItem="ihS-97-xHw" secondAttribute="leadingMargin" constant="4" id="MJE-4C-LY7"/>
-                            <constraint firstItem="eim-KF-Yw4" firstAttribute="top" secondItem="ui9-mr-By2" secondAttribute="bottom" constant="36" id="qJd-sw-6SK"/>
+                            <constraint firstItem="eim-KF-Yw4" firstAttribute="top" secondItem="ui9-mr-By2" secondAttribute="bottom" constant="100" id="qJd-sw-6SK"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Peripheral Connection Timeout" id="aJv-SE-h18"/>
@@ -4037,7 +4037,7 @@
                         <viewControllerLayoutGuide type="bottom" id="oNa-em-hNM"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="GH9-j8-PYf">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Peripheral Reconnections" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="obe-QH-yps">
@@ -4053,7 +4053,7 @@
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="obe-QH-yps" secondAttribute="trailing" constant="4" id="WU9-KJ-Wvc"/>
                             <constraint firstItem="obe-QH-yps" firstAttribute="leading" secondItem="GH9-j8-PYf" secondAttribute="leadingMargin" constant="4" id="jkv-d7-TYO"/>
-                            <constraint firstItem="obe-QH-yps" firstAttribute="top" secondItem="XM8-Ge-AOG" secondAttribute="bottom" constant="36" id="qQF-tJ-J1D"/>
+                            <constraint firstItem="obe-QH-yps" firstAttribute="top" secondItem="XM8-Ge-AOG" secondAttribute="bottom" constant="100" id="qQF-tJ-J1D"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Peripheral Reconnections" id="IDu-qG-Zdj"/>

@@ -68,6 +68,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         setValueLable()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service.peripheral)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
@@ -120,6 +121,20 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
     }
     
+    func setValueLable() {
+        if !self.characteristic.propertyEnabled(.Read) || !self.peripheralViewController.peripehealConnected {
+            self.valuesLabel.textColor = UIColor.lightGrayColor()
+        } else {
+            self.valuesLabel.textColor = UIColor.blackColor()
+        }
+        if self.characteristic.propertyEnabled(.Notify)  && self.peripheralViewController.peripehealConnected {
+            self.setNotifyButtonLabel()
+        } else {
+            self.notifiyButton.setTitleColor(UIColor.lightGrayColor(), forState:.Normal)
+            self.notifiyButton.enabled = false
+        }
+    }
+
     func setNotifyButtonLabel() {
         self.notifiyButton.enabled = true
         if self.characteristic.isNotifying {
@@ -136,21 +151,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             }
         }
     }
-
-    func setValueLable() {
-        if !self.characteristic.propertyEnabled(.Read) || !self.peripheralViewController.peripehealConnected {
-            self.valuesLabel.textColor = UIColor.lightGrayColor()
-        } else {
-            self.valuesLabel.textColor = UIColor.blackColor()
-        }
-        if self.characteristic.propertyEnabled(.Notify)  && self.peripheralViewController.peripehealConnected {
-            self.notifiyButton.enabled = true
-            self.setNotifyButtonLabel()
-        } else {
-            self.notifiyButton.enabled = false
-        }
-    }
-
+    
     func booleanStringValue(value:Bool) -> String {
         return value ? "YES" : "NO"
     }
@@ -160,7 +161,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if self.peripheralViewController.peripehealConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
                     self.peripheralViewController.peripehealConnected = false
-                    self.tableView.reloadData()
+                    self.setValueLable()
                 }, animated:true, completion:nil)
         }
     }

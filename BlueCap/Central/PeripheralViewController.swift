@@ -36,7 +36,6 @@ class PeripheralViewController : UITableViewController {
         self.setStateLabel()
         self.progressView.show()
         self.navigationItem.title = peripheral.name
-        self.serviceLabel.textColor = UIColor.lightGrayColor()
         if let identifier = peripheral.identifier {
             self.uuidLabel.text = identifier.UUIDString
         } else {
@@ -50,9 +49,13 @@ class PeripheralViewController : UITableViewController {
             },
             peripheralDiscoveryFailedCallback:{(error) in
                 self.progressView.remove()
-                self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                        return
-                    }, animated:true, completion:nil)
+                self.serviceLabel.textColor = UIColor.lightGrayColor()
+                if self.peripehealConnected {
+                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                            self.peripehealConnected = false
+                            return
+                        }, animated:true, completion:nil)
+                }
             }
         )
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
