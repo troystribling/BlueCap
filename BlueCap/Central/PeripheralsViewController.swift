@@ -31,7 +31,14 @@ class PeripheralsViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.navigationController?.navigationBar.titleTextAttributes = NSDictionary(dictionary:[NSFontAttributeName:UIFont(name:"Thonburi", size:21)])
+        if var titleAttributes = UINavigationBar.appearance().titleTextAttributes {
+            titleAttributes[NSFontAttributeName] = UIFont(name:"Thonburi", size:21.0)
+            self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
+        } else {
+            var titleAttributes = [NSObject:AnyObject]()
+            titleAttributes[NSFontAttributeName] = UIFont(name:"Thonburi", size:21.0)
+            self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
+        }
         self.setScanButton()
     }
     
