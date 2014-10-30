@@ -28,13 +28,12 @@ class BeaconRegionsViewController: UITableViewController {
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleMonitoring:")
-        self.startScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Refresh, target:self, action:"toggleMonitoring:")
-        self.stopScanBarButtonItem.tintColor = UIColor.blackColor()
-        self.startScanBarButtonItem.tintColor = UIColor.blackColor()
+        self.startScanBarButtonItem = UIBarButtonItem(title:"Scan", style:UIBarButtonItemStyle.Bordered, target:self, action:"toggleMonitoring:")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.styleNavigationBar()
     }
     
     override func viewWillAppear(animated: Bool) {

@@ -37,6 +37,7 @@ class ConfigureViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.styleNavigationBar()
         self.notifySwitch.on = Notify.getEnabled()
     }
     

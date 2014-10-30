@@ -24,21 +24,14 @@ class PeripheralsViewController : UITableViewController {
         super.init(coder:aDecoder)
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleScan:")
-        self.startScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Refresh, target:self, action:"toggleScan:")
+        self.startScanBarButtonItem = UIBarButtonItem(title:"Scan", style:UIBarButtonItemStyle.Bordered, target:self, action:"toggleScan:")
         self.stopScanBarButtonItem.tintColor = UIColor.blackColor()
         self.startScanBarButtonItem.tintColor = UIColor.blackColor()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if var titleAttributes = UINavigationBar.appearance().titleTextAttributes {
-            titleAttributes[NSFontAttributeName] = UIFont(name:"Thonburi", size:21.0)
-            self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
-        } else {
-            var titleAttributes = [NSObject:AnyObject]()
-            titleAttributes[NSFontAttributeName] = UIFont(name:"Thonburi", size:21.0)
-            self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
-        }
+        self.styleNavigationBar()
         self.setScanButton()
     }
     

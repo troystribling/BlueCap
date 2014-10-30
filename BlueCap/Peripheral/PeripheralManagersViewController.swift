@@ -23,6 +23,7 @@ class PeripheralManagersViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.styleNavigationBar()
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor.blackColor()
     }

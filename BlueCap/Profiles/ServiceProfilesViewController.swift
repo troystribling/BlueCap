@@ -24,6 +24,11 @@ class ServiceProfilesViewController : ServiceProfilesTableViewController {
         super.init(coder:aDecoder)
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.styleNavigationBar()
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Service Profiles"
