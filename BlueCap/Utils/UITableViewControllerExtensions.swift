@@ -9,20 +9,34 @@
 import UIKit
 
 extension UITableViewController {
+    
     func updateWhenActive() {
         if UIApplication.sharedApplication().applicationState == .Active {
             self.tableView.reloadData()
         }
     }
+    
     func styleNavigationBar() {
         let font = UIFont(name:"Thonburi", size:22.0)
-        if var titleAttributes = UINavigationBar.appearance().titleTextAttributes {
-            titleAttributes[NSFontAttributeName] = font
-            self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
+        var titleAttributes : [NSObject:AnyObject]
+        if var defaultTitleAttributes = UINavigationBar.appearance().titleTextAttributes {
+            titleAttributes = defaultTitleAttributes
         } else {
-            var titleAttributes = [NSObject:AnyObject]()
-            titleAttributes[NSFontAttributeName] = font
-            self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
+            titleAttributes = [NSObject:AnyObject]()
         }
+        titleAttributes[NSFontAttributeName] = font
+        self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
+    }
+    
+    func styleUIBarButton(button:UIBarButtonItem) {
+        let font = UIFont(name:"Thonburi", size:18.0)
+        var titleAttributes : [NSObject:AnyObject]
+        if var defaultitleAttributes = button.titleTextAttributesForState(UIControlState.Normal) {
+            titleAttributes = defaultitleAttributes
+        } else {
+            titleAttributes = [NSObject:AnyObject]()
+        }
+        titleAttributes[NSFontAttributeName] = font
+        button.setTitleTextAttributes(titleAttributes, forState:UIControlState.Normal)
     }
 }
