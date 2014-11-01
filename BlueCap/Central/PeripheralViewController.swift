@@ -45,7 +45,7 @@ class PeripheralViewController : UITableViewController {
         self.rssiLabel.text = "\(self.peripheral.rssi)"
         self.peripheral.discoverAllPeripheralServices({
                 self.hasData = true
-                self.serviceLabel.textColor = UIColor.blackColor()
+                self.setStateLabel()
                 self.progressView.remove()
             },
             peripheralDiscoveryFailedCallback:{(error) in
@@ -53,6 +53,9 @@ class PeripheralViewController : UITableViewController {
                 self.serviceLabel.textColor = UIColor.lightGrayColor()
                 if self.peripehealConnected {
                     self.peripehealConnected = false
+                    self.presentViewController(UIAlertController.alertOnError(error, handler:{(action) in
+                        self.setStateLabel()
+                    }), animated: true, completion:nil)
                 }
             }
         )
@@ -100,7 +103,9 @@ class PeripheralViewController : UITableViewController {
         self.progressView.remove()
         if self.peripehealConnected {
             self.peripehealConnected = false
-            self.setStateLabel()
+            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected", handler:{(action) in
+                self.setStateLabel()
+            }), animated:true, completion:nil)
         }
     }
     
@@ -117,9 +122,11 @@ class PeripheralViewController : UITableViewController {
         if self.peripehealConnected {
             self.stateLabel.text = "Connected"
             self.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0)
+            self.serviceLabel.textColor = UIColor.blackColor()
         } else {
             self.stateLabel.text = "Disconnected"
             self.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0)
+            self.serviceLabel.textColor = UIColor.lightGrayColor()
         }
     }
 
