@@ -2142,7 +2142,7 @@
         <scene sceneID="Awb-N4-Vuk">
             <objects>
                 <tableViewController id="flO-6L-RZ3" customClass="PeripheralServiceCharacteristicsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="59" sectionHeaderHeight="22" sectionFooterHeight="22" id="Vxs-H7-BUj">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="70" sectionHeaderHeight="22" sectionFooterHeight="22" id="Vxs-H7-BUj">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -2155,21 +2155,21 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cDW-hg-LSS">
-                                            <rect key="frame" x="20" y="26" width="58" height="28"/>
+                                            <rect key="frame" x="20" y="32" width="58" height="28"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="21"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9KI-AZ-e1H">
-                                            <rect key="frame" x="20" y="8" width="265" height="16"/>
+                                            <rect key="frame" x="20" y="12" width="265" height="16"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="12"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="cDW-hg-LSS" firstAttribute="top" secondItem="5s7-wR-64c" secondAttribute="topMargin" constant="18" id="Z1Z-Vo-A2t"/>
+                                        <constraint firstItem="cDW-hg-LSS" firstAttribute="top" secondItem="5s7-wR-64c" secondAttribute="topMargin" constant="24" id="Z1Z-Vo-A2t"/>
                                         <constraint firstItem="9KI-AZ-e1H" firstAttribute="leading" secondItem="5s7-wR-64c" secondAttribute="leadingMargin" constant="12" id="qf4-rx-8rZ"/>
-                                        <constraint firstItem="9KI-AZ-e1H" firstAttribute="top" secondItem="5s7-wR-64c" secondAttribute="topMargin" id="ucC-Aa-Jgu"/>
+                                        <constraint firstItem="9KI-AZ-e1H" firstAttribute="top" secondItem="5s7-wR-64c" secondAttribute="topMargin" constant="4" id="ucC-Aa-Jgu"/>
                                         <constraint firstItem="cDW-hg-LSS" firstAttribute="leading" secondItem="5s7-wR-64c" secondAttribute="leadingMargin" constant="12" id="zkb-qM-YHS"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -2212,7 +2212,7 @@
                                                 <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Values" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fZY-R1-1VI">
                                                     <rect key="frame" x="15" y="0.0" width="270" height="43"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -2234,8 +2234,8 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p2s-ec-2l6">
-                                                    <rect key="frame" x="20" y="4" width="560" height="36"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="20" y="5" width="560" height="35"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <state key="normal" title="Start Notifications">
                                                         <color key="titleColor" red="0.85788892660000005" green="0.85788892660000005" blue="0.85788892660000005" alpha="1" colorSpace="calibratedRGB"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -2265,19 +2265,20 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="UUID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g37-QG-NNC">
                                                     <rect key="frame" x="20" y="11" width="48" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="org-I3-xEa">
-                                                    <rect key="frame" x="360" y="16" width="221" height="14"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="10"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="org-I3-xEa">
+                                                    <rect key="frame" x="76" y="13" width="504" height="16"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="12"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="org-I3-xEa" secondAttribute="trailing" constant="12" id="OVz-gH-Pmb"/>
-                                                <constraint firstAttribute="centerY" secondItem="org-I3-xEa" secondAttribute="centerY" constant="-0.5" id="n4c-0b-qS0"/>
+                                                <constraint firstAttribute="centerY" secondItem="org-I3-xEa" secondAttribute="centerY" constant="0.75" id="n4c-0b-qS0"/>
+                                                <constraint firstItem="org-I3-xEa" firstAttribute="leading" secondItem="Tw5-zq-cTO" secondAttribute="leadingMargin" constant="68" id="pyp-1B-Kpw"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2290,19 +2291,19 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Broadcasting" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UJ1-kj-mfD">
                                                     <rect key="frame" x="20" y="11" width="115" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IFw-aJ-zwi">
-                                                    <rect key="frame" x="534" y="10" width="47" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="537" y="9" width="44" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="IFw-aJ-zwi" secondAttribute="trailing" constant="12" id="HI9-uH-9bI"/>
-                                                <constraint firstAttribute="centerY" secondItem="IFw-aJ-zwi" secondAttribute="centerY" constant="0.5" id="dNp-9G-yxS"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="IFw-aJ-zwi" secondAttribute="trailing" constant="11" id="HI9-uH-9bI"/>
+                                                <constraint firstAttribute="centerY" secondItem="IFw-aJ-zwi" secondAttribute="centerY" constant="1.25" id="dNp-9G-yxS"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2315,19 +2316,19 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Notifying" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jQ2-oC-bEQ">
                                                     <rect key="frame" x="20" y="11" width="115" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zYq-Y7-zJY">
-                                                    <rect key="frame" x="534" y="10" width="47" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="537" y="9" width="44" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="zYq-Y7-zJY" secondAttribute="centerY" constant="0.5" id="kru-qM-YGM"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="zYq-Y7-zJY" secondAttribute="trailing" constant="12" id="w8v-72-1Sf"/>
+                                                <constraint firstAttribute="centerY" secondItem="zYq-Y7-zJY" secondAttribute="centerY" constant="1.25" id="kru-qM-YGM"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="zYq-Y7-zJY" secondAttribute="trailing" constant="11" id="w8v-72-1Sf"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2344,19 +2345,19 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Broadcast" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T1J-e0-Xfc">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="46t-ye-Fke">
-                                                    <rect key="frame" x="549" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="551" y="11" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="46t-ye-Fke" secondAttribute="trailing" constant="11" id="hpq-F9-jvt"/>
-                                                <constraint firstAttribute="centerY" secondItem="46t-ye-Fke" secondAttribute="centerY" constant="0.5" id="mYr-Mu-cf6"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="46t-ye-Fke" secondAttribute="trailing" constant="10" id="hpq-F9-jvt"/>
+                                                <constraint firstAttribute="centerY" secondItem="46t-ye-Fke" secondAttribute="centerY" constant="-0.75" id="mYr-Mu-cf6"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2369,19 +2370,19 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Read" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nIz-zk-qfI">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ehn-mg-Eag">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="11" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="ehn-mg-Eag" secondAttribute="centerY" constant="0.5" id="OgN-1o-YdX"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="ehn-mg-Eag" secondAttribute="trailing" constant="12" id="QZw-J2-hai"/>
+                                                <constraint firstAttribute="centerY" secondItem="ehn-mg-Eag" secondAttribute="centerY" constant="-0.75" id="OgN-1o-YdX"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="ehn-mg-Eag" secondAttribute="trailing" constant="11" id="QZw-J2-hai"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2393,20 +2394,20 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tj3-FV-sDf">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="9" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Write Without Response" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wBm-We-y25">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Tj3-FV-sDf" secondAttribute="trailing" constant="12" id="Pl9-iB-NVM"/>
-                                                <constraint firstAttribute="centerY" secondItem="Tj3-FV-sDf" secondAttribute="centerY" constant="0.5" id="rtS-7d-3sB"/>
+                                                <constraint firstAttribute="centerY" secondItem="Tj3-FV-sDf" secondAttribute="centerY" constant="1.75" id="rtS-7d-3sB"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2417,20 +2418,20 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Write" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GDB-Vx-BmU">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Write" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GDB-Vx-BmU">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="41a-Ks-38j">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="9" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="41a-Ks-38j" secondAttribute="centerY" constant="0.5" id="HeG-5I-blv"/>
+                                                <constraint firstAttribute="centerY" secondItem="41a-Ks-38j" secondAttribute="centerY" constant="1.75" id="HeG-5I-blv"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="41a-Ks-38j" secondAttribute="trailing" constant="12" id="zXV-sL-AIw"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -2444,19 +2445,19 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Notify" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D4h-n1-cuV">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j0P-ee-fIx">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="9" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="j0P-ee-fIx" secondAttribute="trailing" constant="12" id="6Jt-qZ-U3i"/>
-                                                <constraint firstAttribute="centerY" secondItem="j0P-ee-fIx" secondAttribute="centerY" constant="0.5" id="Djg-kO-I8I"/>
+                                                <constraint firstAttribute="centerY" secondItem="j0P-ee-fIx" secondAttribute="centerY" constant="1.75" id="Djg-kO-I8I"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2469,12 +2470,12 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Indicate" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oB1-NK-9Ft">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DaH-6d-aKM">
-                                                    <rect key="frame" x="546" y="11" width="35" height="22"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <rect key="frame" x="547" y="11" width="33" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -2494,18 +2495,18 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Authenticated Signed Writes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t7G-8G-Mfg">
                                                     <rect key="frame" x="20" y="11" width="258" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vj1-bV-RyJ">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="9" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="Vj1-bV-RyJ" secondAttribute="centerY" constant="0.5" id="3hx-sj-mpm"/>
+                                                <constraint firstAttribute="centerY" secondItem="Vj1-bV-RyJ" secondAttribute="centerY" constant="1.75" id="3hx-sj-mpm"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Vj1-bV-RyJ" secondAttribute="trailing" constant="12" id="tpD-aT-s0M"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -2519,19 +2520,19 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Extended Properties" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hav-Va-z8O">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ryv-Cg-UZr">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="9" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="ryv-Cg-UZr" secondAttribute="trailing" constant="12" id="h2y-ef-W5N"/>
-                                                <constraint firstAttribute="centerY" secondItem="ryv-Cg-UZr" secondAttribute="centerY" constant="0.5" id="m8C-un-Kwl"/>
+                                                <constraint firstAttribute="centerY" secondItem="ryv-Cg-UZr" secondAttribute="centerY" constant="1.75" id="m8C-un-Kwl"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2544,19 +2545,19 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Indicate Encryption Required" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Q8-Ce-v5R">
                                                     <rect key="frame" x="20" y="11" width="257" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QA0-lp-qSE">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="9" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="QA0-lp-qSE" secondAttribute="trailing" constant="12" id="TQd-iN-Sb5"/>
-                                                <constraint firstAttribute="centerY" secondItem="QA0-lp-qSE" secondAttribute="centerY" constant="0.5" id="fAr-rz-xu9"/>
+                                                <constraint firstAttribute="centerY" secondItem="QA0-lp-qSE" secondAttribute="centerY" constant="1.75" id="fAr-rz-xu9"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2569,18 +2570,18 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Notify Encryption Required" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nke-mi-XaW">
                                                     <rect key="frame" x="20" y="11" width="240" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FVx-gh-hi1">
-                                                    <rect key="frame" x="548" y="10" width="33" height="24"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <rect key="frame" x="550" y="9" width="31" height="23"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="FVx-gh-hi1" secondAttribute="centerY" constant="0.5" id="HUN-wa-dKw"/>
+                                                <constraint firstAttribute="centerY" secondItem="FVx-gh-hi1" secondAttribute="centerY" constant="1.75" id="HUN-wa-dKw"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="FVx-gh-hi1" secondAttribute="trailing" constant="12" id="aYX-jW-HMn"/>
                                             </constraints>
                                         </tableViewCellContentView>
