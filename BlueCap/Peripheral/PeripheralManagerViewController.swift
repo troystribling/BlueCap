@@ -13,8 +13,8 @@ import CoreBluetooth
 class PeripheralManagerViewController : UITableViewController, UITextFieldDelegate {
     
     @IBOutlet var nameTextField             : UITextField!
-    @IBOutlet var advertiseButton           : UIButton!
-    @IBOutlet var advertisedBeaconButton    : UIButton!
+    @IBOutlet var advertiseSwitch           : UISwitch!
+    @IBOutlet var advertisedBeaconSwitch    : UISwitch!
     @IBOutlet var advertisedBeaconLabel     : UILabel!
     @IBOutlet var advertisedServicesLabel   : UILabel!
     @IBOutlet var servicesLabel             : UILabel!
@@ -134,7 +134,13 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             if PeripheralStore.getBeaconEnabled(peripheral) {
                 PeripheralStore.setBeaconEnabled(peripheral, enabled:false)
             } else {
-                PeripheralStore.setBeaconEnabled(peripheral, enabled:true)
+                if let name = self.advertisedBeaconLabel.text {
+                    if let uuid = PeripheralStore.getBeacon(name) {
+                        PeripheralStore.setBeaconEnabled(peripheral, enabled:true)
+                    } else {
+                        self.presentViewController(UIAlertController.alertWithMessage("iBeacon is invalid"), animated:true, completion:nil)
+                    }
+                }
             }
             self.setUIState()
         }
@@ -177,39 +183,21 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
 
     func setUIState() {
         if let peripheral = self.peripheral {
-            self.advertiseButton.enabled = true
-            self.advertisedBeaconButton.enabled = true
             let peripheralManager = PeripheralManager.sharedInstance()
+            self.advertisedBeaconSwitch.on = PeripheralStore.getBeaconEnabled(peripheral)
             if peripheralManager.isAdvertising {
-                self.advertiseButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
                 self.navigationItem.setHidesBackButton(true, animated:true)
+                self.advertiseSwitch.on = true
                 self.nameTextField.enabled = false
                 self.beaconLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
                 self.advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
-                self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
-                self.advertisedBeaconButton.enabled = false
             } else {
-                self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
+                self.advertiseSwitch.on = false
                 self.beaconLabel.textColor = UIColor.blackColor()
                 self.advertisedServicesLabel.textColor = UIColor.blackColor()
                 self.navigationItem.setHidesBackButton(false, animated:true)
-                if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
-                    if PeripheralStore.getBeaconEnabled(peripheral) {
-                        self.advertisedBeaconButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:.Normal)
-                    } else {
-                        self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:.Normal)
-                    }
-                } else {
-                    self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
-                    self.advertisedBeaconButton.enabled = false
-                }
                 self.nameTextField.enabled = true
             }
-        } else {
-            self.advertiseButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
-            self.advertisedBeaconButton.setTitleColor(UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0), forState:.Normal)
-            self.advertiseButton.enabled = false
-            self.advertisedBeaconButton.enabled = false
         }
     }
     

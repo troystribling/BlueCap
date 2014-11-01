@@ -206,22 +206,22 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="42"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HwI-4l-IZC">
-                                                    <rect key="frame" x="20" y="6" width="560" height="34"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <state key="normal" title="Advertising">
-                                                        <color key="titleColor" red="0.84825501820000004" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Advertise" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UZ2-WS-jHp">
+                                                    <rect key="frame" x="15" y="11" width="85" height="21"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="b2G-oo-ufi">
+                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
                                                     <connections>
-                                                        <action selector="toggleAdvertise:" destination="CAb-bN-tC0" eventType="touchDown" id="6uS-hX-Wzu"/>
+                                                        <action selector="toggleAdvertise:" destination="CAb-bN-tC0" eventType="valueChanged" id="Pgg-DY-oSJ"/>
                                                     </connections>
-                                                </button>
+                                                </switch>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="HwI-4l-IZC" secondAttribute="centerY" constant="-1.5" id="lZZ-sQ-fA5"/>
-                                                <constraint firstItem="HwI-4l-IZC" firstAttribute="leading" secondItem="cSQ-7O-0Yn" secondAttribute="leadingMargin" constant="12" id="su3-Bt-9Pw"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="HwI-4l-IZC" secondAttribute="trailing" constant="12" id="unf-zy-3aV"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="b2G-oo-ufi" secondAttribute="trailing" constant="12" id="MrE-dS-haC"/>
+                                                <constraint firstAttribute="centerY" secondItem="b2G-oo-ufi" secondAttribute="centerY" id="en8-5h-5jh"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -276,22 +276,22 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ofE-YY-d5v" id="kUI-gk-q9L">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pXL-7P-0gs">
-                                                    <rect key="frame" x="20" y="4" width="560" height="34"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <state key="normal" title="iBeacon">
-                                                        <color key="titleColor" red="0.84825501820000004" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RTN-J3-zhq">
+                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
                                                     <connections>
-                                                        <action selector="toggleBeacon:" destination="CAb-bN-tC0" eventType="touchDown" id="vGO-iZ-0r8"/>
+                                                        <action selector="toggleBeacon:" destination="CAb-bN-tC0" eventType="valueChanged" id="Ebx-9K-9wn"/>
                                                     </connections>
-                                                </button>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="iBeacon Enabled" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gEl-EU-rnd">
+                                                    <rect key="frame" x="15" y="11" width="150" height="21"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="pXL-7P-0gs" secondAttribute="centerY" constant="1" id="1XI-to-cug"/>
-                                                <constraint firstItem="pXL-7P-0gs" firstAttribute="leading" secondItem="kUI-gk-q9L" secondAttribute="leadingMargin" constant="12" id="pg8-Qz-QNc"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="pXL-7P-0gs" secondAttribute="trailing" constant="12" id="v1p-9h-lc4"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="RTN-J3-zhq" secondAttribute="trailing" constant="12" id="aeL-0t-NaW"/>
+                                                <constraint firstAttribute="centerY" secondItem="RTN-J3-zhq" secondAttribute="centerY" constant="0.5" id="kwg-2s-4HP"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -300,7 +300,7 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Uer-Fh-uew" id="jyb-m9-4HW">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Beacon" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eVO-L6-T7V">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="iBeacon" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eVO-L6-T7V">
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -328,9 +328,9 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Peripheral" id="fTN-xH-YDe"/>
                     <connections>
-                        <outlet property="advertiseButton" destination="HwI-4l-IZC" id="89e-OB-VHg"/>
-                        <outlet property="advertisedBeaconButton" destination="pXL-7P-0gs" id="wYU-mA-el5"/>
+                        <outlet property="advertiseSwitch" destination="b2G-oo-ufi" id="6nj-yr-nU7"/>
                         <outlet property="advertisedBeaconLabel" destination="dAO-KR-e1W" id="Mex-Eb-85N"/>
+                        <outlet property="advertisedBeaconSwitch" destination="RTN-J3-zhq" id="qNo-kj-K4D"/>
                         <outlet property="advertisedServicesLabel" destination="Nl4-1O-xwR" id="eQY-aK-LBr"/>
                         <outlet property="beaconLabel" destination="eVO-L6-T7V" id="cTO-dH-TQn"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
@@ -540,7 +540,7 @@
             </objects>
             <point key="canvasLocation" x="1959.375" y="2082.5"/>
         </scene>
-        <!--Add Beacon-->
+        <!--Add iBeacon-->
         <scene sceneID="Td0-ka-CYX">
             <objects>
                 <viewController id="9v2-Hm-PfD" customClass="PeripheralManagerBeaconViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
@@ -615,7 +615,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="7Fg-O7-uH0" secondAttribute="trailing" constant="4" id="wK6-iF-g0c"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Add Beacon" id="1RF-pS-Np1"/>
+                    <navigationItem key="navigationItem" title="Add iBeacon" id="1RF-pS-Np1"/>
                     <connections>
                         <outlet property="majorTextField" destination="TuQ-vR-aPz" id="aW5-g0-JiM"/>
                         <outlet property="minorTextField" destination="e4o-js-103" id="i58-Tz-Viy"/>
@@ -1391,22 +1391,22 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ok2-rm-WMR" id="ppK-y9-le4">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t3k-TC-0OT">
-                                                    <rect key="frame" x="20" y="5" width="560" height="34"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region Scan" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="og5-Iz-syx">
+                                                    <rect key="frame" x="15" y="11" width="109" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <state key="normal" title="Region Scanning">
-                                                        <color key="titleColor" red="0.84825501820000004" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lfa-eg-HWW">
+                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
                                                     <connections>
-                                                        <action selector="toggleScanRegion:" destination="z0r-2o-HqO" eventType="touchDown" id="82l-nJ-ikd"/>
+                                                        <action selector="toggleScanRegion:" destination="z0r-2o-HqO" eventType="valueChanged" id="xa4-GL-HuB"/>
                                                     </connections>
-                                                </button>
+                                                </switch>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="t3k-TC-0OT" secondAttribute="centerY" constant="-1" id="df5-ny-Suh"/>
-                                                <constraint firstItem="t3k-TC-0OT" firstAttribute="leading" secondItem="ppK-y9-le4" secondAttribute="leadingMargin" constant="12" id="fZs-tI-iyv"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="t3k-TC-0OT" secondAttribute="trailing" constant="12" id="ktR-nf-s9Z"/>
+                                                <constraint firstAttribute="centerY" secondItem="lfa-eg-HWW" secondAttribute="centerY" constant="0.5" id="CV5-09-Ern"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="lfa-eg-HWW" secondAttribute="trailing" constant="12" id="PRU-eC-Zcu"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -1436,22 +1436,22 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u42-iW-m88" id="0VI-QY-fJa">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lnl-lB-zzO">
-                                                    <rect key="frame" x="20" y="6" width="560" height="34"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Scan Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WEG-8P-fl3">
+                                                    <rect key="frame" x="15" y="11" width="112" height="22"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <state key="normal" title="Scan Timeout">
-                                                        <color key="titleColor" red="0.84825501820000004" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HMb-Q3-Bf0">
+                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
                                                     <connections>
-                                                        <action selector="toggleScanTimeout:" destination="z0r-2o-HqO" eventType="touchUpInside" id="ghC-rM-iuj"/>
+                                                        <action selector="toggleScanTimeout:" destination="z0r-2o-HqO" eventType="valueChanged" id="2NE-JZ-yCg"/>
                                                     </connections>
-                                                </button>
+                                                </switch>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="lnl-lB-zzO" firstAttribute="leading" secondItem="0VI-QY-fJa" secondAttribute="leadingMargin" constant="12" id="FLv-mM-tw9"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="lnl-lB-zzO" secondAttribute="trailing" constant="12" id="X3K-1j-S95"/>
-                                                <constraint firstAttribute="centerY" secondItem="lnl-lB-zzO" secondAttribute="centerY" constant="-1" id="rGb-j8-4ry"/>
+                                                <constraint firstAttribute="centerY" secondItem="HMb-Q3-Bf0" secondAttribute="centerY" constant="0.5" id="WYP-oq-HSo"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="HMb-Q3-Bf0" secondAttribute="trailing" constant="12" id="lsT-DU-YuP"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -1595,16 +1595,16 @@
                         <outlet property="peripheralConnectionTimeout" destination="5gg-0v-ZvH" id="154-ix-9Ql"/>
                         <outlet property="peripheralReconnectionsLabel" destination="4dO-vw-8Qf" id="URm-PR-AL9"/>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
-                        <outlet property="scanRegionButton" destination="t3k-TC-0OT" id="59f-uz-Pc0"/>
+                        <outlet property="scanRegionSwitch" destination="lfa-eg-HWW" id="Q8W-KK-ejj"/>
                         <outlet property="scanRegionsLabel" destination="coN-e3-XtF" id="XY8-pt-Mi2"/>
-                        <outlet property="scanTimeoutButton" destination="lnl-lB-zzO" id="jsK-ro-xnU"/>
                         <outlet property="scanTimeoutLabel" destination="1mj-Pi-WdG" id="ZUP-94-yf9"/>
+                        <outlet property="scanTimeoutSwitch" destination="HMb-Q3-Bf0" id="Dnd-Pm-RYN"/>
                         <outlet property="servicesLabel" destination="clG-Jf-3IE" id="hgE-nK-ZWM"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Txq-Jg-Rtt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2283.75" y="-1327.5"/>
+            <point key="canvasLocation" x="2283" y="-1328"/>
         </scene>
         <!--Scanned Services-->
         <scene sceneID="o6J-kM-477">

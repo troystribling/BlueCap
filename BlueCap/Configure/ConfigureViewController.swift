@@ -14,12 +14,12 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var scanModeLabel                     : UILabel!
     @IBOutlet var servicesLabel                     : UILabel!
     @IBOutlet var scanRegionsLabel                  : UILabel!
-    @IBOutlet var scanRegionButton                  : UIButton!
+    @IBOutlet var scanRegionSwitch                  : UISwitch!
     @IBOutlet var scanTimeoutLabel                  : UILabel!
     @IBOutlet var peripheralReconnectionsLabel      : UILabel!
     @IBOutlet var peripheralConnectionTimeout       : UILabel!
     @IBOutlet var characteristicReadWriteTimeout    : UILabel!
-    @IBOutlet var scanTimeoutButton                 : UIButton!
+    @IBOutlet var scanTimeoutSwitch                 : UISwitch!
     @IBOutlet var notifySwitch                      : UISwitch!
     
     var scanMode = "None"
@@ -103,15 +103,7 @@ class ConfigureViewController : UITableViewController {
         } else {
             self.scanRegionsLabel.textColor = UIColor.blackColor()
         }
-        if ConfigStore.getScanTimeoutEnabled() {
-            self.scanTimeoutButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
-        } else {
-            self.scanTimeoutButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
-        }
-        if ConfigStore.getRegionScanEnabled() {
-            self.scanRegionButton.setTitleColor(UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
-        } else {
-            self.scanRegionButton.setTitleColor(UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0), forState:UIControlState.Normal)
-        }
+        self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
+        self.scanRegionSwitch.on = ConfigStore.getRegionScanEnabled()
     }
 }
