@@ -266,14 +266,13 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
         let peripheral = CentralManager.sharedInstance().peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
+        cell.accessoryType = .None
         if peripheral.state == .Connected {
             cell.nameLabel.textColor = UIColor.blackColor()
-            cell.accessoryType = .DisclosureIndicator
             cell.rssiLabel.text = "\(peripheral.rssi)"
             cell.stateLabel.text = "Connected"
         } else {
             cell.nameLabel.textColor = UIColor.lightGrayColor()
-            cell.accessoryType = .None
             cell.rssiLabel.text = "\(0)"
             cell.stateLabel.text = "Disconnected"
         }
