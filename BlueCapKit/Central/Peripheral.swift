@@ -27,6 +27,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var forcedDisconnect            = false
     
     private let defaultConnectionTimeout    = Double(10.0)
+    
+    private var _discoveredAt               = NSDate()
+    private var _connectedAt                : NSDate?
+    private var _disconnectedAt             : NSDate?
 
     // INTERNAL
     internal let cbPeripheral    : CBPeripheral!
@@ -44,6 +48,18 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
+    public var discoveredAt : NSDate {
+        return self._discoveredAt
+    }
+    
+    public var connectedAt : NSDate? {
+        return self._connectedAt
+    }
+
+    public var disconnectedAt : NSDate? {
+        return self._disconnectedAt
+    }
+
     public var state : CBPeripheralState {
         return self.cbPeripheral.state
     }
@@ -262,6 +278,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // INTERNAL
     internal func didDisconnectPeripheral() {
         Logger.debug("Peripheral#didDisconnectPeripheral")
+        self._disconnectedAt = NSDate()
         if let connectorator = self.connectorator {
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
@@ -288,6 +305,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
 
     internal func didConnectPeripheral() {
         Logger.debug("PeripheralConnectionError#didConnectPeripheral")
+        self._connectedAt = NSDate()
         if let connectorator = self.connectorator {
             connectorator.didConnect(self)
         }

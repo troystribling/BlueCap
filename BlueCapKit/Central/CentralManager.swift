@@ -27,7 +27,16 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PUBLIC
     public var peripherals : [Peripheral] {
-        return self.discoveredPeripherals.values.array
+        return sorted(self.discoveredPeripherals.values.array, {(p1:Peripheral, p2:Peripheral) -> Bool in
+            switch p1.discoveredAt.compare(p2.discoveredAt) {
+            case .OrderedSame:
+                return true
+            case .OrderedDescending:
+                return false
+            case .OrderedAscending:
+                return true
+            }
+        })
     }
     
     public class func sharedInstance() -> CentralManager {
