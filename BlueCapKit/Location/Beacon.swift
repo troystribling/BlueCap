@@ -14,6 +14,10 @@ public class Beacon {
     private let clbeacon        : CLBeacon
     private let _discoveredAt   = NSDate()
     
+    public var discoveredAt : NSDate {
+        return self._discoveredAt
+    }
+    
     internal init(clbeacon:CLBeacon) {
         self.clbeacon = clbeacon
     }

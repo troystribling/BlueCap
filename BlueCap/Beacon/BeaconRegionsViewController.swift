@@ -15,9 +15,6 @@ class BeaconRegionsViewController: UITableViewController {
     var startScanBarButtonItem  : UIBarButtonItem!
     var beaconRegions           = [String:BeaconRegion]()
 
-    var isRanging               = [String:Bool]()
-    var isInRegion              = [String:Bool]()
-    
     struct MainStoryBoard {
         static let beaconRegionCell         = "BeaconRegionCell"
         static let beaconsSegue             = "Beacons"
@@ -99,8 +96,6 @@ class BeaconRegionsViewController: UITableViewController {
                 beaconRegion.startMonitoringRegion = {
                     BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconRegion)
                     self.setScanButton()
-                    self.isRanging[name] = false
-                    self.isInRegion[name] = false
                     Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")
                 }
                 beaconRegion.enterRegion = {
@@ -109,12 +104,10 @@ class BeaconRegionsViewController: UITableViewController {
                         beaconManager.startRangingBeaconsInRegion(beaconRegion)
                         self.updateDisplay()
                     }
-                    self.isInRegion[name] = true
                     Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
                 }
                 beaconRegion.exitRegion = {
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
-                    self.isInRegion[name] = false
                     self.updateWhenActive()
                     Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
                 }
@@ -127,12 +120,7 @@ class BeaconRegionsViewController: UITableViewController {
                     for beacon in beacons {
                         Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
                     }
-                    if let isRanging = self.isRanging[name] {
-                        if !isRanging && beacons.count > 0 {
-                            self.isRanging[name] = true
-                            self.updateWhenActive()
-                        }
-                    }
+                    self.updateWhenActive()
                     if UIApplication.sharedApplication().applicationState == .Active && beacons.count > 0 {
                         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didUpdateBeacon, object:beaconRegion)
                     }
@@ -175,24 +163,25 @@ class BeaconRegionsViewController: UITableViewController {
             cell.nameLabel.text = name
             cell.uuidLabel.text = beaconRegionUUID.UUIDString
         }
-        var isBeaconInRegion = false
-        if let isInRegion = self.isInRegion[name] {
-            isBeaconInRegion = isInRegion
-        }
+        cell.nameLabel.textColor = UIColor.blackColor()
+        cell.beaconsLabel.text = "0"
+        cell.nameLabel.textColor = UIColor.lightGrayColor()
+        cell.statusLabel.textColor = UIColor.lightGrayColor()
         if BeaconManager.sharedInstance().isRangingRegion(name) {
             if let region = BeaconManager.sharedInstance().beaconRegion(name) {
                 if region.beacons.count == 0 {
-                    cell.accessoryType = .None
+                    cell.statusLabel.text = "Monitoring"
                 } else {
-                    cell.accessoryType = .DetailButton
+                    cell.nameLabel.textColor = UIColor.blackColor()
+                    cell.beaconsLabel.text = "\(region.beacons.count)"
+                    cell.statusLabel.text = "Ranging"
+                    cell.statusLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
                 }
-            } else {
-                cell.accessoryType = .DisclosureIndicator
             }
-        } else  if isBeaconInRegion {
-            cell.accessoryType = .None
+        } else if CentralManager.sharedInstance().isScanning {
+            cell.statusLabel.text = "Monitoring"
         } else {
-            cell.accessoryType = .DisclosureIndicator
+            cell.statusLabel.text = "Idle"
         }
         return cell
     }

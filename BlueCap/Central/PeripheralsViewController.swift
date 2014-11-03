@@ -276,7 +276,7 @@ class PeripheralsViewController : UITableViewController {
             cell.nameLabel.textColor = UIColor.lightGrayColor()
             cell.rssiLabel.text = "\(0)"
             cell.stateLabel.text = "Disconnected"
-            cell.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:0.5)
+            cell.stateLabel.textColor = UIColor.lightGrayColor()
         }
         return cell
     }

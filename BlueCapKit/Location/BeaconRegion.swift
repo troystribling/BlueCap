@@ -21,7 +21,16 @@ public class BeaconRegion : Region {
     }
     
     public var beacons : [Beacon] {
-        return self._beacons
+        return sorted(self._beacons, {(b1:Beacon, b2:Beacon) -> Bool in
+            switch b1.discoveredAt.compare(b2.discoveredAt) {
+            case .OrderedSame:
+                return true
+            case .OrderedDescending:
+                return false
+            case .OrderedAscending:
+                return true
+            }
+        })
     }
     
     public var proximityUUID : NSUUID! {
