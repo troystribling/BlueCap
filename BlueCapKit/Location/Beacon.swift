@@ -11,7 +11,8 @@ import CoreLocation
 
 public class Beacon {
     
-    private let clbeacon : CLBeacon
+    private let clbeacon        : CLBeacon
+    private let _discoveredAt   = NSDate()
     
     internal init(clbeacon:CLBeacon) {
         self.clbeacon = clbeacon

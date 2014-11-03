@@ -28,7 +28,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     private let defaultConnectionTimeout    = Double(10.0)
     
-    private var _discoveredAt               = NSDate()
+    private let _discoveredAt               = NSDate()
     private var _connectedAt                : NSDate?
     private var _disconnectedAt             : NSDate?
 

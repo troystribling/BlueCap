@@ -10,8 +10,9 @@ import UIKit
 
 class BeaconRegionCell: UITableViewCell {
 
-    @IBOutlet var nameLabel                     : UILabel!
-    @IBOutlet var uuidLabel                     : UILabel!
-    @IBOutlet var rangingActivityIndicator      : UIActivityIndicatorView!
+    @IBOutlet var nameLabel         : UILabel!
+    @IBOutlet var uuidLabel         : UILabel!
+    @IBOutlet var beaconsLabel      : UILabel!
+    @IBOutlet var statusLabel       : UILabel!
     
 }

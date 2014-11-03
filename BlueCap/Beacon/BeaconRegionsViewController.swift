@@ -171,7 +171,6 @@ class BeaconRegionsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconRegionCell, forIndexPath: indexPath) as BeaconRegionCell
         let name = BeaconStore.getBeaconNames()[indexPath.row]
         let beaconRegions = BeaconStore.getBeacons()
-        cell.rangingActivityIndicator.stopAnimating()
         if let beaconRegionUUID = beaconRegions[name] {
             cell.nameLabel.text = name
             cell.uuidLabel.text = beaconRegionUUID.UUIDString
@@ -184,7 +183,6 @@ class BeaconRegionsViewController: UITableViewController {
             if let region = BeaconManager.sharedInstance().beaconRegion(name) {
                 if region.beacons.count == 0 {
                     cell.accessoryType = .None
-                    cell.rangingActivityIndicator.startAnimating()
                 } else {
                     cell.accessoryType = .DetailButton
                 }
@@ -193,7 +191,6 @@ class BeaconRegionsViewController: UITableViewController {
             }
         } else  if isBeaconInRegion {
             cell.accessoryType = .None
-            cell.rangingActivityIndicator.startAnimating()
         } else {
             cell.accessoryType = .DisclosureIndicator
         }
