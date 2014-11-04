@@ -75,24 +75,30 @@ class PeripheralsViewController : UITableViewController {
     // actions
     func toggleScan(sender:AnyObject) {
         if BeaconManager.sharedInstance().isMonitoring() == false {
-            Logger.debug("toggleScan")
             let central = CentralManager.sharedInstance()
-            if (central.isScanning) {
-                if ConfigStore.getRegionScanEnabled() {
+            if ConfigStore.getRegionScanEnabled() {
+                Logger.debug("toggleScan#RegionManager")
+                let scannerator = RegionScannerator.sharedInstance()
+                if scannerator.isScanning {
                     self.stopMonitoringRegions()
-                    RegionScannerator.sharedInstance().stopScanning()
-                } else {
-                    central.stopScanning()
-                }
-                self.setScanButton()
-                central.disconnectAllPeripherals()
-                central.removeAllPeripherals()
-                self.updateWhenActive()
-            } else {
-                central.powerOn(){
-                    Logger.debug("powerOn Callback")
-                    self.startScan()
+                    scannerator.stopScanning()
                     self.setScanButton()
+                    central.disconnectAllPeripherals()
+                    central.removeAllPeripherals()
+                    self.updateWhenActive()
+                } else {
+                    self.powerOn()
+                }
+            } else {
+                Logger.debug("toggleScan#CentralManager")
+                if (central.isScanning) {
+                    central.stopScanning()
+                    self.setScanButton()
+                    central.disconnectAllPeripherals()
+                    central.removeAllPeripherals()
+                    self.updateWhenActive()
+                } else {
+                    self.powerOn()
                 }
             }
         } else {
@@ -115,6 +121,14 @@ class PeripheralsViewController : UITableViewController {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
+        }
+    }
+    
+    func powerOn() {
+        CentralManager.sharedInstance().powerOn(){
+            Logger.debug("powerOn Callback")
+            self.startScan()
+            self.setScanButton()
         }
     }
     
@@ -143,7 +157,7 @@ class PeripheralsViewController : UITableViewController {
             }
             connectorator.forceDisconnect = {(peripheral) in
                 Logger.debug("PeripheralsViewController#onForcedDisconnect")
-                Notify.withMessage("Force disconnection of forceDisconnect: '\(peripheral.name)'")
+                Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             }
