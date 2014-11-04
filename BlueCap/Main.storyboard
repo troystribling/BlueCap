@@ -1373,7 +1373,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Services" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="clG-Jf-3IE">
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -1418,7 +1418,7 @@
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Regions" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="coN-e3-XtF">
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -1596,6 +1596,7 @@
                         <outlet property="peripheralReconnectionsLabel" destination="4dO-vw-8Qf" id="URm-PR-AL9"/>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
                         <outlet property="scanRegionSwitch" destination="lfa-eg-HWW" id="Q8W-KK-ejj"/>
+                        <outlet property="scanRegionSwitchLabel" destination="og5-Iz-syx" id="QVn-CA-rLb"/>
                         <outlet property="scanRegionsLabel" destination="coN-e3-XtF" id="XY8-pt-Mi2"/>
                         <outlet property="scanTimeoutLabel" destination="1mj-Pi-WdG" id="ZUP-94-yf9"/>
                         <outlet property="scanTimeoutSwitch" destination="HMb-Q3-Bf0" id="Dnd-Pm-RYN"/>

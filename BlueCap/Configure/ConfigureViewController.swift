@@ -15,6 +15,7 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var servicesLabel                     : UILabel!
     @IBOutlet var scanRegionsLabel                  : UILabel!
     @IBOutlet var scanRegionSwitch                  : UISwitch!
+    @IBOutlet var scanRegionSwitchLabel             : UILabel!
     @IBOutlet var scanTimeoutLabel                  : UILabel!
     @IBOutlet var peripheralReconnectionsLabel      : UILabel!
     @IBOutlet var peripheralConnectionTimeout       : UILabel!
@@ -93,14 +94,13 @@ class ConfigureViewController : UITableViewController {
     }
     
     func configUI() {
-        if  CentralManager.sharedInstance().isScanning {
-            self.servicesLabel.textColor = UIColor.lightGrayColor()
-        } else {
-            self.servicesLabel.textColor = UIColor.blackColor()
-        }
-        if  RegionScannerator.sharedInstance().isScanning {
+        if  RegionScannerator.sharedInstance().isScanning || CentralManager.sharedInstance().isScanning {
             self.scanRegionsLabel.textColor = UIColor.lightGrayColor()
+            self.scanRegionSwitchLabel.textColor = UIColor.lightGrayColor()
+            self.scanRegionSwitch.enabled = false
         } else {
+            self.scanRegionSwitch.enabled = true
+            self.scanRegionSwitchLabel.textColor = UIColor.blackColor()
             self.scanRegionsLabel.textColor = UIColor.blackColor()
         }
         self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
