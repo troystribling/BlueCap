@@ -804,9 +804,6 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="nUi-RC-SAK" kind="show" identifier="PeripheralManagerServiceCharacteristicValues" id="h84-FH-dX6"/>
-                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1231,6 +1228,9 @@
                         <outlet property="propertyWriteLabel" destination="y6f-bT-LWN" id="xmd-8k-nJb"/>
                         <outlet property="propertyWriteWithoutResponseLabel" destination="g0Z-ch-XeR" id="fhk-De-kdT"/>
                         <outlet property="uuidLabel" destination="p8X-D3-Jg9" id="eOO-FC-Kjv"/>
+                        <segue destination="nUi-RC-SAK" kind="show" identifier="PeripheralManagerServiceCharacteristicValues" id="A8R-6E-s93"/>
+                        <segue destination="F6T-V4-TwS" kind="show" identifier="PeripheralManagerServiceCharacteristicEditWriteOnlyDiscreteValues" id="Cu6-1g-EZG"/>
+                        <segue destination="eJp-Hv-1Y9" kind="show" identifier="PeripheralServiceCharacteristicEditWriteOnlyDiscreteValues" id="neW-bM-7Vz"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JkI-3u-CN4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1342,20 +1342,20 @@
                         <sections>
                             <tableViewSection id="gGd-fN-SEn">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Yuz-Fm-Dje" detailTextLabel="4dU-Qj-ty3" style="IBUITableViewCellStyleValue1" id="0HI-MV-ohr">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Yuz-Fm-Dje" detailTextLabel="4dU-Qj-ty3" rowHeight="50" style="IBUITableViewCellStyleValue1" id="0HI-MV-ohr">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0HI-MV-ohr" id="ihf-7o-wWK">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Scan Mode" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Yuz-Fm-Dje">
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Promiscuous" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4dU-Qj-ty3">
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1365,14 +1365,14 @@
                                             <segue destination="3GU-aY-66s" kind="show" identifier="ConfigureScanMode" id="mGS-3e-iNw"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="clG-Jf-3IE" style="IBUITableViewCellStyleDefault" id="Yfa-HA-hLd">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="clG-Jf-3IE" rowHeight="50" style="IBUITableViewCellStyleDefault" id="Yfa-HA-hLd">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yfa-HA-hLd" id="Fro-WM-52x">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Services" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="clG-Jf-3IE">
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1386,19 +1386,19 @@
                             </tableViewSection>
                             <tableViewSection id="FVJ-Dp-p8k">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Ok2-rm-WMR">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="Ok2-rm-WMR">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ok2-rm-WMR" id="ppK-y9-le4">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region Scan" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="og5-Iz-syx">
-                                                    <rect key="frame" x="15" y="11" width="109" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <rect key="frame" x="15" y="11" width="132" height="21"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lfa-eg-HWW">
-                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
+                                                    <rect key="frame" x="531" y="9" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleScanRegion:" destination="z0r-2o-HqO" eventType="valueChanged" id="xa4-GL-HuB"/>
                                                     </connections>
@@ -1410,14 +1410,14 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="coN-e3-XtF" style="IBUITableViewCellStyleDefault" id="Y5O-77-3Z9">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="coN-e3-XtF" rowHeight="50" style="IBUITableViewCellStyleDefault" id="Y5O-77-3Z9">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Y5O-77-3Z9" id="d3C-ji-8mL">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Regions" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="coN-e3-XtF">
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1431,19 +1431,18 @@
                             </tableViewSection>
                             <tableViewSection id="8ju-Zn-yKL">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="u42-iW-m88">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="u42-iW-m88">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u42-iW-m88" id="0VI-QY-fJa">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Scan Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WEG-8P-fl3">
-                                                    <rect key="frame" x="15" y="11" width="112" height="22"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <rect key="frame" x="15" y="11" width="133" height="22"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HMb-Q3-Bf0">
-                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
+                                                    <rect key="frame" x="531" y="9" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleScanTimeout:" destination="z0r-2o-HqO" eventType="valueChanged" id="2NE-JZ-yCg"/>
                                                     </connections>
@@ -1455,20 +1454,20 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="zZz-gK-YHp" detailTextLabel="1mj-Pi-WdG" style="IBUITableViewCellStyleValue1" id="5on-Zw-Xtl">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="zZz-gK-YHp" detailTextLabel="1mj-Pi-WdG" rowHeight="50" style="IBUITableViewCellStyleValue1" id="5on-Zw-Xtl">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5on-Zw-Xtl" id="geu-IR-mu5">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zZz-gK-YHp">
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="10s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1mj-Pi-WdG">
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1482,19 +1481,19 @@
                             </tableViewSection>
                             <tableViewSection id="0Nn-2E-9qr">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="2xs-Jj-nLz">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="2xs-Jj-nLz">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2xs-Jj-nLz" id="Aj9-a3-5ac">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Background Notifications" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xrB-gj-AiK">
-                                                    <rect key="frame" x="15" y="11" width="201" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <rect key="frame" x="15" y="11" width="248" height="21"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Qo-VB-F4m">
-                                                    <rect key="frame" x="531" y="6" width="51" height="31"/>
+                                                    <rect key="frame" x="531" y="9" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggelNotification:" destination="z0r-2o-HqO" eventType="valueChanged" id="PeX-YA-ASp"/>
                                                     </connections>
@@ -1510,12 +1509,12 @@
                             </tableViewSection>
                             <tableViewSection id="khN-Sv-olX">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qrc-QP-hIY" detailTextLabel="4dO-vw-8Qf" style="IBUITableViewCellStyleValue1" id="1yW-3g-tr9">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qrc-QP-hIY" detailTextLabel="4dO-vw-8Qf" rowHeight="50" style="IBUITableViewCellStyleValue1" id="1yW-3g-tr9">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1yW-3g-tr9" id="WlY-oX-rF3">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Peripheral Reconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qrc-QP-hIY">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Maximum Reconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qrc-QP-hIY">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1523,7 +1522,7 @@
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="5" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4dO-vw-8Qf">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1533,12 +1532,12 @@
                                             <segue destination="qNM-jR-e9y" kind="show" identifier="ConfigurePeripheralReconnections" id="ZGV-zq-pST"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="ma4-TX-8iG" detailTextLabel="5gg-0v-ZvH" style="IBUITableViewCellStyleValue1" id="NO9-17-ZP8">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="ma4-TX-8iG" detailTextLabel="5gg-0v-ZvH" rowHeight="50" style="IBUITableViewCellStyleValue1" id="NO9-17-ZP8">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NO9-17-ZP8" id="UKM-2X-lR9">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Peripheral Connection Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ma4-TX-8iG">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Connection Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ma4-TX-8iG">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1546,7 +1545,7 @@
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="10s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5gg-0v-ZvH">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1556,12 +1555,12 @@
                                             <segue destination="SvA-DH-tna" kind="show" identifier="PeripheralConnectionTimeout" id="hvr-qI-F8Z"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pfT-ct-Yfa" id="HnQ-CP-pw2">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Characteristic Red/Write Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lQo-z4-DBP">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Red/Write Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lQo-z4-DBP">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1569,7 +1568,7 @@
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="10s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="60B-HI-lJ8">
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                                     <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1678,7 +1677,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="O80-fg-Tzk">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -1686,7 +1685,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="miI-Av-eDH">
-                                <rect key="frame" x="20" y="145" width="560" height="30"/>
+                                <rect key="frame" x="20" y="105" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -1696,7 +1695,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="O80-fg-Tzk" firstAttribute="top" secondItem="Zgr-h9-SZX" secondAttribute="bottom" constant="100" id="HSh-n3-NlZ"/>
+                            <constraint firstItem="O80-fg-Tzk" firstAttribute="top" secondItem="Zgr-h9-SZX" secondAttribute="bottom" constant="60" id="HSh-n3-NlZ"/>
                             <constraint firstItem="miI-Av-eDH" firstAttribute="leading" secondItem="oq4-Uh-ksU" secondAttribute="leadingMargin" constant="4" id="URV-ce-xcl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="O80-fg-Tzk" secondAttribute="trailing" constant="4" id="UjH-wi-dRY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="miI-Av-eDH" secondAttribute="trailing" constant="4" id="WET-PM-ocJ"/>
@@ -1727,7 +1726,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Scan Timeout" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="bXs-1u-5M7">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -1737,7 +1736,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="bXs-1u-5M7" firstAttribute="top" secondItem="YSU-Cr-1O5" secondAttribute="bottom" constant="100" id="3wk-jA-jNJ"/>
+                            <constraint firstItem="bXs-1u-5M7" firstAttribute="top" secondItem="YSU-Cr-1O5" secondAttribute="bottom" constant="60" id="3wk-jA-jNJ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bXs-1u-5M7" secondAttribute="trailing" constant="4" id="Xdo-KW-pNS"/>
                             <constraint firstItem="bXs-1u-5M7" firstAttribute="leading" secondItem="TBs-e2-KmL" secondAttribute="leadingMargin" constant="4" id="eC4-Qy-vqL"/>
                         </constraints>
@@ -1905,7 +1904,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Region Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="80Z-Ee-Abo">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                 <connections>
@@ -1916,7 +1915,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="80Z-Ee-Abo" firstAttribute="leading" secondItem="wCg-Uo-7Mc" secondAttribute="leadingMargin" constant="4" id="38k-6z-Sbf"/>
-                            <constraint firstItem="80Z-Ee-Abo" firstAttribute="top" secondItem="gwD-FR-ZnS" secondAttribute="bottom" constant="100" id="cO1-3a-J7z"/>
+                            <constraint firstItem="80Z-Ee-Abo" firstAttribute="top" secondItem="gwD-FR-ZnS" secondAttribute="bottom" constant="60" id="cO1-3a-J7z"/>
                             <constraint firstAttribute="trailingMargin" secondItem="80Z-Ee-Abo" secondAttribute="trailing" constant="4" id="uQm-Qm-MW0"/>
                         </constraints>
                     </view>
@@ -3260,8 +3259,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Udk-V1-rmr">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Udk-V1-rmr">
+                                <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -4021,7 +4020,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Read/Write Timeout" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="z5P-8Y-1fe">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -4032,7 +4031,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="z5P-8Y-1fe" firstAttribute="leading" secondItem="89i-92-rUZ" secondAttribute="leadingMargin" constant="4" id="7Yw-ff-Vm2"/>
-                            <constraint firstItem="z5P-8Y-1fe" firstAttribute="top" secondItem="fgh-P5-HpF" secondAttribute="bottom" constant="100" id="Koo-cm-83f"/>
+                            <constraint firstItem="z5P-8Y-1fe" firstAttribute="top" secondItem="fgh-P5-HpF" secondAttribute="bottom" constant="60" id="Koo-cm-83f"/>
                             <constraint firstAttribute="trailingMargin" secondItem="z5P-8Y-1fe" secondAttribute="trailing" constant="4" id="wUb-yY-EAN"/>
                         </constraints>
                     </view>
@@ -4058,7 +4057,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Peripheral Connection Timeout" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eim-KF-Yw4">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -4070,7 +4069,7 @@
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="eim-KF-Yw4" secondAttribute="trailing" constant="4" id="88s-0S-d5N"/>
                             <constraint firstItem="eim-KF-Yw4" firstAttribute="leading" secondItem="ihS-97-xHw" secondAttribute="leadingMargin" constant="4" id="MJE-4C-LY7"/>
-                            <constraint firstItem="eim-KF-Yw4" firstAttribute="top" secondItem="ui9-mr-By2" secondAttribute="bottom" constant="100" id="qJd-sw-6SK"/>
+                            <constraint firstItem="eim-KF-Yw4" firstAttribute="top" secondItem="ui9-mr-By2" secondAttribute="bottom" constant="60" id="qJd-sw-6SK"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Peripheral Connection Timeout" id="aJv-SE-h18"/>
@@ -4095,7 +4094,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Peripheral Reconnections" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="obe-QH-yps">
-                                <rect key="frame" x="20" y="100" width="560" height="30"/>
+                                <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -4107,7 +4106,7 @@
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="obe-QH-yps" secondAttribute="trailing" constant="4" id="WU9-KJ-Wvc"/>
                             <constraint firstItem="obe-QH-yps" firstAttribute="leading" secondItem="GH9-j8-PYf" secondAttribute="leadingMargin" constant="4" id="jkv-d7-TYO"/>
-                            <constraint firstItem="obe-QH-yps" firstAttribute="top" secondItem="XM8-Ge-AOG" secondAttribute="bottom" constant="100" id="qQF-tJ-J1D"/>
+                            <constraint firstItem="obe-QH-yps" firstAttribute="top" secondItem="XM8-Ge-AOG" secondAttribute="bottom" constant="60" id="qQF-tJ-J1D"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Peripheral Reconnections" id="IDu-qG-Zdj"/>
@@ -4128,8 +4127,10 @@
         <image name="Profiles" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="XuB-J8-fla"/>
-        <segue reference="vhM-yw-b5Q"/>
         <segue reference="Wml-hJ-ThX"/>
+        <segue reference="XuB-J8-fla"/>
+        <segue reference="Cu6-1g-EZG"/>
+        <segue reference="neW-bM-7Vz"/>
+        <segue reference="vhM-yw-b5Q"/>
     </inferredMetricsTieBreakers>
 </document>

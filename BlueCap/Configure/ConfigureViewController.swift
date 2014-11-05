@@ -68,9 +68,9 @@ class ConfigureViewController : UITableViewController {
             case MainStroryboard.configureScanModeSegue:
                 return true
             case MainStroryboard.configureScanRegionsSegue:
-                return  !RegionScannerator.sharedInstance().isScanning
+                return  !RegionScannerator.sharedInstance().isScanning && !CentralManager.sharedInstance().isScanning
             case MainStroryboard.configureScanServicesSegue:
-                return !CentralManager.sharedInstance().isScanning && !RegionScannerator.sharedInstance().isScanning
+                return true
             default:
                 return true
             }

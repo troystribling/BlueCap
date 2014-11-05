@@ -12,7 +12,9 @@ import BlueCapKit
 class PeripheralServiceCharacteristicViewController : UITableViewController {
 
     struct MainStoryboard {
-        static let peripheralServiceCharacteristicValueSegue = "PeripheralServiceCharacteristicValues"
+        static let peripheralServiceCharacteristicValueSegue                        = "PeripheralServiceCharacteristicValues"
+        static let peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue  = "PeripheralServiceCharacteristicEditWriteOnlyDiscreteValues"
+        static let peripheralServiceCharacteristicEditWriteOnlyValueSeque           = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
     weak var characteristic                                 : Characteristic!
@@ -83,6 +85,17 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
+        } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
+                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
+                viewController.characteristic = self.characteristic
+        } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
+            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
+            viewController.characteristic = self.characteristic
+            if let stringValues = self.characteristic?.stringValues {
+                let selectedIndex = sender as NSIndexPath
+                let names = stringValues.keys.array
+                viewController.valueName = names[selectedIndex.row]
+            }
         }
     }
     
@@ -154,6 +167,20 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     func didBecomeActive() {
         Logger.debug("PeripheralServiceCharacteristicViewController#didBecomeActive")
+    }
+    
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+        if indexPath.row == 0 {
+            if let characteristic = self.characteristic {
+                if (characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse)) && !characteristic.propertyEnabled(.Read) {
+                    if characteristic.discreteStringValues.isEmpty {
+                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender:indexPath)
+                    } else {
+                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender:indexPath)
+                    }
+                }
+            }
+        }
     }
 
 }

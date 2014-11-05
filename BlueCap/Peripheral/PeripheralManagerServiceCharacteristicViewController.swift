@@ -35,7 +35,9 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
     @IBOutlet var propertyIndicateEncryptionRequiredLabel   : UILabel!
 
     struct MainStoryboard {
-        static let peripheralManagerServiceCharacteristicValuesSegue = "PeripheralManagerServiceCharacteristicValues"
+        static let peripheralManagerServiceCharacteristicValuesSegue                            = "PeripheralManagerServiceCharacteristicValues"
+        static let peripheralManagerServiceCharacteristicEditWriteOnlyValueSegue                = "PeripheralManagerServiceCharacteristicWriteOnlyEditValue"
+        static let peripheralManagerServiceCharacteristicEditWriteOnlyDiscreteValuesSegue       = "PeripheralManagerServiceCharacteristicEditWriteOnlyDiscreteValues"
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -83,6 +85,23 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicValuesSegue {
             let viewController = segue.destinationViewController as PeripheralManagerServicesCharacteristicValuesViewController
+            viewController.characteristic = self.characteristic
+            if let peripheralManagerViewController = self.peripheralManagerViewController {
+                viewController.peripheralManagerViewController = peripheralManagerViewController
+            }
+        } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditWriteOnlyValueSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicEditValueViewController
+            viewController.characteristic = self.characteristic
+            let selectedIndex = sender as NSIndexPath
+            if let stringValues = self.characteristic?.stringValues {
+                let values = stringValues.keys.array
+                viewController.valueName = values[selectedIndex.row]
+            }
+            if let peripheralManagerViewController = self.peripheralManagerViewController {
+                viewController.peripheralManagerViewController = peripheralManagerViewController
+            }
+        } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
+            let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
