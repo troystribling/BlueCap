@@ -92,9 +92,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
             if let stringValues = self.characteristic?.stringValues {
-                let selectedIndex = sender as NSIndexPath
                 let names = stringValues.keys.array
-                viewController.valueName = names[selectedIndex.row]
+                viewController.valueName = names[0]
             }
         }
     }
@@ -178,6 +177,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
                     } else {
                         self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender:indexPath)
                     }
+                } else if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicValueSegue, sender:indexPath)
                 }
             }
         }

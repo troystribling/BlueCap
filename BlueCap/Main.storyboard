@@ -804,6 +804,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="nUi-RC-SAK" kind="show" identifier="PeripheralManagerServiceCharacteristicValues" id="CLe-j0-mZe"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1228,9 +1231,6 @@
                         <outlet property="propertyWriteLabel" destination="y6f-bT-LWN" id="xmd-8k-nJb"/>
                         <outlet property="propertyWriteWithoutResponseLabel" destination="g0Z-ch-XeR" id="fhk-De-kdT"/>
                         <outlet property="uuidLabel" destination="p8X-D3-Jg9" id="eOO-FC-Kjv"/>
-                        <segue destination="nUi-RC-SAK" kind="show" identifier="PeripheralManagerServiceCharacteristicValues" id="A8R-6E-s93"/>
-                        <segue destination="F6T-V4-TwS" kind="show" identifier="PeripheralManagerServiceCharacteristicEditWriteOnlyDiscreteValues" id="Cu6-1g-EZG"/>
-                        <segue destination="eJp-Hv-1Y9" kind="show" identifier="PeripheralServiceCharacteristicEditWriteOnlyDiscreteValues" id="neW-bM-7Vz"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JkI-3u-CN4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2219,9 +2219,6 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="ljK-JQ-Agv" kind="show" identifier="PeripheralServiceCharacteristicValues" id="HiV-sn-Ldg"/>
-                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -2631,6 +2628,9 @@
                         <outlet property="propertyWriteWithoutResponseLabel" destination="Tj3-FV-sDf" id="ZWk-Y5-FlX"/>
                         <outlet property="uuidLabel" destination="org-I3-xEa" id="RlT-ej-Kwq"/>
                         <outlet property="valuesLabel" destination="fZY-R1-1VI" id="Sc0-V9-Qid"/>
+                        <segue destination="ljK-JQ-Agv" kind="show" identifier="PeripheralServiceCharacteristicValues" id="cSf-62-vO1"/>
+                        <segue destination="Fgs-SR-AAC" kind="show" identifier="PeripheralServiceCharacteristicEditWriteOnlyValue" id="dOT-6s-x6d"/>
+                        <segue destination="Ab0-DZ-mXp" kind="show" identifier="PeripheralServiceCharacteristicEditWriteOnlyDiscreteValues" id="1b7-0s-Wre"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wAa-QU-BTY" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3259,7 +3259,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Udk-V1-rmr">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Udk-V1-rmr">
                                 <rect key="frame" x="20" y="60" width="560" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -3271,7 +3271,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Udk-V1-rmr" firstAttribute="leading" secondItem="fJU-72-yJV" secondAttribute="leadingMargin" constant="4" id="F1e-Hk-Bjg"/>
-                            <constraint firstItem="Udk-V1-rmr" firstAttribute="top" secondItem="Af2-Ks-cqn" secondAttribute="bottom" constant="100" id="ffZ-fc-iaP"/>
+                            <constraint firstItem="Udk-V1-rmr" firstAttribute="top" secondItem="Af2-Ks-cqn" secondAttribute="bottom" constant="60" id="ffZ-fc-iaP"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Udk-V1-rmr" secondAttribute="trailing" constant="4" id="i3x-DI-EzA"/>
                         </constraints>
                     </view>
@@ -4127,10 +4127,10 @@
         <image name="Profiles" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="dOT-6s-x6d"/>
+        <segue reference="1b7-0s-Wre"/>
         <segue reference="Wml-hJ-ThX"/>
-        <segue reference="XuB-J8-fla"/>
-        <segue reference="Cu6-1g-EZG"/>
-        <segue reference="neW-bM-7Vz"/>
         <segue reference="vhM-yw-b5Q"/>
+        <segue reference="XuB-J8-fla"/>
     </inferredMetricsTieBreakers>
 </document>

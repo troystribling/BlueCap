@@ -719,7 +719,7 @@ public class TISensorTagServiceProfiles {
             serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.AccelerometerService.Enabled.uuid, name:TISensorTag.AccelerometerService.Enabled.name)
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
-                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+                    characteristicProfile.properties = CBCharacteristicProperties.Write
                     characteristicProfile.afterDiscovered = {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes, afterWriteSuccessCallback:{})
                     }
@@ -728,7 +728,7 @@ public class TISensorTagServiceProfiles {
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(UInt8(0x64))
-                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+                    characteristicProfile.properties = CBCharacteristicProperties.Write
                 })
         })
         
