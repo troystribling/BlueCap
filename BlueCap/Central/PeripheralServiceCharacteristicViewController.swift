@@ -100,7 +100,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
         if let identifier = identifier {
-            return (self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying) && self.peripheralViewController.peripehealConnected
+            return (self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.Write)) && self.peripheralViewController.peripehealConnected
         } else {
             return false
         }
@@ -129,7 +129,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func setUI() {
-        if !self.characteristic.propertyEnabled(.Read) || !self.peripheralViewController.peripehealConnected {
+        if (!self.characteristic.propertyEnabled(.Read) && !self.characteristic.propertyEnabled(.Write)) || !self.peripheralViewController.peripehealConnected {
             self.valuesLabel.textColor = UIColor.lightGrayColor()
         } else {
             self.valuesLabel.textColor = UIColor.blackColor()
@@ -177,7 +177,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
                     } else {
                         self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender:indexPath)
                     }
-                } else if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+                } else if characteristic.propertyEnabled(.Read)  {
                     self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicValueSegue, sender:indexPath)
                 }
             }
