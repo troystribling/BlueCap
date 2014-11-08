@@ -107,29 +107,31 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     @IBAction func toggleNotificatons() {
-        if let characteristic = self.characteristic {
-            if characteristic.isNotifying {
-                characteristic.stopNotifying({
-                        characteristic.stopUpdates()
-                    },
-                    notificationStateChangedFailedCallback: {(error) in
-                        self.notifySwitch.on = false
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    })
-            } else {
-                characteristic.startNotifying({
-                    },
-                    notificationStateChangedFailedCallback:{(error) in
-                        self.notifySwitch.on = false
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    }
-                )
-            }
+        if self.characteristic.isNotifying {
+            self.characteristic.stopNotifying({
+                    self.setUI()
+                    self.characteristic.stopUpdates()
+                },
+                notificationStateChangedFailedCallback: {(error) in
+                    self.notifySwitch.on = false
+                    self.setUI()
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                })
+        } else {
+            self.characteristic.startNotifying({
+                    self.setUI()
+                },
+                notificationStateChangedFailedCallback:{(error) in
+                    self.notifySwitch.on = false
+                    self.setUI()
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                }
+            )
         }
     }
     
     func setUI() {
-        if (!self.characteristic.propertyEnabled(.Read) && !self.characteristic.propertyEnabled(.Write)) || !self.peripheralViewController.peripehealConnected {
+        if (!self.characteristic.propertyEnabled(.Read) && !self.characteristic.propertyEnabled(.Write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripehealConnected {
             self.valuesLabel.textColor = UIColor.lightGrayColor()
         } else {
             self.valuesLabel.textColor = UIColor.blackColor()
@@ -170,16 +172,14 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         if indexPath.row == 0 {
-            if let characteristic = self.characteristic {
-                if (characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse)) && !characteristic.propertyEnabled(.Read) {
-                    if characteristic.discreteStringValues.isEmpty {
-                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender:indexPath)
-                    } else {
-                        self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender:indexPath)
-                    }
-                } else if characteristic.propertyEnabled(.Read)  {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicValueSegue, sender:indexPath)
+            if (self.characteristic.propertyEnabled(.Write) || self.characteristic.propertyEnabled(.WriteWithoutResponse)) && !self.characteristic.propertyEnabled(.Read) {
+                if self.characteristic.discreteStringValues.isEmpty {
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender:indexPath)
+                } else {
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender:indexPath)
                 }
+            } else if self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying  {
+                self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicValueSegue, sender:indexPath)
             }
         }
     }
