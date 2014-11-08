@@ -17,7 +17,7 @@ public class MutableCharacteristic : NSObject {
     
     // INTERNAL
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
-    internal var processWriteRequestCallback    : (()->())?
+    internal var processWriteRequestCallback    : ((request:CBATTRequest!)->())?
     
     // PUBLIC
     public var permissions : CBAttributePermissions {
@@ -65,8 +65,16 @@ public class MutableCharacteristic : NSObject {
         return self.profile.discreteStringValues
     }
     
-    public func processWriteRequest(processWriteRequestCallback:()->()) {
+    public func startProcessingWriteRequests(processWriteRequestCallback:(request:CBATTRequest!)->()) {
         self.processWriteRequestCallback = processWriteRequestCallback
+    }
+    
+    public func stopProcessingWriteRequests() {
+        self.processWriteRequestCallback = nil
+    }
+    
+    public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
+        PeripheralManager.sharedInstance().cbPeripheralManager.respondToRequest(request, withResult:result)
     }
     
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {

@@ -8,10 +8,11 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewController {
     
-    var characteristic                  : MutableCharacteristic?
+    var characteristic                  : MutableCharacteristic!
     var peripheralManagerViewController : PeripheralManagerViewController?
 
     
@@ -35,6 +36,11 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
+        self.characteristic.startProcessingWriteRequests() {(request) in
+            self.characteristic.value = request.value
+            self.characteristic.respondToRequest(request, withResult:CBATTError.Success)
+            self.updateWhenActive()
+        }
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
@@ -43,6 +49,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
         NSNotificationCenter.defaultCenter().removeObserver(self)
+        self.characteristic.stopProcessingWriteRequests()
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
@@ -101,12 +108,10 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     }
     
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        if let characteristic = self.characteristic {
-            if characteristic.discreteStringValues.isEmpty {
-                self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue, sender:indexPath)
-            } else {
-                self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
-            }
+        if self.characteristic.discreteStringValues.isEmpty {
+            self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue, sender:indexPath)
+        } else {
+            self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
         }
     }
 

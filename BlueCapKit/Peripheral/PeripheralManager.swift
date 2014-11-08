@@ -323,8 +323,8 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
                     Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
                     characteristic.value = request.value
-                    if let processWriteCallback = characteristic.processWriteRequestCallback {
-                        self.asyncCallback(processWriteCallback)
+                    if let processWriteRequestCallback = characteristic.processWriteRequestCallback {
+                        self.asyncCallback(){processWriteRequestCallback(request:cbattRequest)}
                     }
                 } else {
                     Logger.debug("Error: characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")

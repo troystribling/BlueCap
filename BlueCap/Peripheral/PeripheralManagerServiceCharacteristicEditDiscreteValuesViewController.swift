@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
     
-    var characteristic                  : MutableCharacteristic?
+    var characteristic                  : MutableCharacteristic!
     var peripheralManagerViewController : PeripheralManagerViewController?
 
     struct MainStoryboard {
@@ -24,9 +24,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let characteristic = self.characteristic {
-            self.navigationItem.title = characteristic.name
-        }
+        self.navigationItem.title = self.characteristic.name
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -57,24 +55,18 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let characteristic = self.characteristic {
-            return characteristic.discreteStringValues.count
-        } else {
-            return 0
-        }
+        return self.characteristic.discreteStringValues.count
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
-        if let characteristic = self.characteristic {
-            let stringValue = characteristic.discreteStringValues[indexPath.row]
-            cell.textLabel.text = stringValue
-            if let value = characteristic.stringValues?[characteristic.name] {
-                if value == stringValue {
-                    cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-                } else {
-                    cell.accessoryType = UITableViewCellAccessoryType.None
-                }
+        let stringValue = characteristic.discreteStringValues[indexPath.row]
+        cell.textLabel.text = stringValue
+        if let value = self.characteristic.stringValues?[characteristic.name] {
+            if value == stringValue {
+                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryType.None
             }
         }
         return cell

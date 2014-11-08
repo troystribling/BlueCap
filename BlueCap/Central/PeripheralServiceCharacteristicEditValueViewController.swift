@@ -12,7 +12,7 @@ import BlueCapKit
 class PeripheralServiceCharacteristicEditValueViewController : UIViewController, UITextFieldDelegate {
    
     @IBOutlet var valueTextField    : UITextField!
-    var characteristic              : Characteristic?
+    var characteristic              : Characteristic!
     var peripheralViewController    : PeripheralViewController?
     var valueName                   : String?
     
@@ -26,7 +26,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         super.viewDidLoad()
         if let valueName = self.valueName {
             self.navigationItem.title = valueName
-            if let value = self.characteristic?.stringValues?[valueName] {
+            if let value = self.characteristic.stringValues?[valueName] {
                 self.valueTextField.text = value
             }
         }
@@ -35,7 +35,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service.peripheral)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic.service.peripheral)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
     }
@@ -71,21 +71,19 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         if let newValue = self.valueTextField.text {
             if let valueName = self.valueName {
                 if !valueName.isEmpty {
-                    if let characteristic = self.characteristic {
-                        if var values = characteristic.stringValues {
-                            values[valueName] = newValue
-                            self.progressView.show()
-                            characteristic.write(values, afterWriteSuccessCallback: {
-                                    self.progressView.remove()
-                                    self.navigationController?.popViewControllerAnimated(true)
-                                    return
-                                }, afterWriteFailedCallback: {(error) in
-                                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                                            self.navigationController?.popViewControllerAnimated(true)
-                                            return
-                                        }, animated:true, completion:nil)
-                                })
-                        }
+                    if var values = characteristic.stringValues {
+                        values[valueName] = newValue
+                        self.progressView.show()
+                        characteristic.write(values, afterWriteSuccessCallback: {
+                                self.progressView.remove()
+                                self.navigationController?.popViewControllerAnimated(true)
+                                return
+                            }, afterWriteFailedCallback: {(error) in
+                                self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                                        self.navigationController?.popViewControllerAnimated(true)
+                                        return
+                                    }, animated:true, completion:nil)
+                            })
                     }
                 }
             }

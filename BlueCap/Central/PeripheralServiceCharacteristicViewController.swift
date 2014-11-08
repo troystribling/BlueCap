@@ -45,26 +45,24 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func viewDidLoad()  {
-        if let characteristic = self.characteristic {
-            self.navigationItem.title = characteristic.name
+        self.navigationItem.title = self.characteristic.name
 
-            self.setUI()
-            
-            self.uuidLabel.text = characteristic.uuid.UUIDString
-            self.notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
-            self.broadcastingLabel.text = self.booleanStringValue(characteristic.isBroadcasted)
-            
-            self.propertyBroadcastLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Broadcast))
-            self.propertyReadLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Read))
-            self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.WriteWithoutResponse))
-            self.propertyWriteLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Write))
-            self.propertyNotifyLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Notify))
-            self.propertyIndicateLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.Indicate))
-            self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.AuthenticatedSignedWrites))
-            self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.ExtendedProperties))
-            self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.NotifyEncryptionRequired))
-            self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(.IndicateEncryptionRequired))
-        }
+        self.setUI()
+        
+        self.uuidLabel.text = self.characteristic.uuid.UUIDString
+        self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
+        self.broadcastingLabel.text = self.booleanStringValue(self.characteristic.isBroadcasted)
+        
+        self.propertyBroadcastLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Broadcast))
+        self.propertyReadLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Read))
+        self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.WriteWithoutResponse))
+        self.propertyWriteLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Write))
+        self.propertyNotifyLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Notify))
+        self.propertyIndicateLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Indicate))
+        self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.AuthenticatedSignedWrites))
+        self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.ExtendedProperties))
+        self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.NotifyEncryptionRequired))
+        self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.IndicateEncryptionRequired))
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
     
@@ -86,12 +84,12 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
-                let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
-                viewController.characteristic = self.characteristic
+            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
+            viewController.characteristic = self.characteristic
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
-            if let stringValues = self.characteristic?.stringValues {
+            if let stringValues = self.characteristic.stringValues {
                 let names = stringValues.keys.array
                 viewController.valueName = names[0]
             }
