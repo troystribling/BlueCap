@@ -8,9 +8,9 @@
 
 import Foundation
 
-extension String {
+public extension String {
 
-    subscript(r: Range<Int>) -> String {
+    public subscript(r: Range<Int>) -> String {
         get {
             let startIndex = advance(self.startIndex, r.startIndex)
             let endIndex = advance(startIndex, r.endIndex - r.startIndex)
@@ -18,11 +18,11 @@ extension String {
         }
     }
     
-    var floatValue : Float {
+    public var floatValue : Float {
         return (self as NSString).floatValue
     }
     
-    func dataFromHexString() -> NSData {
+    public func dataFromHexString() -> NSData {
         var bytes : [UInt8] = []
         for i in 0..<(countElements(self)/2) {
             let stringBytes = self[2*i..<2*i+2]

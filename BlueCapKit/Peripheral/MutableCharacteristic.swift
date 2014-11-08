@@ -85,22 +85,22 @@ public class MutableCharacteristic : NSObject {
         return (self.permissions.rawValue & permission.rawValue) > 0
     }
     
-    public func updateValue(value:NSData) {
+    public func updateValueWithData(value:NSData) {
         self._value = value
         PeripheralManager.sharedInstance().cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
     public func updateValueWithString(value:Dictionary<String, String>) {
         if let data = self.profile.dataFromStringValue(value) {
-            self.updateValue(data)
+            self.updateValueWithData(data)
         } else {
             NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
     }
     
-    public func updateValueWithAny(value:Any) {
+    public func updateValue(value:Any) {
         if let data = self.profile.dataFromAnyValue(value) {
-            self.updateValue(data)
+            self.updateValueWithData(data)
         } else {
             NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
         }

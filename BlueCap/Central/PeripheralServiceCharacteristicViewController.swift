@@ -89,10 +89,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
-            if let stringValues = self.characteristic.stringValues {
-                let names = stringValues.keys.array
-                viewController.valueName = names[0]
-            }
+            viewController.valueName = nil
         }
     }
     

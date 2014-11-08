@@ -69,23 +69,28 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {
+            let afterWriteSuceses = {()->() in
+                self.progressView.remove()
+                self.navigationController?.popViewControllerAnimated(true)
+                return
+            }
+            let afterWriteFailed = {(error:NSError!) -> () in
+                self.progressView.remove()
+                self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                    self.navigationController?.popViewControllerAnimated(true)
+                        return
+                    } , animated:true, completion:nil)
+            }
+            self.progressView.show()
             if let valueName = self.valueName {
-                if !valueName.isEmpty {
-                    if var values = characteristic.stringValues {
-                        values[valueName] = newValue
-                        self.progressView.show()
-                        characteristic.write(values, afterWriteSuccessCallback: {
-                                self.progressView.remove()
-                                self.navigationController?.popViewControllerAnimated(true)
-                                return
-                            }, afterWriteFailedCallback: {(error) in
-                                self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                                        self.navigationController?.popViewControllerAnimated(true)
-                                        return
-                                    }, animated:true, completion:nil)
-                            })
-                    }
+                if var values = characteristic.stringValues {
+                    values[valueName] = newValue
+                    characteristic.writeString(values, afterWriteSuccessCallback:afterWriteSuceses ,afterWriteFailedCallback:afterWriteFailed)
+                } else {
+                    characteristic.writeData(newValue.dataFromHexString(), afterWriteSuccessCallback:afterWriteSuceses ,afterWriteFailedCallback:afterWriteFailed)
                 }
+            } else {
+                characteristic.writeData(newValue.dataFromHexString(), afterWriteSuccessCallback:afterWriteSuceses ,afterWriteFailedCallback:afterWriteFailed)
             }
         }
         return true
