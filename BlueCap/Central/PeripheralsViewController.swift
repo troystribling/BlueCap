@@ -76,30 +76,14 @@ class PeripheralsViewController : UITableViewController {
     func toggleScan(sender:AnyObject) {
         if BeaconManager.sharedInstance().isMonitoring() == false {
             let central = CentralManager.sharedInstance()
-            if ConfigStore.getRegionScanEnabled() {
-                Logger.debug("toggleScan#RegionManager")
-                let scannerator = RegionScannerator.sharedInstance()
-                if scannerator.isScanning {
-                    self.stopMonitoringRegions()
-                    scannerator.stopScanning()
-                    self.setScanButton()
-                    central.disconnectAllPeripherals()
-                    central.removeAllPeripherals()
-                    self.updateWhenActive()
-                } else {
-                    self.powerOn()
-                }
+            if (central.isScanning) {
+                central.stopScanning()
+                self.setScanButton()
+                central.disconnectAllPeripherals()
+                central.removeAllPeripherals()
+                self.updateWhenActive()
             } else {
-                Logger.debug("toggleScan#CentralManager")
-                if (central.isScanning) {
-                    central.stopScanning()
-                    self.setScanButton()
-                    central.disconnectAllPeripherals()
-                    central.removeAllPeripherals()
-                    self.updateWhenActive()
-                } else {
-                    self.powerOn()
-                }
+                self.powerOn()
             }
         } else {
             self.presentViewController(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
@@ -117,7 +101,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func setScanButton() {
-        if CentralManager.sharedInstance().isScanning || RegionScannerator.sharedInstance().isScanning || TimedScannerator.sharedInstance().isScanning {
+        if CentralManager.sharedInstance().isScanning || TimedScannerator.sharedInstance().isScanning {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -179,42 +163,7 @@ class PeripheralsViewController : UITableViewController {
         let afterTimeout = {
             self.setScanButton()
         }
-        // Region Scan Enabled
-        if ConfigStore.getRegionScanEnabled() {
-            switch scanMode {
-                // Region Promiscuous Scan Enabled
-            case "Promiscuous" :
-                // Region Promiscuous Scan with Timeout Enabled
-                if ConfigStore.getScanTimeoutEnabled() {
-                    RegionScannerator.sharedInstance().startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
-                } else {
-                    RegionScannerator.sharedInstance().startScanning(afterPeripheralDiscovered)
-                }
-                self.startMonitoringRegions()
-                break
-                // Region Service Scan Enabled
-            case "Service" :
-                let scannedServices = ConfigStore.getScannedServiceUUIDs()
-                if scannedServices.isEmpty {
-                    self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
-                } else {
-                    // Region Service Scan with Timeout Enabled
-                    if ConfigStore.getScanTimeoutEnabled() {
-                        RegionScannerator.sharedInstance().startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
-                            afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
-                    } else {
-                        RegionScannerator.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
-                    }
-                    self.startMonitoringRegions()
-                }
-                break
-            default:
-                Logger.debug("Scan Mode :'\(scanMode)' invalid")
-                break
-            }
-        } else {
-            // Promiscuous Scan Enabled
-            switch scanMode {
+        switch scanMode {
             case "Promiscuous" :
                 // Promiscuous Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
@@ -237,36 +186,12 @@ class PeripheralsViewController : UITableViewController {
                     }
                 }
                 break
-            default:
-                Logger.debug("Scan Mode :'\(scanMode)' invalid")
-                break
-            }
+        default:
+            Logger.debug("Scan Mode :'\(scanMode)' invalid")
+            break
         }
     }
     
-    func startMonitoringRegions() {
-        RegionScannerator.sharedInstance().distanceFilter = 50.0
-        for (name, location) in ConfigStore.getScanRegions() {
-            RegionScannerator.sharedInstance().startMonitoringForRegion(CircularRegion(center:location, identifier:name) {(region) in
-                region.exitRegion = {
-                    Notify.withMessage("Exiting Region: \(name)")
-                }
-                region.enterRegion = {
-                    Notify.withMessage("Entering Region: \(name)")
-                }
-                region.startMonitoringRegion = {
-                    Logger.debug("Started Monitoring Region: \(name)")
-                }
-            })
-        }
-    }
-    
-    func stopMonitoringRegions() {
-        for region in RegionScannerator.sharedInstance().regions {
-            RegionScannerator.sharedInstance().stopMonitoringForRegion(region)
-        }
-    }
-
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

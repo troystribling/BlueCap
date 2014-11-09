@@ -14,7 +14,6 @@
 		055120CE19F5513700ED3B74 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209F19F5513700ED3B74 /* Characteristic.swift */; };
 		055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A019F5513700ED3B74 /* Connectorator.swift */; };
 		055120D019F5513700ED3B74 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A119F5513700ED3B74 /* Peripheral.swift */; };
-		055120D119F5513700ED3B74 /* RegionScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A219F5513700ED3B74 /* RegionScannerator.swift */; };
 		055120D219F5513700ED3B74 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A319F5513700ED3B74 /* Service.swift */; };
 		055120D319F5513700ED3B74 /* TimedScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A419F5513700ED3B74 /* TimedScannerator.swift */; };
 		055120D419F5513700ED3B74 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A619F5513700ED3B74 /* Beacon.swift */; };
@@ -66,7 +65,6 @@
 		0551209F19F5513700ED3B74 /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		055120A019F5513700ED3B74 /* Connectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connectorator.swift; sourceTree = "<group>"; };
 		055120A119F5513700ED3B74 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
-		055120A219F5513700ED3B74 /* RegionScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionScannerator.swift; sourceTree = "<group>"; };
 		055120A319F5513700ED3B74 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		055120A419F5513700ED3B74 /* TimedScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScannerator.swift; sourceTree = "<group>"; };
 		055120A619F5513700ED3B74 /* Beacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
@@ -195,7 +193,6 @@
 				0551209F19F5513700ED3B74 /* Characteristic.swift */,
 				055120A019F5513700ED3B74 /* Connectorator.swift */,
 				055120A119F5513700ED3B74 /* Peripheral.swift */,
-				055120A219F5513700ED3B74 /* RegionScannerator.swift */,
 				055120A319F5513700ED3B74 /* Service.swift */,
 				055120A419F5513700ED3B74 /* TimedScannerator.swift */,
 			);
@@ -423,7 +420,6 @@
 				055120DC19F5513700ED3B74 /* MutableCharacteristic.swift in Sources */,
 				055120E219F5513700ED3B74 /* SerializeDeserialize.swift in Sources */,
 				055120E819F5513700ED3B74 /* PairStructCharacteristicProfile.swift in Sources */,
-				055120D119F5513700ED3B74 /* RegionScannerator.swift in Sources */,
 				055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
