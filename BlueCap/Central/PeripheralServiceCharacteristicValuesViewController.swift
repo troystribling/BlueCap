@@ -78,16 +78,16 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             if characteristic.isNotifying {
                 characteristic.startUpdates({
                         self.updateWhenActive()
-                    }, afterUpdateFailedCallback:{(error) in
+                    }, afterUpdateFailed:{(error) in
                         self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                        }, animated:true, completion:nil)
+                    }, animated:true, completion:nil)
                 })
             } else if characteristic.propertyEnabled(.Read) {
                 self.progressView.show()
                 characteristic.read({
                         self.updateWhenActive()
                         self.progressView.remove()
-                    }, afterReadFailedCallback:{(error) in
+                    }, afterReadFailed:{(error) in
                         self.progressView.remove()
                         self.presentViewController(UIAlertController.alertOnError(error) {(action) in
                             self.navigationController?.popViewControllerAnimated(true)

@@ -17,7 +17,7 @@ extension UITableViewController {
     }
     
     func styleNavigationBar() {
-        let font = UIFont(name:"Thonburi", size:22.0)
+        let font = UIFont(name:"Thonburi", size:18.0)
         var titleAttributes : [NSObject:AnyObject]
         if var defaultTitleAttributes = UINavigationBar.appearance().titleTextAttributes {
             titleAttributes = defaultTitleAttributes
@@ -29,7 +29,7 @@ extension UITableViewController {
     }
     
     func styleUIBarButton(button:UIBarButtonItem) {
-        let font = UIFont(name:"Thonburi", size:18.0)
+        let font = UIFont(name:"Thonburi", size:16.0)
         var titleAttributes : [NSObject:AnyObject]
         if var defaultitleAttributes = button.titleTextAttributesForState(UIControlState.Normal) {
             titleAttributes = defaultitleAttributes
