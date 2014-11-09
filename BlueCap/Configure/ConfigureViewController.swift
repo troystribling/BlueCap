@@ -13,8 +13,8 @@ class ConfigureViewController : UITableViewController {
     
     @IBOutlet var scanModeLabel                     : UILabel!
     @IBOutlet var servicesLabel                     : UILabel!
-    @IBOutlet var scanRegionSwitchLabel             : UILabel!
     @IBOutlet var scanTimeoutLabel                  : UILabel!
+    @IBOutlet var scanTimeoutEnabledLabel           : UILabel!
     @IBOutlet var peripheralReconnectionsLabel      : UILabel!
     @IBOutlet var peripheralConnectionTimeout       : UILabel!
     @IBOutlet var characteristicReadWriteTimeout    : UILabel!
@@ -42,6 +42,14 @@ class ConfigureViewController : UITableViewController {
     override func viewWillAppear(animated: Bool) {
         self.scanMode = ConfigStore.getScanMode()
         self.scanModeLabel.text = self.scanMode
+        self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
+        if CentralManager.sharedInstance().isScanning == true {
+            self.scanTimeoutSwitch.enabled = false
+            self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
+        } else {
+            self.scanTimeoutSwitch.enabled = true
+            self.scanTimeoutEnabledLabel.textColor = UIColor.blackColor()
+        }
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.peripheralReconnectionsLabel.text = "\(ConfigStore.getMaximumReconnections())"
         self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"

@@ -77,7 +77,11 @@ class PeripheralsViewController : UITableViewController {
         if BeaconManager.sharedInstance().isMonitoring() == false {
             let central = CentralManager.sharedInstance()
             if (central.isScanning) {
-                central.stopScanning()
+                if ConfigStore.getScanTimeoutEnabled() {
+                    TimedScannerator.sharedInstance().stopScanning()
+                } else {
+                    central.stopScanning()
+                }
                 self.setScanButton()
                 central.disconnectAllPeripherals()
                 central.removeAllPeripherals()
