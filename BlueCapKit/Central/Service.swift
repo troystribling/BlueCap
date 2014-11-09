@@ -12,13 +12,13 @@ import CoreBluetooth
 public class Service : NSObject {
     
     // PRIVATE
-    private let profile                                     : ServiceProfile?
-    private var characteristicsDiscoveredSuccessCallback    : (() -> ())?
-    private var characteristicDiscoveryFailedCallback       : ((error:NSError!) -> ())?
+    private let profile                             : ServiceProfile?
+    private var characteristicsDiscoveredSuccess    : (() -> ())?
+    private var characteristicDiscoveryFailed       : ((error:NSError!) -> ())?
 
     // INTERNAL
-    internal let _peripheral                                : Peripheral
-    internal let cbService                                  : CBService
+    internal let _peripheral                        : Peripheral
+    internal let cbService                          : CBService
     
     internal var discoveredCharacteristics      = Dictionary<CBUUID, Characteristic>()
     
@@ -44,17 +44,17 @@ public class Service : NSObject {
     }
     
     // PUBLIC
-    public func discoverAllCharacteristics(characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
+    public func discoverAllCharacteristics(characteristicsDiscoveredSuccess:() -> (), characteristicDiscoveryFailed:((error:NSError!) -> ())? = nil) {
         Logger.debug("Service#discoverAllCharacteristics")
-        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
-        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
+        self.characteristicsDiscoveredSuccess = characteristicsDiscoveredSuccess
+        self.characteristicDiscoveryFailed = characteristicDiscoveryFailed
         self.discoverIfConnected(nil)
     }
 
-    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscoveredSuccessCallback:() -> (), characteristicDiscoveryFailedCallback:((error:NSError!) -> ())? = nil) {
+    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscoveredSuccess:() -> (), characteristicDiscoveryFailed:((error:NSError!) -> ())? = nil) {
         Logger.debug("Service#discoverCharacteristics")
-        self.characteristicsDiscoveredSuccessCallback = characteristicsDiscoveredSuccessCallback
-        self.characteristicDiscoveryFailedCallback = characteristicDiscoveryFailedCallback
+        self.characteristicsDiscoveredSuccess = characteristicsDiscoveredSuccess
+        self.characteristicDiscoveryFailed = characteristicDiscoveryFailed
         self.discoverIfConnected(characteristics)
     }
 
@@ -63,8 +63,8 @@ public class Service : NSObject {
         if self.peripheral.state == .Connected {
             self.peripheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
         } else {
-            if let characteristicDiscoveryFailedCallback = self.characteristicDiscoveryFailedCallback {
-                CentralManager.asyncCallback(){characteristicDiscoveryFailedCallback(error:
+            if let characteristicDiscoveryFailed = self.characteristicDiscoveryFailed {
+                CentralManager.asyncCallback(){characteristicDiscoveryFailed(error:
                     NSError(domain:BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
             }
         }
@@ -86,8 +86,8 @@ public class Service : NSObject {
                 bcCharacteristic.didDiscover()
                 Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
             }
-            if let characteristicsDiscoveredSuccessCallback = self.characteristicsDiscoveredSuccessCallback {
-                CentralManager.asyncCallback(characteristicsDiscoveredSuccessCallback)
+            if let characteristicsDiscoveredSuccess = self.characteristicsDiscoveredSuccess {
+                CentralManager.asyncCallback(characteristicsDiscoveredSuccess)
             }
         }
     }

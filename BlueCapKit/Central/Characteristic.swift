@@ -12,12 +12,12 @@ import CoreBluetooth
 public class Characteristic {
 
     // PRIVATE
-    private var notificationStateChangedSuccessCallback     : (() -> ())?
-    private var notificationStateChangedFailedCallback      : ((error:NSError!) -> ())?
-    private var afterUpdateSuccessCallback                  : (() -> ())?
-    private var afterUpdateFailedCallback                   : ((error:NSError) -> ())?
-    private var afterWriteSuccessCallback                   : (() -> ())?
-    private var afterWriteFailedCallback                    : ((error:NSError) -> ())?
+    private var notificationStateChangedSuccess     : (() -> ())?
+    private var notificationStateChangedFailed      : ((error:NSError!) -> ())?
+    private var afterUpdateSuccess                  : (() -> ())?
+    private var afterUpdateFailed                   : ((error:NSError) -> ())?
+    private var afterWriteSuccess                   : (() -> ())?
+    private var afterWriteFailed                    : ((error:NSError) -> ())?
     
     private var reading = false
     private var writing = false
@@ -82,31 +82,31 @@ public class Characteristic {
     
     public func startNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError!) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
-            self.notificationStateChangedSuccessCallback = notificationStateChangedSuccess
-            self.notificationStateChangedFailedCallback = notificationStateChangedFailed
+            self.notificationStateChangedSuccess = notificationStateChangedSuccess
+            self.notificationStateChangedFailed = notificationStateChangedFailed
             self.service.peripheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
         }
     }
 
     public func stopNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError!) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
-            self.notificationStateChangedSuccessCallback = notificationStateChangedSuccess
-            self.notificationStateChangedFailedCallback = notificationStateChangedFailed
+            self.notificationStateChangedSuccess = notificationStateChangedSuccess
+            self.notificationStateChangedFailed = notificationStateChangedFailed
             self.service.peripheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
         }
     }
 
     public func startUpdates(afterUpdateSuccess:() -> (), afterUpdateFailed:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.Notify) {
-            self.afterUpdateSuccessCallback = afterUpdateSuccess
-            self.afterUpdateFailedCallback = afterUpdateFailed
+            self.afterUpdateSuccess = afterUpdateSuccess
+            self.afterUpdateFailed = afterUpdateFailed
         }
     }
 
     public func stopUpdates() {
         if self.propertyEnabled(.Notify) {
-            self.afterUpdateSuccessCallback = nil
-            self.afterUpdateFailedCallback = nil
+            self.afterUpdateSuccess = nil
+            self.afterUpdateFailed = nil
         }
     }
 
@@ -117,8 +117,8 @@ public class Characteristic {
     public func read(afterReadSuccess:() -> (), afterReadFailed:((error:NSError)->())?) {
         if self.propertyEnabled(.Read) {
             Logger.debug("Characteristic#read: \(self.uuid.UUIDString)")
-            self.afterUpdateSuccessCallback = afterReadSuccess
-            self.afterUpdateFailedCallback = afterReadFailed
+            self.afterUpdateSuccess = afterReadSuccess
+            self.afterUpdateFailed = afterReadFailed
             self.service.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
             self.reading = true
             ++self.readSequence
@@ -131,8 +131,8 @@ public class Characteristic {
     public func writeData(value:NSData, afterWriteSuccess:()->(), afterWriteFailed:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-            self.afterWriteSuccessCallback = afterWriteSuccess
-            self.afterWriteFailedCallback = afterWriteFailed
+            self.afterWriteSuccess = afterWriteSuccess
+            self.afterWriteFailed = afterWriteFailed
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
             self.writing = true
             ++self.writeSequence
@@ -145,8 +145,8 @@ public class Characteristic {
     public func writeData(value:NSData, afterWriteFailed:((error:NSError)->())? = nil) {
         if self.propertyEnabled(.WriteWithoutResponse) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-            self.afterWriteSuccessCallback = nil
-            self.afterWriteFailedCallback = afterWriteFailed
+            self.afterWriteSuccess = nil
+            self.afterWriteFailed = afterWriteFailed
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
             self.writing = true
             ++self.writeSequence
@@ -166,7 +166,7 @@ public class Characteristic {
 
     public func writeString(stringValue:Dictionary<String, String>, afterWriteFailed:((error:NSError)->())? = nil) {
         if let value = self.profile.dataFromStringValue(stringValue) {
-            self.writeData(value, afterWriteFailedCallback)
+            self.writeData(value, afterWriteFailed)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
@@ -182,7 +182,7 @@ public class Characteristic {
 
     public func write(anyValue:Any, afterWriteFailed:((error:NSError)->())? = nil) {
         if let value = self.profile.dataFromAnyValue(anyValue) {
-            self.writeData(value, afterWriteFailedCallback)
+            self.writeData(value, afterWriteFailed)
         } else {
             NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
@@ -195,9 +195,9 @@ public class Characteristic {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
-                if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
+                if let afterUpdateFailed = self.afterUpdateFailed {
                     CentralManager.asyncCallback(){
-                        afterUpdateFailedCallback(error:
+                        afterUpdateFailed(error:
                             NSError(domain:BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
                     }
                 }
@@ -213,9 +213,9 @@ public class Characteristic {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                if let afterWriteFailedCallback = self.afterWriteFailedCallback {
+                if let afterWriteFailed = self.afterWriteFailed {
                     CentralManager.asyncCallback(){
-                        afterWriteFailedCallback(error:
+                        afterWriteFailed(error:
                             NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
                     }
                 }
@@ -255,13 +255,13 @@ public class Characteristic {
     internal func didUpdateNotificationState(error:NSError!) {
         if error != nil {
             Logger.debug("Characteristic#didUpdateNotificationState Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let notificationStateChangedFailedCallback = self.notificationStateChangedFailedCallback {
-                CentralManager.asyncCallback(){notificationStateChangedFailedCallback(error:error)}
+            if let notificationStateChangedFailed = self.notificationStateChangedFailed {
+                CentralManager.asyncCallback(){notificationStateChangedFailed(error:error)}
             }
         } else {
             Logger.debug("Characteristic#didUpdateNotificationState Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let notificationStateChangedSuccessCallback = self.notificationStateChangedSuccessCallback {
-                CentralManager.asyncCallback(notificationStateChangedSuccessCallback)
+            if let notificationStateChangedSuccess = self.notificationStateChangedSuccess {
+                CentralManager.asyncCallback(notificationStateChangedSuccess)
             }
         }
     }
@@ -270,13 +270,13 @@ public class Characteristic {
         self.reading = false
         if error != nil {
             Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterUpdateFailedCallback = self.afterUpdateFailedCallback {
-                CentralManager.asyncCallback(){afterUpdateFailedCallback(error:error)}
+            if let afterUpdateFailed = self.afterUpdateFailed {
+                CentralManager.asyncCallback(){afterUpdateFailed(error:error)}
             }
         } else {
             Logger.debug("Characteristic#didUpdate Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterUpdateSuccessCallback = self.afterUpdateSuccessCallback {
-                CentralManager.asyncCallback(afterUpdateSuccessCallback)
+            if let afterUpdateSuccess = self.afterUpdateSuccess {
+                CentralManager.asyncCallback(afterUpdateSuccess)
             }
         }
     }
@@ -285,13 +285,13 @@ public class Characteristic {
         self.writing = false
         if error != nil {
             Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterWriteFailedCallback = self.afterWriteFailedCallback {
-                CentralManager.asyncCallback(){afterWriteFailedCallback(error:error)}
+            if let afterWriteFailed = self.afterWriteFailed {
+                CentralManager.asyncCallback(){afterWriteFailed(error:error)}
             }
         } else {
             Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterWriteSuccessCallback = self.afterWriteSuccessCallback {
-                CentralManager.asyncCallback(afterWriteSuccessCallback)
+            if let afterWriteSuccess = self.afterWriteSuccess {
+                CentralManager.asyncCallback(afterWriteSuccess)
             }
         }
     }

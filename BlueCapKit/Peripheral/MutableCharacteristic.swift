@@ -17,7 +17,7 @@ public class MutableCharacteristic : NSObject {
     
     // INTERNAL
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
-    internal var processWriteRequestCallback    : ((request:CBATTRequest!)->())?
+    internal var processWriteRequest            : ((request:CBATTRequest!)->())?
     
     // PUBLIC
     public var permissions : CBAttributePermissions {
@@ -76,12 +76,12 @@ public class MutableCharacteristic : NSObject {
         return self.profile.discreteStringValues
     }
     
-    public func startProcessingWriteRequests(processWriteRequestCallback:(request:CBATTRequest!)->()) {
-        self.processWriteRequestCallback = processWriteRequestCallback
+    public func startProcessingWriteRequests(processWriteRequest:(request:CBATTRequest!)->()) {
+        self.processWriteRequest = processWriteRequest
     }
     
     public func stopProcessingWriteRequests() {
-        self.processWriteRequestCallback = nil
+        self.processWriteRequest = nil
     }
     
     public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {

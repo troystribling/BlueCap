@@ -48,7 +48,7 @@ class PeripheralViewController : UITableViewController {
                 self.setStateLabel()
                 self.progressView.remove()
             },
-            peripheralDiscoveryFailedCallback:{(error) in
+            peripheralDiscoveryFailed:{(error) in
                 self.progressView.remove()
                 self.serviceLabel.textColor = UIColor.lightGrayColor()
                 if self.peripehealConnected {
