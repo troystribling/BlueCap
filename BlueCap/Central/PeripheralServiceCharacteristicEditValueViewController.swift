@@ -90,6 +90,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                     characteristic.writeData(newValue.dataFromHexString(), afterWriteSuccessCallback:afterWriteSuceses ,afterWriteFailedCallback:afterWriteFailed)
                 }
             } else {
+                Logger.debug("VALUE: \(newValue.dataFromHexString())")
                 characteristic.writeData(newValue.dataFromHexString(), afterWriteSuccessCallback:afterWriteSuceses ,afterWriteFailedCallback:afterWriteFailed)
             }
         }

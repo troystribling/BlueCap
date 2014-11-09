@@ -61,6 +61,17 @@ public class MutableCharacteristic : NSObject {
         }
     }
     
+    public class func withProfiles(profiles:[CharacteristicProfile]) -> [MutableCharacteristic] {
+        return profiles.map{MutableCharacteristic(profile:$0)}
+    }
+    
+    public init(profile:CharacteristicProfile) {
+        super.init()
+        self.profile = profile
+        self._value = self.profile.initialValue
+        self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
+    }
+    
     public var discreteStringValues : [String] {
         return self.profile.discreteStringValues
     }
@@ -104,17 +115,6 @@ public class MutableCharacteristic : NSObject {
         } else {
             NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
-    }
-    
-    public class func withProfiles(profiles:[CharacteristicProfile]) -> [MutableCharacteristic] {
-        return profiles.map{MutableCharacteristic(profile:$0)}
-    }
-    
-    public init(profile:CharacteristicProfile) {
-        super.init()
-        self.profile = profile
-        self._value = self.profile.initialValue
-        self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
     }
     
 }

@@ -37,9 +37,13 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
             self.navigationItem.title = characteristic.name
         }
         self.characteristic.startProcessingWriteRequests() {(request) in
-            self.characteristic.value = request.value
-            self.characteristic.respondToRequest(request, withResult:CBATTError.Success)
-            self.updateWhenActive()
+            if request.value.length > 0 {
+                self.characteristic.value = request.value
+                self.characteristic.respondToRequest(request, withResult:CBATTError.Success)
+                self.updateWhenActive()
+            } else {
+                self.characteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+            }
         }
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
