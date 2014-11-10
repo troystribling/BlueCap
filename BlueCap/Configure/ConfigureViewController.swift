@@ -18,6 +18,9 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var peripheralReconnectionsLabel      : UILabel!
     @IBOutlet var peripheralConnectionTimeout       : UILabel!
     @IBOutlet var characteristicReadWriteTimeout    : UILabel!
+    @IBOutlet var scanRegionsLabel                  : UILabel!
+    @IBOutlet var scanRegionSwitchLabel             : UILabel!
+    @IBOutlet var scanRegionSwitch                  : UISwitch!
     @IBOutlet var scanTimeoutSwitch                 : UISwitch!
     @IBOutlet var notifySwitch                      : UISwitch!
     
@@ -25,6 +28,7 @@ class ConfigureViewController : UITableViewController {
     
     struct MainStroryboard {
         static let configureScanServicesSegue   = "ConfigureScanServices"
+        static let configureScanRegionsSegue    = "ConfigureScanRegions"
         static let configureScanModeSegue       = "ConfigureScanMode"
         static let configureScanTimeoutSegue    = "ConfigureScanTimeout"
     }
@@ -43,17 +47,11 @@ class ConfigureViewController : UITableViewController {
         self.scanMode = ConfigStore.getScanMode()
         self.scanModeLabel.text = self.scanMode
         self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
-        if CentralManager.sharedInstance().isScanning == true {
-            self.scanTimeoutSwitch.enabled = false
-            self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
-        } else {
-            self.scanTimeoutSwitch.enabled = true
-            self.scanTimeoutEnabledLabel.textColor = UIColor.blackColor()
-        }
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.peripheralReconnectionsLabel.text = "\(ConfigStore.getMaximumReconnections())"
         self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
         self.characteristicReadWriteTimeout.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
+        self.configUI()
         self.navigationItem.title = "Configure"
         super.viewWillAppear(animated)
     }
@@ -71,6 +69,8 @@ class ConfigureViewController : UITableViewController {
             switch(identifier) {
             case MainStroryboard.configureScanModeSegue:
                 return true
+            case MainStroryboard.configureScanRegionsSegue:
+                return  !RegionScannerator.sharedInstance().isScanning && !CentralManager.sharedInstance().isScanning
             case MainStroryboard.configureScanServicesSegue:
                 return true
             default:
@@ -81,6 +81,10 @@ class ConfigureViewController : UITableViewController {
         }
     }
     
+    @IBAction func toggleScanRegion(sender:AnyObject) {
+        ConfigStore.setRegionScanEnabled(!ConfigStore.getRegionScanEnabled())
+        self.configUI()
+    }
     
     @IBAction func toggleScanTimeout(sender:AnyObject) {
         ConfigStore.setScanTimeoutEnabled(!ConfigStore.getScanTimeoutEnabled())
@@ -89,5 +93,23 @@ class ConfigureViewController : UITableViewController {
     @IBAction func toggelNotification(sender:AnyObject) {
         Notify.setEnable(enabled:self.notifySwitch.on)
     }
-    
+ 
+    func configUI() {
+        if  CentralManager.sharedInstance().isScanning {
+            self.scanRegionsLabel.textColor = UIColor.lightGrayColor()
+            self.scanRegionSwitchLabel.textColor = UIColor.lightGrayColor()
+            self.scanRegionSwitch.enabled = false
+            self.scanTimeoutSwitch.enabled = false
+            self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
+        } else {
+            self.scanRegionSwitch.enabled = true
+            self.scanRegionSwitchLabel.textColor = UIColor.blackColor()
+            self.scanRegionsLabel.textColor = UIColor.blackColor()
+            self.scanTimeoutSwitch.enabled = true
+            self.scanTimeoutEnabledLabel.textColor = UIColor.blackColor()
+        }
+        self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
+        self.scanRegionSwitch.on = ConfigStore.getRegionScanEnabled()
+    }
+
 }
