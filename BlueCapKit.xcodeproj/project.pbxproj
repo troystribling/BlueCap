@@ -51,6 +51,7 @@
 		055120F419F5513700ED3B74 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120CB19F5513700ED3B74 /* Utils.swift */; };
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
+		059A121F1A11B5CB00395353 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059A121E1A11B5CB00395353 /* DoubleExtensions.swift */; };
 		05B5ABA61A10434800FCDCAF /* RegionScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B5ABA51A10434800FCDCAF /* RegionScannerator.swift */; };
 /* End PBXBuildFile section */
 
@@ -103,6 +104,7 @@
 		055120CB19F5513700ED3B74 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		059A121E1A11B5CB00395353 /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		05B5ABA51A10434800FCDCAF /* RegionScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionScannerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -270,6 +272,7 @@
 		055120C819F5513700ED3B74 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				059A121E1A11B5CB00395353 /* DoubleExtensions.swift */,
 				055120C919F5513700ED3B74 /* Logger.swift */,
 				055120CA19F5513700ED3B74 /* StringExtensions.swift */,
 				055120CB19F5513700ED3B74 /* Utils.swift */,
@@ -388,6 +391,7 @@
 				055120E919F5513700ED3B74 /* ProfileManager.swift in Sources */,
 				055120D219F5513700ED3B74 /* Service.swift in Sources */,
 				055120CE19F5513700ED3B74 /* Characteristic.swift in Sources */,
+				059A121F1A11B5CB00395353 /* DoubleExtensions.swift in Sources */,
 				055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */,
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
 				055120DA19F5513700ED3B74 /* Region.swift in Sources */,

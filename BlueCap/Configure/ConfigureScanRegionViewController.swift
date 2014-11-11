@@ -29,8 +29,8 @@ class ConfigureScanRegionViewController : UITableViewController {
         if let regionName = self.regionName {
             self.navigationItem.title = regionName
             if let region = ConfigStore.getScanRegion(regionName) {
-                self.latitudeLabel.text = "\(region.latitude)"
-                self.longitudeLabel.text = "\(region.longitude)"
+                self.latitudeLabel.text = Double(region.latitude).format(".6")
+                self.longitudeLabel.text = Double(region.longitude).format(".6")
                 let location = CLLocation(latitude:region.latitude, longitude:region.longitude)
                 let progressView = ProgressView()
                 progressView.show()
