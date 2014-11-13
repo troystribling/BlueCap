@@ -36,23 +36,17 @@ class ConfigureAddScanRegionViewController : UIViewController, UITextFieldDelega
             if !name.isEmpty {
                 let progressView = ProgressView()
                 progressView.show()
-                LocationManager.sharedInstance().startUpdatingLocation() {(locationManager) in
-                    locationManager.locationsUpdateSuccess = {(locations) in
-                        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                        if let location = locations.last {
-                            Logger.debug("location update received: \(location)")
-                            locationManager.stopUpdatingLocation()
-                            ConfigStore.addScanRegion(name, region:location.coordinate)
-                        }
+                LocationManager.currentLocation({(location) in
+                        Logger.debug("location update received: \(location)")
+                        ConfigStore.addScanRegion(name, region:location.coordinate)
                         progressView.remove()
                         self.navigationController?.popViewControllerAnimated(true)
-                    }
-                    locationManager.locationsUpdateFailed = {(error:NSError!) in
+                    }, locationUpdateFailed:{(error:NSError!) in
                         progressView.remove()
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                         self.navigationController?.popViewControllerAnimated(true)
                     }
-                }
+                )
                 return true
             } else {
                 return false

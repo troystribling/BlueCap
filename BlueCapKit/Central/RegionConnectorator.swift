@@ -12,4 +12,18 @@ import CoreBluetooth
 
 public class RegionConnectorator : Connectorator {
     
+    public var regionCreateSuccess  : ((region:CircularRegion) -> ())?
+    public var regionCreateFailed   : ((region:CircularRegion) -> ())?
+    
+    public override init(initializer:(regionConnectorator:RegionConnectorator)->()) {
+        super.init()
+        initializer(regionConnectorator:self)
+    }
+    
+    private func createRegion() {
+        LocationManager.currentLocation({(location:CLLocation) in
+            }, locationUpdateFailed:{(error:NSError!) in
+            }
+        )
+    }
 }

@@ -27,6 +27,7 @@ class ConfigureScanRegionsViewController : UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.tableView.reloadData()
         self.navigationItem.title = "Scan Regions"
     }
     

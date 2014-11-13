@@ -42,6 +42,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         return self.clLocationManager.location
     }
     
+
     public class func sharedInstance() -> LocationManager {
         if thisLocationManager == nil {
             thisLocationManager = LocationManager()
@@ -55,6 +56,28 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     
     public class func locationServicesEnabled() -> Bool {
         return CLLocationManager.locationServicesEnabled()
+    }
+    
+    public class func currentLocation(updatedLocation:(location:CLLocation) -> ()) {
+        self.currentLocation(updatedLocation, locationUpdateFailed:nil)
+    }
+    
+    public class func currentLocation(updatedLocation:(location:CLLocation) -> (), locationUpdateFailed:((error:NSError)->())? = nil) {
+        LocationManager().startUpdatingLocation() {(locationManager) in
+            locationManager.locationsUpdateSuccess = {(locations) in
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                if let location = locations.last {
+                    Logger.debug("LocationManager#currentLocation: \(location)")
+                    updatedLocation(location:location)
+                    locationManager.stopUpdatingLocation()
+                }
+            }
+            locationManager.locationsUpdateFailed = {(error:NSError!) in
+                if let locationUpdateFailed = locationUpdateFailed {
+                    locationUpdateFailed(error:error)
+                }
+            }
+        }
     }
     
     public override init() {
