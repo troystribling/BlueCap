@@ -141,9 +141,9 @@ public class RegionScannerator : TimedScannerator {
                     startMonitoringRegion()
                 }
             }
-            scanneratorRegion.regionStateChanged = {(state) in
-                if let regionStateChanged = scanneratorRegion.scanRegion.regionStateChanged {
-                    regionStateChanged(state:state)
+            scanneratorRegion.regionStateDetermined = {(state) in
+                if let regionStateDetermined = scanneratorRegion.scanRegion.regionStateDetermined {
+                    regionStateDetermined(state:state)
                 }
             }
             scanneratorRegion.errorMonitoringRegion = {(error) in
@@ -169,7 +169,7 @@ public class RegionScannerator : TimedScannerator {
     
     private func startUpdatingLocation() {
         var isFirst = true
-        self.regionManager.startUpdatingLocation(){(locationManager) in
+        self.regionManager.startUpdatingLocation() {(locationManager) in
             locationManager.locationsUpdateSuccess = {(locations) in
                 self.lastLocation = locations.last
                 if isFirst {

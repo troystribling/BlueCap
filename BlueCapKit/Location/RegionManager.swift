@@ -123,8 +123,8 @@ public class RegionManager : LocationManager {
     public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
         Logger.debug("RegionManager#didDetermineState: \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
-            if let regionStateChanged = bcregion.regionStateChanged {
-                regionStateChanged(state:state)
+            if let regionStateDetermined = bcregion.regionStateDetermined {
+                regionStateDetermined(state:state)
             }
         }
     }

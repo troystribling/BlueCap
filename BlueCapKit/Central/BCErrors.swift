@@ -26,5 +26,9 @@ struct BCError {
         static let code = 4
         static let description = "Service Discovery Timeout"
     }
+    struct LocationUpdateFailed {
+        static let code = 5
+        static let description = "Location update failed"
+    }
 }
 

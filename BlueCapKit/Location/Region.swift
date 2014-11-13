@@ -18,7 +18,7 @@ public class Region {
     public var enterRegion              : (() -> ())?
     public var exitRegion               : (() -> ())?
     public var startMonitoringRegion    : (() -> ())?
-    public var regionStateChanged       : ((state:CLRegionState) -> ())?
+    public var regionStateDetermined    : ((state:CLRegionState) -> ())?
     public var errorMonitoringRegion    : ((error:NSError!) -> ())?
     
     public var identifier : String {

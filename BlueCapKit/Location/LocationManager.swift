@@ -62,14 +62,19 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         self.currentLocation(updatedLocation, locationUpdateFailed:nil)
     }
     
-    public class func currentLocation(updatedLocation:(location:CLLocation) -> (), locationUpdateFailed:((error:NSError)->())? = nil) {
+    public class func currentLocation(locationUpdateSuccess:(location:CLLocation) -> (), locationUpdateFailed:((error:NSError)->())? = nil) {
         LocationManager().startUpdatingLocation() {(locationManager) in
             locationManager.locationsUpdateSuccess = {(locations) in
                 locationManager.desiredAccuracy = kCLLocationAccuracyBest
                 if let location = locations.last {
                     Logger.debug("LocationManager#currentLocation: \(location)")
-                    updatedLocation(location:location)
+                    locationUpdateSuccess(location:location)
                     locationManager.stopUpdatingLocation()
+                } else {
+                    if let locationUpdateFailed = locationUpdateFailed {
+                        locationUpdateFailed(error:NSError(
+                            domain:BCError.domain, code:BCError.LocationUpdateFailed.code, userInfo:[NSLocalizedDescriptionKey:BCError.LocationUpdateFailed.description]))
+                    }
                 }
             }
             locationManager.locationsUpdateFailed = {(error:NSError!) in
@@ -80,22 +85,6 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         }
     }
     
-    public override init() {
-        super.init()
-        self.clLocationManager = CLLocationManager()
-        self.clLocationManager.delegate = self
-        self.clLocationManager.requestAlwaysAuthorization()
-    }
-    
-    public func requestWhenInUseAuthorization() {
-        self.clLocationManager.requestWhenInUseAuthorization()
-    }
-    
-    public func requestAlwaysAuthorization() {
-        self.clLocationManager.requestAlwaysAuthorization()
-    }
-    
-    // reverse geocode
     public class func reverseGeocodeLocation(location:CLLocation, reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())? = nil)  {
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location){(placemarks:[AnyObject]!, error:NSError!) in
@@ -119,6 +108,22 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         }
     }
     
+    public override init() {
+        super.init()
+        self.clLocationManager = CLLocationManager()
+        self.clLocationManager.delegate = self
+        self.clLocationManager.requestAlwaysAuthorization()
+    }
+    
+    public func requestWhenInUseAuthorization() {
+        self.clLocationManager.requestWhenInUseAuthorization()
+    }
+    
+    public func requestAlwaysAuthorization() {
+        self.clLocationManager.requestAlwaysAuthorization()
+    }
+    
+    // reverse geocode
     public func reverseGeocodeLocation(reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())? = nil)  {
         if let location = self.location {
             RegionManager.reverseGeocodeLocation(self.location, reverseGeocodeSuccess, reverseGeocodeFailed)

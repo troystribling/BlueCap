@@ -248,7 +248,7 @@ class PeripheralsViewController : UITableViewController {
                 region.startMonitoringRegion = {
                     Logger.debug("Started Monitoring Region: \(name)")
                 }
-                })
+            })
         }
     }
     
