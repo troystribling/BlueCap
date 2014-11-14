@@ -75,6 +75,9 @@ class PeripheralsViewController : UITableViewController {
     // actions
     func toggleScan(sender:AnyObject) {
         if BeaconManager.sharedInstance().isMonitoring() == false {
+            if ConfigStore.getRegionConnectoratorEnabled() {
+                RegionManager.sharedInstance().stopUpdatingLocation()
+            }
             let central = CentralManager.sharedInstance()
             if (central.isScanning) {
                 if  ConfigStore.getScanTimeoutEnabled() {
@@ -121,40 +124,92 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        peripheral.connect(connectorator:Connectorator(){(connectorator) in
-            connectorator.timeoutRetries = ConfigStore.getMaximumReconnections()
-            connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
-            connectorator.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
-            connectorator.disconnect = {(periphearl) in
-                Logger.debug("PeripheralsViewController#disconnect")
-                Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
-                peripheral.reconnect()
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                self.updateWhenActive()
-            }
-            connectorator.connect = {(peipheral) in
-                Logger.debug("PeripheralsViewController#connect")
-                Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
-                self.updateWhenActive()
-            }
-            connectorator.timeout = {(peripheral) in
-                Logger.debug("PeripheralsViewController#timeout: '\(peripheral.name)'")
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                peripheral.reconnect()
-                self.updateWhenActive()
-            }
-            connectorator.forceDisconnect = {(peripheral) in
-                Logger.debug("PeripheralsViewController#onForcedDisconnect")
-                Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                self.updateWhenActive()
-            }
-            connectorator.giveUp = {(peripheral) in
-                Logger.debug("PeripheralsViewController#giveUp: '\(peripheral.name)'")
-                peripheral.terminate()
-                self.updateWhenActive()
-            }
-        })
+        if ConfigStore.getRegionConnectoratorEnabled() {
+            peripheral.connect(connectorator:RegionConnectorator(identifier:peripheral.name){(connectorator) in
+                connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
+                connectorator.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
+                connectorator.regionCreateSuccess = {(region:CircularRegion) in
+                    Logger.debug("RegionConnectorator#regionCreateSuccess")
+                }
+                connectorator.regionCreateFailed = {(error:NSError!) in
+                    Logger.debug("RegionConnectorator#regionCreateFailed")
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                }
+                connectorator.enterRegion = {
+                    Logger.debug("RegionConnectorator#enterRegion")
+                    Notify.withMessage("Entered region: '\(peripheral.name)'")
+                    peripheral.reconnect()
+                }
+                connectorator.exitRegion = {
+                    Logger.debug("RegionConnectorator#exitRegion")
+                    Notify.withMessage("Exiting region: '\(peripheral.name)'")
+                    peripheral.disconnect()
+                }
+                connectorator.disconnect = {(peripheral) in
+                    Logger.debug("RegionConnectorator#disconnect")
+                    Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
+                    peripheral.reconnect()
+                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                    self.updateWhenActive()
+                }
+                connectorator.connect = {(peipheral) in
+                    Logger.debug("RegionConnectorator#connect")
+                    Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+                    self.updateWhenActive()
+                }
+                connectorator.timeout = {(peripheral) in
+                    Logger.debug("RegionConnectorator#timeout: '\(peripheral.name)'")
+                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                    peripheral.reconnect()
+                    self.updateWhenActive()
+                }
+                connectorator.forceDisconnect = {(peripheral) in
+                    Logger.debug("RegionConnectorator#onForcedDisconnect")
+                    Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
+                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                    self.updateWhenActive()
+                }
+                connectorator.giveUp = {(peripheral) in
+                    Logger.debug("RegionConnectorator#giveUp: '\(peripheral.name)'")
+                    self.updateWhenActive()
+                }
+            })
+        } else {
+            peripheral.connect(connectorator:Connectorator(){(connectorator) in
+                connectorator.timeoutRetries = ConfigStore.getMaximumReconnections()
+                connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
+                connectorator.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
+                connectorator.disconnect = {(periphearl) in
+                    Logger.debug("Connectorator#disconnect")
+                    Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
+                    peripheral.reconnect()
+                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                    self.updateWhenActive()
+                }
+                connectorator.connect = {(peipheral) in
+                    Logger.debug("Connectorator#connect")
+                    Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+                    self.updateWhenActive()
+                }
+                connectorator.timeout = {(peripheral) in
+                    Logger.debug("Connectorator#timeout: '\(peripheral.name)'")
+                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                    peripheral.reconnect()
+                    self.updateWhenActive()
+                }
+                connectorator.forceDisconnect = {(peripheral) in
+                    Logger.debug("Connectorator#onForcedDisconnect")
+                    Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
+                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                    self.updateWhenActive()
+                }
+                connectorator.giveUp = {(peripheral) in
+                    Logger.debug("Connectorator#giveUp: '\(peripheral.name)'")
+                    peripheral.terminate()
+                    self.updateWhenActive()
+                }
+            })
+        }
     }
     
     func startScan() {
@@ -166,6 +221,9 @@ class PeripheralsViewController : UITableViewController {
         }
         let afterTimeout = {
             self.setScanButton()
+        }
+        if ConfigStore.getRegionConnectoratorEnabled() {
+            RegionManager.sharedInstance().startUpdatingLocation()
         }
         // Promiscuous Scan Enabled
         switch scanMode {

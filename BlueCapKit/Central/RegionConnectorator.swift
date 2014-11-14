@@ -49,6 +49,9 @@ public class RegionConnectorator : Connectorator {
                     }
                 }
                 RegionManager.sharedInstance().startMonitoringForRegion(self.region!)
+                if let regionCreateSuccess = self.regionCreateSuccess {
+                    regionCreateSuccess(region:self.region!)
+                }
             }, locationUpdateFailed:{(error:NSError!) in
                 if let regionCreateFailed = self.regionCreateFailed {
                     regionCreateFailed(error:error)
