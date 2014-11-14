@@ -52,7 +52,6 @@
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
 		059A121F1A11B5CB00395353 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059A121E1A11B5CB00395353 /* DoubleExtensions.swift */; };
-		05B5ABA61A10434800FCDCAF /* RegionScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B5ABA51A10434800FCDCAF /* RegionScannerator.swift */; };
 		05CDA6881A13CE57003163A8 /* RegionConnectorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDA6871A13CE57003163A8 /* RegionConnectorator.swift */; };
 /* End PBXBuildFile section */
 
@@ -106,7 +105,6 @@
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		059A121E1A11B5CB00395353 /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
-		05B5ABA51A10434800FCDCAF /* RegionScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionScannerator.swift; sourceTree = "<group>"; };
 		05CDA6871A13CE57003163A8 /* RegionConnectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionConnectorator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -200,7 +198,6 @@
 				055120A019F5513700ED3B74 /* Connectorator.swift */,
 				055120A119F5513700ED3B74 /* Peripheral.swift */,
 				05CDA6871A13CE57003163A8 /* RegionConnectorator.swift */,
-				05B5ABA51A10434800FCDCAF /* RegionScannerator.swift */,
 				055120A319F5513700ED3B74 /* Service.swift */,
 				055120A419F5513700ED3B74 /* TimedScannerator.swift */,
 			);
@@ -421,7 +418,6 @@
 				055120D719F5513700ED3B74 /* CircularRegion.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
 				055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */,
-				05B5ABA61A10434800FCDCAF /* RegionScannerator.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
 				055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */,

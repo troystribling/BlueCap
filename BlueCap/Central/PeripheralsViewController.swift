@@ -77,10 +77,7 @@ class PeripheralsViewController : UITableViewController {
         if BeaconManager.sharedInstance().isMonitoring() == false {
             let central = CentralManager.sharedInstance()
             if (central.isScanning) {
-                if ConfigStore.getRegionScanEnabled() {
-                    self.stopMonitoringRegions()
-                    RegionScannerator.sharedInstance().stopScanning()
-                } else if  ConfigStore.getScanTimeoutEnabled() {
+                if  ConfigStore.getScanTimeoutEnabled() {
                     TimedScannerator.sharedInstance().stopScanning()
                 } else {
                     central.stopScanning()
@@ -108,7 +105,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func setScanButton() {
-        if CentralManager.sharedInstance().isScanning || RegionScannerator.sharedInstance().isScanning || TimedScannerator.sharedInstance().isScanning {
+        if CentralManager.sharedInstance().isScanning || TimedScannerator.sharedInstance().isScanning {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -170,94 +167,36 @@ class PeripheralsViewController : UITableViewController {
         let afterTimeout = {
             self.setScanButton()
         }
-        // Region Scan Enabled
-        if ConfigStore.getRegionScanEnabled() {
-            switch scanMode {
-                // Region Promiscuous Scan Enabled
-            case "Promiscuous" :
-                // Region Promiscuous Scan with Timeout Enabled
-                if ConfigStore.getScanTimeoutEnabled() {
-                    RegionScannerator.sharedInstance().startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
-                } else {
-                    RegionScannerator.sharedInstance().startScanning(afterPeripheralDiscovered)
-                }
-                self.startMonitoringRegions()
-                break
-                // Region Service Scan Enabled
-            case "Service" :
-                let scannedServices = ConfigStore.getScannedServiceUUIDs()
-                if scannedServices.isEmpty {
-                    self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
-                } else {
-                    // Region Service Scan with Timeout Enabled
-                    if ConfigStore.getScanTimeoutEnabled() {
-                        RegionScannerator.sharedInstance().startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
-                            afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
-                    } else {
-                        RegionScannerator.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
-                    }
-                    self.startMonitoringRegions()
-                }
-                break
-            default:
-                Logger.debug("Scan Mode :'\(scanMode)' invalid")
-                break
+        // Promiscuous Scan Enabled
+        switch scanMode {
+        case "Promiscuous" :
+            // Promiscuous Scan with Timeout Enabled
+            if ConfigStore.getScanTimeoutEnabled() {
+                TimedScannerator.sharedInstance().startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
+            } else {
+                CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
             }
-        } else {
-            // Promiscuous Scan Enabled
-            switch scanMode {
-            case "Promiscuous" :
-                // Promiscuous Scan with Timeout Enabled
+            break
+        case "Service" :
+            let scannedServices = ConfigStore.getScannedServiceUUIDs()
+            if scannedServices.isEmpty {
+                self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
+            } else {
+                // Service Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
-                    TimedScannerator.sharedInstance().startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
+                    TimedScannerator.sharedInstance().startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
+                        afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                 } else {
-                    CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
+                    CentralManager.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
                 }
-                break
-            case "Service" :
-                let scannedServices = ConfigStore.getScannedServiceUUIDs()
-                if scannedServices.isEmpty {
-                    self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
-                } else {
-                    // Service Scan with Timeout Enabled
-                    if ConfigStore.getScanTimeoutEnabled() {
-                        TimedScannerator.sharedInstance().startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
-                            afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
-                    } else {
-                        CentralManager.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
-                    }
-                }
-                break
-            default:
-                Logger.debug("Scan Mode :'\(scanMode)' invalid")
-                break
             }
+            break
+        default:
+            Logger.debug("Scan Mode :'\(scanMode)' invalid")
+            break
         }
     }
-    
-    func startMonitoringRegions() {
-        RegionScannerator.sharedInstance().distanceFilter = 50.0
-        for (name, location) in ConfigStore.getScanRegions() {
-            RegionScannerator.sharedInstance().startMonitoringForRegion(CircularRegion(center:location, identifier:name) {(region) in
-                region.exitRegion = {
-                    Notify.withMessage("Exiting Region: \(name)")
-                }
-                region.enterRegion = {
-                    Notify.withMessage("Entering Region: \(name)")
-                }
-                region.startMonitoringRegion = {
-                    Logger.debug("Started Monitoring Region: \(name)")
-                }
-            })
-        }
-    }
-    
-    func stopMonitoringRegions() {
-        for region in RegionScannerator.sharedInstance().regions {
-            RegionScannerator.sharedInstance().stopMonitoringForRegion(region)
-        }
-    }
-    
+        
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

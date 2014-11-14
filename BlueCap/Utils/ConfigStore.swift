@@ -27,12 +27,12 @@ class ConfigStore {
     }
     
     // region scan enabled
-    class func getRegionScanEnabled() -> Bool {
-        return NSUserDefaults.standardUserDefaults().boolForKey("regionScanEnabled")
+    class func getRegionConnectoratorEnabled() -> Bool {
+        return NSUserDefaults.standardUserDefaults().boolForKey("regionConnectoratorEnabled")
     }
     
-    class func setRegionScanEnabled(regionScanEnabled:Bool) {
-        NSUserDefaults.standardUserDefaults().setBool(regionScanEnabled, forKey:"regionScanEnabled")
+    class func setRegionConnectoratorEnabled(regionScanEnabled:Bool) {
+        NSUserDefaults.standardUserDefaults().setBool(regionScanEnabled, forKey:"regionConnectoratorEnabled")
     }
 
     // scan timeout
@@ -153,54 +153,4 @@ class ConfigStore {
         self.setScannedServices(beacons)
     }
     
-    // scan regions
-    class func getScanRegions() -> [String:CLLocationCoordinate2D] {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let storedRegions = userDefaults.dictionaryForKey("scannedRegions") {
-            var regions = [String:CLLocationCoordinate2D]()
-            for (name, location) in storedRegions {
-                if let name = name as? String {
-                    if location.count == 2 {
-                        let lat = location[0] as NSNumber
-                        let lon = location[1] as NSNumber
-                        regions[name] = CLLocationCoordinate2D(latitude:lat.doubleValue, longitude:lon.doubleValue)
-                    }
-                }
-            }
-            return regions
-        } else {
-            return [:]
-        }
-    }
-    
-    class func getScanRegionNames() -> [String] {
-        return self.getScanRegions().keys.array
-    }
-    
-    class func getScanRegion(name:String) -> CLLocationCoordinate2D? {
-        let regions = self.getScanRegions()
-        return regions[name]
-    }
-    
-    class func setScanRegions(regions:[String:CLLocationCoordinate2D]) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        var storeRegions = [String:[NSNumber]]()
-        for (name, location) in regions {
-            storeRegions[name] = [NSNumber(double:location.latitude), NSNumber(double:location.longitude)]
-        }
-        userDefaults.setObject(storeRegions, forKey:"scannedRegions")
-    }
-    
-    class func addScanRegion(name:String, region:CLLocationCoordinate2D) {
-        var regions = self.getScanRegions()
-        regions[name] = region
-        self.setScanRegions(regions)
-    }
-    
-    class func removeScanRegion(name:String) {
-        var regions = self.getScanRegions()
-        regions.removeValueForKey(name)
-        self.setScanRegions(regions)
-    }
-
 }

@@ -18,9 +18,8 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var peripheralReconnectionsLabel      : UILabel!
     @IBOutlet var peripheralConnectionTimeout       : UILabel!
     @IBOutlet var characteristicReadWriteTimeout    : UILabel!
-    @IBOutlet var scanRegionsLabel                  : UILabel!
-    @IBOutlet var scanRegionSwitchLabel             : UILabel!
-    @IBOutlet var scanRegionSwitch                  : UISwitch!
+    @IBOutlet var regionConnectoratorLabel          : UILabel!
+    @IBOutlet var regionConnectoratorSwitch         : UISwitch!
     @IBOutlet var scanTimeoutSwitch                 : UISwitch!
     @IBOutlet var notifySwitch                      : UISwitch!
     
@@ -46,7 +45,6 @@ class ConfigureViewController : UITableViewController {
     override func viewWillAppear(animated: Bool) {
         self.scanMode = ConfigStore.getScanMode()
         self.scanModeLabel.text = self.scanMode
-        self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.peripheralReconnectionsLabel.text = "\(ConfigStore.getMaximumReconnections())"
         self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
@@ -70,7 +68,7 @@ class ConfigureViewController : UITableViewController {
             case MainStroryboard.configureScanModeSegue:
                 return true
             case MainStroryboard.configureScanRegionsSegue:
-                return  !RegionScannerator.sharedInstance().isScanning && !CentralManager.sharedInstance().isScanning
+                return !CentralManager.sharedInstance().isScanning
             case MainStroryboard.configureScanServicesSegue:
                 return true
             default:
@@ -81,8 +79,8 @@ class ConfigureViewController : UITableViewController {
         }
     }
     
-    @IBAction func toggleScanRegion(sender:AnyObject) {
-        ConfigStore.setRegionScanEnabled(!ConfigStore.getRegionScanEnabled())
+    @IBAction func toggleRegionConnectorator(sender:AnyObject) {
+        ConfigStore.setRegionConnectoratorEnabled(!ConfigStore.getRegionConnectoratorEnabled())
         self.configUI()
     }
     
@@ -96,20 +94,18 @@ class ConfigureViewController : UITableViewController {
  
     func configUI() {
         if  CentralManager.sharedInstance().isScanning {
-            self.scanRegionsLabel.textColor = UIColor.lightGrayColor()
-            self.scanRegionSwitchLabel.textColor = UIColor.lightGrayColor()
-            self.scanRegionSwitch.enabled = false
+            self.regionConnectoratorLabel.textColor = UIColor.lightGrayColor()
+            self.regionConnectoratorSwitch.enabled = false
             self.scanTimeoutSwitch.enabled = false
             self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
         } else {
-            self.scanRegionSwitch.enabled = true
-            self.scanRegionSwitchLabel.textColor = UIColor.blackColor()
-            self.scanRegionsLabel.textColor = UIColor.blackColor()
+            self.regionConnectoratorLabel.textColor = UIColor.blackColor()
+            self.regionConnectoratorSwitch.enabled = true
             self.scanTimeoutSwitch.enabled = true
             self.scanTimeoutEnabledLabel.textColor = UIColor.blackColor()
         }
         self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
-        self.scanRegionSwitch.on = ConfigStore.getRegionScanEnabled()
+        self.regionConnectoratorSwitch.on = ConfigStore.getRegionConnectoratorEnabled()
     }
 
 }
