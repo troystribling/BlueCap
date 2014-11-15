@@ -26,7 +26,7 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setObject(scanMode, forKey:"scanMode")
     }
     
-    // region scan enabled
+    // region connectorator enabled
     class func getRegionConnectoratorEnabled() -> Bool {
         return NSUserDefaults.standardUserDefaults().boolForKey("regionConnectoratorEnabled")
     }

@@ -12,13 +12,17 @@ import CoreBluetooth
 
 public class RegionConnectorator : Connectorator {
     
-    private var region      : CircularRegion?
+    private var _region     : CircularRegion?
     private var identifier  : String
     
     public var regionCreateSuccess  : ((region:CircularRegion) -> ())?
     public var regionCreateFailed   : ((error:NSError) -> ())?
     public var enterRegion          : (() -> ())?
     public var exitRegion           : (() -> ())?
+    
+    public var region : CircularRegion? {
+        return self._region
+    }
     
     public override init(initializer:(regionConnectorator:RegionConnectorator)->()) {
         self.identifier = "RegionConnectorator"
@@ -35,8 +39,8 @@ public class RegionConnectorator : Connectorator {
     }
     
     private func createRegion() {
-        LocationManager.currentLocation({(location:CLLocation) in
-                self.region = CircularRegion(center:location.coordinate, identifier:"RegionConnectorator") {(region) in
+        RegionManager.sharedInstance().currentLocation({(location:CLLocation) in
+                self._region = CircularRegion(center:location.coordinate, identifier:"RegionConnectorator") {(region) in
                     region.exitRegion = {
                         if let exitRegion = self.exitRegion {
                             CentralManager.asyncCallback(exitRegion)
@@ -52,9 +56,9 @@ public class RegionConnectorator : Connectorator {
                         }
                     }
                 }
-                RegionManager.sharedInstance().startMonitoringForRegion(self.region!)
+                RegionManager.sharedInstance().startMonitoringForRegion(self._region!)
                 if let regionCreateSuccess = self.regionCreateSuccess {
-                    regionCreateSuccess(region:self.region!)
+                    regionCreateSuccess(region:self._region!)
                 }
             }, locationUpdateFailed:{(error:NSError!) in
                 if let regionCreateFailed = self.regionCreateFailed {

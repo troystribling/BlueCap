@@ -43,46 +43,12 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     }
     
 
-    public class func sharedInstance() -> LocationManager {
-        if thisLocationManager == nil {
-            thisLocationManager = LocationManager()
-        }
-        return thisLocationManager!
-    }
-
     public class func authorizationStatus() -> CLAuthorizationStatus {
         return CLLocationManager.authorizationStatus()
     }
     
     public class func locationServicesEnabled() -> Bool {
         return CLLocationManager.locationServicesEnabled()
-    }
-    
-    public class func currentLocation(updatedLocation:(location:CLLocation) -> ()) {
-        self.currentLocation(updatedLocation, locationUpdateFailed:nil)
-    }
-    
-    public class func currentLocation(locationUpdateSuccess:(location:CLLocation) -> (), locationUpdateFailed:((error:NSError)->())? = nil) {
-        LocationManager().startUpdatingLocation() {(locationManager) in
-            locationManager.locationsUpdateSuccess = {(locations) in
-                locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                if let location = locations.last {
-                    Logger.debug("LocationManager#currentLocation: \(location)")
-                    locationUpdateSuccess(location:location)
-                    locationManager.stopUpdatingLocation()
-                } else {
-                    if let locationUpdateFailed = locationUpdateFailed {
-                        locationUpdateFailed(error:NSError(
-                            domain:BCError.domain, code:BCError.LocationUpdateFailed.code, userInfo:[NSLocalizedDescriptionKey:BCError.LocationUpdateFailed.description]))
-                    }
-                }
-            }
-            locationManager.locationsUpdateFailed = {(error:NSError!) in
-                if let locationUpdateFailed = locationUpdateFailed {
-                    locationUpdateFailed(error:error)
-                }
-            }
-        }
     }
     
     public class func reverseGeocodeLocation(location:CLLocation, reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())? = nil)  {
@@ -134,18 +100,34 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         }
     }
     
-    // control
-    public func startUpdatingLocation(authorization:CLAuthorizationStatus, initializer:((manager:LocationManager) -> ())? = nil) {
-        if let initializer = initializer {
-            initializer(manager:self)
+    public func currentLocation(locationUpdateSuccess:(location:CLLocation) -> (), locationUpdateFailed:((error:NSError)->())? = nil) {
+        self.locationsUpdateSuccess = {(locations) in
+            if let location = locations.last {
+                Logger.debug("LocationManager#currentLocation: \(location)")
+                locationUpdateSuccess(location:location)
+            } else {
+                if let locationUpdateFailed = locationUpdateFailed {
+                    locationUpdateFailed(error:NSError(
+                        domain:BCError.domain, code:BCError.LocationUpdateFailed.code, userInfo:[NSLocalizedDescriptionKey:BCError.LocationUpdateFailed.description]))
+                }
+            }
+            self.locationsUpdateSuccess = nil
+            self.locationsUpdateFailed = nil
         }
+        self.locationsUpdateFailed = {(error:NSError!) in
+            if let locationUpdateFailed = locationUpdateFailed {
+                locationUpdateFailed(error:error)
+            }
+            self.locationsUpdateSuccess = nil
+            self.locationsUpdateFailed = nil
+        }
+    }
+
+    // control
+    public func startUpdatingLocation(authorization:CLAuthorizationStatus = .Authorized) {
         self.authorize(authorization){self.clLocationManager.startUpdatingLocation()}
     }
-    
-    public func startUpdatingLocation(initializer:((manager:LocationManager) -> ())? = nil) {
-        self.startUpdatingLocation(CLAuthorizationStatus.Authorized, initializer:initializer)
-    }
-    
+        
     public func stopUpdatingLocation() {
         self.locationsUpdateSuccess     = nil
         self.locationsUpdateFailed      = nil
@@ -217,7 +199,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
                         }
                     }
                 }
-                LocationManager.sharedInstance().requestAlwaysAuthorization()
+                self.requestAlwaysAuthorization()
                 break
             case .AuthorizedWhenInUse:
                 self.authorizationStatusChanged = {(status) in
@@ -228,7 +210,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
                         Logger.debug("LocationManager#authorize: Location AuthorizedWhenInUse failed")
                     }
                 }
-                LocationManager.sharedInstance().requestWhenInUseAuthorization()
+                self.requestWhenInUseAuthorization()
                 break
             default:
                 break

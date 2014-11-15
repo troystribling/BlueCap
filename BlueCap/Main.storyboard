@@ -175,6 +175,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Name" id="meN-Xl-hWE"/>
                     <connections>
+                        <outlet property="regionLabel" destination="nAA-vd-Sak" id="yoc-ue-vRA"/>
                         <outlet property="rssiLabel" destination="q4d-zx-jkB" id="wYN-NU-crN"/>
                         <outlet property="serviceLabel" destination="STM-Ax-Kfc" id="RVc-Mk-tVw"/>
                         <outlet property="stateLabel" destination="olY-hM-y4A" id="oJf-bp-5OS"/>
@@ -1517,6 +1518,9 @@
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BqO-bq-Xyz">
                                                     <rect key="frame" x="531" y="9" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="toggleRegionConnectorator:" destination="z0r-2o-HqO" eventType="valueChanged" id="95L-af-qDB"/>
+                                                    </connections>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Region Connectorator" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="0Qt-is-LTh">
                                                     <rect key="frame" x="15" y="12" width="490" height="25"/>

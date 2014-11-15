@@ -32,9 +32,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var _connectedAt                : NSDate?
     private var _disconnectedAt             : NSDate?
 
+    private var _connectorator  : Connectorator?
+
     // INTERNAL
     internal let cbPeripheral    : CBPeripheral!
-    internal var connectorator   : Connectorator?
 
     // PUBLIC
     public let advertisements  : Dictionary<String, String>!
@@ -72,6 +73,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         return self.discoveredServices.values.array
     }
     
+    public var connectorator : Connectorator? {
+        return self._connectorator
+    }
+    
     public init(cbPeripheral:CBPeripheral, advertisements:Dictionary<String, String>, rssi:Int) {
         super.init()
         self.cbPeripheral = cbPeripheral
@@ -94,8 +99,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
      
     public func connect(connectorator:Connectorator?=nil) {
         Logger.debug("Peripheral#connect: \(self.name)")
-        self.connectorator = connectorator
-        self.connectorator?.peripheral = self
+        self._connectorator = connectorator
+        self._connectorator?.peripheral = self
         self.reconnect()
     }
     
@@ -245,7 +250,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedInstance()
         var timeout = self.defaultConnectionTimeout
-        if let connectorator = self.connectorator {
+        if let connectorator = self._connectorator {
             timeout = connectorator.connectionTimeout
         }
         Logger.debug("Peripheral#timeoutConnection: sequence \(sequence), timeout:\(timeout)")
@@ -280,7 +285,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal func didDisconnectPeripheral() {
         Logger.debug("Peripheral#didDisconnectPeripheral")
         self._disconnectedAt = NSDate()
-        if let connectorator = self.connectorator {
+        if let connectorator = self._connectorator {
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
                 CentralManager.asyncCallback() {
@@ -307,12 +312,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal func didConnectPeripheral() {
         Logger.debug("PeripheralConnectionError#didConnectPeripheral")
         self._connectedAt = NSDate()
-        self.connectorator?.didConnect()
+        self._connectorator?.didConnect()
     }
     
     internal func didFailToConnectPeripheral(error:NSError!) {
         Logger.debug("PeripheralConnectionError#didFailToConnectPeripheral")
-        self.connectorator?.didFailConnect(error)
+        self._connectorator?.didFailConnect(error)
     }
     
     internal func discoverService(head:Service, tail:[Service], peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError!)->())? = nil) {

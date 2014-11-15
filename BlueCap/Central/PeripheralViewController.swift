@@ -20,10 +20,12 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var rssiLabel         : UILabel!
     @IBOutlet var stateLabel        : UILabel!
     @IBOutlet var serviceLabel      : UILabel!
+    @IBOutlet var regionLabel       : UILabel!
     
     struct MainStoryBoard {
         static let peripheralServicesSegue          = "PeripheralServices"
         static let peripehralAdvertisementsSegue    = "PeripheralAdvertisements"
+        static let peripheralRegionSegue            = "PeripheralRegion"
     }
     
     required init(coder aDecoder:NSCoder) {
@@ -40,6 +42,11 @@ class PeripheralViewController : UITableViewController {
             self.uuidLabel.text = identifier.UUIDString
         } else {
             self.uuidLabel.text = "Unknown"
+        }
+        if self.hasRegionConnectorator() {
+            self.regionLabel.textColor = UIColor.blackColor()
+        } else {
+            self.regionLabel.textColor = UIColor.lightGrayColor()
         }
         self.peripehealConnected = (peripheral.state == .Connected)
         self.rssiLabel.text = "\(self.peripheral.rssi)"
@@ -83,6 +90,9 @@ class PeripheralViewController : UITableViewController {
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destinationViewController as PeripheralAdvertisementsViewController
             viewController.peripheral = self.peripheral
+        } else if segue.identifier == MainStoryBoard.peripheralRegionSegue {
+            let viewController = segue.destinationViewController as PeripheralRegionViewController
+            viewController.peripheral = self.peripheral
         }
     }
     
@@ -90,6 +100,8 @@ class PeripheralViewController : UITableViewController {
         if let identifier = identifier {
             if identifier == MainStoryBoard.peripheralServicesSegue {
                 return self.hasData
+            } else if identifier == MainStoryBoard.peripheralRegionSegue {
+                return self.hasRegionConnectorator()
             } else {
                 return true
             }
@@ -127,6 +139,18 @@ class PeripheralViewController : UITableViewController {
             self.stateLabel.text = "Disconnected"
             self.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0)
             self.serviceLabel.textColor = UIColor.lightGrayColor()
+        }
+    }
+    
+    func hasRegionConnectorator() -> Bool {
+        if let conectorator = self.peripheral.connectorator {
+            if conectorator is RegionConnectorator {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
         }
     }
 

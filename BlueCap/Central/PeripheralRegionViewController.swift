@@ -26,34 +26,45 @@ class PeripheralRegionViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        if let regionName = self.regionName {
-//            self.navigationItem.title = peri
-//            if let region = ConfigStore.getScanRegion(regionName) {
-//                self.latitudeLabel.text = Double(region.latitude).format(".6")
-//                self.longitudeLabel.text = Double(region.longitude).format(".6")
-//                let location = CLLocation(latitude:region.latitude, longitude:region.longitude)
-//                let progressView = ProgressView()
-//                progressView.show()
-//                LocationManager.reverseGeocodeLocation(location,
-//                    reverseGeocodeSuccess:{(placemarks) in
-//                        if let placemark = placemarks.first {
-//                            if let address:AnyObject = placemark.addressDictionary["FormattedAddressLines"] {
-//                                if let address = address as? [String] {
-//                                    if address.count == 3 {
-//                                        self.address1Label.text = address[0]
-//                                        self.address2Label.text = address[1]
-//                                        self.address3Label.text = address[2]
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        progressView.remove()
-//                    }, reverseGeocodeFailed:{(error) in
-//                        progressView.remove()
-//                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-//                })
-//            }
-//        }
+        self.navigationItem.title = self.peripheral.name
+        if let connectorator = self.peripheral.connectorator {
+            if let regionConnectorator =  connectorator as? RegionConnectorator {
+                if let region = regionConnectorator.region {
+                    self.latitudeLabel.text = Double(region.center.latitude).format(".6")
+                    self.longitudeLabel.text = Double(region.center.longitude).format(".6")
+                    let location = CLLocation(latitude:region.center.latitude, longitude:region.center.longitude)
+                    let progressView = ProgressView()
+                    progressView.show()
+                    LocationManager.reverseGeocodeLocation(location,
+                        reverseGeocodeSuccess:{(placemarks) in
+                            if let placemark = placemarks.first {
+                                if let address:AnyObject = placemark.addressDictionary["FormattedAddressLines"] {
+                                    if let address = address as? [String] {
+                                        if address.count == 3 {
+                                            self.address1Label.text = address[0]
+                                            self.address2Label.text = address[1]
+                                            self.address3Label.text = address[2]
+                                        }
+                                    }
+                                }
+                            }
+                            progressView.remove()
+                        }, reverseGeocodeFailed:{(error) in
+                            progressView.remove()
+                            self.presentViewController(UIAlertController.alertOnError(error, handler:{(action) in
+                                self.navigationController?.popViewControllerAnimated(true)
+                                return
+                            }), animated:true, completion:nil)
+                        }
+                    )
+                } else {
+                    self.presentViewController(UIAlertController.alertWithMessage("Location update error", handler:{(action) in
+                        self.navigationController?.popViewControllerAnimated(true)
+                        return
+                    }), animated:true, completion:nil)
+                }
+            }
+        }
     }
     
     override func viewWillAppear(animated: Bool) {

@@ -23,7 +23,7 @@ public class RegionManager : LocationManager {
         return self.clLocationManager.maximumRegionMonitoringDistance
     }
     
-    public override class func sharedInstance() -> RegionManager {
+    public class func sharedInstance() -> RegionManager {
         if thisRegionManager == nil {
             thisRegionManager = RegionManager()
         }
