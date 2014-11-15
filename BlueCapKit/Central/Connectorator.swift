@@ -10,17 +10,17 @@ import Foundation
 
 public class Connectorator {
 
-    // PRIVATE
     private var timeoutCount    = 0
     private var disconnectCount = 0
     
-    // PUBLIC
-    public var timeout           : ((peripheral:Peripheral) -> ())?
-    public var disconnect        : ((peripheral:Peripheral) -> ())?
-    public var forceDisconnect   : ((peripheral:Peripheral) -> ())?
-    public var connect           : ((peripheral:Peripheral) -> ())?
-    public var failedConnect     : ((peripheral:Peripheral, error:NSError!) -> ())?
-    public var giveUp            : ((peripheral:Peripheral) -> ())?
+    internal var peripheral     : Peripheral?
+    
+    public var timeout          : (() -> ())?
+    public var disconnect       : (() -> ())?
+    public var forceDisconnect  : (() -> ())?
+    public var connect          : (() -> ())?
+    public var failedConnect    : ((error:NSError!) -> ())?
+    public var giveUp           : (() -> ())?
 
     public var timeoutRetries           = -1
     public var disconnectRetries        = -1
@@ -35,77 +35,77 @@ public class Connectorator {
     }
     
     // INTERNAL
-    internal func didTimeout(peripheral:Peripheral) {
+    internal func didTimeout() {
         Logger.debug("Connectorator#didTimeout")
         if self.timeoutRetries > 0 {
             if self.timeoutCount < self.timeoutRetries {
-                self.callDidTimeout(peripheral)
+                self.callDidTimeout()
                 ++self.timeoutCount
             } else {
-                self.callDidGiveUp(peripheral)
+                self.callDidGiveUp()
                 self.timeoutCount = 0
             }
         } else {
-            self.callDidTimeout(peripheral)
+            self.callDidTimeout()
         }
     }
 
-    internal func didDisconnect(peripheral:Peripheral) {
+    internal func didDisconnect() {
         Logger.debug("Connectorator#didDisconnect")
         if self.disconnectRetries > 0 {
             if self.disconnectCount < self.disconnectRetries {
                 ++self.disconnectCount
-                self.callDidDisconnect(peripheral)
+                self.callDidDisconnect()
             } else {
                 self.disconnectCount = 0
-                self.callDidGiveUp(peripheral)
+                self.callDidGiveUp()
             }
         } else {
-            self.callDidDisconnect(peripheral)
+            self.callDidDisconnect()
         }
     }
     
-    internal func didForceDisconnect(peripheral:Peripheral) {
+    internal func didForceDisconnect() {
         Logger.debug("Connectorator#didForceDisconnect")
         if let forcedDisconnect = self.forceDisconnect {
-            CentralManager.asyncCallback(){forcedDisconnect(peripheral:peripheral)}
+            CentralManager.asyncCallback(){forcedDisconnect()}
         }
     }
     
-    internal func didConnect(peripheral:Peripheral) {
+    internal func didConnect() {
         Logger.debug("Connectorator#didConnect")
         if let connect = self.connect {
             self.timeoutCount = 0
-            CentralManager.asyncCallback(){connect(peripheral:peripheral)}
+            CentralManager.asyncCallback(){connect()}
         }
     }
     
-    internal func didFailConnect(peripheral:Peripheral, error:NSError!) {
+    internal func didFailConnect(error:NSError!) {
         Logger.debug("Connectorator#didFailConnect")
         if let failedConnect = self.failedConnect {
-            CentralManager.asyncCallback(){failedConnect(peripheral:peripheral, error:error)}
+            CentralManager.asyncCallback(){failedConnect(error:error)}
         }
     }
     
-    internal func callDidTimeout(peripheral:Peripheral) {
+    internal func callDidTimeout() {
         if let timeout = self.timeout {
-            CentralManager.asyncCallback(){timeout(peripheral:peripheral)}
+            CentralManager.asyncCallback(){timeout()}
         } else {
-            peripheral.reconnect()
+            self.peripheral?.reconnect()
         }
     }
     
-    internal func callDidDisconnect(peripheral:Peripheral) {
+    internal func callDidDisconnect() {
         if let disconnect = self.disconnect {
-            CentralManager.asyncCallback(){disconnect(peripheral:peripheral)}
+            CentralManager.asyncCallback(){disconnect()}
         } else {
-            peripheral.reconnect()
+            self.peripheral?.reconnect()
         }
     }
     
-    internal func callDidGiveUp(peripheral:Peripheral) {
+    internal func callDidGiveUp() {
         if let giveUp = self.giveUp {
-            CentralManager.asyncCallback(){giveUp(peripheral:peripheral)}
+            CentralManager.asyncCallback(){giveUp()}
         }
     }
 }

@@ -145,32 +145,28 @@ class PeripheralsViewController : UITableViewController {
                     Notify.withMessage("Exiting region: '\(peripheral.name)'")
                     peripheral.disconnect()
                 }
-                connectorator.disconnect = {(peripheral) in
+                connectorator.disconnect = {
                     Logger.debug("RegionConnectorator#disconnect")
                     Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                     peripheral.reconnect()
                     NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                     self.updateWhenActive()
                 }
-                connectorator.connect = {(peipheral) in
+                connectorator.connect = {
                     Logger.debug("RegionConnectorator#connect")
                     Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
                     self.updateWhenActive()
                 }
-                connectorator.timeout = {(peripheral) in
+                connectorator.timeout = {
                     Logger.debug("RegionConnectorator#timeout: '\(peripheral.name)'")
                     NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                     peripheral.reconnect()
                     self.updateWhenActive()
                 }
-                connectorator.forceDisconnect = {(peripheral) in
+                connectorator.forceDisconnect = {
                     Logger.debug("RegionConnectorator#onForcedDisconnect")
                     Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                     NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                    self.updateWhenActive()
-                }
-                connectorator.giveUp = {(peripheral) in
-                    Logger.debug("RegionConnectorator#giveUp: '\(peripheral.name)'")
                     self.updateWhenActive()
                 }
             })
@@ -186,24 +182,24 @@ class PeripheralsViewController : UITableViewController {
                     NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                     self.updateWhenActive()
                 }
-                connectorator.connect = {(peipheral) in
+                connectorator.connect = {
                     Logger.debug("Connectorator#connect")
                     Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
                     self.updateWhenActive()
                 }
-                connectorator.timeout = {(peripheral) in
+                connectorator.timeout = {
                     Logger.debug("Connectorator#timeout: '\(peripheral.name)'")
                     NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                     peripheral.reconnect()
                     self.updateWhenActive()
                 }
-                connectorator.forceDisconnect = {(peripheral) in
+                connectorator.forceDisconnect = {
                     Logger.debug("Connectorator#onForcedDisconnect")
                     Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                     NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                     self.updateWhenActive()
                 }
-                connectorator.giveUp = {(peripheral) in
+                connectorator.giveUp = {
                     Logger.debug("Connectorator#giveUp: '\(peripheral.name)'")
                     peripheral.terminate()
                     self.updateWhenActive()

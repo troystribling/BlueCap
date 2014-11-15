@@ -95,6 +95,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     public func connect(connectorator:Connectorator?=nil) {
         Logger.debug("Peripheral#connect: \(self.name)")
         self.connectorator = connectorator
+        self.connectorator?.peripheral = self
         self.reconnect()
     }
     
@@ -284,19 +285,19 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 self.forcedDisconnect = false
                 CentralManager.asyncCallback() {
                     Logger.debug("Peripheral#didFailToConnectPeripheral: forced disconnect")
-                    connectorator.didForceDisconnect(self)
+                    connectorator.didForceDisconnect()
                 }
             } else {
                 switch(self.currentError) {
                 case .None:
                         CentralManager.asyncCallback() {
                             Logger.debug("Peripheral#didFailToConnectPeripheral: No errors disconnecting")
-                            connectorator.didDisconnect(self)
+                            connectorator.didDisconnect()
                         }
                 case .Timeout:
                         CentralManager.asyncCallback() {
                             Logger.debug("Peripheral#didFailToConnectPeripheral: Timeout reconnecting")
-                            connectorator.didTimeout(self)
+                            connectorator.didTimeout()
                         }
                 }
             }
@@ -306,16 +307,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal func didConnectPeripheral() {
         Logger.debug("PeripheralConnectionError#didConnectPeripheral")
         self._connectedAt = NSDate()
-        if let connectorator = self.connectorator {
-            connectorator.didConnect(self)
-        }
+        self.connectorator?.didConnect()
     }
     
     internal func didFailToConnectPeripheral(error:NSError!) {
         Logger.debug("PeripheralConnectionError#didFailToConnectPeripheral")
-        if let connectorator = self.connectorator {
-            connectorator.didFailConnect(self, error:error)
-        }
+        self.connectorator?.didFailConnect(error)
     }
     
     internal func discoverService(head:Service, tail:[Service], peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError!)->())? = nil) {

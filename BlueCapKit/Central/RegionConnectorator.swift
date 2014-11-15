@@ -39,12 +39,16 @@ public class RegionConnectorator : Connectorator {
                 self.region = CircularRegion(center:location.coordinate, identifier:"RegionConnectorator") {(region) in
                     region.exitRegion = {
                         if let exitRegion = self.exitRegion {
-                            exitRegion()
+                            CentralManager.asyncCallback(exitRegion)
+                        } else {
+                            self.peripheral?.disconnect()
                         }
                     }
                     region.enterRegion = {
                         if let enterRegion = self.enterRegion {
-                            enterRegion()
+                            CentralManager.asyncCallback(enterRegion)
+                        } else {
+                            self.peripheral?.reconnect()
                         }
                     }
                 }
