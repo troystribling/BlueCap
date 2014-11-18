@@ -25,9 +25,9 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Peripheral and application development</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>BLE Scan initiated by location</string>
+	<string>iBeacon ranging</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>BLE Scan initiated by location</string>
+	<string>iBeacon ranging</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-peripheral</string>
