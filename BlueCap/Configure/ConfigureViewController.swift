@@ -18,8 +18,6 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var peripheralReconnectionsLabel      : UILabel!
     @IBOutlet var peripheralConnectionTimeout       : UILabel!
     @IBOutlet var characteristicReadWriteTimeout    : UILabel!
-    @IBOutlet var regionConnectoratorLabel          : UILabel!
-    @IBOutlet var regionConnectoratorSwitch         : UISwitch!
     @IBOutlet var scanTimeoutSwitch                 : UISwitch!
     @IBOutlet var notifySwitch                      : UISwitch!
     
@@ -94,18 +92,13 @@ class ConfigureViewController : UITableViewController {
  
     func configUI() {
         if  CentralManager.sharedInstance().isScanning {
-            self.regionConnectoratorLabel.textColor = UIColor.lightGrayColor()
-            self.regionConnectoratorSwitch.enabled = false
             self.scanTimeoutSwitch.enabled = false
             self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
         } else {
-            self.regionConnectoratorLabel.textColor = UIColor.blackColor()
-            self.regionConnectoratorSwitch.enabled = true
             self.scanTimeoutSwitch.enabled = true
             self.scanTimeoutEnabledLabel.textColor = UIColor.blackColor()
         }
         self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
-        self.regionConnectoratorSwitch.on = ConfigStore.getRegionConnectoratorEnabled()
     }
 
 }

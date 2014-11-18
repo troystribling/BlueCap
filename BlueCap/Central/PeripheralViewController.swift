@@ -20,7 +20,6 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var rssiLabel         : UILabel!
     @IBOutlet var stateLabel        : UILabel!
     @IBOutlet var serviceLabel      : UILabel!
-    @IBOutlet var regionLabel       : UILabel!
     
     struct MainStoryBoard {
         static let peripheralServicesSegue          = "PeripheralServices"
@@ -42,11 +41,6 @@ class PeripheralViewController : UITableViewController {
             self.uuidLabel.text = identifier.UUIDString
         } else {
             self.uuidLabel.text = "Unknown"
-        }
-        if self.hasRegionConnectorator() {
-            self.regionLabel.textColor = UIColor.blackColor()
-        } else {
-            self.regionLabel.textColor = UIColor.lightGrayColor()
         }
         self.peripehealConnected = (peripheral.state == .Connected)
         self.rssiLabel.text = "\(self.peripheral.rssi)"
