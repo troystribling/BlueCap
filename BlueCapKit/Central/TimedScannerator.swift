@@ -56,14 +56,8 @@ public class TimedScannerator {
         Logger.debug("Scannerator#timeoutScan: \(self.timeoutSeconds)s")
         let central = CentralManager.sharedInstance()
         central.delayCallback(self.timeoutSeconds) {
-            if central.peripherals.count == 0 {
-                Logger.debug("Scannerator#timeoutScan: timing out")
-                self.stopScanning()
-                if let afterTimeout = self.afterTimeout {
-                    afterTimeout()
-                }
-            } else {
-                Logger.debug("Scannerator#timeoutScan: expired")
+            if let afterTimeout = self.afterTimeout {
+                afterTimeout()
             }
         }
     }

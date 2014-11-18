@@ -85,11 +85,13 @@ class PeripheralsViewController : UITableViewController {
                 } else {
                     central.stopScanning()
                 }
-                self.setScanButton()
                 central.disconnectAllPeripherals()
                 central.removeAllPeripherals()
+                self.setScanButton()
                 self.updateWhenActive()
             } else {
+                central.disconnectAllPeripherals()
+                central.removeAllPeripherals()
                 self.powerOn()
             }
         } else {
@@ -215,7 +217,9 @@ class PeripheralsViewController : UITableViewController {
             self.connect(peripheral)
             self.updateWhenActive()
         }
-        let afterTimeout = {
+        let afterTimeout : () -> () = {
+            Logger.debug("Scannerator#timeoutScan: timing out")
+            TimedScannerator.sharedInstance().stopScanning()
             self.setScanButton()
         }
         if ConfigStore.getRegionConnectoratorEnabled() {

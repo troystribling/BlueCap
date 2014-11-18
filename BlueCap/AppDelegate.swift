@@ -40,6 +40,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         NSUserDefaults.standardUserDefaults().synchronize()
         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didResignActive, object:nil)
+        let central = CentralManager.sharedInstance()
+        if central.isScanning {
+            central.stopScanning()
+            central.disconnectAllPeripherals()
+            central.removeAllPeripherals()
+        }
     }
 
     func applicationWillEnterForeground(application: UIApplication) {
