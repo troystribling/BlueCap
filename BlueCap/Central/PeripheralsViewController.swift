@@ -107,6 +107,7 @@ class PeripheralsViewController : UITableViewController {
     func didBecomeActive() {
         Logger.debug("PeripheralsViewController#didBecomeActive")
         self.tableView.reloadData()
+        self.setScanButton()
     }
     
     func setScanButton() {
