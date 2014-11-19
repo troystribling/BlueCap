@@ -39,6 +39,7 @@ class PeripheralsViewController : UITableViewController {
         super.viewDidAppear(animated)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        self.setScanButton()
     }
     
     override func viewDidDisappear(animated: Bool) {
