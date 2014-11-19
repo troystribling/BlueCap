@@ -61,9 +61,7 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
     }
 
     @IBAction func generateUUID(sender:AnyObject) {
-        if let uuid = Optional(NSUUID()) {
-            self.uuidTextField.text = uuid.UUIDString
-        }
+        self.uuidTextField.text = NSUUID().UUIDString
     }
     
     // UITextFieldDelegate
@@ -75,7 +73,7 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
         let enteredMinor = self.minorTextField.text
         if enteredName != nil && enteredUUID != nil && enteredMinor != nil && enteredMinor != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty && !enteredMinor!.isEmpty && !enteredMajor!.isEmpty {
-                if let uuid = Optional(NSUUID(UUIDString:enteredUUID)) {
+                if let uuid = NSUUID(UUIDString:enteredUUID) {
                     if let minor = enteredMinor!.toInt() {
                         if let major = enteredMajor!.toInt() {
                             if minor < 65536 && major < 65536 {
@@ -92,7 +90,7 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
                         self.presentViewController(UIAlertController.alertOnErrorWithMessage("minor is not convertable to a num ber"), animated:true, completion:nil)
                         return false
                     }
-                    PeripheralStore.addBeacon(enteredName!, uuid:uuid!)
+                    PeripheralStore.addBeacon(enteredName!, uuid:uuid)
                     if let beaconName = self.beaconName {
                         if self.beaconName != enteredName! {
                             PeripheralStore.removeBeacon(beaconName)
