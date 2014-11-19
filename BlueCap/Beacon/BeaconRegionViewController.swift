@@ -58,8 +58,8 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         let enteredName = self.nameTextField.text
         if enteredName != nil && enteredUUID != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
-                if let uuid = Optional(NSUUID(UUIDString:enteredUUID)) {
-                    BeaconStore.addBeacon(enteredName!, uuid:uuid!)
+                if let uuid = NSUUID(UUIDString:enteredUUID) {
+                    BeaconStore.addBeacon(enteredName!, uuid:uuid)
                     if let regionName = self.regionName {
                         if regionName != enteredName! {
                             BeaconStore.removeBeacon(regionName)

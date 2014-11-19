@@ -37,7 +37,7 @@ class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate 
         let enteredName = self.nameTextField.text
         if enteredName != nil && enteredUUID != nil  {
             if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
-                if let nsuuid = Optional(NSUUID(UUIDString:enteredUUID)) {
+                if let nsuuid = NSUUID(UUIDString:enteredUUID) {
                     let uuid = CBUUID(NSUUID:nsuuid)
                     if let serviceName = self.serviceName {
                         // updating
