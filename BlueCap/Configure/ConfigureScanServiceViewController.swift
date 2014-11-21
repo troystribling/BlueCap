@@ -32,7 +32,7 @@ class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate 
 
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        self.nameTextField.resignFirstResponder()
+        textField.resignFirstResponder()
         let enteredUUID = self.uuidTextField.text
         let enteredName = self.nameTextField.text
         if enteredName != nil && enteredUUID != nil  {

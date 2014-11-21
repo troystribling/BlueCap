@@ -310,9 +310,9 @@ class PeripheralStore {
             for (name, config) in storedConfigs {
                 if let name = name as? String {
                     if config.count == 2 {
-                        let major = config[0] as NSNumber
-                        let minor = config[1] as NSNumber
-                        configs[name] = [major.unsignedShortValue, minor.unsignedShortValue]
+                        let minor = config[0] as NSNumber
+                        let major = config[1] as NSNumber
+                        configs[name] = [minor.unsignedShortValue, major.unsignedShortValue]
                     }
                 }
             }

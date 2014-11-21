@@ -9,12 +9,13 @@
 import UIKit
 import BlueCapKit
 
-class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelegate {
+class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldDelegate {
 
     @IBOutlet var nameTextField     : UITextField!
     @IBOutlet var uuidTextField     : UITextField!
     @IBOutlet var majorTextField    : UITextField!
     @IBOutlet var minorTextField    : UITextField!
+    @IBOutlet var doneBarButtonItem : UIBarButtonItem!
     
     var beaconName                      : String?
     var peripheralManagerViewController : PeripheralManagerViewController?
@@ -29,6 +30,7 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
         if let beaconName = self.beaconName {
             self.navigationItem.title = beaconName
             self.nameTextField.text = beaconName
+            self.doneBarButtonItem.enabled = false
             if let uuid = PeripheralStore.getBeacon(beaconName) {
                 self.uuidTextField.text = uuid.UUIDString
             }
@@ -62,11 +64,27 @@ class PeripheralManagerBeaconViewController: UIViewController, UITextFieldDelega
 
     @IBAction func generateUUID(sender:AnyObject) {
         self.uuidTextField.text = NSUUID().UUIDString
+        let enteredName = self.nameTextField.text
+        let enteredMajor = self.majorTextField.text
+        let enteredMinor = self.minorTextField.text
+        if enteredName != nil && enteredMinor != nil && enteredMinor != nil {
+            if !enteredName!.isEmpty && !enteredMinor!.isEmpty && !enteredMajor!.isEmpty {
+                self.doneBarButtonItem.enabled = true
+            }
+        }
+    }
+    
+    @IBAction func done(sender:AnyObject) {
+        self.addBeacon()
     }
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        self.nameTextField.resignFirstResponder()
+        textField.resignFirstResponder()
+        return self.addBeacon()
+    }
+    
+    func addBeacon() -> Bool {
         let enteredUUID = self.uuidTextField.text
         let enteredName = self.nameTextField.text
         let enteredMajor = self.majorTextField.text
