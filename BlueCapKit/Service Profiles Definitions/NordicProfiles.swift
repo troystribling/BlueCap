@@ -17,7 +17,7 @@ public struct Nordic {
     //***************************************************************************************************
     struct DeviceTemperatureService {
         static let uuid = "2f0a0003-69aa-f316-3e78-4194989a6c1a"
-        static let name = "Noric Device Temperature"
+        static let name = "Nordic Device Temperature"
         struct Data {
             static let uuid = "2f0a0004-69aa-f316-3e78-4194989a6c1a"
             static let name = "Device Temperature Data"
@@ -57,7 +57,7 @@ public struct Nordic {
     //***************************************************************************************************
     struct BLEAddressService {
         static let uuid = "2f0a0005-69aa-f316-3e78-4194989a6c1a"
-        static let name = "Noric BLE Address"
+        static let name = "Nordic BLE Address"
         struct Address {
             static let uuid = "2f0a0006-69aa-f316-3e78-4194989a6c1a"
             static let name = "BLE Addresss"
