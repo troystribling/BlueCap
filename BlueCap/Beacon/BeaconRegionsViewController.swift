@@ -114,7 +114,9 @@ class BeaconRegionsViewController: UITableViewController {
                 beaconRegion.errorMonitoringRegion = {(error) in
                     BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
                     self.updateWhenActive()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    if let error = error {
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    }
                 }
                 beaconRegion.rangedBeacons = {(beacons) in
                     for beacon in beacons {
@@ -203,7 +205,11 @@ class BeaconRegionsViewController: UITableViewController {
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         let name = BeaconStore.getBeaconNames()[indexPath.row]
         if BeaconManager.sharedInstance().isRangingRegion(name) {
-            self.performSegueWithIdentifier(MainStoryBoard.beaconsSegue, sender:indexPath)
+            if let beaconRegion = self.beaconRegions[name] {
+                if beaconRegion.beacons.count > 0 {
+                    self.performSegueWithIdentifier(MainStoryBoard.beaconsSegue, sender:indexPath)
+                }
+            }
         } else {
             self.performSegueWithIdentifier(MainStoryBoard.beaconRegionEditSegue, sender:indexPath)
         }

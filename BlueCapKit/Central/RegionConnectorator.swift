@@ -16,7 +16,7 @@ public class RegionConnectorator : Connectorator {
     private var identifier  : String
     
     public var regionCreateSuccess  : ((region:CircularRegion) -> ())?
-    public var regionCreateFailed   : ((error:NSError) -> ())?
+    public var regionCreateFailed   : ((error:NSError?) -> ())?
     public var enterRegion          : (() -> ())?
     public var exitRegion           : (() -> ())?
     
@@ -60,7 +60,7 @@ public class RegionConnectorator : Connectorator {
                 if let regionCreateSuccess = self.regionCreateSuccess {
                     regionCreateSuccess(region:self._region!)
                 }
-            }, locationUpdateFailed:{(error:NSError!) in
+            }, locationUpdateFailed:{(error:NSError?) in
                 if let regionCreateFailed = self.regionCreateFailed {
                     regionCreateFailed(error:error)
                 }

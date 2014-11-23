@@ -135,9 +135,11 @@ class PeripheralsViewController : UITableViewController {
                 connectorator.regionCreateSuccess = {(region:CircularRegion) in
                     Logger.debug("RegionConnectorator#regionCreateSuccess")
                 }
-                connectorator.regionCreateFailed = {(error:NSError!) in
+                connectorator.regionCreateFailed = {(error:NSError?) in
                     Logger.debug("RegionConnectorator#regionCreateFailed")
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    if let error = error {
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    }
                 }
                 connectorator.enterRegion = {
                     Logger.debug("RegionConnectorator#enterRegion")

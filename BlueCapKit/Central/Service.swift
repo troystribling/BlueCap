@@ -14,7 +14,7 @@ public class Service : NSObject {
     // PRIVATE
     private let profile                             : ServiceProfile?
     private var characteristicsDiscoveredSuccess    : (() -> ())?
-    private var characteristicDiscoveryFailed       : ((error:NSError!) -> ())?
+    private var characteristicDiscoveryFailed       : ((error:NSError) -> ())?
 
     // INTERNAL
     internal let _peripheral                        : Peripheral
@@ -44,14 +44,14 @@ public class Service : NSObject {
     }
     
     // PUBLIC
-    public func discoverAllCharacteristics(characteristicsDiscoveredSuccess:() -> (), characteristicDiscoveryFailed:((error:NSError!) -> ())? = nil) {
+    public func discoverAllCharacteristics(characteristicsDiscoveredSuccess:() -> (), characteristicDiscoveryFailed:((error:NSError) -> ())? = nil) {
         Logger.debug("Service#discoverAllCharacteristics")
         self.characteristicsDiscoveredSuccess = characteristicsDiscoveredSuccess
         self.characteristicDiscoveryFailed = characteristicDiscoveryFailed
         self.discoverIfConnected(nil)
     }
 
-    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscoveredSuccess:() -> (), characteristicDiscoveryFailed:((error:NSError!) -> ())? = nil) {
+    public func discoverCharacteristics(characteristics:[CBUUID], characteristicsDiscoveredSuccess:() -> (), characteristicDiscoveryFailed:((error:NSError) -> ())? = nil) {
         Logger.debug("Service#discoverCharacteristics")
         self.characteristicsDiscoveredSuccess = characteristicsDiscoveredSuccess
         self.characteristicDiscoveryFailed = characteristicDiscoveryFailed

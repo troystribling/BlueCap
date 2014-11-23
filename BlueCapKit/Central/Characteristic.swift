@@ -13,7 +13,7 @@ public class Characteristic {
 
     // PRIVATE
     private var notificationStateChangedSuccess     : (() -> ())?
-    private var notificationStateChangedFailed      : ((error:NSError!) -> ())?
+    private var notificationStateChangedFailed      : ((error:NSError) -> ())?
     private var afterUpdateSuccess                  : (() -> ())?
     private var afterUpdateFailed                   : ((error:NSError) -> ())?
     private var afterWriteSuccess                   : (() -> ())?
@@ -80,7 +80,7 @@ public class Characteristic {
         return self.profile.discreteStringValues
     }
     
-    public func startNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError!) -> ())? = nil) {
+    public func startNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
             self.notificationStateChangedSuccess = notificationStateChangedSuccess
             self.notificationStateChangedFailed = notificationStateChangedFailed
@@ -88,7 +88,7 @@ public class Characteristic {
         }
     }
 
-    public func stopNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError!) -> ())? = nil) {
+    public func stopNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError) -> ())? = nil) {
         if self.propertyEnabled(.Notify) {
             self.notificationStateChangedSuccess = notificationStateChangedSuccess
             self.notificationStateChangedFailed = notificationStateChangedFailed
@@ -253,7 +253,7 @@ public class Characteristic {
     }
     
     internal func didUpdateNotificationState(error:NSError!) {
-        if error != nil {
+        if let error = error {
             Logger.debug("Characteristic#didUpdateNotificationState Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let notificationStateChangedFailed = self.notificationStateChangedFailed {
                 CentralManager.asyncCallback(){notificationStateChangedFailed(error:error)}
@@ -268,7 +268,7 @@ public class Characteristic {
     
     internal func didUpdate(error:NSError!) {
         self.reading = false
-        if error != nil {
+        if let error = error {
             Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterUpdateFailed = self.afterUpdateFailed {
                 CentralManager.asyncCallback(){afterUpdateFailed(error:error)}
@@ -283,7 +283,7 @@ public class Characteristic {
     
     internal func didWrite(error:NSError!) {
         self.writing = false
-        if error != nil {
+        if let error = error {
             Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterWriteFailed = self.afterWriteFailed {
                 CentralManager.asyncCallback(){afterWriteFailed(error:error)}

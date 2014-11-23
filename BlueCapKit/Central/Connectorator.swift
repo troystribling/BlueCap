@@ -19,7 +19,7 @@ public class Connectorator {
     public var disconnect       : (() -> ())?
     public var forceDisconnect  : (() -> ())?
     public var connect          : (() -> ())?
-    public var failedConnect    : ((error:NSError!) -> ())?
+    public var failedConnect    : ((error:NSError?) -> ())?
     public var giveUp           : (() -> ())?
 
     public var timeoutRetries           = -1
@@ -80,7 +80,7 @@ public class Connectorator {
         }
     }
     
-    internal func didFailConnect(error:NSError!) {
+    internal func didFailConnect(error:NSError?) {
         Logger.debug("Connectorator#didFailConnect")
         if let failedConnect = self.failedConnect {
             CentralManager.asyncCallback(){failedConnect(error:error)}

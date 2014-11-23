@@ -14,7 +14,7 @@ public class BeaconRegion : Region {
     internal var _beacons   = [Beacon]()
     
     public var rangedBeacons            : ((beacons:[Beacon]) -> ())?
-    public var errorRangingBeacons      : ((error:NSError!) -> ())?
+    public var errorRangingBeacons      : ((error:NSError?) -> ())?
 
     internal var clBeaconRegion : CLBeaconRegion {
         return self._region as CLBeaconRegion

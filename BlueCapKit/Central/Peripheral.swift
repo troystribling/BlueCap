@@ -18,7 +18,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
 
     // PRIVATE
     private var servicesDiscoveredSuccess   : (() -> ())?
-    private var serviceDiscoveryFailed      : ((error:NSError!) -> ())?
+    private var serviceDiscoveryFailed      : ((error:NSError) -> ())?
     
     private var connectionSequence          = 0
     private var discoveredServices          = Dictionary<CBUUID, Service>()
@@ -120,24 +120,24 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
 
     // service discovery
-    public func discoverAllServices(servicesDiscoveredSuccess:()->(), serviceDiscoveryFailed:((error:NSError!) -> ())? = nil) {
+    public func discoverAllServices(servicesDiscoveredSuccess:()->(), serviceDiscoveryFailed:((error:NSError) -> ())? = nil) {
         Logger.debug("Peripheral#discoverAllServices: \(self.name)")
         self.discoverServices(nil, servicesDiscoveredSuccess:servicesDiscoveredSuccess, serviceDiscoveryFailed:serviceDiscoveryFailed)
     }
 
-    public func discoverServices(services:[CBUUID]!, servicesDiscoveredSuccess:()->(), serviceDiscoveryFailed:((error:NSError!) -> ())? = nil) {
+    public func discoverServices(services:[CBUUID]!, servicesDiscoveredSuccess:()->(), serviceDiscoveryFailed:((error:NSError) -> ())? = nil) {
         Logger.debug("Peripheral#discoverAllServices: \(self.name)")
         self.servicesDiscoveredSuccess = servicesDiscoveredSuccess
         self.serviceDiscoveryFailed = serviceDiscoveryFailed
         self.discoverIfConnected(services)
     }
 
-    public func discoverAllPeripheralServices(peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError!)->())? = nil) {
+    public func discoverAllPeripheralServices(peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError)->())? = nil) {
         Logger.debug("Peripheral#discoverAllPeripheralServices: \(self.name)")
         self.discoverPeripheralServices(nil, peripheralDiscovered:peripheralDiscovered, peripheralDiscoveryFailed:peripheralDiscoveryFailed)
     }
 
-    public func discoverPeripheralServices(services:[CBUUID]!, peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError!)->())? = nil) {
+    public func discoverPeripheralServices(services:[CBUUID]!, peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError)->())? = nil) {
         Logger.debug("Peripheral#discoverPeripheralServices: \(self.name)")
         self.discoverServices(services,
             servicesDiscoveredSuccess:{
@@ -289,19 +289,19 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
                 CentralManager.asyncCallback() {
-                    Logger.debug("Peripheral#didFailToConnectPeripheral: forced disconnect")
+                    Logger.debug("Peripheral#didDisconnectPeripheral: forced disconnect")
                     connectorator.didForceDisconnect()
                 }
             } else {
                 switch(self.currentError) {
                 case .None:
                         CentralManager.asyncCallback() {
-                            Logger.debug("Peripheral#didFailToConnectPeripheral: No errors disconnecting")
+                            Logger.debug("Peripheral#didDisconnectPeripheral: No errors disconnecting")
                             connectorator.didDisconnect()
                         }
                 case .Timeout:
                         CentralManager.asyncCallback() {
-                            Logger.debug("Peripheral#didFailToConnectPeripheral: Timeout reconnecting")
+                            Logger.debug("Peripheral#didDisconnectPeripheral: Timeout reconnecting")
                             connectorator.didTimeout()
                         }
                 }
@@ -315,12 +315,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self._connectorator?.didConnect()
     }
     
-    internal func didFailToConnectPeripheral(error:NSError!) {
+    internal func didFailToConnectPeripheral(error:NSError?) {
         Logger.debug("PeripheralConnectionError#didFailToConnectPeripheral")
         self._connectorator?.didFailConnect(error)
     }
     
-    internal func discoverService(head:Service, tail:[Service], peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError!)->())? = nil) {
+    internal func discoverService(head:Service, tail:[Service], peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError)->())? = nil) {
         if tail.count > 0 {
             head.discoverAllCharacteristics({
                 self.discoverService(tail[0], tail:Array(tail[1..<tail.count]),

@@ -16,7 +16,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     internal var clLocationManager          : CLLocationManager!
     
     public var locationsUpdateSuccess       : ((locations:[CLLocation]) -> ())?
-    public var locationsUpdateFailed        : ((error:NSError!) -> ())?
+    public var locationsUpdateFailed        : ((error:NSError?) -> ())?
     public var pausedLocationUpdates        : (() -> ())?
     public var resumedLocationUpdates       : (() -> ())?
     
@@ -51,10 +51,14 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         return CLLocationManager.locationServicesEnabled()
     }
     
-    public class func reverseGeocodeLocation(location:CLLocation, reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())? = nil)  {
+    public class func reverseGeocodeLocation(location:CLLocation, reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError) -> ())? = nil)  {
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location){(placemarks:[AnyObject]!, error:NSError!) in
-            if error == nil {
+            if let error = error {
+                if let reverseGeocodeFailed = reverseGeocodeFailed {
+                    reverseGeocodeFailed(error:error)
+                }
+            } else {
                 var places = Array<CLPlacemark>()
                 if placemarks != nil {
                     places = placemarks.reduce(Array<CLPlacemark>()) {(result, place) in
@@ -66,10 +70,6 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
                     }
                 }
                 reverseGeocodeSuccess(placemarks:places)
-            } else {
-                if let reverseGeocodeFailed = reverseGeocodeFailed {
-                    reverseGeocodeFailed(error:error)
-                }
             }
         }
     }
@@ -90,7 +90,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     }
     
     // reverse geocode
-    public func reverseGeocodeLocation(reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError!) -> ())? = nil)  {
+    public func reverseGeocodeLocation(reverseGeocodeSuccess:(placemarks:[CLPlacemark]) -> (), reverseGeocodeFailed:((error:NSError) -> ())? = nil)  {
         if let location = self.location {
             RegionManager.reverseGeocodeLocation(self.location, reverseGeocodeSuccess, reverseGeocodeFailed)
         } else {
@@ -100,7 +100,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         }
     }
     
-    public func currentLocation(locationUpdateSuccess:(location:CLLocation) -> (), locationUpdateFailed:((error:NSError)->())? = nil) {
+    public func currentLocation(locationUpdateSuccess:(location:CLLocation) -> (), locationUpdateFailed:((error:NSError?)->())? = nil) {
         self.locationsUpdateSuccess = {(locations) in
             if let location = locations.last {
                 Logger.debug("LocationManager#currentLocation: \(location)")
@@ -114,7 +114,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
             self.locationsUpdateSuccess = nil
             self.locationsUpdateFailed = nil
         }
-        self.locationsUpdateFailed = {(error:NSError!) in
+        self.locationsUpdateFailed = {(error:NSError?) in
             if let locationUpdateFailed = locationUpdateFailed {
                 locationUpdateFailed(error:error)
             }

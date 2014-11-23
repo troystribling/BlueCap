@@ -107,7 +107,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 let afterAdvertisingStarted = {
                     self.setUIState()
                 }
-                let afterAdvertisingStartFailed:(error:NSError!)->() = {(error) in
+                let afterAdvertisingStartFailed:(error:NSError)->() = {(error) in
                     self.setUIState()
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }

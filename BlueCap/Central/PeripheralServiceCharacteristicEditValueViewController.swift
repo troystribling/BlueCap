@@ -74,7 +74,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                 self.navigationController?.popViewControllerAnimated(true)
                 return
             }
-            let afterWriteFailed = {(error:NSError!) -> () in
+            let afterWriteFailed = {(error:NSError) -> () in
                 self.progressView.remove()
                 self.presentViewController(UIAlertController.alertOnError(error) {(action) in
                     self.navigationController?.popViewControllerAnimated(true)
