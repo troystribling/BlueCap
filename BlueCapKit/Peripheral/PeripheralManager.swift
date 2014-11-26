@@ -158,7 +158,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                     self.removeAllServices() {
                         Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
                         if let afterServiceAddFailed = afterServiceAddFailed {
-                            self.asyncCallback(){afterServiceAddFailed(error:error)}
+                            self.asyncCallback {afterServiceAddFailed(error:error)}
                         }
                     }
                 })
@@ -182,7 +182,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                     self.removeAllServices() {
                         Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
                         if let afterServiceAddFailed = afterServiceAddFailed {
-                            self.asyncCallback(){afterServiceAddFailed(error:error)}
+                            self.asyncCallback {afterServiceAddFailed(error:error)}
                         }
                     }
                 })
@@ -264,7 +264,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         if let error = error {
             Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Failed '\(error.localizedDescription)'")
             if let afterAdvertisingStartedFailedCallback = self.afterAdvertisingStartedFailedCallback {
-                self.asyncCallback(){afterAdvertisingStartedFailedCallback(error:error)}
+                self.asyncCallback {afterAdvertisingStartedFailedCallback(error:error)}
             }
         } else {
             Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Success")
@@ -281,7 +281,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 Logger.debug("PeripheralManager#didAddService: Failed '\(error.localizedDescription)'")
                 self.configuredServices.removeValueForKey(service.UUID)
                 if let afterServiceAddFailedCallback = self.afterServiceAddFailedCallback {
-                    self.asyncCallback(){afterServiceAddFailedCallback(error:error)}
+                    self.asyncCallback {afterServiceAddFailedCallback(error:error)}
                 }
             } else {
                 Logger.debug("PeripheralManager#didAddService: Success")
@@ -324,7 +324,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                     Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
                     characteristic.value = request.value
                     if let processWriteRequest = characteristic.processWriteRequest {
-                        self.asyncCallback(){processWriteRequest(request:cbattRequest)}
+                        self.asyncCallback {processWriteRequest(request:cbattRequest)}
                     }
                 } else {
                     Logger.debug("Error: characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")

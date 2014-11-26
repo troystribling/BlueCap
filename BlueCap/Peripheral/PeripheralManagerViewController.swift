@@ -99,7 +99,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBAction func toggleAdvertise(sender:AnyObject) {
         let manager = PeripheralManager.sharedInstance()
         if manager.isAdvertising {
-            manager.stopAdvertising(){
+            manager.stopAdvertising {
                 self.setUIState()
             }
         } else {

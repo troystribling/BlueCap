@@ -26,15 +26,6 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setObject(scanMode, forKey:"scanMode")
     }
     
-    // region connectorator enabled
-    class func getRegionConnectoratorEnabled() -> Bool {
-        return NSUserDefaults.standardUserDefaults().boolForKey("regionConnectoratorEnabled")
-    }
-    
-    class func setRegionConnectoratorEnabled(regionScanEnabled:Bool) {
-        NSUserDefaults.standardUserDefaults().setBool(regionScanEnabled, forKey:"regionConnectoratorEnabled")
-    }
-
     // scan timeout
     class func getScanTimeoutEnabled() -> Bool {
         return NSUserDefaults.standardUserDefaults().boolForKey("scanTimeoutEnabled")

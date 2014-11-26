@@ -196,7 +196,7 @@ public class Characteristic {
                 self.reading = false
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 if let afterUpdateFailed = self.afterUpdateFailed {
-                    CentralManager.asyncCallback(){
+                    CentralManager.asyncCallback {
                         afterUpdateFailed(error:
                             NSError(domain:BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
                     }
@@ -214,7 +214,7 @@ public class Characteristic {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 if let afterWriteFailed = self.afterWriteFailed {
-                    CentralManager.asyncCallback(){
+                    CentralManager.asyncCallback {
                         afterWriteFailed(error:
                             NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
                     }
@@ -248,7 +248,7 @@ public class Characteristic {
     internal func didDiscover() {
         Logger.debug("Characteristic#didDiscover:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
         if let afterDiscovered = self.profile.afterDiscovered {
-            CentralManager.asyncCallback(){afterDiscovered(characteristic:self)}
+            CentralManager.asyncCallback {afterDiscovered(characteristic:self)}
         }
     }
     
@@ -256,7 +256,7 @@ public class Characteristic {
         if let error = error {
             Logger.debug("Characteristic#didUpdateNotificationState Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let notificationStateChangedFailed = self.notificationStateChangedFailed {
-                CentralManager.asyncCallback(){notificationStateChangedFailed(error:error)}
+                CentralManager.asyncCallback {notificationStateChangedFailed(error:error)}
             }
         } else {
             Logger.debug("Characteristic#didUpdateNotificationState Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
@@ -271,7 +271,7 @@ public class Characteristic {
         if let error = error {
             Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterUpdateFailed = self.afterUpdateFailed {
-                CentralManager.asyncCallback(){afterUpdateFailed(error:error)}
+                CentralManager.asyncCallback {afterUpdateFailed(error:error)}
             }
         } else {
             Logger.debug("Characteristic#didUpdate Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
@@ -286,7 +286,7 @@ public class Characteristic {
         if let error = error {
             Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if let afterWriteFailed = self.afterWriteFailed {
-                CentralManager.asyncCallback(){afterWriteFailed(error:error)}
+                CentralManager.asyncCallback {afterWriteFailed(error:error)}
             }
         } else {
             Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")

@@ -151,7 +151,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             },
             serviceDiscoveryFailed:{(error) in
                 if let peripheralDiscoveryFailed = peripheralDiscoveryFailed {
-                    CentralManager.asyncCallback(){peripheralDiscoveryFailed(error:error)}
+                    CentralManager.asyncCallback {peripheralDiscoveryFailed(error:error)}
                 }
             }
         )
@@ -270,7 +270,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             self.cbPeripheral.discoverServices(services)
         } else {
             if let serviceDiscoveryFailed = self.serviceDiscoveryFailed {
-                CentralManager.asyncCallback(){serviceDiscoveryFailed(error:
+                CentralManager.asyncCallback {serviceDiscoveryFailed(error:
                     NSError(domain:BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
             }
         }
@@ -288,19 +288,19 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         if let connectorator = self._connectorator {
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
-                CentralManager.asyncCallback() {
+                CentralManager.asyncCallback {
                     Logger.debug("Peripheral#didDisconnectPeripheral: forced disconnect")
                     connectorator.didForceDisconnect()
                 }
             } else {
                 switch(self.currentError) {
                 case .None:
-                        CentralManager.asyncCallback() {
+                        CentralManager.asyncCallback {
                             Logger.debug("Peripheral#didDisconnectPeripheral: No errors disconnecting")
                             connectorator.didDisconnect()
                         }
                 case .Timeout:
-                        CentralManager.asyncCallback() {
+                        CentralManager.asyncCallback {
                             Logger.debug("Peripheral#didDisconnectPeripheral: Timeout reconnecting")
                             connectorator.didTimeout()
                         }

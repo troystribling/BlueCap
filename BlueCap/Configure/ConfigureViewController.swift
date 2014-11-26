@@ -25,7 +25,6 @@ class ConfigureViewController : UITableViewController {
     
     struct MainStroryboard {
         static let configureScanServicesSegue   = "ConfigureScanServices"
-        static let configureScanRegionsSegue    = "ConfigureScanRegions"
         static let configureScanModeSegue       = "ConfigureScanMode"
         static let configureScanTimeoutSegue    = "ConfigureScanTimeout"
     }
@@ -65,8 +64,6 @@ class ConfigureViewController : UITableViewController {
             switch(identifier) {
             case MainStroryboard.configureScanModeSegue:
                 return true
-            case MainStroryboard.configureScanRegionsSegue:
-                return !CentralManager.sharedInstance().isScanning
             case MainStroryboard.configureScanServicesSegue:
                 return true
             default:
@@ -76,12 +73,7 @@ class ConfigureViewController : UITableViewController {
             return false
         }
     }
-    
-    @IBAction func toggleRegionConnectorator(sender:AnyObject) {
-        ConfigStore.setRegionConnectoratorEnabled(!ConfigStore.getRegionConnectoratorEnabled())
-        self.configUI()
-    }
-    
+        
     @IBAction func toggleScanTimeout(sender:AnyObject) {
         ConfigStore.setScanTimeoutEnabled(!ConfigStore.getScanTimeoutEnabled())
     }

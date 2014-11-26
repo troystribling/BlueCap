@@ -68,7 +68,7 @@ public class Connectorator {
     internal func didForceDisconnect() {
         Logger.debug("Connectorator#didForceDisconnect")
         if let forcedDisconnect = self.forceDisconnect {
-            CentralManager.asyncCallback(){forcedDisconnect()}
+            CentralManager.asyncCallback {forcedDisconnect()}
         }
     }
     
@@ -76,20 +76,20 @@ public class Connectorator {
         Logger.debug("Connectorator#didConnect")
         if let connect = self.connect {
             self.timeoutCount = 0
-            CentralManager.asyncCallback(){connect()}
+            CentralManager.asyncCallback {connect()}
         }
     }
     
     internal func didFailConnect(error:NSError?) {
         Logger.debug("Connectorator#didFailConnect")
         if let failedConnect = self.failedConnect {
-            CentralManager.asyncCallback(){failedConnect(error:error)}
+            CentralManager.asyncCallback {failedConnect(error:error)}
         }
     }
     
     internal func callDidTimeout() {
         if let timeout = self.timeout {
-            CentralManager.asyncCallback(){timeout()}
+            CentralManager.asyncCallback {timeout()}
         } else {
             self.peripheral?.reconnect()
         }
@@ -97,7 +97,7 @@ public class Connectorator {
     
     internal func callDidDisconnect() {
         if let disconnect = self.disconnect {
-            CentralManager.asyncCallback(){disconnect()}
+            CentralManager.asyncCallback {disconnect()}
         } else {
             self.peripheral?.reconnect()
         }
@@ -105,7 +105,7 @@ public class Connectorator {
     
     internal func callDidGiveUp() {
         if let giveUp = self.giveUp {
-            CentralManager.asyncCallback(){giveUp()}
+            CentralManager.asyncCallback {giveUp()}
         }
     }
 }
