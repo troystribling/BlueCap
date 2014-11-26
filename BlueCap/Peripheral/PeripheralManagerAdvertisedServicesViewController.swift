@@ -79,7 +79,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         if let peripheral = self.peripheral {
             let serviceUUID = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)[indexPath.row]
             cell.uuidLabel.text = serviceUUID.UUIDString
-            if let service = PeripheralManager.sharedInstance().service(serviceUUID) {
+            if let service = PeripheralManager.sharedInstance.service(serviceUUID) {
                 cell.nameLabel.text = service.name
             } else {
                 cell.nameLabel.text = "Unknown"

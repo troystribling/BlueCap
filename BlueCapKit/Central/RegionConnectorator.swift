@@ -39,7 +39,7 @@ public class RegionConnectorator : Connectorator {
     }
     
     private func createRegion() {
-        RegionManager.sharedInstance().currentLocation({(location:CLLocation) in
+        RegionManager.sharedInstance.currentLocation({(location:CLLocation) in
                 self._region = CircularRegion(center:location.coordinate, identifier:"RegionConnectorator") {(region) in
                     region.exitRegion = {
                         if let exitRegion = self.exitRegion {
@@ -56,7 +56,7 @@ public class RegionConnectorator : Connectorator {
                         }
                     }
                 }
-                RegionManager.sharedInstance().startMonitoringForRegion(self._region!)
+                RegionManager.sharedInstance.startMonitoringForRegion(self._region!)
                 if let regionCreateSuccess = self.regionCreateSuccess {
                     regionCreateSuccess(region:self._region!)
                 }

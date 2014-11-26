@@ -55,7 +55,7 @@ class PeripheralsViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralSegue {
             if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
                 let viewController = segue.destinationViewController as PeripheralViewController
-                viewController.peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
+                viewController.peripheral = CentralManager.sharedInstance.peripherals[selectedIndex.row]
             }
         }
     }
@@ -65,7 +65,7 @@ class PeripheralsViewController : UITableViewController {
         if let identifier = identifier {
             if identifier == MainStoryboard.peripheralSegue {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                    let peripheral = CentralManager.sharedInstance().peripherals[selectedIndex.row]
+                    let peripheral = CentralManager.sharedInstance.peripherals[selectedIndex.row]
                     perform = (peripheral.state == .Connected)
                 }
             }
@@ -75,11 +75,11 @@ class PeripheralsViewController : UITableViewController {
     
     // actions
     func toggleScan(sender:AnyObject) {
-        if BeaconManager.sharedInstance().isMonitoring() == false {
-            let central = CentralManager.sharedInstance()
+        if BeaconManager.sharedInstance.isMonitoring() == false {
+            let central = CentralManager.sharedInstance
             if (central.isScanning) {
                 if  ConfigStore.getScanTimeoutEnabled() {
-                    TimedScannerator.sharedInstance().stopScanning()
+                    TimedScannerator.sharedInstance.stopScanning()
                 } else {
                     central.stopScanning()
                 }
@@ -109,7 +109,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func setScanButton() {
-        if CentralManager.sharedInstance().isScanning || TimedScannerator.sharedInstance().isScanning {
+        if CentralManager.sharedInstance.isScanning || TimedScannerator.sharedInstance.isScanning {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -117,7 +117,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func powerOn() {
-        CentralManager.sharedInstance().powerOn {
+        CentralManager.sharedInstance.powerOn {
             Logger.debug("powerOn Callback")
             self.startScan()
             self.setScanButton()
@@ -170,7 +170,7 @@ class PeripheralsViewController : UITableViewController {
         }
         let afterTimeout : () -> () = {
             Logger.debug("Scannerator#timeoutScan: timing out")
-            TimedScannerator.sharedInstance().stopScanning()
+            TimedScannerator.sharedInstance.stopScanning()
             self.setScanButton()
         }
         // Promiscuous Scan Enabled
@@ -178,9 +178,9 @@ class PeripheralsViewController : UITableViewController {
         case "Promiscuous" :
             // Promiscuous Scan with Timeout Enabled
             if ConfigStore.getScanTimeoutEnabled() {
-                TimedScannerator.sharedInstance().startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
+                TimedScannerator.sharedInstance.startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
             } else {
-                CentralManager.sharedInstance().startScanning(afterPeripheralDiscovered)
+                CentralManager.sharedInstance.startScanning(afterPeripheralDiscovered)
             }
             break
         case "Service" :
@@ -190,10 +190,10 @@ class PeripheralsViewController : UITableViewController {
             } else {
                 // Service Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
-                    TimedScannerator.sharedInstance().startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
+                    TimedScannerator.sharedInstance.startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
                         afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
                 } else {
-                    CentralManager.sharedInstance().startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
+                    CentralManager.sharedInstance.startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
                 }
             }
             break
@@ -209,12 +209,12 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return CentralManager.sharedInstance().peripherals.count
+        return CentralManager.sharedInstance.peripherals.count
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
-        let peripheral = CentralManager.sharedInstance().peripherals[indexPath.row]
+        let peripheral = CentralManager.sharedInstance.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         cell.accessoryType = .None
         if peripheral.state == .Connected {

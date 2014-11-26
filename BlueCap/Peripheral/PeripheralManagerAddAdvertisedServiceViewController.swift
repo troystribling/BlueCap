@@ -22,7 +22,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     var services : [MutableService] {
         if let peripheral = self.peripheral {
             let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-            return PeripheralManager.sharedInstance().services.filter{!contains(serviceUUIDs, $0.uuid)}
+            return PeripheralManager.sharedInstance.services.filter{!contains(serviceUUIDs, $0.uuid)}
         } else {
             return []
         }

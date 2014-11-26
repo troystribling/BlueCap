@@ -55,11 +55,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return self._isPoweredOn
     }
 
-    public class func sharedInstance() -> PeripheralManager {
-        if thisPeripheralManager == nil {
-            thisPeripheralManager = PeripheralManager()
+    public class var sharedInstance : PeripheralManager {
+        struct Static {
+            static let instance = PeripheralManager()
         }
-        return thisPeripheralManager!
+        return Static.instance
     }
     
     public func service(uuid:CBUUID) -> MutableService? {
@@ -337,15 +337,15 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     // INTERNAL INTERFACE
     internal class func syncCallback(request:()->()) {
-        PeripheralManager.sharedInstance().syncCallback(request)
+        PeripheralManager.sharedInstance.syncCallback(request)
     }
     
     internal class func asyncCallback(request:()->()) {
-        PeripheralManager.sharedInstance().asyncCallback(request)
+        PeripheralManager.sharedInstance.asyncCallback(request)
     }
     
     internal class func delayCallback(delay:Float, request:()->()) {
-        PeripheralManager.sharedInstance().delayCallback(delay, request)
+        PeripheralManager.sharedInstance.delayCallback(delay, request)
     }
     
     internal func syncCallback(request:()->()) {
@@ -379,5 +379,3 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }    
 }
-
-var thisPeripheralManager : PeripheralManager?

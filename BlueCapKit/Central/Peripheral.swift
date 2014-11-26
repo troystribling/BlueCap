@@ -90,7 +90,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     public func reconnect() {
         if self.state == .Disconnected {
             Logger.debug("Peripheral#reconnect: \(self.name)")
-            CentralManager.sharedInstance().connectPeripheral(self)
+            CentralManager.sharedInstance.connectPeripheral(self)
             self.forcedDisconnect = false
             ++self.connectionSequence
             self.timeoutConnection(self.connectionSequence)
@@ -106,10 +106,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     public func disconnect() {
         self.forcedDisconnect = true
-        CentralManager.sharedInstance().discoveredPeripherals.removeValueForKey(self.cbPeripheral)
+        CentralManager.sharedInstance.discoveredPeripherals.removeValueForKey(self.cbPeripheral)
         if self.state == .Connected {
             Logger.debug("Peripheral#disconnect: \(self.name)")
-            CentralManager.sharedInstance().cancelPeripheralConnection(self)
+            CentralManager.sharedInstance.cancelPeripheralConnection(self)
         } else {
             self.didDisconnectPeripheral()
         }
@@ -248,7 +248,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     // PRIVATE
     private func timeoutConnection(sequence:Int) {
-        let central = CentralManager.sharedInstance()
+        let central = CentralManager.sharedInstance
         var timeout = self.defaultConnectionTimeout
         if let connectorator = self._connectorator {
             timeout = connectorator.connectionTimeout

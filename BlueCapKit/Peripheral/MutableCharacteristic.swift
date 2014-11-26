@@ -85,7 +85,7 @@ public class MutableCharacteristic : NSObject {
     }
     
     public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
-        PeripheralManager.sharedInstance().cbPeripheralManager.respondToRequest(request, withResult:result)
+        PeripheralManager.sharedInstance.cbPeripheralManager.respondToRequest(request, withResult:result)
     }
     
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
@@ -98,7 +98,7 @@ public class MutableCharacteristic : NSObject {
     
     public func updateValueWithData(value:NSData) {
         self._value = value
-        PeripheralManager.sharedInstance().cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
+        PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
     public func updateValueWithString(value:Dictionary<String, String>) {

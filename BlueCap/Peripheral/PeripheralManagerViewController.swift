@@ -33,7 +33,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if let peripheral = self.peripheral {
             self.nameTextField.text = peripheral
         }
-        PeripheralManager.sharedInstance().powerOn({
+        PeripheralManager.sharedInstance.powerOn({
                 self.setPeripheralManagerServices()
             }, afterPowerOff:{
                 self.setUIState()
@@ -84,7 +84,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if let peripheral = self.peripheral {
             if let identifier = identifier {
                 if identifier != MainStoryboard.peripheralManagerServicesSegue {
-                    return !PeripheralManager.sharedInstance().isAdvertising
+                    return !PeripheralManager.sharedInstance.isAdvertising
                 } else {
                     return true
                 }
@@ -97,7 +97,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     @IBAction func toggleAdvertise(sender:AnyObject) {
-        let manager = PeripheralManager.sharedInstance()
+        let manager = PeripheralManager.sharedInstance
         if manager.isAdvertising {
             manager.stopAdvertising {
                 self.setUIState()
@@ -147,9 +147,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     func setPeripheralManagerServices() {
-        let peripheralManager = PeripheralManager.sharedInstance()
-        let profileManager = ProfileManager.sharedInstance()
-        peripheralManager.removeAllServices() {
+        PeripheralManager.sharedInstance.removeAllServices() {
             if let peripheral = self.peripheral {
                 self.loadPeripheralServicesFromConfig()
             } else {
@@ -160,11 +158,10 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
 
     func loadPeripheralServicesFromConfig() {
         if let peripheral = self.peripheral {
-            let peripheralManager = PeripheralManager.sharedInstance()
-            let profileManager = ProfileManager.sharedInstance()
+            let peripheralManager = PeripheralManager.sharedInstance
             let serviceUUIDs = PeripheralStore.getPeripheralServicesForPeripheral(peripheral)
             let services = serviceUUIDs.reduce([MutableService]()){(services, uuid) in
-                if let serviceProfile = profileManager.service(uuid) {
+                if let serviceProfile = ProfileManager.sharedInstance.service(uuid) {
                     let service = MutableService(profile:serviceProfile)
                     service.characteristicsFromProfiles(serviceProfile.characteristics)
                     return services + [service]
@@ -183,7 +180,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
 
     func setUIState() {
         if let peripheral = self.peripheral {
-            let peripheralManager = PeripheralManager.sharedInstance()
+            let peripheralManager = PeripheralManager.sharedInstance
             self.advertisedBeaconSwitch.on = PeripheralStore.getBeaconEnabled(peripheral)
             if peripheralManager.isAdvertising {
                 self.navigationItem.setHidesBackButton(true, animated:true)

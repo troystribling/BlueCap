@@ -23,11 +23,11 @@ public class ProfileManager {
         return self.serviceProfiles.values.array
     }
     
-    public class func sharedInstance() -> ProfileManager {
-        if thisProfileManager == nil {
-            thisProfileManager = ProfileManager()
+    public class var sharedInstance : ProfileManager {
+        struct Static {
+            static let instance = ProfileManager()
         }
-        return thisProfileManager!
+        return Static.instance
     }
     
     public func addService(serviceProfile:ServiceProfile) -> ServiceProfile {
@@ -41,5 +41,3 @@ public class ProfileManager {
     }
 
 }
-
-var thisProfileManager : ProfileManager?

@@ -179,7 +179,7 @@ public class NordicProfiles {
     
     public class func create() {
         
-        let profileManager = ProfileManager.sharedInstance()
+        let profileManager = ProfileManager.sharedInstance
         
         //***************************************************************************************************
         // Nordic Device Temperature Service

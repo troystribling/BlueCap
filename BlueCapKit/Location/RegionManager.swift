@@ -23,11 +23,11 @@ public class RegionManager : LocationManager {
         return self.clLocationManager.maximumRegionMonitoringDistance
     }
     
-    public class func sharedInstance() -> RegionManager {
-        if thisRegionManager == nil {
-            thisRegionManager = RegionManager()
+    public class var sharedInstance : RegionManager {
+        struct Static {
+            static let instance = RegionManager()
         }
-        return thisRegionManager!
+        return Static.instance
     }
     
     public override init() {
@@ -147,5 +147,3 @@ public class RegionManager : LocationManager {
         }
     }
 }
-
-var thisRegionManager : RegionManager?

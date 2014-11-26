@@ -67,10 +67,11 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func toggleMonitoring(sender:AnyObject) {
-        if CentralManager.sharedInstance().isScanning == false {
-            if BeaconManager.sharedInstance().isRanging() {
-                BeaconManager.sharedInstance().stopRangingAllBeacons()
-                BeaconManager.sharedInstance().stopMonitoringAllRegions()
+        if CentralManager.sharedInstance.isScanning == false {
+            let beaconManager = BeaconManager.sharedInstance
+            if beaconManager.isRanging() {
+                beaconManager.stopRangingAllBeacons()
+                beaconManager.stopMonitoringAllRegions()
                 self.beaconRegions.removeAll(keepCapacity:false)
                 self.setScanButton()
             } else {
@@ -83,7 +84,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func setScanButton() {
-        if BeaconManager.sharedInstance().isRanging() {
+        if BeaconManager.sharedInstance.isRanging() {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -94,12 +95,12 @@ class BeaconRegionsViewController: UITableViewController {
         for (name, uuid) in BeaconStore.getBeacons() {
             let beacon = BeaconRegion(proximityUUID:uuid, identifier:name) {(beaconRegion) in
                 beaconRegion.startMonitoringRegion = {
-                    BeaconManager.sharedInstance().startRangingBeaconsInRegion(beaconRegion)
+                    BeaconManager.sharedInstance.startRangingBeaconsInRegion(beaconRegion)
                     self.setScanButton()
                     Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")
                 }
                 beaconRegion.enterRegion = {
-                    let beaconManager = BeaconManager.sharedInstance()
+                    let beaconManager = BeaconManager.sharedInstance
                     if !beaconManager.isRangingRegion(beaconRegion.identifier) {
                         beaconManager.startRangingBeaconsInRegion(beaconRegion)
                         self.updateDisplay()
@@ -107,12 +108,12 @@ class BeaconRegionsViewController: UITableViewController {
                     Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
                 }
                 beaconRegion.exitRegion = {
-                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
+                    BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beaconRegion)
                     self.updateWhenActive()
                     Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
                 }
                 beaconRegion.errorMonitoringRegion = {(error) in
-                    BeaconManager.sharedInstance().stopRangingBeaconsInRegion(beaconRegion)
+                    BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beaconRegion)
                     self.updateWhenActive()
                     if let error = error {
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
@@ -128,7 +129,7 @@ class BeaconRegionsViewController: UITableViewController {
                     }
                 }
             }
-            BeaconManager.sharedInstance().startMonitoringForRegion(beacon)
+            BeaconManager.sharedInstance.startMonitoringForRegion(beacon)
             self.beaconRegions[name] = beacon
         }
     }
@@ -169,8 +170,8 @@ class BeaconRegionsViewController: UITableViewController {
         cell.beaconsLabel.text = "0"
         cell.nameLabel.textColor = UIColor.lightGrayColor()
         cell.statusLabel.textColor = UIColor.lightGrayColor()
-        if BeaconManager.sharedInstance().isRangingRegion(name) {
-            if let region = BeaconManager.sharedInstance().beaconRegion(name) {
+        if BeaconManager.sharedInstance.isRangingRegion(name) {
+            if let region = BeaconManager.sharedInstance.beaconRegion(name) {
                 if region.beacons.count == 0 {
                     cell.statusLabel.text = "Monitoring"
                 } else {
@@ -180,7 +181,7 @@ class BeaconRegionsViewController: UITableViewController {
                     cell.statusLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
                 }
             }
-        } else if CentralManager.sharedInstance().isScanning {
+        } else if CentralManager.sharedInstance.isScanning {
             cell.statusLabel.text = "Monitoring"
         } else {
             cell.statusLabel.text = "Idle"
@@ -190,7 +191,7 @@ class BeaconRegionsViewController: UITableViewController {
     
     override func tableView(tableView:UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         let name = BeaconStore.getBeaconNames()[indexPath.row]
-        return !BeaconManager.sharedInstance().isRangingRegion(name)
+        return !BeaconManager.sharedInstance.isRangingRegion(name)
     }
     
     override func tableView(tableView:UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
@@ -204,7 +205,7 @@ class BeaconRegionsViewController: UITableViewController {
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         let name = BeaconStore.getBeaconNames()[indexPath.row]
-        if BeaconManager.sharedInstance().isRangingRegion(name) {
+        if BeaconManager.sharedInstance.isRangingRegion(name) {
             if let beaconRegion = self.beaconRegions[name] {
                 if beaconRegion.beacons.count > 0 {
                     self.performSegueWithIdentifier(MainStoryBoard.beaconsSegue, sender:indexPath)

@@ -22,7 +22,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     }
     
     override var excludedServices : Array<CBUUID> {
-        return PeripheralManager.sharedInstance().services.map{$0.uuid}
+        return PeripheralManager.sharedInstance.services.map{$0.uuid}
     }
     
     override var serviceProfileCell : String {
@@ -47,7 +47,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     
     func updatePripheralStore() {
         if let peripheral = self.peripheral {
-            let manager = PeripheralManager.sharedInstance()
+            let manager = PeripheralManager.sharedInstance
             let serviceUUIDs = manager.services.reduce([String]()){(uuids, service) in
                 if let uuid = service.uuid.UUIDString {
                     return uuids + [uuid]
@@ -77,7 +77,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             let service = MutableService(profile:serviceProfile)
             service.characteristicsFromProfiles(serviceProfile.characteristics)
             self.progressView.show()
-            PeripheralManager.sharedInstance().addService(service, afterServiceAddSuccess:{
+            PeripheralManager.sharedInstance.addService(service, afterServiceAddSuccess:{
                 if let peripheral = self.peripheral {
                     PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
                 }

@@ -702,7 +702,7 @@ public class TISensorTagServiceProfiles {
     
     public class func create() {
 
-        let profileManager = ProfileManager.sharedInstance()
+        let profileManager = ProfileManager.sharedInstance
         
         //***************************************************************************************************
         // Accelerometer Service

@@ -26,11 +26,11 @@ public class BeaconManager : RegionManager {
         return CLLocationManager.isRangingAvailable()
     }
     
-    public override class func sharedInstance() -> BeaconManager {
-        if thisBeaconManager == nil {
-            thisBeaconManager = BeaconManager()
+    public override class var sharedInstance : BeaconManager {
+        struct Static {
+            static let instance = BeaconManager()
         }
-        return thisBeaconManager!
+        return Static.instance
     }
     
     public func isRanging() -> Bool {
@@ -135,4 +135,4 @@ public class BeaconManager : RegionManager {
     
 }
 
-var thisBeaconManager : BeaconManager?
+private var thisBeaconManager : BeaconManager?

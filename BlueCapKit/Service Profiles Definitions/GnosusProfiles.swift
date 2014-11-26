@@ -79,7 +79,7 @@ public class GnosusProfiles {
     
     public class func create() {
         
-        let profileManager = ProfileManager.sharedInstance()
+        let profileManager = ProfileManager.sharedInstance
         
         //***************************************************************************************************
         // Hello World Service

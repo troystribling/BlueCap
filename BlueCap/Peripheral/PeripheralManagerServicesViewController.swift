@@ -33,7 +33,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Services"
         self.tableView.reloadData()
-        if PeripheralManager.sharedInstance().isAdvertising {
+        if PeripheralManager.sharedInstance.isAdvertising {
             self.navigationItem.rightBarButtonItem!.enabled = false
         } else {
             self.navigationItem.rightBarButtonItem!.enabled = true
@@ -57,7 +57,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicsSegue {
             if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
                 let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicsViewController
-                viewController.service = PeripheralManager.sharedInstance().services[selectedIndexPath.row]
+                viewController.service = PeripheralManager.sharedInstance.services[selectedIndexPath.row]
                 if let peripheralManagerViewController = self.peripheralManagerViewController {
                     viewController.peripheralManagerViewController = peripheralManagerViewController
                 }
@@ -82,19 +82,19 @@ class PeripheralManagerServicesViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return PeripheralManager.sharedInstance().services.count
+        return PeripheralManager.sharedInstance.services.count
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCell, forIndexPath:indexPath) as NameUUIDCell
-        let service = PeripheralManager.sharedInstance().services[indexPath.row]
+        let service = PeripheralManager.sharedInstance.services[indexPath.row]
         cell.nameLabel.text = service.name
         cell.uuidLabel.text = service.uuid.UUIDString
         return cell
     }
     
     override func tableView(tableView:UITableView, canEditRowAtIndexPath indexPath:NSIndexPath) -> Bool {
-        return !PeripheralManager.sharedInstance().isAdvertising
+        return !PeripheralManager.sharedInstance.isAdvertising
     }
     
     override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
@@ -104,7 +104,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
     override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
             if let peripheral = self.peripheral {
-                let manager = PeripheralManager.sharedInstance()
+                let manager = PeripheralManager.sharedInstance
                 let service = manager.services[indexPath.row]
                 manager.removeService(service) {
                     PeripheralStore.removeAdvertisedPeripheralService(peripheral, service:service.uuid)

@@ -74,7 +74,7 @@ public class Service : NSObject {
     internal init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
         self._peripheral = peripheral
-        self.profile = ProfileManager.sharedInstance().serviceProfiles[cbService.UUID]
+        self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
     }
     
     internal func didDiscoverCharacteristics() {

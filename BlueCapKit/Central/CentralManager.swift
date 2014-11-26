@@ -39,11 +39,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         })
     }
     
-    public class func sharedInstance() -> CentralManager {
-        if thisCentralManager == nil {
-            thisCentralManager = CentralManager()
+    public class var sharedInstance : CentralManager {
+        struct Static {
+            static let instance = CentralManager()
         }
-        return thisCentralManager!
+        return Static.instance
     }
     
     public var isScanning : Bool {
@@ -185,15 +185,15 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // INTERNAL INTERFACE
     internal class func syncCallback(request:()->()) {
-        CentralManager.sharedInstance().syncCallback(request)
+        CentralManager.sharedInstance.syncCallback(request)
     }
     
     internal class func asyncCallback(request:()->()) {
-        CentralManager.sharedInstance().asyncCallback(request)
+        CentralManager.sharedInstance.asyncCallback(request)
     }
     
     internal class func delayCallback(delay:Double, request:()->()) {
-        CentralManager.sharedInstance().delayCallback(delay, request)
+        CentralManager.sharedInstance.delayCallback(delay, request)
     }
     
     internal func syncCallback(request:()->()) {
@@ -244,5 +244,3 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
 }
-
-var thisCentralManager : CentralManager?
