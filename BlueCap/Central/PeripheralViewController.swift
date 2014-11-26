@@ -24,7 +24,6 @@ class PeripheralViewController : UITableViewController {
     struct MainStoryBoard {
         static let peripheralServicesSegue          = "PeripheralServices"
         static let peripehralAdvertisementsSegue    = "PeripheralAdvertisements"
-        static let peripheralRegionSegue            = "PeripheralRegion"
     }
     
     required init(coder aDecoder:NSCoder) {
@@ -84,9 +83,6 @@ class PeripheralViewController : UITableViewController {
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destinationViewController as PeripheralAdvertisementsViewController
             viewController.peripheral = self.peripheral
-        } else if segue.identifier == MainStoryBoard.peripheralRegionSegue {
-            let viewController = segue.destinationViewController as PeripheralRegionViewController
-            viewController.peripheral = self.peripheral
         }
     }
     
@@ -94,8 +90,6 @@ class PeripheralViewController : UITableViewController {
         if let identifier = identifier {
             if identifier == MainStoryBoard.peripheralServicesSegue {
                 return self.hasData
-            } else if identifier == MainStoryBoard.peripheralRegionSegue {
-                return self.hasRegionConnectorator()
             } else {
                 return true
             }
@@ -136,16 +130,4 @@ class PeripheralViewController : UITableViewController {
         }
     }
     
-    func hasRegionConnectorator() -> Bool {
-        if let conectorator = self.peripheral.connectorator {
-            if conectorator is RegionConnectorator {
-                return true
-            } else {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
-
 }

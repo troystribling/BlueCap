@@ -18,8 +18,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     private let cbCentralManager    : CBCentralManager!
 
-    private let centralQueue            = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
-    
+    private let centralQueue    = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
     private var _isScanning     = false
     
     // INTERNAL

@@ -125,40 +125,41 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        peripheral.connect(connectorator:Connectorator(){(connectorator) in
-            connectorator.timeoutRetries = ConfigStore.getMaximumReconnections()
-            connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
-            connectorator.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
-            connectorator.disconnect = {(periphearl) in
-                Logger.debug("Connectorator#disconnect")
-                Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
-                peripheral.reconnect()
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                self.updateWhenActive()
-            }
-            connectorator.connect = {
-                Logger.debug("Connectorator#connect")
-                Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
-                self.updateWhenActive()
-            }
-            connectorator.timeout = {
-                Logger.debug("Connectorator#timeout: '\(peripheral.name)'")
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                peripheral.reconnect()
-                self.updateWhenActive()
-            }
-            connectorator.forceDisconnect = {
-                Logger.debug("Connectorator#onForcedDisconnect")
-                Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                self.updateWhenActive()
-            }
-            connectorator.giveUp = {
-                Logger.debug("Connectorator#giveUp: '\(peripheral.name)'")
-                peripheral.terminate()
-                self.updateWhenActive()
-            }
-        })
+        let connectorator = Connectorator {(connectorator) in
+                                connectorator.timeoutRetries = ConfigStore.getMaximumReconnections()
+                                connectorator.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
+                                connectorator.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
+                            }
+        connectorator.onDisconnect {(peripheral) in
+            Logger.debug("Connectorator#disconnect")
+            Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
+            peripheral.reconnect()
+            NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+            self.updateWhenActive()
+        }
+        connectorator.onConnect {(peripheral) in
+            Logger.debug("Connectorator#connect")
+            Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+            self.updateWhenActive()
+        }
+        connectorator.onTimeout {(peripheral) in
+            Logger.debug("Connectorator#timeout: '\(peripheral.name)'")
+            NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+            peripheral.reconnect()
+            self.updateWhenActive()
+        }
+        connectorator.onForceDisconnect {(peripheral) in
+            Logger.debug("Connectorator#onForcedDisconnect")
+            Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
+            NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+            self.updateWhenActive()
+        }
+        connectorator.onGiveUp {(peripheral) in
+            Logger.debug("Connectorator#giveUp: '\(peripheral.name)'")
+            peripheral.terminate()
+            self.updateWhenActive()
+        }
+        peripheral.connect(connectorator:connectorator)
     }
     
     func startScan() {
