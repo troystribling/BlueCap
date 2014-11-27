@@ -48,7 +48,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     public var isScanning : Bool {
         return self._isScanning
     }
-    
+
+    public var poweredOn : Bool {
+        return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
+    }
+
     // scanning
     public func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
         self.startScanningForServiceUUIDs(nil, afterPeripheralDiscovered)
@@ -98,13 +102,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("powerOn")
         self.afterPowerOn = afterPowerOn
         self.afterPowerOff = afterPowerOff
-        if self.poweredOn() && self.afterPowerOn != nil {
+        if self.poweredOn && self.afterPowerOn != nil {
             asyncCallback(self.afterPowerOn!)
         }
-    }
-
-    public func poweredOn() -> Bool {
-        return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
     
     // CBCentralManagerDelegate
