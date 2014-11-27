@@ -13,12 +13,12 @@ public class Connectorator {
     private var timeoutCount    = 0
     private var disconnectCount = 0
     
-    public var timeout          : ((peripheral:Peripheral) -> ())?
-    public var disconnect       : ((peripheral:Peripheral) -> ())?
-    public var forceDisconnect  : ((peripheral:Peripheral) -> ())?
-    public var connect          : ((peripheral:Peripheral) -> ())?
-    public var failedConnect    : ((peripheral:Peripheral, error:NSError?) -> ())?
-    public var giveUp           : ((peripheral:Peripheral) -> ())?
+    public var timeout          : ((peripheral:Peripheral) -> Void)?
+    public var disconnect       : ((peripheral:Peripheral) -> Void)?
+    public var forceDisconnect  : ((peripheral:Peripheral) -> Void)?
+    public var connect          : ((peripheral:Peripheral) -> Void)?
+    public var failedConnect    : ((peripheral:Peripheral, error:NSError?) -> Void)?
+    public var giveUp           : ((peripheral:Peripheral) -> Void)?
 
     public var timeoutRetries           = -1
     public var disconnectRetries        = -1
@@ -28,33 +28,33 @@ public class Connectorator {
     public init () {
     }
     
-    public init(initializer:((connectorator:Connectorator) -> ())?) {
+    public init(initializer:((connectorator:Connectorator) -> Void)?) {
         if let initializer = initializer {
             initializer(connectorator:self)
         }
     }
     
-    public func onTimeout(timeout:(peripheral:Peripheral) -> ()) {
+    public func onTimeout(timeout:(peripheral:Peripheral) -> Void) {
         self.timeout = timeout
     }
 
-    public func onDisconnect(disconnect:(peripheral:Peripheral) -> ()) {
+    public func onDisconnect(disconnect:(peripheral:Peripheral) -> Void) {
         self.disconnect = disconnect
     }
 
-    public func onForceDisconnect(forceDisconnect:(peripheral:Peripheral) -> ()) {
+    public func onForceDisconnect(forceDisconnect:(peripheral:Peripheral) -> Void) {
         self.forceDisconnect = forceDisconnect
     }
     
-    public func onConnect(connect:(peripheral:Peripheral) -> ()) {
+    public func onConnect(connect:(peripheral:Peripheral) -> Void) {
         self.connect = connect
     }
     
-    public func onFailedConnect(failedConnect:(peripheral:Peripheral, error:NSError?) -> ()) {
+    public func onFailedConnect(failedConnect:(peripheral:Peripheral, error:NSError?) -> Void) {
         self.failedConnect = failedConnect
     }
     
-    public func onGiveUp(giveUp:(peripheral:Peripheral) -> ()) {
+    public func onGiveUp(giveUp:(peripheral:Peripheral) -> Void) {
         self.giveUp = giveUp
     }
     
