@@ -34,28 +34,34 @@ public class Connectorator {
         }
     }
     
-    public func onTimeout(timeout:(peripheral:Peripheral) -> Void) {
+    public func onTimeout(timeout:(peripheral:Peripheral) -> Void) -> Self {
         self.timeout = timeout
+        return self
     }
 
-    public func onDisconnect(disconnect:(peripheral:Peripheral) -> Void) {
+    public func onDisconnect(disconnect:(peripheral:Peripheral) -> Void) -> Self {
         self.disconnect = disconnect
+        return self
     }
 
-    public func onForceDisconnect(forceDisconnect:(peripheral:Peripheral) -> Void) {
+    public func onForceDisconnect(forceDisconnect:(peripheral:Peripheral) -> Void) -> Self {
         self.forceDisconnect = forceDisconnect
+        return self
     }
     
-    public func onConnect(connect:(peripheral:Peripheral) -> Void) {
+    public func onConnect(connect:(peripheral:Peripheral) -> Void) -> Self {
         self.connect = connect
+        return self
     }
     
-    public func onFailedConnect(failedConnect:(peripheral:Peripheral, error:NSError?) -> Void) {
+    public func onFailedConnect(failedConnect:(peripheral:Peripheral, error:NSError?) -> Void) -> Self {
         self.failedConnect = failedConnect
+        return self
     }
     
-    public func onGiveUp(giveUp:(peripheral:Peripheral) -> Void) {
+    public func onGiveUp(giveUp:(peripheral:Peripheral) -> Void) -> Self {
         self.giveUp = giveUp
+        return self
     }
     
     // INTERNAL
