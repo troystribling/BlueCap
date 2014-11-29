@@ -2968,13 +2968,13 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="RSSI:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EeR-Mg-6fq">
-                                            <rect key="frame" x="20" y="85" width="44" height="21"/>
+                                            <rect key="frame" x="20" y="84" width="44" height="21"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-10" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CtP-pK-nDu">
-                                            <rect key="frame" x="124" y="84" width="30" height="23"/>
+                                            <rect key="frame" x="124" y="83" width="30" height="23"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -3013,7 +3013,7 @@
                                     <constraints>
                                         <constraint firstItem="Amd-vC-qb1" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="97" id="3cq-cY-s8R"/>
                                         <constraint firstItem="CtP-pK-nDu" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="116" id="77n-rC-IX0"/>
-                                        <constraint firstItem="CtP-pK-nDu" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="76" id="94k-RA-V78"/>
+                                        <constraint firstItem="CtP-pK-nDu" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="75" id="94k-RA-V78"/>
                                         <constraint firstItem="Amd-vC-qb1" firstAttribute="leading" secondItem="UCA-ce-pvT" secondAttribute="leadingMargin" constant="116" id="FEB-om-gZJ"/>
                                         <constraint firstItem="fd4-Qh-csI" firstAttribute="leading" secondItem="4Tr-x7-5C0" secondAttribute="trailing" constant="2" id="FPo-42-0UE"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="fd4-Qh-csI" secondAttribute="trailing" constant="12" id="JbJ-w1-tYy"/>
