@@ -2998,7 +2998,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="minor:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Tr-x7-5C0">
-                                            <rect key="frame" x="472" y="34" width="46" height="20"/>
+                                            <rect key="frame" x="472" y="35" width="46" height="20"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
@@ -3023,7 +3023,7 @@
                                         <constraint firstItem="F3S-YJ-d0O" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="55" id="gLu-QM-UmF"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="UtL-W3-8me" secondAttribute="trailing" constant="12" id="mmj-7d-gAC"/>
                                         <constraint firstItem="fd4-Qh-csI" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="27" id="rov-jZ-I8s"/>
-                                        <constraint firstItem="4Tr-x7-5C0" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="26" id="vh3-pb-zw4"/>
+                                        <constraint firstItem="4Tr-x7-5C0" firstAttribute="top" secondItem="UCA-ce-pvT" secondAttribute="topMargin" constant="27" id="vh3-pb-zw4"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
