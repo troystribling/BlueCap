@@ -75,7 +75,7 @@ class PeripheralsViewController : UITableViewController {
     
     // actions
     func toggleScan(sender:AnyObject) {
-        if BeaconManager.sharedInstance.isMonitoring() == false {
+        if BeaconManager.sharedInstance.isMonitoring == false {
             let central = CentralManager.sharedInstance
             if (central.isScanning) {
                 if  ConfigStore.getScanTimeoutEnabled() {

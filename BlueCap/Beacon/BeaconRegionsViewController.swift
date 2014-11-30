@@ -69,7 +69,7 @@ class BeaconRegionsViewController: UITableViewController {
     func toggleMonitoring(sender:AnyObject) {
         if CentralManager.sharedInstance.isScanning == false {
             let beaconManager = BeaconManager.sharedInstance
-            if beaconManager.isRanging() {
+            if beaconManager.isRanging {
                 beaconManager.stopRangingAllBeacons()
                 beaconManager.stopMonitoringAllRegions()
                 self.beaconRegions.removeAll(keepCapacity:false)
@@ -84,7 +84,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func setScanButton() {
-        if BeaconManager.sharedInstance.isRanging() {
+        if BeaconManager.sharedInstance.isRanging {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)

@@ -13,7 +13,6 @@ public class RegionManager : LocationManager {
 
     internal var configuredRegions       : [CLRegion:Region] = [:]
     internal var regionMonitorStatus     : [String:Bool]     = [:]
-
     
     public var regions : [Region] {
         return self.configuredRegions.values.array
@@ -21,6 +20,10 @@ public class RegionManager : LocationManager {
     
     public var maximumRegionMonitoringDistance : CLLocationDistance {
         return self.clLocationManager.maximumRegionMonitoringDistance
+    }
+    
+    public var isMonitoring : Bool {
+        return self.regionMonitorStatus.values.array.any{$0}
     }
     
     public class var sharedInstance : RegionManager {
@@ -32,17 +35,6 @@ public class RegionManager : LocationManager {
     
     public override init() {
         super.init()
-    }
-    
-    public func isMonitoring() -> Bool {
-        var status = false
-        for regionStatus in self.regionMonitorStatus.values.array {
-            if regionStatus {
-                status = true
-                break
-            }
-        }
-        return status
     }
     
     public func isMonitoringRegion(identifier:String) -> Bool {

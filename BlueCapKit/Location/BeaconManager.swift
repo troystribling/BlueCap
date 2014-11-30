@@ -18,6 +18,10 @@ public class BeaconManager : RegionManager {
         return self.configuredBeaconRegions.values.array
     }
     
+    public var isRanging : Bool {
+        return self.regionRangingStatus.values.array.any{$0}
+    }
+    
     public override init() {
         super.init()
     }
@@ -31,17 +35,6 @@ public class BeaconManager : RegionManager {
             static let instance = BeaconManager()
         }
         return Static.instance
-    }
-    
-    public func isRanging() -> Bool {
-        var status = false
-        for regionStatus in self.regionRangingStatus.values.array {
-            if regionStatus {
-                status = true
-                break
-            }
-        }
-        return status
     }
     
     public func isRangingRegion(identifier:String) -> Bool {
