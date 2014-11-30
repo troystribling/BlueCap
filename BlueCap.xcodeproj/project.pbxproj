@@ -135,7 +135,7 @@
 		055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = BlueCapKit.xcodeproj; sourceTree = "<group>"; };
 		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerAddAdvertisedServiceViewController.swift; sourceTree = "<group>"; };
-		056B7C7819E0600A001B7F95 /* Testit.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Testit.playground; sourceTree = "<group>"; };
+		056B7C7819E0600A001B7F95 /* BlueCap.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = BlueCap.playground; path = BlueCap/BlueCap.playground; sourceTree = "<group>"; };
 		056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconCell.swift; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; };
 		057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicValueCell.swift; sourceTree = "<group>"; };
@@ -273,9 +273,10 @@
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
-				055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */,
-				05B45BE519A788BC009DAF6D /* CoreLocation.framework */,
 				05840F8D1942098300C744E6 /* CoreBluetooth.framework */,
+				05B45BE519A788BC009DAF6D /* CoreLocation.framework */,
+				056B7C7819E0600A001B7F95 /* BlueCap.playground */,
+				055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */,
 				05840F61194206F100C744E6 /* BlueCap */,
 				05840F76194206F100C744E6 /* BlueCapTests */,
 				05840F60194206F100C744E6 /* Products */,
@@ -352,7 +353,6 @@
 		05BB68BA195C71F200434136 /* Playgrounds */ = {
 			isa = PBXGroup;
 			children = (
-				056B7C7819E0600A001B7F95 /* Testit.playground */,
 			);
 			name = Playgrounds;
 			sourceTree = "<group>";

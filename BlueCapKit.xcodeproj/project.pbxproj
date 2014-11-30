@@ -47,11 +47,26 @@
 		055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */; };
 		055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */; };
 		055120F219F5513700ED3B74 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C919F5513700ED3B74 /* Logger.swift */; };
-		055120F319F5513700ED3B74 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120CA19F5513700ED3B74 /* StringExtensions.swift */; };
-		055120F419F5513700ED3B74 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120CB19F5513700ED3B74 /* Utils.swift */; };
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
-		059A121F1A11B5CB00395353 /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059A121E1A11B5CB00395353 /* DoubleExtensions.swift */; };
+		05D3B9211A2B8C4E008E794E /* ExecutionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B91B1A2B8C4E008E794E /* ExecutionContext.swift */; };
+		05D3B9221A2B8C4E008E794E /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B91C1A2B8C4E008E794E /* Future.swift */; };
+		05D3B9231A2B8C4E008E794E /* FutureUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B91D1A2B8C4E008E794E /* FutureUtils.swift */; };
+		05D3B9241A2B8C4E008E794E /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B91E1A2B8C4E008E794E /* Promise.swift */; };
+		05D3B9251A2B8C4E008E794E /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B91F1A2B8C4E008E794E /* Queue.swift */; };
+		05D3B9261A2B8C4E008E794E /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9201A2B8C4E008E794E /* Result.swift */; };
+		05D3B9321A2B8D61008E794E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9281A2B8D61008E794E /* Array.swift */; };
+		05D3B9331A2B8D61008E794E /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9291A2B8D61008E794E /* Dictionary.swift */; };
+		05D3B9341A2B8D61008E794E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92A1A2B8D61008E794E /* Double.swift */; };
+		05D3B9351A2B8D61008E794E /* ExSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92B1A2B8D61008E794E /* ExSwift.swift */; };
+		05D3B9361A2B8D61008E794E /* Float.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92C1A2B8D61008E794E /* Float.swift */; };
+		05D3B9371A2B8D61008E794E /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92D1A2B8D61008E794E /* Int.swift */; };
+		05D3B9381A2B8D61008E794E /* NSArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92E1A2B8D61008E794E /* NSArray.swift */; };
+		05D3B9391A2B8D61008E794E /* Range.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92F1A2B8D61008E794E /* Range.swift */; };
+		05D3B93A1A2B8D61008E794E /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9301A2B8D61008E794E /* Sequence.swift */; };
+		05D3B93D1A2B9BED008E794E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B93C1A2B9BED008E794E /* String.swift */; };
+		05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* DoubleExtensions.swift */; };
+		05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* StringExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -99,11 +114,27 @@
 		055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfileUtils.swift; sourceTree = "<group>"; };
 		055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TISensorTagServiceProfiles.swift; sourceTree = "<group>"; };
 		055120C919F5513700ED3B74 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		055120CA19F5513700ED3B74 /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
-		055120CB19F5513700ED3B74 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		059A121E1A11B5CB00395353 /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
+		05D3B91B1A2B8C4E008E794E /* ExecutionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExecutionContext.swift; sourceTree = "<group>"; };
+		05D3B91C1A2B8C4E008E794E /* Future.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Future.swift; sourceTree = "<group>"; };
+		05D3B91D1A2B8C4E008E794E /* FutureUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FutureUtils.swift; sourceTree = "<group>"; };
+		05D3B91E1A2B8C4E008E794E /* Promise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
+		05D3B91F1A2B8C4E008E794E /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		05D3B9201A2B8C4E008E794E /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		05D3B9281A2B8D61008E794E /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
+		05D3B9291A2B8D61008E794E /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		05D3B92A1A2B8D61008E794E /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		05D3B92B1A2B8D61008E794E /* ExSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExSwift.swift; sourceTree = "<group>"; };
+		05D3B92C1A2B8D61008E794E /* Float.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Float.swift; sourceTree = "<group>"; };
+		05D3B92D1A2B8D61008E794E /* Int.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
+		05D3B92E1A2B8D61008E794E /* NSArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSArray.swift; sourceTree = "<group>"; };
+		05D3B92F1A2B8D61008E794E /* Range.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Range.swift; sourceTree = "<group>"; };
+		05D3B9301A2B8D61008E794E /* Sequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
+		05D3B93C1A2B9BED008E794E /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		05D3B9411A2BA09F008E794E /* BlueCapKit.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BlueCapKit.playground; sourceTree = "<group>"; };
+		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
+		05D3B9441A2BA162008E794E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +162,7 @@
 			children = (
 				055120F719F551CB00ED3B74 /* CoreBluetooth.framework */,
 				055120F519F551BB00ED3B74 /* CoreLocation.framework */,
+				05D3B9411A2BA09F008E794E /* BlueCapKit.playground */,
 				0551208419F5506000ED3B74 /* BlueCapKit */,
 				0551208E19F5506000ED3B74 /* BlueCapKitTests */,
 				0551208319F5506000ED3B74 /* Products */,
@@ -149,15 +181,17 @@
 		0551208419F5506000ED3B74 /* BlueCapKit */ = {
 			isa = PBXGroup;
 			children = (
+				0551208719F5506000ED3B74 /* BlueCapKit.h */,
 				0551209C19F5513700ED3B74 /* Central */,
+				05D3B9421A2BA162008E794E /* Extensions */,
+				05D3B9191A2B8C4E008E794E /* External */,
 				055120A519F5513700ED3B74 /* Location */,
 				055120AE19F5513700ED3B74 /* Peripheral */,
 				055120B219F5513700ED3B74 /* Serialization Deserialization */,
 				055120B919F5513700ED3B74 /* Service Profiles */,
 				055120C219F5513700ED3B74 /* Service Profiles Definitions */,
-				055120C819F5513700ED3B74 /* Utilities */,
-				0551208719F5506000ED3B74 /* BlueCapKit.h */,
 				0551208519F5506000ED3B74 /* Supporting Files */,
+				055120C819F5513700ED3B74 /* Utilities */,
 			);
 			path = BlueCapKit;
 			sourceTree = "<group>";
@@ -269,12 +303,57 @@
 		055120C819F5513700ED3B74 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				059A121E1A11B5CB00395353 /* DoubleExtensions.swift */,
 				055120C919F5513700ED3B74 /* Logger.swift */,
-				055120CA19F5513700ED3B74 /* StringExtensions.swift */,
-				055120CB19F5513700ED3B74 /* Utils.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		05D3B9191A2B8C4E008E794E /* External */ = {
+			isa = PBXGroup;
+			children = (
+				05D3B9271A2B8D61008E794E /* ExtSwift */,
+				05D3B91A1A2B8C4E008E794E /* BrightFutures */,
+			);
+			path = External;
+			sourceTree = "<group>";
+		};
+		05D3B91A1A2B8C4E008E794E /* BrightFutures */ = {
+			isa = PBXGroup;
+			children = (
+				05D3B91B1A2B8C4E008E794E /* ExecutionContext.swift */,
+				05D3B91C1A2B8C4E008E794E /* Future.swift */,
+				05D3B91D1A2B8C4E008E794E /* FutureUtils.swift */,
+				05D3B91E1A2B8C4E008E794E /* Promise.swift */,
+				05D3B91F1A2B8C4E008E794E /* Queue.swift */,
+				05D3B9201A2B8C4E008E794E /* Result.swift */,
+			);
+			path = BrightFutures;
+			sourceTree = "<group>";
+		};
+		05D3B9271A2B8D61008E794E /* ExtSwift */ = {
+			isa = PBXGroup;
+			children = (
+				05D3B9281A2B8D61008E794E /* Array.swift */,
+				05D3B9291A2B8D61008E794E /* Dictionary.swift */,
+				05D3B92A1A2B8D61008E794E /* Double.swift */,
+				05D3B92B1A2B8D61008E794E /* ExSwift.swift */,
+				05D3B92C1A2B8D61008E794E /* Float.swift */,
+				05D3B92D1A2B8D61008E794E /* Int.swift */,
+				05D3B92E1A2B8D61008E794E /* NSArray.swift */,
+				05D3B92F1A2B8D61008E794E /* Range.swift */,
+				05D3B9301A2B8D61008E794E /* Sequence.swift */,
+				05D3B93C1A2B9BED008E794E /* String.swift */,
+			);
+			path = ExtSwift;
+			sourceTree = "<group>";
+		};
+		05D3B9421A2BA162008E794E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				05D3B9431A2BA162008E794E /* DoubleExtensions.swift */,
+				05D3B9441A2BA162008E794E /* StringExtensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,13 +463,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05D3B93D1A2B9BED008E794E /* String.swift in Sources */,
 				055120D019F5513700ED3B74 /* Peripheral.swift in Sources */,
 				055120E919F5513700ED3B74 /* ProfileManager.swift in Sources */,
+				05D3B93A1A2B8D61008E794E /* Sequence.swift in Sources */,
 				055120D219F5513700ED3B74 /* Service.swift in Sources */,
 				055120CE19F5513700ED3B74 /* Characteristic.swift in Sources */,
-				059A121F1A11B5CB00395353 /* DoubleExtensions.swift in Sources */,
+				05D3B9331A2B8D61008E794E /* Dictionary.swift in Sources */,
 				055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */,
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
+				05D3B9341A2B8D61008E794E /* Double.swift in Sources */,
 				055120DA19F5513700ED3B74 /* Region.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
 				055120EC19F5513700ED3B74 /* StructCharacteristicProfile.swift in Sources */,
@@ -400,10 +482,12 @@
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
 				055120E719F5513700ED3B74 /* EnumCharacteristicProfile.swift in Sources */,
-				055120F419F5513700ED3B74 /* Utils.swift in Sources */,
+				05D3B9231A2B8C4E008E794E /* FutureUtils.swift in Sources */,
 				055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */,
 				055120D619F5513700ED3B74 /* BeaconRegion.swift in Sources */,
+				05D3B9321A2B8D61008E794E /* Array.swift in Sources */,
+				05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */,
 				055120D319F5513700ED3B74 /* TimedScannerator.swift in Sources */,
 				055120DE19F5513700ED3B74 /* PeripheralManager.swift in Sources */,
 				055120E619F5513700ED3B74 /* DeserializedCharacteristicProfile.swift in Sources */,
@@ -412,19 +496,29 @@
 				055120D419F5513700ED3B74 /* Beacon.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
 				055120D719F5513700ED3B74 /* CircularRegion.swift in Sources */,
+				05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
+				05D3B9221A2B8C4E008E794E /* Future.swift in Sources */,
+				05D3B9391A2B8D61008E794E /* Range.swift in Sources */,
 				055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */,
+				05D3B9241A2B8C4E008E794E /* Promise.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
 				055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */,
+				05D3B9371A2B8D61008E794E /* Int.swift in Sources */,
 				055120D919F5513700ED3B74 /* LocationManager.swift in Sources */,
-				055120F319F5513700ED3B74 /* StringExtensions.swift in Sources */,
+				05D3B9261A2B8C4E008E794E /* Result.swift in Sources */,
+				05D3B9381A2B8D61008E794E /* NSArray.swift in Sources */,
 				055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */,
 				055120DB19F5513700ED3B74 /* RegionManager.swift in Sources */,
 				055120DC19F5513700ED3B74 /* MutableCharacteristic.swift in Sources */,
 				055120E219F5513700ED3B74 /* SerializeDeserialize.swift in Sources */,
 				055120E819F5513700ED3B74 /* PairStructCharacteristicProfile.swift in Sources */,
+				05D3B9211A2B8C4E008E794E /* ExecutionContext.swift in Sources */,
+				05D3B9361A2B8D61008E794E /* Float.swift in Sources */,
 				055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */,
+				05D3B9251A2B8C4E008E794E /* Queue.swift in Sources */,
+				05D3B9351A2B8D61008E794E /* ExSwift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
