@@ -54,7 +54,7 @@ public class Future<T> {
     typealias SuccessCallback = (T) -> ()
     public typealias FailureCallback = (NSError) -> ()
     
-    let q = Queue()
+    let q : Queue
     
     var result: Result<T>? = nil
     
@@ -109,7 +109,11 @@ public class Future<T> {
     }
     
     internal init() {
-        
+        self.q = Queue()
+    }
+    
+    internal init(q:Queue) {
+        self.q = q
     }
     
     /**

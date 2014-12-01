@@ -12,8 +12,8 @@ import CoreBluetooth
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PRIVATE
-    private var afterPowerOn                    : (()->())?
-    private var afterPowerOff                   : (()->())?
+    private var afterPowerOn                    : Promise<Void>!
+    private var afterPowerOff                   : Promise<Void>!
     private var afterPeripheralDiscovered       : ((peripheral:Peripheral, rssi:Int)->())?
 
     private let cbCentralManager    : CBCentralManager!
@@ -51,6 +51,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
+    }
+    
+    public var poweredOff : Bool {
+        return self.cbCentralManager.state == CBCentralManagerState.PoweredOff
     }
 
     // scanning
@@ -98,13 +102,22 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // power up
-    public func powerOn(afterPowerOn:(()->())?, afterPowerOff:(()->())? = nil) {
-        Logger.debug("powerOn")
-        self.afterPowerOn = afterPowerOn
-        self.afterPowerOff = afterPowerOff
-        if self.poweredOn && self.afterPowerOn != nil {
-            asyncCallback(self.afterPowerOn!)
+    public func powerOn() -> Future<Void> {
+        Logger.debug("CentralManager#powerOn")
+        self.afterPowerOn = Promise<Void>()
+        if self.poweredOn {
+            self.afterPowerOn.success(())
         }
+        return self.afterPowerOn.future
+    }
+    
+    public func powerOff() -> Future<Void> {
+        Logger.debug("CentralManager#powerOff")
+        self.afterPowerOff = Promise<Void>()
+        if self.poweredOff {
+            self.afterPowerOff.success(())
+        }
+        return self.afterPowerOff.future
     }
     
     // CBCentralManagerDelegate
@@ -170,13 +183,13 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
             if let afterPowerOff = self.afterPowerOff {
-                self.asyncCallback(afterPowerOff)
+                afterPowerOff.success(())
             }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
             if let afterPowerOn = self.afterPowerOn {
-                self.asyncCallback(afterPowerOn)
+                afterPowerOn.success(())
             }
             break
         }

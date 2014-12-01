@@ -30,6 +30,10 @@ public class Promise<T> {
         self.future = Future<T>()
     }
     
+    public init(queue:Queue) {
+        self.future = Future<T>(q:queue)
+    }
+    
     public func completeWith(future: Future<T>) {
         future.onComplete { result in
             switch result {
