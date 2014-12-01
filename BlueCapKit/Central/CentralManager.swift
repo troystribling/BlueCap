@@ -104,7 +104,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // power up
     public func powerOn() -> Future<Void> {
         Logger.debug("CentralManager#powerOn")
-        self.afterPowerOn = Promise<Void>()
+        self.afterPowerOn = Promise<Void>(callbackQueue:Queue.main)
         if self.poweredOn {
             self.afterPowerOn.success(())
         }
@@ -113,7 +113,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     public func powerOff() -> Future<Void> {
         Logger.debug("CentralManager#powerOff")
-        self.afterPowerOff = Promise<Void>()
+        self.afterPowerOff = Promise<Void>(callbackQueue:Queue.main)
         if self.poweredOff {
             self.afterPowerOff.success(())
         }
