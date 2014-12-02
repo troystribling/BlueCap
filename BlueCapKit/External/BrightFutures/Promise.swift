@@ -30,10 +30,6 @@ public class Promise<T> {
         self.future = Future<T>()
     }
     
-    public init(callbackQueue:Queue) {
-        self.future = Future<T>(callbackQueue:callbackQueue)
-    }
-    
     public func completeWith(future: Future<T>) {
         future.onComplete { result in
             switch result {
