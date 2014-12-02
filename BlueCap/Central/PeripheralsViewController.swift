@@ -117,7 +117,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func powerOn() {
-        CentralManager.sharedInstance.powerOn().onSuccess(context:ImmediateExecutionContext()) {
+        CentralManager.sharedInstance.powerOn().onSuccess {
             Logger.debug("PeripheralsViewController#powerOn")
             self.startScan()
             self.setScanButton()

@@ -59,7 +59,7 @@ public struct Queue : ExecutionContext {
      * Instantiates a new `Queue` with the given queue.
      * If `param` is omitted, a serial queue with identifier "queue" is used.
      */
-    public init(queue: dispatch_queue_t = dispatch_queue_create("queue", DISPATCH_QUEUE_SERIAL)) {
+    public init(queue: dispatch_queue_t = dispatch_queue_create("us.gnos.bluecap.futures", DISPATCH_QUEUE_SERIAL)) {
         self.queue = queue
     }
     

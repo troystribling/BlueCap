@@ -61,7 +61,7 @@ public class Future<T> {
     
     var callbacks: [CallbackInternal] = Array<CallbackInternal>()
     
-    let defaultCallbackExecutionContext = Queue()
+    let defaultCallbackExecutionContext = ImmediateExecutionContext()
     
     public func succeeded(fn: (T -> ())? = nil) -> Bool {
         if let res = self.result {
@@ -291,7 +291,7 @@ public class Future<T> {
         self.onComplete(context: c) { result in
             switch result {
             case .Success(let val):
-                callback(val.value)
+                self.callbackQueue.async{callback(val.value)}
             default:
                 break
             }
@@ -374,7 +374,7 @@ public class Future<T> {
     }
     
     private func runCallbacks() {
-        callbackQueue.async {
+        self.callbackQueue.async {
             for callback in self.callbacks {
                 callback(future: self)
             }
