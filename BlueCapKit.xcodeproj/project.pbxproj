@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		05263D091A2E24A000BAE347 /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05263D031A2E24A000BAE347 /* SimpleFutures.swift */; };
+		05263D091A2E24A000BAE347 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05263D031A2E24A000BAE347 /* Future.swift */; };
+		05263D111A2F76DA00BAE347 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05263D101A2F76DA00BAE347 /* Promise.swift */; };
+		05263D131A2F786300BAE347 /* ExecutionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05263D121A2F786300BAE347 /* ExecutionContext.swift */; };
 		0551208819F5506000ED3B74 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0551208719F5506000ED3B74 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0551209219F5506000ED3B74 /* BlueCapKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209119F5506000ED3B74 /* BlueCapKitTests.swift */; };
 		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
@@ -65,7 +67,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05263D031A2E24A000BAE347 /* SimpleFutures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFutures.swift; sourceTree = "<group>"; };
+		05263D031A2E24A000BAE347 /* Future.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Future.swift; sourceTree = "<group>"; };
+		05263D101A2F76DA00BAE347 /* Promise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
+		05263D121A2F786300BAE347 /* ExecutionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExecutionContext.swift; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0551208719F5506000ED3B74 /* BlueCapKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueCapKit.h; sourceTree = "<group>"; };
@@ -150,7 +154,9 @@
 		05263D011A2E24A000BAE347 /* SimpleFutures */ = {
 			isa = PBXGroup;
 			children = (
-				05263D031A2E24A000BAE347 /* SimpleFutures.swift */,
+				05263D031A2E24A000BAE347 /* Future.swift */,
+				05263D101A2F76DA00BAE347 /* Promise.swift */,
+				05263D121A2F786300BAE347 /* ExecutionContext.swift */,
 			);
 			name = SimpleFutures;
 			path = External/SimpleFutures;
@@ -463,8 +469,9 @@
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
 				055120EC19F5513700ED3B74 /* StructCharacteristicProfile.swift in Sources */,
 				055120DD19F5513700ED3B74 /* MutableService.swift in Sources */,
-				05263D091A2E24A000BAE347 /* SimpleFutures.swift in Sources */,
+				05263D091A2E24A000BAE347 /* Future.swift in Sources */,
 				055120EB19F5513700ED3B74 /* StringCharacteristicProfile.swift in Sources */,
+				05263D131A2F786300BAE347 /* ExecutionContext.swift in Sources */,
 				055120D519F5513700ED3B74 /* BeaconManager.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
@@ -496,6 +503,7 @@
 				055120DB19F5513700ED3B74 /* RegionManager.swift in Sources */,
 				055120DC19F5513700ED3B74 /* MutableCharacteristic.swift in Sources */,
 				055120E219F5513700ED3B74 /* SerializeDeserialize.swift in Sources */,
+				05263D111A2F76DA00BAE347 /* Promise.swift in Sources */,
 				055120E819F5513700ED3B74 /* PairStructCharacteristicProfile.swift in Sources */,
 				05D3B9361A2B8D61008E794E /* Float.swift in Sources */,
 				055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  SimpleFutures.swift
+//  Future.swift
 //  SimpleFutures
 //
 //  Created by Troy Stribling on 7/5/14.
@@ -8,134 +8,162 @@
 
 import Foundation
 
-public class ExecutionContext {
+public final class ResultWrapper<T> {
+    public let value: T
     
-    public class var main : ExecutionContext {
-        struct Static {
-            static let instance : ExecutionContext = ExecutionContext(queue:Queue.main)
+    init(_ value: T) {
+        self.value = value
+    }
+}
+
+public enum Result<T> {
+    case Success(ResultWrapper<T>)
+    case Failure(NSError)
+    
+    init(_ value: T) {
+        self = .Success(ResultWrapper(value))
+    }
+    
+    init(_ error: NSError) {
+        self = .Failure(error)
+    }
+    
+    public func failed(failure:(NSError -> Void)? = nil) -> Bool {
+        switch self {
+            
+        case .Success(_):
+            return false
+            
+        case .Failure(let error):
+            if let failure = failure {
+                failure(error)
+            }
+            return true
         }
-        return Static.instance
     }
     
-    public class var global: ExecutionContext {
-        struct Static {
-            static let instance : ExecutionContext = ExecutionContext(queue:Queue.global)
+    public func succeeded(success:(T -> Void)? = nil) -> Bool {
+        switch self {
+        case .Success(let result):
+            if let success = success {
+                success(result.value)
+            }
+            return true
+        case .Failure(let err):
+            return false
         }
-        return Static.instance
     }
     
-    let queue:Queue?
-    
-    public init() {
-    }
-    
-    public init(queue:Queue) {
-        self.queue = queue
-    }
-    
-    public func execute(task: Void -> Void) {
-        if let queue = queue {
-            queue.async(task)
-        } else {
-            task()
+    public func handle(success:(T->Void)? = nil, failure:(NSError->Void)? = nil) {
+        switch self {
+        case .Success(let val):
+            if let success = success {
+                success(val.value)
+            }
+        case .Failure(let err):
+            if let failure = failure {
+                failure(err)
+            }
         }
     }
 }
 
-public struct Queue {
-    
-    public static let main = Queue(queue: dispatch_get_main_queue());
-    public static let global = Queue(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
-    
-    var queue: dispatch_queue_t
-    
-    public init(queue: dispatch_queue_t = dispatch_queue_create("us.gnos.simplefutures", DISPATCH_QUEUE_SERIAL)) {
-        self.queue = queue
-    }
-    
-    public func sync(block:Void -> Void) {
-        dispatch_sync(queue, block)
-    }
-    
-    public func sync<T>(block: Void -> T) -> T {
-        var result:T!
-        dispatch_sync(self.queue, {
-            result = block();
-        });
-        return result;
-    }
-    
-    public func async(block: dispatch_block_t) {
-        dispatch_async(queue, block);
-    }
-    
-}
-
-
-public let NoSuchElementError = "NoSuchElementError"
 
 public class Future<T> {
     
-    typealias CallbackInternal          = (future: Future<T>) -> Void
-    typealias CompletionCallback        = (result:T) -> Void
-    typealias SuccessCallback           = (T) -> Void
-    public typealias FailureCallback    = (NSError) -> Void
+    typealias FutureCallback            = Future<T> -> Void
+    typealias CompletionCallback        = Result<T> -> Void
+    typealias SuccessCallback           = T -> Void
+    public typealias FailureCallback    = NSError -> Void
     
-    let q  = Queue()
+    let internalQueue = Queue("us.gnos.simplefutures")
     
-    var result:T?
+    var result: Result<T>? = nil
     
-    var callbacks: [CallbackInternal] = Array<CallbackInternal>()
+    var futureCallbacks = [FutureCallback]()
     
-    public func succeeded(fn:(T -> Void)? = nil) -> Bool {
-        if let result = self.result {
-            return result.succeeded(fn)
+    public func succeeded(fn: (T -> ())? = nil) -> Bool {
+        if let res = self.result {
+            return res.succeeded(fn)
         }
         return false
     }
     
-    public func failed(fn:(NSError -> Void)? = nil) -> Bool {
-        if let result = self.result {
-            return result.failed(fn)
+    public func failed(fn: (NSError -> ())? = nil) -> Bool {
+        if let res = self.result {
+            return res.failed(fn)
         }
         return false
     }
     
-    public func completed(success:(T->Void)? = nil, failure:(NSError->Void)? = nil) -> Bool{
-        if let result = self.result {
-            result.handle(success:success, failure:failure)
+    public func completed(success: (T->())? = nil, failure: (NSError->())? = nil) -> Bool{
+        if let res = self.result {
+            res.handle(success: success, failure: failure)
             return true
         }
         return false
     }
     
+    public class func succeeded(value: T) -> Future<T> {
+        let res = Future<T>();
+        res.result = Result(value)
+        
+        return res
+    }
+    
+    public class func failed(error: NSError) -> Future<T> {
+        let res = Future<T>();
+        res.result = Result(error)
+        
+        return res
+    }
+    
+    public class func completeAfter(delay: NSTimeInterval, withValue value: T) -> Future<T> {
+        let res = Future<T>()
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * NSTimeInterval(NSEC_PER_SEC))), Queue.global.queue) {
+            res.success(value)
+        }
+        
+        return res
+    }
+    
     internal init() {
     }
     
-    func complete(result:T?) {
+    /**
+     * Returns a Future that will never succeed
+     */
+    public class func never() -> Future<T> {
+        return Future<T>()
+    }
+    
+    func complete(result: Result<T>) {
         let succeeded = tryComplete(result)
         assert(succeeded)
     }
     
-    func tryComplete(result:T?) -> Bool {
-        if let result = result {
-            return self.trySuccess(result)
-        } else {
-            return self.tryError(nil)
+    func tryComplete(result: Result<T>) -> Bool {
+        switch result {
+        case .Success(let val):
+            return self.trySuccess(val.value)
+        case .Failure(let err):
+            return self.tryError(err)
         }
     }
     
-    func success(value:T) {
+    func success(value: T) {
         let succeeded = self.trySuccess(value)
         assert(succeeded)
     }
     
-    func trySuccess(value:T) -> Bool {
+    func trySuccess(value: T) -> Bool {
         return q.sync {
             if self.result != nil {
                 return false;
             }
-            self.result = value
+            
+            self.result = Result(value)
             self.runCallbacks()
             return true;
         };
@@ -254,45 +282,4 @@ public class Future<T> {
             self.callbacks.removeAll()
         }
     }
-}
-
-public class Promise<T> {
-    
-    public let future: Future<T>
-    
-    public init() {
-        self.future = Future<T>()
-    }
-    
-    public func completeWith(future: Future<T>) {
-        future.onComplete { result in
-            switch result {
-            case .Success(let val):
-                self.success(val.value)
-            case .Failure(let err):
-                self.error(err)
-            }
-        }
-    }
-    
-    public func success(value: T) {
-        self.future.success(value)
-    }
-    
-    public func trySuccess(value: T) -> Bool {
-        return self.future.trySuccess(value)
-    }
-    
-    public func error(error: NSError) {
-        self.future.error(error)
-    }
-    
-    public func tryError(error: NSError) -> Bool {
-        return self.future.tryError(error)
-    }
-    
-    public func tryComplete(result: Result<T>) -> Bool {
-        return self.future.tryComplete(result)
-    }
-    
 }
