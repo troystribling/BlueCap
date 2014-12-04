@@ -43,7 +43,7 @@ public class Promise<T> {
         return self.future.tryError(error)
     }
     
-    public func tryComplete(result: Result<T>) -> Bool {
+    public func tryComplete(result:Try<T>) -> Bool {
         return self.future.tryComplete(result)
     }
     

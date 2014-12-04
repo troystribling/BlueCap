@@ -71,16 +71,16 @@ public enum Try<T> {
 
 public class Future<T> {
     
-    typealias           CompletionFuture    = Future<T> -> Void
-    typealias           Completion          = Try<T> -> Void
-    typealias           Success             = T -> Void
-    public typealias    Failure             = NSError -> Void
+    typealias           OnCompleteInFuture  = Future<T> -> Void
+    typealias           OnComplete          = Try<T> -> Void
+    typealias           OnSuccess           = T -> Void
+    public typealias    OnFailure           = NSError -> Void
     
     var result:Try<T>?
 
-    let internalQueue       = Queue("us.gnos.simplefutures")
-    var completionFutures   = [CompletionFuture]()
-    var executionContext    = QueueContext.main
+    let internalQueue                       = Queue("us.gnos.simplefutures")
+    var onCompleteFutures                   = [OnCompleteInFuture]()
+    var executionContext : ExecutionContext = QueueContext.main
     
     public func succeeded(success:(T -> Void)? = nil) -> Bool {
         if let result = self.result {
@@ -154,23 +154,23 @@ public class Future<T> {
         };
     }
 
-    public func onComplete(callback:Completion) -> Future<T> {
-        return self.onComplete(self.executionContext, callback:callback)
+    public func onComplete(onCompletion:OnComplete) -> Future<T> {
+        return self.onComplete(self.executionContext, complete:onCompletion)
     }
     
-    public func onComplete(context:ExecutionContext, callback:Completion) -> Future<T> {
-        self.executionContext = context
-        q.sync {
+    public func onComplete(executionCcontext:ExecutionContext, complete:OnComplete) -> Future<T> {
+        self.executionContext = executionCcontext
+        self.internalQueue.sync {
             let wrappedCallback : Future<T> -> () = { future in
-                if let realRes = self.result {
-                    c.execute {
-                        callback(result: realRes)
+                if let result = self.result {
+                    self.executionContext.execute {
+                        complete(result)
                     }
                 }
             }
             
             if self.result == nil {
-                self.callbacks.append(wrappedCallback)
+                self.onCompleteFutures.append(wrappedCallback)
             } else {
                 wrappedCallback(self)
             }
@@ -179,15 +179,11 @@ public class Future<T> {
         return self
     }
 
-    public func onSuccess(callback: SuccessCallback) -> Future<T> {
-        return self.onSuccess(context: self.callbackExecutionContext, callback)
-    }
-    
-    public func onSuccess(context c: ExecutionContext, callback: SuccessCallback) -> Future<T> {
-        self.onComplete(context: c) { result in
+    public func onSuccess(success:OnSuccess) -> Future<T> {
+        self.onComplete(self.executionContext) {result in
             switch result {
-            case .Success(let val):
-                callback(val.value)
+            case .Success(let resultWrapper):
+                success(resultWrapper.value)
             default:
                 break
             }
@@ -196,12 +192,13 @@ public class Future<T> {
         return self
     }
     
-    public func onFailure(callback: FailureCallback) -> Future<T> {
-        return self.onFailure(context: self.callbackExecutionContext, callback)
+    public func onSuccess(executionCcontext:ExecutionContext, callback:OnSuccess) -> Future<T> {
+        self.executionContext = executionCcontext
+        return self.onSuccess(callback)
     }
     
-    public func onFailure(context c: ExecutionContext, callback: FailureCallback) -> Future<T> {
-        self.onComplete(context: c) { result in
+    public func onFailure(callback:OnFailure) -> Future<T> {
+        self.onComplete(self.executionContext) { result in
             switch result {
             case .Failure(let err):
                 callback(err)
@@ -212,42 +209,17 @@ public class Future<T> {
         return self
     }
     
-    public func recover(task: (NSError) -> T) -> Future<T> {
-        return self.recover(context: self.callbackExecutionContext, task)
+    public func onFailure(executionContext:ExecutionContext, callback:OnFailure) -> Future<T> {
+        self.executionContext = executionContext
+        return self.onFailure(self.executionContext, callback)
     }
     
-    public func recover(context c: ExecutionContext, task: (NSError) -> T) -> Future<T> {
-        return self.recoverWith(context: c) { error -> Future<T> in
-            return Future.succeeded(task(error))
-        }
-    }
-    
-    public func recoverWith(task: (NSError) -> Future<T>) -> Future<T> {
-        return self.recoverWith(context: self.callbackExecutionContext, task: task)
-    }
-    
-    public func recoverWith(context c: ExecutionContext, task: (NSError) -> Future<T>) -> Future<T> {
-        let p = Promise<T>()
-        
-        self.onComplete(context: c) { result -> () in
-            switch result {
-            case .Failure(let err):
-                p.completeWith(task(err))
-            case .Success(let val):
-                p.completeWith(self)
-            }
-        }
-        
-        return p.future;
-    }
-        
     private func runCallbacks() {
-        self.callbackExecutionContext.execute {
-            for callback in self.callbacks {
-                callback(future: self)
+        self.executionContext.execute {
+            for complete in self.onCompleteFutures {
+                complete(self)
             }
-            
-            self.callbacks.removeAll()
+            self.onCompleteFutures.removeAll()
         }
     }
 }
