@@ -16,8 +16,7 @@ public class Characteristic {
     private var notificationStateChangedFailed      : ((error:NSError) -> ())?
     private var afterUpdateSuccess                  : (() -> ())?
     private var afterUpdateFailed                   : ((error:NSError) -> ())?
-    private var afterWriteSuccess                   : (() -> ())?
-    private var afterWriteFailed                    : ((error:NSError) -> ())?
+    private var afterWrite                  : Promise<Void>!
     
     private var reading = false
     private var writing = false
@@ -128,11 +127,10 @@ public class Characteristic {
         }
     }
 
-    public func writeData(value:NSData, afterWriteSuccess:()->(), afterWriteFailed:((error:NSError)->())? = nil) {
+    public func writeData(value:NSData) -> Future<Void> {
+        self.afterWrite = Promise<Void>()
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-            self.afterWriteSuccess = afterWriteSuccess
-            self.afterWriteFailed = afterWriteFailed
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
             self.writing = true
             ++self.writeSequence
@@ -140,6 +138,7 @@ public class Characteristic {
         } else {
             NSException(name:"Characteristic write error", reason: "write not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
         }
+        return self.afterWrite.future
     }
 
     public func writeData(value:NSData, afterWriteFailed:((error:NSError)->())? = nil) {

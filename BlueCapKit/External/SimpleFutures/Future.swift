@@ -78,9 +78,10 @@ public class Future<T> {
     
     var result:Try<T>?
 
-    let internalQueue                       = Queue("us.gnos.simplefutures")
-    var onCompleteFutures                   = [OnCompleteInFuture]()
-    var executionContext : ExecutionContext = QueueContext.main
+    let internalQueue                               = Queue("us.gnos.simplefutures")
+    let defaultExecutionContext: ExecutionContext   = QueueContext.main
+
+    var onCompleteFutures                           = [OnCompleteInFuture]()
     
     public func succeeded(success:(T -> Void)? = nil) -> Bool {
         if let result = self.result {
@@ -155,15 +156,14 @@ public class Future<T> {
     }
 
     public func onComplete(onCompletion:OnComplete) -> Future<T> {
-        return self.onComplete(self.executionContext, complete:onCompletion)
+        return self.onComplete(self.defaultExecutionContext, complete:onCompletion)
     }
     
-    public func onComplete(executionCcontext:ExecutionContext, complete:OnComplete) -> Future<T> {
-        self.executionContext = executionCcontext
+    public func onComplete(executionContext:ExecutionContext, complete:OnComplete) -> Future<T> {
         self.internalQueue.sync {
             let wrappedCallback : Future<T> -> () = { future in
                 if let result = self.result {
-                    self.executionContext.execute {
+                    executionContext.execute {
                         complete(result)
                     }
                 }
@@ -180,7 +180,11 @@ public class Future<T> {
     }
 
     public func onSuccess(success:OnSuccess) -> Future<T> {
-        self.onComplete(self.executionContext) {result in
+        return self.onSuccess(self.defaultExecutionContext, success:success)
+    }
+    
+    public func onSuccess(executionContext:ExecutionContext, success:OnSuccess) -> Future<T> {
+        self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultWrapper):
                 success(resultWrapper.value)
@@ -188,20 +192,18 @@ public class Future<T> {
                 break
             }
         }
-        
         return self
     }
     
-    public func onSuccess(executionCcontext:ExecutionContext, callback:OnSuccess) -> Future<T> {
-        self.executionContext = executionCcontext
-        return self.onSuccess(callback)
+    public func onFailure(callback:OnFailure) -> Future<T> {
+        return self.onFailure(self.defaultExecutionContext, callback)
     }
     
-    public func onFailure(callback:OnFailure) -> Future<T> {
-        self.onComplete(self.executionContext) { result in
+    public func onFailure(executionContext:ExecutionContext, callback:OnFailure) -> Future<T> {
+        self.onComplete(executionContext) { result in
             switch result {
-            case .Failure(let err):
-                callback(err)
+            case .Failure(let error):
+                callback(error)
             default:
                 break
             }
@@ -209,13 +211,8 @@ public class Future<T> {
         return self
     }
     
-    public func onFailure(executionContext:ExecutionContext, callback:OnFailure) -> Future<T> {
-        self.executionContext = executionContext
-        return self.onFailure(self.executionContext, callback)
-    }
-    
     private func runCallbacks() {
-        self.executionContext.execute {
+        self.internalQueue.async {
             for complete in self.onCompleteFutures {
                 complete(self)
             }
