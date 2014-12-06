@@ -12,18 +12,23 @@ import CoreBluetooth
 public class CharacteristicProfile {
     
     // PUBLIC
-    public let uuid                 : CBUUID
-    public let name                 : String
-    public var permissions          : CBAttributePermissions
-    public var properties           : CBCharacteristicProperties
-    public var initialValue         : NSData?
+    public let uuid                     : CBUUID
+    public let name                     : String
+    public var permissions              : CBAttributePermissions
+    public var properties               : CBCharacteristicProperties
+    public var initialValue             : NSData?
 
-    public var afterDiscovered      : ((characteristic:Characteristic) -> ())?
+    internal var afterDiscoveredPromise : Promise<Characteristic>!
 
     public var discreteStringValues : [String] {
         return []
     }
     
+    public var afterDiscovered : Future<Characteristic> {
+        self.afterDiscoveredPromise = Promise<Characteristic>()
+        return self.afterDiscoveredPromise.future
+    }
+
     public init(uuid:String, name:String, initializer:((characteristicProfile:CharacteristicProfile) -> ())? = nil) {
         self.uuid = CBUUID(string:uuid)
         self.name = name

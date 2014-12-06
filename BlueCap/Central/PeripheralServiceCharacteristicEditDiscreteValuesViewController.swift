@@ -94,17 +94,18 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         self.progressView.show()
         if let characteristic = self.characteristic {
             let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]
-            characteristic.writeString(stringValue, afterWriteSuccess:{
+            characteristic.writeString(stringValue)
+                .onSuccess {
                     self.progressView.remove()
                     self.navigationController?.popViewControllerAnimated(true)
                     return
-                },
-                afterWriteFailed:{(error) in
+                }
+                .onFailure {(error) in
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                     self.progressView.remove()
                     self.navigationController?.popViewControllerAnimated(true)
                     return
-            })
+                }
         }
     }
     

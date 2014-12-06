@@ -16,7 +16,7 @@ public class Characteristic {
     private var notificationStateChangedFailed      : ((error:NSError) -> ())?
     private var afterUpdateSuccess                  : (() -> ())?
     private var afterUpdateFailed                   : ((error:NSError) -> ())?
-    private var afterWrite                  : Promise<Void>!
+    private var afterWritePromise                   : Promise<Void>!
     
     private var reading = false
     private var writing = false
@@ -128,7 +128,7 @@ public class Characteristic {
     }
 
     public func writeData(value:NSData) -> Future<Void> {
-        self.afterWrite = Promise<Void>()
+        self.afterWritePromise = Promise<Void>()
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
@@ -136,9 +136,9 @@ public class Characteristic {
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
         } else {
-            self.afterWrite.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotWritable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotWritable.description]))
+            self.afterWritePromise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotWritable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotWritable.description]))
         }
-        return self.afterWrite.future
+        return self.afterWritePromise.future
     }
 
     public func writeString(stringValue:Dictionary<String, String>) -> Future<Void> {
@@ -186,8 +186,8 @@ public class Characteristic {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                if let afterWrite = self.afterWrite {
-                    afterWrite.failure(NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
+                if let afterWritePromise = self.afterWritePromise {
+                    afterWritePromise.failure(NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
                 }
             } else {
                 Logger.debug("Characteristic#timeoutWrite: expired")
@@ -217,8 +217,8 @@ public class Characteristic {
     
     internal func didDiscover() {
         Logger.debug("Characteristic#didDiscover:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-        if let afterDiscovered = self.profile.afterDiscovered {
-            CentralManager.asyncCallback {afterDiscovered(characteristic:self)}
+        if let afterDiscoveredPromise = self.profile.afterDiscoveredPromise {
+            afterDiscoveredPromise.success(self)
         }
     }
     
@@ -253,13 +253,13 @@ public class Characteristic {
     
     internal func didWrite(error:NSError!) {
         self.writing = false
-        if let afterWrite = self.afterWrite {
+        if let afterWritePromise = self.afterWritePromise {
             if let error = error {
                 Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-                afterWrite.failure(error)
+                afterWritePromise.failure(error)
             } else {
                 Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-                afterWrite.success()
+                afterWritePromise.success()
             }
         }
     }

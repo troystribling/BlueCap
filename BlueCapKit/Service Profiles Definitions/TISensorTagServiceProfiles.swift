@@ -720,8 +720,9 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered = {(characteristic) in
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
+                        return
                     }
                 })
             // Accelerometer Update Period
@@ -749,8 +750,9 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered = {(characteristic) in
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
+                        return
                     }
                 })
             // Magnetometer Update Period
@@ -764,7 +766,7 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Gyroscope Service
         //***************************************************************************************************
-        profileManager.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name){(serviceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.GyroscopeService.uuid, name:TISensorTag.GyroscopeService.name) {(serviceProfile) in
             serviceProfile.tag = "TI Sensor Tag"
             // Gyroscope Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.GyroscopeService.Data.Value>(uuid:TISensorTag.GyroscopeService.Data.uuid, name:TISensorTag.GyroscopeService.Data.name)
@@ -778,8 +780,9 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.GyroscopeService.Enabled.Value.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered = {(characteristic) in
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.GyroscopeService.Enabled.Value.XYZAxis)
+                        return
                     }
                 })
         })
@@ -787,7 +790,7 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Temperature Service
         //***************************************************************************************************
-        profileManager.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name){(serviceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.TemperatureService.uuid, name:TISensorTag.TemperatureService.name) {(serviceProfile) in
             serviceProfile.tag = "TI Sensor Tag"
             // Temperature Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.TemperatureService.Data.Value>(uuid:TISensorTag.TemperatureService.Data.uuid, name:TISensorTag.TemperatureService.Data.name)
@@ -801,8 +804,9 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered = {(characteristic) in
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
+                        return
                     }
                 })
         })
@@ -810,7 +814,7 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Barometer Service
         //***************************************************************************************************
-        profileManager.addService(ServiceProfile(uuid:TISensorTag.BarometerService.uuid, name:TISensorTag.BarometerService.name){(serviceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.BarometerService.uuid, name:TISensorTag.BarometerService.name) {(serviceProfile) in
             serviceProfile.tag = "TI Sensor Tag"
             // Barometer Data
             serviceProfile.addCharacteristic(PairStructCharacteristicProfile<TISensorTag.BarometerService.Data.Value>(uuid:TISensorTag.BarometerService.Data.uuid, name:TISensorTag.BarometerService.Data.name)
@@ -831,10 +835,12 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.BarometerService.Enabled.Value.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered = {(characteristic) in
-                        characteristic.write(TISensorTag.BarometerService.Enabled.Value.Yes, afterWriteSuccess:{
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                        characteristic.write(TISensorTag.BarometerService.Enabled.Value.Yes).onSuccess {
                             characteristic.write(TISensorTag.BarometerService.Enabled.Value.Calibrate)
-                        })
+                            return
+                        }
+                        return
                     }
                 })
         })
@@ -856,8 +862,9 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered = {(characteristic) in
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
+                        return
                     }
                 })
         })
@@ -865,7 +872,7 @@ public class TISensorTagServiceProfiles {
         //***************************************************************************************************
         // Sensor Tag Test Service
         //***************************************************************************************************
-        profileManager.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name){(serviceProfile) in
+        profileManager.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name) {(serviceProfile) in
             serviceProfile.tag = "TI Sensor Tag"
             // Test Data
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.SensorTagTestService.Data.Value>(uuid:TISensorTag.SensorTagTestService.Data.uuid, name: TISensorTag.SensorTagTestService.Data.name)
