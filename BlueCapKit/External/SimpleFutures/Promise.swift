@@ -22,7 +22,7 @@ public class Promise<T> {
             case .Success(let val):
                 self.success(val.value)
             case .Failure(let err):
-                self.error(err)
+                self.failure(err)
             }
         }
     }
@@ -35,8 +35,8 @@ public class Promise<T> {
         return self.future.trySuccess(value)
     }
     
-    public func error(error: NSError) {
-        self.future.error(error)
+    public func failure(error: NSError) {
+        self.future.failure(error)
     }
     
     public func tryError(error: NSError) -> Bool {

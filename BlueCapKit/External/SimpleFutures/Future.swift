@@ -106,55 +106,6 @@ public class Future<T> {
         return false
     }
     
-    internal init() {
-    }
-    
-    func complete(result:Try<T>) {
-        let succeeded = tryComplete(result)
-        assert(succeeded)
-    }
-    
-    func tryComplete(result:Try<T>) -> Bool {
-        switch result {
-        case .Success(let success):
-            return self.trySuccess(success.value)
-        case .Failure(let error):
-            return self.tryError(error)
-        }
-    }
-    
-    func success(value:T) {
-        let succeeded = self.trySuccess(value)
-        assert(succeeded)
-    }
-    
-    func trySuccess(value:T) -> Bool {
-        return self.internalQueue.sync {
-            if self.result != nil {
-                return false;
-            }
-            self.result = Try(value)
-            self.runCallbacks()
-            return true;
-        };
-    }
-    
-    func error(error: NSError) {
-        let succeeded = self.tryError(error)
-        assert(succeeded)
-    }
-    
-    func tryError(error: NSError) -> Bool {
-        return self.internalQueue.sync {
-            if self.result != nil {
-                return false;
-            }
-            self.result = Try(error)
-            self.runCallbacks()
-            return true;
-        };
-    }
-
     public func onComplete(onCompletion:OnComplete) -> Future<T> {
         return self.onComplete(self.defaultExecutionContext, complete:onCompletion)
     }
@@ -178,7 +129,7 @@ public class Future<T> {
         
         return self
     }
-
+    
     public func onSuccess(success:OnSuccess) -> Future<T> {
         return self.onSuccess(self.defaultExecutionContext, success:success)
     }
@@ -209,6 +160,56 @@ public class Future<T> {
             }
         }
         return self
+    }
+
+    internal init() {
+    }
+    
+    
+    internal func complete(result:Try<T>) {
+        let succeeded = tryComplete(result)
+        assert(succeeded)
+    }
+    
+    internal func tryComplete(result:Try<T>) -> Bool {
+        switch result {
+        case .Success(let success):
+            return self.trySuccess(success.value)
+        case .Failure(let error):
+            return self.tryError(error)
+        }
+    }
+    
+    internal func success(value:T) {
+        let succeeded = self.trySuccess(value)
+        assert(succeeded)
+    }
+    
+    func trySuccess(value:T) -> Bool {
+        return self.internalQueue.sync {
+            if self.result != nil {
+                return false;
+            }
+            self.result = Try(value)
+            self.runCallbacks()
+            return true;
+        };
+    }
+    
+    internal func failure(error: NSError) {
+        let succeeded = self.tryError(error)
+        assert(succeeded)
+    }
+    
+    internal func tryError(error: NSError) -> Bool {
+        return self.internalQueue.sync {
+            if self.result != nil {
+                return false;
+            }
+            self.result = Try(error)
+            self.runCallbacks()
+            return true;
+        };
     }
     
     private func runCallbacks() {

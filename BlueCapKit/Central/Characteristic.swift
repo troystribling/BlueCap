@@ -136,54 +136,28 @@ public class Characteristic {
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
         } else {
-            NSException(name:"Characteristic write error", reason: "write not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
+            self.afterWrite.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotWritable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotWritable.description]))
         }
         return self.afterWrite.future
     }
 
-    public func writeData(value:NSData, afterWriteFailed:((error:NSError)->())? = nil) {
-        if self.propertyEnabled(.WriteWithoutResponse) {
-            Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-            self.afterWriteSuccess = nil
-            self.afterWriteFailed = afterWriteFailed
-            self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithoutResponse)
-            self.writing = true
-            ++self.writeSequence
-            self.timeoutWrite(self.writeSequence)
-        } else {
-            NSException(name:"Characteristic write error", reason: "write without response not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
-        }
-    }
-
-    public func writeString(stringValue:Dictionary<String, String>, afterWriteSuccess:()->(), afterWriteFailed:((error:NSError)->())? = nil) {
+    public func writeString(stringValue:Dictionary<String, String>) -> Future<Void> {
         if let value = self.profile.dataFromStringValue(stringValue) {
-            self.writeData(value, afterWriteSuccess:afterWriteSuccess, afterWriteFailed:afterWriteFailed)
+            return self.writeData(value)
         } else {
-            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
+            let promise = Promise<Void>()
+            promise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotSerializable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotSerializable.description]))
+            return promise.future
         }
     }
 
-    public func writeString(stringValue:Dictionary<String, String>, afterWriteFailed:((error:NSError)->())? = nil) {
-        if let value = self.profile.dataFromStringValue(stringValue) {
-            self.writeData(value, afterWriteFailed)
-        } else {
-            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
-        }
-    }
-
-    public func write(anyValue:Any, afterWriteSuccess:()->(), afterWriteFailed:((error:NSError)->())? = nil) {
+    public func write(anyValue:Any) -> Future<Void> {
         if let value = self.profile.dataFromAnyValue(anyValue) {
-            self.writeData(value, afterWriteSuccess:afterWriteSuccess, afterWriteFailed:afterWriteFailed)
+            return self.writeData(value)
         } else {
-            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
-        }
-    }
-
-    public func write(anyValue:Any, afterWriteFailed:((error:NSError)->())? = nil) {
-        if let value = self.profile.dataFromAnyValue(anyValue) {
-            self.writeData(value, afterWriteFailed)
-        } else {
-            NSException(name:"Characteristic write error", reason: "unable to serialize \(self.uuid.UUIDString)", userInfo: nil).raise()
+            let promise = Promise<Void>()
+            promise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotSerializable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotSerializable.description]))
+            return promise.future
         }
     }
 
@@ -212,11 +186,8 @@ public class Characteristic {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                if let afterWriteFailed = self.afterWriteFailed {
-                    CentralManager.asyncCallback {
-                        afterWriteFailed(error:
-                            NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
-                    }
+                if let afterWrite = self.afterWrite {
+                    afterWrite.failure(NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
                 }
             } else {
                 Logger.debug("Characteristic#timeoutWrite: expired")
@@ -282,15 +253,13 @@ public class Characteristic {
     
     internal func didWrite(error:NSError!) {
         self.writing = false
-        if let error = error {
-            Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterWriteFailed = self.afterWriteFailed {
-                CentralManager.asyncCallback {afterWriteFailed(error:error)}
-            }
-        } else {
-            Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterWriteSuccess = self.afterWriteSuccess {
-                CentralManager.asyncCallback(afterWriteSuccess)
+        if let afterWrite = self.afterWrite {
+            if let error = error {
+                Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                afterWrite.failure(error)
+            } else {
+                Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                afterWrite.success()
             }
         }
     }

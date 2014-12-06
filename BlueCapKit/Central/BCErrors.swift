@@ -30,5 +30,13 @@ struct BCError {
         static let code = 5
         static let description = "Location update failed"
     }
+    struct CharateristicNotWritable {
+        static let code = 6
+        static let description = "Characteristic does not have write permission"
+    }
+    struct CharateristicNotSerializable {
+        static let code = 6
+        static let description = "Characteristic serializaion failed"
+    }
 }
 
