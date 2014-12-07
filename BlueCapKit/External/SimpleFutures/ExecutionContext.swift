@@ -42,8 +42,10 @@ public class QueueContext : ExecutionContext {
 
 public struct Queue {
     
-    public static let main      = Queue(dispatch_get_main_queue());
-    public static let global    = Queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+    public static let main              = Queue(dispatch_get_main_queue());
+    public static let global            = Queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+
+    internal static let simplefutures   = Queue("us.gnos.simplefutures")
     
     var queue: dispatch_queue_t
     
@@ -73,4 +75,6 @@ public struct Queue {
     }
     
 }
+
+
 
