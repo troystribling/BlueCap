@@ -58,7 +58,7 @@ class ServiceCharacteristicProfileEditDiscreteValuesViewController : UITableView
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileEditDiscreteValuesCell, forIndexPath:indexPath) as UITableViewCell
         if let characteristicProfile = self.characteristicProfile {
             let stringValue = characteristicProfile.discreteStringValues[indexPath.row]
-            cell.textLabel.text = stringValue
+            cell.textLabel?.text = stringValue
             if let value = self.values?[characteristicProfile.name] {
                 if value == stringValue {
                     cell.accessoryType = UITableViewCellAccessoryType.Checkmark

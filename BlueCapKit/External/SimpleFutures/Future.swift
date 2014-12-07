@@ -68,6 +68,25 @@ public enum Try<T> {
     }
 }
 
+public func future<T>(calculateResult:Void -> Try<T>) -> Future<T> {
+    return future(QueueContext.global, calculateResult)
+}
+
+public func future<T>(calculateResult:@autoclosure() -> Try<T>) -> Future<T> {
+    return future(QueueContext.global, calculateResult)
+}
+
+public func future<T>(executionContext:ExecutionContext, calculateResult:@autoclosure() -> Try<T>) -> Future<T> {
+    return future(executionContext, calculateResult)
+}
+
+public func future<T>(executionContext:ExecutionContext, calculateResult:Void -> Try<T>) -> Future<T> {
+    let promise = Promise<T>()
+    executionContext.execute {
+        promise.complete(calculateResult())
+    }
+    return promise.future
+}
 
 public class Future<T> {
     
@@ -97,7 +116,7 @@ public class Future<T> {
     
     public func completed(success:(T -> Void)? = nil, failure:(NSError -> Void)? = nil) -> Bool{
         if let res = self.result {
-            res.handle(success: success, failure: failure)
+            res.handle(success: success, failure:failure)
             return true
         }
         return false

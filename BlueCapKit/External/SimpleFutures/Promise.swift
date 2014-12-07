@@ -16,8 +16,8 @@ public class Promise<T> {
         self.future = Future<T>()
     }
     
-    public func completeWith(future: Future<T>) {
-        future.onComplete { result in
+    public func completeWith(future:Future<T>) {
+        future.onComplete {result in
             switch result {
             case .Success(let val):
                 self.success(val.value)
@@ -27,19 +27,23 @@ public class Promise<T> {
         }
     }
     
-    public func success(value: T) {
+    public func complete(result:Try<T>) {
+        self.future.complete(result)
+    }
+    
+    public func success(value:T) {
         self.future.success(value)
     }
     
-    public func trySuccess(value: T) -> Bool {
+    public func trySuccess(value:T) -> Bool {
         return self.future.trySuccess(value)
     }
     
-    public func failure(error: NSError) {
+    public func failure(error:NSError) {
         self.future.failure(error)
     }
     
-    public func tryError(error: NSError) -> Bool {
+    public func tryError(error:NSError) -> Bool {
         return self.future.tryError(error)
     }
     

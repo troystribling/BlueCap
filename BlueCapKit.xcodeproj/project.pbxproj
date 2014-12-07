@@ -10,6 +10,7 @@
 		05263D091A2E24A000BAE347 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05263D031A2E24A000BAE347 /* Future.swift */; };
 		05263D111A2F76DA00BAE347 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05263D101A2F76DA00BAE347 /* Promise.swift */; };
 		05263D131A2F786300BAE347 /* ExecutionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05263D121A2F786300BAE347 /* ExecutionContext.swift */; };
+		053D16D51A34E0E100102B4D /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053D16D41A34E0E100102B4D /* Stream.swift */; };
 		0551208819F5506000ED3B74 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0551208719F5506000ED3B74 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0551209219F5506000ED3B74 /* BlueCapKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209119F5506000ED3B74 /* BlueCapKitTests.swift */; };
 		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
@@ -70,6 +71,7 @@
 		05263D031A2E24A000BAE347 /* Future.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Future.swift; sourceTree = "<group>"; };
 		05263D101A2F76DA00BAE347 /* Promise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
 		05263D121A2F786300BAE347 /* ExecutionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExecutionContext.swift; sourceTree = "<group>"; };
+		053D16D41A34E0E100102B4D /* Stream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0551208719F5506000ED3B74 /* BlueCapKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueCapKit.h; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				05263D031A2E24A000BAE347 /* Future.swift */,
 				05263D101A2F76DA00BAE347 /* Promise.swift */,
 				05263D121A2F786300BAE347 /* ExecutionContext.swift */,
+				053D16D41A34E0E100102B4D /* Stream.swift */,
 			);
 			name = SimpleFutures;
 			path = External/SimpleFutures;
@@ -498,6 +501,7 @@
 				055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */,
 				05D3B9371A2B8D61008E794E /* Int.swift in Sources */,
 				055120D919F5513700ED3B74 /* LocationManager.swift in Sources */,
+				053D16D51A34E0E100102B4D /* Stream.swift in Sources */,
 				05D3B9381A2B8D61008E794E /* NSArray.swift in Sources */,
 				055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */,
 				055120DB19F5513700ED3B74 /* RegionManager.swift in Sources */,
