@@ -94,11 +94,13 @@ public class Future<T> {
     typealias           OnSuccess           = T -> Void
     public typealias    OnFailure           = NSError -> Void
     
-    var result:Try<T>?
+    private var result:Try<T>?
     
-    let defaultExecutionContext: ExecutionContext   = QueueContext.main
-    var savedCompletions                            = [OnComplete]()
+    private let defaultExecutionContext: ExecutionContext   = QueueContext.main
+    private var savedCompletions                            = [OnComplete]()
     
+    
+    // public interface
     public func succeeded(success:(T -> Void)? = nil) -> Bool {
         if let result = self.result {
             return result.succeeded(success)
@@ -150,8 +152,8 @@ public class Future<T> {
     public func onSuccess(executionContext:ExecutionContext, success:OnSuccess) -> Void {
         self.onComplete(executionContext) {result in
             switch result {
-            case .Success(let resultWrapper):
-                success(resultWrapper.value)
+            case .Success(let valueWrapper):
+                success(valueWrapper.value)
             default:
                 break
             }
@@ -159,15 +161,15 @@ public class Future<T> {
         return
     }
     
-    public func onFailure(callback:OnFailure) -> Void {
-        return self.onFailure(self.defaultExecutionContext, callback)
+    public func onFailure(failure:OnFailure) -> Void {
+        return self.onFailure(self.defaultExecutionContext, failure)
     }
     
-    public func onFailure(executionContext:ExecutionContext, callback:OnFailure) -> Void {
-        self.onComplete(executionContext) { result in
+    public func onFailure(executionContext:ExecutionContext, failure:OnFailure) -> Void {
+        self.onComplete(executionContext) {result in
             switch result {
             case .Failure(let error):
-                callback(error)
+                failure(error)
             default:
                 break
             }
@@ -175,9 +177,28 @@ public class Future<T> {
         return
     }
 
-    internal init() {
+    public func map<M>(mapping:T -> Try<M>) -> Future<M> {
+        return map(QueueContext.main, mapping)
     }
     
+    public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> Future<M> {
+        let promise = Promise<M>()
+        Queue.simplefutures.sync {
+            self.onComplete(executionContext) {result in
+                switch result {
+                case .Success(let valueWrapper):
+                    promise.complete(mapping(valueWrapper.value))
+                case .Failure(let error):
+                    promise.failure(error)
+                }
+            }
+        }
+        return promise.future
+    }
+    
+    // internal interface
+    internal init() {
+    }
     
     internal func complete(result:Try<T>) {
         let succeeded = tryComplete(result)
@@ -198,7 +219,7 @@ public class Future<T> {
         assert(succeeded)
     }
     
-    func trySuccess(value:T) -> Bool {
+    internal func trySuccess(value:T) -> Bool {
         return Queue.simplefutures.sync {
             if self.result != nil {
                 return false;
@@ -225,6 +246,7 @@ public class Future<T> {
         };
     }
     
+    // private interface
     private func runSavedCompletions(result:Try<T>) {
         Queue.simplefutures.async {
             for complete in self.savedCompletions {

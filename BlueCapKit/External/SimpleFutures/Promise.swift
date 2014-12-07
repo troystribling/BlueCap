@@ -10,10 +10,9 @@ import Foundation
 
 public class Promise<T> {
     
-    public let future: Future<T>
+    public let future = Future<T>()
     
     public init() {
-        self.future = Future<T>()
     }
     
     public func completeWith(future:Future<T>) {
