@@ -74,11 +74,15 @@ public class Promise<T> {
     
     public let future = Future<T>()
     
+//    public var isCompleted : Bool {
+//        
+//    }
+    
     public init() {
     }
     
     public func completeWith(future:Future<T>) {
-        if let result = future.result {
+        future.onComplete {result in
             self.complete(result)
         }
     }
@@ -133,9 +137,9 @@ public func future<T>(executionContext:ExecutionContext, calculateResult:Void ->
 // Future
 public class Future<T> {
     
-    internal typealias OnComplete          = Try<T> -> Void
-    internal typealias OnSuccess           = T -> Void
-    public typealias   OnFailure           = NSError -> Void
+    internal typealias OnComplete   = Try<T> -> Void
+    internal typealias OnSuccess    = T -> Void
+    public typealias   OnFailure    = NSError -> Void
     
     private var result:Try<T>?
     
@@ -160,8 +164,8 @@ public class Future<T> {
     }
     
     public func completed(success:(T -> Void)? = nil, failure:(NSError -> Void)? = nil) -> Bool{
-        if let res = self.result {
-            res.handle(success: success, failure:failure)
+        if let result = self.result {
+            result.handle(success: success, failure:failure)
             return true
         }
         return false
@@ -233,6 +237,15 @@ public class Future<T> {
         return promise.future
     }
     
+    public func flatmap<M>(mapping:T -> Try<M>) -> Future<M> {
+        return self.flatmap(QueueContext.main, mapping)
+    }
+
+    public func flatmap<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> Future<M> {
+        let promise = Promise<M>()
+        return promise.future
+    }
+    
     public func andThen(complete:OnComplete) -> Future<T> {
         return self.andThen(QueueContext.main, complete)
     }
@@ -241,7 +254,7 @@ public class Future<T> {
         let promise = Promise<T>()
         promise.future.onComplete(executionContext, complete)
         self.onComplete(executionContext) {result in
-            promise.complete(result)
+            promise.completeWith(self)
         }
         return promise.future
     }

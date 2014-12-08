@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class PromiseStream<T> {
+public class StreamPromise<T> {
 
     let streamFuture = FutureStream<T>()
 }
