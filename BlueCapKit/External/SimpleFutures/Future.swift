@@ -8,6 +8,14 @@
 
 import Foundation
 
+public struct SimpleFuturesError {
+    static let domain = "SimpleFutures"
+    struct IllegalState {
+        static let code = 1
+        static let description = "Future has been completed"
+    }
+}
+
 public final class TryWrapper<T> {
     public let value: T
     
@@ -29,44 +37,6 @@ public enum Try<T> {
         self = .Failure(error)
     }
     
-    public func failed(failure:(NSError -> Void)? = nil) -> Bool {
-        switch self {
-            
-        case .Success(_):
-            return false
-            
-        case .Failure(let error):
-            if let failure = failure {
-                failure(error)
-            }
-            return true
-        }
-    }
-    
-    public func succeeded(success:(T -> Void)? = nil) -> Bool {
-        switch self {
-        case .Success(let result):
-            if let success = success {
-                success(result.value)
-            }
-            return true
-        case .Failure(let err):
-            return false
-        }
-    }
-    
-    public func handle(success:(T -> Void)? = nil, failure:(NSError -> Void)? = nil) {
-        switch self {
-        case .Success(let val):
-            if let success = success {
-                success(val.value)
-            }
-        case .Failure(let err):
-            if let failure = failure {
-                failure(err)
-            }
-        }
-    }
 }
 
 // Promise
@@ -74,16 +44,22 @@ public class Promise<T> {
     
     public let future = Future<T>()
     
-//    public var isCompleted : Bool {
-//        
-//    }
+    public var isCompleted : Bool {
+        return self.future.isCompleted
+    }
     
     public init() {
     }
     
     public func completeWith(future:Future<T>) {
-        future.onComplete {result in
-            self.complete(result)
+        if self.isCompleted == false {
+            future.onComplete {result in
+                self.complete(result)
+            }
+        } else {
+            self.failure(NSError(domain:SimpleFuturesError.domain,
+                code:SimpleFuturesError.IllegalState.code,
+                userInfo:[NSLocalizedDescriptionKey:SimpleFuturesError.IllegalState.description]))
         }
     }
     
@@ -99,7 +75,7 @@ public class Promise<T> {
         return self.future.trySuccess(value)
     }
     
-    public func failure(error:NSError) {
+    public func failure(error:NSError)  {
         self.future.failure(error)
     }
     
@@ -148,27 +124,8 @@ public class Future<T> {
     
     
     // public interface
-    public func succeeded(success:(T -> Void)? = nil) -> Bool {
-        if let result = self.result {
-            return result.succeeded(success)
-        } else {
-            return false
-        }
-    }
-    
-    public func failed(failed:(NSError -> Void)? = nil) -> Bool {
-        if let result = self.result {
-            return result.failed(failed)
-        }
-        return false
-    }
-    
-    public func completed(success:(T -> Void)? = nil, failure:(NSError -> Void)? = nil) -> Bool{
-        if let result = self.result {
-            result.handle(success: success, failure:failure)
-            return true
-        }
-        return false
+    public var isCompleted : Bool {
+        return self.result != nil
     }
     
     public func onComplete(onCompletion:OnComplete) {
@@ -226,7 +183,7 @@ public class Future<T> {
     
     public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> Future<M> {
         let promise = Promise<M>()
-            self.onComplete(executionContext) {result in
+        self.onComplete(executionContext) {result in
             switch result {
             case .Success(let valueWrapper):
                 promise.complete(mapping(valueWrapper.value))
@@ -237,12 +194,20 @@ public class Future<T> {
         return promise.future
     }
     
-    public func flatmap<M>(mapping:T -> Try<M>) -> Future<M> {
+    public func flatmap<M>(mapping:T -> Future<M>) -> Future<M> {
         return self.flatmap(QueueContext.main, mapping)
     }
 
-    public func flatmap<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> Future<M> {
+    public func flatmap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> Future<M> {
         let promise = Promise<M>()
+        self.onComplete(executionContext) {result in
+            switch result {
+            case .Success(let resultWrapper):
+                promise.completeWith(mapping(resultWrapper.value))
+            case .Failure(let error):
+                promise.failure(error)
+            }
+        }
         return promise.future
     }
     
