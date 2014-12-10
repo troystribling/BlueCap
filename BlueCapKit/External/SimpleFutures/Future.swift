@@ -10,9 +10,13 @@ import Foundation
 
 public struct SimpleFuturesError {
     static let domain = "SimpleFutures"
-    struct IllegalState {
+    struct FutureCompleted {
         static let code = 1
         static let description = "Future has been completed"
+    }
+    struct FutureNotCompleted {
+        static let code = 2
+        static let description = "Future has not been completed"
     }
 }
 
@@ -58,8 +62,8 @@ public class Promise<T> {
             }
         } else {
             self.failure(NSError(domain:SimpleFuturesError.domain,
-                code:SimpleFuturesError.IllegalState.code,
-                userInfo:[NSLocalizedDescriptionKey:SimpleFuturesError.IllegalState.description]))
+                code:SimpleFuturesError.FutureCompleted.code,
+                userInfo:[NSLocalizedDescriptionKey:SimpleFuturesError.FutureCompleted.description]))
         }
     }
     
@@ -128,8 +132,8 @@ public class Future<T> {
         return self.result != nil
     }
     
-    public func onComplete(onCompletion:OnComplete) {
-        self.onComplete(self.defaultExecutionContext, complete:onCompletion)
+    public func onComplete(complete:OnComplete) {
+        self.onComplete(self.defaultExecutionContext, complete)
     }
     
     public func onComplete(executionContext:ExecutionContext, complete:OnComplete) -> Void {
@@ -148,7 +152,7 @@ public class Future<T> {
     }
     
     public func onSuccess(success:OnSuccess) {
-        self.onSuccess(self.defaultExecutionContext, success:success)
+        self.onSuccess(self.defaultExecutionContext, success)
     }
     
     public func onSuccess(executionContext:ExecutionContext, success:OnSuccess){
@@ -222,6 +226,10 @@ public class Future<T> {
             promise.completeWith(self)
         }
         return promise.future
+    }
+    
+    public func recover(executionContext:ExecutionContext, recovery:NSError -> T) -> Future<T> {
+        return self
     }
     
     // internal interface
