@@ -63,7 +63,7 @@ public class FutureStream<T> {
         }
     }
     
-    private onWrite() {
+    private func onWrite() {
     }
     
 }
