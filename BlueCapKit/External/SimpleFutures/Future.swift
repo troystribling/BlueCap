@@ -74,21 +74,22 @@ public class Promise<T> {
     public func success(value:T) {
         self.future.success(value)
     }
+
+    public func failure(error:NSError)  {
+        self.future.failure(error)
+    }
+    
+
+    public func tryComplete(result:Try<T>) -> Bool {
+        return self.future.tryComplete(result)
+    }
     
     public func trySuccess(value:T) -> Bool {
         return self.future.trySuccess(value)
     }
     
-    public func failure(error:NSError)  {
-        self.future.failure(error)
-    }
-    
     public func tryError(error:NSError) -> Bool {
         return self.future.tryError(error)
-    }
-    
-    public func tryComplete(result:Try<T>) -> Bool {
-        return self.future.tryComplete(result)
     }
     
 }
@@ -117,14 +118,14 @@ public func future<T>(executionContext:ExecutionContext, calculateResult:Void ->
 // Future
 public class Future<T> {
     
-    internal typealias OnComplete   = Try<T> -> Void
-    internal typealias OnSuccess    = T -> Void
-    public typealias   OnFailure    = NSError -> Void
+    public typealias OnComplete   = Try<T> -> Void
+    public typealias OnSuccess    = T -> Void
+    public typealias OnFailure    = NSError -> Void
     
     private var result:Try<T>?
     
     private let defaultExecutionContext: ExecutionContext   = QueueContext.main
-    private var savedCompletions                            = [OnComplete]()
+    private var saveCompletes                               = [OnComplete]()
     
     
     // public interface
@@ -137,7 +138,7 @@ public class Future<T> {
     }
     
     public func onComplete(executionContext:ExecutionContext, complete:OnComplete) -> Void {
-        Queue.simplefutures.sync {
+        Queue.simpleFutures.sync {
             let savedCompletion : OnComplete = {result in
                 executionContext.execute {
                     complete(result)
@@ -146,7 +147,7 @@ public class Future<T> {
             if let result = self.result {
                 savedCompletion(result)
             } else {
-                self.savedCompletions.append(savedCompletion)
+                self.saveCompletes.append(savedCompletion)
             }
         }
     }
@@ -256,7 +257,7 @@ public class Future<T> {
     }
     
     internal func trySuccess(value:T) -> Bool {
-        return Queue.simplefutures.sync {
+        return Queue.simpleFutures.sync {
             if self.result != nil {
                 return false;
             }
@@ -272,7 +273,7 @@ public class Future<T> {
     }
     
     internal func tryError(error: NSError) -> Bool {
-        return Queue.simplefutures.sync {
+        return Queue.simpleFutures.sync {
             if self.result != nil {
                 return false;
             }
@@ -284,9 +285,9 @@ public class Future<T> {
     
     // private interface
     private func runSavedCompletions(result:Try<T>) {
-        for complete in self.savedCompletions {
+        for complete in self.saveCompletes {
             complete(result)
         }
-        self.savedCompletions.removeAll()
+        self.saveCompletes.removeAll()
     }
 }
