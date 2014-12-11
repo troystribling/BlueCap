@@ -118,13 +118,10 @@ public func future<T>(executionContext:ExecutionContext, calculateResult:Void ->
 // Future
 public class Future<T> {
     
-    public typealias OnComplete   = Try<T> -> Void
-    public typealias OnSuccess    = T -> Void
-    public typealias OnFailure    = NSError -> Void
-    
     private var result:Try<T>?
     
     private let defaultExecutionContext: ExecutionContext   = QueueContext.main
+    typealias OnComplete                                    = Try<T> -> Void
     private var saveCompletes                               = [OnComplete]()
     
     
@@ -133,11 +130,11 @@ public class Future<T> {
         return self.result != nil
     }
     
-    public func onComplete(complete:OnComplete) {
+    public func onComplete(complete:Try<T> -> Void) {
         self.onComplete(self.defaultExecutionContext, complete)
     }
     
-    public func onComplete(executionContext:ExecutionContext, complete:OnComplete) -> Void {
+    public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) -> Void {
         Queue.simpleFutures.sync {
             let savedCompletion : OnComplete = {result in
                 executionContext.execute {
@@ -152,11 +149,11 @@ public class Future<T> {
         }
     }
     
-    public func onSuccess(success:OnSuccess) {
+    public func onSuccess(success:T -> Void) {
         self.onSuccess(self.defaultExecutionContext, success)
     }
     
-    public func onSuccess(executionContext:ExecutionContext, success:OnSuccess){
+    public func onSuccess(executionContext:ExecutionContext, success:T -> Void){
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let valueWrapper):
@@ -167,11 +164,11 @@ public class Future<T> {
         }
     }
     
-    public func onFailure(failure:OnFailure) -> Void {
+    public func onFailure(failure:NSError -> Void) -> Void {
         return self.onFailure(self.defaultExecutionContext, failure)
     }
     
-    public func onFailure(executionContext:ExecutionContext, failure:OnFailure) {
+    public func onFailure(executionContext:ExecutionContext, failure:NSError -> Void) {
         self.onComplete(executionContext) {result in
             switch result {
             case .Failure(let error):
@@ -190,8 +187,8 @@ public class Future<T> {
         let promise = Promise<M>()
         self.onComplete(executionContext) {result in
             switch result {
-            case .Success(let valueWrapper):
-                promise.complete(mapping(valueWrapper.value))
+            case .Success(let resultWrapper):
+                promise.complete(mapping(resultWrapper.value))
             case .Failure(let error):
                 promise.failure(error)
             }
@@ -229,8 +226,38 @@ public class Future<T> {
         return promise.future
     }
     
-    public func recover(executionContext:ExecutionContext, recovery:NSError -> T) -> Future<T> {
-        return self
+    public func recover(recovery: NSError -> Try<T>) -> Future<T> {
+        return self.recover(QueueContext.main, recovery)
+    }
+    
+    public func recover(executionContext:ExecutionContext, recovery:NSError -> Try<T>) -> Future<T> {
+        let promise = Promise<T>()
+        promise.future.onComplete(executionContext) {result in
+            switch result {
+            case .Success(let resultWrapper):
+                promise.success(resultWrapper.value)
+            case .Failure(let error):
+                promise.complete(recovery(error))
+            }
+        }
+        return promise.future
+    }
+    
+    public func recoverWith(recovery:NSError -> Future<T>) -> Future<T> {
+        return self.recoverWith(QueueContext.main, recovery)
+    }
+    
+    public func recoverWith(executionContext:ExecutionContext, recovery:NSError -> Future<T>) -> Future<T> {
+        let promise = Promise<T>()
+        promise.future.onComplete(executionContext) {result in
+            switch result {
+            case .Success(let resultWrapper):
+                promise.success(resultWrapper.value)
+            case .Failure(let error):
+                promise.completeWith(recovery(error))
+            }
+        }
+        return promise.future
     }
     
     // internal interface
@@ -239,7 +266,9 @@ public class Future<T> {
     
     internal func complete(result:Try<T>) {
         let succeeded = tryComplete(result)
-        assert(succeeded)
+        if succeeded == false {
+            NSException(name:"Future complete error", reason: "Future previously completed.", userInfo: nil).raise()
+        }
     }
     
     internal func tryComplete(result:Try<T>) -> Bool {
@@ -253,7 +282,9 @@ public class Future<T> {
     
     internal func success(value:T) {
         let succeeded = self.trySuccess(value)
-        assert(succeeded)
+        if succeeded == false {
+            NSException(name:"Future success error", reason: "Future previously completed.", userInfo: nil).raise()
+        }
     }
     
     internal func trySuccess(value:T) -> Bool {
@@ -269,7 +300,9 @@ public class Future<T> {
     
     internal func failure(error: NSError) {
         let succeeded = self.tryError(error)
-        assert(succeeded)
+        if succeeded == false {
+            NSException(name:"Future failure error", reason: "Future previously completed.", userInfo: nil).raise()
+        }
     }
     
     internal func tryError(error: NSError) -> Bool {

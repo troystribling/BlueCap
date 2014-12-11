@@ -16,12 +16,18 @@ public class StreamPromise<T> {
     }
     
     public func succes(value:T) {
+        let promise = Promise<T>()
+        promise.success(value)
+        self.write(promise.future)
     }
     
     public func failure(error:NSError) {
+        let promise = Promise<T>()
+        promise.failure(error)
+        self.write(promise.future)
     }
     
-    internal func write(future:Future<T>) {
+    public func write(future:Future<T>) {
         self.futureStream.write(future)
     }
     
@@ -30,19 +36,15 @@ public class StreamPromise<T> {
 
 public class FutureStream<T> {
     
-    private typealias InFuture     = Future<T> -> Void
-    public  typealias OnComplete   = Try<T> -> Void
-    public  typealias OnSuccess    = T -> Void
-    public  typealias OnFailure    = NSError -> Void
-    
     private var futures         = [Future<T>]()
+    private typealias InFuture  = Future<T> -> Void
     private var saveCompletes   = [InFuture]()
     
-    public func onComplete(complete:OnComplete) {
+    public func onComplete(complete:Try<T> -> Void) {
         self.onComplete(QueueContext.main, complete)
     }
     
-    public func onComplete(executionContext:ExecutionContext, complete:OnComplete) {
+    public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) {
         let futureComplete : InFuture = {future in
             future.onComplete(executionContext, complete)
         }
@@ -54,11 +56,11 @@ public class FutureStream<T> {
         }
     }
 
-    public func onSuccesss(success:OnSuccess) {
+    public func onSuccesss(success:T -> Void) {
         self.onSuccesss(QueueContext.main, success:success)
     }
 
-    public func onSuccesss(executionContext:ExecutionContext, success:OnSuccess) {
+    public func onSuccesss(executionContext:ExecutionContext, success:T -> Void) {
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultWrapper):
@@ -69,11 +71,11 @@ public class FutureStream<T> {
         }
     }
     
-    public func onFailure(failure:OnFailure) {
+    public func onFailure(failure:NSError -> Void) {
         self.onFailure(QueueContext.main, failure:failure)
     }
 
-    public func onFailure(executionContext:ExecutionContext, failure:OnFailure) {
+    public func onFailure(executionContext:ExecutionContext, failure:NSError -> Void) {
         self.onComplete(executionContext) {result in
             switch result {
             case .Failure(let error):
@@ -83,6 +85,13 @@ public class FutureStream<T> {
             }
         }
     }
+    
+//    public func map<M>(executionContext:ExecutionContext, mapping:T -> M) -> Future<M> {
+//    }
+//    
+//    public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> Future<M> {
+//        
+//    }
     
     internal init() {
     }
