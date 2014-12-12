@@ -15,7 +15,7 @@ public class StreamPromise<T> {
     public init() {
     }
     
-    public func succes(value:T) {
+    public func success(value:T) {
         let promise = Promise<T>()
         promise.success(value)
         self.write(promise.future)
@@ -57,11 +57,11 @@ public class FutureStream<T> {
         }
     }
 
-    public func onSuccesss(success:T -> Void) {
-        self.onSuccesss(QueueContext.main, success:success)
+    public func onSuccess(success:T -> Void) {
+        self.onSuccess(QueueContext.main, success:success)
     }
 
-    public func onSuccesss(executionContext:ExecutionContext, success:T -> Void) {
+    public func onSuccess(executionContext:ExecutionContext, success:T -> Void) {
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultWrapper):

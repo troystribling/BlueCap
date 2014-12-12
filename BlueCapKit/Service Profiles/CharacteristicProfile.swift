@@ -18,15 +18,15 @@ public class CharacteristicProfile {
     public var properties               : CBCharacteristicProperties
     public var initialValue             : NSData?
 
-    internal var afterDiscoveredPromise : Promise<Characteristic>!
+    internal var afterDiscoveredPromise : StreamPromise<Characteristic>!
 
     public var discreteStringValues : [String] {
         return []
     }
     
-    public var afterDiscovered : Future<Characteristic> {
-        self.afterDiscoveredPromise = Promise<Characteristic>()
-        return self.afterDiscoveredPromise.future
+    public var afterDiscovered : FutureStream<Characteristic> {
+        self.afterDiscoveredPromise = StreamPromise<Characteristic>()
+        return self.afterDiscoveredPromise.futureStream
     }
 
     public init(uuid:String, name:String, initializer:((characteristicProfile:CharacteristicProfile) -> ())? = nil) {
