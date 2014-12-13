@@ -94,7 +94,7 @@ public class Promise<T> {
     
 }
 
-// future
+// future construct
 public func future<T>(calculateResult:Void -> Try<T>) -> Future<T> {
     return future(QueueContext.global, calculateResult)
 }
@@ -180,7 +180,7 @@ public class Future<T> {
     }
 
     public func map<M>(mapping:T -> Try<M>) -> Future<M> {
-        return map(QueueContext.main, mapping)
+        return map(self.defaultExecutionContext, mapping)
     }
     
     public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> Future<M> {
@@ -197,7 +197,7 @@ public class Future<T> {
     }
     
     public func flatmap<M>(mapping:T -> Future<M>) -> Future<M> {
-        return self.flatmap(QueueContext.main, mapping)
+        return self.flatmap(self.defaultExecutionContext, mapping)
     }
 
     public func flatmap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> Future<M> {
@@ -213,21 +213,21 @@ public class Future<T> {
         return promise.future
     }
     
-    public func andThen(complete:OnComplete) -> Future<T> {
-        return self.andThen(QueueContext.main, complete)
+    public func andThen(complete:Try<T> -> Void) -> Future<T> {
+        return self.andThen(self.defaultExecutionContext, complete)
     }
     
-    public func andThen(executionContext:ExecutionContext, complete:OnComplete) -> Future<T> {
+    public func andThen(executionContext:ExecutionContext, complete:Try<T> -> Void) -> Future<T> {
         let promise = Promise<T>()
         promise.future.onComplete(executionContext, complete)
         self.onComplete(executionContext) {result in
-            promise.completeWith(self)
+            promise.complete(result)
         }
         return promise.future
     }
     
     public func recover(recovery: NSError -> Try<T>) -> Future<T> {
-        return self.recover(QueueContext.main, recovery)
+        return self.recover(self.defaultExecutionContext, recovery)
     }
     
     public func recover(executionContext:ExecutionContext, recovery:NSError -> Try<T>) -> Future<T> {
@@ -244,7 +244,7 @@ public class Future<T> {
     }
     
     public func recoverWith(recovery:NSError -> Future<T>) -> Future<T> {
-        return self.recoverWith(QueueContext.main, recovery)
+        return self.recoverWith(self.defaultExecutionContext, recovery)
     }
     
     public func recoverWith(executionContext:ExecutionContext, recovery:NSError -> Future<T>) -> Future<T> {

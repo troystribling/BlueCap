@@ -27,6 +27,12 @@ public class StreamPromise<T> {
         self.write(promise.future)
     }
     
+    public func complete(result:Try<T>) {
+        let promise = Promise<T>()
+        promise.complete(result)
+        self.write(promise.future)
+    }
+        
     public func write(future:Future<T>) {
         self.futureStream.write(future)
     }
@@ -38,11 +44,12 @@ public class FutureStream<T> {
     
     private var futures         = [Future<T>]()
     
-    private typealias InFuture  = Future<T> -> Void
-    private var saveCompletes   = [InFuture]()
+    private let defaultExecutionContext: ExecutionContext   = QueueContext.main
+    private typealias InFuture                              = Future<T> -> Void
+    private var saveCompletes                               = [InFuture]()
     
     public func onComplete(complete:Try<T> -> Void) {
-        self.onComplete(QueueContext.main, complete)
+        self.onComplete(self.defaultExecutionContext, complete)
     }
     
     public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) {
@@ -58,7 +65,7 @@ public class FutureStream<T> {
     }
 
     public func onSuccess(success:T -> Void) {
-        self.onSuccess(QueueContext.main, success:success)
+        self.onSuccess(self.defaultExecutionContext, success:success)
     }
 
     public func onSuccess(executionContext:ExecutionContext, success:T -> Void) {
@@ -73,7 +80,7 @@ public class FutureStream<T> {
     }
     
     public func onFailure(failure:NSError -> Void) {
-        self.onFailure(QueueContext.main, failure:failure)
+        self.onFailure(self.defaultExecutionContext, failure:failure)
     }
 
     public func onFailure(executionContext:ExecutionContext, failure:NSError -> Void) {
@@ -88,7 +95,7 @@ public class FutureStream<T> {
     }
     
     public func map<M>(mapping:T -> Try<M>) -> Future<M> {
-        return self.map(QueueContext.main, mapping)
+        return self.map(self.defaultExecutionContext, mapping)
     }
     
     public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> Future<M> {
@@ -105,7 +112,7 @@ public class FutureStream<T> {
     }
     
     public func flatMap<M>(mapping:T -> Future<M>) -> Future<M> {
-        return self.flatMap(QueueContext.main, mapping)
+        return self.flatMap(self.defaultExecutionContext, mapping)
     }
 
     public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> Future<M> {
@@ -122,7 +129,7 @@ public class FutureStream<T> {
     }
     
     public func recover(recovery:NSError -> Try<T>) -> Future<T> {
-        return self.recover(QueueContext.main, recovery:recovery)
+        return self.recover(self.defaultExecutionContext, recovery:recovery)
     }
     
     public func recover(executionContext:ExecutionContext, recovery:NSError -> Try<T>) -> Future<T> {
@@ -134,6 +141,19 @@ public class FutureStream<T> {
             case .Failure(let error):
                 promise.complete(recovery(error))
             }
+        }
+        return promise.future
+    }
+    
+    public func andThen(complete:Try<T> -> Void) -> Future<T> {
+        return self.andThen(self.defaultExecutionContext, complete:complete)
+    }
+    
+    public func andThen(executionContext:ExecutionContext, complete:Try<T> -> Void) -> Future<T> {
+        let promise = Promise<T>()
+        promise.future.onComplete(executionContext, complete:complete)
+        self.onComplete(executionContext) {result in
+            promise.complete(result)
         }
         return promise.future
     }

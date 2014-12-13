@@ -33,7 +33,7 @@
 		055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B319F5513700ED3B74 /* Int16Extensions.swift */; };
 		055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B419F5513700ED3B74 /* Int8Extensions.swift */; };
 		055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B519F5513700ED3B74 /* NSDataExtensions.swift */; };
-		055120E219F5513700ED3B74 /* SerializeDeserialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B619F5513700ED3B74 /* SerializeDeserialize.swift */; };
+		055120E219F5513700ED3B74 /* SerDe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B619F5513700ED3B74 /* SerDe.swift */; };
 		055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B719F5513700ED3B74 /* UInt16Extensions.swift */; };
 		055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B819F5513700ED3B74 /* Uint8Extensions.swift */; };
 		055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */; };
@@ -97,7 +97,7 @@
 		055120B319F5513700ED3B74 /* Int16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int16Extensions.swift; sourceTree = "<group>"; };
 		055120B419F5513700ED3B74 /* Int8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int8Extensions.swift; sourceTree = "<group>"; };
 		055120B519F5513700ED3B74 /* NSDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataExtensions.swift; sourceTree = "<group>"; };
-		055120B619F5513700ED3B74 /* SerializeDeserialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeDeserialize.swift; sourceTree = "<group>"; };
+		055120B619F5513700ED3B74 /* SerDe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerDe.swift; sourceTree = "<group>"; };
 		055120B719F5513700ED3B74 /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
 		055120B819F5513700ED3B74 /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
 		055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
@@ -192,7 +192,7 @@
 				05D3B9191A2B8C4E008E794E /* External */,
 				055120A519F5513700ED3B74 /* Location */,
 				055120AE19F5513700ED3B74 /* Peripheral */,
-				055120B219F5513700ED3B74 /* Serialization Deserialization */,
+				055120B219F5513700ED3B74 /* SerDe */,
 				055120B919F5513700ED3B74 /* Service Profiles */,
 				055120C219F5513700ED3B74 /* Service Profiles Definitions */,
 				05263D011A2E24A000BAE347 /* SimpleFutures */,
@@ -266,16 +266,17 @@
 			path = Peripheral;
 			sourceTree = "<group>";
 		};
-		055120B219F5513700ED3B74 /* Serialization Deserialization */ = {
+		055120B219F5513700ED3B74 /* SerDe */ = {
 			isa = PBXGroup;
 			children = (
 				055120B319F5513700ED3B74 /* Int16Extensions.swift */,
 				055120B419F5513700ED3B74 /* Int8Extensions.swift */,
 				055120B519F5513700ED3B74 /* NSDataExtensions.swift */,
-				055120B619F5513700ED3B74 /* SerializeDeserialize.swift */,
+				055120B619F5513700ED3B74 /* SerDe.swift */,
 				055120B719F5513700ED3B74 /* UInt16Extensions.swift */,
 				055120B819F5513700ED3B74 /* Uint8Extensions.swift */,
 			);
+			name = SerDe;
 			path = "Serialization Deserialization";
 			sourceTree = "<group>";
 		};
@@ -503,7 +504,7 @@
 				055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */,
 				055120DB19F5513700ED3B74 /* RegionManager.swift in Sources */,
 				055120DC19F5513700ED3B74 /* MutableCharacteristic.swift in Sources */,
-				055120E219F5513700ED3B74 /* SerializeDeserialize.swift in Sources */,
+				055120E219F5513700ED3B74 /* SerDe.swift in Sources */,
 				055120E819F5513700ED3B74 /* PairStructCharacteristicProfile.swift in Sources */,
 				05D3B9361A2B8D61008E794E /* Float.swift in Sources */,
 				055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */,

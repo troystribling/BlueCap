@@ -835,12 +835,22 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.BarometerService.Enabled.Value.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
-                        characteristic.write(TISensorTag.BarometerService.Enabled.Value.Yes).onSuccess {
-                            characteristic.write(TISensorTag.BarometerService.Enabled.Value.Calibrate)
-                            return
+                    characteristicProfile.afterDiscovered.andThen {result in
+                        switch result {
+                        case .Success(let resultWrapper):
+                            let characteristic = resultWrapper.value
+                            characteristic.write(TISensorTag.BarometerService.Enabled.Value.Yes)
+                        default:
+                            break
                         }
-                        return
+                    }.andThen {result in
+                        switch result {
+                        case .Success(let resultWrapper):
+                            let characteristic = resultWrapper.value
+                            characteristic.write(TISensorTag.BarometerService.Enabled.Value.Calibrate)
+                        default:
+                            break
+                        }
                     }
                 })
         })
