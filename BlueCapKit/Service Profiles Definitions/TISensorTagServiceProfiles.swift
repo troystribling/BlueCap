@@ -720,10 +720,10 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
-//                        characteristic.write(TISensorTag.Enabled.Yes)
-//                        return
-//                    }
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                        characteristic.write(TISensorTag.Enabled.Yes)
+                        return
+                    }
                 })
             // Accelerometer Update Period
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid, name:TISensorTag.AccelerometerService.UpdatePeriod.name)
@@ -750,10 +750,10 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
-//                        characteristic.write(TISensorTag.Enabled.Yes)
-//                        return
-//                    }
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                        characteristic.write(TISensorTag.Enabled.Yes)
+                        return
+                    }
                 })
             // Magnetometer Update Period
             serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.UInt8Period>(uuid:TISensorTag.MagnetometerService.UpdatePeriod.uuid, name:TISensorTag.MagnetometerService.UpdatePeriod.name)
@@ -780,10 +780,10 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.GyroscopeService.Enabled.Value.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
-//                        characteristic.write(TISensorTag.GyroscopeService.Enabled.Value.XYZAxis)
-//                        return
-//                    }
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                        characteristic.write(TISensorTag.GyroscopeService.Enabled.Value.XYZAxis)
+                        return
+                    }
                 })
         })
 
@@ -804,10 +804,10 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
-//                        characteristic.write(TISensorTag.Enabled.Yes)
-//                        return
-//                    }
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                        characteristic.write(TISensorTag.Enabled.Yes)
+                        return
+                    }
                 })
         })
 
@@ -860,10 +860,10 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
-//                        characteristic.write(TISensorTag.Enabled.Yes)
-//                        return
-//                    }
+                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                        characteristic.write(TISensorTag.Enabled.Yes)
+                        return
+                    }
                 })
         })
 
