@@ -10,7 +10,7 @@ import Foundation
 
 public class StreamPromise<T> {
 
-    let futureStream    = FutureStream<T>()
+    public let future = FutureStream<T>()
     
     public init() {
     }
@@ -32,9 +32,19 @@ public class StreamPromise<T> {
         promise.complete(result)
         self.write(promise.future)
     }
-        
+    
+    public func completeWith(future:Future<T>) {
+        self.completeWith(self.future.defaultExecutionContext, future:future)
+    }
+    
+    public func completeWith(executionContext:ExecutionContext, future:Future<T>) {
+        future.onComplete(executionContext) {result in
+            self.complete(result)
+        }
+    }
+    
     public func write(future:Future<T>) {
-        self.futureStream.write(future)
+        self.future.write(future)
     }
     
 
@@ -42,21 +52,21 @@ public class StreamPromise<T> {
 
 public class FutureStream<T> {
     
-    private var futures         = [Future<T>]()
-    
-    private let defaultExecutionContext: ExecutionContext   = QueueContext.main
+    private var futures                                     = [Future<T>]()
     private typealias InFuture                              = Future<T> -> Void
     private var saveCompletes                               = [InFuture]()
     
+    internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
+
     public func onComplete(complete:Try<T> -> Void) {
         self.onComplete(self.defaultExecutionContext, complete)
     }
     
     public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) {
-        let futureComplete : InFuture = {future in
-            future.onComplete(executionContext, complete)
-        }
         Queue.simpleFutureStreams.sync {
+            let futureComplete : InFuture = {future in
+                future.onComplete(executionContext, complete)
+            }
             self.saveCompletes.append(futureComplete)
             for future in self.futures {
                 futureComplete(future)
@@ -94,12 +104,12 @@ public class FutureStream<T> {
         }
     }
     
-    public func map<M>(mapping:T -> Try<M>) -> Future<M> {
+    public func map<M>(mapping:T -> Try<M>) -> FutureStream<M> {
         return self.map(self.defaultExecutionContext, mapping)
     }
     
-    public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> Future<M> {
-        let promise = Promise<M>()
+    public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> FutureStream<M> {
+        let promise = StreamPromise<M>()
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultWrapper):
@@ -111,16 +121,16 @@ public class FutureStream<T> {
         return promise.future
     }
     
-    public func flatMap<M>(mapping:T -> Future<M>) -> Future<M> {
+    public func flatmap<M>(mapping:T -> Future<M>) -> FutureStream<M> {
         return self.flatMap(self.defaultExecutionContext, mapping)
     }
 
-    public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> Future<M> {
-        let promise = Promise<M>()
+    public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> FutureStream<M> {
+        let promise = StreamPromise<M>()
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultWrapper):
-                promise.completeWith(mapping(resultWrapper.value))
+                promise.completeWith(executionContext, future:mapping(resultWrapper.value))
             case .Failure(let error):
                 promise.failure(error)
             }
@@ -128,12 +138,12 @@ public class FutureStream<T> {
         return promise.future
     }
     
-    public func recover(recovery:NSError -> Try<T>) -> Future<T> {
+    public func recover(recovery:NSError -> Try<T>) -> FutureStream<T> {
         return self.recover(self.defaultExecutionContext, recovery:recovery)
     }
     
-    public func recover(executionContext:ExecutionContext, recovery:NSError -> Try<T>) -> Future<T> {
-        let promise = Promise<T>()
+    public func recover(executionContext:ExecutionContext, recovery:NSError -> Try<T>) -> FutureStream<T> {
+        let promise = StreamPromise<T>()
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultWrapper):
@@ -145,12 +155,12 @@ public class FutureStream<T> {
         return promise.future
     }
     
-    public func andThen(complete:Try<T> -> Void) -> Future<T> {
+    public func andThen(complete:Try<T> -> Void) -> FutureStream<T> {
         return self.andThen(self.defaultExecutionContext, complete:complete)
     }
     
-    public func andThen(executionContext:ExecutionContext, complete:Try<T> -> Void) -> Future<T> {
-        let promise = Promise<T>()
+    public func andThen(executionContext:ExecutionContext, complete:Try<T> -> Void) -> FutureStream<T> {
+        let promise = StreamPromise<T>()
         promise.future.onComplete(executionContext, complete:complete)
         self.onComplete(executionContext) {result in
             promise.complete(result)
@@ -158,10 +168,10 @@ public class FutureStream<T> {
         return promise.future
     }
     
-    internal init() {
+    public init() {
     }
     
-    internal func write(future:Future<T>) {
+    public func write(future:Future<T>) {
         if future.isCompleted == false {
             future.failure(NSError(domain:SimpleFuturesError.domain,
                 code:SimpleFuturesError.FutureNotCompleted.code,

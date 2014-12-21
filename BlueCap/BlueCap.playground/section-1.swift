@@ -30,5 +30,3 @@ func x(b:Int?) {
 }
 
 x(z)
-
-

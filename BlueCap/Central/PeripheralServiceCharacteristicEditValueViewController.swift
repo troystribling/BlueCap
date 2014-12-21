@@ -69,12 +69,12 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text {
-            let afterWriteSuceses = {()->() in
+            let afterWriteSuceses = {(characteristic:Characteristic) -> Void in
                 self.progressView.remove()
                 self.navigationController?.popViewControllerAnimated(true)
                 return
             }
-            let afterWriteFailed = {(error:NSError) -> () in
+            let afterWriteFailed = {(error:NSError) -> Void in
                 self.progressView.remove()
                 self.presentViewController(UIAlertController.alertOnError(error) {(action) in
                     self.navigationController?.popViewControllerAnimated(true)

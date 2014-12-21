@@ -26,7 +26,7 @@ public class CharacteristicProfile {
     
     public var afterDiscovered : FutureStream<Characteristic> {
         self.afterDiscoveredPromise = StreamPromise<Characteristic>()
-        return self.afterDiscoveredPromise.futureStream
+        return self.afterDiscoveredPromise.future
     }
 
     public init(uuid:String, name:String, initializer:((characteristicProfile:CharacteristicProfile) -> ())? = nil) {

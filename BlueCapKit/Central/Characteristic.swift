@@ -16,7 +16,7 @@ public class Characteristic {
     private var notificationStateChangedFailed      : ((error:NSError) -> ())?
     private var afterUpdateSuccess                  : (() -> ())?
     private var afterUpdateFailed                   : ((error:NSError) -> ())?
-    private var afterWritePromise                   : Promise<Void>!
+    private var afterWritePromise                   : Promise<Characteristic>?
     
     private var reading = false
     private var writing = false
@@ -127,8 +127,8 @@ public class Characteristic {
         }
     }
 
-    public func writeData(value:NSData) -> Future<Void> {
-        self.afterWritePromise = Promise<Void>()
+    public func writeData(value:NSData) -> Future<Characteristic> {
+        self.afterWritePromise = Promise<Characteristic>()
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
@@ -136,26 +136,26 @@ public class Characteristic {
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
         } else {
-            self.afterWritePromise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotWritable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotWritable.description]))
+            self.afterWritePromise!.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotWritable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotWritable.description]))
         }
-        return self.afterWritePromise.future
+        return self.afterWritePromise!.future
     }
 
-    public func writeString(stringValue:Dictionary<String, String>) -> Future<Void> {
+    public func writeString(stringValue:Dictionary<String, String>) -> Future<Characteristic> {
         if let value = self.profile.dataFromStringValue(stringValue) {
             return self.writeData(value)
         } else {
-            let promise = Promise<Void>()
+            let promise = Promise<Characteristic>()
             promise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotSerializable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotSerializable.description]))
             return promise.future
         }
     }
 
-    public func write(anyValue:Any) -> Future<Void> {
+    public func write(anyValue:Any) -> Future<Characteristic> {
         if let value = self.profile.dataFromAnyValue(anyValue) {
             return self.writeData(value)
         } else {
-            let promise = Promise<Void>()
+            let promise = Promise<Characteristic>()
             promise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotSerializable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotSerializable.description]))
             return promise.future
         }
@@ -259,7 +259,7 @@ public class Characteristic {
                 afterWritePromise.failure(error)
             } else {
                 Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-                afterWritePromise.success()
+                afterWritePromise.success(self)
             }
         }
     }
