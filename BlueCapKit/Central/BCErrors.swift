@@ -22,10 +22,7 @@ struct BCError {
         static let code = 3
         static let description = "Peripheral Disconnected"
     }
-    struct ServiceDiscoveryTimeout {
-        static let code = 4
-        static let description = "Service Discovery Timeout"
-    }
+    static let serviceDiscoveryTimeout = NSError(domain:domain, code:4, userInfo:[NSLocalizedDescriptionKey:"Service Discovery Timeout"])
     struct LocationUpdateFailed {
         static let code = 5
         static let description = "Location update failed"

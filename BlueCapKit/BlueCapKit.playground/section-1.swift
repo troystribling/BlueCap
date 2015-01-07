@@ -1,5 +1,7 @@
 // Playground - noun: a place where people can play
 
+// Playground - noun: a place where people can play
+
 import UIKit
 import BlueCapKit
 
@@ -35,4 +37,3 @@ case .Success(let result):
 case .Error(let error):
     println("error")
 }
-

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0551208819F5506000ED3B74 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0551208719F5506000ED3B74 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0551209219F5506000ED3B74 /* BlueCapKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209119F5506000ED3B74 /* BlueCapKitTests.swift */; };
 		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
 		055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209E19F5513700ED3B74 /* CentralManager.swift */; };
 		055120CE19F5513700ED3B74 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209F19F5513700ED3B74 /* Characteristic.swift */; };
@@ -49,6 +48,12 @@
 		055120F219F5513700ED3B74 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C919F5513700ED3B74 /* Logger.swift */; };
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
+		0562D3181A5D7FE1001013C9 /* CentralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3171A5D7FE1001013C9 /* CentralManagerTests.swift */; };
+		0562D31A1A5D8308001013C9 /* PertipheralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3191A5D8308001013C9 /* PertipheralTests.swift */; };
+		0562D31C1A5D834C001013C9 /* ConnectoratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31B1A5D834C001013C9 /* ConnectoratorTests.swift */; };
+		0562D31E1A5D8378001013C9 /* TimedScanneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31D1A5D8378001013C9 /* TimedScanneratorTests.swift */; };
+		0562D3201A5D83E9001013C9 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31F1A5D83E9001013C9 /* ServiceTests.swift */; };
+		0562D3231A5D8503001013C9 /* CharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3221A5D8503001013C9 /* CharacteristicTests.swift */; };
 		05D3B9321A2B8D61008E794E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9281A2B8D61008E794E /* Array.swift */; };
 		05D3B9331A2B8D61008E794E /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9291A2B8D61008E794E /* Dictionary.swift */; };
 		05D3B9341A2B8D61008E794E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92A1A2B8D61008E794E /* Double.swift */; };
@@ -75,7 +80,6 @@
 		0551208719F5506000ED3B74 /* BlueCapKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueCapKit.h; sourceTree = "<group>"; };
 		0551208D19F5506000ED3B74 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551209019F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0551209119F5506000ED3B74 /* BlueCapKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueCapKitTests.swift; sourceTree = "<group>"; };
 		0551209D19F5513700ED3B74 /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		0551209E19F5513700ED3B74 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		0551209F19F5513700ED3B74 /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
@@ -116,6 +120,13 @@
 		055120C919F5513700ED3B74 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		0562D3171A5D7FE1001013C9 /* CentralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManagerTests.swift; sourceTree = "<group>"; };
+		0562D3191A5D8308001013C9 /* PertipheralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PertipheralTests.swift; sourceTree = "<group>"; };
+		0562D31B1A5D834C001013C9 /* ConnectoratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectoratorTests.swift; sourceTree = "<group>"; };
+		0562D31D1A5D8378001013C9 /* TimedScanneratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScanneratorTests.swift; sourceTree = "<group>"; };
+		0562D31F1A5D83E9001013C9 /* ServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
+		0562D3221A5D8503001013C9 /* CharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicTests.swift; sourceTree = "<group>"; };
+		0562D3251A5D8861001013C9 /* BlueCapKit.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BlueCapKit.playground; sourceTree = "<group>"; };
 		05D3B9281A2B8D61008E794E /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		05D3B9291A2B8D61008E794E /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		05D3B92A1A2B8D61008E794E /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
@@ -126,7 +137,6 @@
 		05D3B92F1A2B8D61008E794E /* Range.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Range.swift; sourceTree = "<group>"; };
 		05D3B9301A2B8D61008E794E /* Sequence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		05D3B93C1A2B9BED008E794E /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		05D3B9411A2BA09F008E794E /* BlueCapKit.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BlueCapKit.playground; sourceTree = "<group>"; };
 		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		05D3B9441A2BA162008E794E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		05E1A7261A55BE1600A00C02 /* ExecutionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExecutionContext.swift; sourceTree = "<group>"; };
@@ -162,7 +172,6 @@
 			children = (
 				055120F719F551CB00ED3B74 /* CoreBluetooth.framework */,
 				055120F519F551BB00ED3B74 /* CoreLocation.framework */,
-				05D3B9411A2BA09F008E794E /* BlueCapKit.playground */,
 				0551208419F5506000ED3B74 /* BlueCapKit */,
 				0551208E19F5506000ED3B74 /* BlueCapKitTests */,
 				0551208319F5506000ED3B74 /* Products */,
@@ -182,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				0551208719F5506000ED3B74 /* BlueCapKit.h */,
+				0562D3251A5D8861001013C9 /* BlueCapKit.playground */,
 				0551209C19F5513700ED3B74 /* Central */,
 				05D3B9421A2BA162008E794E /* Extensions */,
 				05D3B9191A2B8C4E008E794E /* External */,
@@ -207,7 +217,8 @@
 		0551208E19F5506000ED3B74 /* BlueCapKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				0551209119F5506000ED3B74 /* BlueCapKitTests.swift */,
+				0562D3241A5D8585001013C9 /* SerDe */,
+				0562D3211A5D83F1001013C9 /* Central */,
 				0551208F19F5506000ED3B74 /* Supporting Files */,
 			);
 			path = BlueCapKitTests;
@@ -307,6 +318,26 @@
 				055120C919F5513700ED3B74 /* Logger.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		0562D3211A5D83F1001013C9 /* Central */ = {
+			isa = PBXGroup;
+			children = (
+				0562D3171A5D7FE1001013C9 /* CentralManagerTests.swift */,
+				0562D3221A5D8503001013C9 /* CharacteristicTests.swift */,
+				0562D31B1A5D834C001013C9 /* ConnectoratorTests.swift */,
+				0562D3191A5D8308001013C9 /* PertipheralTests.swift */,
+				0562D31F1A5D83E9001013C9 /* ServiceTests.swift */,
+				0562D31D1A5D8378001013C9 /* TimedScanneratorTests.swift */,
+			);
+			name = Central;
+			sourceTree = "<group>";
+		};
+		0562D3241A5D8585001013C9 /* SerDe */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = SerDe;
 			sourceTree = "<group>";
 		};
 		05D3B9191A2B8C4E008E794E /* External */ = {
@@ -535,7 +566,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0551209219F5506000ED3B74 /* BlueCapKitTests.swift in Sources */,
+				0562D3231A5D8503001013C9 /* CharacteristicTests.swift in Sources */,
+				0562D31E1A5D8378001013C9 /* TimedScanneratorTests.swift in Sources */,
+				0562D31A1A5D8308001013C9 /* PertipheralTests.swift in Sources */,
+				0562D3181A5D7FE1001013C9 /* CentralManagerTests.swift in Sources */,
+				0562D31C1A5D834C001013C9 /* ConnectoratorTests.swift in Sources */,
+				0562D3201A5D83E9001013C9 /* ServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -665,6 +701,7 @@
 		0551209919F5506000ED3B74 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -676,12 +713,14 @@
 				INFOPLIST_FILE = BlueCapKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		0551209A19F5506000ED3B74 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",

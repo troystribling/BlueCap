@@ -15,8 +15,6 @@ public class TimedScannerator {
 
     internal var _isScanning = false
     
-    public var afterTimeout : (() -> ())?
-    
     public var isScanning : Bool {
         return self._isScanning
     }
@@ -31,20 +29,18 @@ public class TimedScannerator {
     public init() {
     }
     
-    public func startScanning(timeoutSeconds:Double, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
-        CentralManager.sharedInstance.startScanning(afterPeripheralDiscovered)
+    public func startScanning(timeoutSeconds:Double) -> FutureStream<(Peripheral, Int)> {
         self.timeoutSeconds = timeoutSeconds
-        self.afterTimeout = afterTimeout
         self._isScanning = true
         self.timeoutScan()
+        return CentralManager.sharedInstance.startScanning()
     }
     
-    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, afterPeripheralDiscoveredCallback:(peripheral:Peripheral, rssi:Int)->(), afterTimeout:(()->())? = nil) {
-        CentralManager.sharedInstance.startScanningForServiceUUIDs(uuids, afterPeripheralDiscoveredCallback)
-        self.afterTimeout = afterTimeout
+    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!) -> FutureStream<(Peripheral, Int)> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
+        return CentralManager.sharedInstance.startScanningForServiceUUIDs(uuids)
     }
     
     public func stopScanning() {
@@ -55,9 +51,7 @@ public class TimedScannerator {
     internal func timeoutScan() {
         Logger.debug("Scannerator#timeoutScan: \(self.timeoutSeconds)s")
         CentralManager.sharedInstance.delayCallback(self.timeoutSeconds) {
-            if let afterTimeout = self.afterTimeout {
-                afterTimeout()
-            }
+            CentralManager.sharedInstance.afterPeripheralDiscoveredPromise.failure(BCError.serviceDiscoveryTimeout)
         }
     }
 

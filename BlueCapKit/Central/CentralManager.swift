@@ -12,9 +12,9 @@ import CoreBluetooth
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PRIVATE
-    private var afterPowerOn                    : Promise<Void>!
-    private var afterPowerOff                   : Promise<Void>!
-    private var afterPeripheralDiscovered       : ((peripheral:Peripheral, rssi:Int)->())?
+    private var afterPowerOnPromise                 : Promise<Void>?
+    private var afterPowerOffPromise                : Promise<Void>?
+    internal var afterPeripheralDiscoveredPromise   = StreamPromise<(Peripheral, Int)>()
 
     private let cbCentralManager    : CBCentralManager!
 
@@ -58,17 +58,22 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // scanning
-    public func startScanning(afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
-        self.startScanningForServiceUUIDs(nil, afterPeripheralDiscovered)
+    public func startScanning(capacity:Int? = nil) -> FutureStream<(Peripheral, Int)> {
+        return self.startScanningForServiceUUIDs(nil, capacity:capacity)
     }
     
-    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, afterPeripheralDiscovered:(peripheral:Peripheral, rssi:Int)->()) {
+    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<(Peripheral, Int)> {
         if !self._isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDs: \(uuids)")
             self._isScanning = true
-            self.afterPeripheralDiscovered = afterPeripheralDiscovered
+            if let capacity = capacity {
+                self.afterPeripheralDiscoveredPromise = StreamPromise<(Peripheral, Int)>(capacity:capacity)
+            } else {
+                self.afterPeripheralDiscoveredPromise = StreamPromise<(Peripheral, Int)>()
+            }
             self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
+        return self.afterPeripheralDiscoveredPromise.future
     }
     
     public func stopScanning() {
@@ -104,20 +109,20 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // power up
     public func powerOn() -> Future<Void> {
         Logger.debug("CentralManager#powerOn")
-        self.afterPowerOn = Promise<Void>()
-        if self.poweredOn {
-            self.afterPowerOn.success(())
+        self.afterPowerOnPromise  = Promise<Void>()
+        if self.poweredOn  {
+            self.afterPowerOnPromise?.success(())
         }
-        return self.afterPowerOn.future
+        return self.afterPowerOnPromise!.future
     }
     
     public func powerOff() -> Future<Void> {
         Logger.debug("CentralManager#powerOff")
-        self.afterPowerOff = Promise<Void>()
-        if self.poweredOff {
-            self.afterPowerOff.success(())
+        self.afterPowerOffPromise  = Promise<Void>()
+        if self.poweredOff  {
+            self.afterPowerOffPromise?.success(())
         }
-        return self.afterPowerOff.future
+        return self.afterPowerOffPromise!.future
     }
     
     // CBCentralManagerDelegate
@@ -140,9 +145,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
-            if let afterPeripheralDiscovered = self.afterPeripheralDiscovered {
-                afterPeripheralDiscovered(peripheral:bcPeripheral, rssi:RSSI.integerValue)
-            }
+            self.afterPeripheralDiscoveredPromise.success((bcPeripheral, RSSI.integerValue))
         }
     }
     
@@ -182,14 +185,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
-            if let afterPowerOff = self.afterPowerOff {
-                afterPowerOff.success(())
+            if let afterPowerOffPromise = self.afterPowerOffPromise {
+                afterPowerOffPromise.success(())
             }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            if let afterPowerOn = self.afterPowerOn {
-                afterPowerOn.success(())
+            if let afterPowerOnPromise = self.afterPowerOnPromise {
+                afterPowerOnPromise.success(())
             }
             break
         }
