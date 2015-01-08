@@ -269,8 +269,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             self.cbPeripheral.discoverServices(services)
         } else {
             if let serviceDiscoveryFailed = self.serviceDiscoveryFailed {
-                CentralManager.asyncCallback {serviceDiscoveryFailed(error:
-                    NSError(domain:BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
+                CentralManager.asyncCallback {serviceDiscoveryFailed(error:BCError.peripheralDisconnected)}
             }
         }
     }
@@ -289,7 +288,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 self.forcedDisconnect = false
                 CentralManager.asyncCallback {
                     Logger.debug("Peripheral#didDisconnectPeripheral: forced disconnect")
-                    connectorator.didForceDisconnect(self)
+                    connectorator.didForceDisconnect()
                 }
             } else {
                 switch(self.currentError) {
@@ -301,7 +300,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 case .Timeout:
                         CentralManager.asyncCallback {
                             Logger.debug("Peripheral#didDisconnectPeripheral: Timeout reconnecting")
-                            connectorator.didTimeout(self)
+                            connectorator.didTimeout()
                         }
                 }
             }
@@ -311,12 +310,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal func didConnectPeripheral() {
         Logger.debug("PeripheralConnectionError#didConnectPeripheral")
         self._connectedAt = NSDate()
-        self._connectorator?.didConnect(self)
+        self._connectorator?.didConnect()
     }
     
     internal func didFailToConnectPeripheral(error:NSError?) {
         Logger.debug("PeripheralConnectionError#didFailToConnectPeripheral")
-        self._connectorator?.didFailConnect(self, error:error)
+        self._connectorator?.didFailConnect(error)
     }
     
     internal func discoverService(head:Service, tail:[Service], peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError)->())? = nil) {

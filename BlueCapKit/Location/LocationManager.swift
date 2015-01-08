@@ -107,8 +107,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
                 locationUpdateSuccess(location:location)
             } else {
                 if let locationUpdateFailed = locationUpdateFailed {
-                    locationUpdateFailed(error:NSError(
-                        domain:BCError.domain, code:BCError.LocationUpdateFailed.code, userInfo:[NSLocalizedDescriptionKey:BCError.LocationUpdateFailed.description]))
+                    locationUpdateFailed(error:BCError.locationUpdateFailed)
                 }
             }
             self.locationsUpdateSuccess = nil

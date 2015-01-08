@@ -64,8 +64,7 @@ public class Service : NSObject {
             self.peripheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
         } else {
             if let characteristicDiscoveryFailed = self.characteristicDiscoveryFailed {
-                CentralManager.asyncCallback {characteristicDiscoveryFailed(error:
-                    NSError(domain:BCError.domain, code:BCError.PeripheralDisconnected.code, userInfo:[NSLocalizedDescriptionKey:BCError.PeripheralDisconnected.description]))}
+                CentralManager.asyncCallback {characteristicDiscoveryFailed(error:BCError.peripheralDisconnected)}
             }
         }
     }

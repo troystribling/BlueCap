@@ -136,7 +136,7 @@ public class Characteristic {
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
         } else {
-            self.afterWritePromise!.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotWritable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotWritable.description]))
+            self.afterWritePromise!.failure(BCError.characteristicNotWritable)
         }
         return self.afterWritePromise!.future
     }
@@ -146,7 +146,7 @@ public class Characteristic {
             return self.writeData(value)
         } else {
             let promise = Promise<Characteristic>()
-            promise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotSerializable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotSerializable.description]))
+            promise.failure(BCError.characteristicNotSerilaizable)
             return promise.future
         }
     }
@@ -156,7 +156,7 @@ public class Characteristic {
             return self.writeData(value)
         } else {
             let promise = Promise<Characteristic>()
-            promise.failure(NSError(domain:BCError.domain, code:BCError.CharateristicNotSerializable.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharateristicNotSerializable.description]))
+            promise.failure(BCError.characteristicNotSerilaizable)
             return promise.future
         }
     }
@@ -170,8 +170,7 @@ public class Characteristic {
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 if let afterUpdateFailed = self.afterUpdateFailed {
                     CentralManager.asyncCallback {
-                        afterUpdateFailed(error:
-                            NSError(domain:BCError.domain, code:BCError.CharacteristicReadTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicReadTimeout.description]))
+                        afterUpdateFailed(error:BCError.characteristicReadTimeout)
                     }
                 }
             } else {
@@ -187,7 +186,7 @@ public class Characteristic {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 if let afterWritePromise = self.afterWritePromise {
-                    afterWritePromise.failure(NSError(domain:BCError.domain, code:BCError.CharacteristicWriteTimeout.code, userInfo:[NSLocalizedDescriptionKey:BCError.CharacteristicWriteTimeout.description]))
+                    afterWritePromise.failure(BCError.characteristicWriteTimeout)
                 }
             } else {
                 Logger.debug("Characteristic#timeoutWrite: expired")
