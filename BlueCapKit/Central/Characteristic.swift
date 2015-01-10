@@ -12,11 +12,11 @@ import CoreBluetooth
 public class Characteristic {
 
     // PRIVATE
-    private var notificationStateChangedSuccess     : (() -> ())?
-    private var notificationStateChangedFailed      : ((error:NSError) -> ())?
-    private var afterUpdateSuccess                  : (() -> ())?
-    private var afterUpdateFailed                   : ((error:NSError) -> ())?
-    private var afterWritePromise                   = Promise<Void>()
+    private var notificationUpdatePromise          = StreamPromise<Void>()
+    private var notificationStateChangedPromise    = Promise<Void>()
+    private var afterNotificationUpdatePromise     = StreamPromise<Void>()
+    private var readPromise                        = Promise<Void>()
+    private var writePromise                       = Promise<Void>()
     
     private var reading = false
     private var writing = false
@@ -79,56 +79,47 @@ public class Characteristic {
         return self.profile.discreteStringValues
     }
     
-    public func startNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError) -> ())? = nil) {
+    public func startNotifying() -> Future<Void> {
+        self.notificationStateChangedPromise = Promise<Void>()
         if self.propertyEnabled(.Notify) {
-            self.notificationStateChangedSuccess = notificationStateChangedSuccess
-            self.notificationStateChangedFailed = notificationStateChangedFailed
             self.service.peripheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
         }
+        return self.notificationStateChangedPromise.future
     }
 
-    public func stopNotifying(notificationStateChangedSuccess:(() -> ())? = nil, notificationStateChangedFailed:((error:NSError) -> ())? = nil) {
+    public func stopNotifying() -> Future<Void> {
+        self.notificationStateChangedPromise = Promise<Void>()
         if self.propertyEnabled(.Notify) {
-            self.notificationStateChangedSuccess = notificationStateChangedSuccess
-            self.notificationStateChangedFailed = notificationStateChangedFailed
             self.service.peripheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
         }
+        return self.notificationStateChangedPromise.future
     }
 
-    public func startUpdates(afterUpdateSuccess:() -> (), afterUpdateFailed:((error:NSError)->())? = nil) {
-        if self.propertyEnabled(.Notify) {
-            self.afterUpdateSuccess = afterUpdateSuccess
-            self.afterUpdateFailed = afterUpdateFailed
-        }
-    }
-
-    public func stopUpdates() {
-        if self.propertyEnabled(.Notify) {
-            self.afterUpdateSuccess = nil
-            self.afterUpdateFailed = nil
-        }
+    public func recieveNotificationUpdates() -> FutureStream<Void> {
+        self.notificationUpdatePromise = StreamPromise<Void>()
+        return self.notificationUpdatePromise.future
     }
 
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
         return (self.properties.rawValue & property.rawValue) > 0
     }
     
-    public func read(afterReadSuccess:() -> (), afterReadFailed:((error:NSError)->())?) {
+    public func read() -> Future<Void> {
+        self.readPromise = Promise<Void>()
         if self.propertyEnabled(.Read) {
             Logger.debug("Characteristic#read: \(self.uuid.UUIDString)")
-            self.afterUpdateSuccess = afterReadSuccess
-            self.afterUpdateFailed = afterReadFailed
             self.service.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
             self.reading = true
             ++self.readSequence
             self.timeoutRead(self.readSequence)
         } else {
-            NSException(name:"Characteristic read error", reason: "read not supported by \(self.uuid.UUIDString)", userInfo: nil).raise()
+            self.readPromise.failure(BCError.characteristicReadNotSupported)
         }
+        return self.readPromise.future
     }
 
     public func writeData(value:NSData) -> Future<Void> {
-        self.afterWritePromise = Promise<Void>()
+        self.writePromise = Promise<Void>()
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
@@ -136,9 +127,9 @@ public class Characteristic {
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
         } else {
-            self.afterWritePromise.failure(BCError.characteristicNotWritable)
+            self.writePromise.failure(BCError.characteristicWriteNotSupported)
         }
-        return self.afterWritePromise.future
+        return self.writePromise.future
     }
 
     public func writeString(stringValue:Dictionary<String, String>) -> Future<Void> {
@@ -185,7 +176,7 @@ public class Characteristic {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                self.afterWritePromise.failure(BCError.characteristicWriteTimeout)
+                self.writePromise.failure(BCError.characteristicWriteTimeout)
             } else {
                 Logger.debug("Characteristic#timeoutWrite: expired")
             }
