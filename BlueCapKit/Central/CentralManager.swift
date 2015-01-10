@@ -12,8 +12,8 @@ import CoreBluetooth
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PRIVATE
-    private var afterPowerOnPromise                 : Promise<Void>?
-    private var afterPowerOffPromise                : Promise<Void>?
+    private var afterPowerOnPromise                 = Promise<Void>()
+    private var afterPowerOffPromise                = Promise<Void>()
     internal var afterPeripheralDiscoveredPromise   = StreamPromise<(Peripheral, Int)>()
 
     private let cbCentralManager    : CBCentralManager!
@@ -109,20 +109,16 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // power up
     public func powerOn() -> Future<Void> {
         Logger.debug("CentralManager#powerOn")
-        self.afterPowerOnPromise  = Promise<Void>()
-        if self.poweredOn  {
-            self.afterPowerOnPromise?.success(())
-        }
-        return self.afterPowerOnPromise!.future
+        let future = self.afterPowerOnPromise.future
+        self.afterPowerOnPromise = Promise<Void>()
+        return future
     }
     
     public func powerOff() -> Future<Void> {
         Logger.debug("CentralManager#powerOff")
-        self.afterPowerOffPromise  = Promise<Void>()
-        if self.poweredOff  {
-            self.afterPowerOffPromise?.success(())
-        }
-        return self.afterPowerOffPromise!.future
+        let future = self.afterPowerOffPromise.future
+        self.afterPowerOffPromise = Promise<Void>()
+        return future
     }
     
     // CBCentralManagerDelegate
@@ -185,15 +181,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
-            if let afterPowerOffPromise = self.afterPowerOffPromise {
-                afterPowerOffPromise.success(())
-            }
+            afterPowerOffPromise.success(())
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            if let afterPowerOnPromise = self.afterPowerOnPromise {
-                afterPowerOnPromise.success(())
-            }
+            afterPowerOnPromise.success(())
             break
         }
     }

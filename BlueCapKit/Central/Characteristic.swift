@@ -16,7 +16,7 @@ public class Characteristic {
     private var notificationStateChangedFailed      : ((error:NSError) -> ())?
     private var afterUpdateSuccess                  : (() -> ())?
     private var afterUpdateFailed                   : ((error:NSError) -> ())?
-    private var afterWritePromise                   : Promise<Characteristic>?
+    private var afterWritePromise                   = Promise<Void>()
     
     private var reading = false
     private var writing = false
@@ -127,8 +127,8 @@ public class Characteristic {
         }
     }
 
-    public func writeData(value:NSData) -> Future<Characteristic> {
-        self.afterWritePromise = Promise<Characteristic>()
+    public func writeData(value:NSData) -> Future<Void> {
+        self.afterWritePromise = Promise<Void>()
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
@@ -136,26 +136,26 @@ public class Characteristic {
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence)
         } else {
-            self.afterWritePromise!.failure(BCError.characteristicNotWritable)
+            self.afterWritePromise.failure(BCError.characteristicNotWritable)
         }
-        return self.afterWritePromise!.future
+        return self.afterWritePromise.future
     }
 
-    public func writeString(stringValue:Dictionary<String, String>) -> Future<Characteristic> {
+    public func writeString(stringValue:Dictionary<String, String>) -> Future<Void> {
         if let value = self.profile.dataFromStringValue(stringValue) {
             return self.writeData(value)
         } else {
-            let promise = Promise<Characteristic>()
+            let promise = Promise<Void>()
             promise.failure(BCError.characteristicNotSerilaizable)
             return promise.future
         }
     }
 
-    public func write(anyValue:Any) -> Future<Characteristic> {
+    public func write(anyValue:Any) -> Future<Void> {
         if let value = self.profile.dataFromAnyValue(anyValue) {
             return self.writeData(value)
         } else {
-            let promise = Promise<Characteristic>()
+            let promise = Promise<Void>()
             promise.failure(BCError.characteristicNotSerilaizable)
             return promise.future
         }
@@ -185,9 +185,7 @@ public class Characteristic {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("Characteristic#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                if let afterWritePromise = self.afterWritePromise {
-                    afterWritePromise.failure(BCError.characteristicWriteTimeout)
-                }
+                self.afterWritePromise.failure(BCError.characteristicWriteTimeout)
             } else {
                 Logger.debug("Characteristic#timeoutWrite: expired")
             }
@@ -252,14 +250,12 @@ public class Characteristic {
     
     internal func didWrite(error:NSError!) {
         self.writing = false
-        if let afterWritePromise = self.afterWritePromise {
-            if let error = error {
-                Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-                afterWritePromise.failure(error)
-            } else {
-                Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-                afterWritePromise.success(self)
-            }
+        if let error = error {
+            Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            self.afterWritePromise.failure(error)
+        } else {
+            Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            self.afterWritePromise.success()
         }
     }
 }

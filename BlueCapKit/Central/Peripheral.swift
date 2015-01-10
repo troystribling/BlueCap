@@ -17,8 +17,7 @@ enum PeripheralConnectionError {
 public class Peripheral : NSObject, CBPeripheralDelegate {
 
     // PRIVATE
-    private var servicesDiscoveredSuccess   : (() -> ())?
-    private var serviceDiscoveryFailed      : ((error:NSError) -> ())?
+    private var servicesDiscoveredPromise   = Promise<[Service]>()
     
     private var connectionSequence          = 0
     private var discoveredServices          = Dictionary<CBUUID, Service>()
@@ -119,41 +118,40 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
 
     // service discovery
-    public func discoverAllServices(servicesDiscoveredSuccess:()->(), serviceDiscoveryFailed:((error:NSError) -> ())? = nil) {
+    public func discoverAllServices() -> Future<[Service]> {
         Logger.debug("Peripheral#discoverAllServices: \(self.name)")
-        self.discoverServices(nil, servicesDiscoveredSuccess:servicesDiscoveredSuccess, serviceDiscoveryFailed:serviceDiscoveryFailed)
+        return self.discoverServices(nil)
     }
 
-    public func discoverServices(services:[CBUUID]!, servicesDiscoveredSuccess:()->(), serviceDiscoveryFailed:((error:NSError) -> ())? = nil) {
+    public func discoverServices(services:[CBUUID]!) -> Future<[Service]> {
         Logger.debug("Peripheral#discoverAllServices: \(self.name)")
-        self.servicesDiscoveredSuccess = servicesDiscoveredSuccess
-        self.serviceDiscoveryFailed = serviceDiscoveryFailed
+        self.servicesDiscoveredPromise = Promise<[Service]>()
         self.discoverIfConnected(services)
+        return self.servicesDiscoveredPromise.future
     }
 
-    public func discoverAllPeripheralServices(peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError)->())? = nil) {
+    public func discoverAllPeripheralServices() -> Future<[Service]> {
         Logger.debug("Peripheral#discoverAllPeripheralServices: \(self.name)")
-        self.discoverPeripheralServices(nil, peripheralDiscovered:peripheralDiscovered, peripheralDiscoveryFailed:peripheralDiscoveryFailed)
+        return self.discoverPeripheralServices(nil)
     }
 
-    public func discoverPeripheralServices(services:[CBUUID]!, peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError)->())? = nil) {
+    public func discoverPeripheralServices(services:[CBUUID]!) -> Future<[Service]> {
+        let peripheralDiscoveredPromise = Promise<[Service]>()
         Logger.debug("Peripheral#discoverPeripheralServices: \(self.name)")
-        self.discoverServices(services,
-            servicesDiscoveredSuccess:{
-                if self.services.count > 1 {
-                    self.discoverService(self.services[0], tail:Array(self.services[1..<self.services.count]),
-                        peripheralDiscovered:peripheralDiscovered,
-                        peripheralDiscoveryFailed:peripheralDiscoveryFailed)
-                } else {
-                    self.services[0].discoverAllCharacteristics(peripheralDiscovered, characteristicDiscoveryFailed:peripheralDiscoveryFailed)
-                }
-            },
-            serviceDiscoveryFailed:{(error) in
-                if let peripheralDiscoveryFailed = peripheralDiscoveryFailed {
-                    CentralManager.asyncCallback {peripheralDiscoveryFailed(error:error)}
-                }
+        let servicesDiscoveredFuture = self.discoverServices(services)
+        servicesDiscoveredFuture.onSuccess {services in
+            if self.services.count > 1 {
+                self.discoverService(self.services[0], tail:Array(self.services[1..<self.services.count]),
+                    peripheralDiscovered:peripheralDiscovered,
+                    peripheralDiscoveryFailed:peripheralDiscoveryFailed)
+            } else {
+                self.services[0].discoverAllCharacteristics(peripheralDiscovered, characteristicDiscoveryFailed:peripheralDiscoveryFailed)
             }
-        )
+        }
+        servicesDiscoveredFuture.onFailure{(error) in
+           peripheralDiscoveredPromise.failure(error)
+        }
+        return peripheralDiscoveredPromise.future
     }
 
     // CBPeripheralDelegate
@@ -170,15 +168,19 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     public func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
         Logger.debug("Peripheral#didDiscoverServices: \(self.name)")
         self.clearAll()
-        if let cbServices = peripheral.services {
-            for cbService : AnyObject in cbServices {
-                let bcService = Service(cbService:cbService as CBService, peripheral:self)
-                self.discoveredServices[bcService.uuid] = bcService
-                Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+        if let error = error {
+            if let cbServices = peripheral.services {
+                for cbService : AnyObject in cbServices {
+                    let bcService = Service(cbService:cbService as CBService, peripheral:self)
+                    self.discoveredServices[bcService.uuid] = bcService
+                    Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+                }
+                self.servicesDiscoveredPromise.success(self.services)
+            } else {
+                self.servicesDiscoveredPromise.success([Service]())
             }
-            if let servicesDiscoveredSuccess = self.servicesDiscoveredSuccess {
-                CentralManager.asyncCallback(servicesDiscoveredSuccess)
-            }
+        } else {
+            self.servicesDiscoveredPromise.failure(error)
         }
     }
     
@@ -268,9 +270,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         if self.state == .Connected {
             self.cbPeripheral.discoverServices(services)
         } else {
-            if let serviceDiscoveryFailed = self.serviceDiscoveryFailed {
-                CentralManager.asyncCallback {serviceDiscoveryFailed(error:BCError.peripheralDisconnected)}
-            }
+            self.servicesDiscoveredPromise.failure(BCError.peripheralDisconnected)
         }
     }
     
