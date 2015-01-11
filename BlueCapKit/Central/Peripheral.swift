@@ -141,11 +141,15 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         let servicesDiscoveredFuture = self.discoverServices(services)
         servicesDiscoveredFuture.onSuccess {services in
             if self.services.count > 1 {
-                self.discoverService(self.services[0], tail:Array(self.services[1..<self.services.count]),
-                    peripheralDiscovered:peripheralDiscovered,
-                    peripheralDiscoveryFailed:peripheralDiscoveryFailed)
+                self.discoverService(self.services[0], tail:Array(self.services[1..<self.services.count]), promise:peripheralDiscoveredPromise)
             } else {
-                self.services[0].discoverAllCharacteristics(peripheralDiscovered, characteristicDiscoveryFailed:peripheralDiscoveryFailed)
+                let discoveryFuture = self.services[0].discoverAllCharacteristics()
+                discoveryFuture.onSuccess {_ in
+                    peripheralDiscoveredPromise.success(self.services)
+                }
+                discoveryFuture.onFailure {error in
+                    peripheralDiscoveredPromise.failure(error)
+                }
             }
         }
         servicesDiscoveredFuture.onFailure{(error) in
@@ -169,6 +173,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug("Peripheral#didDiscoverServices: \(self.name)")
         self.clearAll()
         if let error = error {
+            self.servicesDiscoveredPromise.failure(error)
+        } else {
             if let cbServices = peripheral.services {
                 for cbService : AnyObject in cbServices {
                     let bcService = Service(cbService:cbService as CBService, peripheral:self)
@@ -179,8 +185,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             } else {
                 self.servicesDiscoveredPromise.success([Service]())
             }
-        } else {
-            self.servicesDiscoveredPromise.failure(error)
         }
     }
     
@@ -194,10 +198,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         if let service = service {
             if let bcService = self.discoveredServices[service.UUID] {
                 if let cbCharacteristic = service.characteristics {
-                    bcService.didDiscoverCharacteristics()
-                    for characteristic : AnyObject in cbCharacteristic {
-                        let cbCharacteristic = characteristic as CBCharacteristic
-                        self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+                    bcService.didDiscoverCharacteristics(error)
+                    if error == nil {
+                        for characteristic : AnyObject in cbCharacteristic {
+                            let cbCharacteristic = characteristic as CBCharacteristic
+                            self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+                        }
                     }
                 }
             }
@@ -295,7 +301,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 case .None:
                         CentralManager.asyncCallback {
                             Logger.debug("Peripheral#didDisconnectPeripheral: No errors disconnecting")
-                            connectorator.didDisconnect(self)
+                            connectorator.didDisconnect()
                         }
                 case .Timeout:
                         CentralManager.asyncCallback {
@@ -310,7 +316,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal func didConnectPeripheral() {
         Logger.debug("PeripheralConnectionError#didConnectPeripheral")
         self._connectedAt = NSDate()
-        self._connectorator?.didConnect()
+        self._connectorator?.didConnect(self)
     }
     
     internal func didFailToConnectPeripheral(error:NSError?) {
@@ -318,16 +324,19 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self._connectorator?.didFailConnect(error)
     }
     
-    internal func discoverService(head:Service, tail:[Service], peripheralDiscovered:()->(), peripheralDiscoveryFailed:((error:NSError)->())? = nil) {
+    internal func discoverService(head:Service, tail:[Service], promise:Promise<[Service]>) {
+        let discoveryFuture = head.discoverAllCharacteristics()
         if tail.count > 0 {
-            head.discoverAllCharacteristics({
-                self.discoverService(tail[0], tail:Array(tail[1..<tail.count]),
-                    peripheralDiscovered:peripheralDiscovered,
-                    peripheralDiscoveryFailed:peripheralDiscoveryFailed)
-                },
-                characteristicDiscoveryFailed:peripheralDiscoveryFailed)
+            discoveryFuture.onSuccess {_ in
+                self.discoverService(tail[0], tail:Array(tail[1..<tail.count]), promise:promise)
+            }
         } else {
-            head.discoverAllCharacteristics(peripheralDiscovered, characteristicDiscoveryFailed:peripheralDiscoveryFailed)
+            discoveryFuture.onSuccess {_ in
+                promise.success(self.services)
+            }
+        }
+        discoveryFuture.onFailure {error in
+            promise.failure(error)
         }
     }
 }

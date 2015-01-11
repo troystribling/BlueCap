@@ -12,11 +12,11 @@ import CoreBluetooth
 public class Characteristic {
 
     // PRIVATE
-    private var notificationUpdatePromise          = StreamPromise<Void>()
-    private var notificationStateChangedPromise    = Promise<Void>()
-    private var afterNotificationUpdatePromise     = StreamPromise<Void>()
-    private var readPromise                        = Promise<Void>()
-    private var writePromise                       = Promise<Void>()
+    private var notificationUpdatePromise          = StreamPromise<Characteristic>()
+    private var notificationStateChangedPromise    = Promise<Characteristic>()
+    private var afterNotificationUpdatePromise     = StreamPromise<Characteristic>()
+    private var readPromise                        = Promise<Characteristic>()
+    private var writePromise                       = Promise<Characteristic>()
     
     private var reading = false
     private var writing = false
@@ -79,24 +79,28 @@ public class Characteristic {
         return self.profile.discreteStringValues
     }
     
-    public func startNotifying() -> Future<Void> {
-        self.notificationStateChangedPromise = Promise<Void>()
+    public func startNotifying() -> Future<Characteristic> {
+        self.notificationStateChangedPromise = Promise<Characteristic>()
         if self.propertyEnabled(.Notify) {
             self.service.peripheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
         }
         return self.notificationStateChangedPromise.future
     }
 
-    public func stopNotifying() -> Future<Void> {
-        self.notificationStateChangedPromise = Promise<Void>()
+    public func stopNotifying() -> Future<Characteristic> {
+        self.notificationStateChangedPromise = Promise<Characteristic>()
         if self.propertyEnabled(.Notify) {
             self.service.peripheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
         }
         return self.notificationStateChangedPromise.future
     }
 
-    public func recieveNotificationUpdates() -> FutureStream<Void> {
-        self.notificationUpdatePromise = StreamPromise<Void>()
+    public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic> {
+        if let capacity = capacity {
+            self.notificationUpdatePromise = StreamPromise<Characteristic>(capacity:capacity)
+        } else {
+            self.notificationUpdatePromise = StreamPromise<Characteristic>()
+        }
         return self.notificationUpdatePromise.future
     }
 
@@ -104,8 +108,8 @@ public class Characteristic {
         return (self.properties.rawValue & property.rawValue) > 0
     }
     
-    public func read() -> Future<Void> {
-        self.readPromise = Promise<Void>()
+    public func read() -> Future<Characteristic> {
+        self.readPromise = Promise<Characteristic>()
         if self.propertyEnabled(.Read) {
             Logger.debug("Characteristic#read: \(self.uuid.UUIDString)")
             self.service.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
@@ -118,8 +122,8 @@ public class Characteristic {
         return self.readPromise.future
     }
 
-    public func writeData(value:NSData) -> Future<Void> {
-        self.writePromise = Promise<Void>()
+    public func writeData(value:NSData) -> Future<Characteristic> {
+        self.writePromise = Promise<Characteristic>()
         if self.propertyEnabled(.Write) {
             Logger.debug("Characteristic#write: value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
@@ -132,23 +136,23 @@ public class Characteristic {
         return self.writePromise.future
     }
 
-    public func writeString(stringValue:Dictionary<String, String>) -> Future<Void> {
+    public func writeString(stringValue:Dictionary<String, String>) -> Future<Characteristic> {
         if let value = self.profile.dataFromStringValue(stringValue) {
             return self.writeData(value)
         } else {
-            let promise = Promise<Void>()
-            promise.failure(BCError.characteristicNotSerilaizable)
-            return promise.future
+            self.writePromise = Promise<Characteristic>()
+            self.writePromise.failure(BCError.characteristicNotSerilaizable)
+            return self.writePromise.future
         }
     }
 
-    public func write(anyValue:Any) -> Future<Void> {
+    public func write(anyValue:Any) -> Future<Characteristic> {
         if let value = self.profile.dataFromAnyValue(anyValue) {
             return self.writeData(value)
         } else {
-            let promise = Promise<Void>()
-            promise.failure(BCError.characteristicNotSerilaizable)
-            return promise.future
+            self.writePromise = Promise<Characteristic>()
+            self.writePromise.failure(BCError.characteristicNotSerilaizable)
+            return self.writePromise.future
         }
     }
 
@@ -159,11 +163,7 @@ public class Characteristic {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("Characteristic#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
-                if let afterUpdateFailed = self.afterUpdateFailed {
-                    CentralManager.asyncCallback {
-                        afterUpdateFailed(error:BCError.characteristicReadTimeout)
-                    }
-                }
+                self.readPromise.failure(BCError.characteristicReadTimeout)
             } else {
                 Logger.debug("Characteristic#timeoutRead: expired")
             }
@@ -213,14 +213,10 @@ public class Characteristic {
     internal func didUpdateNotificationState(error:NSError!) {
         if let error = error {
             Logger.debug("Characteristic#didUpdateNotificationState Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let notificationStateChangedFailed = self.notificationStateChangedFailed {
-                CentralManager.asyncCallback {notificationStateChangedFailed(error:error)}
-            }
+            self.notificationStateChangedPromise.failure(error)
         } else {
             Logger.debug("Characteristic#didUpdateNotificationState Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let notificationStateChangedSuccess = self.notificationStateChangedSuccess {
-                CentralManager.asyncCallback(notificationStateChangedSuccess)
-            }
+            self.notificationStateChangedPromise.success(self)
         }
     }
     
@@ -228,13 +224,17 @@ public class Characteristic {
         self.reading = false
         if let error = error {
             Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterUpdateFailed = self.afterUpdateFailed {
-                CentralManager.asyncCallback {afterUpdateFailed(error:error)}
+            if self.isNotifying {
+                self.notificationUpdatePromise.failure(error)
+            } else {
+                self.readPromise.failure(error)
             }
         } else {
             Logger.debug("Characteristic#didUpdate Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if let afterUpdateSuccess = self.afterUpdateSuccess {
-                CentralManager.asyncCallback(afterUpdateSuccess)
+            if self.isNotifying {
+                self.notificationUpdatePromise.success(self)
+            } else {
+                self.readPromise.success(self)
             }
         }
     }
@@ -243,10 +243,10 @@ public class Characteristic {
         self.writing = false
         if let error = error {
             Logger.debug("Characteristic#didWrite Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            self.afterWritePromise.failure(error)
+            self.writePromise.failure(error)
         } else {
             Logger.debug("Characteristic#didWrite Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            self.afterWritePromise.success()
+            self.writePromise.success(self)
         }
     }
 }

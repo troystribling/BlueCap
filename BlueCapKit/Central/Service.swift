@@ -13,9 +13,7 @@ public class Service : NSObject {
     
     // PRIVATE
     private let profile                             : ServiceProfile?
-    private var characteristicsDiscoveredPromise    = Promise<Void>()
-//    private var characteristicsDiscoveredSuccess    : (() -> ())?
-//    private var characteristicDiscoveryFailed       : ((error:NSError) -> ())?
+    private var characteristicsDiscoveredPromise    = Promise<[Characteristic]>()
 
     // INTERNAL
     internal let _peripheral                        : Peripheral
@@ -45,27 +43,25 @@ public class Service : NSObject {
     }
     
     // PUBLIC
-    public func discoverAllCharacteristics() -> Future<Void> {
+    public func discoverAllCharacteristics() -> Future<[Characteristic]> {
         Logger.debug("Service#discoverAllCharacteristics")
         return self.discoverIfConnected(nil)
     }
 
-    public func discoverCharacteristics(characteristics:[CBUUID]) -> Future<Void> {
+    public func discoverCharacteristics(characteristics:[CBUUID]) -> Future<[Characteristic]> {
         Logger.debug("Service#discoverCharacteristics")
-        self.characteristicsDiscoveredSuccess = characteristicsDiscoveredSuccess
-        self.characteristicDiscoveryFailed = characteristicDiscoveryFailed
-        self.discoverIfConnected(characteristics)
+        return self.discoverIfConnected(characteristics)
     }
 
     // PRIVATE
-    private func discoverIfConnected(services:[CBUUID]!) {
+    private func discoverIfConnected(services:[CBUUID]!) -> Future<[Characteristic]> {
+        self.characteristicsDiscoveredPromise = Promise<[Characteristic]>()
         if self.peripheral.state == .Connected {
             self.peripheral.cbPeripheral.discoverCharacteristics(nil, forService:self.cbService)
         } else {
-            if let characteristicDiscoveryFailed = self.characteristicDiscoveryFailed {
-                CentralManager.asyncCallback {characteristicDiscoveryFailed(error:BCError.peripheralDisconnected)}
-            }
+            self.characteristicsDiscoveredPromise.failure(BCError.peripheralDisconnected)
         }
+        return self.characteristicsDiscoveredPromise.future
     }
 
     // INTERNAL
@@ -75,17 +71,19 @@ public class Service : NSObject {
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
     }
     
-    internal func didDiscoverCharacteristics() {
-        self.discoveredCharacteristics.removeAll()
-        if let cbCharacteristics = self.cbService.characteristics {
-            for cbCharacteristic : AnyObject in cbCharacteristics {
-                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic as CBCharacteristic, service:self)
-                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-                bcCharacteristic.didDiscover()
-                Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-            }
-            if let characteristicsDiscoveredSuccess = self.characteristicsDiscoveredSuccess {
-                CentralManager.asyncCallback(characteristicsDiscoveredSuccess)
+    internal func didDiscoverCharacteristics(error:NSError!) {
+        if let error = error {
+            self.characteristicsDiscoveredPromise.failure(error)
+        } else {
+            self.discoveredCharacteristics.removeAll()
+            if let cbCharacteristics = self.cbService.characteristics {
+                for cbCharacteristic : AnyObject in cbCharacteristics {
+                    let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic as CBCharacteristic, service:self)
+                    self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+                    bcCharacteristic.didDiscover()
+                    Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                }
+                self.characteristicsDiscoveredPromise.success(self.characteristics)
             }
         }
     }
