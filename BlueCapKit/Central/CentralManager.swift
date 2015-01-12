@@ -181,11 +181,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .PoweredOff:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
-            afterPowerOffPromise.success(())
+            afterPowerOffPromise.success()
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            afterPowerOnPromise.success(())
+            afterPowerOnPromise.success()
             break
         }
     }

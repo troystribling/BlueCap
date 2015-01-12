@@ -14,13 +14,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     // PRIVATE
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Float = 0.25
     
-    private var afterAdvertisingStartedSuccessCallback  : (()->())?
-    private var afterAdvertisingStartedFailedCallback   : ((error:NSError)->())?
-    private var afterAdvertsingStoppedCallback          : (()->())?
-    private var afterPowerOnCallback                    : (()->())?
-    private var afterPowerOffCallback                   : (()->())?
-    private var afterServiceAddSuccessCallback          : (()->())?
-    private var afterServiceAddFailedCallback           : ((error:NSError)->())?
+    private var afterAdvertisingStartedPromise      = Promise<Void>()
+    private var afterAdvertsingStoppedPromise       = Promise<Void>()
+    private var afterPowerOnPromise                 = Promise<Void>()
+    private var afterPowerOffPromise                = Promise<Void>()
+    private var afterSeriviceAddPromise             = Promise<Void>()
     
     private let peripheralQueue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
     
@@ -67,82 +65,64 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     // power on
-    public func powerOn(afterPowerOn:()->(), afterPowerOff:(()->())?) {
-        self.afterPowerOnCallback = afterPowerOn
-        self.afterPowerOffCallback = afterPowerOff
-        if self._isPoweredOn && self.afterPowerOnCallback != nil {
-            self.asyncCallback(self.afterPowerOnCallback!)
-        }
+    public func powerOn() -> Future<Void> {
+        Logger.debug("PeripheralManager#powerOn")
+        let future = self.afterPowerOnPromise.future
+        self.afterPowerOnPromise = Promise<Void>()
+        return future
     }
     
+    public func powerOff() -> Future<Void> {
+        Logger.debug("PeripheralManager#powerOff")
+        let future = self.afterPowerOffPromise.future
+        self.afterPowerOffPromise = Promise<Void>()
+        return future
+    }
+
     // advertising
-    public func startAdvertising(name:String, uuids:[CBUUID]?, afterAdvertisingStartedSuccess:(()->())? = nil, afterAdvertisingStartFailed:((error:NSError)->())? = nil) {
+    public func startAdvertising(name:String, uuids:[CBUUID]?) -> Future<Void> {
         self._name = name
-        self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
-        self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
+        self.afterAdvertisingStartedPromise = Promise<Void>()
         var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
         if let uuids = uuids {
             advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
         }
         self.cbPeripheralManager.startAdvertising(advertisementData)
+        return self.afterAdvertisingStartedPromise.future
     }
     
-    public func startAdvertising(name:String, uuids:[CBUUID], afterAdvertisingStartFailed:((error:NSError)->())? = nil) {
-        self.startAdvertising(name, uuids:uuids, afterAdvertisingStartedSuccess:nil, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
-    }
-
-    public func startAdvertising(name:String, afterAdvertisingStartedSuccess:(()->())? = nil, afterAdvertisingStartFailed:((error:NSError)->())? = nil) {
-        self.startAdvertising(name, uuids:nil, afterAdvertisingStartedSuccess:afterAdvertisingStartedSuccess, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
-    }
-
-    public func startAdvertising(name:String, afterAdvertisingStartFailed:((error:NSError)->())? = nil) {
-        self.startAdvertising(name, uuids:nil, afterAdvertisingStartedSuccess:nil, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
+    public func startAdvertising(name:String) -> Future<Void> {
+        return self.startAdvertising(name, uuids:nil)
     }
     
-    public func startAdvertising(region:BeaconRegion, afterAdvertisingStartedSuccess:(()->())? = nil, afterAdvertisingStartFailed:((error:NSError)->())? = nil) {
+    public func startAdvertising(region:BeaconRegion) -> Future<Void> {
         self._name = region.identifier
-        self.afterAdvertisingStartedSuccessCallback = afterAdvertisingStartedSuccess
-        self.afterAdvertisingStartedFailedCallback = afterAdvertisingStartFailed
+        self.afterAdvertisingStartedPromise = Promise<Void>()
         self.cbPeripheralManager.startAdvertising(region.clBeaconRegion.peripheralDataWithMeasuredPower(nil))
+        return self.afterAdvertisingStartedPromise.future
     }
     
-    public func startAdvertising(region:BeaconRegion, afterAdvertisingStartFailed:(error:NSError)->()) {
-        self.startAdvertising(region, afterAdvertisingStartedSuccess:nil, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
-    }
-    
-    public func stopAdvertising(afterAdvertisingStopped:(()->())? = nil) {
+    public func stopAdvertising() -> Future<Void> {
         self._name = nil
-        self.afterAdvertisingStartedSuccessCallback = nil
-        self.afterAdvertisingStartedFailedCallback = nil
-        self.afterAdvertsingStoppedCallback = afterAdvertisingStopped
+        self.afterAdvertsingStoppedPromise = Promise<Void>()
         self.cbPeripheralManager.stopAdvertising()
         dispatch_async(self.peripheralQueue, {self.lookForAdvertisingToStop()})
+        return self.afterAdvertsingStoppedPromise.future
     }
     
     // services
-    public func addService(service:MutableService, afterServiceAddSuccess:()->(), afterServiceAddFailed:((error:NSError)->())? = nil) {
+    public func addService(service:MutableService) -> Future<Void> {
         if !self.isAdvertising {
-            self.afterServiceAddSuccessCallback = afterServiceAddSuccess
-            self.afterServiceAddFailedCallback = afterServiceAddFailed
+            self.afterSeriviceAddPromise = Promise<Void>()
             self.configuredServices[service.uuid] = service
             self.cbPeripheralManager.addService(service.cbMutableService)
         } else {
             NSException(name:"Add service failed", reason: "Peripheral is advertising", userInfo: nil).raise()
         }
-    }
-
-    public func addService(service:MutableService, afterServiceAddFailed:((error:NSError)->())? = nil) {
-        if !self.isAdvertising {
-            self.afterServiceAddSuccessCallback = nil
-            self.afterServiceAddFailedCallback = afterServiceAddFailed
-            self.configuredServices[service.uuid] = service
-            self.cbPeripheralManager.addService(service.cbMutableService)
-        } else {
-            NSException(name:"Add service failed", reason: "Peripheral is advertising", userInfo: nil).raise()
-        }
+        return self.afterSeriviceAddPromise.future
     }
     
-    public func addServices(services:[MutableService], afterServiceAddSuccess:()->(), afterServiceAddFailed:((error:NSError)->())? = nil) {
+    public func addServices(services:[MutableService]) -> Future<Void> {
         if services.count > 0 {
             Logger.debug("PeripheralManager#addServices: service count \(services.count)")
             self.addService(services[0], afterServiceAddSuccess:{
@@ -162,31 +142,8 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                         }
                     }
                 })
-        } else {
-            self.asyncCallback(afterServiceAddSuccess)
         }
-    }
-
-    public func addServices(services:[MutableService], afterServiceAddFailed:((error:NSError)->())? = nil) {
-        if services.count > 0 {
-            Logger.debug("PeripheralManager#addServices: service count \(services.count)")
-            self.addService(services[0], afterServiceAddSuccess:{
-                    if services.count > 1 {
-                        let servicesTail = Array(services[1...services.count-1])
-                        Logger.debug("PeripheralManager#addServices: services remaining \(servicesTail.count)")
-                        self.addServices(servicesTail, afterServiceAddFailed:afterServiceAddFailed)
-                    } else {
-                        Logger.debug("PeripheralManager#addServices: completed")
-                    }
-                }, afterServiceAddFailed:{(error) in
-                    self.removeAllServices() {
-                        Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
-                        if let afterServiceAddFailed = afterServiceAddFailed {
-                            self.asyncCallback {afterServiceAddFailed(error:error)}
-                        }
-                    }
-                })
-        }
+        return self.afterSeriviceAddPromise.future
     }
 
     public func removeService(service:MutableService, afterServiceRemoved:(()->())? = nil) {
@@ -234,17 +191,13 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         switch self.state {
         case CBPeripheralManagerState.PoweredOn:
             Logger.debug("PeripheralManager#peripheralManagerDidUpdateState: poweredOn")
+            self.afterPowerOnPromise.success()
             self._isPoweredOn = true
-            if let afterPowerOnCallback = self.afterPowerOnCallback {
-                self.asyncCallback(afterPowerOnCallback)
-            }
             break
         case CBPeripheralManagerState.PoweredOff:
             Logger.debug("PeripheralManager#peripheralManagerDidUpdateState: poweredOff")
+            self.afterPowerOffPromise.success()
             self._isPoweredOn = false
-            if let afterPowerOffCallback = self.afterPowerOffCallback {
-                self.asyncCallback(afterPowerOffCallback)
-            }
             break
         case CBPeripheralManagerState.Resetting:
             break
@@ -263,14 +216,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func peripheralManagerDidStartAdvertising(_:CBPeripheralManager!, error:NSError!) {
         if let error = error {
             Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Failed '\(error.localizedDescription)'")
-            if let afterAdvertisingStartedFailedCallback = self.afterAdvertisingStartedFailedCallback {
-                self.asyncCallback {afterAdvertisingStartedFailedCallback(error:error)}
-            }
+            self.afterAdvertisingStartedPromise.failure(error)
         } else {
             Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Success")
-            if let afterAdvertisingStartedSuccessCallback = self.afterAdvertisingStartedSuccessCallback {
-                self.asyncCallback(afterAdvertisingStartedSuccessCallback)
-            }
+            self.afterAdvertisingStartedPromise.success()
         }
     }
     
@@ -280,14 +229,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
             if let error = error {
                 Logger.debug("PeripheralManager#didAddService: Failed '\(error.localizedDescription)'")
                 self.configuredServices.removeValueForKey(service.UUID)
-                if let afterServiceAddFailedCallback = self.afterServiceAddFailedCallback {
-                    self.asyncCallback {afterServiceAddFailedCallback(error:error)}
-                }
+                self.afterSeriviceAddPromise.failure(error)
             } else {
                 Logger.debug("PeripheralManager#didAddService: Success")
-                if let  afterServiceAddSuccessCallback = self.afterServiceAddSuccessCallback {
-                    self.asyncCallback(afterServiceAddSuccessCallback)
-                }
+                self.afterSeriviceAddPromise.success()
             }
         }
     }
@@ -368,14 +313,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     private func lookForAdvertisingToStop() {
-        if self.isAdvertising && self.afterAdvertsingStoppedCallback != nil {
+        if self.isAdvertising {
             let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL * Float(NSEC_PER_SEC)))
             dispatch_after(popTime, self.peripheralQueue, {
                 self.lookForAdvertisingToStop()
             })
         } else {
             Logger.debug("Peripheral#lookForAdvertisingToStop: Advertising stopped")
-            self.asyncCallback(self.afterAdvertsingStoppedCallback!)
+            self.afterAdvertsingStoppedPromise.success()
         }
     }    
 }
