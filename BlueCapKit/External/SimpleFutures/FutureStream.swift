@@ -134,7 +134,7 @@ public class FutureStream<T> {
     }
     
     public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> FutureStream<M> {
-        let future = FutureStream<M>()
+        let future : FutureStream<M> = self.createWithCapacity()
         self.onComplete(executionContext) {result in
             future.complete(result.flatmap(mapping))
         }
@@ -146,7 +146,7 @@ public class FutureStream<T> {
     }
     
     public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M> {
-        let future = FutureStream<M>()
+        let future : FutureStream<M> = self.createWithCapacity()
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultBox):
@@ -163,7 +163,7 @@ public class FutureStream<T> {
     }
     
     public func andThen(executionContext:ExecutionContext, complete:Try<T> -> Void) -> FutureStream<T> {
-        let future = FutureStream<T>()
+        let future : FutureStream<T> = self.createWithCapacity()
         future.onComplete(executionContext, complete:complete)
         self.onComplete(executionContext) {result in
             future.complete(result)
@@ -176,7 +176,7 @@ public class FutureStream<T> {
     }
     
     public func recover(executionContext:ExecutionContext, recovery:NSError -> Try<T>) -> FutureStream<T> {
-        let future = FutureStream<T>()
+        let future : FutureStream<T> = self.createWithCapacity()
         self.onComplete(executionContext) {result in
             future.complete(result.recoverWith(recovery))
         }
@@ -188,7 +188,7 @@ public class FutureStream<T> {
     }
     
     public func recoverWith(executionContext:ExecutionContext, recovery:NSError -> FutureStream<T>) -> FutureStream<T> {
-        let future = FutureStream<T>()
+        let future : FutureStream<T> = self.createWithCapacity()
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultBox):
@@ -205,7 +205,7 @@ public class FutureStream<T> {
     }
     
     public func withFilter(executionContext:ExecutionContext, filter:T -> Bool) -> FutureStream<T> {
-        let future = FutureStream<T>()
+        let future : FutureStream<T> = self.createWithCapacity()
         self.onComplete(executionContext) {result in
             future.complete(result.filter(filter))
         }
@@ -246,7 +246,7 @@ public class FutureStream<T> {
     }
     
     public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> FutureStream<M> {
-        let future = FutureStream<M>()
+        let future : FutureStream<M> = self.createWithCapacity()
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultBox):
@@ -263,7 +263,7 @@ public class FutureStream<T> {
     }
     
     public func recoverWith(executionContext:ExecutionContext, recovery:NSError -> Future<T>) -> FutureStream<T> {
-        let future = FutureStream<T>()
+        let future : FutureStream<T> = self.createWithCapacity()
         self.onComplete(executionContext) {result in
             switch result {
             case .Success(let resultBox):
@@ -294,4 +294,11 @@ public class FutureStream<T> {
         self.futures.append(future)
     }
     
+    private func createWithCapacity<M>() -> FutureStream<M> {
+        if let capacity = capacity {
+            return FutureStream<M>(capacity:capacity)
+        } else {
+            return FutureStream<M>()
+        }
+    }
 }
