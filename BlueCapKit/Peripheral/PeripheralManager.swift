@@ -123,30 +123,36 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func addServices(services:[MutableService]) -> Future<Void> {
-        if services.count > 0 {
-            Logger.debug("PeripheralManager#addServices: service count \(services.count)")
-            self.addService(services[0], afterServiceAddSuccess:{
-                    if services.count > 1 {
-                        let servicesTail = Array(services[1...services.count-1])
-                        Logger.debug("PeripheralManager#addServices: services remaining \(servicesTail.count)")
-                        self.addServices(servicesTail, afterServiceAddSuccess:afterServiceAddSuccess, afterServiceAddFailed:afterServiceAddFailed)
-                    } else {
-                        Logger.debug("PeripheralManager#addServices: completed")
-                        self.asyncCallback(afterServiceAddSuccess)
-                    }
-                }, afterServiceAddFailed:{(error) in
-                    self.removeAllServices() {
-                        Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
-                        if let afterServiceAddFailed = afterServiceAddFailed {
-                            self.asyncCallback {afterServiceAddFailed(error:error)}
-                        }
-                    }
-                })
-        }
-        return self.afterSeriviceAddPromise.future
+        Logger.debug("PeripheralManager#addServices: service count \(services.count)")
+        let promise = Promise<Void>()
+        self.addService(promise, services:services)
+        return promise.future
     }
 
-    public func removeService(service:MutableService, afterServiceRemoved:(()->())? = nil) {
+    public func addService(promise:Promise<Void>, services:[MutableService]) {
+        if services.count > 0 {
+            let future = self.addService(services[0])
+            future.onSuccess {
+                if services.count > 1 {
+                    let servicesTail = Array(services[1...services.count-1])
+                    Logger.debug("PeripheralManager#addServices: services remaining \(servicesTail.count)")
+                    self.addService(promise, services:servicesTail)
+                } else {
+                    Logger.debug("PeripheralManager#addServices: completed")
+                    promise.success()
+                }
+            }
+            future.onFailure {(error) in
+                let future = self.removeAllServices()
+                future.onSuccess {
+                    Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
+                    promise.failure(error)
+                }
+            }
+        }
+    }
+    
+    public func removeService(service:MutableService) -> Future<Void> {
         if !self.isAdvertising {
             Logger.debug("PeripheralManager#removeService: \(service.uuid.UUIDString)")
             let removeCharacteristics = Array(self.configuredCharcteristics.keys).filter{(cbCharacteristic) in
@@ -172,7 +178,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func removeAllServices(afterServiceRemoved:(()->())? = nil) {
+    public func removeAllServices() -> Future<Void> {
         if !self.isAdvertising {
             Logger.debug("PeripheralManager#removeAllServices")
             self.configuredServices.removeAll(keepCapacity:false)
