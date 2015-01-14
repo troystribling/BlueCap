@@ -261,7 +261,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             timeout = connectorator.connectionTimeout
         }
         Logger.debug("Peripheral#timeoutConnection: sequence \(sequence), timeout:\(timeout)")
-        central.delayCallback(timeout) {
+        central.delay(timeout) {
             if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("Peripheral#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
@@ -292,22 +292,16 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         if let connectorator = self._connectorator {
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
-                CentralManager.asyncCallback {
-                    Logger.debug("Peripheral#didDisconnectPeripheral: forced disconnect")
-                    connectorator.didForceDisconnect()
-                }
+                Logger.debug("Peripheral#didDisconnectPeripheral: forced disconnect")
+                connectorator.didForceDisconnect()
             } else {
                 switch(self.currentError) {
                 case .None:
-                        CentralManager.asyncCallback {
-                            Logger.debug("Peripheral#didDisconnectPeripheral: No errors disconnecting")
-                            connectorator.didDisconnect()
-                        }
+                    Logger.debug("Peripheral#didDisconnectPeripheral: No errors disconnecting")
+                    connectorator.didDisconnect()
                 case .Timeout:
-                        CentralManager.asyncCallback {
-                            Logger.debug("Peripheral#didDisconnectPeripheral: Timeout reconnecting")
-                            connectorator.didTimeout()
-                        }
+                    Logger.debug("Peripheral#didDisconnectPeripheral: Timeout reconnecting")
+                    connectorator.didTimeout()
                 }
             }
         }

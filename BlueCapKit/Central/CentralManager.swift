@@ -191,29 +191,29 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // INTERNAL INTERFACE
-    internal class func syncCallback(request:()->()) {
-        CentralManager.sharedInstance.syncCallback(request)
+    internal class func sync(request:()->()) {
+        CentralManager.sharedInstance.sync(request)
     }
     
-    internal class func asyncCallback(request:()->()) {
-        CentralManager.sharedInstance.asyncCallback(request)
+    internal class func async(request:()->()) {
+        CentralManager.sharedInstance.async(request)
     }
     
-    internal class func delayCallback(delay:Double, request:()->()) {
-        CentralManager.sharedInstance.delayCallback(delay, request)
+    internal class func delay(delay:Double, request:()->()) {
+        CentralManager.sharedInstance.delay(delay, request)
     }
     
-    internal func syncCallback(request:()->()) {
-        dispatch_sync(dispatch_get_main_queue(), request)
+    internal func sync(request:()->()) {
+        dispatch_sync(self.centralQueue, request)
     }
     
-    internal func asyncCallback(request:()->()) {
-        dispatch_async(dispatch_get_main_queue(), request)
+    internal func async(request:()->()) {
+        dispatch_async(self.centralQueue, request)
     }
     
-    internal func delayCallback(delay:Double, request:()->()) {
+    internal func delay(delay:Double, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
-        dispatch_after(popTime, dispatch_get_main_queue(), request)
+        dispatch_after(popTime, self.centralQueue, request)
     }
     
     // PRIVATE
