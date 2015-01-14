@@ -153,6 +153,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func removeService(service:MutableService) -> Future<Void> {
+        let promise = Promise<Void>()
         if !self.isAdvertising {
             Logger.debug("PeripheralManager#removeService: \(service.uuid.UUIDString)")
             let removeCharacteristics = Array(self.configuredCharcteristics.keys).filter{(cbCharacteristic) in
@@ -170,26 +171,25 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
             }
             self.configuredServices.removeValueForKey(service.uuid)
             self.cbPeripheralManager.removeService(service.cbMutableService)
-            if let afterServiceRemoved = afterServiceRemoved {
-                self.asyncCallback(afterServiceRemoved)
-            }
+            promise.success()
         } else {
-            NSException(name:"Remove service failed", reason: "Peripheral is advertising", userInfo: nil).raise()
+            promise.failure(BCError.peripheralManagerIsAdvertising)
         }
+        return promise.future
     }
     
     public func removeAllServices() -> Future<Void> {
+        let promise = Promise<Void>()
         if !self.isAdvertising {
             Logger.debug("PeripheralManager#removeAllServices")
             self.configuredServices.removeAll(keepCapacity:false)
             self.configuredCharcteristics.removeAll(keepCapacity:false)
             self.cbPeripheralManager.removeAllServices()
-            if let afterServiceRemoved = afterServiceRemoved {
-                self.asyncCallback(afterServiceRemoved)
-            }
+            promise.success()
         } else {
-            NSException(name:"Remove all services failed", reason: "Peripheral is advertising", userInfo: nil).raise()
+            promise.failure(BCError.peripheralManagerIsAdvertising)
         }
+        return promise.future
     }
 
     // CBPeripheralManagerDelegate
@@ -274,9 +274,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
                     Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
                     characteristic.value = request.value
-                    if let processWriteRequest = characteristic.processWriteRequest {
-                        self.asyncCallback {processWriteRequest(request:cbattRequest)}
-                    }
+                    characteristic.processWriteRequestPromise.success(cbattRequest)
                 } else {
                     Logger.debug("Error: characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
                 }
@@ -284,32 +282,6 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 Logger.debug("Error: request cast failed")
             }
         }
-    }
-    
-    // INTERNAL INTERFACE
-    internal class func syncCallback(request:()->()) {
-        PeripheralManager.sharedInstance.syncCallback(request)
-    }
-    
-    internal class func asyncCallback(request:()->()) {
-        PeripheralManager.sharedInstance.asyncCallback(request)
-    }
-    
-    internal class func delayCallback(delay:Float, request:()->()) {
-        PeripheralManager.sharedInstance.delayCallback(delay, request)
-    }
-    
-    internal func syncCallback(request:()->()) {
-        dispatch_sync(dispatch_get_main_queue(), request)
-    }
-    
-    internal func asyncCallback(request:()->()) {
-        dispatch_async(dispatch_get_main_queue(), request)
-    }
-    
-    internal func delayCallback(delay:Float, request:()->()) {
-        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay*Float(NSEC_PER_SEC)))
-        dispatch_after(popTime, dispatch_get_main_queue(), request)
     }
     
     // PRIVATE
