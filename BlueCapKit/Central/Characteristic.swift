@@ -12,9 +12,8 @@ import CoreBluetooth
 public class Characteristic {
 
     // PRIVATE
-    private var notificationUpdatePromise          = StreamPromise<Characteristic>()
+    private var notificationUpdatePromise          : StreamPromise<Characteristic>?
     private var notificationStateChangedPromise    = Promise<Characteristic>()
-    private var afterNotificationUpdatePromise     = StreamPromise<Characteristic>()
     private var readPromise                        = Promise<Characteristic>()
     private var writePromise                       = Promise<Characteristic>()
     
@@ -101,9 +100,13 @@ public class Characteristic {
         } else {
             self.notificationUpdatePromise = StreamPromise<Characteristic>()
         }
-        return self.notificationUpdatePromise.future
+        return self.notificationUpdatePromise!.future
     }
-
+    
+    public func stopNotificationUpdates() {
+        self.notificationUpdatePromise = nil
+    }
+    
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
         return (self.properties.rawValue & property.rawValue) > 0
     }
@@ -225,14 +228,18 @@ public class Characteristic {
         if let error = error {
             Logger.debug("Characteristic#didUpdate Failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if self.isNotifying {
-                self.notificationUpdatePromise.failure(error)
+                if let notificationUpdatePromise = self.notificationUpdatePromise {
+                    notificationUpdatePromise.failure(error)
+                }
             } else {
                 self.readPromise.failure(error)
             }
         } else {
             Logger.debug("Characteristic#didUpdate Success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             if self.isNotifying {
-                self.notificationUpdatePromise.success(self)
+                if let notificationUpdatePromise = self.notificationUpdatePromise {
+                    notificationUpdatePromise.success(self)
+                }
             } else {
                 self.readPromise.success(self)
             }

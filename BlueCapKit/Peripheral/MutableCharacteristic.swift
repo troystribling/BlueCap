@@ -17,7 +17,7 @@ public class MutableCharacteristic : NSObject {
     
     // INTERNAL
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
-    internal var processWriteRequestPromise     = StreamPromise<CBATTRequest?>()
+    internal var processWriteRequestPromise     : StreamPromise<CBATTRequest?>?
     
     // PUBLIC
     public var permissions : CBAttributePermissions {
@@ -76,12 +76,17 @@ public class MutableCharacteristic : NSObject {
         return self.profile.discreteStringValues
     }
     
-    public func startProcessingWriteRequests() -> FutureStream<CBATTRequest?> {
-        return self.processWriteRequestPromise.future
+    public func startProcessingWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest?> {
+        if let capacity = capacity {
+            self.processWriteRequestPromise = StreamPromise<CBATTRequest?>(capacity:capacity)
+        } else {
+            self.processWriteRequestPromise = StreamPromise<CBATTRequest?>()
+        }
+        return self.processWriteRequestPromise!.future
     }
     
     public func stopProcessingWriteRequests() {
-        self.processWriteRequestPromise = StreamPromise<CBATTRequest?>()
+        self.processWriteRequestPromise = nil
     }
     
     public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
