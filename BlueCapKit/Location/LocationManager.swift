@@ -29,8 +29,6 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     internal var clLocationManager                  : CLLocationManager!
     
     private var locationUpdatePromise               : StreamPromise<[CLLocation]>?
-    private var pausedLocationUpdatePromise         = Promise<Void>()
-    private var resumeLocationUpdates               = Promise<Void>()
     private var authorizationStatusChangedPromise   = Promise<CLAuthorizationStatus>()
     
     public var distanceFilter : CLLocationDistance {
@@ -169,21 +167,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     
     public func locationManager(_:CLLocationManager!, didFinishDeferredUpdatesWithError error:NSError!) {
     }
-    
-    public func locationManagerDidPauseLocationUpdates(_:CLLocationManager!) {
-        Logger.debug("LocationManager#locationManagerDidPauseLocationUpdates")
-//        if let pausedLocationUpdates = self.pausedLocationUpdates {
-//            pausedLocationUpdates()
-//        }
-    }
-    
-    public func locationManagerDidResumeLocationUpdates(_:CLLocationManager!) {
-        Logger.debug("LocationManager#locationManagerDidResumeLocationUpdates")
-//        if let resumedLocationUpdates = self.resumedLocationUpdates {
-//            resumedLocationUpdates()
-//        }
-    }
-    
+        
     public func locationManager(_:CLLocationManager!, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
         Logger.debug("LocationManager#didChangeAuthorizationStatus: \(status)")
         self.authorizationStatusChangedPromise.success(status)

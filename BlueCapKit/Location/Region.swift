@@ -15,11 +15,7 @@ public class Region {
     
     internal let _region : CLRegion
     
-    public var enterRegion              : (() -> ())?
-    public var exitRegion               : (() -> ())?
-    public var startMonitoringRegion    : (() -> ())?
-    public var regionStateDetermined    : ((state:CLRegionState) -> ())?
-    public var errorMonitoringRegion    : ((error:NSError?) -> ())?
+    internal var promise  : StreamPromise<CLRegionState>
     
     public var identifier : String {
         return self._region.identifier
@@ -46,17 +42,16 @@ public class Region {
     internal var region : CLRegion {
         return self._region
     }
-    
-    private init(region:CLRegion, initializer:((region:Region) -> ())? = nil) {
-        self._region = region
-        if let initializer = initializer {
-            initializer(region:self)
-        }
-    }
-    
+        
     internal init(region:CLRegion) {
         self._region = region
+        self.promise = StreamPromise<CLRegionState>()
     }
-    
+
+    internal init(region:CLRegion, capacity:Int) {
+        self._region = region
+        self.promise = StreamPromise<CLRegionState>(capacity:capacity)
+    }
+
 }
 
