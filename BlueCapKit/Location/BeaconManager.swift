@@ -56,11 +56,11 @@ public class BeaconManager : RegionManager {
     
     // control
     public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion) {
-        self.authorize(authorization) {
-            self.regionRangingStatus[beaconRegion.identifier] = true
-            self.configuredBeaconRegions[beaconRegion.region] = beaconRegion
-            self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
-        }
+//        self.authorize(authorization) {
+//            self.regionRangingStatus[beaconRegion.identifier] = true
+//            self.configuredBeaconRegions[beaconRegion.region] = beaconRegion
+//            self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
+//        }
     }
 
     public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) {

@@ -56,11 +56,11 @@ public class RegionManager : LocationManager {
 
     // control
     public func startMonitoringForRegion(authorization:CLAuthorizationStatus, region:Region) {
-        self.authorize(authorization){
-            self.regionMonitorStatus[region.identifier] = true
-            self.configuredRegions[region.region] = region
-            self.clLocationManager.startMonitoringForRegion(region.region)
-        }
+//        self.authorize(authorization){
+//            self.regionMonitorStatus[region.identifier] = true
+//            self.configuredRegions[region.region] = region
+//            self.clLocationManager.startMonitoringForRegion(region.region)
+//        }
     }
 
     public func startMonitoringForRegion(region:Region) {

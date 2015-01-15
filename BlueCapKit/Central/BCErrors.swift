@@ -30,10 +30,6 @@ public enum PeripheralError : Int {
     case disconnected       = 21
 }
 
-public enum LocationError : Int {
-    case updateFailed       = 30
-}
-
 public enum PeripheralManagerError : Int {
     case isAdvertising      = 40
 }
@@ -55,9 +51,7 @@ struct BCError {
 
     static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.discoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
     static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])
-    
-    static let locationUpdateFailed = NSError(domain:domain, code:LocationError.updateFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location update failed"])
-    
+        
     static let peripheralManagerIsAdvertising = NSError(domain:domain, code:PeripheralManagerError.isAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is Advertising"])
 
 }
