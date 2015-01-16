@@ -24,11 +24,6 @@ public class CharacteristicProfile {
         return []
     }
     
-    public var afterDiscovered : FutureStream<Characteristic> {
-        self.afterDiscoveredPromise = StreamPromise<Characteristic>()
-        return self.afterDiscoveredPromise.future
-    }
-
     public init(uuid:String, name:String, initializer:((characteristicProfile:CharacteristicProfile) -> ())? = nil) {
         self.uuid = CBUUID(string:uuid)
         self.name = name
@@ -39,6 +34,15 @@ public class CharacteristicProfile {
         }
     }
     
+    public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic> {
+        if let capacity = capacity {
+            self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity:capacity)
+        } else {
+            self.afterDiscoveredPromise = StreamPromise<Characteristic>()
+        }
+        return self.afterDiscoveredPromise.future
+    }
+
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
         return (self.properties.rawValue & property.rawValue) > 0
     }

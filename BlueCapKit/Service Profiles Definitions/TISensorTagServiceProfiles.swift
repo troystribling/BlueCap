@@ -720,7 +720,7 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                    characteristicProfile.afterDiscovered(2).onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
                         return
                     }
@@ -750,7 +750,7 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                    characteristicProfile.afterDiscovered(1).onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
                         return
                     }
@@ -780,7 +780,7 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.GyroscopeService.Enabled.Value.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                    characteristicProfile.afterDiscovered(1).onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.GyroscopeService.Enabled.Value.XYZAxis)
                         return
                     }
@@ -804,7 +804,7 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                    characteristicProfile.afterDiscovered(1).onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
                         return
                     }
@@ -835,7 +835,7 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.BarometerService.Enabled.Value.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered.flatmap {characteristic in
+                    characteristicProfile.afterDiscovered(1).flatmap {characteristic in
                         characteristic.write(TISensorTag.BarometerService.Enabled.Value.Yes)
                     }.flatmap {characteristic in
                         characteristic.write(TISensorTag.BarometerService.Enabled.Value.Calibrate)
@@ -860,7 +860,7 @@ public class TISensorTagServiceProfiles {
                 {(characteristicProfile) in
                     characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
                     characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-                    characteristicProfile.afterDiscovered.onSuccess {(characteristic) in
+                    characteristicProfile.afterDiscovered(1).onSuccess {(characteristic) in
                         characteristic.write(TISensorTag.Enabled.Yes)
                         return
                     }
