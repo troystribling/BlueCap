@@ -11,14 +11,11 @@ import CoreBluetooth
 
 public class MutableService : NSObject {
     
-    // PRIVATE
     private let profile             : ServiceProfile!
     private var _characteristics    : [MutableCharacteristic] = []
 
-    // INTERNAL
     internal let cbMutableService   : CBMutableService!
 
-    // PUBLIC
     public var uuid : CBUUID {
         return self.profile.uuid
     }
@@ -33,8 +30,7 @@ public class MutableService : NSObject {
         }
         set {
             self._characteristics = newValue
-            self.cbMutableService.characteristics = self._characteristics.reduce(Array<CBMutableCharacteristic>())
-                                                        {(cbCharacteristics, characteristic) in
+            self.cbMutableService.characteristics = self._characteristics.reduce(Array<CBMutableCharacteristic>()) {(cbCharacteristics, characteristic) in
                                                             PeripheralManager.sharedInstance.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
                                                             return cbCharacteristics + [characteristic.cbMutableChracteristic]
                                                         }

@@ -11,7 +11,6 @@ import CoreBluetooth
 
 public class Characteristic {
 
-    // PRIVATE
     private var notificationUpdatePromise          : StreamPromise<Characteristic>?
     private var notificationStateChangedPromise    = Promise<Characteristic>()
     private var readPromise                        = Promise<Characteristic>()
@@ -24,12 +23,10 @@ public class Characteristic {
     private var writeSequence   = 0
     private let defaultTimeout  = 10.0
     
-    // INTERNAL
     internal let cbCharacteristic : CBCharacteristic
     internal let _service         : Service
     internal let profile          : CharacteristicProfile!
     
-    // PUBLIC
     public var service : Service {
         return self._service
     }
@@ -159,7 +156,6 @@ public class Characteristic {
         }
     }
 
-    // PRIVATE
     private func timeoutRead(sequence:Int) {
         Logger.debug("Characteristic#timeoutRead: sequence \(sequence), timeout:\(self.readWriteTimeout())")
         CentralManager.delay(self.readWriteTimeout()) {
@@ -194,7 +190,6 @@ public class Characteristic {
         }
     }
 
-    // INTERNAL
     internal init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service

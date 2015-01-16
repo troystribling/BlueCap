@@ -11,15 +11,12 @@ import CoreBluetooth
 
 public class MutableCharacteristic : NSObject {
     
-    // PRIVATE
     private let profile                         : CharacteristicProfile!
     private var _value                          : NSData!
     
-    // INTERNAL
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
     internal var processWriteRequestPromise     : StreamPromise<CBATTRequest?>?
     
-    // PUBLIC
     public var permissions : CBAttributePermissions {
         return self.cbMutableChracteristic.permissions
     }

@@ -46,7 +46,6 @@ public class Connectorator {
         return self.promise.future
     }
     
-    // INTERNAL
     internal func didTimeout() {
         Logger.debug("Connectorator#didTimeout")
         if self.timeoutRetries > 0 {

@@ -11,17 +11,14 @@ import CoreBluetooth
 
 public class Service : NSObject {
     
-    // PRIVATE
     private let profile                             : ServiceProfile?
     private var characteristicsDiscoveredPromise    = Promise<[Characteristic]>()
 
-    // INTERNAL
     internal let _peripheral                        : Peripheral
     internal let cbService                          : CBService
     
     internal var discoveredCharacteristics      = Dictionary<CBUUID, Characteristic>()
     
-    // PUBLIC
     public var name : String {
         if let profile = self.profile {
             return profile.name
@@ -42,7 +39,6 @@ public class Service : NSObject {
         return self._peripheral
     }
     
-    // PUBLIC
     public func discoverAllCharacteristics() -> Future<[Characteristic]> {
         Logger.debug("Service#discoverAllCharacteristics")
         return self.discoverIfConnected(nil)
@@ -53,7 +49,6 @@ public class Service : NSObject {
         return self.discoverIfConnected(characteristics)
     }
 
-    // PRIVATE
     private func discoverIfConnected(services:[CBUUID]!) -> Future<[Characteristic]> {
         self.characteristicsDiscoveredPromise = Promise<[Characteristic]>()
         if self.peripheral.state == .Connected {
@@ -64,7 +59,6 @@ public class Service : NSObject {
         return self.characteristicsDiscoveredPromise.future
     }
 
-    // INTERNAL
     internal init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
         self._peripheral = peripheral

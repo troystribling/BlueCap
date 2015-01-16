@@ -11,7 +11,6 @@ import CoreBluetooth
 
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
-    // PRIVATE
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Float = 0.25
     
     private var afterAdvertisingStartedPromise      = Promise<Void>()
@@ -27,12 +26,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private var _isPoweredOn    = false
     private var serviceAdded    = false
 
-    // INTERNAL
     internal var cbPeripheralManager        : CBPeripheralManager!
     internal var configuredServices         : Dictionary<CBUUID, MutableService>                    = [:]
     internal var configuredCharcteristics   : Dictionary<CBCharacteristic, MutableCharacteristic>   = [:]
 
-    // PUBLIC
     public var isAdvertising : Bool {
         return self.cbPeripheralManager.isAdvertising
     }
@@ -286,7 +283,6 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    // PRIVATE
     private override init() {
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue)

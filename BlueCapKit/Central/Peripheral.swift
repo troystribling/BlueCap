@@ -16,7 +16,6 @@ enum PeripheralConnectionError {
 
 public class Peripheral : NSObject, CBPeripheralDelegate {
 
-    // PRIVATE
     private var servicesDiscoveredPromise   = Promise<[Service]>()
     
     private var connectionSequence          = 0
@@ -33,10 +32,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
 
     private var _connectorator  : Connectorator?
 
-    // INTERNAL
     internal let cbPeripheral    : CBPeripheral!
 
-    // PUBLIC
     public let advertisements  : Dictionary<String, String>!
     public let rssi            : Int!
 
@@ -253,7 +250,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug("Peripheral#didWriteValueForDescriptor")
     }
     
-    // PRIVATE
     private func timeoutConnection(sequence:Int) {
         let central = CentralManager.sharedInstance
         var timeout = self.defaultConnectionTimeout
@@ -285,7 +281,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self.discoveredCharacteristics.removeAll()
     }
     
-    // INTERNAL
     internal func didDisconnectPeripheral() {
         Logger.debug("Peripheral#didDisconnectPeripheral")
         self._disconnectedAt = NSDate()
