@@ -62,30 +62,27 @@ public class BeaconRegion : Region {
         }
     }
     
-    internal init(region:CLRegion, initializer:((beaconRegion:BeaconRegion) -> ())? = nil) {
+    internal override init(region:CLRegion) {
         super.init(region:region)
         self.notifyEntryStateOnDisplay = true
-        if let initializer = initializer {
-            initializer(beaconRegion:self)
-        }
     }
     
-    public convenience init(proximityUUID:NSUUID, identifier:String, initializer:((beaconRegion:BeaconRegion) -> ())? = nil) {
+    public convenience init(proximityUUID:NSUUID, identifier:String) {
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, identifier:identifier)
-        self.init(region:beaconRegion, initializer:initializer)
+        self.init(region:beaconRegion)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, initializer:((beaconMonitor:BeaconRegion) -> ())? = nil) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16) {
         let beaconMajor : CLBeaconMajorValue = major
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, identifier:identifier)
-        self.init(region:beaconRegion, initializer:initializer)
+        self.init(region:beaconRegion)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16, initializer:((beaconRegion:BeaconRegion) -> ())? = nil) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16) {
         let beaconMinor : CLBeaconMinorValue = minor
         let beaconMajor : CLBeaconMajorValue = major
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, minor:beaconMinor, identifier:identifier)
-        self.init(region:beaconRegion, initializer:initializer)
+        self.init(region:beaconRegion)
     }
     
     public func peripheralDataWithMeasuredPower(measuredPower:Int? = nil) -> NSMutableDictionary {
