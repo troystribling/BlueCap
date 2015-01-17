@@ -33,11 +33,9 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if let peripheral = self.peripheral {
             self.nameTextField.text = peripheral
         }
-        PeripheralManager.sharedInstance.powerOn({
-                self.setPeripheralManagerServices()
-            }, afterPowerOff:{
-                self.setUIState()
-        })
+        PeripheralManager.sharedInstance.powerOn().onSuccess {
+            self.setPeripheralManagerServices()
+        }
     }
     
     override func viewWillAppear(animated:Bool) {
@@ -147,12 +145,16 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     func setPeripheralManagerServices() {
-        PeripheralManager.sharedInstance.removeAllServices() {
+        let future = PeripheralManager.sharedInstance.removeAllServices()
+        future.onSuccess {
             if let peripheral = self.peripheral {
                 self.loadPeripheralServicesFromConfig()
             } else {
                 self.setUIState()
             }
+        }
+        future.onFailure {error in
+            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
         }
     }
 
@@ -169,12 +171,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                     return services
                 }
             }
-            peripheralManager.addServices(services, afterServiceAddSuccess:{
+            let future = peripheralManager.addServices(services)
+            future.onSuccess {
                 self.setUIState()
-                },  afterServiceAddFailed:{(error) in
-                    self.setUIState()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-            })
+            }
+            future.onFailure {(error) in
+                self.setUIState()
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
         }
     }
 

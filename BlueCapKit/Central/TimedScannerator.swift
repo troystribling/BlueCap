@@ -29,18 +29,18 @@ public class TimedScannerator {
     public init() {
     }
     
-    public func startScanning(timeoutSeconds:Double) -> FutureStream<(Peripheral, Int)> {
+    public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
-        return CentralManager.sharedInstance.startScanning()
+        return CentralManager.sharedInstance.startScanning(capacity:capacity)
     }
     
-    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!) -> FutureStream<(Peripheral, Int)> {
+    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
-        return CentralManager.sharedInstance.startScanningForServiceUUIDs(uuids)
+        return CentralManager.sharedInstance.startScanningForServiceUUIDs(uuids, capacity:capacity)
     }
     
     public func stopScanning() {

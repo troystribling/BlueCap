@@ -9,12 +9,17 @@
 import Foundation
 import CoreBluetooth
 
+public struct PeripheralDiscovery {
+    public var peripheral:Peripheral
+    public var rssi:Int
+}
+
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // PRIVATE
     private var afterPowerOnPromise                 = Promise<Void>()
     private var afterPowerOffPromise                = Promise<Void>()
-    internal var afterPeripheralDiscoveredPromise   = StreamPromise<(Peripheral, Int)>()
+    internal var afterPeripheralDiscoveredPromise   = StreamPromise<PeripheralDiscovery>()
 
     private let cbCentralManager    : CBCentralManager!
 
@@ -58,18 +63,18 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // scanning
-    public func startScanning(capacity:Int? = nil) -> FutureStream<(Peripheral, Int)> {
+    public func startScanning(capacity:Int? = nil) -> FutureStream<(PeripheralDiscovery)> {
         return self.startScanningForServiceUUIDs(nil, capacity:capacity)
     }
     
-    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<(Peripheral, Int)> {
+    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
         if !self._isScanning {
             Logger.debug("CentralManager#startScanningForServiceUUIDs: \(uuids)")
             self._isScanning = true
             if let capacity = capacity {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<(Peripheral, Int)>(capacity:capacity)
+                self.afterPeripheralDiscoveredPromise = StreamPromise<PeripheralDiscovery>(capacity:capacity)
             } else {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<(Peripheral, Int)>()
+                self.afterPeripheralDiscoveredPromise = StreamPromise<PeripheralDiscovery>()
             }
             self.cbCentralManager.scanForPeripheralsWithServices(uuids,options: nil)
         }
@@ -141,7 +146,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
-            self.afterPeripheralDiscoveredPromise.success((bcPeripheral, RSSI.integerValue))
+            self.afterPeripheralDiscoveredPromise.success(PeripheralDiscovery(peripheral:bcPeripheral, rssi:RSSI.integerValue))
         }
     }
     

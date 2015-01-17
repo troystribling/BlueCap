@@ -126,7 +126,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return promise.future
     }
 
-    public func addService(promise:Promise<Void>, services:[MutableService]) {
+    private func addService(promise:Promise<Void>, services:[MutableService]) {
         if services.count > 0 {
             let future = self.addService(services[0])
             future.onSuccess {

@@ -176,26 +176,31 @@ class PeripheralsViewController : UITableViewController {
     
     func startScan() {
         let scanMode = ConfigStore.getScanMode()
-        let afterPeripheralDiscovered = {(peripheral:Peripheral, rssi:Int) -> () in
-            Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
-            self.connect(peripheral)
+        let afterPeripheralDiscovered = {(discovery:PeripheralDiscovery) -> Void in
+            Notify.withMessage("Discovered peripheral '\(discovery.peripheral.name)'")
+            self.connect(discovery.peripheral)
             self.updateWhenActive()
         }
-        let afterTimeout : () -> () = {
-            Logger.debug("Scannerator#timeoutScan: timing out")
-            TimedScannerator.sharedInstance.stopScanning()
-            self.setScanButton()
+        let afterTimeout = {(error:NSError) -> Void in
+            if error.domain == BCError.domain && error.code == PeripheralError.DiscoveryTimeout.rawValue {
+                Logger.debug("Scannerator#timeoutScan: timing out")
+                TimedScannerator.sharedInstance.stopScanning()
+                self.setScanButton()
+            }
         }
         // Promiscuous Scan Enabled
+        var future : FutureStream<PeripheralDiscovery>
         switch scanMode {
         case "Promiscuous" :
             // Promiscuous Scan with Timeout Enabled
             if ConfigStore.getScanTimeoutEnabled() {
-                TimedScannerator.sharedInstance.startScanning(Double(ConfigStore.getScanTimeout()), afterPeripheralDiscovered:afterPeripheralDiscovered, afterTimeout:afterTimeout)
+                future = TimedScannerator.sharedInstance.startScanning(Double(ConfigStore.getScanTimeout()), capacity:10)
+                
             } else {
-                CentralManager.sharedInstance.startScanning(afterPeripheralDiscovered)
+                future = CentralManager.sharedInstance.startScanning(capacity:10)
             }
-            break
+            future.onSuccess(afterPeripheralDiscovered)
+            future.onFailure(afterTimeout)
         case "Service" :
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             if scannedServices.isEmpty {
@@ -203,16 +208,15 @@ class PeripheralsViewController : UITableViewController {
             } else {
                 // Service Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
-                    TimedScannerator.sharedInstance.startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices,
-                        afterPeripheralDiscoveredCallback:afterPeripheralDiscovered, afterTimeout:afterTimeout)
+                    future = TimedScannerator.sharedInstance.startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices, capacity:10)
                 } else {
-                    CentralManager.sharedInstance.startScanningForServiceUUIDs(scannedServices, afterPeripheralDiscovered:afterPeripheralDiscovered)
+                    future = CentralManager.sharedInstance.startScanningForServiceUUIDs(scannedServices, capacity:10)
                 }
+                future.onSuccess(afterPeripheralDiscovered)
+                future.onFailure(afterTimeout)
             }
-            break
         default:
             Logger.debug("Scan Mode :'\(scanMode)' invalid")
-            break
         }
     }
         
