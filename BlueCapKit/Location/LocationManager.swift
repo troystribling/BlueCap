@@ -10,18 +10,18 @@ import Foundation
 import CoreLocation
 
 enum LocationError : Int {
-    case notAvailable               = 30
-    case updateFailed               = 31
-    case authorizationFailed        = 32
-    case authorisedWhenInUseFailed  = 33
+    case NotAvailable               = 30
+    case UpdateFailed               = 31
+    case AuthorizationFailed        = 32
+    case AuthorisedWhenInUseFailed  = 33
 }
 
 struct FLError {
     static let domain = "FutureLocation"
-    static let locationUpdateFailed = NSError(domain:domain, code:LocationError.notAvailable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location not available"])
-    static let locationNotAvailable = NSError(domain:domain, code:LocationError.updateFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location update failed"])
-    static let authoizationFailed = NSError(domain:domain, code:LocationError.authorizationFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"])
-    static let authoizationWhenInUseFailed = NSError(domain:domain, code:LocationError.authorizationFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization when in use failed"])
+    static let locationUpdateFailed = NSError(domain:domain, code:LocationError.NotAvailable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location not available"])
+    static let locationNotAvailable = NSError(domain:domain, code:LocationError.UpdateFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location update failed"])
+    static let authoizationFailed = NSError(domain:domain, code:LocationError.AuthorizationFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"])
+    static let authoizationWhenInUseFailed = NSError(domain:domain, code:LocationError.AuthorizationFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization when in use failed"])
 }
 
 public class LocationManager : NSObject,  CLLocationManagerDelegate {

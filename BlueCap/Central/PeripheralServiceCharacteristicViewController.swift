@@ -103,25 +103,26 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     @IBAction func toggleNotificatons() {
         if self.characteristic.isNotifying {
-            self.characteristic.stopNotifying(notificationStateChangedSuccess: {
-                    self.setUI()
-                    self.characteristic.stopUpdates()
-                },
-                notificationStateChangedFailed: {(error) in
-                    self.notifySwitch.on = false
-                    self.setUI()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                })
+            let future = self.characteristic.stopNotifying()
+            future.onSuccess {_ in
+                self.setUI()
+                self.characteristic.stopNotificationUpdates()
+            }
+            future.onFailure {(error) in
+                self.notifySwitch.on = false
+                self.setUI()
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
         } else {
-            self.characteristic.startNotifying(notificationStateChangedSuccess: {
-                    self.setUI()
-                },
-                notificationStateChangedFailed:{(error) in
-                    self.notifySwitch.on = false
-                    self.setUI()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                }
-            )
+            let future = self.characteristic.startNotifying()
+            future.onSuccess {_ in
+                self.setUI()
+            }
+            future.onFailure {(error) in
+                self.notifySwitch.on = false
+                self.setUI()
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
         }
     }
     

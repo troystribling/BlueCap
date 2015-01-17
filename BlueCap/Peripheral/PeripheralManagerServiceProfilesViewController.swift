@@ -77,17 +77,19 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             let service = MutableService(profile:serviceProfile)
             service.characteristicsFromProfiles(serviceProfile.characteristics)
             self.progressView.show()
-            PeripheralManager.sharedInstance.addService(service, afterServiceAddSuccess:{
+            let future = PeripheralManager.sharedInstance.addService(service)
+            future.onSuccess {
                 if let peripheral = self.peripheral {
                     PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
                 }
                 self.navigationController?.popViewControllerAnimated(true)
                 self.progressView.remove()
-                }, afterServiceAddFailed: {(error) in
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    self.navigationController?.popViewControllerAnimated(true)
-                    self.progressView.remove()
-                })
+            }
+            future.onFailure {(error) in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.navigationController?.popViewControllerAnimated(true)
+                self.progressView.remove()
+            }
         } else {
             self.navigationController?.popViewControllerAnimated(true)
         }
