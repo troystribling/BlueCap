@@ -15,7 +15,7 @@ public class Region {
     
     internal let _region : CLRegion
     
-    internal var promise  : StreamPromise<CLRegionState>
+    internal var regionPromise  : StreamPromise<CLRegionState>
     
     public var identifier : String {
         return self._region.identifier
@@ -43,14 +43,13 @@ public class Region {
         return self._region
     }
         
-    internal init(region:CLRegion) {
+    internal init(region:CLRegion, capacity:Int? = nil) {
         self._region = region
-        self.promise = StreamPromise<CLRegionState>()
-    }
-
-    internal init(region:CLRegion, capacity:Int) {
-        self._region = region
-        self.promise = StreamPromise<CLRegionState>(capacity:capacity)
+        if let capacity = capacity {
+            self.regionPromise = StreamPromise<CLRegionState>(capacity:capacity)
+        } else {
+            self.regionPromise = StreamPromise<CLRegionState>()
+        }
     }
 
 }

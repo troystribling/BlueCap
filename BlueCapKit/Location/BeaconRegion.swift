@@ -11,10 +11,8 @@ import CoreLocation
 
 public class BeaconRegion : Region {
     
-    internal var _beacons   = [Beacon]()
-    
-    public var rangedBeacons            : ((beacons:[Beacon]) -> ())?
-    public var errorRangingBeacons      : ((error:NSError?) -> ())?
+    internal var _beacons       = [Beacon]()
+    internal var beaconPromise  : StreamPromise<[Beacon]>
 
     internal var clBeaconRegion : CLBeaconRegion {
         return self._region as CLBeaconRegion
@@ -62,27 +60,32 @@ public class BeaconRegion : Region {
         }
     }
     
-    internal override init(region:CLRegion) {
-        super.init(region:region)
+    internal override init(region:CLRegion, capacity:Int? = nil) {
+        if let capacity = capacity {
+            self.beaconPromise = StreamPromise<[Beacon]>(capacity:capacity)
+        } else {
+            self.beaconPromise = StreamPromise<[Beacon]>()
+        }
+        super.init(region:region, capacity:capacity)
         self.notifyEntryStateOnDisplay = true
     }
     
-    public convenience init(proximityUUID:NSUUID, identifier:String) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, capacity:Int? = nil) {
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, identifier:identifier)
-        self.init(region:beaconRegion)
+        self.init(region:beaconRegion, capacity:capacity)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, capacity:Int? = nil) {
         let beaconMajor : CLBeaconMajorValue = major
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, identifier:identifier)
-        self.init(region:beaconRegion)
+        self.init(region:beaconRegion, capacity:capacity)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16) {
+    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16, capacity:Int? = nil) {
         let beaconMinor : CLBeaconMinorValue = minor
         let beaconMajor : CLBeaconMajorValue = major
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, minor:beaconMinor, identifier:identifier)
-        self.init(region:beaconRegion)
+        self.init(region:beaconRegion, capacity:capacity)
     }
     
     public func peripheralDataWithMeasuredPower(measuredPower:Int? = nil) -> NSMutableDictionary {

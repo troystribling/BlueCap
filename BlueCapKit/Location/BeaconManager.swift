@@ -55,7 +55,7 @@ public class BeaconManager : RegionManager {
     }
     
     // control
-    public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion)  -> FutureStream<CLRegionState> {
+    public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion)  -> FutureStream<[Beacon]> {
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
             self.regionRangingStatus[beaconRegion.identifier] = true
@@ -63,9 +63,9 @@ public class BeaconManager : RegionManager {
             self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
         }
         authoriztaionFuture.onFailure {error in
-            beaconRegion.promise.failure(error)
+            beaconRegion.beaconPromise.failure(error)
         }
-        return beaconRegion.promise.future
+        return beaconRegion.beaconPromise.future
     }
 
     public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
@@ -107,17 +107,15 @@ public class BeaconManager : RegionManager {
         Logger.debug("BeaconManager#didRangeBeacons: \(region.identifier)")
         if let region = self.configuredRegions[region] {
             let beaconRegion = region as BeaconRegion
-            if let rangedBeacons = beaconRegion.rangedBeacons {
-                let bcbeacons = beacons.reduce([Beacon]()) {(bcbeacons, beacon) in
-                    if let beacon = beacon as? CLBeacon {
-                        return bcbeacons + [Beacon(clbeacon:beacon)]
-                    } else {
-                        return bcbeacons
-                    }
+            let bcbeacons = beacons.reduce([Beacon]()) {(bcbeacons, beacon) in
+                if let beacon = beacon as? CLBeacon {
+                    return bcbeacons + [Beacon(clbeacon:beacon)]
+                } else {
+                    return bcbeacons
                 }
-                beaconRegion._beacons = bcbeacons
-                rangedBeacons(beacons:bcbeacons)
             }
+            beaconRegion._beacons = bcbeacons
+            beaconRegion.beaconPromise.success(bcbeacons)
         }
     }
     
@@ -125,9 +123,7 @@ public class BeaconManager : RegionManager {
         Logger.debug("BeaconManager#rangingBeaconsDidFailForRegion: \(region.identifier)")
         if let region = self.configuredRegions[region] {
             let beaconRegion = region as BeaconRegion
-            if let errorRangingBeacons = beaconRegion.errorRangingBeacons {
-                errorRangingBeacons(error:error)
-            }
+            beaconRegion.beaconPromise.failure(error)
         }
     }
     

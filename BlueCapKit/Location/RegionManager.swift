@@ -63,9 +63,9 @@ public class RegionManager : LocationManager {
             self.clLocationManager.startMonitoringForRegion(region.region)
         }
         authoriztaionFuture.onFailure {error in
-            region.promise.failure(error)
+            region.regionPromise.failure(error)
         }
-        return region.promise.future
+        return region.regionPromise.future
     }
 
     public func startMonitoringForRegion(region:Region) {
