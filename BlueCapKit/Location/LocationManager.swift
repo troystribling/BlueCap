@@ -10,10 +10,10 @@ import Foundation
 import CoreLocation
 
 enum LocationError : Int {
-    case NotAvailable               = 30
-    case UpdateFailed               = 31
-    case AuthorizationFailed        = 32
-    case AuthorisedWhenInUseFailed  = 33
+    case NotAvailable               = 0
+    case UpdateFailed               = 1
+    case AuthorizationFailed        = 2
+    case AuthorisedWhenInUseFailed  = 3
 }
 
 struct FLError {

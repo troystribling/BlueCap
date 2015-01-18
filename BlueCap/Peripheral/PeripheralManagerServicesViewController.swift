@@ -106,10 +106,14 @@ class PeripheralManagerServicesViewController : UITableViewController {
             if let peripheral = self.peripheral {
                 let manager = PeripheralManager.sharedInstance
                 let service = manager.services[indexPath.row]
-                manager.removeService(service) {
+                let future = manager.removeService(service)
+                future.onSuccess {
                     PeripheralStore.removeAdvertisedPeripheralService(peripheral, service:service.uuid)
                     PeripheralStore.removePeripheralService(peripheral, service:service.uuid)
                     self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
+                }
+                future.onFailure {error in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 }
             }
         }

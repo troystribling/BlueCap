@@ -52,7 +52,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     override func viewDidDisappear(animated: Bool) {
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
-                characteristic.stopUpdates()
+                characteristic.stopNotificationUpdates()
             }
         }
         NSNotificationCenter.defaultCenter().removeObserver(self)
@@ -76,24 +76,27 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     @IBAction func updateValues() {
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
-                characteristic.startUpdates({
-                        self.updateWhenActive()
-                    }, afterUpdateFailed:{(error) in
-                        self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                    }, animated:true, completion:nil)
-                })
+                let future = characteristic.recieveNotificationUpdates(capacity:10)
+                future.onSuccess {_ in
+                    self.updateWhenActive()
+                }
+                future.onFailure{(error) in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                }
             } else if characteristic.propertyEnabled(.Read) {
                 self.progressView.show()
-                characteristic.read({
-                        self.updateWhenActive()
-                        self.progressView.remove()
-                    }, afterReadFailed:{(error) in
-                        self.progressView.remove()
-                        self.presentViewController(UIAlertController.alertOnError(error) {(action) in
-                            self.navigationController?.popViewControllerAnimated(true)
-                            return
-                        }, animated:true, completion:nil)
-                })
+                let future = characteristic.read()
+                future.onSuccess {_ in
+                    self.updateWhenActive()
+                    self.progressView.remove()
+                }
+                future.onFailure {(error) in
+                    self.progressView.remove()
+                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                        self.navigationController?.popViewControllerAnimated(true)
+                        return
+                    }, animated:true, completion:nil)
+                }
             }
         }
     }

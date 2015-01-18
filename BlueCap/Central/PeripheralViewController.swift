@@ -43,22 +43,22 @@ class PeripheralViewController : UITableViewController {
         }
         self.peripehealConnected = (peripheral.state == .Connected)
         self.rssiLabel.text = "\(self.peripheral.rssi)"
-        self.peripheral.discoverAllPeripheralServices({
-                self.hasData = true
-                self.setStateLabel()
-                self.progressView.remove()
-            },
-            peripheralDiscoveryFailed:{(error) in
-                self.progressView.remove()
-                self.serviceLabel.textColor = UIColor.lightGrayColor()
-                if self.peripehealConnected {
-                    self.peripehealConnected = false
-                    self.presentViewController(UIAlertController.alertOnError(error, handler:{(action) in
-                        self.setStateLabel()
-                    }), animated: true, completion:nil)
-                }
+        let future = self.peripheral.discoverAllPeripheralServices()
+        future.onSuccess {_ in
+            self.hasData = true
+            self.setStateLabel()
+            self.progressView.remove()
+        }
+        future.onFailure {(error) in
+            self.progressView.remove()
+            self.serviceLabel.textColor = UIColor.lightGrayColor()
+            if self.peripehealConnected {
+                self.peripehealConnected = false
+                self.presentViewController(UIAlertController.alertOnError(error, handler:{(action) in
+                    self.setStateLabel()
+                }), animated: true, completion:nil)
             }
-        )
+        }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
     }
 
