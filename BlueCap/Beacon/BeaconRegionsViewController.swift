@@ -101,15 +101,20 @@ class BeaconRegionsViewController: UITableViewController {
                     let beaconManager = BeaconManager.sharedInstance
                     if !beaconManager.isRangingRegion(beacon.identifier) {
                         self.updateDisplay()
+                        Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
                         return beaconManager.startRangingBeaconsInRegion(beacon)
                     } else {
-                        
+                        let errorPromise = StreamPromise<[Beacon]>()
+                        errorPromise.failure(BCAppError.rangingBeacons)
+                        return errorPromise.future
                     }
-                    Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
                 case .Outside:
                     BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beacon)
                     self.updateWhenActive()
                     Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
+                    let errorPromise = StreamPromise<[Beacon]>()
+                    errorPromise.failure(BCAppError.outOfRegion)
+                    return errorPromise.future
                 case .Start:
                     self.setScanButton()
                     Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")

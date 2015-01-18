@@ -55,7 +55,7 @@ public class BeaconManager : RegionManager {
     }
     
     // control
-    public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion)  -> FutureStream<[Beacon]> {
+    public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion) -> FutureStream<[Beacon]> {
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
             self.regionRangingStatus[beaconRegion.identifier] = true
@@ -68,8 +68,8 @@ public class BeaconManager : RegionManager {
         return beaconRegion.beaconPromise.future
     }
 
-    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
-        self.startRangingBeaconsInRegion(CLAuthorizationStatus.Authorized, beaconRegion:beaconRegion)
+    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) -> FutureStream<[Beacon]> {
+       return self.startRangingBeaconsInRegion(CLAuthorizationStatus.Authorized, beaconRegion:beaconRegion)
     }
 
     public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
