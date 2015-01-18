@@ -93,43 +93,43 @@ class BeaconRegionsViewController: UITableViewController {
     
     func startMonitoring() {
         for (name, uuid) in BeaconStore.getBeacons() {
-            let beacon = BeaconRegion(proximityUUID:uuid, identifier:name) {(beaconRegion) in
-                beaconRegion.startMonitoringRegion = {
-                    BeaconManager.sharedInstance.startRangingBeaconsInRegion(beaconRegion)
-                    self.setScanButton()
-                    Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")
-                }
-                beaconRegion.enterRegion = {
+            let beacon = BeaconRegion(proximityUUID:uuid, identifier:name)
+            let regionFuture = BeaconManager.sharedInstance.startMonitoringForRegion(beacon)
+            let beaconFuture = regionFuture.flatmap {status -> FutureStream<[Beacon]> in
+                switch status {
+                case .Inside:
                     let beaconManager = BeaconManager.sharedInstance
-                    if !beaconManager.isRangingRegion(beaconRegion.identifier) {
-                        beaconManager.startRangingBeaconsInRegion(beaconRegion)
+                    if !beaconManager.isRangingRegion(beacon.identifier) {
                         self.updateDisplay()
+                        return beaconManager.startRangingBeaconsInRegion(beacon)
+                    } else {
+                        
                     }
                     Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
-                }
-                beaconRegion.exitRegion = {
-                    BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beaconRegion)
+                case .Outside:
+                    BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beacon)
                     self.updateWhenActive()
                     Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
-                }
-                beaconRegion.errorMonitoringRegion = {(error) in
-                    BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beaconRegion)
-                    self.updateWhenActive()
-                    if let error = error {
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    }
-                }
-                beaconRegion.rangedBeacons = {(beacons) in
-                    for beacon in beacons {
-                        Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
-                    }
-                    self.updateWhenActive()
-                    if UIApplication.sharedApplication().applicationState == .Active && beacons.count > 0 {
-                        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didUpdateBeacon, object:beaconRegion)
-                    }
+                case .Start:
+                    self.setScanButton()
+                    Logger.debug("BeaconRegionsViewController#startMonitoring: started monitoring region \(name)")
+                    return BeaconManager.sharedInstance.startRangingBeaconsInRegion(beacon)
                 }
             }
-            BeaconManager.sharedInstance.startMonitoringForRegion(beacon)
+            beaconFuture.onSuccess {beacons in
+                for beacon in beacons {
+                    Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
+                }
+                self.updateWhenActive()
+                if UIApplication.sharedApplication().applicationState == .Active && beacons.count > 0 {
+                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didUpdateBeacon, object:beacon)
+                }
+            }
+            regionFuture.onFailure {error in
+                BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beacon)
+                self.updateWhenActive()
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
             self.beaconRegions[name] = beacon
         }
     }
