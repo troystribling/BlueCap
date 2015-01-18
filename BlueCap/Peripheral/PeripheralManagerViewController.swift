@@ -97,7 +97,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBAction func toggleAdvertise(sender:AnyObject) {
         let manager = PeripheralManager.sharedInstance
         if manager.isAdvertising {
-            manager.stopAdvertising {
+            manager.stopAdvertising().onSuccess {
                 self.setUIState()
             }
         } else {
@@ -115,13 +115,19 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                         if let uuid = PeripheralStore.getBeacon(name) {
                             let beaconConfig = PeripheralStore.getBeaconConfig(name)
                             let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:beaconConfig[1], minor:beaconConfig[0])
-                            manager.startAdvertising(beaconRegion, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
+                            let future = manager.startAdvertising(beaconRegion)
+                            future.onSuccess(afterAdvertisingStarted)
+                            future.onFailure(afterAdvertisingStartFailed)
                         }
                     }
                 } else if advertisedServices.count > 0 {
-                    manager.startAdvertising(peripheral, uuids:advertisedServices, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
+                    let future = manager.startAdvertising(peripheral, uuids:advertisedServices)
+                    future.onSuccess(afterAdvertisingStarted)
+                    future.onFailure(afterAdvertisingStartFailed)
                 } else {
-                    manager.startAdvertising(peripheral, afterAdvertisingStartedSuccess:afterAdvertisingStarted, afterAdvertisingStartFailed:afterAdvertisingStartFailed)
+                    let future = manager.startAdvertising(peripheral)
+                    future.onSuccess(afterAdvertisingStarted)
+                    future.onFailure(afterAdvertisingStartFailed)
                 }
             }
         }
