@@ -11,11 +11,15 @@ import CoreLocation
 
 let DEFAULT_REGION_RADIUS = 100.0
 
+public enum RegionState {
+    case Start, Inside, Outside
+}
+
 public class Region {
     
     internal let _region : CLRegion
     
-    internal var regionPromise  : StreamPromise<CLRegionState>
+    internal var regionPromise  : StreamPromise<RegionState>
     
     public var identifier : String {
         return self._region.identifier
@@ -46,9 +50,9 @@ public class Region {
     internal init(region:CLRegion, capacity:Int? = nil) {
         self._region = region
         if let capacity = capacity {
-            self.regionPromise = StreamPromise<CLRegionState>(capacity:capacity)
+            self.regionPromise = StreamPromise<RegionState>(capacity:capacity)
         } else {
-            self.regionPromise = StreamPromise<CLRegionState>()
+            self.regionPromise = StreamPromise<RegionState>()
         }
     }
 
