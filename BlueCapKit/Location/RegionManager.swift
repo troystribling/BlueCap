@@ -102,14 +102,14 @@ public class RegionManager : LocationManager {
     public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
         Logger.debug("RegionManager#didEnterRegion: \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
-            bcregion.promise.success(.Inside)
+            bcregion.regionPromise.success(.Inside)
         }
     }
     
     public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
         Logger.debug("RegionManager#didExitRegion: \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
-            bcregion.promise.success(.Outside)
+            bcregion.regionPromise.success(.Outside)
         }
     }
     
@@ -122,7 +122,7 @@ public class RegionManager : LocationManager {
     public func locationManager(_:CLLocationManager!, monitoringDidFailForRegion region:CLRegion!, withError error:NSError!) {
         Logger.debug("RegionManager#monitoringDidFailForRegion: \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
-            bcregion.promise.failure(error)
+            bcregion.regionPromise.failure(error)
         }
     }
     
