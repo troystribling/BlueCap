@@ -45,33 +45,35 @@ public protocol Serialized {
     class func serializeArray<SerializedType>(values:[SerializedType]) -> NSData    
     class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData
     class func serializeArrayToLittleEndian<SerializedType>(values:[SerializedType]) -> NSData
-    class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData
-    
+    class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData    
 }
 
 public protocol DeserializedEnum {
     typealias SelfType
-    class func fromString(stringValue:String) -> SelfType?
-    class func stringValues() -> [String]
-    var stringValue : String {get}
+    typealias RawType : Deserialized
+    class func fromRaw(rawValue:RawType) -> SelfType?
+    class func fromString(stringValue:[String:String]) -> SelfType?
+    class var stringValues : [String] {get}
+    class var uuid : String {get}
+    var stringValue : [String:String] {get}
+    var rawValue : RawType {get}
 }
 
 public protocol DeserializedStruct {
     typealias SelfType
     typealias RawType : Deserialized
-    class func fromRawValues(rawValues:[RawType]) -> SelfType?
-    class func fromStrings(stringValues:Dictionary<String, String>) -> SelfType?
-    var stringValues : Dictionary<String,String> {get}
-    func toRawValues() -> [RawType]
+    class func fromRaw(rawValue:[RawType]) -> SelfType?
+    class func fromString(stringValues:[String:String]) -> SelfType?
+    var stringValue : [String:String] {get}
+    var rawValue : [RawType] {get}
 }
 
 public protocol DeserializedPairStruct {
     typealias SelfType
     typealias RawType1 : Deserialized
     typealias RawType2 : Deserialized
-    class func fromRawValues(rawValues:([RawType1], [RawType2])) -> SelfType?
-    class func fromStrings(stringValues:Dictionary<String, String>) -> SelfType?
-    class func rawValueSizes() -> (Int, Int)
-    var stringValues : Dictionary<String,String> {get}
-    func toRawValues() -> ([RawType1], [RawType2])
+    class func fromRaw(rawValue:([RawType1], [RawType2])) -> SelfType?
+    class func fromString(stringValues:[String:String]) -> SelfType?
+    var stringValue : [String:String] {get}
+    var rawValue : ([RawType1], [RawType2]) {get}
 }

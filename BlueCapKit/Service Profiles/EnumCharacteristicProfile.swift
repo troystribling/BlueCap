@@ -10,9 +10,6 @@ import Foundation
 
 //public class EnumCharacteristicProfile<EnumType:DeserializedEnum where EnumType.RawType == EnumType.RawType.SelfType, EnumType == EnumType.SelfType> : CharacteristicProfile {
 //    
-//    // PUBLIC
-//    public var endianness : Endianness = .Little
-//
 //    public override var discreteStringValues : [String] {
 //        return EnumType.stringValues()
 //    }
@@ -84,5 +81,5 @@ import Foundation
 //            return NSData.serializeToBigEndian(value)
 //        }
 //    }
-//    
+    
 //}

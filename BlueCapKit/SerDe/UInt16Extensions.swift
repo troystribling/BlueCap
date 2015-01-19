@@ -24,22 +24,6 @@ extension UInt16 : Deserialized {
         }
     }
 
-    public static func deserialize(data:NSData) -> UInt16 {
-        var value : UInt16 = 0
-        if data.length >= sizeof(UInt16) {
-            data.getBytes(&value, length:sizeof(UInt16))
-        }
-        return value
-    }
-    
-    public static func deserialize(data:NSData, start:Int) -> UInt16 {
-        var value : UInt16 = 0
-        if data.length >= start + sizeof(UInt16) {
-            data.getBytes(&value, range: NSMakeRange(start, sizeof(UInt16)))
-        }
-        return value
-    }
-    
     public static func deserializeFromLittleEndian(data:NSData) -> UInt16 {
         var value : UInt16 = 0
         if data.length >= sizeof(UInt16) {

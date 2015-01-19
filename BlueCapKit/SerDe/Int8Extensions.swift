@@ -23,24 +23,12 @@ extension Int8 : Deserialized {
         }
     }
 
-    public static func deserialize(data:NSData) -> Int8 {
+    public static func deserializeFromLittleEndian(data:NSData) -> Int8 {
         var value : Int8 = 0
         if data.length >= sizeof(Int8) {
             data.getBytes(&value, length:sizeof(Int8))
         }
-        return value
-    }
-    
-    public static func deserialize(data:NSData, start:Int) -> Int8 {
-        var value : Int8 = 0
-        if data.length >= start + sizeof(Int8) {
-            data.getBytes(&value, range: NSMakeRange(start, sizeof(Int8)))
-        }
-        return value
-    }
-    
-    public static func deserializeFromLittleEndian(data:NSData) -> Int8 {
-        return deserialize(data)
+        return littleEndianToHost(value)
     }
     
     public static func deserializeArrayFromLittleEndian(data:NSData) -> [Int8] {
@@ -49,6 +37,10 @@ extension Int8 : Deserialized {
     }
     
     public static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int8 {
-        return deserialize(data, start:start)
+        var value : Int8 = 0
+        if data.length >= start + sizeof(Int8) {
+            data.getBytes(&value, range: NSMakeRange(start, sizeof(Int8)))
+        }
+        return littleEndianToHost(value)
     }
 }

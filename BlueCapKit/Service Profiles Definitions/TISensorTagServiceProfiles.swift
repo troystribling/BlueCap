@@ -653,49 +653,40 @@ import BlueCapKit
 //            return [periodRaw]
 //        }
 //    }
-//    enum Enabled: UInt8, DeserializedEnum {
-//        case No     = 0
-//        case Yes    = 1
-//        static func fromRaw(rawValue:UInt8) -> Enabled? {
-//            switch rawValue {
-//            case 0:
-//                return Enabled.No
-//            case 1:
-//                return Enabled.Yes
-//            default:
-//                return nil
-//            }
-//        }
-//        static func fromString(stringValue:String) -> Enabled? {
-//            switch stringValue {
-//            case "No":
-//                return Enabled.No
-//            case "Yes":
-//                return Enabled.Yes
-//            default:
-//                return nil
-//            }
-//        }
-//        static func stringValues() -> [String] {
-//            return ["No", "Yes"]
-//        }
-//        var stringValue : String {
-//            switch self {
-//            case .No:
-//                return "No"
-//            case .Yes:
-//                return "Yes"
-//            }
-//        }
-//        func toRaw() -> UInt8 {
-//            switch self {
-//            case .No:
-//                return 0
-//            case .Yes:
-//                return 1
-//            }
-//        }
-//    }
+    enum Enabled: UInt8, DeserializedEnum {
+        case No     = 0
+        case Yes    = 1
+
+        static let uuid         = "1"
+        static let stringValues = ["No", "Yes"]
+
+        static func fromRaw(rawValue:UInt8) -> Enabled? {
+            return Enabled(rawValue:rawValue)
+        }
+        static func fromString(stringValue:[String:String]) -> Enabled? {
+            if let value = stringValue["Enabled"] {
+                switch value {
+                case "Yes":
+                    return Enabled.Yes
+                case "No":
+                    return Enabled.No
+                default:
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+        
+        var stringValue : [String:String] {
+            switch self {
+            case .No:
+                return ["Enabled":"No"]
+            case .Yes:
+                return ["Enabled":"Yes"]
+            }
+        }
+    }
 //}
 //
 //public class TISensorTagServiceProfiles {

@@ -146,7 +146,7 @@ public class Characteristic {
         }
     }
 
-    public func write(anyValue:Any) -> Future<Characteristic> {
+    public func write<T>(anyValue:T) -> Future<Characteristic> {
         if let value = self.profile.dataFromAnyValue(anyValue) {
             return self.writeData(value)
         } else {
