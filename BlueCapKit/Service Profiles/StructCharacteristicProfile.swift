@@ -10,9 +10,6 @@ import Foundation
 
 public class StructCharacteristicProfile<StructType:DeserializedStruct where StructType.RawType == StructType.RawType.SelfType, StructType == StructType.SelfType> : CharacteristicProfile {
     
-    // PUBLIC
-    public var endianness : Endianness = .Little
-
     public override init(uuid:String, name:String, initializer:((characteristicProfile:StructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runInitializer = initializer {
@@ -58,21 +55,11 @@ public class StructCharacteristicProfile<StructType:DeserializedStruct where Str
     
     // PRIVATE
     private func deserialize(data:NSData) -> [StructType.RawType] {
-        switch self.endianness {
-        case Endianness.Little:
-            return StructType.RawType.deserializeArrayFromLittleEndian(data)
-        case Endianness.Big:
-            return StructType.RawType.deserializeArrayFromBigEndian(data)
-        }
+        return StructType.RawType.deserializeArrayFromLittleEndian(data)
     }
     
     private func serialize(values:[StructType.RawType]) -> NSData {
-        switch self.endianness {
-        case Endianness.Little:
-            return NSData.serializeArrayToLittleEndian(values)
-        case Endianness.Big:
-            return NSData.serializeArrayToBigEndian(values)
-        }
+        return NSData.serializeArrayToLittleEndian(values)
     }
     
 }

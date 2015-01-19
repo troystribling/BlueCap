@@ -51,18 +51,4 @@ extension Int8 : Deserialized {
     public static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int8 {
         return deserialize(data, start:start)
     }
-    
-    public static func deserializeFromBigEndian(data:NSData) -> Int8 {
-        return deserialize(data)
-    }
-    
-    public static func deserializeArrayFromBigEndian(data:NSData) -> [Int8] {
-        let count = data.length / sizeof(Int8)
-        return [Int](0..<count).map{self.deserializeFromBigEndian(data, start:$0)}
-    }
-    
-    public static func deserializeFromBigEndian(data:NSData, start:Int) -> Int8 {
-        return deserialize(data, start:start)
-    }
-
 }

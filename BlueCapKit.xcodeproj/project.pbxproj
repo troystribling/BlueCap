@@ -190,8 +190,8 @@
 		0551208419F5506000ED3B74 /* BlueCapKit */ = {
 			isa = PBXGroup;
 			children = (
-				0551208719F5506000ED3B74 /* BlueCapKit.h */,
 				0562D3251A5D8861001013C9 /* BlueCapKit.playground */,
+				0551208719F5506000ED3B74 /* BlueCapKit.h */,
 				0551209C19F5513700ED3B74 /* Central */,
 				05D3B9421A2BA162008E794E /* Extensions */,
 				05D3B9191A2B8C4E008E794E /* External */,

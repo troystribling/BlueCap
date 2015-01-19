@@ -10,9 +10,6 @@ import Foundation
 
 public class DeserializedCharacteristicProfile<DeserializedType:Deserialized where DeserializedType == DeserializedType.SelfType> : CharacteristicProfile {
 
-    // PUBLIC
-    public var endianness : Endianness = .Little
-
     public override init(uuid:String, name:String, initializer:((characteristicProfile:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runInitializer = initializer {
@@ -59,21 +56,11 @@ public class DeserializedCharacteristicProfile<DeserializedType:Deserialized whe
     
     // PRIVATE
     private func deserialize(data:NSData) -> DeserializedType {
-        switch self.endianness {
-        case Endianness.Little:
-            return DeserializedType.deserializeFromLittleEndian(data)
-        case Endianness.Big:
-            return DeserializedType.deserializeFromBigEndian(data)
-        }
+        return DeserializedType.deserializeFromLittleEndian(data)
     }
     
     private func serialize(value:DeserializedType) -> NSData {
-        switch self.endianness {
-        case Endianness.Little:
-            return NSData.serializeToLittleEndian(value)
-        case Endianness.Big:
-            return NSData.serializeToBigEndian(value)
-        }
+        return NSData.serializeToLittleEndian(value)
     }
     
 }

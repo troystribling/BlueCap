@@ -12,9 +12,6 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
                                                                                      StructType.RawType2 == StructType.RawType2.SelfType,
                                                                                      StructType == StructType.SelfType> : CharacteristicProfile {
     
-    // PUBLIC
-    public var endianness : Endianness = .Little
-
     public override init(uuid:String, name:String, initializer:((characteristicProfile:PairStructCharacteristicProfile<StructType>) -> ())? = nil) {
         super.init(uuid:uuid, name:name)
         if let runInitializer = initializer {
@@ -67,21 +64,11 @@ public class PairStructCharacteristicProfile<StructType:DeserializedPairStruct w
     
     // PRIVATE
     private func deserialize(raw1Data:NSData, raw2Data:NSData) -> ([StructType.RawType1], [StructType.RawType2]) {
-        switch self.endianness {
-        case Endianness.Little:
-            return (StructType.RawType1.deserializeArrayFromLittleEndian(raw1Data), StructType.RawType2.deserializeArrayFromLittleEndian(raw2Data))
-        case Endianness.Big:
-            return (StructType.RawType1.deserializeArrayFromBigEndian(raw1Data), StructType.RawType2.deserializeArrayFromBigEndian(raw2Data))
-        }
+        return (StructType.RawType1.deserializeArrayFromLittleEndian(raw1Data), StructType.RawType2.deserializeArrayFromLittleEndian(raw2Data))
     }
     
     private func serialize(rawValues:([StructType.RawType1], [StructType.RawType2])) -> NSData {
-        switch self.endianness {
-        case Endianness.Little:
-            return NSData.serializeArrayPairToLittleEndian(rawValues)
-        case Endianness.Big:
-            return NSData.serializeArrayPairToBigEndian(rawValues)
-        }
+        return NSData.serializeArrayPairToLittleEndian(rawValues)
     }
     
 }

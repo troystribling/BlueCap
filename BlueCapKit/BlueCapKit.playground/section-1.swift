@@ -5,36 +5,36 @@
 import UIKit
 import BlueCapKit
 
-let hexStr = "10af22cc"
-let hexData = hexStr.dataFromHexString()
-hexData.hexStringValue()
-
-class ResultWrapper<T> {
-    let value : T
-    init(_ value:T) {
-        self.value = value
-    }
-}
-
-enum Result<T> {
-    case Success(ResultWrapper<T>)
-    case Error(NSError)
+enum Enabled : UInt8, DeserializedEnum {
+    case Yes = 0
+    case No = 1
     
-    init(_ value:T) {
-        self = .Success(ResultWrapper(value))
+    static func fromString(stringValue:String) -> Enabled? {
+        switch stringValue {
+        case "Yes":
+            return Enabled.Yes
+        case "No":
+            return Enabled.No
+        default:
+            return nil
+        }
     }
     
-    init (_ error:NSError) {
-        self = .Error(error)
+    static func stringValues() -> [String] {
+        return ["Yes", "No"]
     }
+    
+    var stringValue : String {
+        switch self {
+        case .Yes:
+            return "Yes"
+        case .No:
+            return "No"
+        }
+    }
+
 }
 
-let val = Result<Int>(2)
-
-switch val {
-case .Success(let result):
-    println("result: \(result.value)")
-case .Error(let error):
-    println("error")
+if let test = Enabled(rawValue:1) {
+    println(test.rawValue)
 }
-
