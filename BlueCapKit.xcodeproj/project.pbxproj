@@ -281,8 +281,7 @@
 				055120B719F5513700ED3B74 /* UInt16Extensions.swift */,
 				055120B819F5513700ED3B74 /* Uint8Extensions.swift */,
 			);
-			name = SerDe;
-			path = "Serialization Deserialization";
+			path = SerDe;
 			sourceTree = "<group>";
 		};
 		055120B919F5513700ED3B74 /* Service Profiles */ = {

@@ -24,21 +24,29 @@ func byteArrayValue<T>(value:T) -> [Byte] {
     return byteArray
 }
 
+func reverseBytes<T>(value:T) -> T {
+    var result = value
+    var swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length:sizeof(T))
+    swappedBytes.getBytes(&result, length:sizeof(T))
+    return result
+}
+
 public protocol Deserialized {
     typealias SelfType
     class func fromString(data:String) -> SelfType?
-    class func deserialize(data:NSData) -> SelfType
-    class func deserialize(data:NSData, start:Int) -> SelfType
-    class func deserializeArray(data:NSData) -> [SelfType]
+    class func deserializeFromLittleEndian(data:NSData) -> SelfType
+    class func deserializeArrayFromLittleEndian(data:NSData) -> [SelfType]
+    class func deserializeFromLittleEndian(data:NSData, start:Int) -> SelfType
+
 }
 
 public protocol Serialized {
     class func serialize<SerializedType>(value:SerializedType) -> NSData
-    class func serializeArray<SerializedType>(values:[SerializedType]) -> NSData
-    
+    class func serializeArray<SerializedType>(values:[SerializedType]) -> NSData    
     class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData
     class func serializeArrayToLittleEndian<SerializedType>(values:[SerializedType]) -> NSData
     class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData
+    
 }
 
 public protocol DeserializedEnum {
