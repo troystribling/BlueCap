@@ -24,14 +24,11 @@ public class CharacteristicProfile {
         return []
     }
     
-    public init(uuid:String, name:String, initializer:((characteristicProfile:CharacteristicProfile) -> ())? = nil) {
+    public init(uuid:String, name:String) {
         self.uuid = CBUUID(string:uuid)
         self.name = name
         self.permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
         self.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
-        if let runInializer = initializer {
-            runInializer(characteristicProfile:self)
-        }
     }
     
     public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic> {

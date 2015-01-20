@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Int16 : Deserialized {
+extension Int16 : Deserializable {
     
     public static func fromString(data:String) -> Int16? {
         if let intVal = data.toInt() {

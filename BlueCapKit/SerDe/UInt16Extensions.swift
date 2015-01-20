@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension UInt16 : Deserialized {
+extension UInt16 : Deserializable {
     
     public static func fromString(data:String) -> UInt16? {
         if let intVal = data.toInt() {

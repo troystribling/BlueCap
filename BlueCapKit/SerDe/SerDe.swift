@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreBluetooth
 
 func littleEndianToHost<T>(value:T) -> T {
     return value;
@@ -31,7 +32,7 @@ func reverseBytes<T>(value:T) -> T {
     return result
 }
 
-public protocol Deserialized {
+public protocol Deserializable {
     typealias SelfType
     class func fromString(data:String) -> SelfType?
     class func deserializeFromLittleEndian(data:NSData) -> SelfType
@@ -40,7 +41,7 @@ public protocol Deserialized {
 
 }
 
-public protocol Serialized {
+public protocol Serializable {
     class func serialize<SerializedType>(value:SerializedType) -> NSData
     class func serializeArray<SerializedType>(values:[SerializedType]) -> NSData    
     class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData
@@ -48,20 +49,30 @@ public protocol Serialized {
     class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData    
 }
 
-public protocol DeserializedEnum {
-    typealias SelfType
-    typealias RawType : Deserialized
-    class func fromRaw(rawValue:RawType) -> SelfType?
-    class func fromString(stringValue:[String:String]) -> SelfType?
-    class var stringValues : [String] {get}
-    class var uuid : String {get}
-    var stringValue : [String:String] {get}
+public protocol BLEConfigurable {
+    class var uuid          : String {get}
+    class var name          : String {get}
+    class var tag           : String {get}
+    class var permissions   : CBAttributePermissions {get}
+    class var properties    : CBCharacteristicProperties {get}
+    class var initialValue  : NSData {get}
+}
+
+public protocol RawDeserializable {
+    typealias RawType : Deserializable
+    init?(rawValue:RawType)
     var rawValue : RawType {get}
+}
+
+public protocol StringDeserializable {
+    init?(stringValue:[String:String])
+    class var stringValues : [String] {get}
+    var stringValue : [String:String] {get}
 }
 
 public protocol DeserializedStruct {
     typealias SelfType
-    typealias RawType : Deserialized
+    typealias RawType : Deserializable
     class func fromRaw(rawValue:[RawType]) -> SelfType?
     class func fromString(stringValues:[String:String]) -> SelfType?
     var stringValue : [String:String] {get}
@@ -70,8 +81,8 @@ public protocol DeserializedStruct {
 
 public protocol DeserializedPairStruct {
     typealias SelfType
-    typealias RawType1 : Deserialized
-    typealias RawType2 : Deserialized
+    typealias RawType1 : Deserializable
+    typealias RawType2 : Deserializable
     class func fromRaw(rawValue:([RawType1], [RawType2])) -> SelfType?
     class func fromString(stringValues:[String:String]) -> SelfType?
     var stringValue : [String:String] {get}

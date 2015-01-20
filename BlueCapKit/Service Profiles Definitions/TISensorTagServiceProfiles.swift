@@ -653,23 +653,29 @@ import BlueCapKit
 //            return [periodRaw]
 //        }
 //    }
-    enum Enabled: UInt8, DeserializedEnum {
+    enum Enabled: UInt8, RawDeserializable, StringDeserializable, BLEConfigurable {
         case No     = 0
         case Yes    = 1
 
+        // BLEConfigurable
         static let uuid         = "1"
+        static let name         = "Enabled"
+        static let tag          = "TI Sensor Tag"
+        static let initialValue = NSData.serialize(Enabled.No.rawValue)
+        static let properties   = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+        static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+
+        
+        // StringDeserializable
         static let stringValues = ["No", "Yes"]
 
-        static func fromRaw(rawValue:UInt8) -> Enabled? {
-            return Enabled(rawValue:rawValue)
-        }
-        static func fromString(stringValue:[String:String]) -> Enabled? {
+        init?(stringValue:[String:String]) {
             if let value = stringValue["Enabled"] {
                 switch value {
                 case "Yes":
-                    return Enabled.Yes
+                    self = Enabled.Yes
                 case "No":
-                    return Enabled.No
+                    self = Enabled.No
                 default:
                     return nil
                 }

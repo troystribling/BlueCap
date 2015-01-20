@@ -8,7 +8,7 @@
 
 import Foundation
 
-//public class DeserializedCharacteristicProfile<DeserializedType:Deserialized where DeserializedType == DeserializedType.SelfType> : CharacteristicProfile {
+//public class DeserializedCharacteristicProfile<DeserializedType:Deserializable where DeserializedType == DeserializedType.SelfType> : CharacteristicProfile {
 //
 //    public override init(uuid:String, name:String, initializer:((characteristicProfile:DeserializedCharacteristicProfile<DeserializedType>) -> ())? = nil) {
 //        super.init(uuid:uuid, name:name)

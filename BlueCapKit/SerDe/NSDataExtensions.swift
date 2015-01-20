@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension NSData : Serialized {
+extension NSData : Serializable {
 
     public class func serialize<SerializedType>(value:SerializedType) -> NSData {
         let values = [value]
