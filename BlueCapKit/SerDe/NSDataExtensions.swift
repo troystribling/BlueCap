@@ -47,3 +47,22 @@ extension NSData : Serializable {
     }
     
 }
+
+extension NSData : Deserializable {
+    
+    public class func fromString(data:String) -> NSData? {
+        return data.dataFromHexString()
+    }
+    
+    public class func deserializeFromLittleEndian(data:NSData) -> NSData {
+        return data
+    }
+    
+    public class func deserializeArrayFromLittleEndian(data:NSData) -> [NSData] {
+        return [data]
+    }
+    
+    public class func deserializeFromLittleEndian(data:NSData, start:Int) -> NSData {
+        return data
+    }
+}

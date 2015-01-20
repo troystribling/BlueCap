@@ -57,15 +57,7 @@ public class Characteristic {
 
     public var stringValues : Dictionary<String, String>? {
         if self.value != nil {
-            return self.profile.stringValues(self.value)
-        } else {
-            return nil
-        }
-    }
-    
-    public var anyValue : Any? {
-        if self.value != nil {
-            return self.profile.anyValue(self.value)
+            return self.profile.stringValue(self.value)
         } else {
             return nil
         }

@@ -14,8 +14,8 @@ public class CharacteristicProfile {
     // PUBLIC
     public let uuid                     : CBUUID
     public let name                     : String
-    public var permissions              : CBAttributePermissions
-    public var properties               : CBCharacteristicProperties
+    public let permissions              : CBAttributePermissions
+    public let properties               : CBCharacteristicProperties
     public var initialValue             : NSData?
 
     internal var afterDiscoveredPromise : StreamPromise<Characteristic>!
@@ -24,11 +24,13 @@ public class CharacteristicProfile {
         return []
     }
     
-    public init(uuid:String, name:String) {
+    public init(uuid:String, name:String,
+        permissions:CBAttributePermissions=CBAttributePermissions.Readable | CBAttributePermissions.Writeable,
+        properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify) {
         self.uuid = CBUUID(string:uuid)
         self.name = name
-        self.permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-        self.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify
+        self.permissions = permissions
+        self.properties = properties
     }
     
     public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic> {
@@ -48,24 +50,16 @@ public class CharacteristicProfile {
         return (self.permissions.rawValue & permission.rawValue) > 0
     }
         
-    public func stringValues(data:NSData) -> Dictionary<String, String>? {
+    public func stringValue(data:NSData) -> Dictionary<String, String> {
         return [self.name:data.hexStringValue()]
-    }
-    
-    public func anyValue(data:NSData) -> Any? {
-        return data
     }
     
     public func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
         if let stringVal = data[self.name] {
             return stringVal.dataFromHexString()
         } else {
-            return NSData()
+            return nil
         }
-    }
-
-    public func dataFromAnyValue(object:Any) -> NSData? {
-        return object as? NSData
     }
     
 }
