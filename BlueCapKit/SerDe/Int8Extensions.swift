@@ -10,6 +10,10 @@ import Foundation
 
 extension Int8 : Deserializable {
     
+    public static var size : Int {
+        return sizeof(Int8)
+    }
+
     public static func fromString(data:String) -> Int8? {
         if let intVal = data.toInt() {
             if intVal > 127 {

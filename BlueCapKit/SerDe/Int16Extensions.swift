@@ -10,6 +10,10 @@ import Foundation
 
 extension Int16 : Deserializable {
     
+    public static var size : Int {
+        return sizeof(Int16)
+    }
+    
     public static func fromString(data:String) -> Int16? {
         if let intVal = data.toInt() {
             if intVal > 32767 {

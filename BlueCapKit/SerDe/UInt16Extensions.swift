@@ -10,6 +10,10 @@ import Foundation
 
 extension UInt16 : Deserializable {
     
+    public static var size : Int {
+        return sizeof(UInt16)
+    }
+
     public static func fromString(data:String) -> UInt16? {
         if let intVal = data.toInt() {
             if intVal > 65535 {

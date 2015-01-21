@@ -9,15 +9,6 @@
 import Foundation
 
 extension NSData : Serializable {
-
-    public class func serialize<SerializedType>(value:SerializedType) -> NSData {
-        let values = [value]
-        return NSData(bytes:values, length:sizeof(SerializedType))
-    }
-    
-    public class func serializeArray<SerializedType>(values:[SerializedType]) -> NSData {
-        return NSData(bytes:values, length:values.count*sizeof(SerializedType))
-    }
     
     public class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData {
         let values = [hostToLittleEndian(value)]
@@ -28,7 +19,15 @@ extension NSData : Serializable {
         let littleValues = values.map{hostToLittleEndian($0)}
         return NSData(bytes:littleValues, length:sizeof(SerializedType)*littleValues.count)
     }
-    
+
+    public class func serializePairToLittleEndian<SerializedType1, SerializedType2>(values:(SerializedType1, SerializedType2)) -> NSData {
+        let (values1, values2) = values
+        let data = NSMutableData()
+        data.setData(NSData.serializeToLittleEndian(values1))
+        data.appendData(NSData.serializeToLittleEndian(values2))
+        return data
+    }
+
     public class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData {
         let (values1, values2) = values
         let data = NSMutableData()
@@ -46,23 +45,4 @@ extension NSData : Serializable {
         return hexString
     }
     
-}
-
-extension NSData : Deserializable {
-    
-    public class func fromString(data:String) -> NSData? {
-        return data.dataFromHexString()
-    }
-    
-    public class func deserializeFromLittleEndian(data:NSData) -> NSData {
-        return data
-    }
-    
-    public class func deserializeArrayFromLittleEndian(data:NSData) -> [NSData] {
-        return [data]
-    }
-    
-    public class func deserializeFromLittleEndian(data:NSData, start:Int) -> NSData {
-        return data
-    }
 }

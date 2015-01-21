@@ -10,6 +10,10 @@ import Foundation
 
 extension UInt8 : Deserializable {
     
+    public static var size : Int {
+        return sizeof(UInt8)
+    }
+
     public static func fromString(data:String) -> UInt8? {
         if let intVal = data.toInt() {
             if intVal > 255 {
