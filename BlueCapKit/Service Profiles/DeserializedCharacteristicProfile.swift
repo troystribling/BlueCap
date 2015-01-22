@@ -8,13 +8,13 @@
 
 import Foundation
 
-public class DeserializedCharacteristicProfile<DeserializedType:Deserializable where DeserializedType == DeserializedType.SelfType> : CharacteristicProfile {
+public class DeserializedCharacteristicProfile<DeserializedType:Deserializable> : CharacteristicProfile {
 
     public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
         if let stringValue = data[self.name] {
             if let value = DeserializedType.fromString(stringValue) {
                 Logger.debug("DeserializedCharacteristicProfile#dataValue: data = \(data), value = \(value)")
-                return NSData.serializeToLittleEndian(value)
+                return NSData.serialize(value)
             } else {
                 return nil
             }
@@ -24,7 +24,7 @@ public class DeserializedCharacteristicProfile<DeserializedType:Deserializable w
     }
     
     public override func stringValue(data:NSData) -> Dictionary<String, String> {
-        let value = DeserializedType.deserializeFromLittleEndian(data)
+        let value : DeserializedType = DeserializedType.deserialize(data)
         return [self.name:"\(value)"]
     }
     

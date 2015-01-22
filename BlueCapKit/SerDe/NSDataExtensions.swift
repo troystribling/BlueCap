@@ -10,29 +10,29 @@ import Foundation
 
 extension NSData : Serializable {
     
-    public class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData {
-        let values = [hostToLittleEndian(value)]
-        return NSData(bytes:values, length:sizeof(SerializedType))
+    public class func serialize<T>(value:T) -> NSData {
+        let values = [fromHostByteOrder(value)]
+        return NSData(bytes:values, length:sizeof(T))
     }
     
-    public class func serializeArrayToLittleEndian<SerializedType>(values:[SerializedType]) -> NSData {
-        let littleValues = values.map{hostToLittleEndian($0)}
-        return NSData(bytes:littleValues, length:sizeof(SerializedType)*littleValues.count)
+    public class func serialize<T>(values:[T]) -> NSData {
+        let littleValues = values.map{fromHostByteOrder($0)}
+        return NSData(bytes:littleValues, length:sizeof(T)*littleValues.count)
     }
 
-    public class func serializePairToLittleEndian<SerializedType1, SerializedType2>(values:(SerializedType1, SerializedType2)) -> NSData {
+    public class func serialize<T1, T2>(values:(T1, T2)) -> NSData {
         let (values1, values2) = values
         let data = NSMutableData()
-        data.setData(NSData.serializeToLittleEndian(values1))
-        data.appendData(NSData.serializeToLittleEndian(values2))
+        data.setData(NSData.serialize(values1))
+        data.appendData(NSData.serialize(values2))
         return data
     }
 
-    public class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData {
+    public class func serialize<T1, T2>(values:([T1], [T2])) -> NSData {
         let (values1, values2) = values
         let data = NSMutableData()
-        data.setData(NSData.serializeArrayToLittleEndian(values1))
-        data.appendData(NSData.serializeArrayToLittleEndian(values2))
+        data.setData(NSData.serialize(values1))
+        data.appendData(NSData.serialize(values2))
         return data
     }
 

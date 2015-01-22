@@ -42,17 +42,9 @@ public class MutableCharacteristic : NSObject {
         }
     }
     
-    public var stringValues : Dictionary<String, String>? {
+    public var stringValue : Dictionary<String, String>? {
         if self.value != nil {
-            return self.profile.stringValues(self.value)
-        } else {
-            return nil
-        }
-    }
-    
-    public var anyValue : Any? {
-        if self.value != nil {
-            return self.profile.anyValue(self.value)
+            return self.profile.stringValue(self.value)
         } else {
             return nil
         }
@@ -111,12 +103,24 @@ public class MutableCharacteristic : NSObject {
         }
     }
     
-    public func updateValue(value:Any) {
-        if let data = self.profile.dataFromAnyValue(value) {
-            self.updateValueWithData(data)
-        } else {
-            NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
-        }
+    public func updateValue<T:Deserializable>(value:T) {
+        self.updateValueWithData(serialize(value))
     }
-    
+
+    public func updateValue<T:RawDeserializable>(value:T) {
+        self.updateValueWithData(serialize(value))
+    }
+
+    public func updateValue<T:RawArrayDeserializable>(value:T) {
+        self.updateValueWithData(serialize(value))
+    }
+
+    public func updateValue<T:RawPairDeserializable>(value:T) {
+        self.updateValueWithData(serialize(value))
+    }
+
+    public func updateValue<T:RawArrayPairDeserializable>(value:T) {
+        self.updateValueWithData(serialize(value))
+    }
+
 }

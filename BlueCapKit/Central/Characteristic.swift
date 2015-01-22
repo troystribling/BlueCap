@@ -55,7 +55,7 @@ public class Characteristic {
         return self.cbCharacteristic.value
     }
 
-    public var stringValues : Dictionary<String, String>? {
+    public var stringValue : Dictionary<String, String>? {
         if self.value != nil {
             return self.profile.stringValue(self.value)
         } else {
@@ -138,14 +138,24 @@ public class Characteristic {
         }
     }
 
-    public func write<T:RawDeserializable>(anyValue:T) -> Future<Characteristic> {
-        if let value = self.profile.dataFromAnyValue(anyValue) {
-            return self.writeData(value)
-        } else {
-            self.writePromise = Promise<Characteristic>()
-            self.writePromise.failure(BCError.characteristicNotSerilaizable)
-            return self.writePromise.future
-        }
+    public func write<T:Deserializable>(value:T) -> Future<Characteristic> {
+        return self.writeData(serialize(value))
+    }
+    
+    public func write<T:RawDeserializable>(value:T) -> Future<Characteristic> {
+        return self.writeData(serialize(value))
+    }
+
+    public func write<T:RawArrayDeserializable>(value:T) -> Future<Characteristic> {
+        return self.writeData(serialize(value))
+    }
+
+    public func write<T:RawPairDeserializable>(value:T) -> Future<Characteristic> {
+        return self.writeData(serialize(value))
+    }
+    
+    public func write<T:RawArrayPairDeserializable>(value:T) -> Future<Characteristic> {
+        return self.writeData(serialize(value))
     }
 
     private func timeoutRead(sequence:Int) {

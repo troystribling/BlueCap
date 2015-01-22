@@ -9,11 +9,11 @@
 import Foundation
 import CoreBluetooth
 
-func littleEndianToHost<T>(value:T) -> T {
+func toHostByteOrder<T>(value:T) -> T {
     return value;
 }
 
-func hostToLittleEndian<T>(value:T) -> T {
+func fromHostByteOrder<T>(value:T) -> T {
     return value;
 }
 
@@ -33,20 +33,18 @@ func reverseBytes<T>(value:T) -> T {
 }
 
 public protocol Deserializable {
-    typealias SelfType
     class var size : Int {get}
-    class func fromString(data:String) -> SelfType?
-    class func deserializeFromLittleEndian(data:NSData) -> SelfType
-    class func deserializeArrayFromLittleEndian(data:NSData) -> [SelfType]
-    class func deserializeFromLittleEndian(data:NSData, start:Int) -> SelfType
-
+    class func fromString(data:String) -> Self?
+    class func deserialize(data:NSData) -> Self
+    class func deserialize(data:NSData, start:Int) -> Self
+    class func deserialize(data:NSData) -> [Self]
 }
 
 public protocol Serializable {
-    class func serializeToLittleEndian<SerializedType>(value:SerializedType) -> NSData
-    class func serializeArrayToLittleEndian<SerializedType>(values:[SerializedType]) -> NSData
-    class func serializePairToLittleEndian<SerializedType1, SerializedType2>(values:(SerializedType1, SerializedType2)) -> NSData
-    class func serializeArrayPairToLittleEndian<SerializedType1, SerializedType2>(values:([SerializedType1], [SerializedType2])) -> NSData
+    class func serialize<T>(value:T) -> NSData
+    class func serialize<T>(values:[T]) -> NSData
+    class func serialize<T1, T2>(values:(T1, T2)) -> NSData
+    class func serialize<T1, T2>(values:([T1], [T2])) -> NSData
 }
 
 public protocol BLEConfigurable {
@@ -94,35 +92,49 @@ public protocol RawArrayPairDeserializable {
     init?(rawValue:([RawType1], [RawType2]))
 }
 
-public func deserialize<T:RawDeserializable where T.RawType == T.RawType.SelfType>(data:NSData) -> T.RawType {
-    return T.RawType.deserializeFromLittleEndian(data)
+public func deserialize<T:Deserializable>(data:NSData) -> T {
+    return T.deserialize(data)
 }
 
-public func serialize<T:RawDeserializable where T.RawType == T.RawType.SelfType>(value:T) -> NSData {
-    return NSData.serializeToLittleEndian(value.rawValue)
+public func serialize<T:Deserializable>(value:T) -> NSData {
+    return NSData.serialize(value)
 }
 
-public func deserialize<T:RawArrayDeserializable where T.RawType == T.RawType.SelfType>(data:NSData) -> [T.RawType] {
-    return T.RawType.deserializeArrayFromLittleEndian(data)
+public func deserialize<T:RawDeserializable>(data:NSData) -> T.RawType {
+    return T.RawType.deserialize(data)
 }
 
-public func serialize<T:RawArrayDeserializable where T.RawType == T.RawType.SelfType>(value:T) -> NSData {
-    return NSData.serializeArrayToLittleEndian(value.rawValue)
+public func serialize<T:RawDeserializable>(value:T) -> NSData {
+    return NSData.serialize(value.rawValue)
 }
 
-public func deserialize<T:RawPairDeserializable where T.RawType1 == T.RawType1.SelfType,
-                                                      T.RawType2 == T.RawType2.SelfType>(data:NSData) -> (T.RawType1, T.RawType2) {
+public func deserialize<T:RawArrayDeserializable>(data:NSData) -> [T.RawType] {
+    return T.RawType.deserialize(data)
+}
+
+public func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
+    return NSData.serialize(value.rawValue)
+}
+
+public func deserialize<T:RawPairDeserializable>(data:NSData) -> (T.RawType1, T.RawType2) {
     let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
     let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
-    return (T.RawType1.deserializeFromLittleEndian(rawData1), T.RawType2.deserializeFromLittleEndian(rawData2))
+    return (T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2))
 }
 
-public func deserialize<T:RawArrayPairDeserializable where T.RawType1 == T.RawType1.SelfType,
-                                                           T.RawType2 == T.RawType2.SelfType>(data:NSData) -> ([T.RawType1], [T.RawType2]) {
+public func serialize<T:RawPairDeserializable>(value:T) -> NSData {
+    return NSData.serialize(value.rawValue)
+}
+
+public func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> ([T.RawType1], [T.RawType2]) {
         let (rawSize1, rawSize2) = T.size
         let rawData1 = data.subdataWithRange(NSMakeRange(0, rawSize1))
         let rawData2 = data.subdataWithRange(NSMakeRange(rawSize1, rawSize2))
-        return (T.RawType1.deserializeArrayFromLittleEndian(rawData1), T.RawType2.deserializeArrayFromLittleEndian(rawData2))
+        return (T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2))
+}
+
+public func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
+    return NSData.serialize(value.rawValue)
 }
 
 

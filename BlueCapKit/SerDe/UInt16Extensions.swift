@@ -28,25 +28,25 @@ extension UInt16 : Deserializable {
         }
     }
 
-    public static func deserializeFromLittleEndian(data:NSData) -> UInt16 {
+    public static func deserialize(data:NSData) -> UInt16 {
         var value : UInt16 = 0
         if data.length >= sizeof(UInt16) {
             data.getBytes(&value, length:sizeof(UInt16))
         }
-        return littleEndianToHost(value)
+        return toHostByteOrder(value)
     }
     
-    public static func deserializeArrayFromLittleEndian(data:NSData) -> [UInt16] {
-        let size = sizeof(UInt16)
-        let count = data.length / size
-        return [Int](0..<count).map{self.deserializeFromLittleEndian(data, start:$0*size)}
-    }
-    
-    public static func deserializeFromLittleEndian(data:NSData, start:Int) -> UInt16 {
+    public static func deserialize(data:NSData, start:Int) -> UInt16 {
         var value : UInt16 = 0
         if data.length >= start + sizeof(UInt16) {
             data.getBytes(&value, range:NSMakeRange(start, sizeof(UInt16)))
         }
-        return littleEndianToHost(value)
-    }    
+        return toHostByteOrder(value)
+    }
+
+    public static func deserialize(data:NSData) -> [UInt16] {
+        let size = sizeof(UInt16)
+        let count = data.length / size
+        return [Int](0..<count).map{self.deserialize(data, start:$0*size)}
+    }
 }

@@ -255,7 +255,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func peripheralManager(_:CBPeripheralManager!, didReceiveReadRequest request:CBATTRequest!) {
         Logger.debug("PeripheralManager#didReceiveReadRequest: chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic] {
-            Logger.debug("Responding with data: \(characteristic.stringValues)")
+            Logger.debug("Responding with data: \(characteristic.stringValue)")
             request.value = characteristic.value
             self.cbPeripheralManager.respondToRequest(request, withResult:CBATTError.Success)
         } else {

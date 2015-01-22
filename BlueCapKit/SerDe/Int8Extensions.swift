@@ -27,25 +27,26 @@ extension Int8 : Deserializable {
         }
     }
 
-    public static func deserializeFromLittleEndian(data:NSData) -> Int8 {
+    public static func deserialize(data:NSData) -> Int8 {
         var value : Int8 = 0
         if data.length >= sizeof(Int8) {
             data.getBytes(&value, length:sizeof(Int8))
         }
-        return littleEndianToHost(value)
+        return toHostByteOrder(value)
     }
-    
-    public static func deserializeArrayFromLittleEndian(data:NSData) -> [Int8] {
-        let count = data.length / sizeof(Int8)
-        return [Int](0..<count).map{self.deserializeFromLittleEndian(data, start:$0)}
-    }
-    
-    public static func deserializeFromLittleEndian(data:NSData, start:Int) -> Int8 {
+
+    public static func deserialize(data:NSData, start:Int) -> Int8 {
         var value : Int8 = 0
         if data.length >= start + sizeof(Int8) {
             data.getBytes(&value, range: NSMakeRange(start, sizeof(Int8)))
         }
-        return littleEndianToHost(value)
+        return toHostByteOrder(value)
     }
+
+    public static func deserialize(data:NSData) -> [Int8] {
+        let count = data.length / sizeof(Int8)
+        return [Int](0..<count).map{self.deserialize(data, start:$0)}
+    }
+    
 }
 
