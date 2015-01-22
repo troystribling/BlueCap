@@ -51,13 +51,13 @@ public class Characteristic {
         return self.cbCharacteristic.isBroadcasted
     }
     
-    public var value : NSData! {
+    public var dataValue : NSData! {
         return self.cbCharacteristic.value
     }
 
     public var stringValue : Dictionary<String, String>? {
-        if self.value != nil {
-            return self.profile.stringValue(self.value)
+        if let data = self.dataValue {
+            return self.profile.stringValue(data)
         } else {
             return nil
         }
@@ -67,6 +67,46 @@ public class Characteristic {
         return self.profile.discreteStringValues
     }
     
+    public func value<T:Deserializable>() -> T? {
+        if let data = self.dataValue {
+            return T.deserialize(data)
+        } else {
+            return nil
+        }
+    }
+
+    public func value<T:RawDeserializable>() -> T? {
+        if let data = self.dataValue {
+            return deserialize(data)
+        } else {
+            return nil
+        }
+    }
+
+    public func value<T:RawArrayDeserializable>() -> T? {
+        if let data = self.dataValue {
+            return deserialize(data)
+        } else {
+            return nil
+        }
+    }
+
+    public func value<T:RawPairDeserializable>() -> T? {
+        if let data = self.dataValue {
+            return deserialize(data)
+        } else {
+            return nil
+        }
+    }
+
+    public func value<T:RawArrayPairDeserializable>() -> T? {
+        if let data = self.dataValue {
+            return deserialize(data)
+        } else {
+            return nil
+        }
+    }
+
     public func startNotifying() -> Future<Characteristic> {
         self.notificationStateChangedPromise = Promise<Characteristic>()
         if self.propertyEnabled(.Notify) {

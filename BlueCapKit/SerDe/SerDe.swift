@@ -92,7 +92,7 @@ public protocol RawArrayPairDeserializable {
     init?(rawValue:([RawType1], [RawType2]))
 }
 
-public func deserialize<T:Deserializable>(data:NSData) -> T {
+public func deserialize<T:Deserializable>(data:NSData) -> T? {
     return T.deserialize(data)
 }
 
@@ -100,37 +100,37 @@ public func serialize<T:Deserializable>(value:T) -> NSData {
     return NSData.serialize(value)
 }
 
-public func deserialize<T:RawDeserializable>(data:NSData) -> T.RawType {
-    return T.RawType.deserialize(data)
+public func deserialize<T:RawDeserializable>(data:NSData) -> T? {
+    return T(rawValue:T.RawType.deserialize(data))
 }
 
 public func serialize<T:RawDeserializable>(value:T) -> NSData {
     return NSData.serialize(value.rawValue)
 }
 
-public func deserialize<T:RawArrayDeserializable>(data:NSData) -> [T.RawType] {
-    return T.RawType.deserialize(data)
+public func deserialize<T:RawArrayDeserializable>(data:NSData) -> T? {
+    return T(rawValue:T.RawType.deserialize(data))
 }
 
 public func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
     return NSData.serialize(value.rawValue)
 }
 
-public func deserialize<T:RawPairDeserializable>(data:NSData) -> (T.RawType1, T.RawType2) {
+public func deserialize<T:RawPairDeserializable>(data:NSData) -> T? {
     let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
     let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
-    return (T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2))
+    return T(rawValue:(T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2)))
 }
 
 public func serialize<T:RawPairDeserializable>(value:T) -> NSData {
     return NSData.serialize(value.rawValue)
 }
 
-public func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> ([T.RawType1], [T.RawType2]) {
+public func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> T? {
         let (rawSize1, rawSize2) = T.size
         let rawData1 = data.subdataWithRange(NSMakeRange(0, rawSize1))
         let rawData2 = data.subdataWithRange(NSMakeRange(rawSize1, rawSize2))
-        return (T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2))
+        return T(rawValue:(T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2)))
 }
 
 public func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
