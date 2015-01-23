@@ -10,22 +10,13 @@ import Foundation
 
 public class DeserializedCharacteristicProfile<DeserializedType:Deserializable> : CharacteristicProfile {
 
-    public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
-        if let stringValue = data[self.name] {
-            if let value = DeserializedType.fromString(stringValue) {
-                Logger.debug("DeserializedCharacteristicProfile#dataValue: data = \(data), value = \(value)")
-                return NSData.serialize(value)
-            } else {
-                return nil
-            }
-        } else {
-            return nil
-        }
+    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+        return data[self.name].flatmap{DeserializedType.fromString($0)}.map{serialize($0)}
     }
     
-    public override func stringValue(data:NSData) -> Dictionary<String, String> {
-        let value : DeserializedType = DeserializedType.deserialize(data)
-        return [self.name:"\(value)"]
+    public override func stringValue(data:NSData) -> Dictionary<String, String>? {
+        let value : DeserializedType? = deserialize(data)
+        return value.map{[self.name:"\($0)"]}
     }
     
 }

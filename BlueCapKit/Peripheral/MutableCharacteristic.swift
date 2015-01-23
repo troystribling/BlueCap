@@ -12,7 +12,7 @@ import CoreBluetooth
 public class MutableCharacteristic : NSObject {
     
     private let profile                         : CharacteristicProfile!
-    private var _value                          : NSData!
+    private var _value                          : NSData?
     
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
     internal var processWriteRequestPromise     : StreamPromise<CBATTRequest>?
@@ -59,6 +59,10 @@ public class MutableCharacteristic : NSObject {
         self.profile = profile
         self._value = self.profile.initialValue
         self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
+    }
+
+    public convenience init(uuid:String) {
+        self.init(profile:CharacteristicProfile(uuid:uuid))
     }
     
     public var discreteStringValues : [String] {

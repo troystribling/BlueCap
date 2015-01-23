@@ -8,8 +8,14 @@ import BlueCapKit
 enum Enabled : UInt8, RawDeserializable {
     case Yes = 0
     case No = 1
+    static let uuid = "abc"
 }
 
 if let test = Enabled(rawValue:1) {
     println(test.rawValue)
 }
+
+var x = ["a":1]
+
+println(x["a"].map{$0}!)
+

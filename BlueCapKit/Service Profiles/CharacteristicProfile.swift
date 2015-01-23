@@ -33,6 +33,10 @@ public class CharacteristicProfile {
         self.properties = properties
     }
     
+    public convenience init(uuid:String) {
+        self.init(uuid:uuid, name:"Unknown")
+    }
+    
     public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic> {
         if let capacity = capacity {
             self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity:capacity)
@@ -50,11 +54,12 @@ public class CharacteristicProfile {
         return (self.permissions.rawValue & permission.rawValue) > 0
     }
         
-    public func stringValue(data:NSData) -> Dictionary<String, String> {
+    public func stringValue(data:NSData) -> Dictionary<String, String>? {
         return [self.name:data.hexStringValue()]
     }
     
     public func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
+//        return data[self.name].map{$0.stringVal.dataFromHexString()}
         if let stringVal = data[self.name] {
             return stringVal.dataFromHexString()
         } else {
