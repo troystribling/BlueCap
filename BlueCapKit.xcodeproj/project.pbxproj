@@ -34,12 +34,12 @@
 		055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B819F5513700ED3B74 /* Uint8Extensions.swift */; };
 		055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */; };
 		055120E619F5513700ED3B74 /* DeserializedCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BB19F5513700ED3B74 /* DeserializedCharacteristicProfile.swift */; };
-		055120E719F5513700ED3B74 /* EnumCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BC19F5513700ED3B74 /* EnumCharacteristicProfile.swift */; };
-		055120E819F5513700ED3B74 /* PairStructCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BD19F5513700ED3B74 /* PairStructCharacteristicProfile.swift */; };
+		055120E719F5513700ED3B74 /* RawDeserializedCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BC19F5513700ED3B74 /* RawDeserializedCharacteristicProfile.swift */; };
+		055120E819F5513700ED3B74 /* RawPairDeserializedCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BD19F5513700ED3B74 /* RawPairDeserializedCharacteristicProfile.swift */; };
 		055120E919F5513700ED3B74 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BE19F5513700ED3B74 /* ProfileManager.swift */; };
 		055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BF19F5513700ED3B74 /* ServiceProfile.swift */; };
 		055120EB19F5513700ED3B74 /* StringCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C019F5513700ED3B74 /* StringCharacteristicProfile.swift */; };
-		055120EC19F5513700ED3B74 /* StructCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C119F5513700ED3B74 /* StructCharacteristicProfile.swift */; };
+		055120EC19F5513700ED3B74 /* RawArrayCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C119F5513700ED3B74 /* RawArrayCharacteristicProfile.swift */; };
 		055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */; };
 		055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C419F5513700ED3B74 /* GnosusProfiles.swift */; };
 		055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C519F5513700ED3B74 /* NordicProfiles.swift */; };
@@ -106,12 +106,12 @@
 		055120B819F5513700ED3B74 /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
 		055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
 		055120BB19F5513700ED3B74 /* DeserializedCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserializedCharacteristicProfile.swift; sourceTree = "<group>"; };
-		055120BC19F5513700ED3B74 /* EnumCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumCharacteristicProfile.swift; sourceTree = "<group>"; };
-		055120BD19F5513700ED3B74 /* PairStructCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PairStructCharacteristicProfile.swift; sourceTree = "<group>"; };
+		055120BC19F5513700ED3B74 /* RawDeserializedCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawDeserializedCharacteristicProfile.swift; sourceTree = "<group>"; };
+		055120BD19F5513700ED3B74 /* RawPairDeserializedCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawPairDeserializedCharacteristicProfile.swift; sourceTree = "<group>"; };
 		055120BE19F5513700ED3B74 /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		055120BF19F5513700ED3B74 /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
 		055120C019F5513700ED3B74 /* StringCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCharacteristicProfile.swift; sourceTree = "<group>"; };
-		055120C119F5513700ED3B74 /* StructCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructCharacteristicProfile.swift; sourceTree = "<group>"; };
+		055120C119F5513700ED3B74 /* RawArrayCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawArrayCharacteristicProfile.swift; sourceTree = "<group>"; };
 		055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLESIGGATTProfiles.swift; sourceTree = "<group>"; };
 		055120C419F5513700ED3B74 /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		055120C519F5513700ED3B74 /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
@@ -289,12 +289,12 @@
 			children = (
 				055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */,
 				055120BB19F5513700ED3B74 /* DeserializedCharacteristicProfile.swift */,
-				055120BC19F5513700ED3B74 /* EnumCharacteristicProfile.swift */,
-				055120BD19F5513700ED3B74 /* PairStructCharacteristicProfile.swift */,
+				055120BC19F5513700ED3B74 /* RawDeserializedCharacteristicProfile.swift */,
+				055120BD19F5513700ED3B74 /* RawPairDeserializedCharacteristicProfile.swift */,
 				055120BE19F5513700ED3B74 /* ProfileManager.swift */,
 				055120BF19F5513700ED3B74 /* ServiceProfile.swift */,
 				055120C019F5513700ED3B74 /* StringCharacteristicProfile.swift */,
-				055120C119F5513700ED3B74 /* StructCharacteristicProfile.swift */,
+				055120C119F5513700ED3B74 /* RawArrayCharacteristicProfile.swift */,
 			);
 			path = "Service Profiles";
 			sourceTree = "<group>";
@@ -515,14 +515,14 @@
 				05D3B9341A2B8D61008E794E /* Double.swift in Sources */,
 				055120DA19F5513700ED3B74 /* Region.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
-				055120EC19F5513700ED3B74 /* StructCharacteristicProfile.swift in Sources */,
+				055120EC19F5513700ED3B74 /* RawArrayCharacteristicProfile.swift in Sources */,
 				055120DD19F5513700ED3B74 /* MutableService.swift in Sources */,
 				055120EB19F5513700ED3B74 /* StringCharacteristicProfile.swift in Sources */,
 				055120D519F5513700ED3B74 /* BeaconManager.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
 				05E1A7301A55BE1600A00C02 /* Box.swift in Sources */,
-				055120E719F5513700ED3B74 /* EnumCharacteristicProfile.swift in Sources */,
+				055120E719F5513700ED3B74 /* RawDeserializedCharacteristicProfile.swift in Sources */,
 				055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */,
 				055120D619F5513700ED3B74 /* BeaconRegion.swift in Sources */,
@@ -553,7 +553,7 @@
 				055120DB19F5513700ED3B74 /* RegionManager.swift in Sources */,
 				055120DC19F5513700ED3B74 /* MutableCharacteristic.swift in Sources */,
 				055120E219F5513700ED3B74 /* SerDe.swift in Sources */,
-				055120E819F5513700ED3B74 /* PairStructCharacteristicProfile.swift in Sources */,
+				055120E819F5513700ED3B74 /* RawPairDeserializedCharacteristicProfile.swift in Sources */,
 				05D3B9361A2B8D61008E794E /* Float.swift in Sources */,
 				055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */,
 				05E1A72D1A55BE1600A00C02 /* ExecutionContext.swift in Sources */,

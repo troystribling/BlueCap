@@ -63,8 +63,8 @@ public class Characteristic {
         }
     }
     
-    public var discreteStringValues : [String] {
-        return self.profile.discreteStringValues
+    public var stringValues : [String] {
+        return self.profile.stringValues
     }
     
     public func value<T:Deserializable>() -> T? {

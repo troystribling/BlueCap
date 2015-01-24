@@ -23,16 +23,16 @@ public class Beacon {
     }
     
     public var major : Int? {
-        if let _major = self.clbeacon.major {
-            return _major.integerValue
+        if let major = self.clbeacon.major {
+            return major.integerValue
         } else {
             return nil
         }
     }
     
     public var minor : Int? {
-        if let _minor = self.clbeacon.minor {
-            return _minor.integerValue
+        if let minor = self.clbeacon.minor {
+            return minor.integerValue
         } else {
             return nil
         }

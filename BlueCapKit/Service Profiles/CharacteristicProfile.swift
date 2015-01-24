@@ -20,13 +20,14 @@ public class CharacteristicProfile {
 
     internal var afterDiscoveredPromise : StreamPromise<Characteristic>!
 
-    public var discreteStringValues : [String] {
+    public var stringValues : [String] {
         return []
     }
     
-    public init(uuid:String, name:String,
-        permissions:CBAttributePermissions=CBAttributePermissions.Readable | CBAttributePermissions.Writeable,
-        properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify) {
+    public init(uuid:String,
+                name:String,
+                permissions:CBAttributePermissions=CBAttributePermissions.Readable | CBAttributePermissions.Writeable,
+                properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify) {
         self.uuid = CBUUID(string:uuid)
         self.name = name
         self.permissions = permissions
@@ -59,12 +60,7 @@ public class CharacteristicProfile {
     }
     
     public func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
-//        return data[self.name].map{$0.stringVal.dataFromHexString()}
-        if let stringVal = data[self.name] {
-            return stringVal.dataFromHexString()
-        } else {
-            return nil
-        }
+        return data[self.name].map{$0.dataFromHexString()}
     }
     
 }

@@ -65,8 +65,8 @@ public class MutableCharacteristic : NSObject {
         self.init(profile:CharacteristicProfile(uuid:uuid))
     }
     
-    public var discreteStringValues : [String] {
-        return self.profile.discreteStringValues
+    public var stringValues : [String] {
+        return self.profile.stringValues
     }
     
     public func startProcessingWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest> {

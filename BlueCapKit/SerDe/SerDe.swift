@@ -49,7 +49,6 @@ public protocol Serializable {
 
 public protocol BLEConfigurable {
     class var name          : String {get}
-    class var tag           : String {get}
     class var permissions   : CBAttributePermissions {get}
     class var properties    : CBCharacteristicProperties {get}
     class var initialValue  : NSData {get}
