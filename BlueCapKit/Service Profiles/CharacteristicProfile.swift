@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+// CharacteristicProfile
 public class CharacteristicProfile {
     
     // PUBLIC
@@ -55,12 +56,123 @@ public class CharacteristicProfile {
         return (self.permissions.rawValue & permission.rawValue) > 0
     }
         
-    public func stringValue(data:NSData) -> Dictionary<String, String>? {
+    public func stringValue(data:NSData) -> [String:String]? {
         return [self.name:data.hexStringValue()]
     }
     
-    public func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
+    public func dataFromStringValue(data:[String:String]) -> NSData? {
         return data[self.name].map{$0.dataFromHexString()}
     }
     
 }
+
+// DeserializedCharacteristicProfile
+public class DeserializedCharacteristicProfile<DeserializedType:Deserializable> : CharacteristicProfile {
+    
+    public override var stringValues : [String] {
+        return []
+    }
+    
+    public override func stringValue(data:NSData) -> [String:String]? {
+        let value : DeserializedType? = deserialize(data)
+        return value.map{[self.name:"\($0)"]}
+    }
+    
+    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+        return data[self.name].flatmap{DeserializedType.fromString($0)}.map{serialize($0)}
+    }
+    
+}
+
+// RawDeserializedCharacteristicProfile
+public class RawDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
+    
+    public init() {
+        super.init(uuid:DeserializedType.uuid, name:DeserializedType.name, permissions:DeserializedType.permissions, properties:DeserializedType.properties)
+    }
+    
+    public override var stringValues : [String] {
+        return DeserializedType.stringValues
+    }
+    
+    public override func stringValue(data:NSData) -> Dictionary<String, String>? {
+        let value : DeserializedType? = deserialize(data)
+        return value.map{$0.stringValue}
+    }
+    
+    public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
+        return DeserializedType(stringValue:data).map{serialize($0)}
+    }
+    
+}
+
+// RawPairDeserializedCharacteristicProfile
+public class RawPairDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
+    
+    public init() {
+        super.init(uuid:DeserializedType.uuid, name:DeserializedType.name, permissions:DeserializedType.permissions, properties:DeserializedType.properties)
+    }
+    
+    public override var stringValues : [String] {
+        return DeserializedType.stringValues
+    }
+    
+    public override func stringValue(data:NSData) -> [String:String]? {
+        let value : DeserializedType? = deserialize(data)
+        return value.map{$0.stringValue}
+    }
+    
+    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+        return DeserializedType(stringValue:data).map{serialize($0)}
+    }
+    
+}
+
+// RawArrayCharacteristicProfile
+public class RawArrayCharacteristicProfile<DeserializedType where DeserializedType:RawArrayDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
+    
+    public init() {
+        super.init(uuid:DeserializedType.uuid, name:DeserializedType.name, permissions:DeserializedType.permissions, properties:DeserializedType.properties)
+    }
+    
+    public override var stringValues : [String] {
+        return DeserializedType.stringValues
+    }
+    
+    public override func stringValue(data:NSData) -> [String:String]? {
+        let value : DeserializedType? = deserialize(data)
+        return value.map{$0.stringValue}
+    }
+    
+    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+        return DeserializedType(stringValue:data).map{serialize($0)}
+    }
+    
+}
+
+// RawArrayCharacteristicProfile
+public class StringCharacteristicProfile : CharacteristicProfile {
+    
+    public var encoding : NSStringEncoding
+    
+    public init(uuid:String,
+                name:String,
+                permissions:CBAttributePermissions=CBAttributePermissions.Readable | CBAttributePermissions.Writeable,
+                properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify,
+                encoding:NSStringEncoding = NSUTF8StringEncoding) {
+        self.encoding = encoding
+        super.init(uuid:uuid, name:name, permissions:permissions, properties:properties)
+    }
+    
+    public override func stringValue(data:NSData) -> [String:String]? {
+        let value : String? = deserialize(data, encoding:self.encoding)
+        return value.map{[self.name:$0]}
+    }
+    
+    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+        return data[self.name].flatmap{serialize($0, encoding:self.encoding)}
+    }
+
+}
+
+

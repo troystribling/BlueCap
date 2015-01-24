@@ -10,6 +10,10 @@ import Foundation
 
 extension NSData : Serializable {
     
+    public class func fromString(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
+        return value.dataUsingEncoding(encoding).map{NSData(data:$0)}
+    }
+    
     public class func serialize<T>(value:T) -> NSData {
         let values = [fromHostByteOrder(value)]
         return NSData(bytes:values, length:sizeof(T))

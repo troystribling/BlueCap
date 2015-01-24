@@ -41,6 +41,7 @@ public protocol Deserializable {
 }
 
 public protocol Serializable {
+    class func fromString(value:String, encoding:NSStringEncoding) -> NSData?
     class func serialize<T>(value:T) -> NSData
     class func serialize<T>(values:[T]) -> NSData
     class func serialize<T1, T2>(values:(T1, T2)) -> NSData
@@ -89,6 +90,14 @@ public protocol RawArrayPairDeserializable {
     class var size      : (Int, Int) {get}
     var rawValue        : ([RawType1], [RawType2]) {get}
     init?(rawValue:([RawType1], [RawType2]))
+}
+
+public func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
+    return NSData.fromString(value, encoding:encoding)
+}
+
+public func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String? {
+    return (NSString(data:data, encoding:encoding) as String)
 }
 
 public func deserialize<T:Deserializable>(data:NSData) -> T? {
