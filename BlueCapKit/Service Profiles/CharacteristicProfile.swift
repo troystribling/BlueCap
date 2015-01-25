@@ -12,12 +12,11 @@ import CoreBluetooth
 // CharacteristicProfile
 public class CharacteristicProfile {
     
-    // PUBLIC
     public let uuid                     : CBUUID
     public let name                     : String
     public let permissions              : CBAttributePermissions
     public let properties               : CBCharacteristicProperties
-    public var initialValue             : NSData?
+    public let initialValue             : NSData?
 
     internal var afterDiscoveredPromise : StreamPromise<Characteristic>!
 
@@ -28,11 +27,13 @@ public class CharacteristicProfile {
     public init(uuid:String,
                 name:String,
                 permissions:CBAttributePermissions=CBAttributePermissions.Readable | CBAttributePermissions.Writeable,
-                properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify) {
+                properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify,
+                initialValue:NSData? = nil) {
         self.uuid = CBUUID(string:uuid)
         self.name = name
         self.permissions = permissions
         self.properties = properties
+        self.initialValue = initialValue
     }
     
     public convenience init(uuid:String) {
@@ -88,7 +89,11 @@ public class DeserializedCharacteristicProfile<DeserializedType:Deserializable> 
 public class RawDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
     
     public init() {
-        super.init(uuid:DeserializedType.uuid, name:DeserializedType.name, permissions:DeserializedType.permissions, properties:DeserializedType.properties)
+        super.init(uuid:DeserializedType.uuid,
+            name:DeserializedType.name,
+            permissions:DeserializedType.permissions,
+            properties:DeserializedType.properties,
+            initialValue:DeserializedType.initialValue)
     }
     
     public override var stringValues : [String] {
@@ -110,7 +115,11 @@ public class RawDeserializedCharacteristicProfile<DeserializedType where Deseria
 public class RawPairDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
     
     public init() {
-        super.init(uuid:DeserializedType.uuid, name:DeserializedType.name, permissions:DeserializedType.permissions, properties:DeserializedType.properties)
+        super.init(uuid:DeserializedType.uuid,
+            name:DeserializedType.name,
+            permissions:DeserializedType.permissions,
+            properties:DeserializedType.properties,
+            initialValue:DeserializedType.initialValue)
     }
     
     public override var stringValues : [String] {
@@ -132,7 +141,11 @@ public class RawPairDeserializedCharacteristicProfile<DeserializedType where Des
 public class RawArrayCharacteristicProfile<DeserializedType where DeserializedType:RawArrayDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
     
     public init() {
-        super.init(uuid:DeserializedType.uuid, name:DeserializedType.name, permissions:DeserializedType.permissions, properties:DeserializedType.properties)
+        super.init(uuid:DeserializedType.uuid,
+                   name:DeserializedType.name,
+                   permissions:DeserializedType.permissions,
+                   properties:DeserializedType.properties,
+                   initialValue:DeserializedType.initialValue)
     }
     
     public override var stringValues : [String] {
@@ -151,14 +164,19 @@ public class RawArrayCharacteristicProfile<DeserializedType where DeserializedTy
 }
 
 // RawArrayCharacteristicProfile
-public class StringCharacteristicProfile : CharacteristicProfile {
+public class StringCharacteristicProfile<T:BLEConfigurable> : CharacteristicProfile {
     
     public var encoding : NSStringEncoding
+    
+    public convenience init(encoding:NSStringEncoding = NSUTF8StringEncoding) {
+        self.init(uuid:T.uuid, name:T.name, permissions:T.permissions, properties:T.properties, initialValue:T.initialValue, encoding:encoding)
+    }
     
     public init(uuid:String,
                 name:String,
                 permissions:CBAttributePermissions=CBAttributePermissions.Readable | CBAttributePermissions.Writeable,
                 properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify,
+                initialValue:NSData? = nil,
                 encoding:NSStringEncoding = NSUTF8StringEncoding) {
         self.encoding = encoding
         super.init(uuid:uuid, name:name, permissions:permissions, properties:properties)

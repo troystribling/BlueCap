@@ -10,24 +10,59 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-//public struct Gnosus {
-//  
-//    //***************************************************************************************************
-//    // Hello World Service
-//    //***************************************************************************************************
-//    struct HelloWorldService {
-//        static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
-//        static let name = "Gnosus Hello World"
-//        struct Greeting {
-//            static let uuid = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
-//            static let name = "Hello World Greeting"
-//        }
-//        struct UpdatePeriod {
-//            static let uuid = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
-//            static let name = "Hello World Update Period"
-//        }
-//    }
-//
+public struct Gnosus {
+
+    static let tag = "Gnos.us"
+    
+    // Hello World Service
+    public struct HelloWorldService {
+        
+        static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
+        static let name = "Gnosus Hello World"
+        
+        public struct Greeting : BLEConfigurable {
+
+            // BLEConfigurable
+            public static let uuid         = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+            public static let name         = "Hello World Greeting"
+            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties   = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let initialValue = serialize("Hello")
+            
+        }
+        
+        public struct UpdatePeriod : RawDeserializable, BLEConfigurable, StringDeserializable {
+
+            // RawDeserializable
+            private var value : UInt16?
+            public var rawValue : UInt16? {
+                return self.value
+            }
+            public init?(rawValue:UInt16) {
+                self.value = rawValue
+            }
+
+            // BLEConfigurable
+            public static let uuid                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
+            public static let name                      = "Hello World Update Period"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let initialValue : NSData?    = serialize(UInt16(5000))
+            
+            // StringDeserializable
+            public static var stringValues : [String] {
+                return []
+            }
+            public var stringValue : [String:String] {
+                return [UpdatePeriod.name:"\(self.value)"]
+            }
+            public init?(stringValue:[String:String]) {
+                self.value = UTInt
+            }
+
+        }
+    }
+
 //    //***************************************************************************************************
 //    // Location Service
 //    //***************************************************************************************************
@@ -73,21 +108,20 @@ import BlueCapKit
 //        }
 //    }
 //
-//}
-//
-//public class GnosusProfiles {
-//    
-//    public class func create() {
-//        
-//        let profileManager = ProfileManager.sharedInstance
-//        
-//        //***************************************************************************************************
-//        // Hello World Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:Gnosus.HelloWorldService.uuid, name:Gnosus.HelloWorldService.name){(serviceProfile) in
-//            serviceProfile.tag = "Gnos.us"
-//            // Greeting
-//            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:Gnosus.HelloWorldService.Greeting.uuid, name:Gnosus.HelloWorldService.Greeting.name)
+}
+
+public class GnosusProfiles {
+
+    public class func create() {
+        
+        let profileManager = ProfileManager.sharedInstance
+        
+        // Hello World Service
+        let helloWorldService = ServiceProfile(uuid:Gnosus.HelloWorldService.uuid,
+                                               name:Gnosus.HelloWorldService.name,
+                                               tag:Gnosus.tag)
+        let greetingCharacteristic = StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>()
+//        serviceProfile.addCharacteristic(
 //                {(characteristicProfile) in
 //                    characteristicProfile.initialValue = "Hello".dataUsingEncoding(NSUTF8StringEncoding)
 //                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
@@ -99,7 +133,7 @@ import BlueCapKit
 //                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
 //                })
 //        })
-//
+        profileManager.addService(helloWorldService)
 //        //***************************************************************************************************
 //        // Location Service
 //        //***************************************************************************************************
@@ -111,7 +145,7 @@ import BlueCapKit
 //                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
 //                })
 //        })
-//
-//    }
-//    
-//}
+
+    }
+    
+}

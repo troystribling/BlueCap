@@ -50,9 +50,10 @@ public protocol Serializable {
 
 public protocol BLEConfigurable {
     class var name          : String {get}
+    class var uuid          : String {get}
     class var permissions   : CBAttributePermissions {get}
     class var properties    : CBCharacteristicProperties {get}
-    class var initialValue  : NSData {get}
+    class var initialValue  : NSData? {get}
 }
 
 public protocol StringDeserializable {
@@ -64,7 +65,7 @@ public protocol StringDeserializable {
 public protocol RawDeserializable {
     typealias RawType   : Deserializable
     class var uuid      : String {get}
-    var rawValue        : RawType {get}
+    var rawValue        : RawType? {get}
     init?(rawValue:RawType)
 }
 

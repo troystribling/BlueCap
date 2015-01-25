@@ -658,12 +658,12 @@ import BlueCapKit
         case Yes    = 1
 
         // BLEConfigurable
-        static let uuid         = "1"
-        static let name         = "Enabled"
-        static let tag          = "TI Sensor Tag"
-        static let initialValue = NSData.serialize(Enabled.No.rawValue)
-        static let properties   = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-        static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+        static let uuid                     = "1"
+        static let name                     = "Enabled"
+        static let tag                      = "TI Sensor Tag"
+        static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
+        static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+        static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
 
         
         // StringDeserializable
