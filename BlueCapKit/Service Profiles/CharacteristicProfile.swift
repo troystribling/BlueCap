@@ -68,7 +68,7 @@ public class CharacteristicProfile {
 }
 
 // RawDeserializedCharacteristicProfile
-public class RawDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
+public class RawDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -94,7 +94,7 @@ public class RawDeserializedCharacteristicProfile<DeserializedType where Deseria
 }
 
 // RawPairDeserializedCharacteristicProfile
-public class RawPairDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
+public class RawPairDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -120,7 +120,7 @@ public class RawPairDeserializedCharacteristicProfile<DeserializedType where Des
 }
 
 // RawArrayCharacteristicProfile
-public class RawArrayCharacteristicProfile<DeserializedType where DeserializedType:RawArrayDeserializable, DeserializedType:StringDeserializable, DeserializedType:BLEConfigurable> : CharacteristicProfile {
+public class RawArrayCharacteristicProfile<DeserializedType where DeserializedType:RawArrayDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -146,7 +146,7 @@ public class RawArrayCharacteristicProfile<DeserializedType where DeserializedTy
 }
 
 // RawArrayCharacteristicProfile
-public class StringCharacteristicProfile<T:BLEConfigurable> : CharacteristicProfile {
+public class StringCharacteristicProfile<T:CharacteristicConfigurable> : CharacteristicProfile {
     
     public var encoding : NSStringEncoding
     

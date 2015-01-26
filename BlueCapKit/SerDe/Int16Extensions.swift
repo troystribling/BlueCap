@@ -14,14 +14,12 @@ extension Int16 : Deserializable {
         return sizeof(Int16)
     }
     
-    public static func fromString(data:String) -> Int16? {
-        if let intVal = data.toInt() {
-            if intVal > 32767 {
-                return Int16(32767)
-            } else if intVal < -32768 {
-                return Int16(-32768)
+    public init?(stringValue:String) {
+        if let value = stringValue.toInt() {
+            if value > 32767 || value < -32768 {
+                return nil
             } else {
-                return Int16(intVal)
+                self = Int16(value)
             }
         } else {
             return nil

@@ -48,12 +48,18 @@ public protocol Serializable {
     class func serialize<T1, T2>(values:([T1], [T2])) -> NSData
 }
 
-public protocol BLEConfigurable {
+public protocol CharacteristicConfigurable {
     class var name          : String {get}
     class var uuid          : String {get}
     class var permissions   : CBAttributePermissions {get}
     class var properties    : CBCharacteristicProperties {get}
     class var initialValue  : NSData? {get}
+}
+
+public protocol ServiceConfigurable {
+    class var name  : String {get}
+    class var uuid  : String {get}
+    class var tag   : String {get}
 }
 
 public protocol StringDeserializable {
@@ -65,7 +71,7 @@ public protocol StringDeserializable {
 public protocol RawDeserializable {
     typealias RawType   : Deserializable
     class var uuid      : String {get}
-    var rawValue        : RawType? {get}
+    var rawValue        : RawType {get}
     init?(rawValue:RawType)
 }
 

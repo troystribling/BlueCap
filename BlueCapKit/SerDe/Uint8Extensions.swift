@@ -14,14 +14,12 @@ extension UInt8 : Deserializable {
         return sizeof(UInt8)
     }
 
-    public static func fromString(data:String) -> UInt8? {
-        if let intVal = data.toInt() {
-            if intVal > 255 {
-                return Byte(255)
-            } else if intVal < 0 {
-                return Byte(0)
+    public init?(stringValue:String) {
+        if let value = stringValue.toInt() {
+            if value > 255 || value < 0 {
+                return nil
             } else {
-                return Byte(intVal)
+                self = Byte(value)
             }
         } else {
             return nil

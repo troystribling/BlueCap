@@ -14,14 +14,12 @@ extension UInt16 : Deserializable {
         return sizeof(UInt16)
     }
 
-    public static func fromString(data:String) -> UInt16? {
-        if let intVal = data.toInt() {
-            if intVal > 65535 {
-                return UInt16(65535)
-            } else if intVal < 0 {
-                return UInt16(0)
+    public init?(stringValue:String) {
+        if let value = stringValue.toInt() {
+            if value > 65535 || value < 0 {
+                return nil
             } else {
-                return UInt16(intVal)
+                self = UInt16(value)
             }
         } else {
             return nil

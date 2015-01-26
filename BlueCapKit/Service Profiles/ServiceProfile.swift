@@ -33,3 +33,11 @@ public class ServiceProfile {
     }
     
 }
+
+public class ConfiguredServiceProfile<Config:ServiceConfigurable> : ServiceProfile {
+    
+    public init() {
+        super.init(uuid:Config.uuid, name:Config.name, tag:Config.tag)
+    }
+    
+}

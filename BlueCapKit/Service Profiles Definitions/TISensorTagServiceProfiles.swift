@@ -653,7 +653,7 @@ import BlueCapKit
 //            return [periodRaw]
 //        }
 //    }
-    enum Enabled: UInt8, RawDeserializable, StringDeserializable, BLEConfigurable {
+    enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
         case No     = 0
         case Yes    = 1
 

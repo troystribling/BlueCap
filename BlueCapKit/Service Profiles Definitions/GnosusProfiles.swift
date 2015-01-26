@@ -14,13 +14,15 @@ public struct Gnosus {
 
     static let tag = "Gnos.us"
     
+    //***************************************************************************************************
     // Hello World Service
-    public struct HelloWorldService {
+    public struct HelloWorldService : ServiceConfigurable {
         
-        static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
-        static let name = "Gnosus Hello World"
+        public static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
+        public static let name = "Hello World"
+        public static let tag  = "gnos.us"
         
-        public struct Greeting : BLEConfigurable {
+        public struct Greeting : CharacteristicConfigurable {
 
             // BLEConfigurable
             public static let uuid         = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
@@ -31,20 +33,20 @@ public struct Gnosus {
             
         }
         
-        public struct UpdatePeriod : RawDeserializable, BLEConfigurable, StringDeserializable {
+        public struct UpdatePeriod : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
 
             // RawDeserializable
-            private var value : UInt16?
-            public var rawValue : UInt16? {
-                return self.value
+            public let period : UInt16
+            public var rawValue : UInt16 {
+                return self.period
             }
             public init?(rawValue:UInt16) {
-                self.value = rawValue
+                self.period = rawValue
             }
 
             // BLEConfigurable
             public static let uuid                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
-            public static let name                      = "Hello World Update Period"
+            public static let name                      = "Update Period"
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
             public static let initialValue : NSData?    = serialize(UInt16(5000))
@@ -54,14 +56,15 @@ public struct Gnosus {
                 return []
             }
             public var stringValue : [String:String] {
-                if let value = self.value {
-                    return [UpdatePeriod.name:"\(value)"]
-                } else {
-                    return [:]
-                }
+                return [UpdatePeriod.name:"\(self.period)"]
             }
             public init?(stringValue:[String:String]) {
-                if let strVal = stringValue[UpdatePeriod.name] {                    
+                if let strVal = stringValue[UpdatePeriod.name] {
+                    if let value = UInt16(stringValue:strVal) {
+                        self.period = value
+                    } else {
+                        return nil
+                    }
                 } else {
                     return nil
                 }
@@ -70,16 +73,20 @@ public struct Gnosus {
         }
     }
 
-//    //***************************************************************************************************
-//    // Location Service
-//    //***************************************************************************************************
-//    struct LocationService {
-//        static let uuid = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
-//        static let name = "Gnosus Location"
-//        struct LatitudeAndLongitude {
-//            static let uuid = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
-//            static let name = "Location Lattitude and Longitude"
-//            struct Value : DeserializedStruct {
+    //***************************************************************************************************
+    // Location Service
+    public struct LocationService : ServiceConfigurable {
+        public static let uuid  = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+        public static let name  = "Location"
+        public static let tag   = "gnos.us"
+        
+//        public struct LatitudeAndLongitude : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+//            public static let uuid          = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
+//            public static let name          = "Location Lattitude and Longitude"
+//            public static let permissions   = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+//            public static let properties    = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+//            public static let initialValue  = serialize("Hello")
+//
 //                var latitudeRaw     : Int16
 //                var longitudeRaw    : Int16
 //                var latitude        : Double
@@ -111,10 +118,9 @@ public struct Gnosus {
 //                func toRawValues() -> [Int16] {
 //                    return [latitudeRaw, longitudeRaw]
 //                }
-//            }
 //        }
-//    }
-//
+    }
+
 }
 
 public class GnosusProfiles {
@@ -124,26 +130,14 @@ public class GnosusProfiles {
         let profileManager = ProfileManager.sharedInstance
         
         // Hello World Service
-        let helloWorldService = ServiceProfile(uuid:Gnosus.HelloWorldService.uuid,
-                                               name:Gnosus.HelloWorldService.name,
-                                               tag:Gnosus.tag)
+        let helloWorldService = ConfiguredServiceProfile<Gnosus.HelloWorldService>()
         let greetingCharacteristic = StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>()
-//        serviceProfile.addCharacteristic(
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = "Hello".dataUsingEncoding(NSUTF8StringEncoding)
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-//                })
-//            // Update Period
-//            serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt16>(uuid:Gnosus.HelloWorldService.UpdatePeriod.uuid, name:Gnosus.HelloWorldService.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(UInt16(5000))
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                })
-//        })
+        let updateCharacteristic = RawDeserializedCharacteristicProfile<Gnosus.HelloWorldService.UpdatePeriod>()
+        helloWorldService.addCharacteristic(greetingCharacteristic)
+        helloWorldService.addCharacteristic(updateCharacteristic)
         profileManager.addService(helloWorldService)
-//        //***************************************************************************************************
-//        // Location Service
-//        //***************************************************************************************************
+
+        // Location Service
 //        profileManager.addService(ServiceProfile(uuid:Gnosus.LocationService.uuid, name:Gnosus.LocationService.name){(serviceProfile) in
 //            serviceProfile.tag = "Gnos.us"
 //            serviceProfile.addCharacteristic(StructCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude.Value>(uuid:Gnosus.LocationService.LatitudeAndLongitude.uuid, name:Gnosus.LocationService.LatitudeAndLongitude.name)
