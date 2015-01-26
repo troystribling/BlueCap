@@ -28,26 +28,28 @@ extension Int16 : Deserializable {
         }
     }
 
-    public static func deserialize(data:NSData) -> Int16 {
-        var value : Int16 = 0
+    public static func deserialize(data:NSData) -> Int16? {
         if data.length >= sizeof(Int16) {
+            var value : Int16 = 0
             data.getBytes(&value , length:sizeof(Int16))
+            return toHostByteOrder(value)
+        } else {
+            return nil
         }
-        return toHostByteOrder(value)
     }
 
-    public static func deserialize(data:NSData, start:Int) -> Int16 {
-        var value : Int16 = 0
+    public static func deserialize(data:NSData, start:Int) -> Int16? {
         if data.length >= (sizeof(Int16) + start)  {
+            var value : Int16 = 0
             data.getBytes(&value, range:NSMakeRange(start, sizeof(Int16)))
+            return toHostByteOrder(value)
+        } else {
+            return nil
         }
-        return toHostByteOrder(value)
     }
     
     public static func deserialize(data:NSData) -> [Int16] {
-        let size = sizeof(Int16)
-        let count = data.length/size
-        return [Int](0..<count).map{self.deserialize(data, start:$0*size)}
+        return deserialize(data)
     }
     
 }

@@ -34,10 +34,10 @@ func reverseBytes<T>(value:T) -> T {
 
 public protocol Deserializable {
     class var size : Int {get}
-    class func fromString(data:String) -> Self?
-    class func deserialize(data:NSData) -> Self
-    class func deserialize(data:NSData, start:Int) -> Self
+    class func deserialize(data:NSData) -> Self?
+    class func deserialize(data:NSData, start:Int) -> Self?
     class func deserialize(data:NSData) -> [Self]
+    init?(stringValue:String)
 }
 
 public protocol Serializable {
@@ -105,12 +105,23 @@ public func deserialize<T:Deserializable>(data:NSData) -> T? {
     return T.deserialize(data)
 }
 
+public func deserialize<T:Deserializable>(data:NSData) -> [T] {
+    let count = data.length / T.size
+    return [Int](0..<count).reduce([]) {(result, start) in
+        if let value : T = T.deserialize(data, start:start) {
+            return result + [value]
+        } else {
+            return result
+        }
+    }
+}
+
 public func serialize<T:Deserializable>(value:T) -> NSData {
     return NSData.serialize(value)
 }
 
 public func deserialize<T:RawDeserializable>(data:NSData) -> T? {
-    return T(rawValue:T.RawType.deserialize(data))
+    return T.RawType.deserialize(data).flatmap{T(rawValue:$0)}
 }
 
 public func serialize<T:RawDeserializable>(value:T) -> NSData {
@@ -128,7 +139,11 @@ public func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
 public func deserialize<T:RawPairDeserializable>(data:NSData) -> T? {
     let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
     let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
-    return T(rawValue:(T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2)))
+    return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
+        T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
+            T(rawValue:(rawValue1, rawValue2))
+        }
+    }
 }
 
 public func serialize<T:RawPairDeserializable>(value:T) -> NSData {

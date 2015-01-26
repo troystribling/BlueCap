@@ -28,25 +28,28 @@ extension UInt8 : Deserializable {
         }
     }
 
-    public static func deserialize(data:NSData) -> UInt8 {
-        var value : Byte = 0
+    public static func deserialize(data:NSData) -> UInt8? {
         if data.length >= sizeof(UInt8) {
+            var value : Byte = 0
             data.getBytes(&value, length:sizeof(Byte))
+            return toHostByteOrder(value)
+        } else {
+            return nil
         }
-        return toHostByteOrder(value)
     }
     
-    public static func deserialize(data:NSData, start:Int) -> UInt8 {
-        var value : Byte = 0
+    public static func deserialize(data:NSData, start:Int) -> UInt8? {
         if data.length >= start + sizeof(UInt8) {
+            var value : Byte = 0
             data.getBytes(&value, range: NSMakeRange(start, sizeof(UInt8)))
+            return toHostByteOrder(value)
+        } else {
+            return nil
         }
-        return toHostByteOrder(value)
     }
 
     public static func deserialize(data:NSData) -> [UInt8] {
-        let count = data.length / sizeof(Byte)
-        return [Int](0..<count).map{self.deserialize(data, start:$0)}
+        return deserialize(data)
     }
     
 }

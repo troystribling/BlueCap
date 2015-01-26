@@ -54,10 +54,17 @@ public struct Gnosus {
                 return []
             }
             public var stringValue : [String:String] {
-                return [UpdatePeriod.name:"\(self.value)"]
+                if let value = self.value {
+                    return [UpdatePeriod.name:"\(value)"]
+                } else {
+                    return [:]
+                }
             }
             public init?(stringValue:[String:String]) {
-                self.value = UTInt
+                if let strVal = stringValue[UpdatePeriod.name] {                    
+                } else {
+                    return nil
+                }
             }
 
         }

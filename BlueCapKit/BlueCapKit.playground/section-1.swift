@@ -14,8 +14,3 @@ enum Enabled : UInt8, RawDeserializable {
 if let test = Enabled(rawValue:1) {
     println(test.rawValue)
 }
-
-var x = ["a":1]
-
-println(x["a"].map{$0}!)
-
