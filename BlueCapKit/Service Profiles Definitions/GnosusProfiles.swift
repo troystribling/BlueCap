@@ -12,12 +12,11 @@ import BlueCapKit
 
 public struct Gnosus {
 
-    static let tag = "Gnos.us"
-    
     //***************************************************************************************************
     // Hello World Service
     public struct HelloWorldService : ServiceConfigurable {
         
+        // ServiceConfigurable
         public static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
         public static let name = "Hello World"
         public static let tag  = "gnos.us"
@@ -35,8 +34,16 @@ public struct Gnosus {
         
         public struct UpdatePeriod : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
 
-            // RawDeserializable
             public let period : UInt16
+
+            // CharacteristicConfigurable
+            public static let uuid                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
+            public static let name                      = "Update Period"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let initialValue : NSData?    = serialize(UInt16(5000))
+            
+            // RawDeserializable
             public var rawValue : UInt16 {
                 return self.period
             }
@@ -44,13 +51,6 @@ public struct Gnosus {
                 self.period = rawValue
             }
 
-            // BLEConfigurable
-            public static let uuid                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
-            public static let name                      = "Update Period"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = serialize(UInt16(5000))
-            
             // StringDeserializable
             public static var stringValues : [String] {
                 return []
@@ -59,12 +59,8 @@ public struct Gnosus {
                 return [UpdatePeriod.name:"\(self.period)"]
             }
             public init?(stringValue:[String:String]) {
-                if let strVal = stringValue[UpdatePeriod.name] {
-                    if let value = UInt16(stringValue:strVal) {
-                        self.period = value
-                    } else {
-                        return nil
-                    }
+                if let value = uint16ValueFromStringValue(UpdatePeriod.name, stringValue) {
+                    self.period = value
                 } else {
                     return nil
                 }
@@ -76,56 +72,75 @@ public struct Gnosus {
     //***************************************************************************************************
     // Location Service
     public struct LocationService : ServiceConfigurable {
+
+        // ServiceConfigurable
         public static let uuid  = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
         public static let name  = "Location"
         public static let tag   = "gnos.us"
         
-//        public struct LatitudeAndLongitude : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
-//            public static let uuid          = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
-//            public static let name          = "Location Lattitude and Longitude"
-//            public static let permissions   = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-//            public static let properties    = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-//            public static let initialValue  = serialize("Hello")
-//
-//                var latitudeRaw     : Int16
-//                var longitudeRaw    : Int16
-//                var latitude        : Double
-//                var longitude       : Double
-//                static func fromRawValues(rawValues:[Int16]) -> Value? {
-//                    if rawValues.count == 2 {
-//                        let (latitiude, longitude) = self.valuesFromRaw(rawValues)
-//                        return Value(latitudeRaw:rawValues[0], longitudeRaw:rawValues[1], latitude:latitiude, longitude:longitude)
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let latitudeRaw = BlueCap.int16ValueFromStringValue("latitudeRaw", values:stringValues)
-//                    let longitudeRaw = BlueCap.int16ValueFromStringValue("longitudeRaw", values:stringValues)
-//                    if latitudeRaw != nil && longitudeRaw != nil {
-//                        let (latitiude, longitude) = self.valuesFromRaw([latitudeRaw!, longitudeRaw!])
-//                        return Value(latitudeRaw:latitudeRaw!, longitudeRaw:longitudeRaw!, latitude:latitiude, longitude:longitude)
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func valuesFromRaw(rawValues:[Int16]) -> (Double, Double) {
-//                    return (100.0*Double(rawValues[0]), 100.0*Double(rawValues[1]))
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["latitudeRaw":"\(latitudeRaw)", "longitudeRaw":"\(longitudeRaw)", "latitude":"\(latitude)", "longitude":"\(longitude)"]
-//                }
-//                func toRawValues() -> [Int16] {
-//                    return [latitudeRaw, longitudeRaw]
-//                }
-//        }
+        public struct LatitudeAndLongitude : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            private let rawLatitude     : Int16
+            private let rawLongitude    : Int16
+            public let latitude         : Double
+            public let longitude        : Double
+
+            // CharacteristicConfigurable
+            public static let uuid          = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
+            public static let name          = "Lattitude and Longitude"
+            public static let permissions   = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties    = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let initialValue  = serialize(Gnosus.LocationService.LatitudeAndLongitude(rawValue:[3776, -12242]))
+
+            // RawArrayDeserializable
+            public var rawValue : [Int16] {
+                return [rawLatitude, rawLongitude]
+            }
+            
+            public init?(rawValue:[Int16]) {
+                if rawValue.count == 2 {
+                    self.rawLatitude = rawValue[0]
+                    self.rawLongitude = rawValue[1]
+                    self.latitude = 100.0*Double(self.rawLatitude)
+                    self.longitude = 100.0*Double(self.rawLongitude)
+                } else {
+                    return nil
+                }
+            }
+            
+            // StringDeserializable
+            public static var stringValues  : [String] {
+                return []
+            }
+            
+            public var stringValue  : [String:String] {
+                return ["rawLatitude":"\(self.rawLatitude)",
+                        "rawLongitude":"\(self.rawLongitude)",
+                        "latitude":"\(self.latitude)",
+                        "longitude":"\(self.longitude)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                let lat = int16ValueFromStringValue("rawLatitude", stringValue)
+                let lon = int16ValueFromStringValue("rawLongitude", stringValue)
+                if lat != nil && lon != nil {
+                    self.rawLatitude = lat!
+                    self.rawLongitude = lon!
+                    self.latitude = 100.0*Double(self.rawLatitude)
+                    self.longitude = 100.0*Double(self.rawLongitude)
+                } else {
+                    return nil
+                }
+            }
+            
+        }
     }
 
 }
 
-public class GnosusProfiles {
+public struct GnosusProfiles {
 
-    public class func create() {
+    public static func create() {
         
         let profileManager = ProfileManager.sharedInstance
         
@@ -138,14 +153,10 @@ public class GnosusProfiles {
         profileManager.addService(helloWorldService)
 
         // Location Service
-//        profileManager.addService(ServiceProfile(uuid:Gnosus.LocationService.uuid, name:Gnosus.LocationService.name){(serviceProfile) in
-//            serviceProfile.tag = "Gnos.us"
-//            serviceProfile.addCharacteristic(StructCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude.Value>(uuid:Gnosus.LocationService.LatitudeAndLongitude.uuid, name:Gnosus.LocationService.LatitudeAndLongitude.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(Gnosus.LocationService.LatitudeAndLongitude.Value.fromRawValues([3776, -12242])?.toRawValues())
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                })
-//        })
+        let locationService = ConfiguredServiceProfile<Gnosus.LocationService>()
+        let latlonCharacteristic = RawArrayCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude>()
+        locationService.addCharacteristic(latlonCharacteristic)
+        profileManager.addService(locationService)
 
     }
     
