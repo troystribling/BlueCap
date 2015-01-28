@@ -16,13 +16,21 @@ extension Int8 : Deserializable {
 
     public init?(stringValue:String) {
         if let value = stringValue.toInt() {
-            if value > 127 || value < -128 {
+            if value > 128 || value < -128 {
                  return nil
             } else {
                 self = Int8(value)
             }
         } else {
             return nil
+        }
+    }
+
+    public init?(value:Double) {
+        if value >= 127.0 || value <= -128.0 {
+            return nil
+        } else {
+            self = Int8(value)
         }
     }
 

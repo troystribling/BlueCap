@@ -97,6 +97,11 @@ public struct Gnosus {
                 return [rawLatitude, rawLongitude]
             }
             
+            public init(latitude:Double, longitude:Double) {
+                self.latitude = latitude
+                self.longitude = longitude
+            }
+            
             public init?(rawValue:[Int16]) {
                 if rawValue.count == 2 {
                     self.rawLatitude = rawValue[0]

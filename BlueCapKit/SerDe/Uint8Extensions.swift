@@ -26,6 +26,14 @@ extension UInt8 : Deserializable {
         }
     }
 
+    public init?(value:Double) {
+        if value >= 255.0 || value <= -0.0 {
+            return nil
+        } else {
+            self = UInt8(value)
+        }
+    }
+
     public static func deserialize(data:NSData) -> UInt8? {
         if data.length >= sizeof(UInt8) {
             var value : Byte = 0

@@ -26,6 +26,14 @@ extension Int16 : Deserializable {
         }
     }
 
+    public init?(value:Double) {
+        if value >= 32767.0 || value <= -32768.0 {
+            return nil
+        } else {
+            self = Int16(value)
+        }
+    }
+    
     public static func deserialize(data:NSData) -> Int16? {
         if data.length >= sizeof(Int16) {
             var value : Int16 = 0

@@ -10,64 +10,62 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-//public struct TISensorTag {
-//
-//    //***************************************************************************************************
-//    // Accelerometer Service
-//    //***************************************************************************************************
-//    struct AccelerometerService {
-//        static let uuid = "F000AA10-0451-4000-B000-000000000000"
-//        static let name = "TI Accelerometer"
-//        // Accelerometer Data
-//        struct Data {
-//            static let uuid = "F000AA11-0451-4000-B000-000000000000"
-//            static let name = "Accelerometer Data"
-//            struct Value : DeserializedStruct {
-//                var xRaw:Int8
-//                var yRaw:Int8
-//                var zRaw:Int8
-//                var x:Float
-//                var y:Float
-//                var z:Float
-//                static func fromRawValues(rawValues:[Int8]) -> Value? {
-//                    let values = self.valuesFromRaw(rawValues)
-//                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let xRaw = BlueCap.int8ValueFromStringValue("xRaw", values:stringValues)
-//                    let yRaw = BlueCap.int8ValueFromStringValue("yRaw", values:stringValues)
-//                    let zRaw = BlueCap.int8ValueFromStringValue("zRaw", values:stringValues)
-//                    if xRaw != nil && yRaw != nil && zRaw != nil {
-//                        let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
-//                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func valuesFromRaw(values:[Int8]) -> [Float] {
-//                    return [-Float(values[0])/64.0, -Float(values[1])/64.0, Float(values[2])/64.0]
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
-//                }
-//                func toRawValues() -> [Int8] {
-//                    return [xRaw, yRaw, zRaw]
-//                }
-//
-//            }
-//        }
-//        // Accelerometer Enabled
-//        struct Enabled {
-//            static let uuid = "F000AA12-0451-4000-B000-000000000000"
-//            static let name = "Accelerometer Enabled"
-//        }
-//        // Accelerometer Update Period
-//        struct UpdatePeriod {
-//            static let uuid = "F000AA13-0451-4000-B000-000000000000"
-//            static let name = "Accelerometer Update Period"
-//        }
-//    }
-//    
+public struct TISensorTag {
+
+    // Accelerometer Service
+    struct AccelerometerService {
+        static let uuid = "F000AA10-0451-4000-B000-000000000000"
+        static let name = "TI Accelerometer"
+        // Accelerometer Data
+        struct Data {
+            static let uuid = "F000AA11-0451-4000-B000-000000000000"
+            static let name = "Accelerometer Data"
+            struct Value : DeserializedStruct {
+                var xRaw:Int8
+                var yRaw:Int8
+                var zRaw:Int8
+                var x:Float
+                var y:Float
+                var z:Float
+                static func fromRawValues(rawValues:[Int8]) -> Value? {
+                    let values = self.valuesFromRaw(rawValues)
+                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
+                }
+                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
+                    let xRaw = BlueCap.int8ValueFromStringValue("xRaw", values:stringValues)
+                    let yRaw = BlueCap.int8ValueFromStringValue("yRaw", values:stringValues)
+                    let zRaw = BlueCap.int8ValueFromStringValue("zRaw", values:stringValues)
+                    if xRaw != nil && yRaw != nil && zRaw != nil {
+                        let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
+                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
+                    } else {
+                        return nil
+                    }
+                }
+                static func valuesFromRaw(values:[Int8]) -> [Float] {
+                    return [-Float(values[0])/64.0, -Float(values[1])/64.0, Float(values[2])/64.0]
+                }
+                var stringValues : Dictionary<String,String> {
+                    return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
+                }
+                func toRawValues() -> [Int8] {
+                    return [xRaw, yRaw, zRaw]
+                }
+
+            }
+        }
+        // Accelerometer Enabled
+        struct Enabled {
+            static let uuid = "F000AA12-0451-4000-B000-000000000000"
+            static let name = "Accelerometer Enabled"
+        }
+        // Accelerometer Update Period
+        struct UpdatePeriod {
+            static let uuid = "F000AA13-0451-4000-B000-000000000000"
+            static let name = "Accelerometer Update Period"
+        }
+    }
+    
 //    //***************************************************************************************************
 //    // Magnetometer Service: units are uT
 //    //***************************************************************************************************
@@ -652,7 +650,7 @@ import BlueCapKit
 //        func toRawValues() -> [UInt8] {
 //            return [periodRaw]
 //        }
-//    }
+    }
     enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
         case No     = 0
         case Yes    = 1

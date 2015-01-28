@@ -88,7 +88,7 @@ public class RawDeserializedCharacteristicProfile<DeserializedType where Deseria
     }
     
     public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
-        return DeserializedType(stringValue:data).map{serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{serialize($0)}
     }
     
 }
@@ -114,7 +114,7 @@ public class RawPairDeserializedCharacteristicProfile<DeserializedType where Des
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).map{serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{serialize($0)}
     }
     
 }
@@ -140,7 +140,7 @@ public class RawArrayCharacteristicProfile<DeserializedType where DeserializedTy
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).map{serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{serialize($0)}
     }
     
 }

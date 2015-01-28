@@ -26,6 +26,14 @@ extension UInt16 : Deserializable {
         }
     }
 
+    public init?(value:Double) {
+        if value >= 65535.0 || value <= -32768.0 {
+            return nil
+        } else {
+            self = UInt16(value)
+        }
+    }
+
     public static func deserialize(data:NSData) -> UInt16? {
         if data.length >= sizeof(UInt16) {
             var value : UInt16 = 0

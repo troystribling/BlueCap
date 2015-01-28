@@ -122,10 +122,6 @@ public func deserialize<T:Deserializable>(data:NSData) -> [T] {
     }
 }
 
-public func serialize<T:Deserializable>(value:T?) -> NSData? {
-    return value.map{NSData.serialize($0)}
-}
-
 public func serialize<T:Deserializable>(value:T) -> NSData {
     return NSData.serialize(value)
 }
@@ -134,20 +130,12 @@ public func deserialize<T:RawDeserializable>(data:NSData) -> T? {
     return T.RawType.deserialize(data).flatmap{T(rawValue:$0)}
 }
 
-public func serialize<T:RawDeserializable>(value:T?) -> NSData? {
-    return value.map{NSData.serialize($0.rawValue)}
-}
-
 public func serialize<T:RawDeserializable>(value:T) -> NSData {
     return NSData.serialize(value.rawValue)
 }
 
 public func deserialize<T:RawArrayDeserializable>(data:NSData) -> T? {
     return T(rawValue:T.RawType.deserialize(data))
-}
-
-public func serialize<T:RawArrayDeserializable>(value:T?) -> NSData? {
-    return value.map{NSData.serialize($0.rawValue)}
 }
 
 public func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
@@ -164,10 +152,6 @@ public func deserialize<T:RawPairDeserializable>(data:NSData) -> T? {
     }
 }
 
-public func serialize<T:RawPairDeserializable>(value:T?) -> NSData? {
-    return value.map{NSData.serialize($0.rawValue)}
-}
-
 public func serialize<T:RawPairDeserializable>(value:T) -> NSData {
     return NSData.serialize(value.rawValue)
 }
@@ -181,10 +165,6 @@ public func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> T? {
 
 public func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
     return NSData.serialize(value.rawValue)
-}
-
-public func serialize<T:RawArrayPairDeserializable>(value:T?) -> NSData? {
-    return value.map{NSData.serialize($0.rawValue)}
 }
 
 
