@@ -95,16 +95,20 @@ public struct Gnosus {
             public init?(latitude:Double, longitude:Double) {
                 self.latitude = latitude
                 self.longitude = longitude
-                if let lat = Int16(doubleValue:self.latitude) {
+                if let lat = Int16(doubleValue:(self.latitude/100.0)) {
                     self.rawLatitude = lat
                 } else {
                     return nil
                 }
-                if let lon = Int16(doubleValue:self.longitude) {
+                if let lon = Int16(doubleValue:(self.longitude/100.0)) {
                     self.rawLongitude = lon
                 } else {
                     return nil
                 }
+            }
+            
+            private static func valuesFromRaw(rawValues:[Int16]) -> (Double, Double) {
+                return (100.0*Double(rawValues[0]), 100.0*Double(rawValues[1]))
             }
             
             // RawArrayDeserializable
@@ -116,8 +120,7 @@ public struct Gnosus {
                 if rawValue.count == 2 {
                     self.rawLatitude = rawValue[0]
                     self.rawLongitude = rawValue[1]
-                    self.latitude = 100.0*Double(self.rawLatitude)
-                    self.longitude = 100.0*Double(self.rawLongitude)
+                    (self.latitude, self.longitude) = LatitudeAndLongitude.valuesFromRaw(rawValue)
                 } else {
                     return nil
                 }
@@ -141,8 +144,7 @@ public struct Gnosus {
                 if lat != nil && lon != nil {
                     self.rawLatitude = lat!
                     self.rawLongitude = lon!
-                    self.latitude = 100.0*Double(self.rawLatitude)
-                    self.longitude = 100.0*Double(self.rawLongitude)
+                    (self.latitude, self.longitude) = LatitudeAndLongitude.valuesFromRaw([self.rawLatitude, self.rawLongitude])
                 } else {
                     return nil
                 }

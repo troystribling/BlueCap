@@ -12,6 +12,7 @@ import BlueCapKit
 
 public struct TISensorTag {
 
+    //***************************************************************************************************
     // Accelerometer Service
     public struct AccelerometerService : ServiceConfigurable  {
         public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
@@ -56,14 +57,16 @@ public struct TISensorTag {
                 }
             }
             
+            private static func valuesFromRaw(rawValues:[Int8]) -> (Double, Double, Double) {
+                return (-Double(rawValues[0])/64.0, -Double(rawValues[1])/64.0, Double(rawValues[2])/64.0)
+            }
+            
             // RawArrayDeserializable
             public init?(rawValue:[Int8]) {
                 self.xRaw = rawValue[0]
                 self.yRaw = rawValue[1]
                 self.zRaw = rawValue[2]
-                self.x = -Double(self.xRaw)/64.0
-                self.y = -Double(self.yRaw)/64.0
-                self.z = -Double(self.zRaw)/64.0
+                (self.x, self.y, self.z) = Data.valuesFromRaw(rawValue)
             }
             
             public var rawValue : [Int8] {
@@ -79,9 +82,7 @@ public struct TISensorTag {
                     self.xRaw = xRawInit!
                     self.yRaw = yRawInit!
                     self.zRaw = zRawInit!
-                    self.x = -Double(self.xRaw)/64.0
-                    self.y = -Double(self.yRaw)/64.0
-                    self.z = -Double(self.zRaw)/64.0
+                    (self.x, self.y, self.z) = Data.valuesFromRaw([self.xRaw, self.yRaw, self.zRaw])
                 } else {
                     return nil
                 }
