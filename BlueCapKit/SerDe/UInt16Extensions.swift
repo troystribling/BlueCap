@@ -26,11 +26,11 @@ extension UInt16 : Deserializable {
         }
     }
 
-    public init?(value:Double) {
-        if value >= 65535.0 || value <= -32768.0 {
+    public init?(doubleValue:Double) {
+        if doubleValue >= 65535.0 || doubleValue <= 0.0 {
             return nil
         } else {
-            self = UInt16(value)
+            self = UInt16(doubleValue)
         }
     }
 

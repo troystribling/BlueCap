@@ -26,11 +26,11 @@ extension Int8 : Deserializable {
         }
     }
 
-    public init?(value:Double) {
-        if value >= 127.0 || value <= -128.0 {
+    public init?(doubleValue:Double) {
+        if doubleValue >= 127.0 || doubleValue <= -128.0 {
             return nil
         } else {
-            self = Int8(value)
+            self = Int8(doubleValue)
         }
     }
 

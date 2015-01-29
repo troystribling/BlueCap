@@ -13,56 +13,168 @@ import BlueCapKit
 public struct TISensorTag {
 
     // Accelerometer Service
-    struct AccelerometerService {
-        static let uuid = "F000AA10-0451-4000-B000-000000000000"
-        static let name = "TI Accelerometer"
+    public struct AccelerometerService : ServiceConfigurable  {
+        public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
+        public static let name  = "TI Accelerometer"
+        public static let tag   = "TI Sensor Tag"
+        
         // Accelerometer Data
-        struct Data {
-            static let uuid = "F000AA11-0451-4000-B000-000000000000"
-            static let name = "Accelerometer Data"
-            struct Value : DeserializedStruct {
-                var xRaw:Int8
-                var yRaw:Int8
-                var zRaw:Int8
-                var x:Float
-                var y:Float
-                var z:Float
-                static func fromRawValues(rawValues:[Int8]) -> Value? {
-                    let values = self.valuesFromRaw(rawValues)
-                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
+        public struct Data : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+            
+            public let xRaw:Int8
+            public let yRaw:Int8
+            public let zRaw:Int8
+            public let x:Double
+            public let y:Double
+            public let z:Double
+
+            // CharacteristicConfigurable
+            public static let uuid                      = "F000AA11-0451-4000-B000-000000000000"
+            public static let name                      = "Accelerometer Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    =  serialize(TISensorTag.AccelerometerService.Data(x:1.0, y:0.5, z:-1.5)!)
+            
+            public init?(x:Double, y:Double, z:Double) {
+                self.x = x
+                self.y = y
+                self.z = z
+                if let xRaw = Int8(doubleValue:(-64.0*x)) {
+                    self.xRaw = xRaw
+                } else {
+                    return nil
                 }
-                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-                    let xRaw = BlueCap.int8ValueFromStringValue("xRaw", values:stringValues)
-                    let yRaw = BlueCap.int8ValueFromStringValue("yRaw", values:stringValues)
-                    let zRaw = BlueCap.int8ValueFromStringValue("zRaw", values:stringValues)
-                    if xRaw != nil && yRaw != nil && zRaw != nil {
-                        let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
-                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
-                    } else {
+                if let yRaw = Int8(doubleValue:(-64.0*y)) {
+                    self.yRaw = yRaw
+                } else {
+                    return nil
+                }
+                if let zRaw = Int8(doubleValue:(64.0*z)) {
+                    self.zRaw = zRaw
+                } else {
+                    return nil
+                }
+            }
+            
+            // RawArrayDeserializable
+            public init?(rawValue:[Int8]) {
+                self.xRaw = rawValue[0]
+                self.yRaw = rawValue[1]
+                self.zRaw = rawValue[2]
+                self.x = -Double(self.xRaw)/64.0
+                self.y = -Double(self.yRaw)/64.0
+                self.z = -Double(self.zRaw)/64.0
+            }
+            
+            public var rawValue : [Int8] {
+                return [xRaw, yRaw, zRaw]
+            }
+
+            // StringDeserializable
+            public init?(stringValue:[String:String]) {
+                let xRawInit = int8ValueFromStringValue("xRaw", stringValue)
+                let yRawInit = int8ValueFromStringValue("yRaw", stringValue)
+                let zRawInit = int8ValueFromStringValue("zRaw", stringValue)
+                if xRawInit != nil && yRawInit != nil && zRawInit != nil {
+                    self.xRaw = xRawInit!
+                    self.yRaw = yRawInit!
+                    self.zRaw = zRawInit!
+                    self.x = -Double(self.xRaw)/64.0
+                    self.y = -Double(self.yRaw)/64.0
+                    self.z = -Double(self.zRaw)/64.0
+                } else {
+                    return nil
+                }
+            }
+            
+            public static var stringValues : [String] {
+                return []
+            }
+            
+            public var stringValue : Dictionary<String,String> {
+                return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)", "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
+            }
+
+        }
+        
+        // Accelerometer Enabled
+        public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+
+            case No     = 0
+            case Yes    = 1
+            
+            // CharacteristicConfigurable
+            public static let uuid                     = "F000AA12-0451-4000-B000-000000000000"
+            public static let name                     = "Accelerometer Enabled"
+            public static let tag                      = "TI Sensor Tag"
+            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
+            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            
+            
+            // StringDeserializable
+            public static let stringValues = ["No", "Yes"]
+            
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["Enabled"] {
+                    switch value {
+                    case "Yes":
+                        self = Enabled.Yes
+                    case "No":
+                        self = Enabled.No
+                    default:
                         return nil
                     }
+                } else {
+                    return nil
                 }
-                static func valuesFromRaw(values:[Int8]) -> [Float] {
-                    return [-Float(values[0])/64.0, -Float(values[1])/64.0, Float(values[2])/64.0]
+            }
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return ["Enabled":"No"]
+                case .Yes:
+                    return ["Enabled":"Yes"]
                 }
-                var stringValues : Dictionary<String,String> {
-                    return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
-                }
-                func toRawValues() -> [Int8] {
-                    return [xRaw, yRaw, zRaw]
-                }
-
             }
         }
-        // Accelerometer Enabled
-        struct Enabled {
-            static let uuid = "F000AA12-0451-4000-B000-000000000000"
-            static let name = "Accelerometer Enabled"
-        }
+
         // Accelerometer Update Period
-        struct UpdatePeriod {
-            static let uuid = "F000AA13-0451-4000-B000-000000000000"
-            static let name = "Accelerometer Update Period"
+        public struct UpdatePeriod : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+            
+            public let period : UInt16
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "F000AA13-0451-4000-B000-000000000000"
+            public static let name                      = "Accelerometer Update Period"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let initialValue : NSData?    = serialize(UInt16(5000))
+            
+            // RawDeserializable
+            public var rawValue : UInt16 {
+                return self.period
+            }
+            public init?(rawValue:UInt16) {
+                self.period = rawValue
+            }
+            
+            // StringDeserializable
+            public static var stringValues : [String] {
+                return []
+            }
+            public var stringValue : [String:String] {
+                return [UpdatePeriod.name:"\(self.period)"]
+            }
+            public init?(stringValue:[String:String]) {
+                if let value = uint16ValueFromStringValue(UpdatePeriod.name, stringValue) {
+                    self.period = value
+                } else {
+                    return nil
+                }
+            }
+            
         }
     }
     
@@ -650,46 +762,6 @@ public struct TISensorTag {
 //        func toRawValues() -> [UInt8] {
 //            return [periodRaw]
 //        }
-    }
-    enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
-        case No     = 0
-        case Yes    = 1
-
-        // BLEConfigurable
-        static let uuid                     = "1"
-        static let name                     = "Enabled"
-        static let tag                      = "TI Sensor Tag"
-        static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
-        static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-        static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-
-        
-        // StringDeserializable
-        static let stringValues = ["No", "Yes"]
-
-        init?(stringValue:[String:String]) {
-            if let value = stringValue["Enabled"] {
-                switch value {
-                case "Yes":
-                    self = Enabled.Yes
-                case "No":
-                    self = Enabled.No
-                default:
-                    return nil
-                }
-            } else {
-                return nil
-            }
-        }
-        
-        var stringValue : [String:String] {
-            switch self {
-            case .No:
-                return ["Enabled":"No"]
-            case .Yes:
-                return ["Enabled":"Yes"]
-            }
-        }
     }
 //}
 //

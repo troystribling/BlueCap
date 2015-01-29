@@ -86,20 +86,30 @@ public struct Gnosus {
             public let longitude        : Double
 
             // CharacteristicConfigurable
-            public static let uuid          = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
-            public static let name          = "Lattitude and Longitude"
-            public static let permissions   = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties    = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue  = serialize(Gnosus.LocationService.LatitudeAndLongitude(rawValue:[3776, -12242]))
+            public static let uuid                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
+            public static let name                      = "Lattitude and Longitude"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let initialValue : NSData?    = serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
 
+            public init?(latitude:Double, longitude:Double) {
+                self.latitude = latitude
+                self.longitude = longitude
+                if let lat = Int16(doubleValue:self.latitude) {
+                    self.rawLatitude = lat
+                } else {
+                    return nil
+                }
+                if let lon = Int16(doubleValue:self.longitude) {
+                    self.rawLongitude = lon
+                } else {
+                    return nil
+                }
+            }
+            
             // RawArrayDeserializable
             public var rawValue : [Int16] {
                 return [rawLatitude, rawLongitude]
-            }
-            
-            public init(latitude:Double, longitude:Double) {
-                self.latitude = latitude
-                self.longitude = longitude
             }
             
             public init?(rawValue:[Int16]) {
