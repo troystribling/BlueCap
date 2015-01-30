@@ -55,9 +55,11 @@ public struct Gnosus {
             public static var stringValues : [String] {
                 return []
             }
+            
             public var stringValue : [String:String] {
                 return [UpdatePeriod.name:"\(self.period)"]
             }
+            
             public init?(stringValue:[String:String]) {
                 if let value = uint16ValueFromStringValue(UpdatePeriod.name, stringValue) {
                     self.period = value
@@ -80,28 +82,16 @@ public struct Gnosus {
         
         public struct LatitudeAndLongitude : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
 
-            private let rawLatitude     : Int16
-            private let rawLongitude    : Int16
+            private let latitudeRaw     : Int16
+            private let longitudeRaw    : Int16
             public let latitude         : Double
             public let longitude        : Double
-
-            // CharacteristicConfigurable
-            public static let uuid                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
-            public static let name                      = "Lattitude and Longitude"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
 
             public init?(latitude:Double, longitude:Double) {
                 self.latitude = latitude
                 self.longitude = longitude
-                if let lat = Int16(doubleValue:(self.latitude/100.0)) {
-                    self.rawLatitude = lat
-                } else {
-                    return nil
-                }
-                if let lon = Int16(doubleValue:(self.longitude/100.0)) {
-                    self.rawLongitude = lon
+                if let rawValues = LatitudeAndLongitude.rawFromValues([latitude, longitude]) {
+                    (self.latitudeRaw, self.longitudeRaw) = rawValues
                 } else {
                     return nil
                 }
@@ -111,15 +101,32 @@ public struct Gnosus {
                 return (100.0*Double(rawValues[0]), 100.0*Double(rawValues[1]))
             }
             
+            private static func rawFromValues(values:[Double]) -> (Int16, Int16)? {
+                let latitudeRaw = Int16(doubleValue:values[0]/100.0)
+                let longitudeRaw = Int16(doubleValue:values[1]/100.0)
+                if latitudeRaw != nil && longitudeRaw != nil {
+                    return (latitudeRaw!, longitudeRaw!)
+                } else {
+                    return nil
+                }
+            }
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
+            public static let name                      = "Lattitude and Longitude"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let initialValue : NSData?    = serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
+
             // RawArrayDeserializable
             public var rawValue : [Int16] {
-                return [rawLatitude, rawLongitude]
+                return [self.latitudeRaw, self.longitudeRaw]
             }
             
             public init?(rawValue:[Int16]) {
                 if rawValue.count == 2 {
-                    self.rawLatitude = rawValue[0]
-                    self.rawLongitude = rawValue[1]
+                    self.latitudeRaw = rawValue[0]
+                    self.longitudeRaw = rawValue[1]
                     (self.latitude, self.longitude) = LatitudeAndLongitude.valuesFromRaw(rawValue)
                 } else {
                     return nil
@@ -132,19 +139,19 @@ public struct Gnosus {
             }
             
             public var stringValue  : [String:String] {
-                return ["rawLatitude":"\(self.rawLatitude)",
-                        "rawLongitude":"\(self.rawLongitude)",
+                return ["latitudeRaw":"\(self.latitudeRaw)",
+                        "longitudeRaw":"\(self.longitudeRaw)",
                         "latitude":"\(self.latitude)",
                         "longitude":"\(self.longitude)"]
             }
             
             public init?(stringValue:[String:String]) {
-                let lat = int16ValueFromStringValue("rawLatitude", stringValue)
-                let lon = int16ValueFromStringValue("rawLongitude", stringValue)
+                let lat = int16ValueFromStringValue("latitudeRaw", stringValue)
+                let lon = int16ValueFromStringValue("longitudeRaw", stringValue)
                 if lat != nil && lon != nil {
-                    self.rawLatitude = lat!
-                    self.rawLongitude = lon!
-                    (self.latitude, self.longitude) = LatitudeAndLongitude.valuesFromRaw([self.rawLatitude, self.rawLongitude])
+                    self.latitudeRaw = lat!
+                    self.longitudeRaw = lon!
+                    (self.latitude, self.longitude) = LatitudeAndLongitude.valuesFromRaw([self.latitudeRaw, self.longitudeRaw])
                 } else {
                     return nil
                 }

@@ -15,6 +15,8 @@ public struct TISensorTag {
     //***************************************************************************************************
     // Accelerometer Service
     public struct AccelerometerService : ServiceConfigurable  {
+        
+        // ServiceConfigurable
         public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
         public static let name  = "TI Accelerometer"
         public static let tag   = "TI Sensor Tag"
@@ -29,29 +31,12 @@ public struct TISensorTag {
             public let y:Double
             public let z:Double
 
-            // CharacteristicConfigurable
-            public static let uuid                      = "F000AA11-0451-4000-B000-000000000000"
-            public static let name                      = "Accelerometer Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    =  serialize(TISensorTag.AccelerometerService.Data(x:1.0, y:0.5, z:-1.5)!)
-            
             public init?(x:Double, y:Double, z:Double) {
                 self.x = x
                 self.y = y
                 self.z = z
-                if let xRaw = Int8(doubleValue:(-64.0*x)) {
-                    self.xRaw = xRaw
-                } else {
-                    return nil
-                }
-                if let yRaw = Int8(doubleValue:(-64.0*y)) {
-                    self.yRaw = yRaw
-                } else {
-                    return nil
-                }
-                if let zRaw = Int8(doubleValue:(64.0*z)) {
-                    self.zRaw = zRaw
+                if let rawValues = Data.rawFromValues([x, y, z]) {
+                    (self.xRaw, self.yRaw, self.zRaw) = rawValues
                 } else {
                     return nil
                 }
@@ -61,12 +46,34 @@ public struct TISensorTag {
                 return (-Double(rawValues[0])/64.0, -Double(rawValues[1])/64.0, Double(rawValues[2])/64.0)
             }
             
+            private static func rawFromValues(values:[Double]) -> (Int8, Int8, Int8)? {
+                let xRaw = Int8(doubleValue:(-64.0*values[0]))
+                let yRaw = Int8(doubleValue:(-64.0*values[1]))
+                let zRaw = Int8(doubleValue:(64.0*values[2]))
+                if xRaw != nil && yRaw != nil && zRaw != nil {
+                    return (xRaw!, yRaw!, zRaw!)
+                } else {
+                    return nil
+                }
+            }
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "F000AA11-0451-4000-B000-000000000000"
+            public static let name                      = "Accelerometer Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(TISensorTag.AccelerometerService.Data(x:1.0, y:0.5, z:-1.5)!)
+            
             // RawArrayDeserializable
             public init?(rawValue:[Int8]) {
-                self.xRaw = rawValue[0]
-                self.yRaw = rawValue[1]
-                self.zRaw = rawValue[2]
-                (self.x, self.y, self.z) = Data.valuesFromRaw(rawValue)
+                if rawValue.count == 3 {
+                    self.xRaw = rawValue[0]
+                    self.yRaw = rawValue[1]
+                    self.zRaw = rawValue[2]
+                    (self.x, self.y, self.z) = Data.valuesFromRaw(rawValue)
+                } else {
+                    return nil
+                }
             }
             
             public var rawValue : [Int8] {
@@ -165,9 +172,11 @@ public struct TISensorTag {
             public static var stringValues : [String] {
                 return []
             }
+            
             public var stringValue : [String:String] {
                 return [UpdatePeriod.name:"\(self.period)"]
             }
+
             public init?(stringValue:[String:String]) {
                 if let value = uint16ValueFromStringValue(UpdatePeriod.name, stringValue) {
                     self.period = value
@@ -179,60 +188,184 @@ public struct TISensorTag {
         }
     }
     
-//    //***************************************************************************************************
-//    // Magnetometer Service: units are uT
-//    //***************************************************************************************************
-//    struct MagnetometerService {
-//        static let uuid = "F000AA30-0451-4000-B000-000000000000"
-//        static let name = "TI Magnetometer"
-//        struct Data {
-//            static let uuid = "f000aa31-0451-4000-b000-000000000000"
-//            static let name = "Magnetometer Data"
-//            struct Value : DeserializedStruct {
-//                var xRaw    : Int16
-//                var yRaw    : Int16
-//                var zRaw    : Int16
-//                var x       : Double
-//                var y       : Double
-//                var z       : Double
-//                static func fromRawValues(rawValues:[Int16]) -> Value? {
-//                    let values = self.valuesFromRaw(rawValues)
-//                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let xRaw = BlueCap.int16ValueFromStringValue("xRaw", values:stringValues)
-//                    let yRaw = BlueCap.int16ValueFromStringValue("yRaw", values:stringValues)
-//                    let zRaw = BlueCap.int16ValueFromStringValue("zRaw", values:stringValues)
-//                    if xRaw != nil && yRaw != nil && zRaw != nil {
-//                        let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
-//                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func valuesFromRaw(values:[Int16]) -> [Double] {
-//                    let x = -Double(values[0])*Double(2000.0)/65536.0
-//                    let y = -Double(values[1])*Double(2000.0)/65536.0
-//                    let z = Double(values[2])*Double(2000.0)/65536.0
-//                    return [x, y, z]
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
-//                }
-//                func toRawValues() -> [Int16] {
-//                    return [xRaw, yRaw, zRaw]
-//                }
-//            }
-//        }
-//        struct Enabled {
-//            static let uuid = "f000aa32-0451-4000-b000-000000000000"
-//            static let name = "Magnetometer Enabled"
-//        }
-//        struct UpdatePeriod {
-//            static let uuid = "f000aa33-0451-4000-b000-000000000000"
-//            static let name = "Magnetometer Update Period"
-//        }
-//    }
+    //***************************************************************************************************
+    // Magnetometer Service: units are uT
+    public struct MagnetometerService : ServiceConfigurable {
+        
+        // ServiceConfigurable
+        public static let uuid = "F000AA30-0451-4000-B000-000000000000"
+        public static let name = "TI Magnetometer"
+        public static let tag  = "TI Sensor Tag"
+
+        public struct Data : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            var xRaw    : Int16
+            var yRaw    : Int16
+            var zRaw    : Int16
+            var x       : Double
+            var y       : Double
+            var z       : Double
+
+            public static func valuesFromRaw(values:[Int16]) -> (Double, Double, Double) {
+                let x = -Double(values[0])*2000.0/65536.0
+                let y = -Double(values[1])*2000.0/65536.0
+                let z = Double(values[2])*2000.0/65536.0
+                return (x, y, z)
+            }
+
+            public static func rawFromValues(rawValues:[Double]) -> (Int16, Int16, Int16)? {
+                let xRaw = -Int16(doubleValue:(rawValues[0]*65536.0/2000.0))
+                let yRaw = -Int16(doubleValue:(rawValues[1]*65536.0/2000.0))
+                let zRaw = Int16(doubleValue:(rawValues[2]*65536.0/2000.0))
+                if xRaw != nil && yRaw != nil && zRaw != nil {
+                    return (xRaw!, yRaw!, zRaw!)
+                } else {
+                    return nil
+                }
+            }
+            
+            public init?(x:Double, y:Double, z:Double) {
+                self.x = x
+                self.y = y
+                self.z = z
+                if let values = Data.rawFromValues([x, y, z]) {
+                    (self.xRaw, self.yRaw, self.zRaw) = values
+                } else {
+                    return nil
+                }
+            }
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa31-0451-4000-b000-000000000000"
+            public static let name                      = "Magnetometer Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(TISensorTag.MagnetometerService.Data(x:1.0, y:0.5, z:-1.5)!)
+            
+            // RawArrayDeserializable
+            public var rawValue : [Int16] {
+                return [xRaw, yRaw, zRaw]
+            }
+            
+            public init?(rawValue:[Int16]) {
+                if rawValue.count == 3 {
+                    self.xRaw = rawValue[0]
+                    self.yRaw = rawValue[1]
+                    self.zRaw = rawValue[2]
+                    (self.x, self.y, self.z) = Data.valuesFromRaw(rawValue)
+                } else {
+                    return nil
+                }
+            }
+            
+            // StringDeserializable
+            public static var stringValues  : [String] {
+                return []
+            }
+            
+            public var stringValue  : [String:String] {
+                return ["x":"\(x)", "y":"\(y)", "z":"\(z)",
+                        "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                let xRawInit = int16ValueFromStringValue("xRaw", stringValue)
+                let yRawInit = int16ValueFromStringValue("yRaw", stringValue)
+                let zRawInit = int16ValueFromStringValue("zRaw", stringValue)
+                if xRawInit != nil && yRawInit != nil && zRawInit != nil {
+                    self.xRaw = xRawInit!
+                    self.yRaw = yRawInit!
+                    self.zRaw = zRawInit!
+                    (self.x, self.y, self.z) = Data.valuesFromRaw([self.xRaw, self.yRaw, self.zRaw])
+                } else {
+                    return nil
+                }
+            }
+
+        }
+        
+        // Magnetometer Enabled
+        public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+            
+            case No     = 0
+            case Yes    = 1
+            
+            // CharacteristicConfigurable
+            public static let uuid                     = "f000aa32-0451-4000-b000-000000000000"
+            public static let name                     = "Magnetometer Enabled"
+            public static let tag                      = "TI Sensor Tag"
+            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
+            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            
+            
+            // StringDeserializable
+            public static let stringValues = ["No", "Yes"]
+            
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["Enabled"] {
+                    switch value {
+                    case "Yes":
+                        self = Enabled.Yes
+                    case "No":
+                        self = Enabled.No
+                    default:
+                        return nil
+                    }
+                } else {
+                    return nil
+                }
+            }
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return ["Enabled":"No"]
+                case .Yes:
+                    return ["Enabled":"Yes"]
+                }
+            }
+        }
+
+        // Magnetometer UpdatePeriod
+        public struct UpdatePeriod : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+            
+            public let period : UInt16
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa33-0451-4000-b000-000000000000"
+            public static let name                      = "Magnetometer Update Period"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let initialValue : NSData?    = serialize(UInt16(5000))
+            
+            // RawDeserializable
+            public var rawValue : UInt16 {
+                return self.period
+            }
+            public init?(rawValue:UInt16) {
+                self.period = rawValue
+            }
+            
+            // StringDeserializable
+            public static var stringValues : [String] {
+                return []
+            }
+            
+            public var stringValue : [String:String] {
+                return [UpdatePeriod.name:"\(self.period)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                if let value = uint16ValueFromStringValue(UpdatePeriod.name, stringValue) {
+                    self.period = value
+                } else {
+                    return nil
+                }
+            }
+            
+        }
+    }
 //
 //    //***************************************************************************************************
 //    // Gyroscope Service: units are degrees

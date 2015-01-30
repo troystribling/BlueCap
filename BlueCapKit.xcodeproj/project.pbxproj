@@ -296,7 +296,8 @@
 				055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */,
 				055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */,
 			);
-			path = "Service Profiles Definitions";
+			name = "Service Profiles Definitions";
+			path = "Service Profile Definitions";
 			sourceTree = "<group>";
 		};
 		055120C819F5513700ED3B74 /* Utilities */ = {
