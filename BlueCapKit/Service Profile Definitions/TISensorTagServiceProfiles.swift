@@ -62,7 +62,7 @@ public struct TISensorTag {
             public static let name                      = "Accelerometer Data"
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = serialize(TISensorTag.AccelerometerService.Data(x:1.0, y:0.5, z:-1.5)!)
+            public static let initialValue : NSData?    = serialize(Data(x:1.0, y:0.5, z:-1.5)!)
             
             // RawArrayDeserializable
             public init?(rawValue:[Int8]) {
@@ -214,8 +214,8 @@ public struct TISensorTag {
             }
 
             public static func rawFromValues(rawValues:[Double]) -> (Int16, Int16, Int16)? {
-                let xRaw = -Int16(doubleValue:(rawValues[0]*65536.0/2000.0))
-                let yRaw = -Int16(doubleValue:(rawValues[1]*65536.0/2000.0))
+                let xRaw = Int16(doubleValue:(-rawValues[0]*65536.0/2000.0))
+                let yRaw = Int16(doubleValue:(-rawValues[1]*65536.0/2000.0))
                 let zRaw = Int16(doubleValue:(rawValues[2]*65536.0/2000.0))
                 if xRaw != nil && yRaw != nil && zRaw != nil {
                     return (xRaw!, yRaw!, zRaw!)
@@ -240,7 +240,7 @@ public struct TISensorTag {
             public static let name                      = "Magnetometer Data"
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = serialize(TISensorTag.MagnetometerService.Data(x:1.0, y:0.5, z:-1.5)!)
+            public static let initialValue : NSData?    = serialize(Data(rawValue:[-2183, 1916, 1255])!)
             
             // RawArrayDeserializable
             public var rawValue : [Int16] {
