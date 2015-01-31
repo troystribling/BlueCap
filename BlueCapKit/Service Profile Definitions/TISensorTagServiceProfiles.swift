@@ -538,67 +538,130 @@ public struct TISensorTag {
             }
         }
     }
-//
-//    //***************************************************************************************************
-//    // Temperature Service units Celsius
-//    //***************************************************************************************************
-//    struct TemperatureService {
-//        static let uuid = "F000AA00-0451-4000-B000-000000000000"
-//        static let name = "TI Temperature"
-//        struct Data {
-//            static let uuid = "f000aa01-0451-4000-b000-000000000000"
-//            static let name = "Temperature Data"
-//            struct Value : DeserializedStruct {
-//                var objectRaw   : Int16
-//                var ambientRaw  : Int16
-//                var object      : Double
-//                var ambient     : Double
-//                static func fromRawValues(rawValues:[Int16]) -> Value? {
-//                    let (object, ambient) = self.valuesFromRaw(rawValues[0], ambientRaw:rawValues[1])
-//                    return Value(objectRaw:rawValues[0], ambientRaw:rawValues[1], object:object, ambient:ambient)
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let objectRaw = BlueCap.int16ValueFromStringValue("objectRaw", values:stringValues)
-//                    let ambientRaw = BlueCap.int16ValueFromStringValue("ambientRaw", values:stringValues)
-//                    if objectRaw != nil && ambientRaw != nil {
-//                        let (object, ambient) = self.valuesFromRaw(objectRaw!, ambientRaw:ambientRaw!)
-//                        return Value(objectRaw:objectRaw!, ambientRaw:ambientRaw!, object:object, ambient:ambient)
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func valuesFromRaw(objectRaw:Int16, ambientRaw:Int16) -> (Double, Double) {
-//                    let ambient = Double(ambientRaw)/128.0;
-//                    let vObj2 = Double(objectRaw)*0.00000015625;
-//                    let tDie2 = ambient + 273.15;
-//                    let s0 = 6.4*pow(10,-14);
-//                    let a1 = 1.75*pow(10,-3);
-//                    let a2 = -1.678*pow(10,-5);
-//                    let b0 = -2.94*pow(10,-5);
-//                    let b1 = -5.7*pow(10,-7);
-//                    let b2 = 4.63*pow(10,-9);
-//                    let c2 = 13.4;
-//                    let tRef = 298.15;
-//                    let s = s0*(1+a1*(tDie2 - tRef)+a2*pow((tDie2 - tRef),2));
-//                    let vOs = b0 + b1*(tDie2 - tRef) + b2*pow((tDie2 - tRef),2);
-//                    let fObj = (vObj2 - vOs) + c2*pow((vObj2 - vOs),2);
-//                    let object = pow(pow(tDie2,4) + (fObj/s),0.25) - 273.15;
-//                    return (object, ambient)
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["objectRaw":"\(objectRaw)", "ambientRaw":"\(ambientRaw)", "object":"\(object)", "ambient":"\(ambient)"]
-//                }
-//                func toRawValues() -> [Int16] {
-//                    return [objectRaw, ambientRaw]
-//                }
-//            }
-//        }
-//        struct Enabled {
-//            static let uuid = "f000aa02-0451-4000-b000-000000000000"
-//            static let name = "Temperature Enabled"
-//        }
-//    }
-//
+
+    //***************************************************************************************************
+    // Temperature Service units Celsius
+    public struct TemperatureService : ServiceConfigurable {
+        
+        public static let uuid  = "F000AA00-0451-4000-B000-000000000000"
+        public static let name  = "TI Temperature"
+        public static let tag   = "TI Sensor Tag"
+
+        public struct Data : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            private let objectRaw   : Int16
+            private let ambientRaw  : Int16
+            
+            public let object       : Double
+            public let ambient      : Double
+
+            static func valuesFromRaw(objectRaw:Int16, ambientRaw:Int16) -> (Double, Double) {
+                let ambient = Double(ambientRaw)/128.0;
+                let vObj2 = Double(objectRaw)*0.00000015625;
+                let tDie2 = ambient + 273.15;
+                let s0 = 6.4*pow(10,-14);
+                let a1 = 1.75*pow(10,-3);
+                let a2 = -1.678*pow(10,-5);
+                let b0 = -2.94*pow(10,-5);
+                let b1 = -5.7*pow(10,-7);
+                let b2 = 4.63*pow(10,-9);
+                let c2 = 13.4;
+                let tRef = 298.15;
+                let s = s0*(1+a1*(tDie2 - tRef)+a2*pow((tDie2 - tRef),2));
+                let vOs = b0 + b1*(tDie2 - tRef) + b2*pow((tDie2 - tRef),2);
+                let fObj = (vObj2 - vOs) + c2*pow((vObj2 - vOs),2);
+                let object = pow(pow(tDie2,4) + (fObj/s),0.25) - 273.15;
+                return (object, ambient)
+            }
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa01-0451-4000-b000-000000000000"
+            public static let name                      = "Temperature Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(Data(rawValue:[31, 3260])!)
+
+            // RawArrayDeserializable
+            public var rawValue : [Int16] {
+                return [self.objectRaw, self.ambientRaw]
+            }
+
+            public init?(rawValue:[Int16]) {
+                if rawValue.count == 2 {
+                    self.objectRaw = rawValue[0]
+                    self.ambientRaw = rawValue[1]
+                    (self.object, self.ambient) = Data.valuesFromRaw(self.objectRaw, ambientRaw:self.ambientRaw)
+                } else {
+                    return nil
+                }
+            }
+            
+            // StringDeserializable
+            public static var stringValues  : [String] {
+                return []
+            }
+
+            public var stringValue : Dictionary<String,String> {
+                return [ "object":"\(object)", "ambient":"\(ambient)",
+                         "objectRaw":"\(objectRaw)", "ambientRaw":"\(ambientRaw)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                let objectRawInit   = int16ValueFromStringValue("objectRaw", stringValue)
+                let ambientRawInit  = int16ValueFromStringValue("ambientRaw", stringValue)
+                if objectRawInit != nil && ambientRawInit != nil {
+                    self.objectRaw = objectRawInit!
+                    self.ambientRaw = ambientRawInit!
+                    (self.object, self.ambient) = Data.valuesFromRaw(self.objectRaw, ambientRaw:self.ambientRaw)
+                } else {
+                    return nil
+                }
+            }
+        }
+        
+        // Temperature Enabled
+        public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+            
+            case No     = 0
+            case Yes    = 1
+            
+            // CharacteristicConfigurable
+            public static let uuid                     = "f000aa02-0451-4000-b000-000000000000"
+            public static let name                     = "Temperature Enabled"
+            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
+            
+            // StringDeserializable
+            public static let stringValues = ["No", "Yes"]
+            
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["Enabled"] {
+                    switch value {
+                    case "Yes":
+                        self = Enabled.Yes
+                    case "No":
+                        self = Enabled.No
+                    default:
+                        return nil
+                    }
+                } else {
+                    return nil
+                }
+            }
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return ["Enabled":"No"]
+                case .Yes:
+                    return ["Enabled":"Yes"]
+                }
+            }
+        }
+
+    }
+
 //    //***************************************************************************************************
 //    // Barometer Service
 //    //
