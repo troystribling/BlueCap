@@ -24,9 +24,10 @@ public struct TISensorTag {
         // Accelerometer Data
         public struct Data : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
             
-            public let xRaw:Int8
-            public let yRaw:Int8
-            public let zRaw:Int8
+            private let xRaw:Int8
+            private let yRaw:Int8
+            private let zRaw:Int8
+            
             public let x:Double
             public let y:Double
             public let z:Double
@@ -100,7 +101,8 @@ public struct TISensorTag {
             }
             
             public var stringValue : Dictionary<String,String> {
-                return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)", "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
+                return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)",
+                        "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
             }
 
         }
@@ -114,10 +116,9 @@ public struct TISensorTag {
             // CharacteristicConfigurable
             public static let uuid                     = "F000AA12-0451-4000-B000-000000000000"
             public static let name                     = "Accelerometer Enabled"
-            public static let tag                      = "TI Sensor Tag"
-            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
             public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
             public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
             
             
             // StringDeserializable
@@ -199,12 +200,13 @@ public struct TISensorTag {
 
         public struct Data : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
 
-            var xRaw    : Int16
-            var yRaw    : Int16
-            var zRaw    : Int16
-            var x       : Double
-            var y       : Double
-            var z       : Double
+            private let xRaw    : Int16
+            private let yRaw    : Int16
+            private let zRaw    : Int16
+            
+            public let x        : Double
+            public let y        : Double
+            public let z        : Double
 
             public static func valuesFromRaw(values:[Int16]) -> (Double, Double, Double) {
                 let x = -Double(values[0])*2000.0/65536.0
@@ -293,11 +295,9 @@ public struct TISensorTag {
             // CharacteristicConfigurable
             public static let uuid                     = "f000aa32-0451-4000-b000-000000000000"
             public static let name                     = "Magnetometer Enabled"
-            public static let tag                      = "TI Sensor Tag"
-            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
             public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
             public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            
+            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
             
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
@@ -366,154 +366,178 @@ public struct TISensorTag {
             
         }
     }
-//
-//    //***************************************************************************************************
-//    // Gyroscope Service: units are degrees
-//    //***************************************************************************************************
-//    struct GyroscopeService {
-//        static let uuid = "F000AA50-0451-4000-B000-000000000000"
-//        static let name = "TI Gyroscope"
-//        struct Data {
-//            static let uuid = "f000aa51-0451-4000-b000-000000000000"
-//            static let name = "Gyroscope Data"
-//            struct Value : DeserializedStruct {
-//                var xRaw    : Int16
-//                var yRaw    : Int16
-//                var zRaw    : Int16
-//                var x       : Double
-//                var y       : Double
-//                var z       : Double
-//                static func fromRawValues(rawValues:[Int16]) -> Value? {
-//                    let values = self.valuesFromRaw(rawValues)
-//                    return Value(xRaw:rawValues[0], yRaw:rawValues[1], zRaw:rawValues[2], x:values[0], y:values[1], z:values[2])
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let xRaw = BlueCap.int16ValueFromStringValue("xRaw", values:stringValues)
-//                    let yRaw = BlueCap.int16ValueFromStringValue("yRaw", values:stringValues)
-//                    let zRaw = BlueCap.int16ValueFromStringValue("zRaw", values:stringValues)
-//                    if xRaw != nil && yRaw != nil && zRaw != nil {
-//                        let values = self.valuesFromRaw([xRaw!, yRaw!, zRaw!])
-//                        return Value(xRaw:xRaw!, yRaw:yRaw!, zRaw:zRaw!, x:values[0], y:values[1], z:values[2])
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func valuesFromRaw(values:[Int16]) -> [Double] {
-//                    let x = -Double(values[0])*Double(500.0)/65536.0
-//                    let y = -Double(values[1])*Double(500.0)/65536.0
-//                    let z = Double(values[2])*Double(500.0)/65536.0
-//                    return [x, y, z]
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["x":"\(x)", "y":"\(y)", "z":"\(z)", "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
-//                }
-//                func toRawValues() -> [Int16] {
-//                    return [xRaw, yRaw, zRaw]
-//                }
-//            }
-//        }
-//        struct Enabled {
-//            static let uuid = "f000aa52-0451-4000-b000-000000000000"
-//            static let name = "Gyroscope Enabled"
-//            enum Value : UInt8, DeserializedEnum {
-//                case No         = 0
-//                case XAxis      = 1
-//                case YAxis      = 2
-//                case XYAxis     = 3
-//                case ZAxis      = 4
-//                case XZAxis     = 5
-//                case YZAxis     = 6
-//                case XYZAxis    = 7
-//                static func fromRaw(rawValue:UInt8) -> Value? {
-//                    switch rawValue {
-//                    case 0:
-//                        return Value.No
-//                    case 1:
-//                        return Value.XAxis
-//                    case 2:
-//                        return Value.YAxis
-//                    case 3:
-//                        return Value.XYAxis
-//                    case 4:
-//                        return Value.ZAxis
-//                    case 5:
-//                        return Value.XZAxis
-//                    case 6:
-//                        return Value.YZAxis
-//                    case 7:
-//                        return Value.XYZAxis
-//                    default:
-//                        return nil
-//                    }
-//                }
-//                static func fromString(stringValue:String) -> Value? {
-//                    switch stringValue {
-//                    case "No":
-//                        return Value.No
-//                    case "XAxis":
-//                        return Value.XAxis
-//                    case "YAxis":
-//                        return Value.YAxis
-//                    case "XYAxis":
-//                        return Value.XYAxis
-//                    case "ZAxis":
-//                        return Value.ZAxis
-//                    case "XZAxis":
-//                        return Value.XZAxis
-//                    case "YZAxis":
-//                        return Value.YZAxis
-//                    case "XYZAxis":
-//                        return Value.XYZAxis
-//                    default:
-//                        return nil
-//                    }
-//                }
-//                static func stringValues() -> [String] {
-//                    return ["No", "XAxis", "YAxis", "XYAxis", "ZAxis", "XZAxis", "YZAxis", "XYZAxis"]
-//                }
-//                var stringValue : String {
-//                    switch self {
-//                    case .No:
-//                        return "No"
-//                    case .XAxis:
-//                        return "XAxis"
-//                    case .YAxis:
-//                        return "YAxis"
-//                    case .XYAxis:
-//                        return "XYAxis"
-//                    case .ZAxis:
-//                        return "ZAxis"
-//                    case .XZAxis:
-//                        return "XZAxis"
-//                    case .YZAxis:
-//                        return "YZAxis"
-//                    case .XYZAxis:
-//                        return "XYZAxis"
-//                    }
-//                }
-//                func toRaw() -> UInt8 {
-//                    switch self {
-//                    case .No:
-//                        return 0
-//                    case .XAxis:
-//                        return 1
-//                    case .YAxis:
-//                        return 2
-//                    case .XYAxis:
-//                        return 3
-//                    case .ZAxis:
-//                        return 4
-//                    case .XZAxis:
-//                        return 5
-//                    case .YZAxis:
-//                        return 6
-//                    case .XYZAxis:
-//                        return 7
-//                    }
-//                }
-//            }
-//        }
-//    }
+
+    //***************************************************************************************************
+    // Gyroscope Service: units are degrees
+    public struct GyroscopeService : ServiceConfigurable {
+
+        // ServiceConfigurable
+        public static let uuid  = "F000AA50-0451-4000-B000-000000000000"
+        public static let name  = "TI Gyroscope"
+        public static let tag   = "TI Sensor Tag"
+
+        // Gyroscope Data
+        public struct Data : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            private let xRaw    : Int16
+            private let yRaw    : Int16
+            private let zRaw    : Int16
+            
+            public let x : Double
+            public let y : Double
+            public let z : Double
+            
+            static func valuesFromRaw(values:[Int16]) -> (Double, Double, Double) {
+                let x = -Double(values[0])*Double(500.0)/65536.0
+                let y = -Double(values[1])*Double(500.0)/65536.0
+                let z = Double(values[2])*Double(500.0)/65536.0
+                return (x, y, z)
+            }
+
+            public static func rawFromValues(rawValues:[Double]) -> (Int16, Int16, Int16)? {
+                let xRaw = Int16(doubleValue:(-rawValues[0]*65536.0/500.0))
+                let yRaw = Int16(doubleValue:(-rawValues[1]*65536.0/500.0))
+                let zRaw = Int16(doubleValue:(rawValues[2]*65536.0/500.0))
+                if xRaw != nil && yRaw != nil && zRaw != nil {
+                    return (xRaw!, yRaw!, zRaw!)
+                } else {
+                    return nil
+                }
+            }
+
+            public init?(x:Double, y:Double, z:Double) {
+                self.x = x
+                self.y = y
+                self.z = z
+                if let values = Data.rawFromValues([x, y, z]) {
+                    (self.xRaw, self.yRaw, self.zRaw) = values
+                } else {
+                    return nil
+                }
+            }
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa51-0451-4000-b000-000000000000"
+            public static let name                      = "Gyroscope Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(Data(rawValue:[-24, -219, -23])!)
+
+            // RawArrayDeserializable
+            public static var stringValues  : [String] {
+                return []
+            }
+
+            public var rawValue : [Int16] {
+                return [self.xRaw, self.yRaw, self.zRaw]
+            }
+
+            public init?(rawValue:[Int16]) {
+                if rawValue.count == 3 {
+                    self.xRaw = rawValue[0]
+                    self.yRaw = rawValue[1]
+                    self.zRaw = rawValue[2]
+                    (self.x, self.y, self.z) = Data.valuesFromRaw(rawValue)
+                } else {
+                    return nil
+                }
+            }
+            
+            // StringDeserializable
+            public var stringValue : Dictionary<String,String> {
+                return ["x":"\(x)", "y":"\(y)", "z":"\(z)",
+                        "xRaw":"\(xRaw)", "yRaw":"\(yRaw)", "zRaw":"\(zRaw)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                let xRawInit = int16ValueFromStringValue("xRaw", stringValue)
+                let yRawInit = int16ValueFromStringValue("yRaw", stringValue)
+                let zRawInit = int16ValueFromStringValue("zRaw", stringValue)
+                if xRawInit != nil && yRawInit != nil && zRawInit != nil {
+                    self.xRaw = xRawInit!
+                    self.yRaw = yRawInit!
+                    self.zRaw = zRawInit!
+                    (self.x, self.y, self.z) = Data.valuesFromRaw([self.xRaw, self.yRaw, self.zRaw])
+                } else {
+                    return nil
+                }
+            }
+
+        }
+        
+        // Gyroscope Enabled
+        public enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+            
+            case No         = 0
+            case XAxis      = 1
+            case YAxis      = 2
+            case XYAxis     = 3
+            case ZAxis      = 4
+            case XZAxis     = 5
+            case YZAxis     = 6
+            case XYZAxis    = 7
+            
+            // CharacteristicConfigurable
+            public static let uuid                     = "f000aa52-0451-4000-b000-000000000000"
+            public static let name                     = "Gyroscope Enabled"
+            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
+
+            // StringDeserializable
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["Enabled"] {
+                    switch value {
+                    case "No":
+                        self = Enabled.No
+                    case "XAxis":
+                        self =  Enabled.XAxis
+                    case "YAxis":
+                        self =  Enabled.YAxis
+                    case "XYAxis":
+                        self =  Enabled.XYAxis
+                    case "ZAxis":
+                        self =  Enabled.ZAxis
+                    case "XZAxis":
+                        self =  Enabled.XZAxis
+                    case "YZAxis":
+                        self =  Enabled.YZAxis
+                    case "XYZAxis":
+                        self =  Enabled.XYZAxis
+                    default:
+                        return nil
+                    }
+                } else {
+                    return nil
+                }
+            }
+            
+            public static var stringValues : [String] {
+                return ["No", "XAxis", "YAxis", "XYAxis", "ZAxis", "XZAxis", "YZAxis", "XYZAxis"]
+            }
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return ["Enabled" : "No"]
+                case .XAxis:
+                    return ["Enabled" : "XAxis"]
+                case .YAxis:
+                    return ["Enabled" : "YAxis"]
+                case .XYAxis:
+                    return ["Enabled" : "XYAxis"]
+                case .ZAxis:
+                    return ["Enabled" : "ZAxis"]
+                case .XZAxis:
+                    return ["Enabled" : "XZAxis"]
+                case .YZAxis:
+                    return ["Enabled" : "YZAxis"]
+                case .XYZAxis:
+                    return ["Enabled" : "XYZAxis"]
+                }
+            }
+        }
+    }
 //
 //    //***************************************************************************************************
 //    // Temperature Service units Celsius
