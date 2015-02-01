@@ -99,13 +99,13 @@ public class Characteristic {
         }
     }
 
-    public func value<T:RawArrayPairDeserializable>() -> T? {
-        if let data = self.dataValue {
-            return deserialize(data)
-        } else {
-            return nil
-        }
-    }
+//    public func value<T:RawArrayPairDeserializable>() -> T? { 
+//        if let data = self.dataValue {
+//            return deserialize(data)
+//        } else {
+//            return nil
+//        }
+//    }
 
     public func startNotifying() -> Future<Characteristic> {
         self.notificationStateChangedPromise = Promise<Characteristic>()

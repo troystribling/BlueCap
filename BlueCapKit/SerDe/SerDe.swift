@@ -94,7 +94,7 @@ public protocol RawArrayPairDeserializable {
     typealias RawType1  : Deserializable
     typealias RawType2  : Deserializable
     class var uuid      : String {get}
-    class var size      : (Int, Int)
+    class var size      : (Int, Int) {get}
     var rawValue        : ([RawType1], [RawType2]) {get}
     init?(rawValue:([RawType1], [RawType2]))
 }
@@ -160,13 +160,7 @@ public func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> T? {
     let (rawSize1, rawSize2) = T.size
     let rawData1 = data.subdataWithRange(NSMakeRange(0, rawSize1))
     let rawData2 = data.subdataWithRange(NSMakeRange(rawSize1, rawSize2))
-    let rawValue1 : [T.RawType1]? = T.RawType1.deserialize(rawData1)
-    let rawValue2 : [T.RawType2]? = T.RawType1.deserialize(rawData2)
-    return rawValue1.flatmap {(rawValue1 : [T.RawType1]) in
-        T.RawType2.deserialize(rawData2).flatmap {(rawValue2 : [T.RawType2]) in
-            T(rawValue:(rawValue1, rawValue2))
-        }
-    }
+    return T(rawValue:(T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2)))
 }
 
 public func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {

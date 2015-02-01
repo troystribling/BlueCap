@@ -587,7 +587,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
 
             public var stringValue : Dictionary<String,String> {
                 return [ "object":"\(object)", "ambient":"\(ambient)",
@@ -709,7 +709,7 @@ public struct TISensorTag {
             
         }
     
-        // Barometer Enabled
+        // Barometer Calibration
         public struct Calibration : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {
 
             public let c1 : UInt16
@@ -833,56 +833,118 @@ public struct TISensorTag {
                 }
             }
         }
+    }
+
+    //***************************************************************************************************
+    // Hygrometer Service
+    // Temperature units Celsius
+    // Humidity units Relative Humdity
+    public struct HygrometerService  : ServiceConfigurable {
+        
+        // ServiceConfigurable
+        public static let uuid = "F000AA20-0451-4000-B000-000000000000"
+        public static let name = "TI Hygrometer"
+        public static let tag  = "TI Sensor Tag"
+
+        public struct Data : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            public var temperatureRaw  : UInt16
+            public var humidityRaw     : UInt16
+            
+            public var temperature     : Double
+            public var humidity        : Double
+            
+            private static func valuesFromRaw(temperatureRaw:UInt16, humidityRaw:UInt16) -> (Double, Double) {
+                return (-46.86+175.72*Double(temperatureRaw)/65536.0, -6.0+125.0*Double(humidityRaw)/65536.0)
+            }
+
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa21-0451-4000-b000-000000000000"
+            public static let name                      = "Hygrometer Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(Data(rawValue:[2600, 3500])!)
+            
+            // RawArrayDeserializable
+            public var rawValue : [UInt16] {
+                return [self.temperatureRaw, self.humidityRaw]
+            }
+            
+            public init?(rawValue:[UInt16]) {
+                if rawValue.count == 2 {
+                    self.temperatureRaw = rawValue[0]
+                    self.humidityRaw = rawValue[1]
+                    (self.temperature, self.humidity) = Data.valuesFromRaw(self.temperatureRaw, humidityRaw:self.humidityRaw)
+                } else {
+                    return nil
+                }
+            }
+            
+            // StringDeserializable
+            public static let stringValues = [String]()
+            
+            public var stringValue : [String:String] {
+                return ["temperature":"\(temperature)", "humidity":"\(humidity)",
+                        "temperatureRaw":"\(temperatureRaw)", "humidityRaw":"\(humidityRaw)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                let temperatureRawInit = uint16ValueFromStringValue("temperatureRaw", stringValue)
+                let humidityRawInit = uint16ValueFromStringValue("humidityRaw", stringValue)
+                if temperatureRawInit != nil && humidityRawInit != nil {
+                    self.temperatureRaw = temperatureRawInit!
+                    self.humidityRaw = humidityRawInit!
+                    (self.temperature, self.humidity) = Data.valuesFromRaw(self.temperatureRaw, humidityRaw:self.humidityRaw)
+                } else {
+                    return nil
+                }
+            }
+        }
+        
+        // Hygrometer Enabled
+        public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+            
+            case No     = 0
+            case Yes    = 1
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa22-0451-4000-b000-000000000000"
+            public static let name                      = "Hygrometer Enabled"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(Enabled.No.rawValue)
+            
+            
+            // StringDeserializable
+            public static let stringValues = ["No", "Yes"]
+            
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["Enabled"] {
+                    switch value {
+                    case "Yes":
+                        self = Enabled.Yes
+                    case "No":
+                        self = Enabled.No
+                    default:
+                        return nil
+                    }
+                } else {
+                    return nil
+                }
+            }
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return ["Enabled":"No"]
+                case .Yes:
+                    return ["Enabled":"Yes"]
+                }
+            }
+        }
 
     }
 
-//    //***************************************************************************************************
-//    // Hygrometer Service
-//    // Temperature units Celsius
-//    // Humidity units Relative Humdity
-//    //***************************************************************************************************
-//    struct HygrometerService {
-//        static let uuid = "F000AA20-0451-4000-B000-000000000000"
-//        static let name = "TI Hygrometer"
-//        struct Data {
-//            static let uuid = "f000aa21-0451-4000-b000-000000000000"
-//            static let name = "Hygrometer Data"
-//            struct Value : DeserializedStruct {
-//                var temperatureRaw  : UInt16
-//                var humidityRaw     : UInt16
-//                var temperature     : Double
-//                var humidity        : Double
-//                static func fromRawValues(rawValues:[UInt16]) -> Value? {
-//                    let (temperature, humidity) = self.valuesFromRaw(rawValues[0], humidityRaw:rawValues[1])
-//                    return Value(temperatureRaw:rawValues[0], humidityRaw:rawValues[1], temperature:temperature, humidity:humidity)
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let temperatureRaw = BlueCap.uint16ValueFromStringValue("temperatureRaw", values:stringValues)
-//                    let humidityRaw = BlueCap.uint16ValueFromStringValue("humidityRaw", values:stringValues)
-//                    if temperatureRaw != nil && humidityRaw != nil {
-//                        let (temperature, humidity) = self.valuesFromRaw(temperatureRaw!, humidityRaw:humidityRaw!)
-//                        return Value(temperatureRaw:temperatureRaw!, humidityRaw:humidityRaw!, temperature:temperature, humidity:humidity)
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func valuesFromRaw(temperatureRaw:UInt16, humidityRaw:UInt16) -> (Double, Double) {
-//                    return (-46.86+175.72*Double(temperatureRaw)/65536.0, -6.0+125.0*Double(humidityRaw)/65536.0)
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["temperatureRaw":"\(temperatureRaw)", "humidityRaw":"\(humidityRaw)", "temperature":"\(temperature)", "humidity":"\(humidity)"]
-//                }
-//                func toRawValues() -> [UInt16] {
-//                    return [temperatureRaw, humidityRaw]
-//                }
-//            }
-//        }
-//        struct Enabled {
-//            static let uuid = "f000aa22-0451-4000-b000-000000000000"
-//            static let name = "Hygrometer Enabled"
-//        }
-//    }
-//
 //    //***************************************************************************************************
 //    // Sensor Tag Test Service
 //    //***************************************************************************************************
@@ -964,46 +1026,8 @@ public struct TISensorTag {
 //        }
 //    }
 //    
-//    //***************************************************************************************************
-//    // Common
-//    //***************************************************************************************************
-//    struct UInt8Period : DeserializedStruct {
-//        var periodRaw   : UInt8
-//        var period      : UInt16
-//        static func fromRawValues(rawValues:[UInt8]) -> UInt8Period? {
-//            var period = 10*UInt16(rawValues[0])
-//            if period < 10 {
-//                period = 10
-//            }
-//            return UInt8Period(periodRaw:rawValues[0], period:period)
-//        }
-//        static func fromStrings(stringValues:Dictionary<String, String>) -> UInt8Period? {
-//            if let period = BlueCap.uint16ValueFromStringValue("period", values:stringValues) {
-//                let periodRaw = self.periodRawFromPeriod(period)
-//                return UInt8Period(periodRaw:periodRaw, period:10*period)
-//            } else {
-//                return nil
-//            }
-//        }
-//        static func periodRawFromPeriod(period:UInt16) -> UInt8 {
-//            let periodRaw = period/10
-//            if periodRaw > 255 {
-//                return 255
-//            } else if periodRaw < 10 {
-//                return 10
-//            } else {
-//                return UInt8(periodRaw)
-//            }
-//        }
-//        var stringValues : Dictionary<String,String> {
-//        return ["periodRaw":"\(periodRaw)", "period":"\(period)"]
-//        }
-//        func toRawValues() -> [UInt8] {
-//            return [periodRaw]
-//        }
-    }
-//}
-//
+}
+
 //public class TISensorTagServiceProfiles {
 //    
 //    public class func create() {
