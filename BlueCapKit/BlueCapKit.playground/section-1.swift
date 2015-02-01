@@ -14,3 +14,4 @@ enum Enabled : UInt8, RawDeserializable {
 if let test = Enabled(rawValue:1) {
     println(test.rawValue)
 }
+

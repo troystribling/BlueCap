@@ -82,6 +82,13 @@ public struct TISensorTag {
             }
 
             // StringDeserializable
+            public static let stringValues : [String] = []
+            
+            public var stringValue : Dictionary<String,String> {
+                return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)",
+                    "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
+            }
+
             public init?(stringValue:[String:String]) {
                 let xRawInit = int8ValueFromStringValue("xRaw", stringValue)
                 let yRawInit = int8ValueFromStringValue("yRaw", stringValue)
@@ -96,15 +103,6 @@ public struct TISensorTag {
                 }
             }
             
-            public static var stringValues : [String] {
-                return []
-            }
-            
-            public var stringValue : Dictionary<String,String> {
-                return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)",
-                        "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
-            }
-
         }
         
         // Accelerometer Enabled
@@ -170,9 +168,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static var stringValues : [String] {
-                return []
-            }
+            public static let stringValues : [String] = []
             
             public var stringValue : [String:String] {
                 return [UpdatePeriod.name:"\(self.period)"]
@@ -261,9 +257,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static var stringValues  : [String] {
-                return []
-            }
+            public static let stringValues : [String] = []
             
             public var stringValue  : [String:String] {
                 return ["x":"\(x)", "y":"\(y)", "z":"\(z)",
@@ -348,9 +342,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static var stringValues : [String] {
-                return []
-            }
+            public static let stringValues : [String] = []
             
             public var stringValue : [String:String] {
                 return [UpdatePeriod.name:"\(self.period)"]
@@ -424,9 +416,7 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = serialize(Data(rawValue:[-24, -219, -23])!)
 
             // RawArrayDeserializable
-            public static var stringValues  : [String] {
-                return []
-            }
+            public static let stringValues : [String] = []
 
             public var rawValue : [Int16] {
                 return [self.xRaw, self.yRaw, self.zRaw]
@@ -597,9 +587,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static var stringValues  : [String] {
-                return []
-            }
+            public static let stringValues : [String] = []
 
             public var stringValue : Dictionary<String,String> {
                 return [ "object":"\(object)", "ambient":"\(ambient)",
@@ -662,162 +650,192 @@ public struct TISensorTag {
 
     }
 
-//    //***************************************************************************************************
-//    // Barometer Service
-//    //
-//    // Calibrated Pressure and Temperature are computed as follows
-//    // C1...C8 = Calibration Coefficients, TR = Raw temperature, PR = Raw Pressure,
-//    // T = Calibrated Temperature in Celcius, P = Calibrated Pressure in Pascals
-//    //
-//    // S = C3 + C4*TR/2^17 + C5*TR^2/2^34
-//    // O = C6*2^14 + C7*TR/8 + C8TR^2/2^19
-//    // P = (S*PR + O)/2^14
-//    // T = C2/2^10 + C1*TR/2^24
-//    //
-//    //***************************************************************************************************
-//    struct BarometerService {
-//        static let uuid = "F000AA40-0451-4000-B000-000000000000"
-//        static let name = "TI Barometer"
-//        struct Data {
-//            static let uuid = "f000aa41-0451-4000-b000-000000000000"
-//            static let name = "Baraometer Data"
-//            struct Value : DeserializedPairStruct {
-//                var temperatureRaw  : Int16
-//                var pressureRaw     : UInt16
-//                static func fromRawValues(rawValues:([Int16], [UInt16])) -> Value? {
-//                    let (temperatureRaw, pressureRaw) = rawValues
-//                    if temperatureRaw.count == 1 && pressureRaw.count == 1 {
-//                        return Value(temperatureRaw:temperatureRaw[0], pressureRaw:pressureRaw[0])
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let temperatureRaw = BlueCap.int16ValueFromStringValue("temperatureRaw", values:stringValues)
-//                    let pressureRaw = BlueCap.uint16ValueFromStringValue("pressureRaw", values:stringValues)
-//                    if temperatureRaw != nil && pressureRaw != nil {
-//                        return Value(temperatureRaw:temperatureRaw!, pressureRaw:pressureRaw!)
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func rawValueSizes() -> (Int, Int) {
-//                    return (sizeof(Int16), sizeof(UInt16))
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["temperatureRaw":"\(temperatureRaw)", "pressureRaw":"\(pressureRaw)"]
-//                }
-//                func toRawValues() -> ([Int16], [UInt16]) {
-//                    return ([temperatureRaw], [pressureRaw])
-//                }
-//            }
-//        }
-//        struct Calibration {
-//            static let uuid = "f000aa43-0451-4000-b000-000000000000"
-//            static let name = "Baraometer Calibration Data"
-//            struct Value : DeserializedPairStruct {
-//                var c1 : UInt16
-//                var c2 : UInt16
-//                var c3 : UInt16
-//                var c4 : UInt16
-//                var c5 : Int16
-//                var c6 : Int16
-//                var c7 : Int16
-//                var c8 : Int16
-//                static func fromRawValues(rawValues:([UInt16], [Int16])) -> Value? {
-//                    let (unsignedValues, signedValues) = rawValues
-//                    if unsignedValues.count == 4 && signedValues.count == 4 {
-//                        return Value(c1:unsignedValues[0], c2:unsignedValues[1], c3:unsignedValues[2], c4:unsignedValues[3],
-//                                     c5:signedValues[0], c6:signedValues[1], c7:signedValues[2], c8:signedValues[3])
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    let c1 = BlueCap.uint16ValueFromStringValue("c1", values:stringValues)
-//                    let c2 = BlueCap.uint16ValueFromStringValue("c2", values:stringValues)
-//                    let c3 = BlueCap.uint16ValueFromStringValue("c3", values:stringValues)
-//                    let c4 = BlueCap.uint16ValueFromStringValue("c4", values:stringValues)
-//                    let c5 = BlueCap.int16ValueFromStringValue("c5", values:stringValues)
-//                    let c6 = BlueCap.int16ValueFromStringValue("c6", values:stringValues)
-//                    let c7 = BlueCap.int16ValueFromStringValue("c7", values:stringValues)
-//                    let c8 = BlueCap.int16ValueFromStringValue("c8", values:stringValues)
-//                    if c1 != nil && c2 != nil && c3 != nil && c4 != nil && c5 != nil && c6 != nil && c7 != nil && c8 != nil {
-//                        return Value(c1:c1!, c2:c2!, c3:c3!, c4:c4!, c5:c5!, c6:c6!, c7:c7!, c8:c8!)
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func rawValueSizes() -> (Int, Int) {
-//                    return (4*sizeof(UInt16), 4*sizeof(Int16))
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                return ["c1":"\(c1)", "c2":"\(c2)", "c3":"\(c3)", "c4":"\(c4)","c5":"\(c5)", "c6":"\(c6)","c7":"\(c7)","c8":"\(c8)"]
-//                }
-//                func toRawValues() -> ([UInt16], [Int16]) {
-//                    return ([c1,c2,c3,c4], [c5,c6,c7,c8])
-//                }
-//            }
-//        }
-//        struct Enabled {
-//            static let uuid = "f000aa42-0451-4000-b000-000000000000"
-//            static let name = "Baraometer Enabled"
-//            enum Value : UInt8, DeserializedEnum {
-//                case No         = 0
-//                case Yes        = 1
-//                case Calibrate  = 2
-//                static func fromRaw(rawValue:UInt8) -> Value? {
-//                    switch rawValue {
-//                    case 0:
-//                        return Value.No
-//                    case 1:
-//                        return Value.Yes
-//                    case 2:
-//                        return Value.Calibrate
-//                    default:
-//                        return nil
-//                    }
-//                }
-//                static func fromString(stringValue:String) -> Value? {
-//                    switch stringValue {
-//                    case "No":
-//                        return Value.No
-//                    case "Yes":
-//                        return Value.Yes
-//                    case "Calibrate":
-//                        return Value.Calibrate
-//                    default:
-//                        return nil
-//                    }
-//                }
-//                static func stringValues() -> [String] {
-//                    return ["No", "Yes", "Calibrate"]
-//                }
-//                var stringValue : String {
-//                    switch self {
-//                    case .No:
-//                        return "No"
-//                    case .Yes:
-//                        return "Yes"
-//                    case .Calibrate:
-//                        return "Calibrate"
-//                    }
-//                }
-//                func toRaw() -> UInt8 {
-//                    switch self {
-//                    case .No:
-//                        return 0
-//                    case .Yes:
-//                        return 1
-//                    case .Calibrate:
-//                        return 2
-//                    }
-//                    
-//                }
-//            }
-//        }
-//    }
-//
+    //***************************************************************************************************
+    // Barometer Service
+    //
+    // Calibrated Pressure and Temperature are computed as follows
+    // C1...C8 = Calibration Coefficients, TR = Raw temperature, PR = Raw Pressure,
+    // T = Calibrated Temperature in Celcius, P = Calibrated Pressure in Pascals
+    //
+    // S = C3 + C4*TR/2^17 + C5*TR^2/2^34
+    // O = C6*2^14 + C7*TR/8 + C8TR^2/2^19
+    // P = (S*PR + O)/2^14
+    // T = C2/2^10 + C1*TR/2^24
+    public struct BarometerService : ServiceConfigurable {
+        
+        // ServiceConfigurable
+        public static let uuid = "F000AA40-0451-4000-B000-000000000000"
+        public static let name = "TI Barometer"
+        public static let tag  = "TI Sensor Tag"
+
+        public struct Data : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            public let temperatureRaw  : Int16
+            public let pressureRaw     : UInt16
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa41-0451-4000-b000-000000000000"
+            public static let name                      = "Baraometer Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(Data(rawValue:(-2343, 33995))!)
+
+            // RawPairDeserializable
+            public static let stringValues : [String] = []
+            
+            public var rawValue : (Int16, UInt16) {
+                return (self.temperatureRaw, self.pressureRaw)
+            }
+            
+            public init?(rawValue:(Int16, UInt16)) {
+                (self.temperatureRaw, self.pressureRaw) = rawValue
+            }
+
+            // StringDeserializable
+            public var stringValue : Dictionary<String,String> {
+                return ["temperatureRaw":"\(temperatureRaw)", "pressureRaw":"\(pressureRaw)"]
+            }
+
+            public init?(stringValue:[String:String]) {
+                let temperatureRawInit = int16ValueFromStringValue("temperatureRaw", stringValue)
+                let pressureRawInit = uint16ValueFromStringValue("pressureRaw", stringValue)
+                if temperatureRawInit != nil && pressureRawInit != nil {
+                    self.temperatureRaw = temperatureRawInit!
+                    self.pressureRaw = pressureRawInit!
+                } else {
+                    return nil
+                }
+            }
+            
+        }
+    
+        // Barometer Enabled
+        public struct Calibration : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            public let c1 : UInt16
+            public let c2 : UInt16
+            public let c3 : UInt16
+            public let c4 : UInt16
+            
+            public let c5 : Int16
+            public let c6 : Int16
+            public let c7 : Int16
+            public let c8 : Int16
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa43-0451-4000-b000-000000000000"
+            public static let name                      = "Baraometer Calibration Data"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(Calibration(rawValue:([45697, 25592, 48894, 36174], [7001, 1990, -2369, 5542]))!)
+
+            // RawArrayPairDeserializable
+            public static var size : (Int, Int) {
+                return (4*sizeof(UInt16), 4*sizeof(Int16))
+            }
+            
+            public var rawValue : ([UInt16], [Int16]) {
+                return ([self.c1, self.c2, self.c3, self.c4],
+                        [self.c5, self.c6, self.c7, self.c8])
+            }
+
+            public init?(rawValue:([UInt16], [Int16])) {
+                let (unsignedValues, signedValues) = rawValue
+                if unsignedValues.count == 4 && signedValues.count == 4 {
+                    self.c1 = unsignedValues[0]
+                    self.c2 = unsignedValues[1]
+                    self.c3 = unsignedValues[2]
+                    self.c4 = unsignedValues[3]
+                    self.c5 = signedValues[0]
+                    self.c6 = signedValues[1]
+                    self.c7 = signedValues[2]
+                    self.c8 = signedValues[3]
+                } else {
+                    return nil
+                }
+            }
+            
+            // StringDeserializable
+            public static let stringValues : [String] = []
+
+            public var stringValue : [String:String] {
+                return ["c1":"\(c1)", "c2":"\(c2)", "c3":"\(c3)",
+                        "c4":"\(c4)", "c5":"\(c5)", "c6":"\(c6)",
+                        "c7":"\(c7)", "c8":"\(c8)"]
+            }
+
+            public init?(stringValue:[String:String]) {
+                let c1Init = uint16ValueFromStringValue("c1", stringValue)
+                let c2Init = uint16ValueFromStringValue("c2", stringValue)
+                let c3Init = uint16ValueFromStringValue("c3", stringValue)
+                let c4Init = uint16ValueFromStringValue("c4", stringValue)
+                let c5Init = int16ValueFromStringValue("c5", stringValue)
+                let c6Init = int16ValueFromStringValue("c6", stringValue)
+                let c7Init = int16ValueFromStringValue("c7", stringValue)
+                let c8Init = int16ValueFromStringValue("c8", stringValue)
+                if c1Init != nil && c2Init != nil && c3Init != nil && c4Init != nil && c5Init != nil && c6Init != nil && c7Init != nil && c8Init != nil {
+                    self.c1 = c1Init!
+                    self.c2 = c2Init!
+                    self.c3 = c3Init!
+                    self.c4 = c4Init!
+                    self.c5 = c5Init!
+                    self.c6 = c6Init!
+                    self.c7 = c7Init!
+                    self.c8 = c8Init!
+                } else {
+                    return nil
+                }
+            }
+        }
+    
+        // Barometer Enabled
+        public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+            
+            case No         = 0
+            case Yes        = 1
+            case Calibrate  = 2
+            
+            // CharacteristicConfigurable
+            public static let uuid                     = "f000aa42-0451-4000-b000-000000000000"
+            public static let name                     = "Baraometer Enabled"
+            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?   = serialize(Enabled.No.rawValue)
+            
+            // StringDeserializable
+            public static let stringValues =  ["No", "Yes", "Calibrate"]
+            
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["Enabled"] {
+                    switch value {
+                    case "Yes":
+                        self = Enabled.Yes
+                    case "No":
+                        self = Enabled.No
+                    case "Calibrate":
+                        self = Enabled.Calibrate
+                    default:
+                        return nil
+                    }
+                } else {
+                    return nil
+                }
+            }
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return ["Enabled":"No"]
+                case .Yes:
+                    return ["Enabled":"Yes"]
+                case .Calibrate:
+                    return ["Enabled":"Yes"]
+                }
+            }
+        }
+
+    }
+
 //    //***************************************************************************************************
 //    // Hygrometer Service
 //    // Temperature units Celsius
