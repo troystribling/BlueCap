@@ -82,7 +82,7 @@ public struct TISensorTag {
             }
 
             // StringDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
             
             public var stringValue : Dictionary<String,String> {
                 return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)",
@@ -168,7 +168,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
             
             public var stringValue : [String:String] {
                 return [UpdatePeriod.name:"\(self.period)"]
@@ -257,7 +257,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
             
             public var stringValue  : [String:String] {
                 return ["x":"\(x)", "y":"\(y)", "z":"\(z)",
@@ -342,7 +342,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
             
             public var stringValue : [String:String] {
                 return [UpdatePeriod.name:"\(self.period)"]
@@ -416,7 +416,7 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = serialize(Data(rawValue:[-24, -219, -23])!)
 
             // RawArrayDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
 
             public var rawValue : [Int16] {
                 return [self.xRaw, self.yRaw, self.zRaw]
@@ -502,9 +502,8 @@ public struct TISensorTag {
                 }
             }
             
-            public static var stringValues : [String] {
-                return ["No", "XAxis", "YAxis", "XYAxis", "ZAxis", "XZAxis", "YZAxis", "XYZAxis"]
-            }
+            public static var stringValues = ["No", "XAxis", "YAxis", "XYAxis",
+                                              "ZAxis", "XZAxis", "YZAxis", "XYZAxis"]
             
             public var stringValue : [String:String] {
                 switch self {
@@ -681,7 +680,7 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = serialize(Data(rawValue:(-2343, 33995))!)
 
             // RawPairDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
             
             public var rawValue : (Int16, UInt16) {
                 return (self.temperatureRaw, self.pressureRaw)
@@ -756,7 +755,7 @@ public struct TISensorTag {
             }
             
             // StringDeserializable
-            public static let stringValues : [String] = []
+            public static let stringValues = [String]()
 
             public var stringValue : [String:String] {
                 return ["c1":"\(c1)", "c2":"\(c2)", "c3":"\(c3)",
@@ -945,75 +944,142 @@ public struct TISensorTag {
 
     }
 
-//    //***************************************************************************************************
-//    // Sensor Tag Test Service
-//    //***************************************************************************************************
-//    struct SensorTagTestService {
-//        static let uuid = "F000AA60-0451-4000-B000-000000000000"
-//        static let name = "TI Sensor Tag Test"
-//        struct Data {
-//            static let uuid = "f000aa61-0451-4000-b000-000000000000"
-//            static let name = "Test Data"
-//            struct Value : DeserializedStruct {
-//                var resultRaw : UInt8
-//                var test1 : Bool
-//                var test2 : Bool
-//                var test3 : Bool
-//                var test4 : Bool
-//                var test5 : Bool
-//                var test6 : Bool
-//                var test7 : Bool
-//                var test8 : Bool
-//                static func fromRawValues(rawValues:[UInt8]) -> Value? {
-//                    let values = self.valuesFromRaw(rawValues[0])
-//                    return Value(resultRaw:rawValues[0], test1:values[0],
-//                                 test2:values[1], test3:values[2],
-//                                 test4:values[3], test5:values[4],
-//                                 test6:values[5], test7:values[6],
-//                                 test8:values[7])
-//                }
-//                static func fromStrings(stringValues:Dictionary<String, String>) -> Value? {
-//                    if let rawValue = BlueCap.uint8ValueFromStringValue("rawValue", values:stringValues) {
-//                        let values = self.valuesFromRaw(rawValue)
-//                        return Value(resultRaw:rawValue, test1:values[0],
-//                                     test2:values[1], test3:values[2],
-//                                     test4:values[3], test5:values[4],
-//                                     test6:values[5], test7:values[6],
-//                                     test8:values[7])
-//                    } else {
-//                        return nil
-//                    }
-//                }
-//                static func valuesFromRaw(rawValue:UInt8) -> [Bool] {
-//                    return [self.testResult(rawValue, position:0), self.testResult(rawValue, position:1),
-//                            self.testResult(rawValue, position:2), self.testResult(rawValue, position:3),
-//                            self.testResult(rawValue, position:4), self.testResult(rawValue, position:5),
-//                            self.testResult(rawValue, position:6), self.testResult(rawValue, position:7)]
-//                }
-//                static func testResult(rawResult:UInt8, position:UInt8) -> Bool {
-//                    return (rawResult & (1 << position)) > 0
-//                }
-//                var stringValues : Dictionary<String,String> {
-//                    return ["resultRaw":"\(resultRaw)", "test1":"\(self.testResultStringValue(test1))",
-//                            "test2":"\(self.testResultStringValue(test2))", "test3":"\(self.testResultStringValue(test3))",
-//                            "test4":"\(self.testResultStringValue(test4))", "test5":"\(self.testResultStringValue(test5))",
-//                            "test6":"\(self.testResultStringValue(test6))", "test7":"\(self.testResultStringValue(test7))",
-//                            "test8":"\(self.testResultStringValue(test8))"]
-//                }
-//                func testResultStringValue(value:Bool) -> String {
-//                    return value ? "PASSED" : "FAILED"
-//                }
-//                func toRawValues() -> [UInt8] {
-//                    return [resultRaw]
-//                }
-//            }
-//        }
-//        struct Enabled {
-//            static let uuid = "f000aa62-0451-4000-b000-000000000000"
-//            static let name = "Test Enabled"
-//        }
-//    }
-//
+    //***************************************************************************************************
+    // Sensor Tag Test Service
+    public struct SensorTagTestService : ServiceConfigurable {
+        
+        // ServiceConfigurable
+        public static let uuid  = "F000AA60-0451-4000-B000-000000000000"
+        public static let name  = "TI Sensor Tag Test"
+        public static let tag   = "TI Sensor Tag"
+        
+        public struct Data : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+
+            var resultRaw : UInt8
+
+            var test1 : Bool
+            var test2 : Bool
+            var test3 : Bool
+            var test4 : Bool
+            var test5 : Bool
+            var test6 : Bool
+            var test7 : Bool
+            var test8 : Bool
+        
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa61-0451-4000-b000-000000000000"
+            public static let name                      = "Test Data"
+            public static let properties                = CBCharacteristicProperties.Read
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(0b11110000 as UInt8)
+
+            private static func valuesFromRaw(rawValue:UInt8) -> [Bool] {
+                return [self.testResult(rawValue, position:0), self.testResult(rawValue, position:1),
+                    self.testResult(rawValue, position:2), self.testResult(rawValue, position:3),
+                    self.testResult(rawValue, position:4), self.testResult(rawValue, position:5),
+                    self.testResult(rawValue, position:6), self.testResult(rawValue, position:7)]
+            }
+            
+            private static func testResult(rawResult:UInt8, position:UInt8) -> Bool {
+                return (rawResult & (1 << position)) > 0
+            }
+            
+            private static func testResultStringValue(value:Bool) -> String {
+                return value ? "PASSED" : "FAILED"
+            }
+
+
+            // RawDeserializable
+            public var rawValue : UInt8 {
+                return self.resultRaw
+            }
+            
+            public init?(rawValue:UInt8) {
+                self.resultRaw = rawValue
+                let values = Data.valuesFromRaw(rawValue)
+                self.test1 = values[0]
+                self.test2 = values[1]
+                self.test3 = values[2]
+                self.test4 = values[3]
+                self.test5 = values[4]
+                self.test6 = values[5]
+                self.test7 = values[6]
+                self.test8 = values[7]
+            }
+            
+            // StringDeserializable
+            public static let stringValues = [String]()
+
+            public var stringValue : [String:String] {
+                return ["resultRaw":"\(resultRaw)", "test1":"\(Data.testResultStringValue(test1))",
+                        "test2":"\(Data.testResultStringValue(test2))", "test3":"\(Data.testResultStringValue(test3))",
+                        "test4":"\(Data.testResultStringValue(test4))", "test5":"\(Data.testResultStringValue(test5))",
+                        "test6":"\(Data.testResultStringValue(test6))", "test7":"\(Data.testResultStringValue(test7))",
+                        "test8":"\(Data.testResultStringValue(test8))"]
+            }
+                
+            public init?(stringValue:[String:String]) {
+                if let rawValue = uint8ValueFromStringValue("resultRaw", stringValue) {
+                    let values = Data.valuesFromRaw(rawValue)
+                    self.resultRaw = rawValue
+                    self.test1 = values[0]
+                    self.test2 = values[1]
+                    self.test3 = values[2]
+                    self.test4 = values[3]
+                    self.test5 = values[4]
+                    self.test6 = values[5]
+                    self.test7 = values[6]
+                    self.test8 = values[7]
+                } else {
+                    return nil
+                }
+            }
+
+        }
+    
+        public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+            
+            case No     = 0
+            case Yes    = 1
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "f000aa62-0451-4000-b000-000000000000"
+            public static let name                      = "Test Enabled"
+            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(Enabled.No.rawValue)
+            
+            
+            // StringDeserializable
+            public static let stringValues = ["No", "Yes"]
+            
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["Enabled"] {
+                    switch value {
+                    case "Yes":
+                        self = Enabled.Yes
+                    case "No":
+                        self = Enabled.No
+                    default:
+                        return nil
+                    }
+                } else {
+                    return nil
+                }
+            }
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return ["Enabled":"No"]
+                case .Yes:
+                    return ["Enabled":"Yes"]
+                }
+            }
+        }
+
+    }
+
 //    //***************************************************************************************************
 //    // Key Pressed Service
 //    //***************************************************************************************************
