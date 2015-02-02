@@ -123,7 +123,7 @@ public struct TISensorTag {
             public static let stringValues = ["No", "Yes"]
             
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["Enabled"] {
+                if let value = stringValue[Enabled.name] {
                     switch value {
                     case "Yes":
                         self = Enabled.Yes
@@ -140,9 +140,9 @@ public struct TISensorTag {
             public var stringValue : [String:String] {
                 switch self {
                 case .No:
-                    return ["Enabled":"No"]
+                    return [Enabled.name:"No"]
                 case .Yes:
-                    return ["Enabled":"Yes"]
+                    return [Enabled.name:"Yes"]
                 }
             }
         }
@@ -297,7 +297,7 @@ public struct TISensorTag {
             public static let stringValues = ["No", "Yes"]
             
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["Enabled"] {
+                if let value = stringValue[Enabled.name] {
                     switch value {
                     case "Yes":
                         self = Enabled.Yes
@@ -314,9 +314,9 @@ public struct TISensorTag {
             public var stringValue : [String:String] {
                 switch self {
                 case .No:
-                    return ["Enabled":"No"]
+                    return [Enabled.name:"No"]
                 case .Yes:
-                    return ["Enabled":"Yes"]
+                    return [Enabled.name:"Yes"]
                 }
             }
         }
@@ -476,7 +476,7 @@ public struct TISensorTag {
 
             // StringDeserializable
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["Enabled"] {
+                if let value = stringValue[Enabled.name] {
                     switch value {
                     case "No":
                         self = Enabled.No
@@ -508,21 +508,21 @@ public struct TISensorTag {
             public var stringValue : [String:String] {
                 switch self {
                 case .No:
-                    return ["Enabled" : "No"]
+                    return [Enabled.name:"No"]
                 case .XAxis:
-                    return ["Enabled" : "XAxis"]
+                    return [Enabled.name:"XAxis"]
                 case .YAxis:
-                    return ["Enabled" : "YAxis"]
+                    return [Enabled.name:"YAxis"]
                 case .XYAxis:
-                    return ["Enabled" : "XYAxis"]
+                    return [Enabled.name:"XYAxis"]
                 case .ZAxis:
-                    return ["Enabled" : "ZAxis"]
+                    return [Enabled.name:"ZAxis"]
                 case .XZAxis:
-                    return ["Enabled" : "XZAxis"]
+                    return [Enabled.name:"XZAxis"]
                 case .YZAxis:
-                    return ["Enabled" : "YZAxis"]
+                    return [Enabled.name:"YZAxis"]
                 case .XYZAxis:
-                    return ["Enabled" : "XYZAxis"]
+                    return [Enabled.name:"XYZAxis"]
                 }
             }
         }
@@ -623,7 +623,7 @@ public struct TISensorTag {
             public static let stringValues = ["No", "Yes"]
             
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["Enabled"] {
+                if let value = stringValue[Enabled.name] {
                     switch value {
                     case "Yes":
                         self = Enabled.Yes
@@ -640,9 +640,9 @@ public struct TISensorTag {
             public var stringValue : [String:String] {
                 switch self {
                 case .No:
-                    return ["Enabled":"No"]
+                    return [Enabled.name:"No"]
                 case .Yes:
-                    return ["Enabled":"Yes"]
+                    return [Enabled.name:"Yes"]
                 }
             }
         }
@@ -805,7 +805,7 @@ public struct TISensorTag {
             public static let stringValues =  ["No", "Yes", "Calibrate"]
             
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["Enabled"] {
+                if let value = stringValue[Enabled.name] {
                     switch value {
                     case "Yes":
                         self = Enabled.Yes
@@ -824,11 +824,11 @@ public struct TISensorTag {
             public var stringValue : [String:String] {
                 switch self {
                 case .No:
-                    return ["Enabled":"No"]
+                    return [Enabled.name:"No"]
                 case .Yes:
-                    return ["Enabled":"Yes"]
+                    return [Enabled.name:"Yes"]
                 case .Calibrate:
-                    return ["Enabled":"Yes"]
+                    return [Enabled.name:"Yes"]
                 }
             }
         }
@@ -917,8 +917,17 @@ public struct TISensorTag {
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
             
+            public var stringValue : [String:String] {
+                switch self {
+                case .No:
+                    return [Enabled.name:"No"]
+                case .Yes:
+                    return [Enabled.name:"Yes"]
+                }
+            }
+
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["Enabled"] {
+                if let value = stringValue[Enabled.name] {
                     switch value {
                     case "Yes":
                         self = Enabled.Yes
@@ -932,14 +941,6 @@ public struct TISensorTag {
                 }
             }
             
-            public var stringValue : [String:String] {
-                switch self {
-                case .No:
-                    return ["Enabled":"No"]
-                case .Yes:
-                    return ["Enabled":"Yes"]
-                }
-            }
         }
 
     }
@@ -1054,7 +1055,7 @@ public struct TISensorTag {
             public static let stringValues = ["No", "Yes"]
             
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["Enabled"] {
+                if let value = stringValue[Enabled.name] {
                     switch value {
                     case "Yes":
                         self = Enabled.Yes
@@ -1071,9 +1072,9 @@ public struct TISensorTag {
             public var stringValue : [String:String] {
                 switch self {
                 case .No:
-                    return ["Enabled":"No"]
+                    return [Enabled.name:"No"]
                 case .Yes:
-                    return ["Enabled":"Yes"]
+                    return [Enabled.name:"Yes"]
                 }
             }
         }

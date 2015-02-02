@@ -90,7 +90,6 @@ public struct Nordic {
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
             public static let initialValue : NSData?    = serialize(Int16(100))
 
-
             // RawArrayDeserializable
             public var rawValue : [UInt8] {
                 return [self.addr1, self.addr2, self.addr3, self.addr4, self.addr5, self.addr5]
@@ -138,82 +137,66 @@ public struct Nordic {
 
         }
         
-//        struct AddressType {
-//            static let uuid = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
-//            static let name = "BLE Address Type"
-//            enum Value : UInt8, DeserializedEnum {
-//                case Unknown                    = 0
-//                case Public                     = 1
-//                case RandomStatic               = 2
-//                case RandomPrivateResolvable    = 3
-//                case RandomPrivateUnresolvable  = 4
-//                static func fromRaw(rawValue:UInt8) -> Value? {
-//                    switch rawValue {
-//                    case 0:
-//                        return Value.Unknown
-//                    case 1:
-//                        return Value.Public
-//                    case 2:
-//                        return Value.RandomStatic
-//                    case 3:
-//                        return Value.RandomPrivateResolvable
-//                    case 4:
-//                        return Value.RandomPrivateUnresolvable
-//                    default:
-//                        return nil
-//                    }
-//                }
-//                static func fromString(stringValue:String) -> Value? {
-//                    switch stringValue {
-//                    case "Unknown":
-//                        return Value.Unknown
-//                    case "Public":
-//                        return Value.Public
-//                    case "RandomStatic":
-//                        return Value.RandomStatic
-//                    case "RandomPrivateResolvable":
-//                        return Value.RandomPrivateResolvable
-//                    case "RandomPrivateUnresolvable":
-//                        return Value.RandomPrivateUnresolvable
-//                    default:
-//                        return nil
-//                    }
-//                }
-//                static func stringValues() -> [String] {
-//                    return ["Unknown", "Public", "RandomStatic", "RandomPrivateResolvable", "RandomPrivateUnresolvable"]
-//                }
-//                var stringValue : String {
-//                switch self {
-//                case .Unknown:
-//                    return "Unknown"
-//                case .Public:
-//                    return "Public"
-//                case .RandomStatic:
-//                    return "RandomStatic"
-//                case .RandomPrivateResolvable:
-//                    return "RandomPrivateResolvable"
-//                case .RandomPrivateUnresolvable:
-//                    return "RandomPrivateUnresolvable"
-//                    }
-//                }
-//                func toRaw() -> UInt8 {
-//                    switch self {
-//                    case .Unknown:
-//                        return 0
-//                    case .Public:
-//                        return 1
-//                    case .RandomStatic:
-//                        return 2
-//                    case .RandomPrivateResolvable:
-//                        return 3
-//                    case .RandomPrivateUnresolvable:
-//                        return 4
-//                    }
-//                }
-//            }
-//        }
+        public enum AddressType : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable  {
+            
+            case Unknown                    = 0
+            case Public                     = 1
+            case RandomStatic               = 2
+            case RandomPrivateResolvable    = 3
+            case RandomPrivateUnresolvable  = 4
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
+            public static let name                      = "BLE Address Type"
+            public static let properties                = CBCharacteristicProperties.Read
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(AddressType.Public)
+
+
+            // StringDeserializable
+            public static let stringValues = ["Unknown", "Public", "RandomStatic",
+                                              "RandomPrivateResolvable", "RandomPrivateUnresolvable"]
+
+            public var stringValue : [String:String] {
+                switch self {
+                case .Unknown:
+                    return [AddressType.name:"Unknown"]
+                case .Public:
+                    return [AddressType.name:"Public"]
+                case .RandomStatic:
+                    return [AddressType.name:"RandomStatic"]
+                case .RandomPrivateResolvable:
+                    return [AddressType.name:"RandomPrivateResolvable"]
+                case .RandomPrivateUnresolvable:
+                    return [AddressType.name:"RandomPrivateUnresolvable"]
+                }
+            }
+
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue[AddressType.name] {
+                    switch value {
+                    case "Unknown":
+                        self = AddressType.Unknown
+                    case "Public":
+                        self = AddressType.Public
+                    case "RandomStatic":
+                        self = AddressType.RandomStatic
+                    case "RandomPrivateResolvable":
+                        self = AddressType.RandomPrivateResolvable
+                    case "RandomPrivateUnresolvable":
+                        self = AddressType.RandomPrivateUnresolvable
+                    default:
+                        return nil
+                   
+                    }
+                } else {
+                    return nil
+                }
+            }
+        }
     }
 }
+
 //
 //public class NordicProfiles {
 //    
