@@ -1080,18 +1080,61 @@ public struct TISensorTag {
 
     }
 
-//    //***************************************************************************************************
-//    // Key Pressed Service
-//    //***************************************************************************************************
-//    struct KeyPressedService {
-//        static let uuid = "ffe0"
-//        static let name = "Sensor Tag Key Pressed"
-//        struct Data {
-//            static let uuid = "ffe1"
-//            static let name = "Key Pressed"
-//        }
-//    }
-//    
+    //***************************************************************************************************
+    // Key Pressed Service
+    public struct KeyPressedService : ServiceConfigurable {
+
+        public static let uuid = "ffe0"
+        public static let name = "Sensor Tag Key Pressed"
+        public static let tag  = "TI Sensor Tag"
+
+        public enum State : UInt8, RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+            
+            case None       = 0
+            case ButtonOne  = 1
+            case ButtonTwo  = 2
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "ffe1"
+            public static let name                      = "Key Pressed"
+            public static let properties                = CBCharacteristicProperties.Notify
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let initialValue : NSData?    = serialize(0x01 as UInt8)
+
+            
+            // StringDeserializable
+            public static let stringValues = ["None", "Button One", "Button Two"]
+            
+            public var stringValue : [String:String] {
+                switch self {
+                case .None:
+                    return ["state":"None"]
+                case .ButtonOne:
+                    return ["state":"Button One"]
+                case .ButtonTwo:
+                    return ["state":"Button Two"]
+                }
+            }
+
+            public init?(stringValue:[String:String]) {
+                if let value = stringValue["state"] {
+                    switch value {
+                    case "None":
+                        self = State.None
+                    case "Button One":
+                        self = State.ButtonOne
+                    case "Button Two":
+                        self = State.ButtonTwo
+                    default:
+                        return nil
+                    }
+                } else {
+                    return nil
+                }
+            }
+        }
+    }
+    
 }
 
 //public class TISensorTagServiceProfiles {
