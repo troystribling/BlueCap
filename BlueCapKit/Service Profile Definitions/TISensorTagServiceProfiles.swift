@@ -1100,7 +1100,6 @@ public struct TISensorTag {
             public static let properties                = CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
             public static let initialValue : NSData?    = serialize(0x01 as UInt8)
-
             
             // StringDeserializable
             public static let stringValues = ["None", "Button One", "Button Two"]
