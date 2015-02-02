@@ -1108,16 +1108,16 @@ public struct TISensorTag {
             public var stringValue : [String:String] {
                 switch self {
                 case .None:
-                    return ["state":"None"]
+                    return [State.name:"None"]
                 case .ButtonOne:
-                    return ["state":"Button One"]
+                    return [State.name:"Button One"]
                 case .ButtonTwo:
-                    return ["state":"Button Two"]
+                    return [State.name:"Button Two"]
                 }
             }
 
             public init?(stringValue:[String:String]) {
-                if let value = stringValue["state"] {
+                if let value = stringValue[State.name] {
                     switch value {
                     case "None":
                         self = State.None

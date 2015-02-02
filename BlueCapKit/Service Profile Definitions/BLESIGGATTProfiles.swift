@@ -10,65 +10,177 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-//public struct BLESIGGATT {
-//    
-//    //***************************************************************************************************
-//    // Device Information Service
-//    //***************************************************************************************************
-//    struct DeviceInformationService {
-//        static let uuid = "180a"
-//        static let name = "Device Information"
-//        struct ModelNumber {
-//            static let uuid = "2a24"
-//            static let name = "Device Model Number"
-//        }
-//        struct SerialNumber {
-//            static let uuid = "2a25"
-//            static let name = "Device Serial Number"
-//        }
-//        struct FirmwareRevision {
-//            static let uuid = "2a26"
-//            static let name = "Device Firmware Revision"
-//        }
-//        struct HardwareRevision {
-//            static let uuid = "2a27"
-//            static let name = "Device Hardware Revision"
-//        }
-//        struct SoftwareRevision {
-//            static let uuid = "2a28"
-//            static let name = "Device Software Revision"
-//        }
-//        struct ManufacturerName {
-//            static let uuid = "2a29"
-//            static let name = "Device Manufacturer Name"
-//        }
-//    }
-//    
-//    //***************************************************************************************************
-//    // Battery Service
-//    //***************************************************************************************************
-//    struct BatteryService {
-//        static let uuid = "180f"
-//        static let name = "Battery"
-//        struct Level {
-//            static let uuid = "2a19"
-//            static let name = "Battery Level"
-//        }
-//    }
-//
-//    //***************************************************************************************************
-//    // Tx Power Service
-//    //***************************************************************************************************
-//    struct TxPowerService {
-//        static let uuid = "1804"
-//        static let name = "Tx Power Level"
-//        struct Level {
-//            static let uuid = "2a07"
-//            static let name = "Tx Power Level"
-//        }
-//    }
-//    
-//}
+public struct BLESIGGATT {
+
+    //***************************************************************************************************
+    // Device Information Service
+    public struct DeviceInformationService : ServiceConfigurable {
+
+        // ServiceConfigurable
+        public static let uuid = "180a"
+        public static let name = "Device Information"
+        public static let tag  = "BLESIGGATT"
+        
+        public struct ModelNumber : CharacteristicConfigurable {
+            
+            // CharacteristicConfigurable
+            public static let uuid = "2a24"
+            public static let name = "Device Model Number"
+            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties   = CBCharacteristicProperties.Read
+            public static let initialValue = serialize("Model A")
+            
+        }
+        
+        public struct SerialNumber : CharacteristicConfigurable {
+
+            // CharacteristicConfigurable
+            public static let uuid = "2a25"
+            public static let name = "Device Serial Number"
+            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties   = CBCharacteristicProperties.Read
+            public static let initialValue = serialize("AAA11")
+            
+        }
+        
+        public struct FirmwareRevision : CharacteristicConfigurable {
+
+            // CharacteristicConfigurable
+            public static let uuid = "2a26"
+            public static let name = "Device Firmware Revision"
+            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties   = CBCharacteristicProperties.Read
+            public static let initialValue = serialize("1.0")
+
+        }
+        
+        public struct HardwareRevision : CharacteristicConfigurable {
+            
+            // CharacteristicConfigurable
+            public static let uuid = "2a27"
+            public static let name = "Device Hardware Revision"
+            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties   = CBCharacteristicProperties.Read
+            public static let initialValue = serialize("1.0")
+            
+        }
+        
+        public struct SoftwareRevision : CharacteristicConfigurable {
+            
+            // CharacteristicConfigurable
+            public static let uuid = "2a28"
+            public static let name = "Device Software Revision"
+            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties   = CBCharacteristicProperties.Read
+            public static let initialValue = serialize("1.0")
+
+        }
+        
+        public struct ManufacturerName : CharacteristicConfigurable {
+            
+            // CharacteristicConfigurable
+            public static let uuid = "2a29"
+            public static let name = "Device Manufacturer Name"
+            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties   = CBCharacteristicProperties.Read
+            public static let initialValue = serialize("gnos.us")
+            
+        }
+    }
+    
+    //***************************************************************************************************
+    // Battery Service
+    public struct BatteryService : ServiceConfigurable {
+
+        // ServiceConfigurable
+        public static let uuid = "180f"
+        public static let name = "Battery"
+        public static let tag  = "BLESIGGATT"
+        
+        public struct Level : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+            
+            public let value : UInt8
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "2a19"
+            public static let name                      = "Battery Level"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Notify | CBCharacteristicProperties.Read
+            public static let initialValue : NSData?    = serialize(UInt8(100))
+
+            // RawDeserializable
+            public var rawValue : UInt8 {
+                return self.value
+            }
+            public init?(rawValue:UInt8) {
+                self.value = rawValue
+            }
+            
+            // StringDeserializable
+            public static let stringValues = [String]()
+            
+            public var stringValue : [String:String] {
+                return [Level.name:"\(self.value)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                if let valueInit = uint8ValueFromStringValue(Level.name, stringValue) {
+                    self.value = valueInit
+                } else {
+                    return nil
+                }
+            }
+
+        }
+    }
+
+    //***************************************************************************************************
+    // Tx Power Service
+    public struct TxPowerService : ServiceConfigurable {
+
+        // ServiceConfigurable
+        public static let uuid = "1804"
+        public static let name = "Tx Power Level"
+        public static let tag  = "BLESIGGATT"
+
+        public struct Level : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+            
+            public let value : Int8
+            
+            // CharacteristicConfigurable
+            public static let uuid                      = "2a07"
+            public static let name                      = "Tx Power Level"
+            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = CBCharacteristicProperties.Notify | CBCharacteristicProperties.Read
+            public static let initialValue : NSData?    = serialize(Int8(-40))
+            
+            // RawDeserializable
+            public var rawValue : Int8 {
+                return self.value
+            }
+            public init?(rawValue:Int8) {
+                self.value = rawValue
+            }
+            
+            // StringDeserializable
+            public static let stringValues = [String]()
+            
+            public var stringValue : [String:String] {
+                return [Level.name:"\(self.value)"]
+            }
+            
+            public init?(stringValue:[String:String]) {
+                if let valueInit = int8ValueFromStringValue(Level.name, stringValue) {
+                    self.value = valueInit
+                } else {
+                    return nil
+                }
+            }
+
+        }
+    }
+    
+}
 //
 //public class BLESIGGATTProfiles {
 //    
