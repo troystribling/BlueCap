@@ -171,7 +171,7 @@ public struct GnosusProfiles {
         // Hello World Service
         let helloWorldService = ConfiguredServiceProfile<Gnosus.HelloWorldService>()
         let greetingCharacteristic = StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>()
-        let updateCharacteristic = RawDeserializedCharacteristicProfile<Gnosus.HelloWorldService.UpdatePeriod>()
+        let updateCharacteristic = RawCharacteristicProfile<Gnosus.HelloWorldService.UpdatePeriod>()
         helloWorldService.addCharacteristic(greetingCharacteristic)
         helloWorldService.addCharacteristic(updateCharacteristic)
         profileManager.addService(helloWorldService)

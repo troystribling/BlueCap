@@ -67,8 +67,8 @@ public class CharacteristicProfile {
     
 }
 
-// RawDeserializedCharacteristicProfile
-public class RawDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
+// RawCharacteristicProfile
+public class RawCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -93,8 +93,8 @@ public class RawDeserializedCharacteristicProfile<DeserializedType where Deseria
     
 }
 
-// RawPairDeserializedCharacteristicProfile
-public class RawPairDeserializedCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
+// RawPairCharacteristicProfile
+public class RawPairCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -145,7 +145,33 @@ public class RawArrayCharacteristicProfile<DeserializedType where DeserializedTy
     
 }
 
-// RawArrayCharacteristicProfile
+// RawArrayPairCharacteristicProfile
+public class RawArrayPairCharacteristicProfile<DeserializedType where DeserializedType:RawArrayPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
+    
+    public init() {
+        super.init(uuid:DeserializedType.uuid,
+            name:DeserializedType.name,
+            permissions:DeserializedType.permissions,
+            properties:DeserializedType.properties,
+            initialValue:DeserializedType.initialValue)
+    }
+    
+    public override var stringValues : [String] {
+        return DeserializedType.stringValues
+    }
+    
+    public override func stringValue(data:NSData) -> [String:String]? {
+        let value : DeserializedType? = deserialize(data)
+        return value.map{$0.stringValue}
+    }
+    
+    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+        return DeserializedType(stringValue:data).flatmap{serialize($0)}
+    }
+    
+}
+
+// StringCharacteristicProfile
 public class StringCharacteristicProfile<T:CharacteristicConfigurable> : CharacteristicProfile {
     
     public var encoding : NSStringEncoding
