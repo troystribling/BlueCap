@@ -197,45 +197,29 @@ public struct Nordic {
     }
 }
 
-//
-//public class NordicProfiles {
-//    
-//    public class func create() {
-//        
-//        let profileManager = ProfileManager.sharedInstance
-//        
-//        //***************************************************************************************************
-//        // Nordic Device Temperature Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:Nordic.DeviceTemperatureService.uuid, name:Nordic.DeviceTemperatureService.name){(serviceProfile) in
-//            serviceProfile.tag = "Nordic"
-//            // Device Temperature Data
-//            serviceProfile.addCharacteristic(StructCharacteristicProfile<Nordic.DeviceTemperatureService.Data.Value>(uuid:Nordic.DeviceTemperatureService.Data.uuid, name:Nordic.DeviceTemperatureService.Data.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.endianness = .Big
-//                    characteristicProfile.initialValue = NSData.serializeArrayToBigEndian(Nordic.DeviceTemperatureService.Data.Value.fromRawValues([100])!.toRawValues())
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                })
-//        })
-//
-//        //***************************************************************************************************
-//        // Nordic BLE Address Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:Nordic.BLEAddressService.uuid, name:Nordic.BLEAddressService.name){(serviceProfile) in
-//            serviceProfile.tag = "Nordic"
-//            // BLE Address Address
-//            serviceProfile.addCharacteristic(StructCharacteristicProfile<Nordic.BLEAddressService.Address.Value>(uuid:Nordic.BLEAddressService.Address.uuid, name:Nordic.BLEAddressService.Address.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serializeArray(Nordic.BLEAddressService.Address.Value.fromRawValues([10, 11, 12, 13, 14, 15])!.toRawValues())
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                })
-//            // BLE Address Type
-//            serviceProfile.addCharacteristic(EnumCharacteristicProfile<Nordic.BLEAddressService.AddressType.Value>(uuid:Nordic.BLEAddressService.AddressType.uuid, name:Nordic.BLEAddressService.AddressType.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(Nordic.BLEAddressService.AddressType.Value.Public.toRaw())
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                })
-//        })
-//
-//    }
-//}
+
+public class NordicProfiles {
+    
+    public class func create() {
+        
+        let profileManager = ProfileManager.sharedInstance
+        
+        //***************************************************************************************************
+        // Nordic Device Temperature Service
+        let temperatureService = ConfiguredServiceProfile<Nordic.DeviceTemperatureService>()
+        let temperatureDataCharcteristic = RawCharacteristicProfile<Nordic.DeviceTemperatureService.Data>()
+
+        temperatureService.addCharacteristic(temperatureDataCharcteristic)
+        profileManager.addService(temperatureService)
+
+        //***************************************************************************************************
+        // Nordic BLE Address Service
+        let bleAddressService = ConfiguredServiceProfile<Nordic.BLEAddressService>()
+        let bleAddressCharacteristic = RawArrayCharacteristicProfile<Nordic.BLEAddressService.Address>()
+        let bleAddressTypeCharacteristic = RawCharacteristicProfile<Nordic.BLEAddressService.AddressType>()
+        
+        bleAddressService.addCharacteristic(bleAddressCharacteristic)
+        bleAddressService.addCharacteristic(bleAddressTypeCharacteristic)
+        profileManager.addService(bleAddressService)
+    }
+}

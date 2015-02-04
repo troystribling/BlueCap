@@ -181,72 +181,46 @@ public struct BLESIGGATT {
     }
     
 }
-//
-//public class BLESIGGATTProfiles {
-//    
-//    public class func create () {
-//        
-//        let profileManager = ProfileManager.sharedInstance
-//        
-//        //***************************************************************************************************
-//        // Device Information Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:BLESIGGATT.DeviceInformationService.uuid, name:BLESIGGATT.DeviceInformationService.name){(serviceProfile) in
-//            serviceProfile.tag = "BLESIGGATT"
-//            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.ModelNumber.uuid, name:BLESIGGATT.DeviceInformationService.ModelNumber.name)
-//                {(characteristicProfile:StringCharacteristicProfile) in
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                    characteristicProfile.initialValue = "Model A".dataUsingEncoding(NSUTF8StringEncoding)
-//                })
-//            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.SerialNumber.uuid, name:BLESIGGATT.DeviceInformationService.SerialNumber.name)
-//                {(characteristicProfile:StringCharacteristicProfile) in
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                    characteristicProfile.initialValue = "AAA11".dataUsingEncoding(NSUTF8StringEncoding)
-//                })
-//            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.FirmwareRevision.uuid, name:BLESIGGATT.DeviceInformationService.FirmwareRevision.name)
-//                {(characteristicProfile:StringCharacteristicProfile) in
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                    characteristicProfile.initialValue = "1.0".dataUsingEncoding(NSUTF8StringEncoding)
-//                })
-//            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.HardwareRevision.uuid, name:BLESIGGATT.DeviceInformationService.HardwareRevision.name)
-//                {(characteristicProfile:StringCharacteristicProfile) in
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                    characteristicProfile.initialValue = "1.0".dataUsingEncoding(NSUTF8StringEncoding)
-//                })
-//            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.SoftwareRevision.uuid, name:BLESIGGATT.DeviceInformationService.SoftwareRevision.name)
-//                {(characteristicProfile:StringCharacteristicProfile) in
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                    characteristicProfile.initialValue = "1.0".dataUsingEncoding(NSUTF8StringEncoding)
-//                })
-//            serviceProfile.addCharacteristic(StringCharacteristicProfile(uuid:BLESIGGATT.DeviceInformationService.ManufacturerName.uuid, name:BLESIGGATT.DeviceInformationService.ManufacturerName.name)
-//                {(characteristicProfile:StringCharacteristicProfile) in
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                    characteristicProfile.initialValue = "gnos.us".dataUsingEncoding(NSUTF8StringEncoding)
-//                })
-//        })
-//
-//        //***************************************************************************************************
-//        // Battery Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:BLESIGGATT.BatteryService.uuid, name:BLESIGGATT.BatteryService.name){(serviceProfile) in
-//            serviceProfile.tag = "BLESIGGATT"
-//            serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt8>(uuid:BLESIGGATT.BatteryService.Level.uuid, name:BLESIGGATT.BatteryService.Level.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(UInt8(100))
-//                    characteristicProfile.properties = CBCharacteristicProperties.Notify | CBCharacteristicProperties.Read
-//                })
-//        })
-//
-//        //***************************************************************************************************
-//        // Tx Power Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:BLESIGGATT.TxPowerService.uuid, name:BLESIGGATT.TxPowerService.name){(serviceProfile) in
-//            serviceProfile.tag = "BLESIGGATT"
-//            serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<Int8>(uuid:BLESIGGATT.TxPowerService.uuid, name:BLESIGGATT.TxPowerService.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(Int8(-40))
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                })
-//        })
-//    }
-//}
+
+public class BLESIGGATTProfiles {
+    
+    public class func create () {
+        
+        let profileManager = ProfileManager.sharedInstance
+        
+        //***************************************************************************************************
+        // Device Information Service
+        let deviceInformationService = ConfiguredServiceProfile<BLESIGGATT.DeviceInformationService>()
+        let deviceModelNumberCharacteristic = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.ModelNumber>()
+        let deviceSerialNumberCharacteristic = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.SerialNumber>()
+        let deviceFirmwareVersion = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.FirmwareRevision>()
+        let deviceHardwareRevision = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.HardwareRevision>()
+        let deviceSoftwareRevision = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.SoftwareRevision>()
+        let deviceManufactureName = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.ManufacturerName>()
+        
+        deviceInformationService.addCharacteristic(deviceModelNumberCharacteristic)
+        deviceInformationService.addCharacteristic(deviceSerialNumberCharacteristic)
+        deviceInformationService.addCharacteristic(deviceFirmwareVersion)
+        deviceInformationService.addCharacteristic(deviceHardwareRevision)
+        deviceInformationService.addCharacteristic(deviceSoftwareRevision)
+        deviceInformationService.addCharacteristic(deviceManufactureName)
+        profileManager.addService(deviceInformationService)
+        
+
+        //***************************************************************************************************
+        // Battery Service
+        let batteryService = ConfiguredServiceProfile<BLESIGGATT.BatteryService>()
+        let batteryLevelCharcteristic = RawCharacteristicProfile<BLESIGGATT.BatteryService.Level>()
+        
+        batteryService.addCharacteristic(batteryLevelCharcteristic)
+        profileManager.addService(batteryService)
+
+        //***************************************************************************************************
+        // Tx Power Service
+        let txPowerService = ConfiguredServiceProfile<BLESIGGATT.TxPowerService>()
+        let txPowerLevel = RawCharacteristicProfile<BLESIGGATT.TxPowerService.Level>()
+        
+        txPowerService.addCharacteristic(txPowerLevel)
+        profileManager.addService(txPowerService)
+    }
+}

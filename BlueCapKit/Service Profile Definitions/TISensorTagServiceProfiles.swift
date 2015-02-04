@@ -1215,7 +1215,7 @@ public class TISensorTagServiceProfiles {
         let barometerCalibrationCharacteristic = RawArrayPairCharacteristicProfile<TISensorTag.BarometerService.Calibration>()
         let barometerEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.BarometerService.Enabled>()
         
-        let barometerDiscoveredFuture = barometerEnabledCharacteristic.afterDiscovered(1)
+        let barometerDiscoveredFuture = barometerEnabledCharacteristic.afterDiscovered(2)
             
         let barometerEnabledFuture = barometerDiscoveredFuture.flatmap {characteristic -> Future<Characteristic> in
             return characteristic.write(TISensorTag.BarometerService.Enabled.Yes)
@@ -1233,59 +1233,36 @@ public class TISensorTagServiceProfiles {
         
         //***************************************************************************************************
         // Hygrometer Service
-        let hygrometerSErvice = ConfiguredServiceProfile<TISensorTag.HygrometerService>()
+        let hygrometerService = ConfiguredServiceProfile<TISensorTag.HygrometerService>()
+        let hygrometerDataCharacteristic = RawArrayCharacteristicProfile<TISensorTag.HygrometerService.Data>()
+        let hygrometerEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.HygrometerService.Enabled>()
         
-//        profileManager.addService(ServiceProfile(uuid:TISensorTag.HygrometerService.uuid, name:TISensorTag.HygrometerService.name){(serviceProfile) in
-//            serviceProfile.tag = "TI Sensor Tag"
-//            // Hygrometer Data
-//            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.HygrometerService.Data.Value>(uuid:TISensorTag.HygrometerService.Data.uuid, name:TISensorTag.HygrometerService.Data.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.endianness = .Little
-//                    characteristicProfile.initialValue = NSData.serializeArrayToLittleEndian(TISensorTag.HygrometerService.Data.Value.fromRawValues([2600, 3500])!.toRawValues())
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-//                })
-//            // Hygrometer Enabled
-//            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.HygrometerService.Enabled.uuid, name:TISensorTag.HygrometerService.Enabled.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                    characteristicProfile.afterDiscovered(1).onSuccess {(characteristic) in
-//                        characteristic.write(TISensorTag.Enabled.Yes)
-//                        return
-//                    }
-//                })
-//        })
-//
-//        //***************************************************************************************************
-//        // Sensor Tag Test Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:TISensorTag.SensorTagTestService.uuid, name:TISensorTag.SensorTagTestService.name) {(serviceProfile) in
-//            serviceProfile.tag = "TI Sensor Tag"
-//            // Test Data
-//            serviceProfile.addCharacteristic(StructCharacteristicProfile<TISensorTag.SensorTagTestService.Data.Value>(uuid:TISensorTag.SensorTagTestService.Data.uuid, name: TISensorTag.SensorTagTestService.Data.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(0b11110000 as UInt8)
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read
-//                })
-//            // Test Enabled
-//            serviceProfile.addCharacteristic(EnumCharacteristicProfile<TISensorTag.Enabled>(uuid:TISensorTag.SensorTagTestService.Enabled.uuid, name:TISensorTag.SensorTagTestService.Enabled.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(TISensorTag.Enabled.No.toRaw())
-//                    characteristicProfile.properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-//                })
-//        })
-//
-//        //***************************************************************************************************
-//        // Key Pressed Service
-//        //***************************************************************************************************
-//        profileManager.addService(ServiceProfile(uuid:TISensorTag.KeyPressedService.uuid, name:TISensorTag.KeyPressedService.name){(serviceProfile) in
-//            serviceProfile.tag = "TI Sensor Tag"
-//            serviceProfile.addCharacteristic(DeserializedCharacteristicProfile<UInt8>(uuid:TISensorTag.KeyPressedService.Data.uuid, name:TISensorTag.KeyPressedService.Data.name)
-//                {(characteristicProfile) in
-//                    characteristicProfile.initialValue = NSData.serialize(0x01 as UInt8)
-//                    characteristicProfile.properties = CBCharacteristicProperties.Notify
-//                })
-//        })
-//
+        hygrometerEnabledCharacteristic.afterDiscovered(2).onSuccess {characteristic in
+            characteristic.write(TISensorTag.HygrometerService.Enabled.Yes)
+            return
+        }
+        
+        hygrometerService.addCharacteristic(hygrometerDataCharacteristic)
+        hygrometerService.addCharacteristic(hygrometerEnabledCharacteristic)
+        profileManager.addService(hygrometerService)
+        
+
+        //***************************************************************************************************
+        // Sensor Tag Test Service
+        let sensorTagTestService = ConfiguredServiceProfile<TISensorTag.SensorTagTestService>()
+        let sensorTagTestData = RawCharacteristicProfile<TISensorTag.SensorTagTestService.Data>()
+        let sensorTagTestEnabled = RawCharacteristicProfile<TISensorTag.SensorTagTestService.Enabled>()
+        
+        sensorTagTestService.addCharacteristic(sensorTagTestData)
+        sensorTagTestService.addCharacteristic(sensorTagTestEnabled)
+        profileManager.addService(sensorTagTestService)
+
+        //***************************************************************************************************
+        // Key Pressed Service
+        let keyPressedService = ConfiguredServiceProfile<TISensorTag.KeyPressedService>()
+        let keyPressedStateCharacteristic = RawCharacteristicProfile<TISensorTag.KeyPressedService.State>()
+        
+        keyPressedService.addCharacteristic(keyPressedStateCharacteristic)
+        profileManager.addService(keyPressedService)
     }
 }

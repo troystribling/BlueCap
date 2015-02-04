@@ -35,7 +35,6 @@
 		055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */; };
 		055120E919F5513700ED3B74 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BE19F5513700ED3B74 /* ProfileManager.swift */; };
 		055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BF19F5513700ED3B74 /* ServiceProfile.swift */; };
-		055120EB19F5513700ED3B74 /* StringCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C019F5513700ED3B74 /* StringCharacteristicProfile.swift */; };
 		055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */; };
 		055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C419F5513700ED3B74 /* GnosusProfiles.swift */; };
 		055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C519F5513700ED3B74 /* NordicProfiles.swift */; };
@@ -103,7 +102,6 @@
 		055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
 		055120BE19F5513700ED3B74 /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		055120BF19F5513700ED3B74 /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
-		055120C019F5513700ED3B74 /* StringCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCharacteristicProfile.swift; sourceTree = "<group>"; };
 		055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLESIGGATTProfiles.swift; sourceTree = "<group>"; };
 		055120C419F5513700ED3B74 /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		055120C519F5513700ED3B74 /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
@@ -282,7 +280,6 @@
 				055120BA19F5513700ED3B74 /* CharacteristicProfile.swift */,
 				055120BE19F5513700ED3B74 /* ProfileManager.swift */,
 				055120BF19F5513700ED3B74 /* ServiceProfile.swift */,
-				055120C019F5513700ED3B74 /* StringCharacteristicProfile.swift */,
 			);
 			path = "Service Profiles";
 			sourceTree = "<group>";
@@ -505,7 +502,6 @@
 				055120DA19F5513700ED3B74 /* Region.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
 				055120DD19F5513700ED3B74 /* MutableService.swift in Sources */,
-				055120EB19F5513700ED3B74 /* StringCharacteristicProfile.swift in Sources */,
 				055120D519F5513700ED3B74 /* BeaconManager.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
