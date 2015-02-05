@@ -26,7 +26,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         super.viewDidLoad()
         if let valueName = self.valueName {
             self.navigationItem.title = valueName
-            if let value = self.characteristic.stringValues?[valueName] {
+            if let value = self.characteristic.stringValue?[valueName] {
                 self.valueTextField.text = value
             }
         }
@@ -83,7 +83,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
             }
             self.progressView.show()
             if let valueName = self.valueName {
-                if var values = characteristic.stringValues {
+                if var values = self.characteristic.stringValue {
                     values[valueName] = newValue
                     let write = characteristic.writeString(values)
                     write.onSuccess(afterWriteSuceses)

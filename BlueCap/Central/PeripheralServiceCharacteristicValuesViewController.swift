@@ -65,7 +65,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
             let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
-            if let stringValues = self.characteristic?.stringValues {
+            if let stringValues = self.characteristic?.stringValue {
                 let selectedIndex = sender as NSIndexPath
                 let names = stringValues.keys.array
                 viewController.valueName = names[selectedIndex.row]
@@ -138,7 +138,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as CharacteristicValueCell
         if let characteristic = self.characteristic {
-            if let stringValues = characteristic.stringValues {
+            if let stringValues = characteristic.stringValue {
                 let names = stringValues.keys.array
                 let values = stringValues.values.array
                 cell.valueNameLabel.text = names[indexPath.row]
@@ -157,7 +157,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         if let characteristic = self.characteristic {
             if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
-                if characteristic.discreteStringValues.isEmpty {
+                if characteristic.stringValues.isEmpty {
                     self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender:indexPath)
                 } else {
                     self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)

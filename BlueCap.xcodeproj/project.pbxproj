@@ -67,8 +67,6 @@
 		05F2A8DB199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */; };
 		05F2A8DC199271FA00004260 /* ServiceCharacteristicProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */; };
 		05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */; };
-		05F2A8DF1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */; };
-		05F2A8E11993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */; };
 		05FAFC3519D30247003725B0 /* Notify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FAFC3419D30247003725B0 /* Notify.swift */; };
 /* End PBXBuildFile section */
 
@@ -189,8 +187,6 @@
 		05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileValuesViewController.swift; sourceTree = "<group>"; };
 		05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileViewController.swift; sourceTree = "<group>"; };
 		05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
-		05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileEditValueViewController.swift; sourceTree = "<group>"; };
-		05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileEditDiscreteValuesViewController.swift; sourceTree = "<group>"; };
 		05FAFC3419D30247003725B0 /* Notify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notify.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -383,8 +379,6 @@
 			isa = PBXGroup;
 			children = (
 				05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */,
-				05F2A8E01993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift */,
-				05F2A8DE1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift */,
 				05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */,
 				05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */,
 				05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */,
@@ -550,7 +544,6 @@
 				05F2A8DA199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift in Sources */,
 				05B48B5219C8527100800327 /* BeaconRegionsViewController.swift in Sources */,
 				05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */,
-				05F2A8E11993CAA800004260 /* ServiceCharacteristicProfileEditDiscreteValuesViewController.swift in Sources */,
 				05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */,
 				05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */,
 				05CA6C1519FA6C2C00088A39 /* ConfigureCharacteristicReadWriteTimeoutViewController.swift in Sources */,
@@ -564,7 +557,6 @@
 				05883B2D19F7E21100CE8435 /* ConfigurePeripheralReconnectionsViewController.swift in Sources */,
 				05F2A8DB199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */,
 				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,
-				05F2A8DF1993CA5500004260 /* ServiceCharacteristicProfileEditValueViewController.swift in Sources */,
 				05B48B5819C9B7DF00800327 /* BeaconCell.swift in Sources */,
 				05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */,
 				05F2A8DC199271FA00004260 /* ServiceCharacteristicProfileViewController.swift in Sources */,

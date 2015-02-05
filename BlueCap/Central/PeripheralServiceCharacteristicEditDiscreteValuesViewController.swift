@@ -72,18 +72,20 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return self.characteristic.discreteStringValues.count
+        return self.characteristic.stringValues.count
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
-        let stringValue = self.characteristic.discreteStringValues[indexPath.row]
+        let stringValue = self.characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
-        if let value = self.characteristic.stringValues?[characteristic.name] {
-            if value == stringValue {
-                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-            } else {
-                cell.accessoryType = UITableViewCellAccessoryType.None
+        if let valueName = characteristic.stringValue?.keys.first {
+            if let value = self.characteristic.stringValue?[valueName] {
+                if value == stringValue {
+                    cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                } else {
+                    cell.accessoryType = UITableViewCellAccessoryType.None
+                }
             }
         }
         return cell
@@ -93,18 +95,20 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         self.progressView.show()
         if let characteristic = self.characteristic {
-            let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]
-            let write = characteristic.writeString(stringValue)
-            write.onSuccess {characteristic in
-                self.progressView.remove()
-                self.navigationController?.popViewControllerAnimated(true)
-                return
-            }
-            write.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                self.progressView.remove()
-                self.navigationController?.popViewControllerAnimated(true)
-                return
+            if let valueName = characteristic.stringValue?.keys.first {
+                let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
+                let write = characteristic.writeString(stringValue)
+                write.onSuccess {characteristic in
+                    self.progressView.remove()
+                    self.navigationController?.popViewControllerAnimated(true)
+                    return
+                }
+                write.onFailure {error in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.progressView.remove()
+                    self.navigationController?.popViewControllerAnimated(true)
+                    return
+                }
             }
         }
     }

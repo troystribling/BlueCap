@@ -14,10 +14,10 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     
     var characteristicProfile : CharacteristicProfile?
     
-    var  values : Dictionary<String, String>? {
+    var  values : [String:String]? {
         if let characteristicProfile = self.characteristicProfile {
             if let initialValue = characteristicProfile.initialValue {
-                return characteristicProfile.stringValues(initialValue)
+                return characteristicProfile.stringValue(initialValue)
             } else {
                 return nil
             }
@@ -27,9 +27,7 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     }
 
     struct MainStoryboard {
-        static let serviceCharacteristicProfileValueCell                = "ServiceCharacteristicProfileValueCell"
-        static let serviceCharacteristicProfileEditValueSegue           = "ServiceCharacteristicProfileEditValue"
-        static let serviceCharacteristicProfileEditDiscreteValuesSegue  = "ServiceCharacteristicProfileEditDiscreteValues"
+        static let serviceCharacteristicProfileValueCell = "ServiceCharacteristicProfileValueCell"
     }
     
     required init(coder aDecoder:NSCoder) {
@@ -53,19 +51,6 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
-        let selectedIndex = sender as NSIndexPath
-        if segue.identifier == MainStoryboard.serviceCharacteristicProfileEditValueSegue {
-            let viewController = segue.destinationViewController as ServiceCharacteristicProfileEditValueViewController
-            viewController.characteristicProfile = self.characteristicProfile
-            let selectedIndex = sender as NSIndexPath
-            if let values = self.values {
-                let valueNames = values.keys.array
-                viewController.valueName = valueNames[selectedIndex.row]
-            }
-        } else if segue.identifier == MainStoryboard.serviceCharacteristicProfileEditDiscreteValuesSegue {
-            let viewController = segue.destinationViewController as ServiceCharacteristicProfileEditDiscreteValuesViewController
-            viewController.characteristicProfile = self.characteristicProfile
-        }
     }
     
     // UITableViewDataSource
@@ -92,13 +77,4 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         return cell
     }
     
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        if let characteristicProfile = self.characteristicProfile {
-            if characteristicProfile.discreteStringValues.isEmpty {
-                self.performSegueWithIdentifier(MainStoryboard.serviceCharacteristicProfileEditValueSegue, sender:indexPath)
-            } else {
-                self.performSegueWithIdentifier(MainStoryboard.serviceCharacteristicProfileEditDiscreteValuesSegue, sender:indexPath)
-            }
-        }
-    }
 }

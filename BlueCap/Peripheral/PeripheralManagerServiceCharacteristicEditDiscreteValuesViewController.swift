@@ -55,18 +55,20 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return self.characteristic.discreteStringValues.count
+        return self.characteristic.stringValues.count
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
-        let stringValue = characteristic.discreteStringValues[indexPath.row]
+        let stringValue = characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
-        if let value = self.characteristic.stringValues?[characteristic.name] {
-            if value == stringValue {
-                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-            } else {
-                cell.accessoryType = UITableViewCellAccessoryType.None
+        if let valueName = self.characteristic.stringValue?.keys.first {
+            if let value = self.characteristic.stringValue?[valueName] {
+                if value == stringValue {
+                    cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                } else {
+                    cell.accessoryType = UITableViewCellAccessoryType.None
+                }
             }
         }
         return cell
@@ -75,9 +77,11 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         if let characteristic = self.characteristic {
-            let stringValue = [characteristic.name:characteristic.discreteStringValues[indexPath.row]]
-            characteristic.updateValueWithString(stringValue)
-            self.navigationController?.popViewControllerAnimated(true)
+            if let valueName = self.characteristic.stringValue?.keys.first {
+                let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
+                characteristic.updateValueWithString(stringValue)
+                self.navigationController?.popViewControllerAnimated(true)
+            }
         }
     }
     

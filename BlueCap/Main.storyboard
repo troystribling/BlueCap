@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Gm5-G9-oBc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Gm5-G9-oBc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -2944,7 +2944,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="UtL-W3-8me">
-                                            <rect key="frame" x="20" y="17" width="560" height="18.5"/>
+                                            <rect key="frame" x="20" y="17" width="560" height="19"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="14"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
@@ -2974,7 +2974,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-10" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CtP-pK-nDu">
-                                            <rect key="frame" x="124" y="83" width="29.5" height="22.5"/>
+                                            <rect key="frame" x="124" y="83" width="30" height="23"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -2986,7 +2986,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="50" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Amd-vC-qb1">
-                                            <rect key="frame" x="124" y="105" width="23" height="22.5"/>
+                                            <rect key="frame" x="124" y="105" width="23" height="23"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -2998,13 +2998,13 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="minor:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Tr-x7-5C0">
-                                            <rect key="frame" x="472" y="35" width="45.5" height="20"/>
+                                            <rect key="frame" x="472" y="35" width="46" height="20"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Immediate" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F3S-YJ-d0O">
-                                            <rect key="frame" x="124" y="63" width="85.5" height="22.5"/>
+                                            <rect key="frame" x="124" y="63" width="86" height="23"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -3654,7 +3654,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceCharacteristicProfileValueCell" rowHeight="80" id="2uV-za-o9g" customClass="CharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceCharacteristicProfileValueCell" rowHeight="80" id="2uV-za-o9g" customClass="CharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2uV-za-o9g" id="eBW-mR-pp7">
@@ -3676,8 +3676,8 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="CsQ-h9-yPH" firstAttribute="top" secondItem="eBW-mR-pp7" secondAttribute="topMargin" constant="28" id="KfW-0H-x7W"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="CsQ-h9-yPH" secondAttribute="trailing" constant="-1" id="Zdi-w8-pVl"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="wKr-8X-7ex" secondAttribute="trailing" constant="-1" id="eZd-EE-Eg1"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="CsQ-h9-yPH" secondAttribute="trailing" constant="32" id="Zdi-w8-pVl"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="wKr-8X-7ex" secondAttribute="trailing" constant="32" id="eZd-EE-Eg1"/>
                                         <constraint firstItem="wKr-8X-7ex" firstAttribute="top" secondItem="eBW-mR-pp7" secondAttribute="topMargin" constant="9" id="rng-hY-5nb"/>
                                         <constraint firstItem="CsQ-h9-yPH" firstAttribute="leading" secondItem="eBW-mR-pp7" secondAttribute="leadingMargin" constant="12" id="tUp-hh-8al"/>
                                         <constraint firstItem="wKr-8X-7ex" firstAttribute="leading" secondItem="eBW-mR-pp7" secondAttribute="leadingMargin" constant="12" id="z23-Xd-QGo"/>
@@ -3695,89 +3695,10 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Characteristic Values" id="Aeh-BT-Hy4"/>
-                    <connections>
-                        <segue destination="IBS-ox-p3c" kind="show" identifier="ServiceCharacteristicProfileEditValue" id="Tfx-QO-uUm"/>
-                        <segue destination="ymu-CQ-WDc" kind="show" identifier="ServiceCharacteristicProfileEditDiscreteValues" id="Yc0-Db-ecl"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dsp-Mq-Xro" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5118.75" y="4068.75"/>
-        </scene>
-        <!--New Value-->
-        <scene sceneID="xqR-u1-WkI">
-            <objects>
-                <viewController id="IBS-ox-p3c" customClass="ServiceCharacteristicProfileEditValueViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="MFb-Gv-zdP"/>
-                        <viewControllerLayoutGuide type="bottom" id="Vsq-HU-9c9"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="mPU-0P-MCc">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Characteristic Value" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="scK-cN-VWY">
-                                <rect key="frame" x="20" y="60" width="560" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="TCv-4h-Fpy"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
-                                <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <outlet property="delegate" destination="IBS-ox-p3c" id="Lyp-3P-5es"/>
-                                </connections>
-                            </textField>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="scK-cN-VWY" firstAttribute="top" secondItem="MFb-Gv-zdP" secondAttribute="bottom" constant="60" id="3KK-wS-wX0"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="scK-cN-VWY" secondAttribute="trailing" constant="4" id="Whe-E2-vMa"/>
-                            <constraint firstItem="scK-cN-VWY" firstAttribute="leading" secondItem="mPU-0P-MCc" secondAttribute="leadingMargin" constant="4" id="r8V-L2-xym"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="New Value" id="SU2-Ja-HIx"/>
-                    <connections>
-                        <outlet property="valueTextField" destination="scK-cN-VWY" id="fd3-Dv-D3E"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="rn6-yj-Klj" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="6202.5" y="3667.5"/>
-        </scene>
-        <!--New Values-->
-        <scene sceneID="zDk-7u-dMh">
-            <objects>
-                <tableViewController id="ymu-CQ-WDc" customClass="ServiceCharacteristicProfileEditDiscreteValuesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="50" sectionHeaderHeight="22" sectionFooterHeight="22" id="9Nu-EN-OAR">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="ServiceCharacteristicProfileEditDiscreteValuesCell" textLabel="fsa-kQ-AZc" rowHeight="50" style="IBUITableViewCellStyleDefault" id="QR2-Rj-Je1">
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QR2-Rj-Je1" id="763-ua-Zzj">
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Value" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fsa-kQ-AZc">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="ymu-CQ-WDc" id="hAy-bc-SdQ"/>
-                            <outlet property="delegate" destination="ymu-CQ-WDc" id="9m4-yk-itY"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="New Values" id="D1t-2T-CXj"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Flh-Gy-Dvi" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="6202.5" y="4490"/>
         </scene>
         <!--Profiles-->
         <scene sceneID="qez-Id-BOC">

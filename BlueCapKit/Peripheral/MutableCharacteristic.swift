@@ -42,7 +42,7 @@ public class MutableCharacteristic : NSObject {
         }
     }
     
-    public var stringValue : Dictionary<String, String>? {
+    public var stringValue : [String:String]? {
         if self.value != nil {
             return self.profile.stringValue(self.value)
         } else {

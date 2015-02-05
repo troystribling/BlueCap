@@ -30,3 +30,7 @@ func x(b:Int?) {
 }
 
 x(z)
+
+let h = ["name":1]
+h.keys.first
+

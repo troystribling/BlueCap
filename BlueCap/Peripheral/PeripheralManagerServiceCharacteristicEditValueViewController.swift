@@ -25,7 +25,7 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
         super.viewDidLoad()
         if let valueName = self.valueName {
             self.navigationItem.title = valueName
-            if let value = self.characteristic?.stringValues?[valueName] {
+            if let value = self.characteristic?.stringValue?[valueName] {
                 self.valueTextField.text = value
             }
         }
@@ -59,7 +59,7 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
             if let valueName = self.valueName {
                 if !valueName.isEmpty {
                     if let characteristic = self.characteristic {
-                        if var values = characteristic.stringValues {
+                        if var values = characteristic.stringValue {
                             values[valueName] = newValue
                             characteristic.updateValueWithString(values)
                             self.navigationController?.popViewControllerAnimated(true)

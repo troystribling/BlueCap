@@ -62,7 +62,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
             let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
             let selectedIndex = sender as NSIndexPath
-            if let stringValues = self.characteristic?.stringValues {
+            if let stringValues = self.characteristic?.stringValue {
                 let values = stringValues.keys.array
                 viewController.valueName = values[selectedIndex.row]
             }
@@ -103,7 +103,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServicesCharacteristicValueCell, forIndexPath: indexPath) as CharacteristicValueCell
-        if let values = self.characteristic?.stringValues {
+        if let values = self.characteristic?.stringValue {
             let characteristicValueNames = values.keys.array
             let characteristicValues = values.values.array
             cell.valueNameLabel.text = characteristicValueNames[indexPath.row]
@@ -113,7 +113,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     }
     
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        if self.characteristic.discreteStringValues.isEmpty {
+        if self.characteristic.stringValues.isEmpty {
             self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue, sender:indexPath)
         } else {
             self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)

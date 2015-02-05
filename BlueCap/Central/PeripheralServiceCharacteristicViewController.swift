@@ -171,7 +171,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             if self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying  {
                 self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicValueSegue, sender:indexPath)
             } else if (self.characteristic.propertyEnabled(.Write) || self.characteristic.propertyEnabled(.WriteWithoutResponse)) && !self.characteristic.propertyEnabled(.Read) {
-                if self.characteristic.discreteStringValues.isEmpty {
+                if self.characteristic.stringValues.isEmpty {
                     self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender:indexPath)
                 } else {
                     self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender:indexPath)
