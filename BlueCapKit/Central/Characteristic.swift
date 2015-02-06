@@ -99,13 +99,13 @@ public class Characteristic {
         }
     }
 
-//    public func value<T:RawArrayPairDeserializable>() -> T? { 
-//        if let data = self.dataValue {
-//            return deserialize(data)
-//        } else {
-//            return nil
-//        }
-//    }
+    public func value<T:RawArrayPairDeserializable>() -> T? { 
+        if let data = self.dataValue {
+            return deserialize(data)
+        } else {
+            return nil
+        }
+    }
 
     public func startNotifying() -> Future<Characteristic> {
         self.notificationStateChangedPromise = Promise<Characteristic>()
@@ -238,6 +238,8 @@ public class Characteristic {
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
                 self.profile = characteristicProfile
+            } else {
+                self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString)
             }
         } else {
             self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString)
