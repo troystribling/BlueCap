@@ -77,7 +77,7 @@ public class Characteristic {
 
     public func value<T:RawDeserializable>() -> T? {
         if let data = self.dataValue {
-            return deserialize(data)
+            return Serde.deserialize(data)
         } else {
             return nil
         }
@@ -85,7 +85,7 @@ public class Characteristic {
 
     public func value<T:RawArrayDeserializable>() -> T? {
         if let data = self.dataValue {
-            return deserialize(data)
+            return Serde.deserialize(data)
         } else {
             return nil
         }
@@ -93,7 +93,7 @@ public class Characteristic {
 
     public func value<T:RawPairDeserializable>() -> T? {
         if let data = self.dataValue {
-            return deserialize(data)
+            return Serde.deserialize(data)
         } else {
             return nil
         }
@@ -101,7 +101,7 @@ public class Characteristic {
 
     public func value<T:RawArrayPairDeserializable>() -> T? { 
         if let data = self.dataValue {
-            return deserialize(data)
+            return Serde.deserialize(data)
         } else {
             return nil
         }
@@ -179,23 +179,23 @@ public class Characteristic {
     }
 
     public func write<T:Deserializable>(value:T) -> Future<Characteristic> {
-        return self.writeData(serialize(value))
+        return self.writeData(Serde.serialize(value))
     }
     
     public func write<T:RawDeserializable>(value:T) -> Future<Characteristic> {
-        return self.writeData(serialize(value))
+        return self.writeData(Serde.serialize(value))
     }
 
     public func write<T:RawArrayDeserializable>(value:T) -> Future<Characteristic> {
-        return self.writeData(serialize(value))
+        return self.writeData(Serde.serialize(value))
     }
 
     public func write<T:RawPairDeserializable>(value:T) -> Future<Characteristic> {
-        return self.writeData(serialize(value))
+        return self.writeData(Serde.serialize(value))
     }
     
     public func write<T:RawArrayPairDeserializable>(value:T) -> Future<Characteristic> {
-        return self.writeData(serialize(value))
+        return self.writeData(Serde.serialize(value))
     }
 
     private func timeoutRead(sequence:Int) {
@@ -236,12 +236,16 @@ public class Characteristic {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
+            Logger.debug("Charcteristic#init: Creating characteristic for service profile: \(service.name):\(service.uuid)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
+                Logger.debug("Charcteristic#init: Charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
                 self.profile = characteristicProfile
             } else {
+                Logger.debug("Charcteristic#init: No characteristic profile found. Creating characteristic with UUID: \(self.uuid.UUIDString)")
                 self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString)
             }
         } else {
+            Logger.debug("No service profile found. Creating characteristic with UUID: \(self.uuid.UUIDString)")
             self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString)
         }
     }

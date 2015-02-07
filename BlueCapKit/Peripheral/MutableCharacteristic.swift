@@ -108,23 +108,23 @@ public class MutableCharacteristic : NSObject {
     }
     
     public func updateValue<T:Deserializable>(value:T) {
-        return self.updateValueWithData(serialize(value))
+        return self.updateValueWithData(Serde.serialize(value))
     }
 
     public func updateValue<T:RawDeserializable>(value:T) {
-        return self.updateValueWithData(serialize(value))
+        return self.updateValueWithData(Serde.serialize(value))
     }
 
     public func updateValue<T:RawArrayDeserializable>(value:T) {
-        return self.updateValueWithData(serialize(value))
+        return self.updateValueWithData(Serde.serialize(value))
     }
 
     public func updateValue<T:RawPairDeserializable>(value:T) {
-        return self.updateValueWithData(serialize(value))
+        return self.updateValueWithData(Serde.serialize(value))
     }
 
     public func updateValue<T:RawArrayPairDeserializable>(value:T) {
-        return self.updateValueWithData(serialize(value))
+        return self.updateValueWithData(Serde.serialize(value))
     }
 
 }

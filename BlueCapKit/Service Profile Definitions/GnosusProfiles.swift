@@ -28,7 +28,7 @@ public struct Gnosus {
             public static let name         = "Hello World Greeting"
             public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
             public static let properties   = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let initialValue = serialize("Hello")
+            public static let initialValue = Serde.serialize("Hello")
             
         }
         
@@ -41,7 +41,7 @@ public struct Gnosus {
             public static let name                      = "Update Period"
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = serialize(UInt16(5000))
+            public static let initialValue : NSData?    = Serde.serialize(UInt16(5000))
             
             // RawDeserializable
             public var rawValue : UInt16 {
@@ -116,7 +116,7 @@ public struct Gnosus {
             public static let name                      = "Lattitude and Longitude"
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
+            public static let initialValue : NSData?    = Serde.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
 
             // RawArrayDeserializable
             public var rawValue : [Int16] {

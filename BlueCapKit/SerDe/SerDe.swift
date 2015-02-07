@@ -99,74 +99,69 @@ public protocol RawArrayPairDeserializable {
     init?(rawValue:([RawType1], [RawType2]))
 }
 
-public func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
-    return NSData.fromString(value, encoding:encoding)
-}
+public struct Serde {
+    
+    public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
+        return NSData.fromString(value, encoding:encoding)
+    }
 
-public func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String? {
-    return (NSString(data:data, encoding:encoding) as String)
-}
+    public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String? {
+        return (NSString(data:data, encoding:encoding) as String)
+    }
 
-public func deserialize<T:Deserializable>(data:NSData) -> T? {
-    return T.deserialize(data)
-}
+    public static func deserialize<T:Deserializable>(data:NSData) -> T? {
+        return T.deserialize(data)
+    }
 
-public func deserialize<T:Deserializable>(data:NSData) -> [T] {
-    let count = data.length / T.size
-    return [Int](0..<count).reduce([]) {(result, start) in
-        if let value : T = T.deserialize(data, start:start) {
-            return result + [value]
-        } else {
-            return result
+    public func deserialize<T:Deserializable>(data:NSData) -> [T] {
+        return T.deserialize(data)
+    }
+
+    public static func serialize<T:Deserializable>(value:T) -> NSData {
+        return NSData.serialize(value)
+    }
+
+    public static func deserialize<T:RawDeserializable>(data:NSData) -> T? {
+        return T.RawType.deserialize(data).flatmap{T(rawValue:$0)}
+    }
+
+    public static func serialize<T:RawDeserializable>(value:T) -> NSData {
+        return NSData.serialize(value.rawValue)
+    }
+
+    public static func deserialize<T:RawArrayDeserializable>(data:NSData) -> T? {
+        return T(rawValue:T.RawType.deserialize(data))
+    }
+
+    public static func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
+        return NSData.serialize(value.rawValue)
+    }
+
+    public static func deserialize<T:RawPairDeserializable>(data:NSData) -> T? {
+        let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
+        let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
+        return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
+            T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
+                T(rawValue:(rawValue1, rawValue2))
+            }
         }
     }
-}
 
-public func serialize<T:Deserializable>(value:T) -> NSData {
-    return NSData.serialize(value)
-}
+    public static func serialize<T:RawPairDeserializable>(value:T) -> NSData {
+        return NSData.serialize(value.rawValue)
+    }
 
-public func deserialize<T:RawDeserializable>(data:NSData) -> T? {
-    return T.RawType.deserialize(data).flatmap{T(rawValue:$0)}
-}
+    public static func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> T? {
+        let (rawSize1, rawSize2) = T.size
+        let rawData1 = data.subdataWithRange(NSMakeRange(0, rawSize1))
+        let rawData2 = data.subdataWithRange(NSMakeRange(rawSize1, rawSize2))
+        return T(rawValue:(T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2)))
+    }
 
-public func serialize<T:RawDeserializable>(value:T) -> NSData {
-    return NSData.serialize(value.rawValue)
-}
-
-public func deserialize<T:RawArrayDeserializable>(data:NSData) -> T? {
-    return T(rawValue:T.RawType.deserialize(data))
-}
-
-public func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
-    return NSData.serialize(value.rawValue)
-}
-
-public func deserialize<T:RawPairDeserializable>(data:NSData) -> T? {
-    let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
-    let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
-    return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
-        T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
-            T(rawValue:(rawValue1, rawValue2))
-        }
+    public static func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
+        return NSData.serialize(value.rawValue)
     }
 }
-
-public func serialize<T:RawPairDeserializable>(value:T) -> NSData {
-    return NSData.serialize(value.rawValue)
-}
-
-public func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> T? {
-    let (rawSize1, rawSize2) = T.size
-    let rawData1 = data.subdataWithRange(NSMakeRange(0, rawSize1))
-    let rawData2 = data.subdataWithRange(NSMakeRange(rawSize1, rawSize2))
-    return T(rawValue:(T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2)))
-}
-
-public func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
-    return NSData.serialize(value.rawValue)
-}
-
 
 
 

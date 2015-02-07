@@ -82,13 +82,13 @@ public class RawCharacteristicProfile<DeserializedType where DeserializedType:Ra
         return DeserializedType.stringValues
     }
     
-    public override func stringValue(data:NSData) -> Dictionary<String, String>? {
-        let value : DeserializedType? = deserialize(data)
+    public override func stringValue(data:NSData) -> [String:String]? {
+        let value : DeserializedType? = Serde.deserialize(data)
         return value.map{$0.stringValue}
     }
     
     public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{Serde.serialize($0)}
     }
     
 }
@@ -109,12 +109,12 @@ public class RawPairCharacteristicProfile<DeserializedType where DeserializedTyp
     }
     
     public override func stringValue(data:NSData) -> [String:String]? {
-        let value : DeserializedType? = deserialize(data)
+        let value : DeserializedType? = Serde.deserialize(data)
         return value.map{$0.stringValue}
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{Serde.serialize($0)}
     }
     
 }
@@ -135,12 +135,12 @@ public class RawArrayCharacteristicProfile<DeserializedType where DeserializedTy
     }
     
     public override func stringValue(data:NSData) -> [String:String]? {
-        let value : DeserializedType? = deserialize(data)
+        let value : DeserializedType? = Serde.deserialize(data)
         return value.map{$0.stringValue}
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{Serde.serialize($0)}
     }
     
 }
@@ -161,12 +161,12 @@ public class RawArrayPairCharacteristicProfile<DeserializedType where Deserializ
     }
     
     public override func stringValue(data:NSData) -> [String:String]? {
-        let value : DeserializedType? = deserialize(data)
+        let value : DeserializedType? = Serde.deserialize(data)
         return value.map{$0.stringValue}
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{Serde.serialize($0)}
     }
     
 }
@@ -191,12 +191,12 @@ public class StringCharacteristicProfile<T:CharacteristicConfigurable> : Charact
     }
     
     public override func stringValue(data:NSData) -> [String:String]? {
-        let value : String? = deserialize(data, encoding:self.encoding)
+        let value : String? = Serde.deserialize(data, encoding:self.encoding)
         return value.map{[self.name:$0]}
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return data[self.name].flatmap{serialize($0, encoding:self.encoding)}
+        return data[self.name].flatmap{Serde.serialize($0, encoding:self.encoding)}
     }
 
 }

@@ -35,7 +35,7 @@ public struct Nordic {
             public static let name                      = "Device Temperature Data"
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = serialize(Int16(100))
+            public static let initialValue : NSData?    = Serde.serialize(Int16(100))
 
             // RawDeserializable
             public var rawValue : Int16 {
@@ -88,7 +88,7 @@ public struct Nordic {
             public static let name                      = "BLE Addresss"
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = serialize(Int16(100))
+            public static let initialValue : NSData?    = Serde.serialize(Int16(100))
 
             // RawArrayDeserializable
             public var rawValue : [UInt8] {
@@ -150,7 +150,7 @@ public struct Nordic {
             public static let name                      = "BLE Address Type"
             public static let properties                = CBCharacteristicProperties.Read
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = serialize(AddressType.Public)
+            public static let initialValue : NSData?    = Serde.serialize(AddressType.Public)
 
 
             // StringDeserializable

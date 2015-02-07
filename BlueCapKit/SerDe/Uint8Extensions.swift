@@ -55,7 +55,14 @@ extension UInt8 : Deserializable {
     }
 
     public static func deserialize(data:NSData) -> [UInt8] {
-        return deserialize(data)
+        let count = data.length / sizeof(UInt8)
+        return [Int](0..<count).reduce([]) {(result, start) in
+            if let value = self.deserialize(data, start:start) {
+                return result + [value]
+            } else {
+                return result
+            }
+        }
     }
     
 }
