@@ -55,9 +55,10 @@ extension UInt16 : Deserializable {
     }
 
     public static func deserialize(data:NSData) -> [UInt16] {
-        let count = data.length / sizeof(UInt16)
-        return [Int](0..<count).reduce([]) {(result, start) in
-            if let value = self.deserialize(data, start:start) {
+        let size = sizeof(UInt16)
+        let count = data.length / size
+        return [Int](0..<count).reduce([]) {(result, idx) in
+            if let value = self.deserialize(data, start:size*idx) {
                 return result + [value]
             } else {
                 return result

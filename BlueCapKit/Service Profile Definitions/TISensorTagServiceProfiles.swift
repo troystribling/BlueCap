@@ -86,7 +86,7 @@ public struct TISensorTag {
             
             public var stringValue : Dictionary<String,String> {
                 return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)",
-                    "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
+                        "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
             }
 
             public init?(stringValue:[String:String]) {
@@ -590,7 +590,7 @@ public struct TISensorTag {
             public static let name                      = "Temperature Data"
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[31, 3260])!)
+            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[-172, 3388])!)
 
             // RawArrayDeserializable
             public var rawValue : [Int16] {

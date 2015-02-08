@@ -1,5 +1,5 @@
 //
-//  ByteSwap.swift
+//  SerDe.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/8/14.
@@ -113,12 +113,12 @@ public struct Serde {
         return T.deserialize(data)
     }
 
-    public func deserialize<T:Deserializable>(data:NSData) -> [T] {
-        return T.deserialize(data)
-    }
-
     public static func serialize<T:Deserializable>(value:T) -> NSData {
         return NSData.serialize(value)
+    }
+
+    public static func serialize<T:Deserializable>(values:[T]) -> NSData {
+        return NSData.serialize(values)
     }
 
     public static func deserialize<T:RawDeserializable>(data:NSData) -> T? {

@@ -5,13 +5,13 @@
 import UIKit
 import BlueCapKit
 
-enum Enabled : UInt8, RawDeserializable {
-    case Yes = 0
-    case No = 1
-    static let uuid = "abc"
-}
+let x : [UInt16] = [122,6789]
+let data = NSData.serialize(x)
+data.hexStringValue()
+let v : [UInt16] = Serde.deserialize(data)
+println("\(v[0])")
+v[0]
 
-if let test = Enabled(rawValue:1) {
-    println(test.rawValue)
-}
+
+
 
