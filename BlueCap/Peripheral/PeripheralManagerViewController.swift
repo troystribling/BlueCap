@@ -47,6 +47,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             } else {
                 self.advertisedBeaconLabel.text = "None"
             }
+            self.loadPeripheralServicesFromConfig()
             self.setUIState()
         }
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
