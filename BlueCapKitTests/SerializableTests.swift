@@ -65,5 +65,15 @@ class SerializableTests: XCTestCase {
         XCTAssert(data.hexStringValue() == "b4fb6400", "Int16 array serialization failed: \(data)")
     }
 
+    func testSerializePair() {
+        let value = (Int16(-1100), UInt8(100))
+        let data = NSData.serialize(value)
+        XCTAssert(data.hexStringValue() == "b4fb64", "Pair serialization failed: \(data)")
+    }
 
+    func testSerializeArrayPair() {
+        let value = ([Int16(-1100), Int16(1000)] , [UInt8(100), UInt8(75)])
+        let data = NSData.serialize(value)
+        XCTAssert(data.hexStringValue() == "b4fbe803644b", "Pair serialization failed: \(data)")
+    }
 }

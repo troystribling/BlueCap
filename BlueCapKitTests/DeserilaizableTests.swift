@@ -84,7 +84,6 @@ class DeserilaizableTests: XCTestCase {
         }
     }
     
-
     func testDeserializeUInt8Array() {
         let value : [UInt8] = [100, 10]
         let data = Serde.serialize(value)
