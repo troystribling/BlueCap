@@ -94,7 +94,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let values = self.characteristic?.stringValues {
+        if let values = self.characteristic?.stringValue {
             return values.count
         } else {
             return 0

@@ -166,7 +166,7 @@ public struct TISensorTag {
             public static let name                      = "Accelerometer Update Period"
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = Serde.serialize(UInt16(5000))
+            public static let initialValue : NSData?    = Serde.serialize(UInt8(100))
             
             // RawDeserializable
             public var rawValue : UInt8 {
