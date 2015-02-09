@@ -116,6 +116,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("CentralManager#powerOn")
         let future = self.afterPowerOnPromise.future
         self.afterPowerOnPromise = Promise<Void>()
+        if self.poweredOn {
+            self.afterPowerOnPromise.success()
+        }
         return future
     }
     
@@ -123,6 +126,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("CentralManager#powerOff")
         let future = self.afterPowerOffPromise.future
         self.afterPowerOffPromise = Promise<Void>()
+        if self.poweredOff {
+            self.afterPowerOnPromise.success()
+        }
         return future
     }
     
