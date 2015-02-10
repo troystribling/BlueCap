@@ -78,7 +78,7 @@ public struct TISensorTag {
             }
             
             public var rawValue : [Int8] {
-                return [xRaw, yRaw, zRaw]
+                return [self.xRaw, self.yRaw, self.zRaw]
             }
 
             // StringDeserializable

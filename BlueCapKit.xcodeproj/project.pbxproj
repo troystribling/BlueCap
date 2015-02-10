@@ -52,6 +52,8 @@
 		0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC6E1A87D0C600CA8B6E /* DeserilaizableTests.swift */; };
 		0565EC711A87D14600CA8B6E /* SerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC701A87D14600CA8B6E /* SerializableTests.swift */; };
 		0565EC781A891AA400CA8B6E /* RawDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC771A891AA400CA8B6E /* RawDeserializableTests.swift */; };
+		0565EC7A1A89B88200CA8B6E /* RawArrayDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC791A89B88200CA8B6E /* RawArrayDeserializableTests.swift */; };
+		0565EC7C1A89CDA500CA8B6E /* RawPairSerializableTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC7B1A89CDA500CA8B6E /* RawPairSerializableTest.swift */; };
 		05D3B9321A2B8D61008E794E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9281A2B8D61008E794E /* Array.swift */; };
 		05D3B9331A2B8D61008E794E /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9291A2B8D61008E794E /* Dictionary.swift */; };
 		05D3B9341A2B8D61008E794E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92A1A2B8D61008E794E /* Double.swift */; };
@@ -123,6 +125,8 @@
 		0565EC6E1A87D0C600CA8B6E /* DeserilaizableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserilaizableTests.swift; sourceTree = "<group>"; };
 		0565EC701A87D14600CA8B6E /* SerializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableTests.swift; sourceTree = "<group>"; };
 		0565EC771A891AA400CA8B6E /* RawDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawDeserializableTests.swift; sourceTree = "<group>"; };
+		0565EC791A89B88200CA8B6E /* RawArrayDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawArrayDeserializableTests.swift; sourceTree = "<group>"; };
+		0565EC7B1A89CDA500CA8B6E /* RawPairSerializableTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawPairSerializableTest.swift; sourceTree = "<group>"; };
 		05D3B9281A2B8D61008E794E /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		05D3B9291A2B8D61008E794E /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		05D3B92A1A2B8D61008E794E /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
@@ -328,7 +332,9 @@
 			isa = PBXGroup;
 			children = (
 				0565EC6E1A87D0C600CA8B6E /* DeserilaizableTests.swift */,
+				0565EC791A89B88200CA8B6E /* RawArrayDeserializableTests.swift */,
 				0565EC771A891AA400CA8B6E /* RawDeserializableTests.swift */,
+				0565EC7B1A89CDA500CA8B6E /* RawPairSerializableTest.swift */,
 				0565EC701A87D14600CA8B6E /* SerializableTests.swift */,
 			);
 			name = SerDe;
@@ -557,12 +563,14 @@
 			files = (
 				0565EC781A891AA400CA8B6E /* RawDeserializableTests.swift in Sources */,
 				0562D3231A5D8503001013C9 /* CharacteristicTests.swift in Sources */,
+				0565EC7A1A89B88200CA8B6E /* RawArrayDeserializableTests.swift in Sources */,
 				0562D31E1A5D8378001013C9 /* TimedScanneratorTests.swift in Sources */,
 				0562D31A1A5D8308001013C9 /* PertipheralTests.swift in Sources */,
 				0562D3181A5D7FE1001013C9 /* CentralManagerTests.swift in Sources */,
 				0565EC711A87D14600CA8B6E /* SerializableTests.swift in Sources */,
 				0562D31C1A5D834C001013C9 /* ConnectoratorTests.swift in Sources */,
 				0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */,
+				0565EC7C1A89CDA500CA8B6E /* RawPairSerializableTest.swift in Sources */,
 				0562D3201A5D83E9001013C9 /* ServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
