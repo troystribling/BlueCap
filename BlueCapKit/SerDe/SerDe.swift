@@ -17,10 +17,10 @@ func fromHostByteOrder<T>(value:T) -> T {
     return value;
 }
 
-func byteArrayValue<T>(value:T) -> [Byte] {
+func byteArrayValue<T>(value:T) -> [UInt8] {
     let values = [value]
     let data = NSData(bytes:values, length:sizeof(T))
-    var byteArray = [Byte](count:sizeof(T), repeatedValue:0)
+    var byteArray = [UInt8](count:sizeof(T), repeatedValue:0)
     data.getBytes(&byteArray, length:sizeof(T))
     return byteArray
 }
@@ -33,68 +33,68 @@ func reverseBytes<T>(value:T) -> T {
 }
 
 public protocol Deserializable {
-    class var size : Int {get}
-    class func deserialize(data:NSData) -> Self?
-    class func deserialize(data:NSData, start:Int) -> Self?
-    class func deserialize(data:NSData) -> [Self]
+    static var size : Int {get}
+    static func deserialize(data:NSData) -> Self?
+    static func deserialize(data:NSData, start:Int) -> Self?
+    static func deserialize(data:NSData) -> [Self]
     init?(stringValue:String)
 }
 
 public protocol Serializable {
-    class func fromString(value:String, encoding:NSStringEncoding) -> NSData?
-    class func serialize<T>(value:T) -> NSData
-    class func serialize<T>(values:[T]) -> NSData
-    class func serialize<T1, T2>(values:(T1, T2)) -> NSData
-    class func serialize<T1, T2>(values:([T1], [T2])) -> NSData
+    static func fromString(value:String, encoding:NSStringEncoding) -> NSData?
+    static func serialize<T>(value:T) -> NSData
+    static func serialize<T>(values:[T]) -> NSData
+    static func serialize<T1, T2>(values:(T1, T2)) -> NSData
+    static func serialize<T1, T2>(values:([T1], [T2])) -> NSData
 }
 
 public protocol CharacteristicConfigurable {
-    class var name          : String {get}
-    class var uuid          : String {get}
-    class var permissions   : CBAttributePermissions {get}
-    class var properties    : CBCharacteristicProperties {get}
-    class var initialValue  : NSData? {get}
+    static var name          : String {get}
+    static var uuid          : String {get}
+    static var permissions   : CBAttributePermissions {get}
+    static var properties    : CBCharacteristicProperties {get}
+    static var initialValue  : NSData? {get}
 }
 
 public protocol ServiceConfigurable {
-    class var name  : String {get}
-    class var uuid  : String {get}
-    class var tag   : String {get}
+    static var name  : String {get}
+    static var uuid  : String {get}
+    static var tag   : String {get}
 }
 
 public protocol StringDeserializable {
-    class var stringValues  : [String] {get}
+    static var stringValues : [String] {get}
     var stringValue         : [String:String] {get}
     init?(stringValue:[String:String])
 }
 
 public protocol RawDeserializable {
-    typealias RawType   : Deserializable
-    class var uuid      : String {get}
-    var rawValue        : RawType {get}
+    typealias RawType       : Deserializable
+    static var uuid         : String {get}
+    var rawValue            : RawType {get}
     init?(rawValue:RawType)
 }
 
 public protocol RawArrayDeserializable {
     typealias RawType   : Deserializable
-    class var uuid      : String {get}
+    static var uuid     : String {get}
     var rawValue        : [RawType] {get}
     init?(rawValue:[RawType])
 }
 
 public protocol RawPairDeserializable {
-    typealias RawType1   : Deserializable
-    typealias RawType2   : Deserializable
-    class var uuid      : String {get}
+    typealias RawType1  : Deserializable
+    typealias RawType2  : Deserializable
+    static var uuid     : String {get}
     var rawValue        : (RawType1, RawType2) {get}
     init?(rawValue:(RawType1, RawType2))
 }
 
 public protocol RawArrayPairDeserializable {
     typealias RawType1  : Deserializable
-    typealias RawType2  : Deserializable
-    class var uuid      : String {get}
-    class var size      : (Int, Int) {get}
+    typealias RawType2      : Deserializable
+    static var uuid      : String {get}
+    static var size      : (Int, Int) {get}
     var rawValue        : ([RawType1], [RawType2]) {get}
     init?(rawValue:([RawType1], [RawType2]))
 }
@@ -106,7 +106,7 @@ public struct Serde {
     }
 
     public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String? {
-        return (NSString(data:data, encoding:encoding) as String)
+        return (NSString(data:data, encoding:encoding) as? String)
     }
 
     public static func deserialize<T:Deserializable>(data:NSData) -> T? {

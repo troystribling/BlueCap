@@ -91,11 +91,11 @@ public class Future<T> {
     }
     
     public func onComplete(complete:Try<T> -> Void) {
-        self.onComplete(self.defaultExecutionContext, complete)
+        self.onComplete(self.defaultExecutionContext, complete:complete)
     }
 
     public func onSuccess(success:T -> Void) {
-        self.onSuccess(self.defaultExecutionContext, success)
+        self.onSuccess(self.defaultExecutionContext, success:success)
     }
     
     public func onSuccess(executionContext:ExecutionContext, success:T -> Void){
@@ -110,7 +110,7 @@ public class Future<T> {
     }
 
     public func onFailure(failure:NSError -> Void) -> Void {
-        return self.onFailure(self.defaultExecutionContext, failure)
+        return self.onFailure(self.defaultExecutionContext, failure:failure)
     }
     
     public func onFailure(executionContext:ExecutionContext, failure:NSError -> Void) {
@@ -159,7 +159,7 @@ public class Future<T> {
     
     public func andThen(executionContext:ExecutionContext, complete:Try<T> -> Void) -> Future<T> {
         let future = Future<T>()
-        future.onComplete(executionContext, complete)
+        future.onComplete(executionContext, complete:complete)
         self.onComplete(executionContext) {result in
             future.complete(result)
         }

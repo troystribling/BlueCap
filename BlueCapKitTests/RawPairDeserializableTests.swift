@@ -1,5 +1,5 @@
 //
-//  RawPairSerializableTest.swift
+//  RawPairDeserializableTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 2/9/15.
@@ -10,32 +10,32 @@ import UIKit
 import XCTest
 import BlueCapKit
 
-class RawPairSerializableTest: XCTestCase {
+class RawPairDeserializableTests: XCTestCase {
 
-//    struct RawPair : RawPairDeserializable {
-//        
-//        let value1:Int8
-//        let value2:UInt8
-//        
-//        // RawArrayPairDeserializable
-//        static let uuid = "abc"
-//        
-//        init?(rawValue:(Int8, UInt8)) {
-//            let (raw1, raw2) = rawValue
-//            if raw2 > 10 {
-//                self.value1 = raw1
-//                self.value2 = raw2
-//            } else {
-//                return nil
-//            }
-//            
-//        }
-//        
-//        var rawValue : (Int8, UInt8) {
-//            return (self.value1, self.value2)
-//        }
-//        
-//    }
+    struct RawPair : RawPairDeserializable {
+        
+        let value1:Int8
+        let value2:UInt8
+        
+        // RawArrayPairDeserializable
+        static let uuid = "abc"
+        
+        var rawValue : (Int8, UInt8) {
+            return (self.value1, self.value2)
+        }
+
+        init?(rawValue:(Int8, UInt8)) {
+            let (raw1, raw2) = rawValue
+            if raw2 > 10 {
+                self.value1 = raw1
+                self.value2 = raw2
+            } else {
+                return nil
+            }
+            
+        }
+        
+    }
     
     override func setUp() {
         super.setUp()
@@ -62,9 +62,12 @@ class RawPairSerializableTest: XCTestCase {
 //    }
 //    
 //    func testSerialization() {
-//        let value = RawPair(rawValue:(5, 100))
-//        let data = Serde.serialize(value)
-//        XCTAssert(data.hexStringValue() == "0564", "RawDeserializable serialization failed: \(data)")
-//    }    
+//        if let let value = RawPair(rawValue:(5, 100)) {
+//            let data = Serde.serialize(value)
+//            XCTAssert(data.hexStringValue() == "0564", "RawDeserializable serialization failed: \(data)")
+//        } else {
+//            XCTFail("RawArrayDeserializable RawArray creation failed")
+//        }
+//    }
 
 }

@@ -32,10 +32,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
 
     private var _connectorator  : Connectorator?
 
-    internal let cbPeripheral    : CBPeripheral!
+    internal let cbPeripheral    : CBPeripheral
 
-    public let advertisements  : Dictionary<String, String>!
-    public let rssi            : Int!
+    public let advertisements  : [String: String]
+    public let rssi            : Int
 
     public var name : String {
         if let name = cbPeripheral.name {
@@ -74,12 +74,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public init(cbPeripheral:CBPeripheral, advertisements:Dictionary<String, String>, rssi:Int) {
-        super.init()
         self.cbPeripheral = cbPeripheral
-        self.cbPeripheral.delegate = self
         self.advertisements = advertisements
         self.currentError = .None
         self.rssi = rssi
+        super.init()
+        self.cbPeripheral.delegate = self
     }
     
     // connect
@@ -173,10 +173,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             self.servicesDiscoveredPromise.failure(error)
         } else {
             if let cbServices = peripheral.services {
-                for cbService : AnyObject in cbServices {
-                    let bcService = Service(cbService:cbService as CBService, peripheral:self)
-                    self.discoveredServices[bcService.uuid] = bcService
-                    Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+                for service : AnyObject in cbServices {
+                    if let cbService = service as? CBService {
+                        let bcService = Service(cbService:cbService, peripheral:self)
+                        self.discoveredServices[bcService.uuid] = bcService
+                        Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+                    }
                 }
                 self.servicesDiscoveredPromise.success(self.services)
             } else {
@@ -194,12 +196,13 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug("Peripheral#didDiscoverCharacteristicsForService: \(self.name)")
         if let service = service {
             if let bcService = self.discoveredServices[service.UUID] {
-                if let cbCharacteristic = service.characteristics {
+                if let cbCharacteristics = service.characteristics {
                     bcService.didDiscoverCharacteristics(error)
                     if error == nil {
-                        for characteristic : AnyObject in cbCharacteristic {
-                            let cbCharacteristic = characteristic as CBCharacteristic
-                            self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+                        for characteristic : AnyObject in cbCharacteristics {
+                            if let cbCharacteristic = characteristic as? CBCharacteristic {
+                                self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+                            }
                         }
                     }
                 }
