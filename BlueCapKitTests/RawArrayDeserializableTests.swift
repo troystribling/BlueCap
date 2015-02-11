@@ -59,10 +59,13 @@ class RawArrayDeserializableTests: XCTestCase {
         }
     }
     
-//    func testSerialization() {
-//        let value = RawArray(rawValue:[5, 100])
-//        let data = Serde.serialize(value)
-//        XCTAssert(data.hexStringValue() == "0564", "RawDeserializable serialization failed: \(data)")
-//    }
+    func testSerialization() {
+        if let value = RawArray(rawValue:[5, 100]) {
+            let data = Serde.serialize(value)
+            XCTAssert(data.hexStringValue() == "0564", "RawArrayDeserializable serialization value invalid: \(data)")
+        } else {
+            XCTFail("RawArrayDeserializable RawArray creation failed")
+        }
+    }
 
 }

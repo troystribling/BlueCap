@@ -71,11 +71,13 @@ public class Service : NSObject {
         } else {
             self.discoveredCharacteristics.removeAll()
             if let cbCharacteristics = self.cbService.characteristics {
-                for cbCharacteristic : AnyObject in cbCharacteristics {
-                    let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic as CBCharacteristic, service:self)
-                    self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-                    bcCharacteristic.didDiscover()
-                    Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                for characteristic : AnyObject in cbCharacteristics {
+                    if let cbCharacteristic = characteristic as? CBCharacteristic {
+                        let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
+                        self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+                        bcCharacteristic.didDiscover()
+                        Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                    }
                 }
                 self.characteristicsDiscoveredPromise.success(self.characteristics)
             }
