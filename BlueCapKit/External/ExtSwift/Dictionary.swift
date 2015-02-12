@@ -73,7 +73,7 @@ internal extension Dictionary {
         //  Casts self from [Key: Value] to [K: V]
         let filtered = mapFilter { (item, value) -> (K, V)? in
             if (item is K) && (value is V) {
-                return (item as! K, value as V)
+                return (item as! K, value as! V)
             }
             
             return nil

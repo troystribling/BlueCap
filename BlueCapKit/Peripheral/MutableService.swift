@@ -11,10 +11,10 @@ import CoreBluetooth
 
 public class MutableService : NSObject {
     
-    private let profile             : ServiceProfile!
+    private let profile             : ServiceProfile
     private var _characteristics    : [MutableCharacteristic] = []
 
-    internal let cbMutableService   : CBMutableService!
+    internal let cbMutableService   : CBMutableService
 
     public var uuid : CBUUID {
         return self.profile.uuid
@@ -38,9 +38,9 @@ public class MutableService : NSObject {
     }
     
     public init(profile:ServiceProfile) {
-        super.init()
         self.profile = profile
         self.cbMutableService = CBMutableService(type:self.profile.uuid, primary:true)
+        super.init()
     }
     
     public func characteristicsFromProfiles(profiles:[CharacteristicProfile]) {

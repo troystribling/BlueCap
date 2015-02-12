@@ -19,7 +19,7 @@ extension UInt8 : Deserializable {
             if value > 255 || value < 0 {
                 return nil
             } else {
-                self = Byte(value)
+                self = UInt8(value)
             }
         } else {
             return nil
@@ -36,8 +36,8 @@ extension UInt8 : Deserializable {
 
     public static func deserialize(data:NSData) -> UInt8? {
         if data.length >= sizeof(UInt8) {
-            var value : Byte = 0
-            data.getBytes(&value, length:sizeof(Byte))
+            var value : UInt8 = 0
+            data.getBytes(&value, length:sizeof(UInt8))
             return toHostByteOrder(value)
         } else {
             return nil
@@ -46,7 +46,7 @@ extension UInt8 : Deserializable {
     
     public static func deserialize(data:NSData, start:Int) -> UInt8? {
         if data.length >= start + sizeof(UInt8) {
-            var value : Byte = 0
+            var value : UInt8 = 0
             data.getBytes(&value, range: NSMakeRange(start, sizeof(UInt8)))
             return toHostByteOrder(value)
         } else {

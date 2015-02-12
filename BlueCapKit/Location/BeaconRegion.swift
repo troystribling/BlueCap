@@ -14,8 +14,8 @@ public class BeaconRegion : Region {
     internal var _beacons       = [Beacon]()
     internal var beaconPromise  : StreamPromise<[Beacon]>
 
-    internal var clBeaconRegion : CLBeaconRegion {
-        return self._region as CLBeaconRegion
+    internal var clBeaconRegion : CLBeaconRegion? {
+        return self._region as? CLBeaconRegion
     }
     
     public var beacons : [Beacon] {
@@ -31,12 +31,12 @@ public class BeaconRegion : Region {
         })
     }
     
-    public var proximityUUID : NSUUID! {
-        return (self._region as CLBeaconRegion).proximityUUID
+    public var proximityUUID : NSUUID? {
+        return self.clBeaconRegion?.proximityUUID
     }
     
     public var major : Int? {
-        if let _major = self.clBeaconRegion.major {
+        if let _major = self.clBeaconRegion?.major {
             return _major.integerValue
         } else {
             return nil
@@ -44,19 +44,19 @@ public class BeaconRegion : Region {
     }
     
     public var minor : Int? {
-        if let _minor = self.clBeaconRegion.minor {
+        if let _minor = self.clBeaconRegion?.minor {
             return _minor.integerValue
         } else {
             return nil
         }
     }
     
-    public var notifyEntryStateOnDisplay : Bool {
+    public var notifyEntryStateOnDisplay : Bool? {
         get {
-            return self.clBeaconRegion.notifyEntryStateOnDisplay
+            return self.clBeaconRegion?.notifyEntryStateOnDisplay
         }
         set {
-            self.clBeaconRegion.notifyEntryStateOnDisplay = newValue
+            self.clBeaconRegion?.notifyEntryStateOnDisplay = newValue
         }
     }
     
