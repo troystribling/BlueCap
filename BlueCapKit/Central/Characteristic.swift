@@ -241,12 +241,12 @@ public class Characteristic {
                 Logger.debug("Charcteristic#init: Charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
                 self.profile = characteristicProfile
             } else {
-                Logger.debug("Charcteristic#init: No characteristic profile found. Creating characteristic with UUID: \(self.uuid.UUIDString)")
-                self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString)
+                Logger.debug("Charcteristic#init: No characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+                self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
             }
         } else {
-            Logger.debug("No service profile found. Creating characteristic with UUID: \(self.uuid.UUIDString)")
-            self.profile = CharacteristicProfile(uuid:self.uuid.UUIDString)
+            Logger.debug("No service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+            self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
         }
     }
     

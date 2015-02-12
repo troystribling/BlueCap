@@ -60,7 +60,9 @@ public class BeaconManager : RegionManager {
         authoriztaionFuture.onSuccess {status in
             self.regionRangingStatus[beaconRegion.identifier] = true
             self.configuredBeaconRegions[beaconRegion.region] = beaconRegion
-            self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
+            if let region = beaconRegion.region as? CLBeaconRegion {
+                self.clLocationManager.startRangingBeaconsInRegion(region)
+            }
         }
         authoriztaionFuture.onFailure {error in
             beaconRegion.beaconPromise.failure(error)
@@ -75,26 +77,34 @@ public class BeaconManager : RegionManager {
     public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
         self.regionRangingStatus.removeValueForKey(beaconRegion.identifier)
         self.configuredBeaconRegions.removeValueForKey(beaconRegion.region)
-        self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
+        if let region = beaconRegion.region as? CLBeaconRegion {
+            self.clLocationManager.stopRangingBeaconsInRegion(region)
+        }
     }
     
     public func resumeRangingAllBeacons() {
         for beaconRegion in self.regions {
             self.regionRangingStatus[beaconRegion.identifier] = true
-            self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
+            if let region = beaconRegion.region as? CLBeaconRegion {
+                self.clLocationManager.startRangingBeaconsInRegion(region)
+            }
         }
     }
     
     public func pauseRangingAllBeacons() {
         for beaconRegion in self.regions {
             self.regionRangingStatus[beaconRegion.identifier] = false
-            self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.region as CLBeaconRegion)
+            if let region = beaconRegion.region as? CLBeaconRegion {
+                self.clLocationManager.stopRangingBeaconsInRegion(region)
+            }
         }
     }
 
     public func stopRangingAllBeacons() {
         for beaconRegion in self.regions {
-            self.stopRangingBeaconsInRegion(beaconRegion as BeaconRegion)
+            if let beaconRegion = beaconRegion as? BeaconRegion {
+                self.stopRangingBeaconsInRegion(beaconRegion)
+            }
         }
     }
 
@@ -106,24 +116,26 @@ public class BeaconManager : RegionManager {
     public func locationManager(_:CLLocationManager!, didRangeBeacons beacons:[AnyObject]!, inRegion region:CLBeaconRegion!) {
         Logger.debug("BeaconManager#didRangeBeacons: \(region.identifier)")
         if let region = self.configuredRegions[region] {
-            let beaconRegion = region as BeaconRegion
-            let bcbeacons = beacons.reduce([Beacon]()) {(bcbeacons, beacon) in
-                if let beacon = beacon as? CLBeacon {
-                    return bcbeacons + [Beacon(clbeacon:beacon)]
-                } else {
-                    return bcbeacons
+            if let beaconRegion = region as? BeaconRegion {
+                let bcbeacons = beacons.reduce([Beacon]()) {(bcbeacons, beacon) in
+                    if let beacon = beacon as? CLBeacon {
+                        return bcbeacons + [Beacon(clbeacon:beacon)]
+                    } else {
+                        return bcbeacons
+                    }
                 }
+                beaconRegion._beacons = bcbeacons
+                beaconRegion.beaconPromise.success(bcbeacons)
             }
-            beaconRegion._beacons = bcbeacons
-            beaconRegion.beaconPromise.success(bcbeacons)
         }
     }
     
     public func locationManager(_:CLLocationManager!, rangingBeaconsDidFailForRegion region:CLBeaconRegion!, withError error:NSError!) {
         Logger.debug("BeaconManager#rangingBeaconsDidFailForRegion: \(region.identifier)")
         if let region = self.configuredRegions[region] {
-            let beaconRegion = region as BeaconRegion
-            beaconRegion.beaconPromise.failure(error)
+            if let beaconRegion = region as? BeaconRegion {
+                beaconRegion.beaconPromise.failure(error)
+            }
         }
     }
     
