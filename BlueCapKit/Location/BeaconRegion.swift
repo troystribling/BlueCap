@@ -14,9 +14,7 @@ public class BeaconRegion : Region {
     internal var _beacons       = [Beacon]()
     internal var beaconPromise  : StreamPromise<[Beacon]>
 
-    internal var clBeaconRegion : CLBeaconRegion? {
-        return self._region as? CLBeaconRegion
-    }
+    internal  let clBeaconRegion : CLBeaconRegion
     
     public var beacons : [Beacon] {
         return sorted(self._beacons, {(b1:Beacon, b2:Beacon) -> Bool in
@@ -32,11 +30,11 @@ public class BeaconRegion : Region {
     }
     
     public var proximityUUID : NSUUID? {
-        return self.clBeaconRegion?.proximityUUID
+        return self.clBeaconRegion.proximityUUID
     }
     
     public var major : Int? {
-        if let _major = self.clBeaconRegion?.major {
+        if let _major = self.clBeaconRegion.major {
             return _major.integerValue
         } else {
             return nil
@@ -44,23 +42,24 @@ public class BeaconRegion : Region {
     }
     
     public var minor : Int? {
-        if let _minor = self.clBeaconRegion?.minor {
+        if let _minor = self.clBeaconRegion.minor {
             return _minor.integerValue
         } else {
             return nil
         }
     }
     
-    public var notifyEntryStateOnDisplay : Bool? {
+    public var notifyEntryStateOnDisplay : Bool {
         get {
-            return self.clBeaconRegion?.notifyEntryStateOnDisplay
+            return self.clBeaconRegion.notifyEntryStateOnDisplay
         }
         set {
-            self.clBeaconRegion?.notifyEntryStateOnDisplay = newValue
+            self.clBeaconRegion.notifyEntryStateOnDisplay = newValue
         }
     }
     
-    internal override init(region:CLRegion, capacity:Int? = nil) {
+    internal init(region:CLBeaconRegion, capacity:Int? = nil) {
+        self.clBeaconRegion = region
         if let capacity = capacity {
             self.beaconPromise = StreamPromise<[Beacon]>(capacity:capacity)
         } else {
@@ -71,8 +70,7 @@ public class BeaconRegion : Region {
     }
     
     public convenience init(proximityUUID:NSUUID, identifier:String, capacity:Int? = nil) {
-        let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, identifier:identifier)
-        self.init(region:beaconRegion, capacity:capacity)
+        self.init(region:CLBeaconRegion(proximityUUID:proximityUUID, identifier:identifier), capacity:capacity)
     }
 
     public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, capacity:Int? = nil) {

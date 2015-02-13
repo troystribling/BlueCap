@@ -11,10 +11,8 @@ import CoreLocation
 
 public class CircularRegion : Region {
 
-    internal var clCircularRegion : CLCircularRegion {
-        return self._region as CLCircularRegion
-    }
-    
+    internal let clCircularRegion : CLCircularRegion
+        
     public var center : CLLocationCoordinate2D {
         return self.clCircularRegion.center
     }
@@ -23,21 +21,19 @@ public class CircularRegion : Region {
         return self.clCircularRegion.radius
     }
 
-    internal init(region:CLRegion, initializer:((circularRegion:CircularRegion) -> ())? = nil) {
-        super.init(region:region)
-        if let initializer = initializer {
-            initializer(circularRegion:self)
-        }
+    internal init(region:CLCircularRegion, capacity:Int? = nil) {
+        self.clCircularRegion = region
+        super.init(region:region, capacity:capacity)
     }
 
-    public convenience init(center:CLLocationCoordinate2D, radius:CLLocationDistance, identifier:String, initializer:((region:CircularRegion) -> ())? = nil) {
+    public convenience init(center:CLLocationCoordinate2D, radius:CLLocationDistance, identifier:String, capacity:Int? = nil) {
         let circularRegion = CLCircularRegion(center:center, radius:radius, identifier:identifier)
-        self.init(region:circularRegion, initializer:initializer)
+        self.init(region:circularRegion, capacity:capacity)
     }
     
-    public convenience init(center:CLLocationCoordinate2D, identifier:String, initializer:((region:CircularRegion) -> ())? = nil) {
+    public convenience init(center:CLLocationCoordinate2D, identifier:String, capacity:Int? = nil) {
         let circularRegion = CLCircularRegion(center:center, radius:DEFAULT_REGION_RADIUS, identifier:identifier)
-        self.init(region:circularRegion, initializer:initializer)
+        self.init(region:circularRegion, capacity:capacity)
     }
     
     public func containsCoordinate(coordinate:CLLocationCoordinate2D) -> Bool {

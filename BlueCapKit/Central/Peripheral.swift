@@ -173,8 +173,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             self.servicesDiscoveredPromise.failure(error)
         } else {
             if let cbServices = peripheral.services {
-                for service : AnyObject in cbServices {
-                    if let cbService = service as? CBService {
+                for cbService : AnyObject in cbServices {
+                    if let cbService = cbService as? CBService {
                         let bcService = Service(cbService:cbService, peripheral:self)
                         self.discoveredServices[bcService.uuid] = bcService
                         Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")

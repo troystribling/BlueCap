@@ -74,7 +74,7 @@ public class FutureStream<T> {
     public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) {
         Queue.simpleFutureStreams.sync {
             let futureComplete : InFuture = {future in
-                future.onComplete(executionContext, complete)
+                future.onComplete(executionContext, complete:complete)
             }
             self.saveCompletes.append(futureComplete)
             for future in self.futures {
@@ -96,7 +96,7 @@ public class FutureStream<T> {
     
     // should be future mixin
     public func onComplete(complete:Try<T> -> Void) {
-        self.onComplete(self.defaultExecutionContext, complete)
+        self.onComplete(self.defaultExecutionContext, complete:complete)
     }
     
     public func onSuccess(success:T -> Void) {
@@ -130,7 +130,7 @@ public class FutureStream<T> {
     }
     
     public func map<M>(mapping:T -> Try<M>) -> FutureStream<M> {
-        return self.map(self.defaultExecutionContext, mapping)
+        return self.map(self.defaultExecutionContext, mapping:mapping)
     }
     
     public func map<M>(executionContext:ExecutionContext, mapping:T -> Try<M>) -> FutureStream<M> {
@@ -142,7 +142,7 @@ public class FutureStream<T> {
     }
     
     public func flatmap<M>(mapping:T -> FutureStream<M>) -> FutureStream<M> {
-        return self.flatMap(self.defaultExecutionContext, mapping)
+        return self.flatMap(self.defaultExecutionContext, mapping:mapping)
     }
     
     public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M> {
@@ -242,7 +242,7 @@ public class FutureStream<T> {
     
     // future stream extensions
     public func flatmap<M>(mapping:T -> Future<M>) -> FutureStream<M> {
-        return self.flatMap(self.defaultExecutionContext, mapping)
+        return self.flatMap(self.defaultExecutionContext, mapping:mapping)
     }
     
     public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> FutureStream<M> {
