@@ -17,38 +17,34 @@ public enum RegionState {
 
 public class Region {
     
-    internal let _region : CLRegion
+    internal let clRegion : CLRegion
     
     internal var regionPromise  : StreamPromise<RegionState>
     
     public var identifier : String {
-        return self._region.identifier
+        return self.clRegion.identifier
     }
     
     public var notifyOnEntry : Bool {
         get {
-            return self._region.notifyOnEntry
+            return self.clRegion.notifyOnEntry
         }
         set {
-            self._region.notifyOnEntry = newValue
+            self.clRegion.notifyOnEntry = newValue
         }
     }
     
     public var notifyOnExit : Bool {
         get {
-            return self._region.notifyOnExit
+            return self.clRegion.notifyOnExit
         }
         set {
-            self._region.notifyOnExit = newValue
+            self.clRegion.notifyOnExit = newValue
         }
     }
     
-    internal var region : CLRegion {
-        return self._region
-    }
-        
     internal init(region:CLRegion, capacity:Int? = nil) {
-        self._region = region
+        self.clRegion = region
         if let capacity = capacity {
             self.regionPromise = StreamPromise<RegionState>(capacity:capacity)
         } else {

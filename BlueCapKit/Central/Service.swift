@@ -71,8 +71,8 @@ public class Service : NSObject {
         } else {
             self.discoveredCharacteristics.removeAll()
             if let cbCharacteristics = self.cbService.characteristics {
-                for characteristic : AnyObject in cbCharacteristics {
-                    if let cbCharacteristic = characteristic as? CBCharacteristic {
+                for cbCharacteristic : AnyObject in cbCharacteristics {
+                    if let cbCharacteristic = cbCharacteristic as? CBCharacteristic {
                         let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
                         self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
                         bcCharacteristic.didDiscover()
