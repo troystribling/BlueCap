@@ -11,8 +11,8 @@ import CoreLocation
 
 public class BeaconManager : RegionManager {
     
-    private var regionRangingStatus         : [String:Bool]             = [:]
-    internal var configuredBeaconRegions    : [CLBeaconRegion:BeaconRegion]   = [:]
+    private var regionRangingStatus         : [String:Bool]                     = [:]
+    internal var configuredBeaconRegions    : [CLBeaconRegion:BeaconRegion]     = [:]
 
     public var beaconRegions : [BeaconRegion] {
         return self.configuredBeaconRegions.values.array
@@ -93,10 +93,8 @@ public class BeaconManager : RegionManager {
     }
 
     public func stopRangingAllBeacons() {
-        for beaconRegion in self.regions {
-            if let beaconRegion = beaconRegion as? BeaconRegion {
-                self.stopRangingBeaconsInRegion(beaconRegion)
-            }
+        for beaconRegion in self.beaconRegions {
+            self.stopRangingBeaconsInRegion(beaconRegion)
         }
     }
 
@@ -107,27 +105,17 @@ public class BeaconManager : RegionManager {
     // CLLocationManagerDelegate
     public func locationManager(_:CLLocationManager!, didRangeBeacons beacons:[AnyObject]!, inRegion region:CLBeaconRegion!) {
         Logger.debug("BeaconManager#didRangeBeacons: \(region.identifier)")
-        if let region = self.configuredRegions[region] {
-            if let beaconRegion = region as? BeaconRegion {
-                let bcbeacons = beacons.reduce([Beacon]()) {(bcbeacons, beacon) in
-                    if let beacon = beacon as? CLBeacon {
-                        return bcbeacons + [Beacon(clbeacon:beacon)]
-                    } else {
-                        return bcbeacons
-                    }
-                }
-                beaconRegion._beacons = bcbeacons
-                beaconRegion.beaconPromise.success(bcbeacons)
-            }
+        if let beaconRegion = self.configuredBeaconRegions[region] {
+            let bcbeacons = beacons.map{Beacon(clbeacon:($0 as! CLBeacon))}
+            beaconRegion._beacons = bcbeacons
+            beaconRegion.beaconPromise.success(bcbeacons)
         }
     }
     
     public func locationManager(_:CLLocationManager!, rangingBeaconsDidFailForRegion region:CLBeaconRegion!, withError error:NSError!) {
         Logger.debug("BeaconManager#rangingBeaconsDidFailForRegion: \(region.identifier)")
-        if let beaconRegion = self.configuredRegions[region] {
-            if let beaconRegion = beaconRegion as? BeaconRegion {
-                beaconRegion.beaconPromise.failure(error)
-            }
+        if let beaconRegion = self.configuredBeaconRegions[region] {
+            beaconRegion.beaconPromise.failure(error)
         }
     }
     

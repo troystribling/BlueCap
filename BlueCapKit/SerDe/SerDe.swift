@@ -71,7 +71,7 @@ public protocol StringDeserializable {
 public protocol RawDeserializable {
     typealias RawType       : Deserializable
     static var uuid         : String {get}
-//    var rawValue            : RawType {get}
+    var rawValue            : RawType {get}
     init?(rawValue:RawType)
 }
 

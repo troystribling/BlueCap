@@ -55,10 +55,10 @@ public class MutableCharacteristic : NSObject {
     }
     
     public init(profile:CharacteristicProfile) {
-        super.init()
         self.profile = profile
-        self._value = self.profile.initialValue
+        self._value = profile.initialValue
         self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
+        super.init()
     }
 
     public convenience init(uuid:String) {

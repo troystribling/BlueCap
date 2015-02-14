@@ -95,7 +95,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func startAdvertising(region:BeaconRegion) -> Future<Void> {
         self._name = region.identifier
         self.afterAdvertisingStartedPromise = Promise<Void>()
-        self.cbPeripheralManager.startAdvertising(region.clBeaconRegion.peripheralDataWithMeasuredPower(nil))
+        self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower())
         return self.afterAdvertisingStartedPromise.future
     }
     
@@ -267,18 +267,15 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func peripheralManager(_:CBPeripheralManager!, didReceiveWriteRequests requests:[AnyObject]!) {
         Logger.debug("PeripheralManager#didReceiveWriteRequests")
         for request in requests {
-            if let cbattRequest = request as? CBATTRequest {
-                if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
-                    Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
-                    characteristic.value = request.value
-                    if let processWriteRequestPromise = characteristic.processWriteRequestPromise {
-                        processWriteRequestPromise.success(cbattRequest)
-                    }
-                } else {
-                    Logger.debug("Error: characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
+            let cbattRequest = request as! CBATTRequest
+            if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
+                Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
+                characteristic.value = request.value
+                if let processWriteRequestPromise = characteristic.processWriteRequestPromise {
+                    processWriteRequestPromise.success(cbattRequest)
                 }
             } else {
-                Logger.debug("Error: request cast failed")
+                Logger.debug("Error: characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
             }
         }
     }

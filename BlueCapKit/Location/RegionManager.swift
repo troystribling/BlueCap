@@ -59,8 +59,8 @@ public class RegionManager : LocationManager {
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
             self.regionMonitorStatus[region.identifier] = true
-            self.configuredRegions[region.region] = region
-            self.clLocationManager.startMonitoringForRegion(region.region)
+            self.configuredRegions[region.clRegion] = region
+            self.clLocationManager.startMonitoringForRegion(region.clRegion)
         }
         authoriztaionFuture.onFailure {error in
             region.regionPromise.failure(error)
@@ -69,26 +69,26 @@ public class RegionManager : LocationManager {
     }
 
     public func startMonitoringForRegion(region:Region) -> FutureStream<RegionState> {
-        return self.startMonitoringForRegion(CLAuthorizationStatus.Authorized, region:region)
+        return self.startMonitoringForRegion(CLAuthorizationStatus.AuthorizedAlways, region:region)
     }
 
     public func stopMonitoringForRegion(region:Region) {
         self.regionMonitorStatus.removeValueForKey(region.identifier)
-        self.configuredRegions.removeValueForKey(region.region)
-        self.clLocationManager.stopMonitoringForRegion(region.region)
+        self.configuredRegions.removeValueForKey(region.clRegion)
+        self.clLocationManager.stopMonitoringForRegion(region.clRegion)
     }
     
     public func resumeMonitoringAllRegions() {
         for region in self.regions {
             self.regionMonitorStatus[region.identifier] = true
-            self.clLocationManager.startMonitoringForRegion(region.region)
+            self.clLocationManager.startMonitoringForRegion(region.clRegion)
         }
     }
     
     public func pauseMonitoringAllRegions() {
         for region in self.regions {
             self.regionMonitorStatus[region.identifier] = false
-            self.clLocationManager.stopMonitoringForRegion(region.region)
+            self.clLocationManager.stopMonitoringForRegion(region.clRegion)
         }
     }
 

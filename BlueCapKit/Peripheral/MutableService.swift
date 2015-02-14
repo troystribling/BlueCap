@@ -30,7 +30,7 @@ public class MutableService : NSObject {
         }
         set {
             self._characteristics = newValue
-            self.cbMutableService.characteristics = self._characteristics.reduce(Array<CBMutableCharacteristic>()) {(cbCharacteristics, characteristic) in
+            self.cbMutableService.characteristics = self._characteristics.reduce([CBMutableCharacteristic]()) {(cbCharacteristics, characteristic) in
                                                             PeripheralManager.sharedInstance.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
                                                             return cbCharacteristics + [characteristic.cbMutableChracteristic]
                                                         }

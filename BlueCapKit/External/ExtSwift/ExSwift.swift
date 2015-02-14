@@ -58,7 +58,7 @@ public class ExSwift {
         
         let f = ExSwift.after(n, function: callAfter)
         
-        return { f([nil])? }
+        return { f([nil]) }
     }
     
     /**
