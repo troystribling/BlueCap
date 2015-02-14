@@ -69,30 +69,30 @@ public protocol StringDeserializable {
 }
 
 public protocol RawDeserializable {
-    typealias RawType       : Deserializable
+    typealias RawType
     static var uuid         : String {get}
     var rawValue            : RawType {get}
     init?(rawValue:RawType)
 }
 
 public protocol RawArrayDeserializable {
-    typealias RawType   : Deserializable
+    typealias RawType
     static var uuid     : String {get}
     var rawValue        : [RawType] {get}
     init?(rawValue:[RawType])
 }
 
 public protocol RawPairDeserializable {
-    typealias RawType1  : Deserializable
-    typealias RawType2  : Deserializable
+    typealias RawType1
+    typealias RawType2
     static var uuid     : String {get}
     var rawValue        : (RawType1, RawType2) {get}
     init?(rawValue:(RawType1, RawType2))
 }
 
 public protocol RawArrayPairDeserializable {
-    typealias RawType1  : Deserializable
-    typealias RawType2      : Deserializable
+    typealias RawType1
+    typealias RawType2
     static var uuid      : String {get}
     static var size      : (Int, Int) {get}
     var rawValue        : ([RawType1], [RawType2]) {get}
@@ -121,7 +121,7 @@ public struct Serde {
         return NSData.serialize(values)
     }
 
-    public static func deserialize<T:RawDeserializable>(data:NSData) -> T? {
+    public static func deserialize<T:RawDeserializable where T.RawType:Deserializable>(data:NSData) -> T? {
         return T.RawType.deserialize(data).flatmap{T(rawValue:$0)}
     }
 
@@ -129,7 +129,7 @@ public struct Serde {
         return NSData.serialize(value.rawValue)
     }
 
-    public static func deserialize<T:RawArrayDeserializable>(data:NSData) -> T? {
+    public static func deserialize<T:RawArrayDeserializable where T.RawType:Deserializable>(data:NSData) -> T? {
         return T(rawValue:T.RawType.deserialize(data))
     }
 
@@ -137,7 +137,7 @@ public struct Serde {
         return NSData.serialize(value.rawValue)
     }
 
-    public static func deserialize<T:RawPairDeserializable>(data:NSData) -> T? {
+    public static func deserialize<T:RawPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T? {
         let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
         let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
         return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
@@ -151,7 +151,7 @@ public struct Serde {
         return NSData.serialize(value.rawValue)
     }
 
-    public static func deserialize<T:RawArrayPairDeserializable>(data:NSData) -> T? {
+    public static func deserialize<T:RawArrayPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T? {
         let (rawSize1, rawSize2) = T.size
         let rawData1 = data.subdataWithRange(NSMakeRange(0, rawSize1))
         let rawData2 = data.subdataWithRange(NSMakeRange(rawSize1, rawSize2))
