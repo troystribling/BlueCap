@@ -75,7 +75,7 @@ public class Characteristic {
         }
     }
 
-    public func value<T:RawDeserializable>() -> T? {
+    public func value<T:RawDeserializable where T.RawType:Deserializable>() -> T? {
         if let data = self.dataValue {
             return Serde.deserialize(data)
         } else {
@@ -83,7 +83,7 @@ public class Characteristic {
         }
     }
 
-    public func value<T:RawArrayDeserializable>() -> T? {
+    public func value<T:RawArrayDeserializable where T.RawType:Deserializable>() -> T? {
         if let data = self.dataValue {
             return Serde.deserialize(data)
         } else {
@@ -91,7 +91,7 @@ public class Characteristic {
         }
     }
 
-    public func value<T:RawPairDeserializable>() -> T? {
+    public func value<T:RawPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>() -> T? {
         if let data = self.dataValue {
             return Serde.deserialize(data)
         } else {
@@ -99,7 +99,7 @@ public class Characteristic {
         }
     }
 
-    public func value<T:RawArrayPairDeserializable>() -> T? { 
+    public func value<T:RawArrayPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>() -> T? { 
         if let data = self.dataValue {
             return Serde.deserialize(data)
         } else {

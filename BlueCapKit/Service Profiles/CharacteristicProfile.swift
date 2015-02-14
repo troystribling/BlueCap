@@ -68,7 +68,7 @@ public class CharacteristicProfile {
 }
 
 // RawCharacteristicProfile
-public class RawCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
+public class RawCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType:Deserializable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -93,34 +93,8 @@ public class RawCharacteristicProfile<DeserializedType where DeserializedType:Ra
     
 }
 
-// RawPairCharacteristicProfile
-public class RawPairCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
-    
-    public init() {
-        super.init(uuid:DeserializedType.uuid,
-            name:DeserializedType.name,
-            permissions:DeserializedType.permissions,
-            properties:DeserializedType.properties,
-            initialValue:DeserializedType.initialValue)
-    }
-    
-    public override var stringValues : [String] {
-        return DeserializedType.stringValues
-    }
-    
-    public override func stringValue(data:NSData) -> [String:String]? {
-        let value : DeserializedType? = Serde.deserialize(data)
-        return value.map{$0.stringValue}
-    }
-    
-    public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{Serde.serialize($0)}
-    }
-    
-}
-
 // RawArrayCharacteristicProfile
-public class RawArrayCharacteristicProfile<DeserializedType where DeserializedType:RawArrayDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
+public class RawArrayCharacteristicProfile<DeserializedType where DeserializedType:RawArrayDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType:Deserializable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -145,8 +119,35 @@ public class RawArrayCharacteristicProfile<DeserializedType where DeserializedTy
     
 }
 
+// RawPairCharacteristicProfile
+public class RawPairCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType1:Deserializable, DeserializedType.RawType2:Deserializable> : CharacteristicProfile {
+    
+    public init() {
+        super.init(uuid:DeserializedType.uuid,
+            name:DeserializedType.name,
+            permissions:DeserializedType.permissions,
+            properties:DeserializedType.properties,
+            initialValue:DeserializedType.initialValue)
+    }
+    
+    public override var stringValues : [String] {
+        return DeserializedType.stringValues
+    }
+    
+    public override func stringValue(data:NSData) -> [String:String]? {
+        let value : DeserializedType? = Serde.deserialize(data)
+        return value.map{$0.stringValue}
+    }
+    
+    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+        return DeserializedType(stringValue:data).flatmap{Serde.serialize($0)}
+    }
+    
+}
+
+
 // RawArrayPairCharacteristicProfile
-public class RawArrayPairCharacteristicProfile<DeserializedType where DeserializedType:RawArrayPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable> : CharacteristicProfile {
+public class RawArrayPairCharacteristicProfile<DeserializedType where DeserializedType:RawArrayPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType1:Deserializable, DeserializedType.RawType2:Deserializable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
