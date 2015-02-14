@@ -10,69 +10,69 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-public struct Gnosus {
-
-    //***************************************************************************************************
-    // Hello World Service
-    public struct HelloWorldService : ServiceConfigurable {
-        
-        // ServiceConfigurable
-        public static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
-        public static let name = "Hello World"
-        public static let tag  = "gnos.us"
-        
-        public struct Greeting : CharacteristicConfigurable {
-
-            // BLEConfigurable
-            public static let uuid         = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
-            public static let name         = "Hello World Greeting"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let initialValue = Serde.serialize("Hello")
-            
-        }
-        
-        public struct UpdatePeriod : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
-
-            public let period : UInt16
-
-            // CharacteristicConfigurable
-            public static let uuid                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
-            public static let name                      = "Update Period"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = Serde.serialize(UInt16(5000))
-            
-            // RawDeserializable
+//public struct Gnosus {
+//
+//    //***************************************************************************************************
+//    // Hello World Service
+//    public struct HelloWorldService : ServiceConfigurable {
+//        
+//        // ServiceConfigurable
+//        public static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
+//        public static let name = "Hello World"
+//        public static let tag  = "gnos.us"
+//        
+//        public struct Greeting : CharacteristicConfigurable {
+//
+//            // BLEConfigurable
+//            public static let uuid         = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+//            public static let name         = "Hello World Greeting"
+//            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+//            public static let properties   = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+//            public static let initialValue = Serde.serialize("Hello")
+//            
+//        }
+//        
+//        public struct UpdatePeriod : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+//
+//            public let period : UInt16
+//
+//            // CharacteristicConfigurable
+//            public static let uuid                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
+//            public static let name                      = "Update Period"
+//            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+//            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+//            public static let initialValue : NSData?    = Serde.serialize(UInt16(5000))
+//            
+//            // RawDeserializable
 //            public var rawValue : UInt16 {
 //                return self.period
 //            }
-            public init?(rawValue:UInt16) {
-                self.period = rawValue
-            }
-
-            // StringDeserializable
-            public static var stringValues : [String] {
-                return []
-            }
-            
-            public var stringValue : [String:String] {
-                return [UpdatePeriod.name:"\(self.period)"]
-            }
-            
-            public init?(stringValue:[String:String]) {
-                if let value = uint16ValueFromStringValue(UpdatePeriod.name, stringValue) {
-                    self.period = value
-                } else {
-                    return nil
-                }
-            }
-
-        }
-    }
-
-    //***************************************************************************************************
-    // Location Service
+//            public init?(rawValue:UInt16) {
+//                self.period = rawValue
+//            }
+//
+//            // StringDeserializable
+//            public static var stringValues : [String] {
+//                return []
+//            }
+//            
+//            public var stringValue : [String:String] {
+//                return [UpdatePeriod.name:"\(self.period)"]
+//            }
+//            
+//            public init?(stringValue:[String:String]) {
+//                if let value = uint16ValueFromStringValue(UpdatePeriod.name, stringValue) {
+//                    self.period = value
+//                } else {
+//                    return nil
+//                }
+//            }
+//
+//        }
+//    }
+//
+//    //***************************************************************************************************
+//    // Location Service
 //    public struct LocationService : ServiceConfigurable {
 //
 //        // ServiceConfigurable
@@ -159,29 +159,29 @@ public struct Gnosus {
 //            
 //        }
 //    }
-
-}
-
-public struct GnosusProfiles {
-
-    public static func create() {
-        
-        let profileManager = ProfileManager.sharedInstance
-        
-        // Hello World Service
+//
+//}
+//
+//public struct GnosusProfiles {
+//
+//    public static func create() {
+//        
+//        let profileManager = ProfileManager.sharedInstance
+//        
+//        // Hello World Service
 //        let helloWorldService = ConfiguredServiceProfile<Gnosus.HelloWorldService>()
 //        let greetingCharacteristic = StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>()
 //        let updateCharacteristic = RawCharacteristicProfile<Gnosus.HelloWorldService.UpdatePeriod>()
 //        helloWorldService.addCharacteristic(greetingCharacteristic)
 //        helloWorldService.addCharacteristic(updateCharacteristic)
 //        profileManager.addService(helloWorldService)
-
-        // Location Service
+//
+//        // Location Service
 //        let locationService = ConfiguredServiceProfile<Gnosus.LocationService>()
 //        let latlonCharacteristic = RawArrayCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude>()
 //        locationService.addCharacteristic(latlonCharacteristic)
 //        profileManager.addService(locationService)
-
-    }
-    
-}
+//
+//    }
+//    
+//}

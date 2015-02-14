@@ -71,13 +71,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
             } else {
                 var places = [CLPlacemark]()
                 if placemarks != nil {
-                    places = placemarks.reduce(Array<CLPlacemark>()) {(result, place) in
-                        if let place = place as? CLPlacemark {
-                            return result + [place]
-                        } else {
-                            return result
-                        }
-                    }
+                    places = placemarks.map {$0 as! CLPlacemark}
                 }
                 promise.success(places)
             }
@@ -146,13 +140,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         if let locations = locations {
             Logger.debug("LocationManager#didUpdateLocations")
             if let locationUpdatePromise = self.locationUpdatePromise {
-                let cllocations = locations.reduce([CLLocation]()) {(cllocations, location) in
-                    if let location = location as? CLLocation {
-                        return cllocations + [location]
-                    } else {
-                        return cllocations
-                    }
-                }
+                let cllocations = locations.map{$0 as! CLLocation}
                 locationUpdatePromise.success(cllocations)
             }
         }

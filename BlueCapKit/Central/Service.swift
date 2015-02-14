@@ -70,15 +70,12 @@ public class Service : NSObject {
             self.characteristicsDiscoveredPromise.failure(error)
         } else {
             self.discoveredCharacteristics.removeAll()
-            if let cbCharacteristics = self.cbService.characteristics {
-                for cbCharacteristic : AnyObject in cbCharacteristics {
-                    if let cbCharacteristic = cbCharacteristic as? CBCharacteristic {
-                        let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
-                        self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-                        bcCharacteristic.didDiscover()
-                        Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-                    }
-                }
+            for characteristic in self.cbService.characteristics {
+                let cbCharacteristic = characteristic as! CBCharacteristic
+                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
+                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+                bcCharacteristic.didDiscover()
+                Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
                 self.characteristicsDiscoveredPromise.success(self.characteristics)
             }
         }

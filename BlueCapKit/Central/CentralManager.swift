@@ -21,10 +21,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private var afterPowerOffPromise                = Promise<Void>()
     internal var afterPeripheralDiscoveredPromise   = StreamPromise<PeripheralDiscovery>()
 
-    private let cbCentralManager    : CBCentralManager!
-
-    private let centralQueue    = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
-    private var _isScanning     = false
+    private var cbCentralManager : CBCentralManager! = nil
+    
+    private let centralQueue        = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
+    private var _isScanning         = false
     
     // INTERNAL
     internal var discoveredPeripherals   : Dictionary<CBPeripheral, Peripheral> = [:]
@@ -147,7 +147,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:NSDictionary!, RSSI:NSNumber!) {
+    public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:[NSObject:AnyObject]!, RSSI:NSNumber!) {
         if self.discoveredPeripherals[peripheral] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
@@ -172,7 +172,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // central manager state
-    public func centralManager(_:CBCentralManager!, willRestoreState dict:NSDictionary!) {
+    public func centralManager(_:CBCentralManager!, willRestoreState dict:[NSObject:AnyObject]!!) {
         Logger.debug("CentralManager#willRestoreState")
     }
     
@@ -211,7 +211,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     internal class func delay(delay:Double, request:()->()) {
-        CentralManager.sharedInstance.delay(delay, request)
+        CentralManager.sharedInstance.delay(delay, request:request)
     }
     
     internal func sync(request:()->()) {
@@ -233,9 +233,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue)
     }
     
-    private func unpackAdvertisements(advertDictionary:NSDictionary!) -> Dictionary<String,String> {
+    private func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
         Logger.debug("CentralManager#unpackAdvertisements found \(advertDictionary.count) advertisements")
-        var advertisements = Dictionary<String, String>()
+        var advertisements = [String:String]()
         func addKey(key:String, andValue value:AnyObject) -> () {
             if value is NSString {
                 advertisements[key] = (value as? String)
@@ -245,16 +245,18 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             Logger.debug("CentralManager#unpackAdvertisements key:\(key), value:\(advertisements[key])")
         }
         if advertDictionary != nil {
-            for keyObject : AnyObject in advertDictionary.allKeys {
-                let key = keyObject as String
-                let value : AnyObject! = advertDictionary.objectForKey(keyObject)
-                if value is NSArray {
-                    for v : AnyObject in (value as NSArray) {
-                        addKey(key, andValue:value)
+            for keyObject : NSObject in advertDictionary.keys {
+                if let key = keyObject as? String {
+                    if let value : AnyObject = advertDictionary[keyObject] {
+                        if value is NSArray {
+                            for v : AnyObject in (value as! NSArray) {
+                                addKey(key, andValue:value)
+                            }
+                        } else {
+                            addKey(key, andValue:value)
+                        }
                     }
-                } else {
-                    addKey(key, andValue:value)
-                }                
+                }
             }
         }
         Logger.debug("CentralManager#unpackAdvertisements unpacked \(advertisements.count) advertisements")
