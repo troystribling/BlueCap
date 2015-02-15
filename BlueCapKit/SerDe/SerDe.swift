@@ -45,7 +45,7 @@ public protocol Serializable {
     static func serialize<T>(value:T) -> NSData
     static func serialize<T>(values:[T]) -> NSData
     static func serialize<T1, T2>(value1:T1, value2:T2) -> NSData
-    static func serialize<T1, T2>(values:([T1], [T2])) -> NSData
+    static func serialize<T1, T2>(value1:[T1], value2:[T2]) -> NSData
 }
 
 public protocol CharacteristicConfigurable {
@@ -95,9 +95,11 @@ public protocol RawArrayPairDeserializable {
     typealias RawType1
     typealias RawType2
     static var uuid      : String {get}
-    static var size      : (Int, Int) {get}
-    var rawValue        : ([RawType1], [RawType2]) {get}
-    init?(rawValue:([RawType1], [RawType2]))
+    static var size1     : Int {get}
+    static var size2     : Int {get}
+    var rawValue1       : [RawType1] {get}
+    var rawValue2       : [RawType2] {get}
+    init?(rawValue1:[RawType1], rawValue2:[RawType2])
 }
 
 public struct Serde {
@@ -153,14 +155,13 @@ public struct Serde {
     }
 
     public static func deserialize<T:RawArrayPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T? {
-        let (rawSize1, rawSize2) = T.size
-        let rawData1 = data.subdataWithRange(NSMakeRange(0, rawSize1))
-        let rawData2 = data.subdataWithRange(NSMakeRange(rawSize1, rawSize2))
-        return T(rawValue:(T.RawType1.deserialize(rawData1), T.RawType2.deserialize(rawData2)))
+        let rawData1 = data.subdataWithRange(NSMakeRange(0, T.size1))
+        let rawData2 = data.subdataWithRange(NSMakeRange(T.size1, T.size2))
+        return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2:T.RawType2.deserialize(rawData2))
     }
 
     public static func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
-        return NSData.serialize(value.rawValue)
+        return NSData.serialize(value.rawValue1, value2:value.rawValue2)
     }
 }
 
