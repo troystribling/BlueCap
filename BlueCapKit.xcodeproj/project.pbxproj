@@ -55,6 +55,8 @@
 		0565EC7A1A89B88200CA8B6E /* RawArrayDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC791A89B88200CA8B6E /* RawArrayDeserializableTests.swift */; };
 		0565EC7C1A89CDA500CA8B6E /* RawPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC7B1A89CDA500CA8B6E /* RawPairDeserializableTests.swift */; };
 		0565EC7E1A8B1D4800CA8B6E /* RawArrayPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC7D1A8B1D4800CA8B6E /* RawArrayPairDeserializableTests.swift */; };
+		05A648EE1A90203500633EED /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
+		05A648EF1A90204000633EED /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		05D3B9321A2B8D61008E794E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9281A2B8D61008E794E /* Array.swift */; };
 		05D3B9331A2B8D61008E794E /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9291A2B8D61008E794E /* Dictionary.swift */; };
 		05D3B9341A2B8D61008E794E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B92A1A2B8D61008E794E /* Double.swift */; };
@@ -74,6 +76,16 @@
 		05E1A7311A55BE1600A00C02 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72B1A55BE1600A00C02 /* Optional.swift */; };
 		05E1A7321A55BE1600A00C02 /* Try.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72C1A55BE1600A00C02 /* Try.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		05A648EC1A90200F00633EED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0551207919F5506000ED3B74 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0551208119F5506000ED3B74;
+			remoteInfo = BlueCapKit;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,6 +175,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05A648EF1A90204000633EED /* CoreLocation.framework in Frameworks */,
+				05A648EE1A90203500633EED /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,6 +456,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				05A648ED1A90200F00633EED /* PBXTargetDependency */,
 			);
 			name = BlueCapKitTests;
 			productName = BlueCapKitTests;
@@ -580,6 +595,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		05A648ED1A90200F00633EED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0551208119F5506000ED3B74 /* BlueCapKit */;
+			targetProxy = 05A648EC1A90200F00633EED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		0551209319F5506000ED3B74 /* Debug */ = {
