@@ -753,29 +753,35 @@ public struct TISensorTag {
             public static let name                      = "Baraometer Calibration Data"
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Calibration(rawValue:([45697, 25592, 48894, 36174], [7001, 1990, -2369, 5542]))!)
+            public static let initialValue : NSData?    = Serde.serialize(Calibration(rawValue1:[45697, 25592, 48894, 36174], rawValue2:[7001, 1990, -2369, 5542])!)
 
             // RawArrayPairDeserializable
-            public static var size : (Int, Int) {
-                return (4*sizeof(UInt16), 4*sizeof(Int16))
-            }
-            
-            public var rawValue : ([UInt16], [Int16]) {
-                return ([self.c1, self.c2, self.c3, self.c4],
-                        [self.c5, self.c6, self.c7, self.c8])
+            public static var size1 : Int {
+                return 4*sizeof(UInt16)
             }
 
-            public init?(rawValue:([UInt16], [Int16])) {
-                let (unsignedValues, signedValues) = rawValue
-                if unsignedValues.count == 4 && signedValues.count == 4 {
-                    self.c1 = unsignedValues[0]
-                    self.c2 = unsignedValues[1]
-                    self.c3 = unsignedValues[2]
-                    self.c4 = unsignedValues[3]
-                    self.c5 = signedValues[0]
-                    self.c6 = signedValues[1]
-                    self.c7 = signedValues[2]
-                    self.c8 = signedValues[3]
+            public static var size2 : Int {
+                return 4*sizeof(Int16)
+            }
+
+            public var rawValue1 : [UInt16] {
+                return [self.c1, self.c2, self.c3, self.c4]
+            }
+
+            public var rawValue2 : [Int16] {
+                return [self.c5, self.c6, self.c7, self.c8]
+            }
+
+            public init?(rawValue1:[UInt16], rawValue2:[Int16]) {
+                if rawValue1.count == 4 && rawValue2.count == 4 {
+                    self.c1 = rawValue1[0]
+                    self.c2 = rawValue1[1]
+                    self.c3 = rawValue1[2]
+                    self.c4 = rawValue1[3]
+                    self.c5 = rawValue2[0]
+                    self.c6 = rawValue2[1]
+                    self.c7 = rawValue2[2]
+                    self.c8 = rawValue2[3]
                 } else {
                     return nil
                 }
