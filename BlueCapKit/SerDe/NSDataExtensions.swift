@@ -24,11 +24,10 @@ extension NSData : Serializable {
         return NSData(bytes:littleValues, length:sizeof(T)*littleValues.count)
     }
 
-    public class func serialize<T1, T2>(values:(T1, T2)) -> NSData {
-        let (values1, values2) = values
+    public class func serialize<T1, T2>(value1:T1, value2:T2) -> NSData {
         let data = NSMutableData()
-        data.setData(NSData.serialize(values1))
-        data.appendData(NSData.serialize(values2))
+        data.setData(NSData.serialize(value1))
+        data.appendData(NSData.serialize(value2))
         return data
     }
 

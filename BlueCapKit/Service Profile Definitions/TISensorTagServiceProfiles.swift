@@ -699,20 +699,25 @@ public struct TISensorTag {
             public static let name                      = "Baraometer Data"
             public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
             public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:(-2343, 33995))!)
+            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue1:-2343, rawValue2:33995)!)
 
             // RawPairDeserializable
-            public static let stringValues = [String]()
-            
-            public var rawValue : (Int16, UInt16) {
-                return (self.temperatureRaw, self.pressureRaw)
+            public var rawValue1 : Int16 {
+                return self.temperatureRaw
             }
-            
-            public init?(rawValue:(Int16, UInt16)) {
-                (self.temperatureRaw, self.pressureRaw) = rawValue
+
+            public var rawValue2 : UInt16 {
+                return self.pressureRaw
+            }
+
+            public init?(rawValue1:Int16, rawValue2:UInt16) {
+                self.temperatureRaw = rawValue1
+                self.pressureRaw = rawValue2
             }
 
             // StringDeserializable
+            public static let stringValues = [String]()
+            
             public var stringValue : Dictionary<String,String> {
                 return ["temperatureRaw":"\(temperatureRaw)", "pressureRaw":"\(pressureRaw)"]
             }
