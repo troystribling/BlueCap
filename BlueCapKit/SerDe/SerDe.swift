@@ -94,9 +94,9 @@ public protocol RawPairDeserializable {
 public protocol RawArrayPairDeserializable {
     typealias RawType1
     typealias RawType2
-    static var uuid      : String {get}
-    static var size1     : Int {get}
-    static var size2     : Int {get}
+    static var uuid     : String {get}
+    static var size1    : Int {get}
+    static var size2    : Int {get}
     var rawValue1       : [RawType1] {get}
     var rawValue2       : [RawType2] {get}
     init?(rawValue1:[RawType1], rawValue2:[RawType2])

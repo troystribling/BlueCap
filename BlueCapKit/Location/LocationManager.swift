@@ -159,12 +159,12 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     public func locationManager(_:CLLocationManager!, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
         Logger.debug("LocationManager#didChangeAuthorizationStatus: \(status)")
         self.authorizationStatusChangedPromise.success(status)
+        self.authorizationStatusChangedPromise = Promise<CLAuthorizationStatus>()
     }
     
     internal func authorize(authorization:CLAuthorizationStatus) -> Future<Void> {
         let promise = Promise<Void>()
         if LocationManager.authorizationStatus() != authorization {
-            self.authorizationStatusChangedPromise = Promise<CLAuthorizationStatus>()
             switch authorization {
             case .AuthorizedAlways:
                 self.authorizationStatusChangedPromise.future.onSuccess {(status) in

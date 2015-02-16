@@ -49,14 +49,14 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
-            let viewController = segue.destinationViewController as PeripheralManagerServiceProfilesViewController
+            let viewController = segue.destinationViewController as! PeripheralManagerServiceProfilesViewController
             viewController.peripheral = self.peripheral
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
             }
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicsSegue {
-            if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                let viewController = segue.destinationViewController as PeripheralManagerServiceCharacteristicsViewController
+            if let selectedIndexPath = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+                let viewController = segue.destinationViewController as! PeripheralManagerServiceCharacteristicsViewController
                 viewController.service = PeripheralManager.sharedInstance.services[selectedIndexPath.row]
                 if let peripheralManagerViewController = self.peripheralManagerViewController {
                     viewController.peripheralManagerViewController = peripheralManagerViewController
@@ -86,7 +86,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCell, forIndexPath:indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCell, forIndexPath:indexPath) as! NameUUIDCell
         let service = PeripheralManager.sharedInstance.services[indexPath.row]
         cell.nameLabel.text = service.name
         cell.uuidLabel.text = service.uuid.UUIDString

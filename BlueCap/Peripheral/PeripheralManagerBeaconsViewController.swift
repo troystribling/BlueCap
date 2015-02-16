@@ -43,8 +43,8 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
         if segue.identifier == MainStoryboard.peripheralManagerAddBeaconSegue {
         } else if segue.identifier == MainStoryboard.peripheralManagerEditBeaconSegue {
-            if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                let viewController = segue.destinationViewController as PeripheralManagerBeaconViewController
+            if let selectedIndexPath = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+                let viewController = segue.destinationViewController as! PeripheralManagerBeaconViewController
                 let beaconNames = PeripheralStore.getBeaconNames()
                 viewController.beaconName = beaconNames[selectedIndexPath.row]
                 if let peripheralManagerViewController = self.peripheralManagerViewController {
@@ -74,7 +74,7 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     }
 
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerBeaconCell, forIndexPath: indexPath) as PeripheralManagerBeaconCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerBeaconCell, forIndexPath: indexPath) as! PeripheralManagerBeaconCell
         let name = PeripheralStore.getBeaconNames()[indexPath.row]
         cell.nameLabel.text = name
         if let uuid = PeripheralStore.getBeacon(name) {

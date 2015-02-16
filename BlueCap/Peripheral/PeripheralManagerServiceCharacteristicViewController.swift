@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
-import UIkit
+import UIKit
 import CoreBluetooth
 import BlueCapKit
 
@@ -82,7 +82,7 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicValuesSegue {
-            let viewController = segue.destinationViewController as PeripheralManagerServicesCharacteristicValuesViewController
+            let viewController = segue.destinationViewController as! PeripheralManagerServicesCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController

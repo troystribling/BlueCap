@@ -65,15 +65,15 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
-            let viewController = segue.destinationViewController as PeripheralManagerServicesViewController
+            let viewController = segue.destinationViewController as! PeripheralManagerServicesViewController
             viewController.peripheral = self.peripheral
             viewController.peripheralManagerViewController = self
         } else if segue.identifier == MainStoryboard.peripheralManagerAdvertisedServicesSegue {
-            let viewController = segue.destinationViewController as PeripheralManagerAdvertisedServicesViewController
+            let viewController = segue.destinationViewController as! PeripheralManagerAdvertisedServicesViewController
             viewController.peripheral = self.peripheral
             viewController.peripheralManagerViewController = self
         } else if segue.identifier == MainStoryboard.peripheralManagerBeaconsSegue {
-            let viewController = segue.destinationViewController as PeripheralManagerBeaconsViewController
+            let viewController = segue.destinationViewController as! PeripheralManagerBeaconsViewController
             viewController.peripheral = self.peripheral
             viewController.peripheralManagerViewController = self
         }
@@ -218,7 +218,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()
         if let enteredName = self.nameTextField.text {
             if !enteredName.isEmpty {

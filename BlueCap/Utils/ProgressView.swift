@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 gnos.us. All rights reserved.
 //
 
-import UIkit
+import UIKit
 
 class ProgressView : UIView {
     

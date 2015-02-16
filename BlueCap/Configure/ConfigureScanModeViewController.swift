@@ -27,7 +27,7 @@ class ConfigureScanModeViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as! UITableViewCell
         let scanMode = scanModes[indexPath.row]
         cell.textLabel?.text = scanMode
         if scanMode == ConfigStore.getScanMode() {

@@ -52,7 +52,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()
         let enteredUUID = self.uuidTextField.text
         let enteredName = self.nameTextField.text

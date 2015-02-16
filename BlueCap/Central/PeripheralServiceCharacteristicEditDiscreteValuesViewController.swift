@@ -76,7 +76,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as! UITableViewCell
         let stringValue = self.characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
         if let valueName = characteristic.stringValue?.keys.first {

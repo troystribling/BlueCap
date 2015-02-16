@@ -76,8 +76,8 @@ public class Service : NSObject {
                 self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
                 bcCharacteristic.didDiscover()
                 Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-                self.characteristicsDiscoveredPromise.success(self.characteristics)
             }
+            self.characteristicsDiscoveredPromise.success(self.characteristics)
         }
     }
 }

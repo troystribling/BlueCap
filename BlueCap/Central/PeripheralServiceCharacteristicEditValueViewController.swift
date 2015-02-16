@@ -67,7 +67,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         if let newValue = self.valueTextField.text {
             let afterWriteSuceses = {(characteristic:Characteristic) -> Void in
                 self.progressView.remove()

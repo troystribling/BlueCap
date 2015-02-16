@@ -53,8 +53,8 @@ class PeripheralsViewController : UITableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralSegue {
-            if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                let viewController = segue.destinationViewController as PeripheralViewController
+            if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+                let viewController = segue.destinationViewController as! PeripheralViewController
                 viewController.peripheral = CentralManager.sharedInstance.peripherals[selectedIndex.row]
             }
         }
@@ -64,7 +64,7 @@ class PeripheralsViewController : UITableViewController {
         var perform = false
         if let identifier = identifier {
             if identifier == MainStoryboard.peripheralSegue {
-                if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
+                if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
                     let peripheral = CentralManager.sharedInstance.peripherals[selectedIndex.row]
                     perform = (peripheral.state == .Connected)
                 }
@@ -231,7 +231,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as PeripheralCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as! PeripheralCell
         let peripheral = CentralManager.sharedInstance.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         cell.accessoryType = .None
