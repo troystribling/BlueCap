@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Gm5-G9-oBc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7515.2" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Gm5-G9-oBc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7512"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -180,7 +180,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Peripheral Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Tak-si-bkz">
-                                                    <rect key="frame" x="15" y="10" width="570" height="40"/>
+                                                    <rect key="frame" x="15" y="9" width="570" height="40"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="40" id="soW-o6-ia5"/>
                                                     </constraints>
@@ -953,7 +953,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vc5-wX-GSF">
-                                                    <rect key="frame" x="546" y="13" width="35" height="25"/>
+                                                    <rect key="frame" x="545" y="13" width="35" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -999,7 +999,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Read Encryption Required" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="pgd-xI-wPy">
-                                                    <rect key="frame" x="20" y="13" width="480" height="25"/>
+                                                    <rect key="frame" x="20" y="12" width="480" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1113,7 +1113,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write Without Response" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="eSZ-OX-gat">
-                                                    <rect key="frame" x="20" y="13" width="480" height="25"/>
+                                                    <rect key="frame" x="20" y="12" width="480" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1226,7 +1226,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Authenticated Signed Writes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="Jim-iQ-qb9">
-                                                    <rect key="frame" x="20" y="12" width="500" height="25"/>
+                                                    <rect key="frame" x="20" y="11" width="500" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1310,7 +1310,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Indicate Encryption Required" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="5yS-hN-Dt5">
-                                                    <rect key="frame" x="20" y="12" width="500" height="25"/>
+                                                    <rect key="frame" x="20" y="11" width="500" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -2180,7 +2180,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zYq-Y7-zJY">
-                                                    <rect key="frame" x="545" y="12" width="35" height="25"/>
+                                                    <rect key="frame" x="545" y="11" width="35" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -2260,7 +2260,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write Without Response" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="wBm-We-y25">
-                                                    <rect key="frame" x="20" y="13" width="480" height="25"/>
+                                                    <rect key="frame" x="20" y="12" width="480" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -2372,7 +2372,7 @@
                                                 <constraint firstAttribute="centerY" secondItem="Vj1-bV-RyJ" secondAttribute="centerY" constant="0.25" id="3hx-sj-mpm"/>
                                                 <constraint firstItem="t7G-8G-Mfg" firstAttribute="leading" secondItem="VCz-Aq-fW8" secondAttribute="leadingMargin" constant="12" id="Zg3-nq-Ekh"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="t7G-8G-Mfg" secondAttribute="trailing" constant="72" id="fX7-Mq-Z9p"/>
-                                                <constraint firstAttribute="centerY" secondItem="t7G-8G-Mfg" secondAttribute="centerY" id="tQ6-H8-JQD"/>
+                                                <constraint firstAttribute="centerY" secondItem="t7G-8G-Mfg" secondAttribute="centerY" constant="-1" id="tQ6-H8-JQD"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Vj1-bV-RyJ" secondAttribute="trailing" constant="12" id="tpD-aT-s0M"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -2410,7 +2410,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Indicate Encryption Required" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="5Q8-Ce-v5R">
-                                                    <rect key="frame" x="20" y="13" width="500" height="25"/>
+                                                    <rect key="frame" x="20" y="12" width="500" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -2438,7 +2438,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notify Encryption Required" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="nke-mi-XaW">
-                                                    <rect key="frame" x="20" y="13" width="500" height="25"/>
+                                                    <rect key="frame" x="20" y="12" width="500" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -3288,7 +3288,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Read Encryption Required" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="Bfa-fY-udM">
-                                                    <rect key="frame" x="20" y="13" width="480" height="25"/>
+                                                    <rect key="frame" x="20" y="12" width="480" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -3333,7 +3333,7 @@
                                                 <constraint firstAttribute="centerY" secondItem="roI-1p-jf8" secondAttribute="centerY" constant="-0.5" id="2gz-VP-dcd"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="roI-1p-jf8" secondAttribute="trailing" constant="11" id="5ta-ut-PIH"/>
                                                 <constraint firstItem="yuA-v4-gW8" firstAttribute="leading" secondItem="eHI-Zo-vJM" secondAttribute="leadingMargin" constant="12" id="F5z-qD-GSf"/>
-                                                <constraint firstAttribute="centerY" secondItem="yuA-v4-gW8" secondAttribute="centerY" id="Mge-8f-Ybj"/>
+                                                <constraint firstAttribute="centerY" secondItem="yuA-v4-gW8" secondAttribute="centerY" constant="-1" id="Mge-8f-Ybj"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="yuA-v4-gW8" secondAttribute="trailing" constant="92" id="i8Z-LS-EqB"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -3402,7 +3402,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write Without Response" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="q03-VI-dMt">
-                                                    <rect key="frame" x="20" y="13" width="480" height="25"/>
+                                                    <rect key="frame" x="20" y="12" width="480" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -3608,7 +3608,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="centerY" secondItem="bqh-03-e8R" secondAttribute="centerY" constant="-0.5" id="4MT-pb-bUw"/>
                                                 <constraint firstItem="yOu-Ge-Q9T" firstAttribute="leading" secondItem="OlL-y5-up5" secondAttribute="leadingMargin" constant="12" id="IDi-wz-Ab7"/>
-                                                <constraint firstAttribute="centerY" secondItem="yOu-Ge-Q9T" secondAttribute="centerY" id="dyC-3f-Tuh"/>
+                                                <constraint firstAttribute="centerY" secondItem="yOu-Ge-Q9T" secondAttribute="centerY" constant="-1" id="dyC-3f-Tuh"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="bqh-03-e8R" secondAttribute="trailing" constant="11" id="pL1-00-H1q"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="yOu-Ge-Q9T" secondAttribute="trailing" constant="72" id="qfr-BM-3VA"/>
                                             </constraints>
