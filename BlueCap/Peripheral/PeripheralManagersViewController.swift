@@ -41,13 +41,13 @@ class PeripheralManagersViewController : UITableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerViewSegue {
-            if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                let viewController = segue.destinationViewController as PeripheralManagerViewController
+            if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+                let viewController = segue.destinationViewController as! PeripheralManagerViewController
                 let peripherals = PeripheralStore.getPeripheralNames()
                 viewController.peripheral = peripherals[selectedIndex.row]
             }
         } else if segue.identifier == MainStoryboard.peripheralManagerAddSegue {
-            let viewController = segue.destinationViewController as PeripheralManagerViewController
+            let viewController = segue.destinationViewController as! PeripheralManagerViewController
             viewController.peripheral = nil
         }
     }
@@ -74,7 +74,7 @@ class PeripheralManagersViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as SimpleCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as! SimpleCell
         let peripherals = PeripheralStore.getPeripheralNames()
         cell.nameLabel.text = peripherals[indexPath.row]
         return cell

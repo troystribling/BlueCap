@@ -25,8 +25,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     required init(coder aDecoder:NSCoder) {
-        super.init(coder:aDecoder)
         self.progressView = ProgressView()
+        super.init(coder:aDecoder)
     }
     
     override func viewDidLoad() {
@@ -60,13 +60,13 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
-            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
+            let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
-            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
+            let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
             if let stringValues = self.characteristic?.stringValue {
-                let selectedIndex = sender as NSIndexPath
+                let selectedIndex = sender as! NSIndexPath
                 let names = stringValues.keys.array
                 viewController.valueName = names[selectedIndex.row]
             }
@@ -136,7 +136,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as CharacteristicValueCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as! CharacteristicValueCell
         if let characteristic = self.characteristic {
             if let stringValues = characteristic.stringValue {
                 let names = stringValues.keys.array

@@ -43,7 +43,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == MainStoryboard.peripheralManagerAddAdvertisedServiceSegue {
-            let viewController = segue.destinationViewController as PeripheralManagerAddAdvertisedServiceViewController
+            let viewController = segue.destinationViewController as! PeripheralManagerAddAdvertisedServiceViewController
             viewController.peripheral = self.peripheral
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
@@ -75,7 +75,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     }
 
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAdvertisedServiceCell, forIndexPath: indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAdvertisedServiceCell, forIndexPath: indexPath) as! NameUUIDCell
         if let peripheral = self.peripheral {
             let serviceUUID = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)[indexPath.row]
             cell.uuidLabel.text = serviceUUID.UUIDString

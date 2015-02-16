@@ -81,13 +81,13 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
 
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
-            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicValuesViewController
+            let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
-            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditDiscreteValuesViewController
+            let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
-            let viewController = segue.destinationViewController as PeripheralServiceCharacteristicEditValueViewController
+            let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
             viewController.valueName = nil
         }

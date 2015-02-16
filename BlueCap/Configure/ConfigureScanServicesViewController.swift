@@ -40,9 +40,9 @@ class ConfigureScanServicesViewController : UITableViewController {
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
         if segue.identifier == MainStoryboard.configureAddScanServiceSegue {
         } else if segue.identifier == MainStoryboard.configureEditScanServiceSegue {
-            if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
+            if let selectedIndexPath = self.tableView.indexPathForCell(sender as! UITableViewCell) {
                 let names = ConfigStore.getScannedServiceNames()
-                let viewController = segue.destinationViewController as ConfigureScanServiceViewController
+                let viewController = segue.destinationViewController as! ConfigureScanServiceViewController
                 viewController.serviceName = names[selectedIndexPath.row]
             }
         }
@@ -70,7 +70,7 @@ class ConfigureScanServicesViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanServicesCell, forIndexPath: indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanServicesCell, forIndexPath: indexPath) as! NameUUIDCell
         let names = ConfigStore.getScannedServiceNames()
         if let serviceUUID = ConfigStore.getScannedServiceUUID(names[indexPath.row]) {
             cell.uuidLabel.text = serviceUUID.UUIDString

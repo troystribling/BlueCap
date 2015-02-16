@@ -37,8 +37,8 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if let serviceProfile = self.serviceProfile {
             if segue.identifier == MainStoryboard.serviceCharacteristicProfileSegue {
-                if let selectedIndexPath = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                    let viewController = segue.destinationViewController as ServiceCharacteristicProfileViewController
+                if let selectedIndexPath = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+                    let viewController = segue.destinationViewController as! ServiceCharacteristicProfileViewController
                     viewController.characteristicProfile = serviceProfile.characteristics[selectedIndexPath.row]
                 }
             }
@@ -59,7 +59,7 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileCell, forIndexPath: indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileCell, forIndexPath: indexPath) as! NameUUIDCell
         if let serviceProfile = self.serviceProfile {
             let characteristicProfile = serviceProfile.characteristics[indexPath.row]
             cell.nameLabel.text = characteristicProfile.name

@@ -45,8 +45,8 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicSegue {
             if let service = self.service {
-                if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
-                    let viewController = segue.destinationViewController as PeripheralServiceCharacteristicViewController
+                if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+                    let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicViewController
                     viewController.characteristic = service.characteristics[selectedIndex.row]
                     viewController.peripheralViewController = self.peripheralViewController
                 }
@@ -94,7 +94,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicCell, forIndexPath: indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicCell, forIndexPath: indexPath) as! NameUUIDCell
         if let service = self.service {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name

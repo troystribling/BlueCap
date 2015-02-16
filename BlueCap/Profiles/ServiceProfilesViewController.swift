@@ -44,10 +44,10 @@ class ServiceProfilesViewController : ServiceProfilesTableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfilesSegue {
-            if let selectedIndex = self.tableView.indexPathForCell(sender as UITableViewCell) {
+            if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
                 let tag = self.serviceProfiles.keys.array
                 if let profiles = self.serviceProfiles[tag[selectedIndex.section]] {
-                    let viewController = segue.destinationViewController as ServiceCharacteristicProfilesViewController
+                    let viewController = segue.destinationViewController as! ServiceCharacteristicProfilesViewController
                     viewController.serviceProfile =  profiles[selectedIndex.row]
                 }
             }

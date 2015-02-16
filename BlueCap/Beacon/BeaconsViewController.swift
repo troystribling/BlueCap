@@ -85,7 +85,7 @@ class BeaconsViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconCell, forIndexPath: indexPath) as BeaconCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconCell, forIndexPath: indexPath) as! BeaconCell
         if let beaconRegion = self.beaconRegion {
             let beacon = sorted(beaconRegion.beacons, self.sortBeacons)[indexPath.row]
             if let uuid = beacon.proximityUUID {

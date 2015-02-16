@@ -79,7 +79,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return self.addBeacon()
     }

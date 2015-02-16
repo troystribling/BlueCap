@@ -52,16 +52,16 @@ class BeaconRegionsViewController: UITableViewController {
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
         if segue.identifier == MainStoryBoard.beaconsSegue {
-            let selectedIndexPath = sender as NSIndexPath
-            let beaconsViewController = segue.destinationViewController as BeaconsViewController
+            let selectedIndexPath = sender as! NSIndexPath
+            let beaconsViewController = segue.destinationViewController as! BeaconsViewController
             let beaconName = BeaconStore.getBeaconNames()[selectedIndexPath.row]
             if let beaconRegion = self.beaconRegions[beaconName] {
                 beaconsViewController.beaconRegion = beaconRegion
             }
         } else if segue.identifier == MainStoryBoard.beaconRegionAddSegue {
         } else if segue.identifier == MainStoryBoard.beaconRegionEditSegue {
-            let selectedIndexPath = sender as NSIndexPath
-            let viewController = segue.destinationViewController as BeaconRegionViewController
+            let selectedIndexPath = sender as! NSIndexPath
+            let viewController = segue.destinationViewController as! BeaconRegionViewController
             viewController.regionName = BeaconStore.getBeaconNames()[selectedIndexPath.row]
         }
     }
@@ -164,7 +164,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconRegionCell, forIndexPath: indexPath) as BeaconRegionCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconRegionCell, forIndexPath: indexPath) as! BeaconRegionCell
         let name = BeaconStore.getBeaconNames()[indexPath.row]
         let beaconRegions = BeaconStore.getBeacons()
         if let beaconRegionUUID = beaconRegions[name] {

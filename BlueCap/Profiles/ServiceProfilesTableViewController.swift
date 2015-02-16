@@ -67,7 +67,7 @@ class ServiceProfilesTableViewController : UITableViewController {
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(self.serviceProfileCell, forIndexPath: indexPath) as NameUUIDCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(self.serviceProfileCell, forIndexPath: indexPath) as! NameUUIDCell
         let tags = self.serviceProfiles.keys.array
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let profile = profiles[indexPath.row]
