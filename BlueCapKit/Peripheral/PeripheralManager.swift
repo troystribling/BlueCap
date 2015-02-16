@@ -109,12 +109,12 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     // services
     public func addService(service:MutableService) -> Future<Void> {
+        self.afterSeriviceAddPromise = Promise<Void>()
         if !self.isAdvertising {
-            self.afterSeriviceAddPromise = Promise<Void>()
             self.configuredServices[service.uuid] = service
             self.cbPeripheralManager.addService(service.cbMutableService)
         } else {
-            NSException(name:"Add service failed", reason: "Peripheral is advertising", userInfo: nil).raise()
+            self.afterSeriviceAddPromise.failure(BCError.peripheralManagerAddServiceFailed)
         }
         return self.afterSeriviceAddPromise.future
     }
