@@ -16,6 +16,7 @@ public struct PeripheralDiscovery {
 
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
+    // IMPL
     public struct Impl {
         
         private var afterPowerOnPromise                 = Promise<Void>()
@@ -102,9 +103,97 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             return future
         }
         
+        // CBCentralManagerDelegate
+        public func didConnectPeripheral(peripheral:NSUUID) {
+            Logger.debug("CentralManager.Impl#didConnectPeripheral: \(peripheral)")
+            if let bcPeripheral = self.discoveredPeripherals[peripheral] {
+                bcPeripheral.didConnectPeripheral()
+            }
+        }
+        
+        public func didDisconnectPeripheral(peripheral:NSUUID, error:NSError!) {
+            Logger.debug("CentralManager#didDisconnectPeripheral: \(peripheral)")
+            if let bcPeripheral = self.discoveredPeripherals[peripheral] {
+                bcPeripheral.didDisconnectPeripheral()
+            }
+        }
+        
+//        public mutating func didDiscoverPeripheral(peripheral:NSUUID, advertisementData:[NSObject:AnyObject]!, RSSI:Int) -> Peripheral.Impl {
+//            if self.discoveredPeripherals[peripheral] == nil {
+//                let bcPeripheral = Peripheral.Impl(advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI)
+//                Logger.debug("CentralManager#didDiscoverPeripheral.Impl: \(bcPeripheral.name)")
+//                self.discoveredPeripherals[peripheral] = bcPeripheral
+//                self.afterPeripheralDiscoveredPromise.success(PeripheralDiscovery(peripheral:bcPeripheral, rssi:RSSI))
+//            }
+//        }
+        
+        public func didFailToConnectPeripheral(peripheral:NSUUID, error:NSError!) {
+            Logger.debug("CentralManager#didFailToConnectPeripheral.Impl")
+            if let bcPeripheral = self.discoveredPeripherals[peripheral] {
+                bcPeripheral.didFailToConnectPeripheral(error)
+            }
+        }
+        
+        // central manager state
+        public func centralManagerDidUpdateState(state:CBCentralManagerState) {
+            switch(state) {
+            case .Unauthorized:
+                Logger.debug("CentralManager#centralManagerDidUpdateState: Unauthorized")
+                break
+            case .Unknown:
+                Logger.debug("CentralManager#centralManagerDidUpdateState: Unknown")
+                break
+            case .Unsupported:
+                Logger.debug("CentralManager#centralManagerDidUpdateState: Unsupported")
+                break
+            case .Resetting:
+                Logger.debug("CentralManager#centralManagerDidUpdateState: Resetting")
+                break
+            case .PoweredOff:
+                Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOff")
+                afterPowerOffPromise.success()
+                break
+            case .PoweredOn:
+                Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
+                afterPowerOnPromise.success()
+                break
+            }
+        }
+        
+        internal func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
+            Logger.debug("CentralManager#unpackAdvertisements found \(advertDictionary.count) advertisements")
+            var advertisements = [String:String]()
+            func addKey(key:String, andValue value:AnyObject) -> () {
+                if value is NSString {
+                    advertisements[key] = (value as? String)
+                } else {
+                    advertisements[key] = value.stringValue
+                }
+                Logger.debug("CentralManager#unpackAdvertisements key:\(key), value:\(advertisements[key])")
+            }
+            if advertDictionary != nil {
+                for keyObject : NSObject in advertDictionary.keys {
+                    if let key = keyObject as? String {
+                        if let value : AnyObject = advertDictionary[keyObject] {
+                            if value is NSArray {
+                                for v : AnyObject in (value as! NSArray) {
+                                    addKey(key, andValue:value)
+                                }
+                            } else {
+                                addKey(key, andValue:value)
+                            }
+                        }
+                    }
+                }
+            }
+            Logger.debug("CentralManager#unpackAdvertisements unpacked \(advertisements.count) advertisements")
+            return advertisements
+        }
+
     }
     
-    // PRIVATE
+    
+    // CentralManager
     private var afterPowerOnPromise                 = Promise<Void>()
     private var afterPowerOffPromise                = Promise<Void>()
     internal var afterPeripheralDiscoveredPromise   = StreamPromise<PeripheralDiscovery>()

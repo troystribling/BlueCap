@@ -16,6 +16,18 @@ enum PeripheralConnectionError {
 
 public class Peripheral : NSObject, CBPeripheralDelegate {
 
+    struct Impl {
+        
+        let advertisements  : [String: String]
+        let rssi            : Int
+
+        init(advertisements:[String:String], rssi:Int) {
+            self.advertisements = advertisements
+            self.rssi = rssi
+        }
+        
+    }
+    
     private var servicesDiscoveredPromise   = Promise<[Service]>()
     
     private var connectionSequence          = 0
@@ -73,7 +85,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         return self._connectorator
     }
     
-    public init(cbPeripheral:CBPeripheral, advertisements:Dictionary<String, String>, rssi:Int) {
+    internal init(cbPeripheral:CBPeripheral, advertisements:[String:String], rssi:Int) {
         self.cbPeripheral = cbPeripheral
         self.advertisements = advertisements
         self.currentError = .None
