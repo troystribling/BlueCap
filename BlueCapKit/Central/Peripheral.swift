@@ -19,8 +19,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var servicesDiscoveredPromise   = Promise<[Service]>()
     
     private var connectionSequence          = 0
-    private var discoveredServices          = Dictionary<CBUUID, Service>()
-    private var discoveredCharacteristics   = Dictionary<CBCharacteristic, Characteristic>()
+    private var discoveredServices          = [CBUUID:Service]()
+    private var discoveredCharacteristics   = [CBCharacteristic:Characteristic]()
     private var currentError                = PeripheralConnectionError.None
     private var forcedDisconnect            = false
     

@@ -16,6 +16,94 @@ public struct PeripheralDiscovery {
 
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
+    public struct Impl {
+        
+        private var afterPowerOnPromise                 = Promise<Void>()
+        private var afterPowerOffPromise                = Promise<Void>()
+        internal var afterPeripheralDiscoveredPromise   = StreamPromise<PeripheralDiscovery>()
+        
+        internal var discoveredPeripherals              = [NSUUID: Peripheral]()
+        private var _isScanning                         = false
+        
+        public var peripherals : [Peripheral] {
+            return sorted(self.discoveredPeripherals.values.array, {(p1:Peripheral, p2:Peripheral) -> Bool in
+                switch p1.discoveredAt.compare(p2.discoveredAt) {
+                case .OrderedSame:
+                    return true
+                case .OrderedDescending:
+                    return false
+                case .OrderedAscending:
+                    return true
+                }
+            })
+        }
+        
+        public var isScanning : Bool {
+            return self._isScanning
+        }
+        
+        // scanning
+        public mutating func startScanning(capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
+            return self.startScanningForServiceUUIDs(nil, capacity:capacity)
+        }
+        
+        public mutating func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
+            if !self._isScanning {
+                Logger.debug("CentralManager.Impl#startScanningForServiceUUIDs: \(uuids)")
+                self._isScanning = true
+                if let capacity = capacity {
+                    self.afterPeripheralDiscoveredPromise = StreamPromise<PeripheralDiscovery>(capacity:capacity)
+                } else {
+                    self.afterPeripheralDiscoveredPromise = StreamPromise<PeripheralDiscovery>()
+                }
+            } else {
+                self.afterPeripheralDiscoveredPromise.failure(BCError.centralIsScanning)
+            }
+            return self.afterPeripheralDiscoveredPromise.future
+        }
+        
+        public mutating func stopScanning() {
+            if self._isScanning {
+                Logger.debug("CentralManager.Impl#stopScanning")
+                self._isScanning = false
+            }
+        }
+        
+        public mutating func removeAllPeripherals() {
+            self.discoveredPeripherals.removeAll(keepCapacity:false)
+        }
+        
+        // connection
+        public func disconnectAllPeripherals() {
+            Logger.debug("CentralManager.Impl#disconnectAllPeripherals")
+            for peripheral in self.peripherals {
+                peripheral.disconnect()
+            }
+        }
+        
+        // power up
+        public mutating func powerOn(powerOnStatus:Bool) -> Future<Void> {
+            Logger.debug("CentralManager.Impl#powerOn")
+            let future = self.afterPowerOnPromise.future
+            self.afterPowerOnPromise = Promise<Void>()
+            if powerOnStatus {
+                self.afterPowerOnPromise.success()
+            }
+            return future
+        }
+        
+        public mutating func powerOff(powerOffStatus:Bool) -> Future<Void> {
+            Logger.debug("CentralManager.Impl#powerOff")
+            let future = self.afterPowerOffPromise.future
+            self.afterPowerOffPromise = Promise<Void>()
+            if powerOffStatus {
+                self.afterPowerOnPromise.success()
+            }
+            return future
+        }
+        
+    }
+    
     // PRIVATE
     private var afterPowerOnPromise                 = Promise<Void>()
     private var afterPowerOffPromise                = Promise<Void>()
@@ -27,7 +115,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private var _isScanning         = false
     
     // INTERNAL
-    internal var discoveredPeripherals   : Dictionary<CBPeripheral, Peripheral> = [:]
+    internal var discoveredPeripherals   = [CBPeripheral: Peripheral]()
     
     // PUBLIC
     public var peripherals : [Peripheral] {
@@ -63,7 +151,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // scanning
-    public func startScanning(capacity:Int? = nil) -> FutureStream<(PeripheralDiscovery)> {
+    public func startScanning(capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
         return self.startScanningForServiceUUIDs(nil, capacity:capacity)
     }
     
@@ -227,13 +315,13 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         dispatch_after(popTime, self.centralQueue, request)
     }
     
-    // PRIVATE
+    // UTILS
     private override init() {
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue)
     }
     
-    private func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
+    internal func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
         Logger.debug("CentralManager#unpackAdvertisements found \(advertDictionary.count) advertisements")
         var advertisements = [String:String]()
         func addKey(key:String, andValue value:AnyObject) -> () {
