@@ -16,7 +16,6 @@ public enum CharacteristicError : Int {
     case WriteNotSupported  = 5
 }
 
-
 public enum ConnectoratorError : Int {
     case Timeout            = 10
     case Disconnect         = 11
@@ -33,6 +32,10 @@ public enum PeripheralError : Int {
 public enum PeripheralManagerError : Int {
     case IsAdvertising      = 40
     case AddServiceFailed   = 41
+}
+
+public enum CentralError : Int {
+    case IsScannong         = 50
 }
 
 public struct BCError {
@@ -55,6 +58,8 @@ public struct BCError {
         
     internal static let peripheralManagerIsAdvertising = NSError(domain:domain, code:PeripheralManagerError.IsAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is Advertising"])
     internal static let peripheralManagerAddServiceFailed = NSError(domain:domain, code:PeripheralManagerError.AddServiceFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Add service failed because service peripheral is advertising"])
+    
+    internal static let centralIsScanning = NSError(domain:domain, code:CentralError.IsScannong.rawValue, userInfo:[NSLocalizedDescriptionKey:"Central is scanning"])
 
 }
 

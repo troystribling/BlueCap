@@ -8,10 +8,18 @@
 
 import UIKit
 import XCTest
+import CoreBluetooth
 import BlueCapKit
 
 class CentralManagerTests: XCTestCase {
 
+    class StubbedCentralManager : CentralManager {
+        
+        override func scanForPeripheralsWithServices(uuids:[CBUUID]!) {
+        }
+        
+    }
+    
     override func setUp() {
         super.setUp()
     }
@@ -21,13 +29,15 @@ class CentralManagerTests: XCTestCase {
     }
 
     func testPowerOn() {
-        XCTAssert(true, "Pass")
     }
     
     func testPowerOff() {
     }
     
-    func testStartScanning() {
+    func testStartPromiscuousScanning() {
+    }
+
+    func testStartSErviceScanning() {
         
     }
 
