@@ -16,6 +16,7 @@ public struct PeripheralDiscovery {
 
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
+    ///////////////////////////////////////////
     // IMPL
     public struct Impl {
         
@@ -191,6 +192,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
 
     }
+    // IMPL
+    ///////////////////////////////////////////
     
     
     // CentralManager
