@@ -24,21 +24,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         private var afterPowerOffPromise                = Promise<Void>()
         internal var afterPeripheralDiscoveredPromise   = StreamPromise<PeripheralDiscovery>()
         
-        internal var discoveredPeripherals              = [NSUUID: Peripheral]()
         private var _isScanning                         = false
-        
-        public var peripherals : [Peripheral] {
-            return sorted(self.discoveredPeripherals.values.array, {(p1:Peripheral, p2:Peripheral) -> Bool in
-                switch p1.discoveredAt.compare(p2.discoveredAt) {
-                case .OrderedSame:
-                    return true
-                case .OrderedDescending:
-                    return false
-                case .OrderedAscending:
-                    return true
-                }
-            })
-        }
         
         public var isScanning : Bool {
             return self._isScanning
@@ -71,16 +57,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             }
         }
         
-        public mutating func removeAllPeripherals() {
-            self.discoveredPeripherals.removeAll(keepCapacity:false)
-        }
-        
         // connection
         public func disconnectAllPeripherals() {
             Logger.debug("CentralManager.Impl#disconnectAllPeripherals")
-            for peripheral in self.peripherals {
-                peripheral.disconnect()
-            }
         }
         
         // power up
@@ -107,16 +86,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         // CBCentralManagerDelegate
         public func didConnectPeripheral(peripheral:NSUUID) {
             Logger.debug("CentralManager.Impl#didConnectPeripheral: \(peripheral)")
-            if let bcPeripheral = self.discoveredPeripherals[peripheral] {
-                bcPeripheral.didConnectPeripheral()
-            }
         }
         
         public func didDisconnectPeripheral(peripheral:NSUUID, error:NSError!) {
             Logger.debug("CentralManager#didDisconnectPeripheral: \(peripheral)")
-            if let bcPeripheral = self.discoveredPeripherals[peripheral] {
-                bcPeripheral.didDisconnectPeripheral()
-            }
         }
         
 //        public mutating func didDiscoverPeripheral(peripheral:NSUUID, advertisementData:[NSObject:AnyObject]!, RSSI:Int) -> Peripheral.Impl {
@@ -130,9 +103,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         
         public func didFailToConnectPeripheral(peripheral:NSUUID, error:NSError!) {
             Logger.debug("CentralManager#didFailToConnectPeripheral.Impl")
-            if let bcPeripheral = self.discoveredPeripherals[peripheral] {
-                bcPeripheral.didFailToConnectPeripheral(error)
-            }
         }
         
         // central manager state
