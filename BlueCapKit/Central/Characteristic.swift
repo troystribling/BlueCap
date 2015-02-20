@@ -11,6 +11,13 @@ import CoreBluetooth
 
 public class Characteristic {
 
+    ///////////////////////////////////////////
+    // IMPL
+    public struct Impl {
+    }
+    // IMPL
+    ///////////////////////////////////////////
+
     private var notificationUpdatePromise          : StreamPromise<Characteristic>?
     private var notificationStateChangedPromise    = Promise<Characteristic>()
     private var readPromise                        = Promise<Characteristic>()

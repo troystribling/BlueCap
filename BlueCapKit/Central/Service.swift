@@ -9,6 +9,54 @@
 import Foundation
 import CoreBluetooth
 
+///////////////////////////////////////////
+// ServiceImpl
+public struct ServiceImpl<T> {
+    
+    private let profile                             : ServiceProfile?
+    private var characteristicsDiscoveredPromise    = Promise<[T]>()
+    
+    public init(uuid:CBUUID) {
+        self.profile = ProfileManager.sharedInstance.serviceProfiles[uuid]
+    }
+    
+    public var name : String {
+        if let profile = self.profile {
+            return profile.name
+        } else {
+            return "Unknown"
+        }
+    }
+    
+    public mutating func discoverIfConnected(services:[CBUUID]!) -> Future<[T]> {
+        self.characteristicsDiscoveredPromise = Promise<[T]>()
+        return self.characteristicsDiscoveredPromise.future
+    }
+    
+    public mutating func peripheralDisconnected() {
+        self.characteristicsDiscoveredPromise.failure(BCError.peripheralDisconnected)
+    }
+    
+    
+    internal func didDiscoverCharacteristics(error:NSError!) {
+        if let error = error {
+            self.characteristicsDiscoveredPromise.failure(error)
+        } else {
+            for characteristic in self.cbService.characteristics {
+                let cbCharacteristic = characteristic as! CBCharacteristic
+                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
+                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+                bcCharacteristic.didDiscover()
+                Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            }
+            self.characteristicsDiscoveredPromise.success(self.characteristics)
+        }
+    }
+    
+}
+// ServiceImpl
+///////////////////////////////////////////
+
 public class Service : NSObject {
     
     private let profile                             : ServiceProfile?
@@ -17,7 +65,7 @@ public class Service : NSObject {
     internal let _peripheral                        : Peripheral
     internal let cbService                          : CBService
     
-    internal var discoveredCharacteristics      = Dictionary<CBUUID, Characteristic>()
+    internal var discoveredCharacteristics  = [CBUUID:Characteristic]()
     
     public var name : String {
         if let profile = self.profile {

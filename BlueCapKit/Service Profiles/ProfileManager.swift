@@ -12,7 +12,7 @@ import CoreBluetooth
 public class ProfileManager {
     
     // INTERNAL
-    internal var serviceProfiles = Dictionary<CBUUID, ServiceProfile>()
+    internal var serviceProfiles = [CBUUID:ServiceProfile]()
     
     // PRIVATE
     private init() {
