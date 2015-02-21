@@ -9,11 +9,268 @@
 import Foundation
 import CoreBluetooth
 
+public protocol CharacteristicWrapper {
+
+    var uuid                    : CBUUID                {get}
+    var name                    : String                {get}
+    var connectorator           : Connectorator?        {get}
+    var isNotifying             : Bool                  {get}
+    var stringValues            : [String]              {get}
+    var afterDiscoveredPromise  : StreamPromise<Self>?  {get}
+    
+    
+    func stringValue(data:NSData?) -> [String:String]?
+    func dataFromStringValue(stringValue:[String:String]) -> NSData?
+    
+    func setNotifyValue(state:Bool)
+    func propertyEnabled(property:CBCharacteristicProperties) -> Bool
+    func readValueForCharacteristic()
+    func writeValue(value:NSData)
+    
+}
+
 ///////////////////////////////////////////
 // IMPL
-public struct CharacteristicImpl {
+public struct CharacteristicImpl<Wrapper:CharacteristicWrapper> {
+    
+    private var notificationUpdatePromise          : StreamPromise<Wrapper>?
+    private var notificationStateChangedPromise    = Promise<Wrapper>()
+    private var readPromise                        = Promise<Wrapper>()
+    private var writePromise                       = Promise<Wrapper>()
+    
+    private var reading = false
+    private var writing = false
+    
+    private var readSequence    = 0
+    private var writeSequence   = 0
+    private let defaultTimeout  = 10.0
+    
+    public init() {
+    }
+    
+    public func stringValue(characteristic:Wrapper, data:NSData?) -> [String:String]? {
+        return characteristic.stringValue(data).map{$0}
+    }
+    
+    public func stringValues(characteristic:Wrapper) -> [String] {
+        return characteristic.stringValues
+    }
+    
+    public func value<T:Deserializable>(data:NSData?) -> T? {
+        if let data = data {
+            return T.deserialize(data)
+        } else {
+            return nil
+        }
+    }
+    
+    public func value<T:RawDeserializable where T.RawType:Deserializable>(data:NSData?) -> T? {
+        if let data = data {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
+    }
+    
+    public func value<T:RawArrayDeserializable where T.RawType:Deserializable>(data:NSData?) -> T? {
+        if let data = data {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
+    }
+    
+    public func value<T:RawPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>(data:NSData?) -> T? {
+        if let data = data {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
+    }
+    
+    public func value<T:RawArrayPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>(data:NSData?) -> T? {
+        if let data = data {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
+    }
+    
+    public mutating func startNotifying(characteristic:Wrapper) -> Future<Wrapper> {
+        self.notificationStateChangedPromise = Promise<Wrapper>()
+        if characteristic.propertyEnabled(.Notify) {
+            characteristic.setNotifyValue(true)
+        }
+        return self.notificationStateChangedPromise.future
+    }
+    
+    public mutating func stopNotifying(characteristic:Wrapper) -> Future<Wrapper> {
+        self.notificationStateChangedPromise = Promise<Wrapper>()
+        if characteristic.propertyEnabled(.Notify) {
+            characteristic.setNotifyValue(false)
+        }
+        return self.notificationStateChangedPromise.future
+    }
+    
+    public mutating func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Wrapper> {
+        if let capacity = capacity {
+            self.notificationUpdatePromise = StreamPromise<Wrapper>(capacity:capacity)
+        } else {
+            self.notificationUpdatePromise = StreamPromise<Wrapper>()
+        }
+        return self.notificationUpdatePromise!.future
+    }
+    
+    public mutating func stopNotificationUpdates() {
+        self.notificationUpdatePromise = nil
+    }
+    
+    public mutating func read(characteristic:Wrapper) -> Future<Wrapper> {
+        self.readPromise = Promise<Wrapper>()
+        if characteristic.propertyEnabled(.Read) {
+            Logger.debug("CharacteristicImpl#read: \(characteristic.uuid.UUIDString)")
+            characteristic.readValueForCharacteristic()
+            self.reading = true
+            ++self.readSequence
+            self.timeoutRead(characteristic, sequence:self.readSequence)
+        } else {
+            self.readPromise.failure(BCError.characteristicReadNotSupported)
+        }
+        return self.readPromise.future
+    }
+    
+    public mutating func writeData(characteristic:Wrapper, value:NSData) -> Future<Wrapper> {
+        self.writePromise = Promise<Wrapper>()
+        if characteristic.propertyEnabled(.Write) {
+            Logger.debug("CharacteristicImpl#write: value=\(value.hexStringValue()), uuid=\(characteristic.uuid.UUIDString)")
+            characteristic.writeValue(value)
+            self.writing = true
+            ++self.writeSequence
+            self.timeoutWrite(characteristic, sequence:self.writeSequence)
+        } else {
+            self.writePromise.failure(BCError.characteristicWriteNotSupported)
+        }
+        return self.writePromise.future
+    }
+    
+    public mutating func writeString(characteristic:Wrapper, stringValue:[String:String]) -> Future<Wrapper> {
+        if let value = characteristic.dataFromStringValue(stringValue) {
+            return self.writeData(characteristic, value:value)
+        } else {
+            self.writePromise = Promise<Wrapper>()
+            self.writePromise.failure(BCError.characteristicNotSerilaizable)
+            return self.writePromise.future
+        }
+    }
+    
+    public mutating func write<T:Deserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value))
+    }
+    
+    public mutating func write<T:RawDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value))
+    }
+    
+    public mutating func write<T:RawArrayDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value))
+    }
+    
+    public mutating func write<T:RawPairDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value))
+    }
+    
+    public mutating func write<T:RawArrayPairDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value))
+    }
+    
+    private mutating func timeoutRead(characteristic:Wrapper, sequence:Int) {
+        Logger.debug("CharacteristicImpl#timeoutRead: sequence \(sequence), timeout:\(self.readWriteTimeout(characteristic))")
+        CentralManager.delay(self.readWriteTimeout(characteristic)) {
+            if sequence == self.readSequence && self.reading {
+                self.reading = false
+                Logger.debug("CharacteristicImpl#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
+                self.readPromise.failure(BCError.characteristicReadTimeout)
+            } else {
+                Logger.debug("CharacteristicImpl#timeoutRead: expired")
+            }
+        }
+    }
+    
+    private mutating func timeoutWrite(characteristic:Wrapper, sequence:Int) {
+        Logger.debug("CharacteristicImpl#timeoutWrite: sequence \(sequence), timeout:\(self.readWriteTimeout(characteristic))")
+        CentralManager.delay(self.readWriteTimeout(characteristic)) {
+            if sequence == self.writeSequence && self.writing {
+                self.writing = false
+                Logger.debug("CharacteristicImpl#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
+                self.writePromise.failure(BCError.characteristicWriteTimeout)
+            } else {
+                Logger.debug("CharacteristicImpl#timeoutWrite: expired")
+            }
+        }
+    }
+    
+    private func readWriteTimeout(characteristic:Wrapper) -> Double {
+        if let connectorator = characteristic.connectorator {
+            return connectorator.characteristicTimeout
+        } else {
+            return self.defaultTimeout
+        }
+    }
+    
+    internal func didDiscover(characteristic:Wrapper) {
+        Logger.debug("CharacteristicImpl#didDiscover:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+        if let afterDiscoveredPromise = characteristic.afterDiscoveredPromise {
+            afterDiscoveredPromise.success(characteristic)
+        }
+    }
+    
+    internal func didUpdateNotificationState(characteristic:Wrapper, error:NSError!) {
+        if let error = error {
+            Logger.debug("CharacteristicImpl#didUpdateNotificationState Failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            self.notificationStateChangedPromise.failure(error)
+        } else {
+            Logger.debug("CharacteristicImpl#didUpdateNotificationState Success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            self.notificationStateChangedPromise.success(characteristic)
+        }
+    }
+    
+    internal mutating func didUpdate(characteristic:Wrapper, error:NSError!) {
+        self.reading = false
+        if let error = error {
+            Logger.debug("CharacteristicImpl#didUpdate Failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            if characteristic.isNotifying {
+                if let notificationUpdatePromise = self.notificationUpdatePromise {
+                    notificationUpdatePromise.failure(error)
+                }
+            } else {
+                self.readPromise.failure(error)
+            }
+        } else {
+            Logger.debug("CharacteristicImpl#didUpdate Success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            if characteristic.isNotifying {
+                if let notificationUpdatePromise = self.notificationUpdatePromise {
+                    notificationUpdatePromise.success(characteristic)
+                }
+            } else {
+                self.readPromise.success(characteristic)
+            }
+        }
+    }
+    
+    internal mutating func didWrite(characteristic:Wrapper, error:NSError!) {
+        self.writing = false
+        if let error = error {
+            Logger.debug("CharacteristicImpl#didWrite Failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            self.writePromise.failure(error)
+        } else {
+            Logger.debug("CharacteristicImpl#didWrite Success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            self.writePromise.success(characteristic)
+        }
+    }
+
 }
 // IMPL
+
 ///////////////////////////////////////////
 
 public class Characteristic {
@@ -32,7 +289,7 @@ public class Characteristic {
     
     internal let cbCharacteristic : CBCharacteristic
     internal let _service         : Service
-    internal let profile          : CharacteristicProfile!
+    internal let profile          : CharacteristicProfile
     
     public var service : Service {
         return self._service
@@ -62,7 +319,7 @@ public class Characteristic {
         return self.cbCharacteristic.value
     }
 
-    public var stringValue : Dictionary<String, String>? {
+    public var stringValue :[String:String]? {
         if let data = self.dataValue {
             return self.profile.stringValue(data)
         } else {
@@ -117,7 +374,7 @@ public class Characteristic {
     public func startNotifying() -> Future<Characteristic> {
         self.notificationStateChangedPromise = Promise<Characteristic>()
         if self.propertyEnabled(.Notify) {
-            self.service.peripheral.cbPeripheral .setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
+            self.service.peripheral.cbPeripheral.setNotifyValue(true, forCharacteristic:self.cbCharacteristic)
         }
         return self.notificationStateChangedPromise.future
     }
@@ -125,7 +382,7 @@ public class Characteristic {
     public func stopNotifying() -> Future<Characteristic> {
         self.notificationStateChangedPromise = Promise<Characteristic>()
         if self.propertyEnabled(.Notify) {
-            self.service.peripheral.cbPeripheral .setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
+            self.service.peripheral.cbPeripheral.setNotifyValue(false, forCharacteristic:self.cbCharacteristic)
         }
         return self.notificationStateChangedPromise.future
     }
