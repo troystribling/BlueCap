@@ -9,14 +9,14 @@
 import Foundation
 import CoreBluetooth
 
-public class Characteristic {
+///////////////////////////////////////////
+// IMPL
+public struct CharacteristicImpl {
+}
+// IMPL
+///////////////////////////////////////////
 
-    ///////////////////////////////////////////
-    // IMPL
-    public struct Impl {
-    }
-    // IMPL
-    ///////////////////////////////////////////
+public class Characteristic {
 
     private var notificationUpdatePromise          : StreamPromise<Characteristic>?
     private var notificationStateChangedPromise    = Promise<Characteristic>()
