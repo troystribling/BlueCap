@@ -298,7 +298,6 @@
 				05277C9B1944CAE50022FB59 /* Central */,
 				05B45BFC19A78BBB009DAF6D /* Configure */,
 				05E6870219508799009B38DA /* Peripheral */,
-				05BB68BA195C71F200434136 /* Playgrounds */,
 				05E68703195087D0009B38DA /* Profiles */,
 				05840F62194206F100C744E6 /* Supporting Files */,
 				05764D7D1969D01900E6C801 /* Utils */,
@@ -344,13 +343,6 @@
 				05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */,
 			);
 			path = Configure;
-			sourceTree = "<group>";
-		};
-		05BB68BA195C71F200434136 /* Playgrounds */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Playgrounds;
 			sourceTree = "<group>";
 		};
 		05E6870219508799009B38DA /* Peripheral */ = {
