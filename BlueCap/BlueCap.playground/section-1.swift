@@ -2,35 +2,24 @@
 
 import UIKit
 
-let a = [1,2,3,4]
-a[0]
-a[1...a.count-1]
-a[a.count..<a.count]
+protocol DoinIt {
+    func addVal(val:Int) -> Self
+}
 
-func f(pred:@autoclosure()-> Bool) {
-    if pred() {
-        println("TRUE")
-    } else {
-        println("FALSE")
+extension Int : DoinIt {
+    func addVal(val: Int) -> Int {
+        return self + val
     }
 }
 
-f(2==3)
-f(3 > 2)
-f(2 > 3)
-
-
-let z : Int! = nil
-func x(b:Int?) {
-    if let b = b {
-        println(b)
-    } else {
-        println("It is nil")
+struct Thing<T : DoinIt> {
+    let x = 2
+    func doit(t:T) -> T {
+        return t.addVal(2)
     }
 }
 
-x(z)
+let zz = Thing<Int>()
 
-let h = ["name":1]
-h.keys.first
+zz.doit(5)
 
