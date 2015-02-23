@@ -13,7 +13,7 @@ public class Connectorator {
     private var timeoutCount    = 0
     private var disconnectCount = 0
     
-    private let promise : StreamPromise<Peripheral>
+    private let promise : StreamPromise<Void>
 
     public var timeoutRetries           = -1
     public var disconnectRetries        = -1
@@ -21,11 +21,11 @@ public class Connectorator {
     public var characteristicTimeout    = 10.0
 
     public init () {
-        self.promise = StreamPromise<Peripheral>()
+        self.promise = StreamPromise<Void>()
     }
 
     public init (capacity:Int) {
-        self.promise = StreamPromise<Peripheral>(capacity:capacity)
+        self.promise = StreamPromise<Void>(capacity:capacity)
     }
     
     convenience public init(initializer:((connectorator:Connectorator) -> Void)?) {
@@ -42,7 +42,7 @@ public class Connectorator {
         }
     }
 
-    public func onConnect() -> FutureStream<Peripheral> {
+    public func onConnect() -> FutureStream<Void> {
         return self.promise.future
     }
     
@@ -81,9 +81,9 @@ public class Connectorator {
         self.promise.failure(BCError.connectoratorForcedDisconnect)
     }
     
-    internal func didConnect(peripheral:Peripheral) {
+    internal func didConnect() {
         Logger.debug("Connectorator#didConnect")
-        self.promise.success(peripheral)
+        self.promise.success()
     }
     
     internal func didFailConnect(error:NSError?) {
