@@ -19,7 +19,7 @@ public protocol ServiceWrappable {
     
     func discoverCharacteristics(characteristics:[CBUUID]!)
     func didDiscoverCharacteristics(error:NSError!)
-    func didDiscoverCharacteristics()
+    func createCharacteristics()
     func discoverAllCharacteristics() -> Future<Self>
 }
 
@@ -55,7 +55,7 @@ public final class ServiceImpl<Wrapper:ServiceWrappable> {
             Logger.debug("ServiceImpl#didDiscoverCharacteristics failed")
             self.characteristicsDiscoveredPromise.failure(error)
         } else {
-            service.didDiscoverCharacteristics()
+            service.createCharacteristics()
             Logger.debug("ServiceImpl#didDiscoverCharacteristics success")
             self.characteristicsDiscoveredPromise.success(service)
         }
@@ -90,7 +90,7 @@ public final class Service : ServiceWrappable {
         self.peripheral.cbPeripheral.discoverCharacteristics(characteristics, forService:self.cbService)
     }
     
-    public func didDiscoverCharacteristics() {
+    public func createCharacteristics() {
         self.discoveredCharacteristics.removeAll()
         for characteristic in self.cbService.characteristics {
             let cbCharacteristic = characteristic as! CBCharacteristic
