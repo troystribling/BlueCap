@@ -68,7 +68,11 @@ public class CharacteristicProfile {
 }
 
 // RawCharacteristicProfile
-public class RawCharacteristicProfile<DeserializedType where DeserializedType:RawDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType:Deserializable> : CharacteristicProfile {
+public final class RawCharacteristicProfile<DeserializedType where
+                                              DeserializedType:RawDeserializable,
+                                              DeserializedType:StringDeserializable,
+                                              DeserializedType:CharacteristicConfigurable,
+                                              DeserializedType.RawType:Deserializable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -94,7 +98,11 @@ public class RawCharacteristicProfile<DeserializedType where DeserializedType:Ra
 }
 
 // RawArrayCharacteristicProfile
-public class RawArrayCharacteristicProfile<DeserializedType where DeserializedType:RawArrayDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType:Deserializable> : CharacteristicProfile {
+public final class RawArrayCharacteristicProfile<DeserializedType where
+                                                   DeserializedType:RawArrayDeserializable,
+                                                   DeserializedType:StringDeserializable,
+                                                   DeserializedType:CharacteristicConfigurable,
+                                                   DeserializedType.RawType:Deserializable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -120,7 +128,12 @@ public class RawArrayCharacteristicProfile<DeserializedType where DeserializedTy
 }
 
 // RawPairCharacteristicProfile
-public class RawPairCharacteristicProfile<DeserializedType where DeserializedType:RawPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType1:Deserializable, DeserializedType.RawType2:Deserializable> : CharacteristicProfile {
+public final class RawPairCharacteristicProfile<DeserializedType where
+                                                  DeserializedType:RawPairDeserializable,
+                                                  DeserializedType:StringDeserializable,
+                                                  DeserializedType:CharacteristicConfigurable,
+                                                  DeserializedType.RawType1:Deserializable,
+                                                  DeserializedType.RawType2:Deserializable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -147,7 +160,12 @@ public class RawPairCharacteristicProfile<DeserializedType where DeserializedTyp
 
 
 // RawArrayPairCharacteristicProfile
-public class RawArrayPairCharacteristicProfile<DeserializedType where DeserializedType:RawArrayPairDeserializable, DeserializedType:StringDeserializable, DeserializedType:CharacteristicConfigurable, DeserializedType.RawType1:Deserializable, DeserializedType.RawType2:Deserializable> : CharacteristicProfile {
+public final class RawArrayPairCharacteristicProfile<DeserializedType where
+                                                       DeserializedType:RawArrayPairDeserializable,
+                                                       DeserializedType:StringDeserializable,
+                                                       DeserializedType:CharacteristicConfigurable,
+                                                       DeserializedType.RawType1:Deserializable,
+                                                       DeserializedType.RawType2:Deserializable> : CharacteristicProfile {
     
     public init() {
         super.init(uuid:DeserializedType.uuid,
@@ -173,7 +191,7 @@ public class RawArrayPairCharacteristicProfile<DeserializedType where Deserializ
 }
 
 // StringCharacteristicProfile
-public class StringCharacteristicProfile<T:CharacteristicConfigurable> : CharacteristicProfile {
+public final class StringCharacteristicProfile<T:CharacteristicConfigurable> : CharacteristicProfile {
     
     public var encoding : NSStringEncoding
     
