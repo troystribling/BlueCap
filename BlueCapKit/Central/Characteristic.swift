@@ -9,6 +9,8 @@
 import Foundation
 import CoreBluetooth
 
+///////////////////////////////////////////
+// CharacteristicImpl
 public protocol CharacteristicWrappable {
 
     var uuid                    : CBUUID!                   {get}
@@ -29,8 +31,6 @@ public protocol CharacteristicWrappable {
     
 }
 
-///////////////////////////////////////////
-// IMPL
 public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
     private var notificationUpdatePromise          : StreamPromise<Wrapper>?
@@ -269,12 +269,12 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     }
 
 }
-// IMPL
+// CharacteristicImpl
 ///////////////////////////////////////////
 
 public final class Characteristic : CharacteristicWrappable {
 
-    private var impl = CharacteristicImpl<Characteristic>()
+    internal var impl = CharacteristicImpl<Characteristic>()
     
     // CharacteristicWrappable
     public var uuid : CBUUID! {

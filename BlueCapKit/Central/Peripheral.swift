@@ -14,6 +14,226 @@ enum PeripheralConnectionError {
     case Timeout
 }
 
+///////////////////////////////////////////
+// PeripheralImpl
+public protocol PeripheralWrappable {
+    
+    typealias WrappedService
+    
+    var name            : String                {get}
+    var state           : CBPeripheralState     {get}
+    var connectorator   : Connectorator?        {get}
+    var services        : [WrappedService]      {get}
+    
+    func connect()
+    func cancel()
+    func discoverServices(services:[CBUUID]!)
+    func didDiscoverServices()
+}
+
+public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
+                                                Wrapper.WrappedService:ServiceWrappable> {
+    
+    private var servicesDiscoveredPromise   = Promise<Wrapper>()
+    
+    private var connectionSequence          = 0
+    private var currentError                = PeripheralConnectionError.None
+    private var forcedDisconnect            = false
+    
+    private let defaultConnectionTimeout    = Double(10.0)
+    
+    private let _discoveredAt               = NSDate()
+    private var _connectedAt                : NSDate?
+    private var _disconnectedAt             : NSDate?
+    
+    public let advertisements               : [String: String]
+    public let rssi                         : Int
+    
+    public var discoveredAt : NSDate {
+        return self._discoveredAt
+    }
+    
+    public var connectedAt : NSDate? {
+        return self._connectedAt
+    }
+    
+    public var disconnectedAt : NSDate? {
+        return self._disconnectedAt
+    }
+    
+    public init(advertisements:[String:String], rssi:Int) {
+        self.advertisements = advertisements
+        self.currentError = .None
+        self.rssi = rssi
+    }
+    
+    // connect
+    public func reconnect(peripheral:Wrapper) {
+        if peripheral.state == .Disconnected {
+            Logger.debug("PeripheralImpl#reconnect: \(peripheral.name)")
+            peripheral.connect()
+            self.forcedDisconnect = false
+            ++self.connectionSequence
+            self.timeoutConnection(peripheral, sequence:self.connectionSequence)
+        }
+    }
+    
+    public func connect(peripheral:Wrapper) {
+        Logger.debug("PeripheralImpl#connect: \(peripheral.name)")
+        self.reconnect(peripheral)
+    }
+    
+    public func disconnect(peripheral:Wrapper) {
+        self.forcedDisconnect = true
+        if peripheral.state == .Connected {
+            Logger.debug("Peripheral#disconnect: \(peripheral.name)")
+            peripheral.cancel()
+        } else {
+            self.didDisconnectPeripheral(peripheral)
+        }
+    }
+    
+    public func terminate(peripheral:Wrapper) {
+        self.disconnect(peripheral)
+    }
+    
+    // service discovery
+    public func discoverAllServices(peripheral:Wrapper) -> Future<Wrapper> {
+        Logger.debug("PeripheralImpl#discoverAllServices: \(peripheral.name)")
+        return self.discoverServices(peripheral, services:nil)
+    }
+    
+    public func discoverServices(peripheral:Wrapper, services:[CBUUID]!) -> Future<Wrapper> {
+        Logger.debug("PeripheralImpl#discoverAllServices: \(peripheral.name)")
+        self.servicesDiscoveredPromise = Promise<Wrapper>()
+        self.discoverIfConnected(peripheral, services:services)
+        return self.servicesDiscoveredPromise.future
+    }
+    
+    public func discoverAllPeripheralServices(peripheral:Wrapper) -> Future<Wrapper> {
+        Logger.debug("PeripheralImpl#discoverAllPeripheralServices: \(peripheral.name)")
+        return self.discoverPeripheralServices(peripheral, services:nil)
+    }
+    
+    public func discoverPeripheralServices(peripheral:Wrapper, services:[CBUUID]!) -> Future<Wrapper> {
+        let peripheralDiscoveredPromise = Promise<Wrapper>()
+        Logger.debug("PeripheralImpl#discoverPeripheralServices: \(peripheral.name)")
+        let servicesDiscoveredFuture = self.discoverServices(peripheral, services:services)
+        servicesDiscoveredFuture.onSuccess {services in
+            if peripheral.services.count > 1 {
+                self.discoverService(peripheral,
+                                     head:peripheral.services[0],
+                                     tail:Array(peripheral.services[1..<peripheral.services.count]),
+                                     promise:peripheralDiscoveredPromise)
+            } else {
+                let discoveryFuture = peripheral.services[0].discoverAllCharacteristics()
+                discoveryFuture.onSuccess {_ in
+                    peripheralDiscoveredPromise.success(peripheral)
+                }
+                discoveryFuture.onFailure {error in
+                    peripheralDiscoveredPromise.failure(error)
+                }
+            }
+        }
+        servicesDiscoveredFuture.onFailure{(error) in
+            peripheralDiscoveredPromise.failure(error)
+        }
+        return peripheralDiscoveredPromise.future
+    }
+    
+    // CBPeripheralDelegate
+    // services
+    public func didDiscoverServices(peripheral:Wrapper, error:NSError!) {
+        Logger.debug("PeripheralImpl#didDiscoverServices: \(peripheral.name)")
+        if let error = error {
+            self.servicesDiscoveredPromise.failure(error)
+        } else {
+            peripheral.didDiscoverServices()
+            self.servicesDiscoveredPromise.success(peripheral)
+        }
+    }
+        
+    
+    // utils
+    private func timeoutConnection(peripheral:Wrapper, sequence:Int) {
+        let central = CentralManager.sharedInstance
+        var timeout = self.defaultConnectionTimeout
+        if let connectorator = peripheral.connectorator {
+            timeout = connectorator.connectionTimeout
+        }
+        Logger.debug("PeripheralImpl#timeoutConnection: sequence \(sequence), timeout:\(timeout)")
+        central.delay(timeout) {
+            if peripheral.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
+                Logger.debug("PeripheralImpl#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
+                self.currentError = .Timeout
+                peripheral.cancel()
+            } else {
+                Logger.debug("Peripheral#timeoutConnection: expired")
+            }
+        }
+    }
+    
+    private func discoverIfConnected(peripheral:Wrapper, services:[CBUUID]!) {
+        if peripheral.state == .Connected {
+            peripheral.discoverServices(services)
+        } else {
+            self.servicesDiscoveredPromise.failure(BCError.peripheralDisconnected)
+        }
+    }
+    
+    internal func didDisconnectPeripheral(peripheral:Wrapper) {
+        Logger.debug("Peripheral#didDisconnectPeripheral")
+        self._disconnectedAt = NSDate()
+        if let connectorator = peripheral.connectorator {
+            if (self.forcedDisconnect) {
+                self.forcedDisconnect = false
+                Logger.debug("Peripheral#didDisconnectPeripheral: forced disconnect")
+                connectorator.didForceDisconnect()
+            } else {
+                switch(self.currentError) {
+                case .None:
+                    Logger.debug("Peripheral#didDisconnectPeripheral: No errors disconnecting")
+                    connectorator.didDisconnect()
+                case .Timeout:
+                    Logger.debug("Peripheral#didDisconnectPeripheral: Timeout reconnecting")
+                    connectorator.didTimeout()
+                }
+            }
+        }
+    }
+    
+    internal func didConnectPeripheral(peripheral:Wrapper) {
+        Logger.debug("PeripheralConnectionError#didConnectPeripheral")
+        self._connectedAt = NSDate()
+        peripheral.connectorator?.didConnect()
+    }
+    
+    internal func didFailToConnectPeripheral(peripheral:Wrapper, error:NSError?) {
+        Logger.debug("PeripheralConnectionError#didFailToConnectPeripheral")
+        peripheral.connectorator?.didFailConnect(error)
+    }
+    
+    internal func discoverService(peripheral:Wrapper, head:Wrapper.WrappedService, tail:[Wrapper.WrappedService], promise:Promise<Wrapper>) {
+        let discoveryFuture = head.discoverAllCharacteristics()
+        if tail.count > 0 {
+            discoveryFuture.onSuccess {_ in
+                self.discoverService(peripheral, head:tail[0], tail:Array(tail[1..<tail.count]), promise:promise)
+            }
+        } else {
+            discoveryFuture.onSuccess {_ in
+                promise.success(peripheral)
+            }
+        }
+        discoveryFuture.onFailure {error in
+            promise.failure(error)
+        }
+    }
+
+}
+
+// PeripheralImpl
+///////////////////////////////////////////
+
 public class Peripheral : NSObject, CBPeripheralDelegate {
     
     private var servicesDiscoveredPromise   = Promise<[Service]>()
@@ -100,8 +320,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public func disconnect() {
-        self.forcedDisconnect = true
         CentralManager.sharedInstance.discoveredPeripherals.removeValueForKey(self.cbPeripheral)
+        self.forcedDisconnect = true
         if self.state == .Connected {
             Logger.debug("Peripheral#disconnect: \(self.name)")
             CentralManager.sharedInstance.cancelPeripheralConnection(self)
@@ -309,7 +529,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal func didConnectPeripheral() {
         Logger.debug("PeripheralConnectionError#didConnectPeripheral")
         self._connectedAt = NSDate()
-        self._connectorator?.didConnect(self)
+        self._connectorator?.didConnect()
     }
     
     internal func didFailToConnectPeripheral(error:NSError?) {
