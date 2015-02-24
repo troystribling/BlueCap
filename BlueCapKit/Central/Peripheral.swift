@@ -27,6 +27,7 @@ public protocol PeripheralWrappable {
     
     func connect()
     func cancel()
+    func disconnect()
     func discoverServices(services:[CBUUID]!)
     func didDiscoverServices()
 }
@@ -261,6 +262,11 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         CentralManager.sharedInstance.cancelPeripheralConnection(self)
     }
     
+    public func disconnect() {
+        CentralManager.sharedInstance.discoveredPeripherals.removeValueForKey(self.cbPeripheral)
+        self.impl.disconnect(self)
+    }
+    
     public func discoverServices(services:[CBUUID]!) {
         self.cbPeripheral.discoverServices(services)
     }
@@ -322,11 +328,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     public func connect(connectorator:Connectorator?=nil) {
         self._connectorator = connectorator
         self.impl.connect(self)
-    }
-    
-    public func disconnect() {
-        CentralManager.sharedInstance.discoveredPeripherals.removeValueForKey(self.cbPeripheral)
-        self.impl.disconnect(self)
     }
     
     public func terminate() {
