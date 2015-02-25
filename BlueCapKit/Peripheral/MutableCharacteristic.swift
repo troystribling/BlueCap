@@ -9,6 +9,76 @@
 import Foundation
 import CoreBluetooth
 
+///////////////////////////////////////////
+// MutableCharacteristicImpl
+public protocol MutableCharacteristicWrappable {
+  
+    var uuid            : CBUUID!   {get}
+    var name            : String    {get}
+    var value           : NSData!   {get}
+    var stringValues    : [String]  {get}
+
+    func propertyEnabled(property:CBCharacteristicProperties) -> Bool
+    func permissionEnabled(permission:CBAttributePermissions) -> Bool
+    
+    func stringValue(data:NSData?) -> [String:String]?
+    func dataFromStringValue(stringValue:[String:String]) -> NSData?
+    
+    func updateValueWithData(value:NSData)
+}
+
+public final class MutableCharacteristicImpl<Wrapper:MutableCharacteristicWrappable> {
+    
+    internal var processWriteRequestPromise : StreamPromise<CBATTRequest>?
+    
+    
+    public init() {
+    }
+    
+    
+    public func startProcessingWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest> {
+        if let capacity = capacity {
+            self.processWriteRequestPromise = StreamPromise<CBATTRequest>(capacity:capacity)
+        } else {
+            self.processWriteRequestPromise = StreamPromise<CBATTRequest>()
+        }
+        return self.processWriteRequestPromise!.future
+    }
+    
+    public func stopProcessingWriteRequests() {
+        self.processWriteRequestPromise = nil
+    }
+    
+    public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
+        PeripheralManager.sharedInstance.cbPeripheralManager.respondToRequest(request, withResult:result)
+    }
+    
+    
+    public func updateValue<T:Deserializable>(characteristic:Wrapper, value:T) {
+        return characteristic.updateValueWithData(Serde.serialize(value))
+    }
+    
+    public func updateValue<T:RawDeserializable>(characteristic:Wrapper, value:T) {
+        return characteristic.updateValueWithData(Serde.serialize(value))
+    }
+    
+    public func updateValue<T:RawArrayDeserializable>(characteristic:Wrapper, value:T) {
+        return characteristic.updateValueWithData(Serde.serialize(value))
+    }
+    
+    public func updateValue<T:RawPairDeserializable>(characteristic:Wrapper, value:T) {
+        return characteristic.updateValueWithData(Serde.serialize(value))
+    }
+    
+    public func updateValue<T:RawArrayPairDeserializable>(characteristic:Wrapper, value:T) {
+        return characteristic.updateValueWithData(Serde.serialize(value))
+    }
+
+}
+// MutableCharacteristicImpl
+///////////////////////////////////////////
+
+
 public class MutableCharacteristic : NSObject {
     
     private let profile                         : CharacteristicProfile!
