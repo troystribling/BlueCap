@@ -29,14 +29,14 @@ public class TimedScannerator {
     public init() {
     }
     
-    public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
+    public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Peripheral> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
         return CentralManager.sharedInstance.startScanning(capacity:capacity)
     }
     
-    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<PeripheralDiscovery> {
+    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
@@ -51,7 +51,7 @@ public class TimedScannerator {
     internal func timeoutScan() {
         Logger.debug("Scannerator#timeoutScan: \(self.timeoutSeconds)s")
         CentralManager.sharedInstance.delay(self.timeoutSeconds) {
-            CentralManager.sharedInstance.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
+            CentralManager.sharedInstance.impl.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
         }
     }
 

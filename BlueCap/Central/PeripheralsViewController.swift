@@ -177,9 +177,9 @@ class PeripheralsViewController : UITableViewController {
     
     func startScan() {
         let scanMode = ConfigStore.getScanMode()
-        let afterPeripheralDiscovered = {(discovery:PeripheralDiscovery) -> Void in
-            Notify.withMessage("Discovered peripheral '\(discovery.peripheral.name)'")
-            self.connect(discovery.peripheral)
+        let afterPeripheralDiscovered = {(peripheral:Peripheral) -> Void in
+            Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
+            self.connect(peripheral)
             self.updateWhenActive()
         }
         let afterTimeout = {(error:NSError) -> Void in
@@ -190,7 +190,7 @@ class PeripheralsViewController : UITableViewController {
             }
         }
         // Promiscuous Scan Enabled
-        var future : FutureStream<PeripheralDiscovery>
+        var future : FutureStream<Peripheral>
         switch scanMode {
         case "Promiscuous" :
             // Promiscuous Scan with Timeout Enabled
