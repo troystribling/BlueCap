@@ -36,6 +36,7 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
                                                 Wrapper.WrappedService:ServiceWrappable> {
     
     private var servicesDiscoveredPromise   = Promise<Wrapper>()
+    private var readRSSIPromise             = Promise<Int>()
     
     private var connectionSequence          = 0
     private var currentError                = PeripheralConnectionError.None
@@ -136,6 +137,12 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         return peripheralDiscoveredPromise.future
     }
     
+    // RSSI
+    public func readRSSI() -> Future<Int> {
+        self.readRSSIPromise = Promise<Int>()
+        return self.readRSSIPromise.future
+    }
+    
     // CBPeripheralDelegate
     // services
     public func didDiscoverServices(peripheral:Wrapper, error:NSError!) {
@@ -148,7 +155,18 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         }
     }
     
-    
+    public func didReadRSSI(RSSI:NSNumber!, error:NSError!) {
+        if let error = error {
+            self.readRSSIPromise.failure(error)
+        } else {
+            if let RSSI = RSSI {
+                self.readRSSIPromise.success(RSSI.integerValue)
+            } else {
+                self.readRSSIPromise.success(RSSI.integerValue)
+            }
+        }
+    }
+
     // utils
     private func timeoutConnection(peripheral:Wrapper, sequence:Int) {
         let central = CentralManager.sharedInstance
@@ -229,13 +247,13 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
 // PeripheralImpl
 ///////////////////////////////////////////
 
-public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
+public final class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     
     internal var impl = PeripheralImpl<Peripheral>()
     
     // PeripheralImpl
     public var name : String {
-        if let name = cbPeripheral.name {
+        if let name = self.cbPeripheral.name {
             return name
         } else {
             return "Unknown"
@@ -282,7 +300,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
             }
         }
     }
-
     
     // PeripheralImpl
     
@@ -318,6 +335,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         self.rssi = rssi
         super.init()
         self.cbPeripheral.delegate = self
+    }
+    
+    // rssi
+    func readRSSI() -> Future<Int> {
+        self.cbPeripheral.readRSSI()
+        return self.impl.readRSSI()
     }
     
     // connect
@@ -359,6 +382,11 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     
     public func peripheral(_:CBPeripheral!, didModifyServices invalidatedServices:[AnyObject]!) {
         Logger.debug("Peripheral#didModifyServices")
+    }
+    
+    public func peripheral(_:CBPeripheral!, didReadRSSI RSSI:NSNumber!, error:NSError!) {
+        Logger.debug("Peripheral#didReadRSSI")
+        self.impl.didReadRSSI(RSSI, error:error)
     }
     
     // services
