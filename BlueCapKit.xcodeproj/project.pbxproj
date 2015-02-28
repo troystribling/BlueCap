@@ -72,6 +72,7 @@
 		05E1A7301A55BE1600A00C02 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72A1A55BE1600A00C02 /* Box.swift */; };
 		05E1A7311A55BE1600A00C02 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72B1A55BE1600A00C02 /* Optional.swift */; };
 		05E1A7321A55BE1600A00C02 /* Try.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72C1A55BE1600A00C02 /* Try.swift */; };
+		7396583E1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7396583D1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -145,6 +146,7 @@
 		05E1A72A1A55BE1600A00C02 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		05E1A72B1A55BE1600A00C02 /* Optional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		05E1A72C1A55BE1600A00C02 /* Try.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Try.swift; sourceTree = "<group>"; };
+		7396583D1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLAuthorizationStatusExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +374,7 @@
 			children = (
 				05D3B9431A2BA162008E794E /* DoubleExtensions.swift */,
 				05D3B9441A2BA162008E794E /* StringExtensions.swift */,
+				7396583D1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -539,6 +542,7 @@
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
 				05D3B9391A2B8D61008E794E /* Range.swift in Sources */,
 				055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */,
+				7396583E1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
 				055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */,
