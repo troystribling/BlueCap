@@ -69,7 +69,7 @@ public class BeaconManager : RegionManager {
     }
 
     public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) -> FutureStream<[Beacon]> {
-       return self.startRangingBeaconsInRegion(CLAuthorizationStatus.Authorized, beaconRegion:beaconRegion)
+       return self.startRangingBeaconsInRegion(CLAuthorizationStatus.AuthorizedAlways, beaconRegion:beaconRegion)
     }
 
     public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
