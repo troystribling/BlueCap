@@ -206,6 +206,10 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         }
     }
     
+    public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
+        self.impl.respondToRequest(self, request:request, withResult:result)
+    }
+    
     public func updateValue<T:Deserializable>(value:T) {
         return self.impl.updateValue(self, value:value)
     }
