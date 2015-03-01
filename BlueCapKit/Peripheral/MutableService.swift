@@ -9,13 +9,20 @@
 import Foundation
 import CoreBluetooth
 
-public class MutableService : NSObject {
+///////////////////////////////////////////
+// MutableServiceImpl
+public protocol MutableServiceWrappable {
+
+    var uuid            : CBUUID            {get}
+    var name            : String            {get}
     
-    private let profile             : ServiceProfile
-    private var _characteristics    : [MutableCharacteristic] = []
+}
+// MutableServiceImpl
+///////////////////////////////////////////
 
-    internal let cbMutableService   : CBMutableService
+public final class MutableService : NSObject, MutableServiceWrappable {
 
+    // MutableServiceImpl
     public var uuid : CBUUID {
         return self.profile.uuid
     }
@@ -23,7 +30,13 @@ public class MutableService : NSObject {
     public var name : String {
         return self.profile.name
     }
-    
+        // MutableServiceImpl
+
+    private let profile             : ServiceProfile
+    private var _characteristics    : [MutableCharacteristic] = []
+
+    internal let cbMutableService   : CBMutableService
+
     public var characteristics : [MutableCharacteristic] {
         get {
             return self._characteristics

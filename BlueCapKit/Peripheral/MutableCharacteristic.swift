@@ -28,7 +28,7 @@ public protocol MutableCharacteristicWrappable {
     func dataFromStringValue(stringValue:[String:String]) -> NSData?
     
     func updateValueWithData(value:NSData)
-    func respondToRequest(request:RequestWrapper, withResult result:ResultWrapper)
+    func respondToWrappedRequest(request:RequestWrapper, withResult result:ResultWrapper)
 }
 
 public protocol CBATTRequestWrappable {
@@ -62,7 +62,7 @@ public final class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharac
     }
     
     public func respondToRequest(characteristic:Wrapper, request:Wrapper.RequestWrapper, withResult result:Wrapper.ResultWrapper) {
-        characteristic.respondToRequest(request, withResult:result)
+        characteristic.respondToWrappedRequest(request, withResult:result)
     }
     
     
@@ -152,8 +152,8 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
-    public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
-        self.impl.respondToRequest(self, request:request, withResult:result)
+    public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
+        PeripheralManager.sharedInstance.cbPeripheralManager.respondToRequest(request, withResult:result)
     }
     
     

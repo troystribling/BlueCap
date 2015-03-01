@@ -9,7 +9,30 @@
 import Foundation
 import CoreBluetooth
 
-public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
+///////////////////////////////////////////
+// PeripheralManagerImpl
+public protocol PeripheralManagerWrappable {
+    
+    typealias WrappedService
+    typealias WrappedBeaconRegion
+    
+    var isAdvertising   : Bool                      {get}
+    var state           : CBPeripheralManagerState  {get}
+    var services        : [WrappedService]          {get}
+    
+    func startAdvertising(advertisementData:[NSObject:AnyObject])
+    func startAdversting(beaconRegion:WrappedBeaconRegion)
+    func stopAdvertising()
+    func addWrappedService(service:WrappedService)
+    func removeWrappedService(service:WrappedService)
+    func removeAllWrappedServices()
+
+}
+
+public final class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappable,
+                                                       Wrapper.WrappedService:MutableServiceWrappable> {
+    
+    let peripheral : Wrapper
     
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Float = 0.25
     
@@ -19,17 +42,190 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private var afterPowerOffPromise                = Promise<Void>()
     private var afterSeriviceAddPromise             = Promise<Void>()
     
-    private let peripheralQueue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
+    internal let peripheralQueue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
     
-    private var _name : String?
-
     private var _isPoweredOn    = false
-    private var serviceAdded    = false
+    
+    public var isPoweredOn : Bool {
+        return self._isPoweredOn
+    }
+    
+    // power on
+    public func powerOn() -> Future<Void> {
+        Logger.debug("PeripheralManagerImpl#powerOn")
+        let future = self.afterPowerOnPromise.future
+        self.afterPowerOnPromise = Promise<Void>()
+        return future
+    }
+    
+    public func powerOff() -> Future<Void> {
+        Logger.debug("PeripheralManagerImpl#powerOff")
+        let future = self.afterPowerOffPromise.future
+        self.afterPowerOffPromise = Promise<Void>()
+        return future
+    }
+    
+    // advertising
+    public func startAdvertising(name:String, uuids:[CBUUID]?) -> Future<Void> {
+        self.afterAdvertisingStartedPromise = Promise<Void>()
+        var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+        if let uuids = uuids {
+            advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+        }
+        self.peripheral.startAdvertising(advertisementData)
+        return self.afterAdvertisingStartedPromise.future
+    }
+    
+    public func startAdvertising(name:String) -> Future<Void> {
+        return self.startAdvertising(name, uuids:nil)
+    }
+    
+    public func startAdvertising(region:BeaconRegion) -> Future<Void> {
+        self.afterAdvertisingStartedPromise = Promise<Void>()
+        self.peripheral.startAdvertising(region.peripheralDataWithMeasuredPower())
+        return self.afterAdvertisingStartedPromise.future
+    }
+    
+    public func stopAdvertising() -> Future<Void> {
+        self.afterAdvertsingStoppedPromise = Promise<Void>()
+        self.peripheral.stopAdvertising()
+        dispatch_async(self.peripheralQueue, {self.lookForAdvertisingToStop()})
+        return self.afterAdvertsingStoppedPromise.future
+    }
+    
+    // services
+    public func addService(service:Wrapper.WrappedService) -> Future<Void> {
+        self.afterSeriviceAddPromise = Promise<Void>()
+        if !self.peripheral.isAdvertising {
+            self.peripheral.addWrappedService(service)
+        } else {
+            self.afterSeriviceAddPromise.failure(BCError.peripheralManagerAddServiceFailed)
+        }
+        return self.afterSeriviceAddPromise.future
+    }
+    
+    public func addServices(services:[Wrapper.WrappedService]) -> Future<Void> {
+        Logger.debug("PeripheralManagerImpl#addServices: service count \(services.count)")
+        let promise = Promise<Void>()
+        self.addService(promise, services:services)
+        return promise.future
+    }
+    
+    private func addService(promise:Promise<Void>, services:[Wrapper.WrappedService]) {
+        if services.count > 0 {
+            let future = self.addService(services[0])
+            future.onSuccess {
+                if services.count > 1 {
+                    let servicesTail = Array(services[1...services.count-1])
+                    Logger.debug("PeripheralManagerImpl#addServices: services remaining \(servicesTail.count)")
+                    self.addService(promise, services:servicesTail)
+                } else {
+                    Logger.debug("PeripheralManagerImpl#addServices: completed")
+                    promise.success()
+                }
+            }
+            future.onFailure {(error) in
+                let future = self.removeAllServices()
+                future.onSuccess {
+                    Logger.debug("PeripheralManagerImpl#addServices: failed '\(error.localizedDescription)'")
+                    promise.failure(error)
+                }
+            }
+        }
+    }
+    
+    public func removeService(service:Wrapper.WrappedService) -> Future<Void> {
+        let promise = Promise<Void>()
+        if !self.peripheral.isAdvertising {
+            Logger.debug("PeripheralManagerImpl#removeService: \(service.uuid.UUIDString)")
+            self.peripheral.removeWrappedService(service)
+            promise.success()
+        } else {
+            promise.failure(BCError.peripheralManagerIsAdvertising)
+        }
+        return promise.future
+    }
+    
+    public func removeAllServices() -> Future<Void> {
+        let promise = Promise<Void>()
+        if !self.peripheral.isAdvertising {
+            Logger.debug("PeripheralManagerImpl#removeAllServices")
+            self.peripheral.removeAllWrappedServices()
+            promise.success()
+        } else {
+            promise.failure(BCError.peripheralManagerIsAdvertising)
+        }
+        return promise.future
+    }
+    
+    // CBPeripheralManagerDelegate
+    public func peripheralManagerDidUpdateState() {
+        switch self.peripheral.state {
+        case CBPeripheralManagerState.PoweredOn:
+            Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOn")
+            self.afterPowerOnPromise.success()
+            self._isPoweredOn = true
+            break
+        case CBPeripheralManagerState.PoweredOff:
+            Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOff")
+            self.afterPowerOffPromise.success()
+            self._isPoweredOn = false
+            break
+        case CBPeripheralManagerState.Resetting:
+            break
+        case CBPeripheralManagerState.Unsupported:
+            break
+        case CBPeripheralManagerState.Unauthorized:
+            break
+        case CBPeripheralManagerState.Unknown:
+            break
+        }
+    }
+    
+    public func didStartAdvertising(error:NSError!) {
+        if let error = error {
+            Logger.debug("PeripheralManagerImpl#peripheralManagerDidStartAdvertising: Failed '\(error.localizedDescription)'")
+            self.afterAdvertisingStartedPromise.failure(error)
+        } else {
+            Logger.debug("PeripheralManagerImpl#peripheralManagerDidStartAdvertising: Success")
+            self.afterAdvertisingStartedPromise.success()
+        }
+    }
+    
+    public func didAddService(error:NSError!) {
+        if let error = error {
+            Logger.debug("PeripheralManagerImpl#didAddService: Failed '\(error.localizedDescription)'")
+            self.afterSeriviceAddPromise.failure(error)
+        } else {
+            Logger.debug("PeripheralManagerImpl#didAddService: Success")
+            self.afterSeriviceAddPromise.success()
+        }
+    }
+    
+    private init(peripheral:Wrapper) {
+        self.peripheral = peripheral
+    }
+    
+    private func lookForAdvertisingToStop() {
+        if self.peripheral.isAdvertising {
+            let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL * Float(NSEC_PER_SEC)))
+            dispatch_after(popTime, self.peripheralQueue, {
+                self.lookForAdvertisingToStop()
+            })
+        } else {
+            Logger.debug("Peripheral#lookForAdvertisingToStop: Advertising stopped")
+            self.afterAdvertsingStoppedPromise.success()
+        }
+    }
+}
 
-    internal var cbPeripheralManager        : CBPeripheralManager!
-    internal var configuredServices         : Dictionary<CBUUID, MutableService>                    = [:]
-    internal var configuredCharcteristics   : Dictionary<CBCharacteristic, MutableCharacteristic>   = [:]
-
+// PeripheralManagerImpl
+///////////////////////////////////////////
+public final class PeripheralManager : NSObject, CBPeripheralManagerDelegate, PeripheralManagerWrappable {
+    
+    private var impl : PeripheralManagerImpl<PeripheralManager>!
+    
+    // PeripheralManagerImpl
     public var isAdvertising : Bool {
         return self.cbPeripheralManager.isAdvertising
     }
@@ -42,12 +238,56 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return self.configuredServices.values.array
     }
     
-    public var name : String? {
-        return self._name
+    public func startAdvertising(advertisementData:[NSObject:AnyObject]) {
+        self.cbPeripheralManager.startAdvertising(advertisementData)
     }
     
+    public func startAdversting(region:BeaconRegion) {
+        self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower())
+    }
+    
+    public func stopAdvertising() {
+        self.cbPeripheralManager.stopAdvertising()
+    }
+    
+    public func addWrappedService(service:MutableService) {
+        self.configuredServices[service.uuid] = service
+        self.cbPeripheralManager.addService(service.cbMutableService)
+    }
+    
+    public func removeWrappedService(service:MutableService) {
+        let removeCharacteristics = Array(self.configuredCharcteristics.keys).filter{(cbCharacteristic) in
+            for bcCharacteristic in service.characteristics {
+                if let uuid = cbCharacteristic.UUID {
+                    if uuid == bcCharacteristic.uuid {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        for cbCharacteristic in removeCharacteristics {
+            self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
+        }
+        self.configuredServices.removeValueForKey(service.uuid)
+        self.cbPeripheralManager.removeService(service.cbMutableService)
+    }
+    
+    public func removeAllWrappedServices() {
+        self.configuredServices.removeAll(keepCapacity:false)
+        self.configuredCharcteristics.removeAll(keepCapacity:false)
+        self.cbPeripheralManager.removeAllServices()
+    }
+    // PeripheralManagerImpl
+    
+    private var _name : String?
+
+    internal var cbPeripheralManager        : CBPeripheralManager!
+    internal var configuredServices         : [CBUUID:MutableService]                    = [:]
+    internal var configuredCharcteristics   : [CBCharacteristic:MutableCharacteristic]   = [:]
+
     public var isPoweredOn : Bool {
-        return self._isPoweredOn
+        return self.impl.isPoweredOn
     }
 
     public class var sharedInstance : PeripheralManager {
@@ -63,181 +303,67 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     // power on
     public func powerOn() -> Future<Void> {
-        Logger.debug("PeripheralManager#powerOn")
-        let future = self.afterPowerOnPromise.future
-        self.afterPowerOnPromise = Promise<Void>()
-        return future
+        return self.impl.powerOn()
     }
     
     public func powerOff() -> Future<Void> {
-        Logger.debug("PeripheralManager#powerOff")
-        let future = self.afterPowerOffPromise.future
-        self.afterPowerOffPromise = Promise<Void>()
-        return future
+        return self.impl.powerOff()
     }
 
     // advertising
     public func startAdvertising(name:String, uuids:[CBUUID]?) -> Future<Void> {
         self._name = name
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
-        if let uuids = uuids {
-            advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
-        }
-        self.cbPeripheralManager.startAdvertising(advertisementData)
-        return self.afterAdvertisingStartedPromise.future
+        return self.impl.startAdvertising(name, uuids:uuids)
     }
     
     public func startAdvertising(name:String) -> Future<Void> {
-        return self.startAdvertising(name, uuids:nil)
+        return self.impl.startAdvertising(name)
     }
     
     public func startAdvertising(region:BeaconRegion) -> Future<Void> {
         self._name = region.identifier
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower())
-        return self.afterAdvertisingStartedPromise.future
+        return self.impl.startAdvertising(region)
     }
     
     public func stopAdvertising() -> Future<Void> {
         self._name = nil
-        self.afterAdvertsingStoppedPromise = Promise<Void>()
-        self.cbPeripheralManager.stopAdvertising()
-        dispatch_async(self.peripheralQueue, {self.lookForAdvertisingToStop()})
-        return self.afterAdvertsingStoppedPromise.future
+        return self.impl.stopAdvertising()
     }
     
     // services
     public func addService(service:MutableService) -> Future<Void> {
-        self.afterSeriviceAddPromise = Promise<Void>()
-        if !self.isAdvertising {
-            self.configuredServices[service.uuid] = service
-            self.cbPeripheralManager.addService(service.cbMutableService)
-        } else {
-            self.afterSeriviceAddPromise.failure(BCError.peripheralManagerAddServiceFailed)
-        }
-        return self.afterSeriviceAddPromise.future
+        return self.impl.addService(service)
     }
     
     public func addServices(services:[MutableService]) -> Future<Void> {
-        Logger.debug("PeripheralManager#addServices: service count \(services.count)")
-        let promise = Promise<Void>()
-        self.addService(promise, services:services)
-        return promise.future
+        return self.impl.addServices(services)
     }
 
-    private func addService(promise:Promise<Void>, services:[MutableService]) {
-        if services.count > 0 {
-            let future = self.addService(services[0])
-            future.onSuccess {
-                if services.count > 1 {
-                    let servicesTail = Array(services[1...services.count-1])
-                    Logger.debug("PeripheralManager#addServices: services remaining \(servicesTail.count)")
-                    self.addService(promise, services:servicesTail)
-                } else {
-                    Logger.debug("PeripheralManager#addServices: completed")
-                    promise.success()
-                }
-            }
-            future.onFailure {(error) in
-                let future = self.removeAllServices()
-                future.onSuccess {
-                    Logger.debug("PeripheralManager#addServices: failed '\(error.localizedDescription)'")
-                    promise.failure(error)
-                }
-            }
-        }
-    }
-    
     public func removeService(service:MutableService) -> Future<Void> {
-        let promise = Promise<Void>()
-        if !self.isAdvertising {
-            Logger.debug("PeripheralManager#removeService: \(service.uuid.UUIDString)")
-            let removeCharacteristics = Array(self.configuredCharcteristics.keys).filter{(cbCharacteristic) in
-                                            for bcCharacteristic in service.characteristics {
-                                                if let uuid = cbCharacteristic.UUID {
-                                                    if uuid == bcCharacteristic.uuid {
-                                                        return true
-                                                    }
-                                                }
-                                            }
-                                            return false
-                                        }
-            for cbCharacteristic in removeCharacteristics {
-                self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
-            }
-            self.configuredServices.removeValueForKey(service.uuid)
-            self.cbPeripheralManager.removeService(service.cbMutableService)
-            promise.success()
-        } else {
-            promise.failure(BCError.peripheralManagerIsAdvertising)
-        }
-        return promise.future
+        return self.impl.removeService(service)
     }
     
     public func removeAllServices() -> Future<Void> {
-        let promise = Promise<Void>()
-        if !self.isAdvertising {
-            Logger.debug("PeripheralManager#removeAllServices")
-            self.configuredServices.removeAll(keepCapacity:false)
-            self.configuredCharcteristics.removeAll(keepCapacity:false)
-            self.cbPeripheralManager.removeAllServices()
-            promise.success()
-        } else {
-            promise.failure(BCError.peripheralManagerIsAdvertising)
-        }
-        return promise.future
+        return self.impl.removeAllServices()
     }
 
     // CBPeripheralManagerDelegate
     public func peripheralManagerDidUpdateState(_:CBPeripheralManager!) {
-        switch self.state {
-        case CBPeripheralManagerState.PoweredOn:
-            Logger.debug("PeripheralManager#peripheralManagerDidUpdateState: poweredOn")
-            self.afterPowerOnPromise.success()
-            self._isPoweredOn = true
-            break
-        case CBPeripheralManagerState.PoweredOff:
-            Logger.debug("PeripheralManager#peripheralManagerDidUpdateState: poweredOff")
-            self.afterPowerOffPromise.success()
-            self._isPoweredOn = false
-            break
-        case CBPeripheralManagerState.Resetting:
-            break
-        case CBPeripheralManagerState.Unsupported:
-            break
-        case CBPeripheralManagerState.Unauthorized:
-            break
-        case CBPeripheralManagerState.Unknown:
-            break
-        }
+        self.impl.peripheralManagerDidUpdateState()
     }
     
     public func peripheralManager(_:CBPeripheralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
     }
     
     public func peripheralManagerDidStartAdvertising(_:CBPeripheralManager!, error:NSError!) {
-        if let error = error {
-            Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Failed '\(error.localizedDescription)'")
-            self.afterAdvertisingStartedPromise.failure(error)
-        } else {
-            Logger.debug("PeripheralManager#peripheralManagerDidStartAdvertising: Success")
-            self.afterAdvertisingStartedPromise.success()
-        }
+        self.impl.didStartAdvertising(error)
     }
     
     public func peripheralManager(_:CBPeripheralManager!, didAddService service:CBService!, error:NSError!) {
-        if let bcService = self.configuredServices[service.UUID] {
-            self.serviceAdded = true
-            if let error = error {
-                Logger.debug("PeripheralManager#didAddService: Failed '\(error.localizedDescription)'")
-                self.configuredServices.removeValueForKey(service.UUID)
-                self.afterSeriviceAddPromise.failure(error)
-            } else {
-                Logger.debug("PeripheralManager#didAddService: Success")
-                self.afterSeriviceAddPromise.success()
-            }
+        if error != nil {
+            self.configuredServices.removeValueForKey(service.UUID)
         }
+        self.impl.didAddService(error)
     }
     
     public func peripheralManager(_:CBPeripheralManager!, central:CBCentral!, didSubscribeToCharacteristic characteristic:CBCharacteristic!) {
@@ -280,18 +406,8 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     private override init() {
         super.init()
-        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue)
+        self.impl = PeripheralManagerImpl<PeripheralManager>(peripheral:self)
+        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.impl.peripheralQueue)
     }
     
-    private func lookForAdvertisingToStop() {
-        if self.isAdvertising {
-            let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL * Float(NSEC_PER_SEC)))
-            dispatch_after(popTime, self.peripheralQueue, {
-                self.lookForAdvertisingToStop()
-            })
-        } else {
-            Logger.debug("Peripheral#lookForAdvertisingToStop: Advertising stopped")
-            self.afterAdvertsingStoppedPromise.success()
-        }
-    }    
 }
