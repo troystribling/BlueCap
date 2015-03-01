@@ -69,7 +69,7 @@ public class RegionManager : LocationManager {
     }
 
     public func startMonitoringForRegion(region:Region) -> FutureStream<RegionState> {
-        return self.startMonitoringForRegion(CLAuthorizationStatus.Authorized, region:region)
+        return self.startMonitoringForRegion(CLAuthorizationStatus.AuthorizedAlways, region:region)
     }
 
     public func stopMonitoringForRegion(region:Region) {

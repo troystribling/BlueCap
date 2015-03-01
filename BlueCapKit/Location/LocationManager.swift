@@ -112,7 +112,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
     }
     
     // control
-    public func startUpdatingLocation(authorization:CLAuthorizationStatus = .Authorized) -> FutureStream<[CLLocation]> {
+    public func startUpdatingLocation(authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
         self.locationUpdatePromise = StreamPromise<[CLLocation]>()
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
@@ -124,7 +124,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         return self.locationUpdatePromise!.future
     }
 
-    public func startUpdatingLocation(capacity:Int, authorization:CLAuthorizationStatus = .Authorized) -> FutureStream<[CLLocation]> {
+    public func startUpdatingLocation(capacity:Int, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
         self.locationUpdatePromise = StreamPromise<[CLLocation]>(capacity:capacity)
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
@@ -178,9 +178,9 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate {
         if LocationManager.authorizationStatus() != authorization {
             self.authorizationStatusChangedPromise = Promise<CLAuthorizationStatus>()
             switch authorization {
-            case .Authorized:
+            case .AuthorizedAlways:
                 self.authorizationStatusChangedPromise.future.onSuccess {(status) in
-                    if status == .Authorized {
+                    if status == .AuthorizedAlways {
                         Logger.debug("LocationManager#authorize: Location Authorized succcess")
                         promise.success()
                     } else {
