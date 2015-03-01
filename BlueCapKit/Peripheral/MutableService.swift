@@ -12,10 +12,8 @@ import CoreBluetooth
 ///////////////////////////////////////////
 // MutableServiceImpl
 public protocol MutableServiceWrappable {
-
     var uuid            : CBUUID            {get}
     var name            : String            {get}
-    
 }
 // MutableServiceImpl
 ///////////////////////////////////////////
@@ -43,10 +41,11 @@ public final class MutableService : NSObject, MutableServiceWrappable {
         }
         set {
             self._characteristics = newValue
-            self.cbMutableService.characteristics = self._characteristics.reduce([CBMutableCharacteristic]()) {(cbCharacteristics, characteristic) in
-                                                            PeripheralManager.sharedInstance.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
-                                                            return cbCharacteristics + [characteristic.cbMutableChracteristic]
-                                                        }
+            let cbCharacteristics = self._characteristics.reduce([CBMutableCharacteristic]()) {(cbCharacteristics, characteristic) in
+                PeripheralManager.sharedInstance.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
+                return cbCharacteristics + [characteristic.cbMutableChracteristic]
+            }
+            self.cbMutableService.characteristics = cbCharacteristics
         }
     }
     

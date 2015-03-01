@@ -33,9 +33,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if let peripheral = self.peripheral {
             self.nameTextField.text = peripheral
         }
-        PeripheralManager.sharedInstance.powerOn().onSuccess {
-            self.setPeripheralManagerServices()
-        }
     }
     
     override func viewWillAppear(animated:Bool) {
@@ -47,7 +44,9 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             } else {
                 self.advertisedBeaconLabel.text = "None"
             }
-            self.loadPeripheralServicesFromConfig()
+            PeripheralManager.sharedInstance.powerOn().onSuccess {
+                self.setPeripheralManagerServices()
+            }
             self.setUIState()
         }
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)

@@ -44,7 +44,7 @@ public final class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManager
     
     internal let peripheralQueue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
     
-    private var _isPoweredOn    = false
+    private var _isPoweredOn : Bool = false
     
     public var isPoweredOn : Bool {
         return self._isPoweredOn
@@ -53,16 +53,21 @@ public final class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManager
     // power on
     public func powerOn() -> Future<Void> {
         Logger.debug("PeripheralManagerImpl#powerOn")
-        let future = self.afterPowerOnPromise.future
         self.afterPowerOnPromise = Promise<Void>()
-        return future
+        let future = self.afterPowerOnPromise.future
+        if self.isPoweredOn {
+            self.afterPowerOnPromise.success()
+        }
+        return self.afterPowerOnPromise.future
     }
     
     public func powerOff() -> Future<Void> {
         Logger.debug("PeripheralManagerImpl#powerOff")
-        let future = self.afterPowerOffPromise.future
         self.afterPowerOffPromise = Promise<Void>()
-        return future
+        if !self.isPoweredOn {
+            self.afterPowerOffPromise.success()
+        }
+        return self.afterPowerOffPromise.future
     }
     
     // advertising
@@ -98,6 +103,7 @@ public final class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManager
         self.afterSeriviceAddPromise = Promise<Void>()
         if !self.peripheral.isAdvertising {
             self.peripheral.addWrappedService(service)
+            Logger.debug("PeripheralManagerImpl#addService:\(service.name), \(service.uuid)")
         } else {
             self.afterSeriviceAddPromise.failure(BCError.peripheralManagerAddServiceFailed)
         }
