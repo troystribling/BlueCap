@@ -48,7 +48,7 @@ public final class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharac
     public init() {
     }
     
-    public func startProcessingWriteRequests(capacity:Int? = nil) -> FutureStream<Wrapper.RequestWrapper> {
+    public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<Wrapper.RequestWrapper> {
         if let capacity = capacity {
             self.processWriteRequestPromise = StreamPromise<Wrapper.RequestWrapper>(capacity:capacity)
         } else {
@@ -86,9 +86,12 @@ public final class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharac
         return characteristic.updateValueWithData(Serde.serialize(value))
     }
     
-    public func processWriteRequest(request:Wrapper.RequestWrapper) {
+    public func respondToWriteRequest(request:Wrapper.RequestWrapper) -> Bool {
         if let processWriteRequestPromise = self.processWriteRequestPromise {
             processWriteRequestPromise.success(request)
+            return true
+        } else {
+            return false
         }
     }
 
@@ -186,16 +189,16 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         self.init(profile:CharacteristicProfile(uuid:uuid))
     }
     
-    public func startProcessingWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest> {
-        return self.impl.startProcessingWriteRequests(capacity:capacity)
+    public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest> {
+        return self.impl.startRespondingToWriteRequests(capacity:capacity)
     }
     
     public func stopProcessingWriteRequests() {
         self.impl.stopProcessingWriteRequests()
     }
     
-    public func processWriteRequest(request:CBATTRequest)  {
-        self.impl.processWriteRequest(request)
+    public func respondToWriteRequest(request:CBATTRequest) -> Bool  {
+        return self.impl.respondToWriteRequest(request)
     }
     
     public func updateValueWithString(value:Dictionary<String, String>) {

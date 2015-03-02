@@ -36,7 +36,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
-        let future = self.characteristic.startProcessingWriteRequests(capacity:10)
+        let future = self.characteristic.startRespondingToWriteRequests(capacity:10)
         future.onSuccess {(request) in
             if request.value.length > 0 {
                 self.characteristic.value = request.value
