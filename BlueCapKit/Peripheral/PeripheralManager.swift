@@ -402,7 +402,7 @@ public final class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Pe
             let cbattRequest = request as! CBATTRequest
             if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
                 Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
-                if characteristic.respondToWriteRequest(cbattRequest) {
+                if characteristic.didRespondToWriteRequest(cbattRequest) {
                     characteristic.value = cbattRequest.value
                 } else {
                     characteristic.respondToRequest(cbattRequest, withResult:CBATTError.WriteNotPermitted)

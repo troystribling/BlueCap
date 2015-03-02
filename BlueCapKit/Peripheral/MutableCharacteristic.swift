@@ -86,7 +86,7 @@ public final class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharac
         return characteristic.updateValueWithData(Serde.serialize(value))
     }
     
-    public func respondToWriteRequest(request:Wrapper.RequestWrapper) -> Bool {
+    public func didRespondToWriteRequest(request:Wrapper.RequestWrapper) -> Bool {
         if let processWriteRequestPromise = self.processWriteRequestPromise {
             processWriteRequestPromise.success(request)
             return true
@@ -197,8 +197,8 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         self.impl.stopProcessingWriteRequests()
     }
     
-    public func respondToWriteRequest(request:CBATTRequest) -> Bool  {
-        return self.impl.respondToWriteRequest(request)
+    public func didRespondToWriteRequest(request:CBATTRequest) -> Bool  {
+        return self.impl.didRespondToWriteRequest(request)
     }
     
     public func updateValueWithString(value:Dictionary<String, String>) {
