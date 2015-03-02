@@ -151,16 +151,18 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     func setPeripheralManagerServices() {
-        let future = PeripheralManager.sharedInstance.removeAllServices()
-        future.onSuccess {
-            if let peripheral = self.peripheral {
-                self.loadPeripheralServicesFromConfig()
-            } else {
-                self.setUIState()
+        if !PeripheralManager.sharedInstance.isAdvertising {
+            let future = PeripheralManager.sharedInstance.removeAllServices()
+            future.onSuccess {
+                if let peripheral = self.peripheral {
+                    self.loadPeripheralServicesFromConfig()
+                } else {
+                    self.setUIState()
+                }
             }
-        }
-        future.onFailure {error in
-            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            future.onFailure {error in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
         }
     }
 
