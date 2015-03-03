@@ -185,7 +185,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
     private func timeoutRead(characteristic:Wrapper, sequence:Int) {
         Logger.debug("CharacteristicImpl#timeoutRead: sequence \(sequence), timeout:\(self.readWriteTimeout(characteristic))")
-        CentralManager.delay(self.readWriteTimeout(characteristic)) {
+        CentralQueue.delay(self.readWriteTimeout(characteristic)) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("CharacteristicImpl#timeoutRead: timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
@@ -198,7 +198,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
     private func timeoutWrite(characteristic:Wrapper, sequence:Int) {
         Logger.debug("CharacteristicImpl#timeoutWrite: sequence \(sequence), timeout:\(self.readWriteTimeout(characteristic))")
-        CentralManager.delay(self.readWriteTimeout(characteristic)) {
+        CentralQueue.delay(self.readWriteTimeout(characteristic)) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("CharacteristicImpl#timeoutWrite: timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")

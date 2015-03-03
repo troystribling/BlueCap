@@ -50,7 +50,7 @@ public class TimedScannerator {
 
     internal func timeoutScan() {
         Logger.debug("Scannerator#timeoutScan: \(self.timeoutSeconds)s")
-        CentralManager.sharedInstance.delay(self.timeoutSeconds) {
+        CentralQueue.delay(self.timeoutSeconds) {
             CentralManager.sharedInstance.impl.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
         }
     }

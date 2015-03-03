@@ -24,26 +24,46 @@ public protocol CentralManagerWrappable {
     func stopScan()
 }
 
+internal struct CentralQueue {
+    
+    private static let queue = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
+    
+    internal static func sync(request:()->()) {
+        dispatch_sync(self.queue, request)
+    }
+    
+    internal static func async(request:()->()) {
+        dispatch_async(self.queue, request)
+    }
+    
+    internal static func delay(delay:Double, request:()->()) {
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
+        dispatch_after(popTime, self.queue, request)
+    }
+    
+}
+
 public final class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
                                                     Wrapper.WrappedPeripheral:PeripheralWrappable> {
-  
-    let central : Wrapper
     
     private var afterPowerOnPromise                 = Promise<Void>()
     private var afterPowerOffPromise                = Promise<Void>()
     internal var afterPeripheralDiscoveredPromise   = StreamPromise<Wrapper.WrappedPeripheral>()
 
-    private var _isScanning         = false
+    private var _isScanning      = false
     
     public var isScanning : Bool {
         return self._isScanning
     }
     
-    public func startScanning(capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
-        return self.startScanningForServiceUUIDs(nil, capacity:capacity)
+    public init() {
+    }
+
+    public func startScanning(central:Wrapper, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
+        return self.startScanningForServiceUUIDs(central, uuids:nil, capacity:capacity)
     }
     
-    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
+    public func startScanningForServiceUUIDs(central:Wrapper, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
         if !self._isScanning {
             Logger.debug("CentralManagerImpl#startScanningForServiceUUIDs: \(uuids)")
             self._isScanning = true
@@ -52,44 +72,44 @@ public final class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappa
             } else {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Wrapper.WrappedPeripheral>()
             }
-            self.central.scanForPeripheralsWithServices(uuids)
+            central.scanForPeripheralsWithServices(uuids)
         }
         return self.afterPeripheralDiscoveredPromise.future
     }
     
-    public func stopScanning() {
+    public func stopScanning(central:Wrapper) {
         if self._isScanning {
             Logger.debug("CentralManagerImpl#stopScanning")
             self._isScanning = false
-            self.central.stopScan()
+            central.stopScan()
         }
     }
     
     // connection
-    public func disconnectAllPeripherals() {
+    public func disconnectAllPeripherals(central:Wrapper) {
         Logger.debug("CentralManagerImpl#disconnectAllPeripherals")
-        for peripheral in self.central.peripherals {
+        for peripheral in central.peripherals {
             peripheral.disconnect()
         }
     }
     
     
     // power up
-    public func powerOn() -> Future<Void> {
+    public func powerOn(central:Wrapper) -> Future<Void> {
         Logger.debug("CentralManagerImpl#powerOn")
         let future = self.afterPowerOnPromise.future
         self.afterPowerOnPromise = Promise<Void>()
-        if self.central.poweredOn {
+        if central.poweredOn {
             self.afterPowerOnPromise.success()
         }
         return future
     }
     
-    public func powerOff() -> Future<Void> {
+    public func powerOff(central:Wrapper) -> Future<Void> {
         Logger.debug("CentralManagerImpl#powerOff")
         let future = self.afterPowerOffPromise.future
         self.afterPowerOffPromise = Promise<Void>()
-        if self.central.poweredOff {
+        if central.poweredOff {
             self.afterPowerOnPromise.success()
         }
         return future
@@ -100,8 +120,8 @@ public final class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappa
     }
     
     // central manager state
-    public func centralManagerDidUpdateState() {
-        switch(self.central.state) {
+    public func centralManagerDidUpdateState(central:Wrapper) {
+        switch(central.state) {
         case .Unauthorized:
             Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: Unauthorized")
             break
@@ -125,17 +145,13 @@ public final class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappa
         }
     }
     
-    public init(central:Wrapper) {
-        self.central = central
-    }
-    
 }
 // ServiceImpl
 ///////////////////////////////////////////
 
 public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManagerWrappable {
     
-    internal var impl : CentralManagerImpl<CentralManager>!
+    internal let impl = CentralManagerImpl<CentralManager>()
 
     // ServiceImpl
     public var poweredOn : Bool {
@@ -174,7 +190,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     // ServiceImpl
     
     private var cbCentralManager : CBCentralManager! = nil
-    private let centralQueue     = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
     
     internal var discoveredPeripherals   = [CBPeripheral: Peripheral]()
     
@@ -191,15 +206,15 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
 
     // scanning
     public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral> {
-        return self.impl.startScanning(capacity:capacity)
+        return self.impl.startScanning(self, capacity:capacity)
     }
     
     public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral> {
-        return self.impl.startScanningForServiceUUIDs(uuids, capacity:capacity)
+        return self.impl.startScanningForServiceUUIDs(self, uuids:uuids, capacity:capacity)
     }
     
     public func stopScanning() {
-        self.impl.stopScanning()
+        self.impl.stopScanning(self)
     }
     
     public func removeAllPeripherals() {
@@ -208,16 +223,26 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     
     // connection
     public func disconnectAllPeripherals() {
-        self.impl.disconnectAllPeripherals()
+        self.impl.disconnectAllPeripherals(self)
+    }
+    
+    public func connectPeripheral(peripheral:Peripheral) {
+        Logger.debug("CentralManager#connectPeripheral")
+        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
+    }
+    
+    internal func cancelPeripheralConnection(peripheral:Peripheral) {
+        Logger.debug("CentralManager#cancelPeripheralConnection")
+        self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
     
     // power up
     public func powerOn() -> Future<Void> {
-        return self.impl.powerOn()
+        return self.impl.powerOn(self)
     }
     
     public func powerOff() -> Future<Void> {
-        return self.impl.powerOff()
+        return self.impl.powerOff(self)
     }
     
     // CBCentralManagerDelegate
@@ -265,48 +290,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     public func centralManagerDidUpdateState(_:CBCentralManager!) {
-        self.impl.centralManagerDidUpdateState()
-    }
-    
-    internal class func sync(request:()->()) {
-        CentralManager.sharedInstance.sync(request)
-    }
-    
-    internal class func async(request:()->()) {
-        CentralManager.sharedInstance.async(request)
-    }
-    
-    internal class func delay(delay:Double, request:()->()) {
-        CentralManager.sharedInstance.delay(delay, request:request)
-    }
-    
-    internal func sync(request:()->()) {
-        dispatch_sync(self.centralQueue, request)
-    }
-    
-    internal func async(request:()->()) {
-        dispatch_async(self.centralQueue, request)
-    }
-    
-    internal func delay(delay:Double, request:()->()) {
-        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
-        dispatch_after(popTime, self.centralQueue, request)
-    }
-    
-    internal func connectPeripheral(peripheral:Peripheral) {
-        Logger.debug("CentralManager#connectPeripheral")
-        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
-    }
-    
-    internal func cancelPeripheralConnection(peripheral:Peripheral) {
-        Logger.debug("CentralManager#cancelPeripheralConnection")
-        self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
+        self.impl.centralManagerDidUpdateState(self)
     }
     
     private override init() {
         super.init()
-        self.impl = CentralManagerImpl<CentralManager>(central:self)
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue)
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue)
     }
     
     internal func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
