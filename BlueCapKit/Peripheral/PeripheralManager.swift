@@ -29,6 +29,25 @@ public protocol PeripheralManagerWrappable {
 
 }
 
+internal struct PeripheralQueue {
+    
+    private static let queue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
+    
+    internal static func sync(request:()->()) {
+        dispatch_sync(self.queue, request)
+    }
+    
+    internal static func async(request:()->()) {
+        dispatch_async(self.queue, request)
+    }
+    
+    internal static func delay(delay:Double, request:()->()) {
+        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
+        dispatch_after(popTime, self.queue, request)
+    }
+    
+}
+
 public final class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappable,
                                                        Wrapper.WrappedService:MutableServiceWrappable> {
     

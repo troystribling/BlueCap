@@ -175,7 +175,7 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
             timeout = connectorator.connectionTimeout
         }
         Logger.debug("PeripheralImpl#timeoutConnection: sequence \(sequence), timeout:\(timeout)")
-        central.delay(timeout) {
+        CentralQueue.delay(timeout) {
             if peripheral.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("PeripheralImpl#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
