@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 ///////////////////////////////////////////
-// ServiceImpl
+// CentralManagerImpl
 public protocol CentralManagerWrappable {
     
     typealias WrappedPeripheral
@@ -146,14 +146,14 @@ public final class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappa
     }
     
 }
-// ServiceImpl
+// CentralManagerImpl
 ///////////////////////////////////////////
 
 public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManagerWrappable {
     
     internal let impl = CentralManagerImpl<CentralManager>()
 
-    // ServiceImpl
+    // CentralManagerWrappable
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
@@ -186,8 +186,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     public func stopScan() {
         self.cbCentralManager.stopScan()
     }
-
-    // ServiceImpl
+    // CentralManagerWrappable
     
     private var cbCentralManager : CBCentralManager! = nil
     
