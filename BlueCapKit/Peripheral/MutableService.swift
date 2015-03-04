@@ -20,7 +20,7 @@ public protocol MutableServiceWrappable {
 
 public final class MutableService : NSObject, MutableServiceWrappable {
 
-    // MutableServiceImpl
+    // MutableServiceWrappable
     public var uuid : CBUUID {
         return self.profile.uuid
     }
@@ -28,7 +28,7 @@ public final class MutableService : NSObject, MutableServiceWrappable {
     public var name : String {
         return self.profile.name
     }
-        // MutableServiceImpl
+    // MutableServiceWrappable
 
     private let profile             : ServiceProfile
     private var _characteristics    : [MutableCharacteristic] = []

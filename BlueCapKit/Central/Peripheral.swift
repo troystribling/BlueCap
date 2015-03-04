@@ -243,7 +243,6 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     }
 
 }
-
 // PeripheralImpl
 ///////////////////////////////////////////
 
@@ -251,7 +250,7 @@ public final class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappa
     
     internal var impl = PeripheralImpl<Peripheral>()
     
-    // PeripheralImpl
+    // PeripheralWrappable
     public var name : String {
         if let name = self.cbPeripheral.name {
             return name
@@ -300,8 +299,7 @@ public final class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappa
             }
         }
     }
-    
-    // PeripheralImpl
+    // PeripheralWrappable
     
     private var discoveredServices          = [CBUUID:Service]()
     private var discoveredCharacteristics   = [CBCharacteristic:Characteristic]()

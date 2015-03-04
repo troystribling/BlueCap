@@ -108,7 +108,7 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
 
     var impl = MutableCharacteristicImpl<MutableCharacteristic>()
     
-    // MutableCharacteristicImpl
+    // MutableCharacteristicWrappable
     public var uuid : CBUUID {
         return self.profile.uuid
     }
@@ -158,9 +158,7 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
         PeripheralManager.sharedInstance.cbPeripheralManager.respondToRequest(request, withResult:result)
     }
-    
-    
-    // MutableCharacteristicImpl
+    // MutableCharacteristicWrappable
 
     private let profile                         : CharacteristicProfile!
     private var _value                          : NSData?
