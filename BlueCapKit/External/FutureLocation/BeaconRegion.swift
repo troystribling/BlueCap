@@ -11,8 +11,11 @@ import CoreLocation
 
 public class BeaconRegion : Region {
     
+    // BeaconRegionWrappable
+    public let beaconPromise  : StreamPromise<[Beacon]>
+    // BeaconRegionWrappable
+    
     internal var _beacons       = [Beacon]()
-    internal var beaconPromise  : StreamPromise<[Beacon]>
 
     internal  let clBeaconRegion : CLBeaconRegion
     
