@@ -27,7 +27,7 @@ class RawDeserializableTests: XCTestCase {
         super.tearDown()
     }
 
-    func testSuccessfulDeserilaization() {
+    func testSuccessfulDeserialization() {
         let data = "02".dataFromHexString()
         if let value : Testit = Serde.deserialize(data) {
             XCTAssert(value == .Maybe, "RawDeserializable deserialization value wrong: \(data)")
@@ -36,7 +36,7 @@ class RawDeserializableTests: XCTestCase {
         }
     }
 
-    func testFailedDeserilaization() {
+    func testFailedDeserialization() {
         let data = "03".dataFromHexString()
         if let value : Testit = Serde.deserialize(data) {
             XCTFail("RawDeserializable deserialization succeeded")

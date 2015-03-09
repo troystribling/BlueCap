@@ -66,6 +66,8 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = Serde.serialize(Data(x:1.0, y:0.5, z:-1.5)!)
             
             // RawArrayDeserializable
+            public static let size = 3
+            
             public init?(rawValue:[Int8]) {
                 if rawValue.count == 3 {
                     self.xRaw = rawValue[0]
@@ -252,6 +254,8 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[-2183, 1916, 1255])!)
             
             // RawArrayDeserializable
+            public static let size = 6
+
             public var rawValue : [Int16] {
                 return [xRaw, yRaw, zRaw]
             }
@@ -438,6 +442,8 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[-24, -219, -23])!)
 
             // RawArrayDeserializable
+            public static let size = 6
+
             public static let stringValues = [String]()
 
             public var rawValue : [Int16] {
@@ -593,6 +599,8 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[-172, 3388])!)
 
             // RawArrayDeserializable
+            public static let size = 4
+
             public var rawValue : [Int16] {
                 return [self.objectRaw, self.ambientRaw]
             }
@@ -898,6 +906,8 @@ public struct TISensorTag {
             public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[2600, 3500])!)
             
             // RawArrayDeserializable
+            public static let size = 4
+
             public var rawValue : [UInt16] {
                 return [self.temperatureRaw, self.humidityRaw]
             }

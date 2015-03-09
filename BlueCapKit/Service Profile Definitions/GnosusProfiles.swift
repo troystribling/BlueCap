@@ -119,6 +119,8 @@ public struct Gnosus {
             public static let initialValue : NSData?    = Serde.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
 
             // RawArrayDeserializable
+            public static let size = 4
+
             public var rawValue : [Int16] {
                 return [self.latitudeRaw, self.longitudeRaw]
             }
