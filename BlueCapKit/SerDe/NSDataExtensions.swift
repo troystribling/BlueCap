@@ -19,7 +19,7 @@ extension NSData : Serializable {
         return NSData(bytes:values, length:sizeof(T))
     }
     
-    public class func serialize<T>(values:[T]) -> NSData {
+    public class func serializeArray<T>(values:[T]) -> NSData {
         let littleValues = values.map{fromHostByteOrder($0)}
         return NSData(bytes:littleValues, length:sizeof(T)*littleValues.count)
     }
@@ -31,11 +31,10 @@ extension NSData : Serializable {
         return data
     }
 
-    public class func serialize<T1, T2>(values:([T1], [T2])) -> NSData {
-        let (values1, values2) = values
+    public class func serializeArrays<T1, T2>(values1:[T1], values2:[T2]) -> NSData {
         let data = NSMutableData()
-        data.setData(NSData.serialize(values1))
-        data.appendData(NSData.serialize(values2))
+        data.setData(NSData.serializeArray(values1))
+        data.appendData(NSData.serializeArray(values2))
         return data
     }
 

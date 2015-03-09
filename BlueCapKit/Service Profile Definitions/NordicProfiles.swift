@@ -91,6 +91,8 @@ public struct Nordic {
             public static let initialValue : NSData?    = Serde.serialize(Int16(100))
 
             // RawArrayDeserializable
+            public static let size = 6
+
             public var rawValue : [UInt8] {
                 return [self.addr1, self.addr2, self.addr3, self.addr4, self.addr5, self.addr5]
             }

@@ -78,6 +78,7 @@ public protocol RawDeserializable {
 public protocol RawArrayDeserializable {
     typealias RawType
     static var uuid     : String {get}
+    static var size     : Int {get}
     var rawValue        : [RawType] {get}
     init?(rawValue:[RawType])
 }
@@ -121,7 +122,7 @@ public struct Serde {
     }
 
     public static func serialize<T:Deserializable>(values:[T]) -> NSData {
-        return NSData.serialize(values)
+        return NSData.serializeArray(values)
     }
 
     public static func deserialize<T:RawDeserializable where T.RawType:Deserializable>(data:NSData) -> T? {
@@ -133,20 +134,28 @@ public struct Serde {
     }
 
     public static func deserialize<T:RawArrayDeserializable where T.RawType:Deserializable>(data:NSData) -> T? {
-        return T(rawValue:T.RawType.deserialize(data))
+        if data.length >= T.size {
+            return T(rawValue:T.RawType.deserialize(data))
+        } else {
+            return nil
+        }
     }
 
     public static func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
-        return NSData.serialize(value.rawValue)
+        return NSData.serializeArray(value.rawValue)
     }
 
     public static func deserialize<T:RawPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T? {
-        let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
-        let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
-        return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
-            T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
-                T(rawValue1:rawValue1, rawValue2:rawValue2)
+        if data.length >= (T.RawType1.size + T.RawType2.size) {
+            let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
+            let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
+            return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
+                T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
+                    T(rawValue1:rawValue1, rawValue2:rawValue2)
+                }
             }
+        } else {
+            return nil
         }
     }
 
@@ -155,13 +164,17 @@ public struct Serde {
     }
 
     public static func deserialize<T:RawArrayPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T? {
-        let rawData1 = data.subdataWithRange(NSMakeRange(0, T.size1))
-        let rawData2 = data.subdataWithRange(NSMakeRange(T.size1, T.size2))
-        return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2:T.RawType2.deserialize(rawData2))
+        if data.length >= (T.size1 + T.size2) {
+            let rawData1 = data.subdataWithRange(NSMakeRange(0, T.size1))
+            let rawData2 = data.subdataWithRange(NSMakeRange(T.size1, T.size2))
+            return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2:T.RawType2.deserialize(rawData2))
+        } else {
+            return nil
+        }
     }
 
     public static func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
-        return NSData.serialize(value.rawValue1, value2:value.rawValue2)
+        return NSData.serializeArrays(value.rawValue1, values2:value.rawValue2)
     }
 }
 

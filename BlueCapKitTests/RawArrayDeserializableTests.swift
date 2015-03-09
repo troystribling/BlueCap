@@ -19,6 +19,7 @@ class RawArrayDeserializableTests: XCTestCase {
         
         // RawArrayDeserializable
         static let uuid = "abc"
+        static let size = 2
         
         init?(rawValue:[Int8]) {
             if rawValue.count == 2 {
@@ -43,7 +44,7 @@ class RawArrayDeserializableTests: XCTestCase {
         super.tearDown()
     }
 
-    func testSuccessfulDeserilaization() {
+    func testSuccessfulDeserialization() {
         let data = "02ab".dataFromHexString()
         if let value : RawArray = Serde.deserialize(data) {
             XCTAssert(value.value1 == 2 && value.value2 == -85, "RawArrayDeserializable deserialization value invalid: \(value.value1), \(value.value2)")
@@ -52,7 +53,7 @@ class RawArrayDeserializableTests: XCTestCase {
         }
     }
     
-    func testFailedDeserilaization() {
+    func testFailedDeserialization() {
         let data = "02ab0c".dataFromHexString()
         if let value : RawArray = Serde.deserialize(data) {
             XCTFail("RawArrayDeserializable deserialization succeeded")
