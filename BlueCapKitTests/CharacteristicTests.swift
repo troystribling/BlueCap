@@ -73,7 +73,9 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
-    var characteristicImpl = CharacteristicImpl<CharacteristicMock>()
+    let impl = CharacteristicImpl<CharacteristicMock>()
+    let mock = CharacteristicMock()
+    
     // CharacteristicMock
     
     override func setUp() {
@@ -84,6 +86,79 @@ class CharacteristicTests: XCTestCase {
         super.tearDown()
     }
     
+    func testDiscovered() {
+        let future = MockValues.afterDiscoveredPromise.future
+        let onSuccessExpectation = expectationWithDescription("onFailure fulfilled for future")
+        future.onSuccess {characteristic in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "futureComleted onFailure called")
+        }
+        self.impl.didDiscover(self.mock)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
     
+    func testWriteDataSuccess() {
+        
+    }
+
+    func testWriteDataFailed() {
+        
+    }
+
+    func testWriteDataTimeOut() {
+        
+    }
+
+    func testWriteDataNotWrteable() {
+        
+    }
+
+    func testWriteStringSuccess() {
+        
+    }
+    
+    func testWriteStringFailed() {
+        
+    }
+    
+    func testWriteStringTimeOut() {
+        
+    }
+
+    func testWriteStringNotWrteable() {
+        
+    }
+    
+    func testReadSuccess() {
+        
+    }
+    
+    func testReadFailure() {
+        
+    }
+    
+    func testReadTimeout() {
+        
+    }
+    
+    func testReadNotReadable() {
+        
+    }
+    
+    func testStartNotifying() {
+        
+    }
+    
+    func testReceiveNotificationUpdates() {
+        
+    }
+    
+    func testStopNotifying() {
+        
+    }
 
 }

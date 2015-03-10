@@ -217,14 +217,14 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         }
     }
     
-    internal func didDiscover(characteristic:Wrapper) {
+    public func didDiscover(characteristic:Wrapper) {
         Logger.debug("CharacteristicImpl#didDiscover:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
         if let afterDiscoveredPromise = characteristic.afterDiscoveredPromise {
             afterDiscoveredPromise.success(characteristic)
         }
     }
     
-    internal func didUpdateNotificationState(characteristic:Wrapper, error:NSError!) {
+    public func didUpdateNotificationState(characteristic:Wrapper, error:NSError!) {
         if let error = error {
             Logger.debug("CharacteristicImpl#didUpdateNotificationState Failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
             self.notificationStateChangedPromise.failure(error)
@@ -234,7 +234,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         }
     }
     
-    internal func didUpdate(characteristic:Wrapper, error:NSError!) {
+    public func didUpdate(characteristic:Wrapper, error:NSError!) {
         self.reading = false
         if let error = error {
             Logger.debug("CharacteristicImpl#didUpdate Failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
@@ -257,7 +257,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         }
     }
     
-    internal func didWrite(characteristic:Wrapper, error:NSError!) {
+    public func didWrite(characteristic:Wrapper, error:NSError!) {
         self.writing = false
         if let error = error {
             Logger.debug("CharacteristicImpl#didWrite Failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
