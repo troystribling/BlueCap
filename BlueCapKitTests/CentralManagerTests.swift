@@ -12,13 +12,6 @@ import CoreBluetooth
 import BlueCapKit
 
 class CentralManagerTests: XCTestCase {
-
-    class StubbedCentralManager : CentralManager {
-        
-        override func scanForPeripheralsWithServices(uuids:[CBUUID]!) {
-        }
-        
-    }
     
     override func setUp() {
         super.setUp()
