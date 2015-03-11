@@ -11,6 +11,10 @@ import XCTest
 import CoreBluetooth
 import BlueCapKit
 
+struct TestFailure {
+    static let error = NSError(domain:"BlueCapKit Tests", code:100, userInfo:[NSLocalizedDescriptionKey:"Testing"])
+}
+
 class CharacteristicTests: XCTestCase {
 
     // CharacteristicMock
@@ -87,13 +91,13 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testDiscovered() {
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = MockValues.afterDiscoveredPromise.future
-        let onSuccessExpectation = expectationWithDescription("onFailure fulfilled for future")
         future.onSuccess {characteristic in
             onSuccessExpectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "futureComleted onFailure called")
+            XCTAssert(false, "onFailure called")
         }
         self.impl.didDiscover(self.mock)
         waitForExpectationsWithTimeout(2) {error in
@@ -102,15 +106,48 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testWriteDataSuccess() {
-        
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = self.impl.writeData(self.mock, value:"aa".dataFromHexString())
+        future.onSuccess {characteristic in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.impl.didWrite(self.mock, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testWriteDataFailed() {
-        
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = self.impl.writeData(self.mock, value:"aa".dataFromHexString())
+        future.onSuccess {characteristic in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+        }
+        self.impl.didWrite(self.mock, error:TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testWriteDataTimeOut() {
-        
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = self.impl.writeData(self.mock, value:"aa".dataFromHexString())
+        future.onSuccess {characteristic in
+            XCTAssert(false, "onFailure called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+            XCTAssert(error.code == CharacteristicError.WriteTimeout.rawValue, "Error code invalid")
+        }
+        waitForExpectationsWithTimeout(20) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testWriteDataNotWrteable() {
