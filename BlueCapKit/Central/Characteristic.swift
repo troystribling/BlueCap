@@ -33,7 +33,7 @@ public protocol CharacteristicWrappable {
 
 public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
-    private var notificationUpdatePromise          : StreamPromise<Wrapper>?
+    public var notificationUpdatePromise          : StreamPromise<Wrapper>?
     private var notificationStateChangedPromise    = Promise<Wrapper>()
     private var readPromise                        = Promise<Wrapper>()
     private var writePromise                       = Promise<Wrapper>()
@@ -113,11 +113,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     }
     
     public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Wrapper> {
-        if let capacity = capacity {
-            self.notificationUpdatePromise = StreamPromise<Wrapper>(capacity:capacity)
-        } else {
-            self.notificationUpdatePromise = StreamPromise<Wrapper>()
-        }
+        self.notificationUpdatePromise = StreamPromise<Wrapper>(capacity:capacity)
         return self.notificationUpdatePromise!.future
     }
     
