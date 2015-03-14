@@ -322,59 +322,128 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReceiveNotificationUpdateSuccess() {
-        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.impl.startNotifying(self.mock).foreach{characteristic in
-            return self.impl.recieveNotificationUpdates()
+        let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
+        let updateOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
+
+        let startNotifyingFuture = self.impl.startNotifying(self.mock)
+        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        
+        startNotifyingFuture.onSuccess{_ in
+            startNotifyingOnSuccessExpectation.fulfill()
         }
-        future.onSuccess {characteristic in
+        startNotifyingFuture.onFailure{_ in
+            XCTAssert(false, "start notifying onFailure called")
+        }
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
+            let future = self.impl.recieveNotificationUpdates()
+            self.impl.didUpdate(self.mock, error:nil)
+            return future
+        }
+        updateFuture.onSuccess {characteristic in
+            updateOnSuccessExpectation.fulfill()
+        }
+        updateFuture.onFailure {error in
+            XCTAssert(false, "update onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testReceiveNotificationUpdateFailure() {
+        let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
+        let updateOnFailureExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
+        
+        let startNotifyingFuture = self.impl.startNotifying(self.mock)
+        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        
+        startNotifyingFuture.onSuccess{_ in
+            startNotifyingOnSuccessExpectation.fulfill()
+        }
+        startNotifyingFuture.onFailure{_ in
+            XCTAssert(false, "start notifying onFailure called")
+        }
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
+            let future = self.impl.recieveNotificationUpdates()
+            self.impl.didUpdate(self.mock, error:TestFailure.error)
+            return future
+        }
+        updateFuture.onSuccess {characteristic in
+            XCTAssert(false, "update onSuccess called")
+        }
+        updateFuture.onFailure {error in
+            updateOnFailureExpectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testStopNotifyingSuccess() {
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = self.impl.stopNotifying(self.mock)
+        future.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
         self.impl.didUpdateNotificationState(self.mock, error:nil)
-        self.impl.didUpdate(self.mock, error:nil)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
 
-//    func testReceiveNotificationUpdateFailure() {
-//        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-//        let future = self.impl.startNotifying(self.mock).flatmap{(characteristic:CharacteristicMock) -> Future<CharacteristicMock> in
-//            return self.impl.recieveNotificationUpdates()
-//        }
-//        future.onSuccess {characteristic in
-//            XCTAssert(false, "onSuccess called")
-//        }
-//        future.onFailure {error in
-//            onFailureExpectation.fulfill()
-//        }
-//        self.impl.didUpdateNotificationState(self.mock, error:nil)
-//        self.impl.didUpdate(self.mock, error:TestFailure.error)
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//
-//    func testReceivingNotificationUpdates() {
-//        
-//    }
-//    
-//    func testStopNotifyingSuccess() {
-//        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = self.impl.stopNotifying(self.mock)
-//        self.impl.stopNotifying(self.mock)
-//        future.onSuccess {characteristic in
-//            onSuccessExpectation.fulfill()
-//        }
-//        future.onFailure {error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        self.impl.didUpdate(self.mock, error:nil)
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
+    func testStopNotifyingFailure() {
+        let onFailureExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = self.impl.stopNotifying(self.mock)
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+        }
+        self.impl.didUpdateNotificationState(self.mock, error:TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testStopNotificationUpdates() {
+        let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
+        let updateOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
+
+        var updates = 0
+        let startNotifyingFuture = self.impl.startNotifying(self.mock)
+        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        
+        startNotifyingFuture.onSuccess{_ in
+            startNotifyingOnSuccessExpectation.fulfill()
+        }
+        startNotifyingFuture.onFailure{_ in
+            XCTAssert(false, "start notifying onFailure called")
+        }
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
+            let future = self.impl.recieveNotificationUpdates()
+            self.impl.didUpdate(self.mock, error:nil)
+            self.impl.stopNotificationUpdates()
+            self.impl.didUpdate(self.mock, error:nil)
+            return future
+        }
+        updateFuture.onSuccess {characteristic in
+            if updates == 0 {
+                updateOnSuccessExpectation.fulfill()
+                ++updates
+            } else {
+                XCTAssert(false, "update onSuccess called more than once")
+            }
+        }
+        updateFuture.onFailure {error in
+            XCTAssert(false, "update onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 
 }
