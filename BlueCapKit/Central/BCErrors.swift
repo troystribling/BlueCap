@@ -53,8 +53,8 @@ public struct BCError {
     internal static let connectoratorFailed = NSError(domain:domain, code:ConnectoratorError.Failed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator connection failed"])
     internal static let connectoratorGiveUp = NSError(domain:domain, code:ConnectoratorError.GiveUp.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator giving up"])
 
-    internal static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.DiscoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
-    internal static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.Disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])
+    internal static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.Disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
+    internal static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.DiscoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])
         
     internal static let peripheralManagerIsAdvertising = NSError(domain:domain, code:PeripheralManagerError.IsAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is Advertising"])
     internal static let peripheralManagerAddServiceFailed = NSError(domain:domain, code:PeripheralManagerError.AddServiceFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Add service failed because service peripheral is advertising"])

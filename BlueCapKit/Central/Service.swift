@@ -25,7 +25,7 @@ public protocol ServiceWrappable {
 
 public final class ServiceImpl<Wrapper:ServiceWrappable> {
     
-    private var characteristicsDiscoveredPromise    = Promise<Wrapper>()
+    private var characteristicsDiscoveredPromise = Promise<Wrapper>()
     
     public func discoverAllCharacteristics(service:Wrapper) -> Future<Wrapper> {
         Logger.debug("ServiceImpl#discoverAllCharacteristics: uuid=\(service.uuid.UUIDString), name=\(service.name)")
@@ -37,7 +37,7 @@ public final class ServiceImpl<Wrapper:ServiceWrappable> {
         return self.discoverIfConnected(service, characteristics:characteristics)
     }
     
-    private func discoverIfConnected(service:Wrapper, characteristics:[CBUUID]!) -> Future<Wrapper> {
+    public func discoverIfConnected(service:Wrapper, characteristics:[CBUUID]!) -> Future<Wrapper> {
         self.characteristicsDiscoveredPromise = Promise<Wrapper>()
         if service.state == .Connected {
             service.discoverCharacteristics(characteristics)
@@ -47,10 +47,10 @@ public final class ServiceImpl<Wrapper:ServiceWrappable> {
         return self.characteristicsDiscoveredPromise.future
     }
     
-    internal init() {
+    public init() {
     }
     
-    internal func didDiscoverCharacteristics(service:Wrapper, error:NSError!) {
+    public func didDiscoverCharacteristics(service:Wrapper, error:NSError!) {
         if let error = error {
             Logger.debug("ServiceImpl#didDiscoverCharacteristics failed")
             self.characteristicsDiscoveredPromise.failure(error)
