@@ -100,4 +100,42 @@ class PertipheralTests: XCTestCase {
         super.tearDown()
     }
     
+    func testDiscoverServicesSuccess() {
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = self.impl.discoverServices(self.mock, services:nil)
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.impl.didDiscoverServices(self.mock, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testDiscoverServicesFailure() {
+    }
+
+    func testDiscoverPeripheralServicesSuccess() {
+    }
+    
+    func testDiscoverPeripheralServicesFailure() {
+    }
+
+    func testPeripheralConnect() {
+    }
+    
+    func testPeripheralFailedConnect() {
+    }
+    
+    func testPeripheralForcedConnect() {
+    }
+    
+    func testPeripheralDisconnect() {
+    }
+    
+    func testPeripheralTimeout() {
+    }
 }
