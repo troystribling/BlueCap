@@ -78,6 +78,7 @@ class PertipheralTests: XCTestCase {
         }
         
         func didDiscoverCharacteristics(error:NSError!) {
+            self.impl.didDiscoverCharacteristics(self, error:error)
         }
         
         func createCharacteristics() {
@@ -116,9 +117,36 @@ class PertipheralTests: XCTestCase {
     }
 
     func testDiscoverServicesFailure() {
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = self.impl.discoverServices(self.mock, services:nil)
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+        }
+        self.impl.didDiscoverServices(self.mock, error:TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testDiscoverPeripheralServicesSuccess() {
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = self.impl.discoverPeripheralServices(self.mock, services:nil)
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.impl.didDiscoverServices(self.mock, error:nil)
+        for service in self.mock.services {
+            service.didDiscoverCharacteristics(nil)
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
     
     func testDiscoverPeripheralServicesFailure() {
