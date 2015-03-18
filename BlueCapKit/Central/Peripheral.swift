@@ -36,6 +36,8 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
                                                 Wrapper.WrappedService:ServiceWrappable> {
     
     private var servicesDiscoveredPromise   = Promise<Wrapper>()
+    private var _serviceDiscoveredFutures   = [Future<Wrapper.WrappedService>]()
+    
     private var readRSSIPromise             = Promise<Int>()
     
     private var connectionSequence          = 0
@@ -113,6 +115,7 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     
     public func discoverPeripheralServices(peripheral:Wrapper, services:[CBUUID]!) -> Future<Wrapper> {
         let peripheralDiscoveredPromise = Promise<Wrapper>()
+        self._serviceDiscoveredFutures = [Future<Wrapper.WrappedService>]()
         Logger.debug("PeripheralImpl#discoverPeripheralServices: \(peripheral.name)")
         let servicesDiscoveredFuture = self.discoverServices(peripheral, services:services)
         servicesDiscoveredFuture.onSuccess {services in
@@ -240,6 +243,7 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         discoveryFuture.onFailure {error in
             promise.failure(error)
         }
+        self._serviceDiscoveredFutures.append(discoveryFuture)
     }
 
 }
