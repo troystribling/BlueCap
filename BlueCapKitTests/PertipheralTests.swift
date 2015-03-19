@@ -21,6 +21,8 @@ class PertipheralTests: XCTestCase {
     
     struct PeripheralMock : PeripheralWrappable {
         
+        let _services = [ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"), name:"Service Mock-1"),
+                         ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6aaa"), name:"Service Mock-2")]
         var name : String {
             return "Mock Periphearl"
         }
@@ -34,8 +36,7 @@ class PertipheralTests: XCTestCase {
         }
         
         var services : [ServiceMock] {
-            return [ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"), name:"Service Mock-1"),
-                    ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6aaa"), name:"Service Mock-1")]
+            return self._services
         }
         
         init() {            
@@ -141,10 +142,10 @@ class PertipheralTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         self.impl.didDiscoverServices(self.mock, error:nil)
-        for service in self.mock.services {
-            service.didDiscoverCharacteristics(nil)
+        self.impl._servicesDiscoveredFuture.onSuccess {_ in
+            self.mock.services[0].didDiscoverCharacteristics(nil)
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(10) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
