@@ -15,8 +15,9 @@ class PertipheralTests: XCTestCase {
 
     // PeripheralMock
     struct MockValues {
-        static var state :CBPeripheralState = .Connected
-        static var connectorator : Connectorator? = nil
+        static var state            :CBPeripheralState  = .Connected
+        static var connectorator    : Connectorator?    = nil
+        static var error            : NSError?          = nil
     }
     
     struct PeripheralMock : PeripheralWrappable {
@@ -86,10 +87,13 @@ class PertipheralTests: XCTestCase {
         }
         
         func discoverAllCharacteristics() -> Future<ServiceMock> {
-            return self.impl.discoverIfConnected(self, characteristics:nil)
+            let future = self.impl.discoverIfConnected(self, characteristics:nil)
+            self.didDiscoverCharacteristics(MockValues.error)
+            return future
         }
         
     }
+    
     // PeripheralMock
     let mock = PeripheralMock()
     let impl = PeripheralImpl<PeripheralMock>()
@@ -142,15 +146,41 @@ class PertipheralTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         self.impl.didDiscoverServices(self.mock, error:nil)
-        self.impl._servicesDiscoveredFuture.onSuccess {_ in
-            self.mock.services[0].didDiscoverCharacteristics(nil)
-        }
         waitForExpectationsWithTimeout(10) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
     
-    func testDiscoverPeripheralServicesFailure() {
+    func testDiscoverPeripheralServicesPeripheralFailure() {
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = self.impl.discoverPeripheralServices(self.mock, services:nil)
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+        }
+        self.impl.didDiscoverServices(self.mock, error:TestFailure.error)
+        waitForExpectationsWithTimeout(10) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testDiscoverPeripheralServicesSErviceFailure() {
+        MockValues.error = TestFailure.error
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = self.impl.discoverPeripheralServices(self.mock, services:nil)
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+        }
+        self.impl.didDiscoverServices(self.mock, error:nil)
+        waitForExpectationsWithTimeout(10) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+        MockValues.error = nil
     }
 
     func testPeripheralConnect() {

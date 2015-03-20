@@ -12,13 +12,13 @@ import CoreBluetooth
 ///////////////////////////////////////////
 // CharacteristicImpl
 public protocol CharacteristicWrappable {
-
+    
     var uuid                    : CBUUID!                   {get}
     var name                    : String                    {get}
     var connectorator           : Connectorator?            {get}
     var isNotifying             : Bool                      {get}
     var stringValues            : [String]                  {get}
-    var afterDiscoveredPromise  : StreamPromise<Self>?      {get}
+    var afterDiscoveredPromise  : StreamPromise<Self>?  {get}
     
     
     func stringValue(data:NSData?) -> [String:String]?

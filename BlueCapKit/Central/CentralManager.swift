@@ -43,7 +43,7 @@ internal struct CentralQueue {
     
 }
 
-public final class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
+public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
                                                     Wrapper.WrappedPeripheral:PeripheralWrappable> {
     
     private var afterPowerOnPromise                 = Promise<Void>()

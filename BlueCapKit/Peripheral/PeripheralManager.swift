@@ -48,8 +48,8 @@ internal struct PeripheralQueue {
     
 }
 
-public final class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappable,
-                                                       Wrapper.WrappedService:MutableServiceWrappable> {
+public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappable,
+                                                 Wrapper.WrappedService:MutableServiceWrappable> {
     
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Double = 0.25
     
@@ -240,7 +240,7 @@ public final class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManager
 
 // PeripheralManagerImpl
 ///////////////////////////////////////////
-public final class PeripheralManager : NSObject, CBPeripheralManagerDelegate, PeripheralManagerWrappable {
+public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, PeripheralManagerWrappable {
     
     private var impl = PeripheralManagerImpl<PeripheralManager>()
     
