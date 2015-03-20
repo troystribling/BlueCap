@@ -18,7 +18,7 @@ public protocol MutableServiceWrappable {
 // MutableServiceImpl
 ///////////////////////////////////////////
 
-public final class MutableService : NSObject, MutableServiceWrappable {
+public class MutableService : NSObject, MutableServiceWrappable {
 
     // MutableServiceWrappable
     public var uuid : CBUUID {

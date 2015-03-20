@@ -22,8 +22,8 @@ public protocol TimedScanneratorWrappable {
     
 }
 
-public final class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappable,
-                                                      Wrapper.WrappedPeripheral:PeripheralWrappable> {
+public class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappable,
+                                                Wrapper.WrappedPeripheral:PeripheralWrappable> {
     
     internal var timeoutSeconds = 10.0
     

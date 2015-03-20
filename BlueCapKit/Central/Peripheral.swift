@@ -32,12 +32,10 @@ public protocol PeripheralWrappable {
     func didDiscoverServices()
 }
 
-public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
-                                                Wrapper.WrappedService:ServiceWrappable> {
+public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
+                                          Wrapper.WrappedService:ServiceWrappable> {
     
     private var servicesDiscoveredPromise   = Promise<Wrapper>()
-    public var _discoveryFuture             = Future<Wrapper.WrappedService>()
-    public var _servicesDiscoveredFuture    = Future<Wrapper>()
     
     private var readRSSIPromise             = Promise<Int>()
     
@@ -117,8 +115,8 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     public func discoverPeripheralServices(peripheral:Wrapper, services:[CBUUID]!) -> Future<Wrapper> {
         let peripheralDiscoveredPromise = Promise<Wrapper>()
         Logger.debug("PeripheralImpl#discoverPeripheralServices: \(peripheral.name)")
-        self._servicesDiscoveredFuture = self.discoverServices(peripheral, services:services)
-        self._servicesDiscoveredFuture.onSuccess {services in
+        let servicesDiscoveredFuture = self.discoverServices(peripheral, services:services)
+        servicesDiscoveredFuture.onSuccess {services in
             if peripheral.services.count > 1 {
                 self.discoverService(peripheral,
                                      head:peripheral.services[0],
@@ -134,7 +132,7 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
                 }
             }
         }
-        self._servicesDiscoveredFuture.onFailure{(error) in
+        servicesDiscoveredFuture.onFailure{(error) in
             peripheralDiscoveredPromise.failure(error)
         }
         return peripheralDiscoveredPromise.future
@@ -230,18 +228,18 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     }
     
     internal func discoverService(peripheral:Wrapper, head:Wrapper.WrappedService, tail:[Wrapper.WrappedService], promise:Promise<Wrapper>) {
-        self._discoveryFuture = head.discoverAllCharacteristics()
+        let discoveryFuture = head.discoverAllCharacteristics()
         Logger.debug("PeripheralImpl#discoverService: \(head.name), count \(tail.count + 1)")
         if tail.count > 0 {
-            self._discoveryFuture.onSuccess {_ in
+            discoveryFuture.onSuccess {_ in
                 self.discoverService(peripheral, head:tail[0], tail:Array(tail[1..<tail.count]), promise:promise)
             }
         } else {
-            self._discoveryFuture.onSuccess {_ in
+            discoveryFuture.onSuccess {_ in
                 promise.success(peripheral)
             }
         }
-        self._discoveryFuture.onFailure {error in
+        discoveryFuture.onFailure {error in
             promise.failure(error)
         }
     }
@@ -250,7 +248,7 @@ public final class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
 // PeripheralImpl
 ///////////////////////////////////////////
 
-public final class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
+public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     
     internal var impl = PeripheralImpl<Peripheral>()
     

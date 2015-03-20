@@ -39,9 +39,9 @@ public protocol CBATTErrorWrappable {
     
 }
 
-public final class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacteristicWrappable,
-                                                           Wrapper.RequestWrapper:CBATTRequestWrappable,
-                                                           Wrapper.ResultWrapper:CBATTErrorWrappable> {
+public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacteristicWrappable,
+                                                     Wrapper.RequestWrapper:CBATTRequestWrappable,
+                                                     Wrapper.ResultWrapper:CBATTErrorWrappable> {
     
     internal var processWriteRequestPromise : StreamPromise<Wrapper.RequestWrapper>?
     
