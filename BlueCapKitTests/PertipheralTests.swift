@@ -16,7 +16,6 @@ class PertipheralTests: XCTestCase {
     // PeripheralMock
     struct MockValues {
         static var state            :CBPeripheralState  = .Connected
-        static var connectorator    : Connectorator?    = nil
         static var error            : NSError?          = nil
     }
     
@@ -30,10 +29,6 @@ class PertipheralTests: XCTestCase {
         
         var state: CBPeripheralState {
             return MockValues.state
-        }
-        
-        var connectorator : Connectorator? {
-            return MockValues.connectorator
         }
         
         var services : [ServiceMock] {
@@ -184,12 +179,37 @@ class PertipheralTests: XCTestCase {
     }
 
     func testConnect() {
-        let connectorator = Connectorator(capacity:10) {config in
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let connectorator = Connectorator() {config in
             config.timeoutRetries = 2
             config.connectionTimeout = 2.0
+            config.disconnectRetries = 2
         }
         let future = connectorator.onConnect()
         future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.impl.connect(self.mock, connectorator:connectorator)
+        self.impl.didConnectPeripheral(self.mock)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+    
+    func testFailedConnect() {
+        MockValues.state = .Disconnected
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let connectorator = Connectorator() {config in
+            config.timeoutRetries = 2
+            config.connectionTimeout = 2.0
+            config.disconnectRetries = 2
+        }
+        let future = connectorator.onConnect()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
         }
         future.onFailure {error in
             if error.domain == BCError.domain {
@@ -199,6 +219,159 @@ class PertipheralTests: XCTestCase {
                         XCTAssert(false, "onFailure Timeout invalid")
                     case .Disconnect:
                         XCTAssert(false, "onFailure Disconnect invalid")
+                    case .ForceDisconnect:
+                        XCTAssert(false, "onFailure ForceDisconnect invalid")
+                    case .Failed:
+                        onFailureExpectation.fulfill()
+                    case .GiveUp:
+                        XCTAssert(false, "onFailure GiveUp invalid")
+                    }
+                } else {
+                    XCTAssert(false, "onFailure error code invalid")
+                }
+            } else {
+                XCTAssert(false, "onFailure error invalid")
+            }
+        }
+        self.impl.connect(self.mock, connectorator:connectorator)
+        MockValues.state = .Connected
+        self.impl.didFailToConnectPeripheral(self.mock, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testFailedConnectWithError() {
+        MockValues.state = .Disconnected
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let connectorator = Connectorator() {config in
+            config.timeoutRetries = 2
+            config.connectionTimeout = 2.0
+            config.disconnectRetries = 2
+        }
+        let future = connectorator.onConnect()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            if error.domain == BCError.domain {
+                XCTAssert(false, "onFailure error invalid")
+            } else {
+                onFailureExpectation.fulfill()
+            }
+        }
+        self.impl.connect(self.mock, connectorator:connectorator)
+        MockValues.state = .Connected
+        self.impl.didFailToConnectPeripheral(self.mock, error:TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testForcedDisconnectWhenDisconnected() {
+        MockValues.state = .Disconnected
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let connectorator = Connectorator() {config in
+            config.timeoutRetries = 2
+            config.connectionTimeout = 2.0
+            config.disconnectRetries = 2
+        }
+        let future = connectorator.onConnect()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            if error.domain == BCError.domain {
+                if let connectoratorError = ConnectoratorError(rawValue:error.code) {
+                    switch connectoratorError {
+                    case .Timeout:
+                        XCTAssert(false, "onFailure Timeout invalid")
+                    case .Disconnect:
+                        XCTAssert(false, "onFailure Disconnect invalid")
+                    case .ForceDisconnect:
+                        onFailureExpectation.fulfill()
+                    case .Failed:
+                        XCTAssert(false, "onFailure Failed invalid")
+                    case .GiveUp:
+                        XCTAssert(false, "onFailure GiveUp invalid")
+                    }
+                } else {
+                    XCTAssert(false, "onFailure error code invalid")
+                }
+            } else {
+                XCTAssert(false, "onFailure error invalid")
+            }
+        }
+        self.impl.connect(self.mock, connectorator:connectorator)
+        self.impl.disconnect(self.mock)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+        MockValues.state = .Connected
+    }
+    
+    func testForcedDisconnectWhenConnected() {
+        MockValues.state = .Disconnected
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let connectorator = Connectorator() {config in
+            config.timeoutRetries = 2
+            config.connectionTimeout = 2.0
+            config.disconnectRetries = 2
+        }
+        let future = connectorator.onConnect()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            if error.domain == BCError.domain {
+                if let connectoratorError = ConnectoratorError(rawValue:error.code) {
+                    switch connectoratorError {
+                    case .Timeout:
+                        XCTAssert(false, "onFailure Timeout invalid")
+                    case .Disconnect:
+                        XCTAssert(false, "onFailure Disconnect invalid")
+                    case .ForceDisconnect:
+                        onFailureExpectation.fulfill()
+                    case .Failed:
+                        XCTAssert(false, "onFailure Failed invalid")
+                    case .GiveUp:
+                        XCTAssert(false, "onFailure GiveUp invalid")
+                    }
+                } else {
+                    XCTAssert(false, "onFailure error code invalid")
+                }
+            } else {
+                XCTAssert(false, "onFailure error invalid")
+            }
+        }
+        self.impl.connect(self.mock, connectorator:connectorator)
+        MockValues.state = .Connected
+        self.impl.disconnect(self.mock)
+        self.impl.didDisconnectPeripheral(self.mock)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testDisconnect() {
+        MockValues.state = .Disconnected
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let connectorator = Connectorator() {config in
+            config.timeoutRetries = 2
+            config.connectionTimeout = 2.0
+        }
+        let future = connectorator.onConnect()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            if error.domain == BCError.domain {
+                if let connectoratorError = ConnectoratorError(rawValue:error.code) {
+                    switch connectoratorError {
+                    case .Timeout:
+                        XCTAssert(false, "onFailure Timeout invalid")
+                    case .Disconnect:
+                        onFailureExpectation.fulfill()
                     case .ForceDisconnect:
                         XCTAssert(false, "onFailure ForceDisconnect invalid")
                     case .Failed:
@@ -212,17 +385,24 @@ class PertipheralTests: XCTestCase {
             } else {
                 XCTAssert(false, "onFailure error invalid")
             }
-    }
-    
-    func testFailedConnect() {
-    }
-    
-    func testForcedConnect() {
-    }
-    
-    func testDisconnect() {
+        }
+        self.impl.connect(self.mock, connectorator:connectorator)
+        self.impl.didDisconnectPeripheral(self.mock)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+        MockValues.state = .Connected
     }
     
     func testTimeout() {
+    }
+    
+    func testGiveUp() {
+    }
+
+    func testReconectOnTimeout() {
+    }
+    
+    func testReconnectOnDisconnect() {
     }
 }

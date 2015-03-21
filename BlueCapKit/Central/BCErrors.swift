@@ -41,25 +41,25 @@ public enum CentralError : Int {
 public struct BCError {
     public static let domain = "BlueCap"
     
-    internal static let characteristicReadTimeout = NSError(domain:domain, code:CharacteristicError.ReadTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic read timeout"])
-    internal static let characteristicWriteTimeout = NSError(domain:domain, code:CharacteristicError.WriteTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic write timeout"])
-    internal static let characteristicNotSerilaizable = NSError(domain:domain, code:CharacteristicError.NotSerializable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic not serializable"])
-    internal static let characteristicReadNotSupported = NSError(domain:domain, code:CharacteristicError.ReadNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic read not supported"])
-    internal static let characteristicWriteNotSupported = NSError(domain:domain, code:CharacteristicError.WriteNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic write not supported"])
+    public static let characteristicReadTimeout = NSError(domain:domain, code:CharacteristicError.ReadTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic read timeout"])
+    public static let characteristicWriteTimeout = NSError(domain:domain, code:CharacteristicError.WriteTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic write timeout"])
+    public static let characteristicNotSerilaizable = NSError(domain:domain, code:CharacteristicError.NotSerializable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic not serializable"])
+    public static let characteristicReadNotSupported = NSError(domain:domain, code:CharacteristicError.ReadNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic read not supported"])
+    public static let characteristicWriteNotSupported = NSError(domain:domain, code:CharacteristicError.WriteNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic write not supported"])
 
-    internal static let connectoratorTimeout = NSError(domain:domain, code:ConnectoratorError.Timeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator timeout"])
-    internal static let connectoratorDisconnect = NSError(domain:domain, code:ConnectoratorError.Disconnect.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator disconnect"])
-    internal static let connectoratorForcedDisconnect = NSError(domain:domain, code:ConnectoratorError.ForceDisconnect.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator forced disconnected"])
-    internal static let connectoratorFailed = NSError(domain:domain, code:ConnectoratorError.Failed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator connection failed"])
-    internal static let connectoratorGiveUp = NSError(domain:domain, code:ConnectoratorError.GiveUp.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator giving up"])
+    public static let connectoratorTimeout = NSError(domain:domain, code:ConnectoratorError.Timeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator timeout"])
+    public static let connectoratorDisconnect = NSError(domain:domain, code:ConnectoratorError.Disconnect.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator disconnect"])
+    public static let connectoratorForcedDisconnect = NSError(domain:domain, code:ConnectoratorError.ForceDisconnect.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator forced disconnected"])
+    public static let connectoratorFailed = NSError(domain:domain, code:ConnectoratorError.Failed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator connection failed"])
+    public static let connectoratorGiveUp = NSError(domain:domain, code:ConnectoratorError.GiveUp.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator giving up"])
 
-    internal static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.Disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
-    internal static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.DiscoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])
+    public static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.Disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
+    public static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.DiscoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])
         
-    internal static let peripheralManagerIsAdvertising = NSError(domain:domain, code:PeripheralManagerError.IsAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is Advertising"])
-    internal static let peripheralManagerAddServiceFailed = NSError(domain:domain, code:PeripheralManagerError.AddServiceFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Add service failed because service peripheral is advertising"])
+    public static let peripheralManagerIsAdvertising = NSError(domain:domain, code:PeripheralManagerError.IsAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is Advertising"])
+    public static let peripheralManagerAddServiceFailed = NSError(domain:domain, code:PeripheralManagerError.AddServiceFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Add service failed because service peripheral is advertising"])
     
-    internal static let centralIsScanning = NSError(domain:domain, code:CentralError.IsScannong.rawValue, userInfo:[NSLocalizedDescriptionKey:"Central is scanning"])
+    public static let centralIsScanning = NSError(domain:domain, code:CentralError.IsScannong.rawValue, userInfo:[NSLocalizedDescriptionKey:"Central is scanning"])
 
 }
 
