@@ -22,7 +22,6 @@ public protocol PeripheralWrappable {
     
     var name            : String                {get}
     var state           : CBPeripheralState     {get}
-    var connectorator   : Connectorator?        {get}
     var services        : [WrappedService]      {get}
     
     func connect()
@@ -48,6 +47,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     private let _discoveredAt               = NSDate()
     private var _connectedAt                : NSDate?
     private var _disconnectedAt             : NSDate?
+    private var _connectorator              : Connectorator?
     
     public var discoveredAt : NSDate {
         return self._discoveredAt
@@ -59,6 +59,10 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     
     public var disconnectedAt : NSDate? {
         return self._disconnectedAt
+    }
+    
+    public var connectorator : Connectorator? {
+        return self._connectorator
     }
     
     public init() {
@@ -75,7 +79,8 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         }
     }
     
-    public func connect(peripheral:Wrapper) {
+    public func connect(peripheral:Wrapper, connectorator:Connectorator) {
+        self._connectorator = connectorator
         Logger.debug("PeripheralImpl#connect: \(peripheral.name)")
         self.reconnect(peripheral)
     }
@@ -172,7 +177,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     private func timeoutConnection(peripheral:Wrapper, sequence:Int) {
         let central = CentralManager.sharedInstance
         var timeout = self.defaultConnectionTimeout
-        if let connectorator = peripheral.connectorator {
+        if let connectorator = self.connectorator {
             timeout = connectorator.connectionTimeout
         }
         Logger.debug("PeripheralImpl#timeoutConnection: sequence \(sequence), timeout:\(timeout)")
@@ -198,7 +203,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     public func didDisconnectPeripheral(peripheral:Wrapper) {
         Logger.debug("PeripheralImpl#didDisconnectPeripheral")
         self._disconnectedAt = NSDate()
-        if let connectorator = peripheral.connectorator {
+        if let connectorator = self.connectorator {
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
                 Logger.debug("PeripheralImpl#didDisconnectPeripheral: forced disconnect")
@@ -219,12 +224,12 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     public func didConnectPeripheral(peripheral:Wrapper) {
         Logger.debug("PeripheralImpl#didConnectPeripheral PeripheralConnectionError")
         self._connectedAt = NSDate()
-        peripheral.connectorator?.didConnect()
+        self.connectorator?.didConnect()
     }
     
     public func didFailToConnectPeripheral(peripheral:Wrapper, error:NSError?) {
         Logger.debug("PeripheralImpl#didFailToConnectPeripheral: PeripheralConnectionError")
-        peripheral.connectorator?.didFailConnect(error)
+        self.connectorator?.didFailConnect(error)
     }
     
     internal func discoverService(peripheral:Wrapper, head:Wrapper.WrappedService, tail:[Wrapper.WrappedService], promise:Promise<Wrapper>) {
@@ -266,7 +271,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     }
     
     public var connectorator : Connectorator? {
-        return self._connectorator
+        return self.impl._connectorator
     }
 
     public var services : [Service] {
@@ -306,7 +311,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     private var discoveredServices          = [CBUUID:Service]()
     private var discoveredCharacteristics   = [CBCharacteristic:Characteristic]()
     
-    private var _connectorator  : Connectorator?
     internal let cbPeripheral   : CBPeripheral
 
     public let advertisements   : [String: String]
@@ -348,9 +352,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         self.impl.reconnect(self)
     }
      
-    public func connect(connectorator:Connectorator?=nil) {
-        self._connectorator = connectorator
-        self.impl.connect(self)
+    public func connect(connectorator:Connectorator) {
+        self.impl.connect(self, connectorator:connectorator)
     }
     
     public func terminate() {
