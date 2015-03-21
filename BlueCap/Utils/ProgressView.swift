@@ -33,7 +33,7 @@ class ProgressView : UIView {
         self.addSubview(self.activityIndicator)
     }
     
-    override convenience init() {
+    convenience init() {
         self.init(frame:UIScreen.mainScreen().bounds)
     }
     

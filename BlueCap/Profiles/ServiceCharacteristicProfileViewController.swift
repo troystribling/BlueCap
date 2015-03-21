@@ -45,7 +45,7 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
         if let characteristicProfile = self.characteristicProfile {
 
             self.navigationItem.title = characteristicProfile.name
-            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
 
             self.uuidLabel.text = characteristicProfile.uuid.UUIDString
             

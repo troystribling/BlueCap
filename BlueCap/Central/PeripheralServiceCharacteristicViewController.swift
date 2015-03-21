@@ -51,7 +51,6 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         
         self.uuidLabel.text = self.characteristic.uuid.UUIDString
         self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
-        self.broadcastingLabel.text = self.booleanStringValue(self.characteristic.isBroadcasted)
         
         self.propertyBroadcastLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Broadcast))
         self.propertyReadLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Read))
@@ -63,7 +62,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.ExtendedProperties))
         self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.NotifyEncryptionRequired))
         self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.IndicateEncryptionRequired))
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -141,6 +140,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             self.notifySwitch.enabled = false
             self.notifySwitch.on = false
         }
+        self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
     }
     
     func booleanStringValue(value:Bool) -> String {

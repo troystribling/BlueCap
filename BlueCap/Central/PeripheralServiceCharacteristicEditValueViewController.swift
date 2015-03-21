@@ -30,7 +30,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                 self.valueTextField.text = value
             }
         }
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Bordered, target:nil, action:nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
     }
     
     override func viewDidAppear(animated: Bool) {
