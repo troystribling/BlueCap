@@ -995,7 +995,7 @@ internal extension Array {
             return []
         }
             
-        return Array(self[Range(start: start, end: end)] as Slice<T>)
+        return Array(self[Range(start: start, end: end)] as ArraySlice<T>)
     }
 
     /**

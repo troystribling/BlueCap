@@ -183,18 +183,46 @@ class PertipheralTests: XCTestCase {
         MockValues.error = nil
     }
 
-    func testPeripheralConnect() {
+    func testConnect() {
+        let connectorator = Connectorator(capacity:10) {config in
+            config.timeoutRetries = 2
+            config.connectionTimeout = 2.0
+        }
+        let future = connectorator.onConnect()
+        future.onSuccess {_ in
+        }
+        future.onFailure {error in
+            if error.domain == BCError.domain {
+                if let connectoratorError = ConnectoratorError(rawValue:error.code) {
+                    switch connectoratorError {
+                    case .Timeout:
+                        XCTAssert(false, "onFailure Timeout invalid")
+                    case .Disconnect:
+                        XCTAssert(false, "onFailure Disconnect invalid")
+                    case .ForceDisconnect:
+                        XCTAssert(false, "onFailure ForceDisconnect invalid")
+                    case .Failed:
+                        XCTAssert(false, "onFailure Failed invalid")
+                    case .GiveUp:
+                        XCTAssert(false, "onFailure GiveUp invalid")
+                    }
+                } else {
+                    XCTAssert(false, "onFailure error code invalid")
+                }
+            } else {
+                XCTAssert(false, "onFailure error invalid")
+            }
     }
     
-    func testPeripheralFailedConnect() {
+    func testFailedConnect() {
     }
     
-    func testPeripheralForcedConnect() {
+    func testForcedConnect() {
     }
     
-    func testPeripheralDisconnect() {
+    func testDisconnect() {
     }
     
-    func testPeripheralTimeout() {
+    func testTimeout() {
     }
 }

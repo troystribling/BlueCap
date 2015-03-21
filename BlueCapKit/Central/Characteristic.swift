@@ -333,10 +333,6 @@ public final class Characteristic : CharacteristicWrappable {
     public var service : Service {
         return self._service
     }
-
-    public var isBroadcasted : Bool {
-        return self.cbCharacteristic.isBroadcasted
-    }
     
     public var dataValue : NSData! {
         return self.cbCharacteristic.value
