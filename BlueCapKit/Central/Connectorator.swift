@@ -96,11 +96,11 @@ public class Connectorator {
     }
     
     internal func callDidTimeout() {
-        self.promise.failure(BCError.connectoratorDisconnect)
+        self.promise.failure(BCError.connectoratorTimeout)
     }
     
     internal func callDidDisconnect() {
-        self.promise.failure(BCError.connectoratorTimeout)
+        self.promise.failure(BCError.connectoratorDisconnect)
     }
     
     internal func callDidGiveUp() {
