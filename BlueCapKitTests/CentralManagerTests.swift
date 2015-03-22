@@ -30,8 +30,7 @@ class CentralManagerTests: XCTestCase {
     func testStartPromiscuousScanning() {
     }
 
-    func testStartSErviceScanning() {
-        
+    func testStartServiceScanning() {        
     }
 
     func testStopScanning() {
