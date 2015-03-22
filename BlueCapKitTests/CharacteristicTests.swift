@@ -99,7 +99,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.impl.didDiscover(self.mock)
+        CentralQueue.async {
+            self.impl.didDiscover(self.mock)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -114,7 +116,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.impl.didWrite(self.mock, error:nil)
+        CentralQueue.async {
+            self.impl.didWrite(self.mock, error:nil)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -129,7 +133,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
         }
-        self.impl.didWrite(self.mock, error:TestFailure.error)
+        CentralQueue.async {
+            self.impl.didWrite(self.mock, error:TestFailure.error)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -176,7 +182,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.impl.didWrite(self.mock, error:nil)
+        CentralQueue.async {
+            self.impl.didWrite(self.mock, error:nil)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -191,7 +199,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
         }
-        self.impl.didWrite(self.mock, error:TestFailure.error)
+        CentralQueue.async {
+            self.impl.didWrite(self.mock, error:TestFailure.error)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -238,7 +248,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.impl.didUpdate(self.mock, error:nil)
+        CentralQueue.async {
+            self.impl.didUpdate(self.mock, error:nil)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -253,7 +265,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
         }
-        self.impl.didUpdate(self.mock, error:TestFailure.error)
+        CentralQueue.async {
+            self.impl.didUpdate(self.mock, error:TestFailure.error)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -300,7 +314,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        CentralQueue.async {
+            self.impl.didUpdateNotificationState(self.mock, error:nil)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -315,7 +331,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
         }
-        self.impl.didUpdateNotificationState(self.mock, error:TestFailure.error)
+        CentralQueue.async {
+            self.impl.didUpdateNotificationState(self.mock, error:TestFailure.error)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -336,7 +354,9 @@ class CharacteristicTests: XCTestCase {
         }
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
             let future = self.impl.recieveNotificationUpdates()
-            self.impl.didUpdate(self.mock, error:nil)
+            CentralQueue.async {
+                self.impl.didUpdate(self.mock, error:nil)
+            }
             return future
         }
         updateFuture.onSuccess {characteristic in
@@ -365,7 +385,9 @@ class CharacteristicTests: XCTestCase {
         }
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
             let future = self.impl.recieveNotificationUpdates()
-            self.impl.didUpdate(self.mock, error:TestFailure.error)
+            CentralQueue.async {
+                self.impl.didUpdate(self.mock, error:TestFailure.error)
+            }
             return future
         }
         updateFuture.onSuccess {characteristic in
@@ -388,7 +410,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        CentralQueue.async {
+            self.impl.didUpdateNotificationState(self.mock, error:nil)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -403,7 +427,9 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
         }
-        self.impl.didUpdateNotificationState(self.mock, error:TestFailure.error)
+        CentralQueue.async {
+            self.impl.didUpdateNotificationState(self.mock, error:TestFailure.error)
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -425,9 +451,13 @@ class CharacteristicTests: XCTestCase {
         }
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
             let future = self.impl.recieveNotificationUpdates()
-            self.impl.didUpdate(self.mock, error:nil)
+            CentralQueue.sync {
+                self.impl.didUpdate(self.mock, error:nil)
+            }
             self.impl.stopNotificationUpdates()
-            self.impl.didUpdate(self.mock, error:nil)
+            CentralQueue.sync {
+                self.impl.didUpdate(self.mock, error:nil)
+            }
             return future
         }
         updateFuture.onSuccess {characteristic in
