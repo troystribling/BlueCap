@@ -45,6 +45,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     private let defaultConnectionTimeout    = Double(10.0)
     
     private let _discoveredAt               = NSDate()
+
     private var _connectedAt                : NSDate?
     private var _disconnectedAt             : NSDate?
     private var _connectorator              : Connectorator?
@@ -68,7 +69,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     public init() {
     }
     
-    // connect
+    // connect  (Called on User queue)
     public func reconnect(peripheral:Wrapper) {
         if peripheral.state == .Disconnected {
             Logger.debug("PeripheralImpl#reconnect: \(peripheral.name)")
@@ -80,7 +81,9 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     }
     
     public func connect(peripheral:Wrapper, connectorator:Connectorator) {
-        self._connectorator = connectorator
+        CentralQueue.sync {
+            self._connectorator = connectorator
+        }
         Logger.debug("PeripheralImpl#connect: \(peripheral.name)")
         self.reconnect(peripheral)
     }
@@ -99,7 +102,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         self.disconnect(peripheral)
     }
     
-    // service discovery
+    // service discovery (Called on Central queue)
     public func discoverAllServices(peripheral:Wrapper) -> Future<Wrapper> {
         Logger.debug("PeripheralImpl#discoverAllServices: \(peripheral.name)")
         return self.discoverServices(peripheral, services:nil)
@@ -175,7 +178,6 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
 
     // utils
     private func timeoutConnection(peripheral:Wrapper, sequence:Int) {
-        let central = CentralManager.sharedInstance
         var timeout = self.defaultConnectionTimeout
         if let connectorator = self.connectorator {
             timeout = connectorator.connectionTimeout

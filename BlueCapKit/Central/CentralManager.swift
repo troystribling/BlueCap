@@ -24,19 +24,19 @@ public protocol CentralManagerWrappable {
     func stopScan()
 }
 
-internal struct CentralQueue {
+public struct CentralQueue {
     
     private static let queue = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
     
-    internal static func sync(request:()->()) {
+    public static func sync(request:()->()) {
         dispatch_sync(self.queue, request)
     }
     
-    internal static func async(request:()->()) {
+    public static func async(request:()->()) {
         dispatch_async(self.queue, request)
     }
     
-    internal static func delay(delay:Double, request:()->()) {
+    public static func delay(delay:Double, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, self.queue, request)
     }
