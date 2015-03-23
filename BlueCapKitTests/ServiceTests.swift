@@ -14,15 +14,14 @@ import BlueCapKit
 class ServiceTests: XCTestCase {
 
     // ServiceMock
-    struct MockValues {
-        static var state :CBPeripheralState = .Connected
-    }
-    
     struct ServiceMock : ServiceWrappable {
         
         let impl = ServiceImpl<ServiceMock>()
         
-        init() {            
+        var _state :CBPeripheralState
+
+        init(state:CBPeripheralState = .Connected) {
+            self._state = state
         }
         
         var uuid : CBUUID! {
@@ -34,7 +33,7 @@ class ServiceTests: XCTestCase {
         }
         
         var state: CBPeripheralState {
-            return MockValues.state
+            return self._state
         }
         
         func discoverCharacteristics(characteristics:[CBUUID]!) {
@@ -51,9 +50,7 @@ class ServiceTests: XCTestCase {
         }
 
     }
-    
     // ServiceMock
-    let mock = ServiceMock()
     
     override func setUp() {
         super.setUp()
@@ -64,39 +61,41 @@ class ServiceTests: XCTestCase {
     }
 
     func testDiscoverCharacteristicsSuccess() {
+        let mock = ServiceMock()
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.mock.impl.discoverIfConnected(self.mock, characteristics:nil)
+        let future = mock.impl.discoverIfConnected(mock, characteristics:nil)
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.mock.impl.didDiscoverCharacteristics(self.mock, error:nil)
+        mock.impl.didDiscoverCharacteristics(mock, error:nil)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
 
     func testDiscoverCharacteristicsFailure() {
+        let mock = ServiceMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.mock.impl.discoverIfConnected(self.mock, characteristics:nil)
+        let future = mock.impl.discoverIfConnected(mock, characteristics:nil)
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
         }
-        self.mock.impl.didDiscoverCharacteristics(self.mock, error:TestFailure.error)
+        mock.impl.didDiscoverCharacteristics(mock, error:TestFailure.error)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
 
     func testDiscoverCharacteristicsDisconnected() {
-        MockValues.state = .Disconnected
+        let mock = ServiceMock(state:.Disconnected)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.mock.impl.discoverIfConnected(self.mock, characteristics:nil)
+        let future = mock.impl.discoverIfConnected(mock, characteristics:nil)
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -107,7 +106,6 @@ class ServiceTests: XCTestCase {
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
-        MockValues.state = .Connected
     }
 
 }
