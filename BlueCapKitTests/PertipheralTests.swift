@@ -18,7 +18,7 @@ class PertipheralTests: XCTestCase {
         
         let impl = PeripheralImpl<PeripheralMock>()
 
-        var _state :CBPeripheralState  = .Disconnected
+        var _state :CBPeripheralState
 
         let _services = [ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"), name:"Service Mock-1"),
                          ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6aaa"), name:"Service Mock-2")]
@@ -62,8 +62,7 @@ class PertipheralTests: XCTestCase {
     }
 
     struct ServiceMockValues {
-        static var state :CBPeripheralState  = .Connected
-        static var error : NSError?          = nil
+        static var error : NSError? = nil
     }
 
     struct ServiceMock : ServiceWrappable {
@@ -71,6 +70,7 @@ class PertipheralTests: XCTestCase {
         let uuid:CBUUID!
         let name:String
         
+        let _state :CBPeripheralState = .Connected
         let impl = ServiceImpl<ServiceMock>()
         
         init(uuid:CBUUID, name:String) {
@@ -79,7 +79,7 @@ class PertipheralTests: XCTestCase {
         }
         
         var state: CBPeripheralState {
-            return ServiceMockValues.state
+            return self._state
         }
         
         func discoverCharacteristics(characteristics:[CBUUID]!) {
