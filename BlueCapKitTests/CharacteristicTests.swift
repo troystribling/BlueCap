@@ -18,20 +18,24 @@ struct TestFailure {
 class CharacteristicTests: XCTestCase {
 
     // CharacteristicMock
-    struct MockValues {
-        static var isNotifying             = false
-        static var stringValues            = [String]()
-        static var propertyEnabled         = true
-        static var stringValue             = ["Mock":"1"]
-        static var dataFromStringValue     = "01".dataFromHexString()
-        static var connectorator           = Connectorator()
-        static var afterDiscoveredPromise  = StreamPromise<CharacteristicMock>()
-    }
-    
-    struct CharacteristicMock : CharacteristicWrappable {
-        
+    final class CharacteristicMock : CharacteristicWrappable {
+
+        var _isNotifying             = false
+        var _stringValues            = [String]()
+        var _propertyEnabled         = true
+        var _stringValue             = ["Mock":"1"]
+        var _dataFromStringValue     = "01".dataFromHexString()
+        var _connectorator           = Connectorator()
+        var _afterDiscoveredPromise  = StreamPromise<CharacteristicMock>()
+
+        let impl = CharacteristicImpl<CharacteristicMock>()
+
         var uuid : CBUUID! {
             return CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6c1a")
+        }
+        
+        init (propertyEnabled:Bool = true) {
+            self._propertyEnabled = propertyEnabled
         }
         
         var name : String {
@@ -39,35 +43,35 @@ class CharacteristicTests: XCTestCase {
         }
         
         var connectorator : Connectorator? {
-            return MockValues.connectorator
+            return self._connectorator
         }
         
         var isNotifying : Bool {
-            return MockValues.isNotifying
+            return self._isNotifying
         }
         
         var stringValues : [String] {
-            return MockValues.stringValues
+            return self._stringValues
         }
         
         var afterDiscoveredPromise  : StreamPromise<CharacteristicMock>? {
-            return MockValues.afterDiscoveredPromise
+            return self._afterDiscoveredPromise
         }
         
         func stringValue(data:NSData?) -> [String:String]? {
-            return MockValues.stringValue
+            return self._stringValue
         }
         
         func dataFromStringValue(stringValue:[String:String]) -> NSData? {
-            return MockValues.dataFromStringValue
+            return self._dataFromStringValue
         }
         
         func setNotifyValue(state:Bool) {
-            MockValues.isNotifying = state
+            self._isNotifying = state
         }
         
         func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
-            return MockValues.propertyEnabled
+            return self._propertyEnabled
         }
         
         func readValueForCharacteristic() {
@@ -76,9 +80,6 @@ class CharacteristicTests: XCTestCase {
         func writeValue(value:NSData) {
         }
     }
-    
-    let impl = CharacteristicImpl<CharacteristicMock>()
-    let mock = CharacteristicMock()
     
     // CharacteristicMock
     
@@ -91,16 +92,17 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testDiscovered() {
+        let mock = CharacteristicMock()
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = MockValues.afterDiscoveredPromise.future
-        future.onSuccess {_ in
+        let future = mock.afterDiscoveredPromise?.future
+        future!.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
-        future.onFailure {error in
+        future!.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
         CentralQueue.async {
-            self.impl.didDiscover(self.mock)
+            mock.impl.didDiscover(mock)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -108,8 +110,9 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testWriteDataSuccess() {
+        let mock = CharacteristicMock()
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.impl.writeData(self.mock, value:"aa".dataFromHexString())
+        let future = mock.impl.writeData(mock, value:"aa".dataFromHexString())
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
@@ -117,7 +120,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         CentralQueue.async {
-            self.impl.didWrite(self.mock, error:nil)
+            mock.impl.didWrite(mock, error:nil)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -125,8 +128,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteDataFailed() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.writeData(self.mock, value:"aa".dataFromHexString())
+        let future = mock.impl.writeData(mock, value:"aa".dataFromHexString())
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -134,7 +138,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
         }
         CentralQueue.async {
-            self.impl.didWrite(self.mock, error:TestFailure.error)
+            mock.impl.didWrite(mock, error:TestFailure.error)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -142,8 +146,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteDataTimeOut() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.writeData(self.mock, value:"aa".dataFromHexString())
+        let future = mock.impl.writeData(mock, value:"aa".dataFromHexString())
         future.onSuccess {_ in
             XCTAssert(false, "onFailure called")
         }
@@ -157,9 +162,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteDataNotWrteable() {
-        MockValues.propertyEnabled = false
+        let mock = CharacteristicMock(propertyEnabled:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.writeData(self.mock, value:"aa".dataFromHexString())
+        let future = mock.impl.writeData(mock, value:"aa".dataFromHexString())
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -170,12 +175,12 @@ class CharacteristicTests: XCTestCase {
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
-        MockValues.propertyEnabled = true
     }
 
     func testWriteStringSuccess() {
+        let mock = CharacteristicMock()
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.impl.writeString(self.mock, stringValue:["Mock":"1"])
+        let future = mock.impl.writeString(mock, stringValue:["Mock":"1"])
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
@@ -183,7 +188,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         CentralQueue.async {
-            self.impl.didWrite(self.mock, error:nil)
+            mock.impl.didWrite(mock, error:nil)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -191,8 +196,9 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testWriteStringFailed() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.writeString(self.mock, stringValue:["Mock":"1"])
+        let future = mock.impl.writeString(mock, stringValue:["Mock":"1"])
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -200,7 +206,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
         }
         CentralQueue.async {
-            self.impl.didWrite(self.mock, error:TestFailure.error)
+            mock.impl.didWrite(mock, error:TestFailure.error)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -208,8 +214,9 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testWriteStringTimeOut() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.writeString(self.mock, stringValue:["Mock":"1"])
+        let future = mock.impl.writeString(mock, stringValue:["Mock":"1"])
         future.onSuccess {_ in
             XCTAssert(false, "onFailure called")
         }
@@ -223,9 +230,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteStringNotWrteable() {
-        MockValues.propertyEnabled = false
+        let mock = CharacteristicMock(propertyEnabled:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.writeString(self.mock, stringValue:["Mock":"1"])
+        let future = mock.impl.writeString(mock, stringValue:["Mock":"1"])
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -236,12 +243,12 @@ class CharacteristicTests: XCTestCase {
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
-        MockValues.propertyEnabled = true
     }
     
     func testReadSuccess() {
+        let mock = CharacteristicMock()
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.impl.read(self.mock)
+        let future = mock.impl.read(mock)
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
@@ -249,7 +256,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         CentralQueue.async {
-            self.impl.didUpdate(self.mock, error:nil)
+            mock.impl.didUpdate(mock, error:nil)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -257,8 +264,9 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReadFailure() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.read(self.mock)
+        let future = mock.impl.read(mock)
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -266,7 +274,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
         }
         CentralQueue.async {
-            self.impl.didUpdate(self.mock, error:TestFailure.error)
+            mock.impl.didUpdate(mock, error:TestFailure.error)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -274,8 +282,9 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReadTimeout() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.read(self.mock)
+        let future = mock.impl.read(mock)
         future.onSuccess {_ in
             XCTAssert(false, "onFailure called")
         }
@@ -289,9 +298,9 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReadNotReadable() {
-        MockValues.propertyEnabled = false
+        let mock = CharacteristicMock(propertyEnabled:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.read(self.mock)
+        let future = mock.impl.read(mock)
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -302,12 +311,12 @@ class CharacteristicTests: XCTestCase {
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
-        MockValues.propertyEnabled = true
     }
     
     func testStartNotifyingSucceess() {
+        let mock = CharacteristicMock()
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.impl.startNotifying(self.mock)
+        let future = mock.impl.startNotifying(mock)
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
@@ -315,7 +324,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         CentralQueue.async {
-            self.impl.didUpdateNotificationState(self.mock, error:nil)
+            mock.impl.didUpdateNotificationState(mock, error:nil)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -323,8 +332,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStartNotifyingFailure() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = self.impl.startNotifying(self.mock)
+        let future = mock.impl.startNotifying(mock)
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -332,7 +342,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
         }
         CentralQueue.async {
-            self.impl.didUpdateNotificationState(self.mock, error:TestFailure.error)
+            mock.impl.didUpdateNotificationState(mock, error:TestFailure.error)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -340,11 +350,12 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReceiveNotificationUpdateSuccess() {
+        let mock = CharacteristicMock()
         let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
         let updateOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
 
-        let startNotifyingFuture = self.impl.startNotifying(self.mock)
-        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        let startNotifyingFuture = mock.impl.startNotifying(mock)
+        mock.impl.didUpdateNotificationState(mock, error:nil)
         
         startNotifyingFuture.onSuccess{_ in
             startNotifyingOnSuccessExpectation.fulfill()
@@ -353,9 +364,9 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "start notifying onFailure called")
         }
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
-            let future = self.impl.recieveNotificationUpdates()
+            let future = mock.impl.recieveNotificationUpdates()
             CentralQueue.async {
-                self.impl.didUpdate(self.mock, error:nil)
+                mock.impl.didUpdate(mock, error:nil)
             }
             return future
         }
@@ -371,11 +382,12 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testReceiveNotificationUpdateFailure() {
+        let mock = CharacteristicMock()
         let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
         let updateOnFailureExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
         
-        let startNotifyingFuture = self.impl.startNotifying(self.mock)
-        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        let startNotifyingFuture = mock.impl.startNotifying(mock)
+        mock.impl.didUpdateNotificationState(mock, error:nil)
         
         startNotifyingFuture.onSuccess{_ in
             startNotifyingOnSuccessExpectation.fulfill()
@@ -384,9 +396,9 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "start notifying onFailure called")
         }
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
-            let future = self.impl.recieveNotificationUpdates()
+            let future = mock.impl.recieveNotificationUpdates()
             CentralQueue.async {
-                self.impl.didUpdate(self.mock, error:TestFailure.error)
+                mock.impl.didUpdate(mock, error:TestFailure.error)
             }
             return future
         }
@@ -402,8 +414,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotifyingSuccess() {
+        let mock = CharacteristicMock()
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.impl.stopNotifying(self.mock)
+        let future = mock.impl.stopNotifying(mock)
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
         }
@@ -411,7 +424,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         CentralQueue.async {
-            self.impl.didUpdateNotificationState(self.mock, error:nil)
+            mock.impl.didUpdateNotificationState(mock, error:nil)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -419,8 +432,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotifyingFailure() {
+        let mock = CharacteristicMock()
         let onFailureExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = self.impl.stopNotifying(self.mock)
+        let future = mock.impl.stopNotifying(mock)
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
@@ -428,7 +442,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
         }
         CentralQueue.async {
-            self.impl.didUpdateNotificationState(self.mock, error:TestFailure.error)
+            mock.impl.didUpdateNotificationState(mock, error:TestFailure.error)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -436,12 +450,13 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotificationUpdates() {
+        let mock = CharacteristicMock()
         let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
         let updateOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
 
         var updates = 0
-        let startNotifyingFuture = self.impl.startNotifying(self.mock)
-        self.impl.didUpdateNotificationState(self.mock, error:nil)
+        let startNotifyingFuture = mock.impl.startNotifying(mock)
+        mock.impl.didUpdateNotificationState(mock, error:nil)
         
         startNotifyingFuture.onSuccess{_ in
             startNotifyingOnSuccessExpectation.fulfill()
@@ -450,13 +465,13 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "start notifying onFailure called")
         }
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<CharacteristicMock> in
-            let future = self.impl.recieveNotificationUpdates()
+            let future = mock.impl.recieveNotificationUpdates()
             CentralQueue.sync {
-                self.impl.didUpdate(self.mock, error:nil)
+                mock.impl.didUpdate(mock, error:nil)
             }
-            self.impl.stopNotificationUpdates()
+            mock.impl.stopNotificationUpdates()
             CentralQueue.sync {
-                self.impl.didUpdate(self.mock, error:nil)
+                mock.impl.didUpdate(mock, error:nil)
             }
             return future
         }

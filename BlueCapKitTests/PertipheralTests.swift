@@ -35,10 +35,7 @@ class PertipheralTests: XCTestCase {
             return self._services
         }
 
-        init() {
-        }
-
-        init(state:CBPeripheralState) {
+        init(state:CBPeripheralState = .Disconnected) {
             self._state = state
         }
 
