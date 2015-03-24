@@ -172,7 +172,7 @@ class PeripheralsViewController : UITableViewController {
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
         }
-        peripheral.connect(connectorator:connectorator)
+        peripheral.connect(connectorator)
     }
     
     func startScan() {
