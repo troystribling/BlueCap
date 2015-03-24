@@ -97,8 +97,8 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     // power up
     public func powerOn(central:Wrapper) -> Future<Void> {
         Logger.debug("CentralManagerImpl#powerOn")
-        let future = self.afterPowerOnPromise.future
         self.afterPowerOnPromise = Promise<Void>()
+        let future = self.afterPowerOnPromise.future
         if central.poweredOn {
             self.afterPowerOnPromise.success()
         }
@@ -107,10 +107,10 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     public func powerOff(central:Wrapper) -> Future<Void> {
         Logger.debug("CentralManagerImpl#powerOff")
-        let future = self.afterPowerOffPromise.future
         self.afterPowerOffPromise = Promise<Void>()
+        let future = self.afterPowerOffPromise.future
         if central.poweredOff {
-            self.afterPowerOnPromise.success()
+            self.afterPowerOffPromise.success()
         }
         return future
     }
@@ -120,7 +120,7 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     }
     
     // central manager state
-    public func centralManagerDidUpdateState(central:Wrapper) {
+    public func didUpdateState(central:Wrapper) {
         switch(central.state) {
         case .Unauthorized:
             Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: Unauthorized")
@@ -289,7 +289,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     public func centralManagerDidUpdateState(_:CBCentralManager!) {
-        self.impl.centralManagerDidUpdateState(self)
+        self.impl.didUpdateState(self)
     }
     
     private override init() {
