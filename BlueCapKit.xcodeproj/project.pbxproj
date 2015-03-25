@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		053139B01AC1ADC4002B4B36 /* MutableCharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139AF1AC1ADC4002B4B36 /* MutableCharacteristicTests.swift */; };
+		053139B41AC2CE23002B4B36 /* PeripheralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */; };
 		0551208819F5506000ED3B74 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0551208719F5506000ED3B74 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
 		055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209E19F5513700ED3B74 /* CentralManager.swift */; };
@@ -88,6 +90,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		053139AF1AC1ADC4002B4B36 /* MutableCharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableCharacteristicTests.swift; sourceTree = "<group>"; };
+		053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerTests.swift; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0551208719F5506000ED3B74 /* BlueCapKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueCapKit.h; sourceTree = "<group>"; };
@@ -183,6 +187,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		053139AC1AC1AD44002B4B36 /* Peripheral */ = {
+			isa = PBXGroup;
+			children = (
+				053139AF1AC1ADC4002B4B36 /* MutableCharacteristicTests.swift */,
+				053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */,
+			);
+			name = Peripheral;
+			sourceTree = "<group>";
+		};
 		0551207819F5506000ED3B74 = {
 			isa = PBXGroup;
 			children = (
@@ -232,6 +245,7 @@
 		0551208E19F5506000ED3B74 /* BlueCapKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				053139AC1AC1AD44002B4B36 /* Peripheral */,
 				0562D3241A5D8585001013C9 /* SerDe */,
 				0562D3211A5D83F1001013C9 /* Central */,
 				0551208F19F5506000ED3B74 /* Supporting Files */,
@@ -585,11 +599,13 @@
 				0565EC7A1A89B88200CA8B6E /* RawArrayDeserializableTests.swift in Sources */,
 				0562D31E1A5D8378001013C9 /* TimedScanneratorTests.swift in Sources */,
 				0565EC7E1A8B1D4800CA8B6E /* RawArrayPairDeserializableTests.swift in Sources */,
+				053139B41AC2CE23002B4B36 /* PeripheralManagerTests.swift in Sources */,
 				0562D31A1A5D8308001013C9 /* PertipheralTests.swift in Sources */,
 				0562D3181A5D7FE1001013C9 /* CentralManagerTests.swift in Sources */,
 				0565EC711A87D14600CA8B6E /* SerializableTests.swift in Sources */,
 				0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */,
 				0565EC7C1A89CDA500CA8B6E /* RawPairDeserializableTests.swift in Sources */,
+				053139B01AC1ADC4002B4B36 /* MutableCharacteristicTests.swift in Sources */,
 				0562D3201A5D83E9001013C9 /* ServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
