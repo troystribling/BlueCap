@@ -49,7 +49,8 @@ internal struct PeripheralQueue {
 }
 
 public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappable,
-                                                 Wrapper.WrappedService:MutableServiceWrappable> {
+                                                 Wrapper.WrappedService:MutableServiceWrappable,
+                                                 Wrapper.WrappedBeaconRegion:BeaconRegionWrappable> {
     
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Double = 0.25
     
@@ -100,9 +101,9 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         return self.startAdvertising(peripheral, name:name, uuids:nil)
     }
     
-    public func startAdvertising(peripheral:Wrapper, region:BeaconRegion) -> Future<Void> {
+    public func startAdvertising(peripheral:Wrapper, region:Wrapper.WrappedBeaconRegion) -> Future<Void> {
         self.afterAdvertisingStartedPromise = Promise<Void>()
-        peripheral.startAdvertising(region.peripheralDataWithMeasuredPower())
+        peripheral.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
         return self.afterAdvertisingStartedPromise.future
     }
     

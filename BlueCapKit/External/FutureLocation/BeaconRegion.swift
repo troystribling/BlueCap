@@ -89,7 +89,7 @@ public class BeaconRegion : Region {
         self.init(region:beaconRegion, capacity:capacity)
     }
     
-    public func peripheralDataWithMeasuredPower(measuredPower:Int? = nil) -> [NSObject:AnyObject] {
+    public func peripheralDataWithMeasuredPower(_ measuredPower:Int? = nil) -> [NSObject:AnyObject] {
         if let measuredPower = measuredPower {
             let dict = self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as NSDictionary
             return dict as! [NSObject:AnyObject]
