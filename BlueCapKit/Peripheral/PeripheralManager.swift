@@ -17,6 +17,8 @@ public protocol PeripheralManagerWrappable {
     typealias WrappedBeaconRegion
     
     var isAdvertising   : Bool                      {get}
+    var poweredOn       : Bool                      {get}
+    var poweredOff      : Bool                      {get}
     var state           : CBPeripheralManagerState  {get}
     var services        : [WrappedService]          {get}
     
@@ -60,27 +62,21 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     private var afterPowerOffPromise                = Promise<Void>()
     private var afterSeriviceAddPromise             = Promise<Void>()
     
-    private var _isPoweredOn : Bool = false
-    
-    public var isPoweredOn : Bool {
-        return self._isPoweredOn
-    }
     
     // power on
-    public func powerOn() -> Future<Void> {
+    public func powerOn(peripheral:Wrapper) -> Future<Void> {
         Logger.debug("PeripheralManagerImpl#powerOn")
         self.afterPowerOnPromise = Promise<Void>()
-        let future = self.afterPowerOnPromise.future
-        if self.isPoweredOn {
+        if peripheral.poweredOn {
             self.afterPowerOnPromise.success()
         }
         return self.afterPowerOnPromise.future
     }
     
-    public func powerOff() -> Future<Void> {
+    public func powerOff(peripheral:Wrapper) -> Future<Void> {
         Logger.debug("PeripheralManagerImpl#powerOff")
         self.afterPowerOffPromise = Promise<Void>()
-        if !self.isPoweredOn {
+        if peripheral.poweredOff {
             self.afterPowerOffPromise.success()
         }
         return self.afterPowerOffPromise.future
@@ -133,7 +129,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         return promise.future
     }
     
-    private func addService(peripheral:Wrapper, promise:Promise<Void>, services:[Wrapper.WrappedService]) {
+    public func addService(peripheral:Wrapper, promise:Promise<Void>, services:[Wrapper.WrappedService]) {
         if services.count > 0 {
             let future = self.addService(peripheral, service:services[0])
             future.onSuccess {
@@ -181,17 +177,15 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     }
     
     // CBPeripheralManagerDelegate
-    public func peripheralManagerDidUpdateState(peripheral:Wrapper) {
+    public func didUpdateState(peripheral:Wrapper) {
         switch peripheral.state {
         case CBPeripheralManagerState.PoweredOn:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOn")
             self.afterPowerOnPromise.success()
-            self._isPoweredOn = true
             break
         case CBPeripheralManagerState.PoweredOff:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOff")
             self.afterPowerOffPromise.success()
-            self._isPoweredOn = false
             break
         case CBPeripheralManagerState.Resetting:
             break
@@ -224,7 +218,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         }
     }
     
-    private init() {
+    public init() {
     }
     
     private func lookForAdvertisingToStop(peripheral:Wrapper) {
@@ -250,6 +244,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         return self.cbPeripheralManager.isAdvertising
     }
     
+    public var poweredOn : Bool {
+        return self.cbPeripheralManager.state == CBPeripheralManagerState.PoweredOn
+    }
+    
+    public var poweredOff : Bool {
+        return self.cbPeripheralManager.state == CBPeripheralManagerState.PoweredOff
+    }
+
     public var state : CBPeripheralManagerState {
         return self.cbPeripheralManager.state
     }
@@ -306,10 +308,6 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     internal var configuredServices         : [CBUUID:MutableService]                    = [:]
     internal var configuredCharcteristics   : [CBCharacteristic:MutableCharacteristic]   = [:]
 
-    public var isPoweredOn : Bool {
-        return self.impl.isPoweredOn
-    }
-
     public class var sharedInstance : PeripheralManager {
         struct Static {
             static let instance = PeripheralManager()
@@ -323,11 +321,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     
     // power on
     public func powerOn() -> Future<Void> {
-        return self.impl.powerOn()
+        return self.impl.powerOn(self)
     }
     
     public func powerOff() -> Future<Void> {
-        return self.impl.powerOff()
+        return self.impl.powerOff(self)
     }
 
     // advertising
@@ -369,7 +367,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
 
     // CBPeripheralManagerDelegate
     public func peripheralManagerDidUpdateState(_:CBPeripheralManager!) {
-        self.impl.peripheralManagerDidUpdateState(self)
+        self.impl.didUpdateState(self)
     }
     
     public func peripheralManager(_:CBPeripheralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
