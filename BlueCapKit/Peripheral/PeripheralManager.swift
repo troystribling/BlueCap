@@ -117,7 +117,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
             peripheral.addWrappedService(service)
             Logger.debug("PeripheralManagerImpl#addService:\(service.name), \(service.uuid)")
         } else {
-            self.afterSeriviceAddPromise.failure(BCError.peripheralManagerAddServiceFailed)
+            self.afterSeriviceAddPromise.failure(BCError.peripheralManagerIsAdvertising)
         }
         return self.afterSeriviceAddPromise.future
     }

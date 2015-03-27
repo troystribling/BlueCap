@@ -211,6 +211,10 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
+    func testStartAdvertisingWhenAdvertising() {
+        
+    }
+    
     func testStartAdvertisingBeaconSuccess() {
         let mock = PeripheralManagerMock(isAdvertising:false, state:.PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -243,6 +247,10 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
+    func testStartAdvertisingBeaconWhenAdvertising() {
+        
+    }
+
     func testStopAdvertising() {
         let mock = PeripheralManagerMock(isAdvertising:true, state:.PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -259,16 +267,78 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
+    func testStopAdvertisingWhenNotAdvertsing() {
+        
+    }
+    
     func testAddServiceSuccess() {
+        let mock = PeripheralManagerMock(isAdvertising:false, state:.PoweredOn)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = mock.impl.addService(mock, service:MutableServiceMock())
+        future.onSuccess {
+            expectation.fulfill()
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        mock.impl.didAddService(nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+    
+    func testAddServicesSucccess() {
+    }
+
+    func testAddServicesFailure() {
     }
 
     func testAddServiceFailure() {
+        let mock = PeripheralManagerMock(isAdvertising:false, state:.PoweredOn)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = mock.impl.addService(mock, service:MutableServiceMock())
+        future.onSuccess {
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure{error in
+            expectation.fulfill()
+        }
+        mock.impl.didAddService(TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testAddServiceWhenAdvertising() {
+        let mock = PeripheralManagerMock(isAdvertising:true, state:.PoweredOn)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = mock.impl.addService(mock, service:MutableServiceMock())
+        future.onSuccess {
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure{error in
+            XCTAssert(error.code == PeripheralManagerError.IsAdvertising.rawValue, "Error code is invalid \(error.code)")
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testRemoveServiceSuccess() {
+        let mock = PeripheralManagerMock(isAdvertising:false, state:.PoweredOn)
+        mock._services = [MutableServiceMock()]
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = mock.impl.removeService(mock, service:MutableServiceMock())
+        future.onSuccess {
+            expectation.fulfill()
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testRemoveServiceFailure() {
