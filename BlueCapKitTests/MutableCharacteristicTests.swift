@@ -16,6 +16,8 @@ class MutableCharacteristicTests: XCTestCase {
     // MutableCharacteristicMock
     class MutableCharacteristicMock : MutableCharacteristicWrappable {
 
+        var impl = MutableCharacteristicImpl<MutableCharacteristicMock>()
+        
         var _propertyEnabled : Bool
         var _permissionEnabled : Bool
 
@@ -90,24 +92,32 @@ class MutableCharacteristicTests: XCTestCase {
     }
 
     func testStartRespondingToWriteRequests() {
+        let mock = MutableCharacteristicMock()
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = mock.impl.startRespondingToWriteRequests()
+        future.onSuccess {_ in
+            expectation.fulfill()
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        mock.impl.didRespondToWriteRequest(RequestMock())
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testStopRespondingToWriteRequests() {
-    }
-
-    func testUpdateDeserializable() {
-    }
-    
-    func testUpdateRawDeserializable() {
-    }
-    
-    func testUpdateRawArrayDeserializable() {
-    }
-    
-    func testUpdateRawPairDeserializable() {
-    }
-    
-    func testUpdateRawArrayPairDeserializable() {        
+        let mock = MutableCharacteristicMock()
+        let future = mock.impl.startRespondingToWriteRequests()
+        mock.impl.stopProcessingWriteRequests()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        mock.impl.didRespondToWriteRequest(RequestMock())
     }
 
 }

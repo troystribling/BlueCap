@@ -173,7 +173,7 @@ class TimedScanneratorTests: XCTestCase {
             XCTAssert(PeripheralError.DiscoveryTimeout.rawValue == error.code, "onFailure error invalid \(error.code)")
             onFailureExpectation.fulfill()
         }
-        waitForExpectationsWithTimeout(3) {error in
+        waitForExpectationsWithTimeout(10) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
