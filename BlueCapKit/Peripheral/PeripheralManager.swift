@@ -31,19 +31,19 @@ public protocol PeripheralManagerWrappable {
 
 }
 
-internal struct PeripheralQueue {
+public struct PeripheralQueue {
     
     private static let queue = dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL)
     
-    internal static func sync(request:()->()) {
+    public static func sync(request:()->()) {
         dispatch_sync(self.queue, request)
     }
     
-    internal static func async(request:()->()) {
+    public static func async(request:()->()) {
         dispatch_async(self.queue, request)
     }
     
-    internal static func delay(delay:Double, request:()->()) {
+    public static func delay(delay:Double, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, self.queue, request)
     }
@@ -85,11 +85,15 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     // advertising
     public func startAdvertising(peripheral:Wrapper, name:String, uuids:[CBUUID]?) -> Future<Void> {
         self.afterAdvertisingStartedPromise = Promise<Void>()
-        var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
-        if let uuids = uuids {
-            advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+        if !peripheral.isAdvertising {
+            var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+            if let uuids = uuids {
+                advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+            }
+            peripheral.startAdvertising(advertisementData)
+        } else {
+            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
         }
-        peripheral.startAdvertising(advertisementData)
         return self.afterAdvertisingStartedPromise.future
     }
     
@@ -99,14 +103,22 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     
     public func startAdvertising(peripheral:Wrapper, region:Wrapper.WrappedBeaconRegion) -> Future<Void> {
         self.afterAdvertisingStartedPromise = Promise<Void>()
-        peripheral.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
+        if !peripheral.isAdvertising {
+            peripheral.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
+        } else {
+            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+        }
         return self.afterAdvertisingStartedPromise.future
     }
     
     public func stopAdvertising(peripheral:Wrapper) -> Future<Void> {
         self.afterAdvertsingStoppedPromise = Promise<Void>()
-        peripheral.stopAdvertising()
-        PeripheralQueue.async{self.lookForAdvertisingToStop(peripheral)}
+        if peripheral.isAdvertising {
+            peripheral.stopAdvertising()
+            PeripheralQueue.async{self.lookForAdvertisingToStop(peripheral)}
+        } else {
+            self.afterAdvertsingStoppedPromise.failure(BCError.peripheralManagerIsNotAdvertising)
+        }
         return self.afterAdvertsingStoppedPromise.future
     }
     

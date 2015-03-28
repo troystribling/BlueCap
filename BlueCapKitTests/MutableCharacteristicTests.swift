@@ -101,7 +101,9 @@ class MutableCharacteristicTests: XCTestCase {
         future.onFailure{error in
             XCTAssert(false, "onFailure called")
         }
-        mock.impl.didRespondToWriteRequest(RequestMock())
+        PeripheralQueue.sync {
+            mock.impl.didRespondToWriteRequest(RequestMock())
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }

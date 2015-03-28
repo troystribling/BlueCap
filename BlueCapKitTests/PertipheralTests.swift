@@ -495,7 +495,7 @@ class PertipheralTests: XCTestCase {
         let timeoutExpectation = expectationWithDescription("onFailure fulfilled for Timeout")
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let connectorator = Connectorator() {config in
-            config.connectionTimeout = 4.0
+            config.connectionTimeout = 5.0
             config.timeoutRetries = 2
         }
         let future = connectorator.onConnect()
@@ -529,7 +529,7 @@ class PertipheralTests: XCTestCase {
             }
         }
         mock.impl.connect(mock, connectorator:connectorator)
-        waitForExpectationsWithTimeout(10) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
