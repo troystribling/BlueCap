@@ -91,7 +91,7 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
     
     public func stopMonitoringAllRegions(manager:Wrapper) {
         for region in manager.regions {
-            manager.wrappedStopMonitoringForRegion(region)
+            self.stopMonitoringForRegion(manager, region:region)
         }
     }
     

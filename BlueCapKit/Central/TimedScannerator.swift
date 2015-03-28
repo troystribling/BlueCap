@@ -19,7 +19,7 @@ public protocol TimedScanneratorWrappable {
     
     func startScanning(capacity:Int?) -> FutureStream<WrappedPeripheral>
     func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int?) -> FutureStream<WrappedPeripheral>
-    func stopScanning()
+    func wrappedStopScanning()
     func timeout()
     
 }
@@ -54,7 +54,7 @@ public class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappabl
     
     public func stopScanning(scanner:Wrapper) {
         self._isScanning = false
-        scanner.stopScanning()
+        scanner.wrappedStopScanning()
     }
     
     internal func timeoutScan(scanner:Wrapper) {
@@ -86,6 +86,10 @@ public class TimedScannerator : TimedScanneratorWrappable {
     
     public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int?) -> FutureStream<Peripheral> {
         return CentralManager.sharedInstance.startScanningForServiceUUIDs(uuids, capacity:capacity)
+    }
+    
+    public func wrappedStopScanning() {
+        CentralManager.sharedInstance.stopScanning()
     }
     
     public func timeout() {

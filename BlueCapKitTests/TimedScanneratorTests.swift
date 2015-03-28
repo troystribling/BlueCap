@@ -37,7 +37,7 @@ class TimedScanneratorTests: XCTestCase {
             return self.promise.future
         }
         
-        func stopScanning() {
+        func wrappedStopScanning() {
         }
         
         func timeout() {
