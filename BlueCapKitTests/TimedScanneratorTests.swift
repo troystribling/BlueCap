@@ -165,7 +165,7 @@ class TimedScanneratorTests: XCTestCase {
     func testScanTimeout() {
         let mock = TimedScanneratorMock()
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = mock.impl.startScanning(mock, timeoutSeconds:2)
+        let future = mock.impl.startScanning(mock, timeoutSeconds:1)
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
