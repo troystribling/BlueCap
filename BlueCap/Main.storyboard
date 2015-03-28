@@ -2770,14 +2770,8 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Status:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xaP-Nm-Y2F">
-                                            <rect key="frame" x="20" y="34" width="68" height="21"/>
-                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
-                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Monitoring" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7U9-w4-13u">
-                                            <rect key="frame" x="76" y="33" width="96" height="21"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Monitoring" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7U9-w4-13u">
+                                            <rect key="frame" x="76" y="34" width="96" height="20"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
@@ -2794,16 +2788,28 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xaP-Nm-Y2F">
+                                            <rect key="frame" x="20" y="34" width="56" height="20"/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="deg-tU-Wkd" firstAttribute="leading" secondItem="2Ef-AO-iFz" secondAttribute="leadingMargin" constant="12" id="3tz-VF-fr6"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="xaP-Nm-Y2F" secondAttribute="trailing" constant="516" id="8D0-o8-BwL"/>
+                                        <constraint firstItem="deg-tU-Wkd" firstAttribute="leading" secondItem="2Ef-AO-iFz" secondAttribute="leadingMargin" constant="12" id="DUJ-dy-MgG"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="deg-tU-Wkd" secondAttribute="trailing" constant="32" id="FQO-JI-2Ji"/>
                                         <constraint firstItem="iHl-Fq-H38" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="28" id="Fle-k9-A24"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="7U9-w4-13u" secondAttribute="trailing" constant="420" id="G2n-11-SzL"/>
+                                        <constraint firstItem="sSS-zr-8zL" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="9" id="Jo5-LH-WVc"/>
+                                        <constraint firstItem="xaP-Nm-Y2F" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="26" id="LXt-Za-jH9"/>
+                                        <constraint firstItem="sSS-zr-8zL" firstAttribute="leading" secondItem="2Ef-AO-iFz" secondAttribute="leadingMargin" constant="12" id="MHe-tG-Bj1"/>
+                                        <constraint firstItem="xaP-Nm-Y2F" firstAttribute="leading" secondItem="2Ef-AO-iFz" secondAttribute="leadingMargin" constant="12" id="NGk-8F-As1"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="sSS-zr-8zL" secondAttribute="trailing" constant="33" id="cEd-hl-eAw"/>
+                                        <constraint firstItem="7U9-w4-13u" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="26" id="dRk-gQ-dsX"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="iHl-Fq-H38" secondAttribute="trailing" constant="66" id="eZD-fi-6kI"/>
-                                        <constraint firstItem="sSS-zr-8zL" firstAttribute="trailing" secondItem="2Ef-AO-iFz" secondAttribute="trailingMargin" constant="-33" id="f9x-ls-s7W"/>
-                                        <constraint firstItem="sSS-zr-8zL" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="9" id="kRO-gO-96q"/>
-                                        <constraint firstItem="sSS-zr-8zL" firstAttribute="leading" secondItem="2Ef-AO-iFz" secondAttribute="leadingMargin" constant="12" id="kRf-Pu-iu4"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="deg-tU-Wkd" secondAttribute="trailing" constant="32" id="mZ8-fV-jjR"/>
-                                        <constraint firstItem="deg-tU-Wkd" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="49" id="wwX-c6-CjA"/>
+                                        <constraint firstItem="deg-tU-Wkd" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="49" id="qd0-NT-u5V"/>
+                                        <constraint firstItem="7U9-w4-13u" firstAttribute="leading" secondItem="2Ef-AO-iFz" secondAttribute="leadingMargin" constant="68" id="xpV-RA-OKp"/>
                                         <constraint firstItem="O5q-GS-dle" firstAttribute="trailing" secondItem="2Ef-AO-iFz" secondAttribute="trailingMargin" constant="-33" id="y2V-Dk-2X4"/>
                                         <constraint firstItem="O5q-GS-dle" firstAttribute="top" secondItem="2Ef-AO-iFz" secondAttribute="topMargin" constant="28" id="ycB-VE-Zo5"/>
                                     </constraints>
