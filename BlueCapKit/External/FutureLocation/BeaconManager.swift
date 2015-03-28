@@ -106,7 +106,7 @@ public class BeaconManagerImpl<Wrapper where
     
     public func stopRangingAllBeacons(manager:Wrapper) {
         for beaconRegion in manager.beaconRegions {
-            manager.wrappedStopRangingBeaconsInRegion(beaconRegion)
+            self.stopRangingBeaconsInRegion(manager, beaconRegion:beaconRegion)
         }
     }
     
