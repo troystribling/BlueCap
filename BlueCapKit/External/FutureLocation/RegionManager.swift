@@ -54,8 +54,8 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
     }
     
     // control
-    public func startMonitoringForRegion(manager:Wrapper, authorization:CLAuthorizationStatus, region:Wrapper.WrappedRegion) -> FutureStream<RegionState> {
-        let authoriztaionFuture = self.authorize(manager, authorization:authorization)
+    public func startMonitoringForRegion(manager:Wrapper, currentAuthorization:CLAuthorizationStatus, requestedAuthorization:CLAuthorizationStatus, region:Wrapper.WrappedRegion) -> FutureStream<RegionState> {
+        let authoriztaionFuture = self.authorize(manager, currentAuthorization:currentAuthorization, requestedAuthorization:requestedAuthorization)
         authoriztaionFuture.onSuccess {status in
             self.regionMonitorStatus[region.identifier] = true
             manager.wrappedStartMonitoringForRegion(region)
@@ -64,10 +64,6 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
             region.regionPromise.failure(error)
         }
         return region.regionPromise.future
-    }
-    
-    public func startMonitoringForRegion(manager:Wrapper, region:Wrapper.WrappedRegion) -> FutureStream<RegionState> {
-        return self.startMonitoringForRegion(manager, authorization:CLAuthorizationStatus.AuthorizedAlways, region:region)
     }
     
     public func stopMonitoringForRegion(manager:Wrapper, region:Wrapper.WrappedRegion) {
@@ -110,7 +106,7 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
         Logger.debug("RegionManagerImpl#didDetermineState: \(region.identifier)")
     }
     
-    public func monitoringDidFailForRegion(region:Wrapper.WrappedRegion, withError error:NSError!) {
+    public func didFailMonitoringForRegion(region:Wrapper.WrappedRegion, error:NSError!) {
         Logger.debug("RegionManagerImpl#monitoringDidFailForRegion: \(region.identifier)")
         region.regionPromise.failure(error)
     }
@@ -180,11 +176,11 @@ public class RegionManager : LocationManager, RegionManagerWrappable {
 
     // control
     public func startMonitoringForRegion(authorization:CLAuthorizationStatus, region:Region) -> FutureStream<RegionState> {
-        return self.regionImpl.startMonitoringForRegion(self, authorization:authorization, region:region)
+        return self.regionImpl.startMonitoringForRegion(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, region:region)
     }
 
     public func startMonitoringForRegion(region:Region) -> FutureStream<RegionState> {
-        return self.regionImpl.startMonitoringForRegion(self, authorization:CLAuthorizationStatus.AuthorizedAlways, region:region)
+        return self.regionImpl.startMonitoringForRegion(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:CLAuthorizationStatus.AuthorizedAlways, region:region)
     }
 
     public func stopMonitoringForRegion(region:Region) {
@@ -228,7 +224,7 @@ public class RegionManager : LocationManager, RegionManagerWrappable {
     public func locationManager(_:CLLocationManager!, monitoringDidFailForRegion region:CLRegion!, withError error:NSError!) {
         Logger.debug("RegionManager#monitoringDidFailForRegion: \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
-            self.regionImpl.monitoringDidFailForRegion(bcregion, withError:error)
+            self.regionImpl.didFailMonitoringForRegion(bcregion, error:error)
         }
     }
     

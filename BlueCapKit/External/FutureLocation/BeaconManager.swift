@@ -44,7 +44,7 @@ extension Beacon : BeaconWrappable {
 public class BeaconManagerImpl<Wrapper where
                                 Wrapper:BeaconManagerWrappable,
                                 Wrapper.WrappedBeaconRegion:BeaconRegionWrappable,
-                                Wrapper.WrappedBeaconRegion.WrappedBeacon : BeaconWrappable,
+                                Wrapper.WrappedBeaconRegion.WrappedBeacon:BeaconWrappable,
                                 Wrapper:RegionManagerWrappable,
                                 Wrapper:LocationManagerWrappable,
                                 Wrapper.WrappedCLLocation:CLLocationWrappable,
@@ -69,8 +69,8 @@ public class BeaconManagerImpl<Wrapper where
     }
     
     // control
-    public func startRangingBeaconsInRegion(manager:Wrapper, authorization:CLAuthorizationStatus, beaconRegion:Wrapper.WrappedBeaconRegion) -> FutureStream<[Wrapper.WrappedBeaconRegion.WrappedBeacon]> {
-        let authoriztaionFuture = self.authorize(manager, authorization:authorization)
+    public func startRangingBeaconsInRegion(manager:Wrapper, currentAuthorization:CLAuthorizationStatus, requestedAuthorization:CLAuthorizationStatus, beaconRegion:Wrapper.WrappedBeaconRegion) -> FutureStream<[Wrapper.WrappedBeaconRegion.WrappedBeacon]> {
+        let authoriztaionFuture = self.authorize(manager, currentAuthorization:currentAuthorization, requestedAuthorization:requestedAuthorization)
         authoriztaionFuture.onSuccess {status in
             self.regionRangingStatus[beaconRegion.identifier] = true
             manager.wrappedStartRangingBeaconsInRegion(beaconRegion)
@@ -79,10 +79,6 @@ public class BeaconManagerImpl<Wrapper where
             beaconRegion.beaconPromise.failure(error)
         }
         return beaconRegion.beaconPromise.future
-    }
-    
-    public func startRangingBeaconsInRegion(manager:Wrapper, beaconRegion:Wrapper.WrappedBeaconRegion) -> FutureStream<[Wrapper.WrappedBeaconRegion.WrappedBeacon]> {
-        return self.startRangingBeaconsInRegion(manager, authorization:CLAuthorizationStatus.AuthorizedAlways, beaconRegion:beaconRegion)
     }
     
     public func stopRangingBeaconsInRegion(manager:Wrapper, beaconRegion:Wrapper.WrappedBeaconRegion) {
@@ -111,12 +107,12 @@ public class BeaconManagerImpl<Wrapper where
     }
     
     // CLLocationManagerDelegate
-    public func didRangeBeacons(beacons:[Wrapper.WrappedBeaconRegion.WrappedBeacon], inRegion region:Wrapper.WrappedBeaconRegion) {
+    public func didRangeBeacons(beacons:[Wrapper.WrappedBeaconRegion.WrappedBeacon], region:Wrapper.WrappedBeaconRegion) {
         Logger.debug("BeaconManager#didRangeBeacons: \(region.identifier)")
         region.beaconPromise.success(beacons)
     }
     
-    public func rangingBeaconsDidFailForRegion(region:Wrapper.WrappedBeaconRegion, withError error:NSError!) {
+    public func didFailRangingBeaconsForRegion(region:Wrapper.WrappedBeaconRegion, error:NSError!) {
         Logger.debug("BeaconManager#rangingBeaconsDidFailForRegion: \(region.identifier)")
         region.beaconPromise.failure(error)
     }
@@ -181,12 +177,8 @@ public class BeaconManager : RegionManager, BeaconManagerWrappable {
     }
 
     // control
-    public func startRangingBeaconsInRegion(authorization:CLAuthorizationStatus, beaconRegion:BeaconRegion) -> FutureStream<[Beacon]> {
-        return self.beaconImpl.startRangingBeaconsInRegion(self, authorization:authorization, beaconRegion:beaconRegion)
-    }
-
-    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion) -> FutureStream<[Beacon]> {
-        return self.beaconImpl.startRangingBeaconsInRegion(self, beaconRegion:beaconRegion)
+    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[Beacon]> {
+        return self.beaconImpl.startRangingBeaconsInRegion(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, beaconRegion:beaconRegion)
     }
 
     public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
@@ -215,14 +207,14 @@ public class BeaconManager : RegionManager, BeaconManagerWrappable {
         if let beaconRegion = self.configuredBeaconRegions[region] {
             let bcbeacons = beacons.map{Beacon(clbeacon:($0 as! CLBeacon))}
             beaconRegion._beacons = bcbeacons
-            self.beaconImpl.didRangeBeacons(bcbeacons, inRegion:beaconRegion)
+            self.beaconImpl.didRangeBeacons(bcbeacons, region:beaconRegion)
         }
     }
     
     public func locationManager(_:CLLocationManager!, rangingBeaconsDidFailForRegion region:CLBeaconRegion!, withError error:NSError!) {
         Logger.debug("BeaconManager#rangingBeaconsDidFailForRegion: \(region.identifier)")
         if let beaconRegion = self.configuredBeaconRegions[region] {
-            self.beaconImpl.rangingBeaconsDidFailForRegion(beaconRegion, withError:error)
+            self.beaconImpl.didFailRangingBeaconsForRegion(beaconRegion, error:error)
         }
     }
     
