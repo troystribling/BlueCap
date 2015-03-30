@@ -17,9 +17,6 @@ public protocol LocationManagerWrappable {
     
     var location : WrappedCLLocation! {get}
     
-    static func authorizationStatus() -> CLAuthorizationStatus
-    static func locationServicesEnabled() -> Bool
-    
     func requestWhenInUseAuthorization()
     func requestAlwaysAuthorization()
     func startUpdatingLocation()
@@ -44,13 +41,13 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
     }
     
     // control
-    public func startUpdatingLocation(locationManager:Wrapper, capacity:Int? = nil, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[Wrapper.WrappedCLLocation]> {
+    public func startUpdatingLocation(locationManager:Wrapper, currentAuthorization:CLAuthorizationStatus, requestedAuthorization:CLAuthorizationStatus, capacity:Int? = nil) -> FutureStream<[Wrapper.WrappedCLLocation]> {
         if let capacity = capacity {
             self.locationUpdatePromise = StreamPromise<[Wrapper.WrappedCLLocation]>(capacity:capacity)
         } else {
             self.locationUpdatePromise = StreamPromise<[Wrapper.WrappedCLLocation]>()
         }
-        let authoriztaionFuture = self.authorize(locationManager, authorization:authorization)
+        let authoriztaionFuture = self.authorize(locationManager, currentAuthorization:currentAuthorization, requestedAuthorization:requestedAuthorization)
         authoriztaionFuture.onSuccess {status in
             locationManager.startUpdatingLocation()
         }
@@ -86,10 +83,10 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
         self.authorizationStatusChangedPromise = Promise<CLAuthorizationStatus>()
     }
     
-    internal func authorize(locationManager:Wrapper, authorization:CLAuthorizationStatus) -> Future<Void> {
+    public func authorize(locationManager:Wrapper, currentAuthorization:CLAuthorizationStatus, requestedAuthorization:CLAuthorizationStatus) -> Future<Void> {
         let promise = Promise<Void>()
-        if Wrapper.authorizationStatus() != authorization {
-            switch authorization {
+        if currentAuthorization != requestedAuthorization {
+            switch requestedAuthorization {
             case .AuthorizedAlways:
                 self.authorizationStatusChangedPromise.future.onSuccess {(status) in
                     if status == .AuthorizedAlways {
@@ -97,7 +94,7 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
                         promise.success()
                     } else {
                         Logger.debug("LocationManager#authorize: Location Authorized failed")
-                        promise.failure(FLError.authoizationFailed)
+                        promise.failure(FLError.authoizationAlwaysFailed)
                     }
                 }
                 locationManager.requestAlwaysAuthorization()
@@ -126,10 +123,10 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
 // LocationManagerImpl
 /////////////////////////////////////////////
 
-enum LocationError : Int {
+public enum LocationError : Int {
     case NotAvailable               = 0
     case UpdateFailed               = 1
-    case AuthorizationFailed        = 2
+    case AuthorizationAlwaysFailed  = 2
     case AuthorisedWhenInUseFailed  = 3
 }
 
@@ -137,8 +134,8 @@ struct FLError {
     static let domain = "FutureLocation"
     static let locationUpdateFailed = NSError(domain:domain, code:LocationError.UpdateFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location not available"])
     static let locationNotAvailable = NSError(domain:domain, code:LocationError.NotAvailable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location update failed"])
-    static let authoizationFailed = NSError(domain:domain, code:LocationError.AuthorizationFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"])
-    static let authoizationWhenInUseFailed = NSError(domain:domain, code:LocationError.AuthorizationFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization when in use failed"])
+    static let authoizationAlwaysFailed = NSError(domain:domain, code:LocationError.AuthorizationAlwaysFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"])
+    static let authoizationWhenInUseFailed = NSError(domain:domain, code:LocationError.AuthorisedWhenInUseFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization when in use failed"])
 }
 
 public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationManagerWrappable {
@@ -235,11 +232,11 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     
     // control
     public func startUpdatingLocation(authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
-        return self.impl.startUpdatingLocation(self, capacity:nil, authorization:authorization)
+        return self.impl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:nil)
     }
 
     public func startUpdatingLocation(capacity:Int, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
-        return self.impl.startUpdatingLocation(self, capacity:capacity, authorization:authorization)
+        return self.impl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:capacity)
     }
     
     // CLLocationManagerDelegate
@@ -261,7 +258,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
         self.impl.didChangeAuthorizationStatus(status)
     }
     
-    internal func authorize(authorization:CLAuthorizationStatus) -> Future<Void> {
-        return self.impl.authorize(self, authorization:authorization)
+    public func authorize(authorization:CLAuthorizationStatus) -> Future<Void> {
+        return self.impl.authorize(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization)
     }
 }
