@@ -38,6 +38,10 @@ public class Promise<T> {
         self.future.complete(result)
     }
     
+    public func completed() -> Bool {
+        return self.future.completed()
+    }
+    
     public func success(value:T) {
         self.future.success(value)
     }
@@ -88,6 +92,10 @@ public class Future<T> {
             }
             self.saveCompletes.removeAll()
         }
+    }
+    
+    public func completed() -> Bool {
+        return self.result != nil
     }
     
     public func onComplete(complete:Try<T> -> Void) {
