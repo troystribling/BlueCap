@@ -42,6 +42,7 @@
 		0562D31E1A5D8378001013C9 /* TimedScanneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31D1A5D8378001013C9 /* TimedScanneratorTests.swift */; };
 		0562D3201A5D83E9001013C9 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31F1A5D83E9001013C9 /* ServiceTests.swift */; };
 		0562D3231A5D8503001013C9 /* CharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3221A5D8503001013C9 /* CharacteristicTests.swift */; };
+		05644B091AD9EB800097EED7 /* CLAuthorizationStatusExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05644B081AD9EB800097EED7 /* CLAuthorizationStatusExtension.swift */; };
 		0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC6E1A87D0C600CA8B6E /* DeserilaizableTests.swift */; };
 		0565EC711A87D14600CA8B6E /* SerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC701A87D14600CA8B6E /* SerializableTests.swift */; };
 		0565EC781A891AA400CA8B6E /* RawDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC771A891AA400CA8B6E /* RawDeserializableTests.swift */; };
@@ -76,7 +77,6 @@
 		05E1A7301A55BE1600A00C02 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72A1A55BE1600A00C02 /* Box.swift */; };
 		05E1A7311A55BE1600A00C02 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72B1A55BE1600A00C02 /* Optional.swift */; };
 		05E1A7321A55BE1600A00C02 /* Try.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72C1A55BE1600A00C02 /* Try.swift */; };
-		7396583E1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7396583D1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +130,7 @@
 		0562D31F1A5D83E9001013C9 /* ServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
 		0562D3221A5D8503001013C9 /* CharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicTests.swift; sourceTree = "<group>"; };
 		0562D3251A5D8861001013C9 /* BlueCapKit.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BlueCapKit.playground; sourceTree = "<group>"; };
+		05644B081AD9EB800097EED7 /* CLAuthorizationStatusExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLAuthorizationStatusExtension.swift; sourceTree = "<group>"; };
 		0565EC6E1A87D0C600CA8B6E /* DeserilaizableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserilaizableTests.swift; sourceTree = "<group>"; };
 		0565EC701A87D14600CA8B6E /* SerializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableTests.swift; sourceTree = "<group>"; };
 		0565EC771A891AA400CA8B6E /* RawDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawDeserializableTests.swift; sourceTree = "<group>"; };
@@ -162,7 +163,6 @@
 		05E1A72A1A55BE1600A00C02 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		05E1A72B1A55BE1600A00C02 /* Optional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		05E1A72C1A55BE1600A00C02 /* Try.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Try.swift; sourceTree = "<group>"; };
-		7396583D1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLAuthorizationStatusExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -357,6 +357,7 @@
 		05BAEAF21A9AA670003C0C1C /* FutureLocation */ = {
 			isa = PBXGroup;
 			children = (
+				05644B081AD9EB800097EED7 /* CLAuthorizationStatusExtension.swift */,
 				05BAEAF31A9AA670003C0C1C /* Beacon.swift */,
 				05BAEAF41A9AA670003C0C1C /* BeaconManager.swift */,
 				05BAEAF51A9AA670003C0C1C /* BeaconRegion.swift */,
@@ -402,7 +403,6 @@
 			children = (
 				05D3B9431A2BA162008E794E /* DoubleExtensions.swift */,
 				05D3B9441A2BA162008E794E /* StringExtensions.swift */,
-				7396583D1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -488,7 +488,7 @@
 				TargetAttributes = {
 					0551208119F5506000ED3B74 = {
 						CreatedOnToolsVersion = 6.0.1;
-						DevelopmentTeam = V6ESYGU6CV;
+						DevelopmentTeam = HZEX459C37;
 					};
 					0551208C19F5506000ED3B74 = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -571,7 +571,7 @@
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
 				05D3B9391A2B8D61008E794E /* Range.swift in Sources */,
 				055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */,
-				7396583E1AA264CA004AC8DD /* CLAuthorizationStatusExtension.swift in Sources */,
+				05644B091AD9EB800097EED7 /* CLAuthorizationStatusExtension.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
 				05BAEAFB1A9AA670003C0C1C /* Beacon.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,

@@ -142,6 +142,7 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
                 locationManager.requestWhenInUseAuthorization()
                 break
             default:
+                Logger.debug("LocationManager#authorize: Location Authorization invalid")
                 break
             }
         } else {
@@ -202,10 +203,6 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
         return CLLocationManager.deferredLocationUpdatesAvailable()
     }
     
-    public class func isMonitoringAvailableForClass(regionClass:AnyClass!) -> Bool {
-        return CLLocationManager.isMonitoringAvailableForClass(regionClass)
-    }
-
     public func requestWhenInUseAuthorization() {
         self.clLocationManager.requestWhenInUseAuthorization()
     }

@@ -12,7 +12,11 @@ import CoreLocation
 public class CircularRegion : Region {
 
     internal let clCircularRegion : CLCircularRegion
-        
+    
+    public override class func isMonitoringAvailableForClass() -> Bool {
+        return CLLocationManager.isMonitoringAvailableForClass(CLCircularRegion)
+    }
+    
     public var center : CLLocationCoordinate2D {
         return self.clCircularRegion.center
     }

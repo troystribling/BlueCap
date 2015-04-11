@@ -54,5 +54,9 @@ public class Region {
         }
     }
 
+    public class func isMonitoringAvailableForClass() -> Bool {
+        return CLLocationManager.isMonitoringAvailableForClass(CLRegion)
+    }
+
 }
 

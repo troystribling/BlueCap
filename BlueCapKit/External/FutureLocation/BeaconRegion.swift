@@ -89,6 +89,10 @@ public class BeaconRegion : Region {
         self.init(region:beaconRegion, capacity:capacity)
     }
     
+    public override class func isMonitoringAvailableForClass() -> Bool {
+        return CLLocationManager.isMonitoringAvailableForClass(CLBeaconRegion)
+    }
+    
     public func peripheralDataWithMeasuredPower(_ measuredPower:Int? = nil) -> [NSObject:AnyObject] {
         if let measuredPower = measuredPower {
             let dict = self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as NSDictionary
