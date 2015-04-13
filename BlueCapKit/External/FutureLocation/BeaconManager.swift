@@ -20,6 +20,7 @@ public protocol BeaconManagerWrappable {
     func wrappedStartRangingBeaconsInRegion(beaconRegion:WrappedBeaconRegion)
     func wrappedStopRangingBeaconsInRegion(beaconRegion:WrappedBeaconRegion)
     
+    func authorize(requestedAuthorization:CLAuthorizationStatus) -> Future<Void>
 }
 
 public protocol BeaconRegionWrappable {
@@ -44,11 +45,7 @@ extension Beacon : BeaconWrappable {
 public class BeaconManagerImpl<Wrapper where
                                 Wrapper:BeaconManagerWrappable,
                                 Wrapper.WrappedBeaconRegion:BeaconRegionWrappable,
-                                Wrapper.WrappedBeaconRegion.WrappedBeacon:BeaconWrappable,
-                                Wrapper:RegionManagerWrappable,
-                                Wrapper:LocationManagerWrappable,
-                                Wrapper.WrappedCLLocation:CLLocationWrappable,
-                                Wrapper.WrappedRegion:RegionWrappable> : RegionManagerImpl<Wrapper> {
+                                Wrapper.WrappedBeaconRegion.WrappedBeacon:BeaconWrappable> {
 
     private var regionRangingStatus = [String:Bool]()
 
@@ -56,8 +53,7 @@ public class BeaconManagerImpl<Wrapper where
         return self.regionRangingStatus.values.array.any{$0}
     }
     
-    public override init() {
-        super.init()
+    public init() {
     }
     
     public func isRangingRegion(identifier:String) -> Bool {
@@ -69,8 +65,8 @@ public class BeaconManagerImpl<Wrapper where
     }
     
     // control
-    public func startRangingBeaconsInRegion(manager:Wrapper, currentAuthorization:CLAuthorizationStatus, requestedAuthorization:CLAuthorizationStatus, beaconRegion:Wrapper.WrappedBeaconRegion) -> FutureStream<[Wrapper.WrappedBeaconRegion.WrappedBeacon]> {
-        let authoriztaionFuture = self.authorize(manager, currentAuthorization:currentAuthorization, requestedAuthorization:requestedAuthorization)
+    public func startRangingBeaconsInRegion(manager:Wrapper, authorization:CLAuthorizationStatus, beaconRegion:Wrapper.WrappedBeaconRegion) -> FutureStream<[Wrapper.WrappedBeaconRegion.WrappedBeacon]> {
+        let authoriztaionFuture = manager.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
             self.regionRangingStatus[beaconRegion.identifier] = true
             manager.wrappedStartRangingBeaconsInRegion(beaconRegion)
@@ -120,7 +116,6 @@ public class BeaconManagerImpl<Wrapper where
 }
 // BeaconManagerImpl
 /////////////////////////////////////////////
-
 
 public class BeaconManager : RegionManager, BeaconManagerWrappable {
     
@@ -177,8 +172,12 @@ public class BeaconManager : RegionManager, BeaconManagerWrappable {
     }
 
     // control
-    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[Beacon]> {
-        return self.beaconImpl.startRangingBeaconsInRegion(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, beaconRegion:beaconRegion)
+    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion, authorization:CLAuthorizationStatus? = nil) -> FutureStream<[Beacon]> {
+        if let authorization = authorization {
+            return self.beaconImpl.startRangingBeaconsInRegion(self, authorization:authorization, beaconRegion:beaconRegion)
+        } else {
+            return self.beaconImpl.startRangingBeaconsInRegion(self, authorization:LocationManager.authorizationStatus(), beaconRegion:beaconRegion)
+        }
     }
 
     public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {

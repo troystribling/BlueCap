@@ -161,22 +161,22 @@ public enum LocationError : Int {
     case AuthorisedWhenInUseFailed  = 3
 }
 
-struct FLError {
-    static let domain = "FutureLocation"
-    static let locationUpdateFailed = NSError(domain:domain, code:LocationError.UpdateFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location not available"])
-    static let locationNotAvailable = NSError(domain:domain, code:LocationError.NotAvailable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location update failed"])
-    static let authoizationAlwaysFailed = NSError(domain:domain, code:LocationError.AuthorizationAlwaysFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"])
-    static let authoizationWhenInUseFailed = NSError(domain:domain, code:LocationError.AuthorisedWhenInUseFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization when in use failed"])
+public struct FLError {
+    public static let domain = "FutureLocation"
+    public static let locationUpdateFailed = NSError(domain:domain, code:LocationError.UpdateFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location not available"])
+    public static let locationNotAvailable = NSError(domain:domain, code:LocationError.NotAvailable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Location update failed"])
+    public static let authoizationAlwaysFailed = NSError(domain:domain, code:LocationError.AuthorizationAlwaysFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization failed"])
+    public static let authoizationWhenInUseFailed = NSError(domain:domain, code:LocationError.AuthorisedWhenInUseFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Authorization when in use failed"])
 }
 
 public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationManagerWrappable {
     
-    let impl = LocationManagerImpl<LocationManager>()
+    public let locationImpl = LocationManagerImpl<LocationManager>()
 
     // LocationManagerImpl
 
     public var isUpdating : Bool {
-        return self.impl.isUpdating
+        return self.locationImpl.isUpdating
     }
 
     public var location : CLLocation! {
@@ -286,28 +286,28 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     
     // control
     public func startUpdatingLocation(authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
-        return self.impl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:nil)
+        return self.locationImpl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:nil)
     }
 
     public func startUpdatingLocation(capacity:Int, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
-        return self.impl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:capacity)
+        return self.locationImpl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:capacity)
     }
 
     public func stopUpdatingLocation() {
-        self.impl.stopUpdatingLocation()
+        self.locationImpl.stopUpdatingLocation()
         self.clLocationManager.stopUpdatingLocation()
     }
     
     public func startMonitoringSignificantLocationChanges(authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
-        return self.impl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:nil)
+        return self.locationImpl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:nil)
     }
     
     public func startMonitoringSignificantLocationChanges(capacity:Int, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<[CLLocation]> {
-        return self.impl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:capacity)
+        return self.locationImpl.startUpdatingLocation(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, capacity:capacity)
     }
     
     public func stopMonitoringSignificantLocationChanges() {
-        self.impl.stopMonitoringSignificantLocationChanges()
+        self.locationImpl.stopMonitoringSignificantLocationChanges()
         self.clLocationManager.stopMonitoringSignificantLocationChanges()
     }
     
@@ -315,22 +315,22 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     public func locationManager(_:CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
         if let locations = locations {
             let cllocations = locations.map{$0 as! CLLocation}
-            self.impl.didUpdateLocations(cllocations)
+            self.locationImpl.didUpdateLocations(cllocations)
         }
     }
     
     public func locationManager(_:CLLocationManager!, didFailWithError error:NSError!) {
-        self.impl.didFailWithError(error)
+        self.locationImpl.didFailWithError(error)
     }
     
     public func locationManager(_:CLLocationManager!, didFinishDeferredUpdatesWithError error:NSError!) {
     }
         
     public func locationManager(_:CLLocationManager!, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
-        self.impl.didChangeAuthorizationStatus(status)
+        self.locationImpl.didChangeAuthorizationStatus(status)
     }
     
     public func authorize(authorization:CLAuthorizationStatus) -> Future<Void> {
-        return self.impl.authorize(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization)
+        return self.locationImpl.authorize(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization)
     }
 }

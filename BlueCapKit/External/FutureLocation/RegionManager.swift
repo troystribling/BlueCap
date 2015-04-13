@@ -21,6 +21,7 @@ public protocol RegionManagerWrappable {
     func wrappedStartMonitoringForRegion(region:WrappedRegion)
     func wrappedStopMonitoringForRegion(region:WrappedRegion)
     
+    func authorize(requestedAuthorization:CLAuthorizationStatus) -> Future<Void>
 }
 
 public protocol RegionWrappable {
@@ -32,9 +33,7 @@ extension Region : RegionWrappable {
 }
 
 public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
-                               Wrapper:LocationManagerWrappable,
-                               Wrapper.WrappedCLLocation:CLLocationWrappable,
-                               Wrapper.WrappedRegion:RegionWrappable> : LocationManagerImpl<Wrapper> {
+                               Wrapper.WrappedRegion:RegionWrappable> {
     
     internal var regionMonitorStatus = [String:Bool]()
     
@@ -42,7 +41,7 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
         return self.regionMonitorStatus.values.array.any{$0}
     }
     
-    public override init() {
+    public init() {
     }
     
     public func isMonitoringRegion(identifier:String) -> Bool {
@@ -54,8 +53,8 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
     }
     
     // control
-    public func startMonitoringForRegion(manager:Wrapper, currentAuthorization:CLAuthorizationStatus, requestedAuthorization:CLAuthorizationStatus, region:Wrapper.WrappedRegion) -> FutureStream<RegionState> {
-        let authoriztaionFuture = self.authorize(manager, currentAuthorization:currentAuthorization, requestedAuthorization:requestedAuthorization)
+    public func startMonitoringForRegion(manager:Wrapper, authorization:CLAuthorizationStatus, region:Wrapper.WrappedRegion) -> FutureStream<RegionState> {
+        let authoriztaionFuture = manager.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
             self.regionMonitorStatus[region.identifier] = true
             manager.wrappedStartMonitoringForRegion(region)
@@ -175,8 +174,12 @@ public class RegionManager : LocationManager, RegionManagerWrappable {
     }
 
     // control
-    public func startMonitoringForRegion(region:Region, authorization:CLAuthorizationStatus = .AuthorizedAlways) -> FutureStream<RegionState> {
-        return self.regionImpl.startMonitoringForRegion(self, currentAuthorization:LocationManager.authorizationStatus(), requestedAuthorization:authorization, region:region)
+    public func startMonitoringForRegion(region:Region, authorization:CLAuthorizationStatus? = nil) -> FutureStream<RegionState> {
+        if let authorization = authorization {
+            return self.regionImpl.startMonitoringForRegion(self, authorization:authorization, region:region)
+        } else {
+            return self.regionImpl.startMonitoringForRegion(self, authorization:LocationManager.authorizationStatus(), region:region)
+        }
     }
 
     public func stopMonitoringForRegion(region:Region) {
