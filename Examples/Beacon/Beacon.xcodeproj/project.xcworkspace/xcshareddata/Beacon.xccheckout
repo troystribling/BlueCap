@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>F6B22A96-35B6-4294-B7D3-E523B0924284</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Beacon</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>1B46E2EB4238C0978F01FFF9E8C1390836A3DFD9</key>
+		<string>github.com:troystribling/BlueCap.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Examples/Beacon/Beacon.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>1B46E2EB4238C0978F01FFF9E8C1390836A3DFD9</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:troystribling/BlueCap.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>1B46E2EB4238C0978F01FFF9E8C1390836A3DFD9</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>1B46E2EB4238C0978F01FFF9E8C1390836A3DFD9</string>
+			<key>IDESourceControlWCCName</key>
+			<string>BlueCap</string>
+		</dict>
+	</array>
+</dict>
+</plist>

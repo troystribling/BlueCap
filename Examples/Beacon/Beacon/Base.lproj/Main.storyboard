@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="sHZ-C7-U0G">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--Beacon View Controller Table View Controller-->
+        <scene sceneID="WZa-Hp-fK8">
+            <objects>
+                <tableViewController id="sHZ-C7-U0G" customClass="BeaconViewControllerTableViewController" customModule="Beacon" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Fbn-wc-fAP">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <sections>
+                            <tableViewSection headerTitle=" Status" id="IG7-iT-AuR">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="III-d4-1wO">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="III-d4-1wO" id="kea-FA-ijW">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertise" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tpv-Cv-Xaj">
+                                                    <rect key="frame" x="31" y="19" width="88" height="25"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DaL-2G-Xqt">
+                                                    <rect key="frame" x="531" y="16" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="toggleAdvertising:" destination="sHZ-C7-U0G" eventType="valueChanged" id="Z42-y1-rXF"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="DaL-2G-Xqt" secondAttribute="trailing" constant="12" id="9DG-5G-BLV"/>
+                                                <constraint firstItem="Tpv-Cv-Xaj" firstAttribute="leading" secondItem="kea-FA-ijW" secondAttribute="leadingMargin" constant="23" id="L4S-nP-WTB"/>
+                                                <constraint firstItem="DaL-2G-Xqt" firstAttribute="top" secondItem="kea-FA-ijW" secondAttribute="topMargin" constant="8" id="l0j-Gk-x3u"/>
+                                                <constraint firstItem="Tpv-Cv-Xaj" firstAttribute="top" secondItem="kea-FA-ijW" secondAttribute="topMargin" constant="11" id="zNi-jd-JMH"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Configure" id="SNj-VC-jSv">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="110" id="kbs-Lh-B2t">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kbs-Lh-B2t" id="Wlq-d3-qpY">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="8Js-SD-RGK">
+                                                    <rect key="frame" x="20" y="60" width="560" height="40"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="40" id="hdb-hb-WK1"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="8Js-SD-RGK" secondAttribute="trailing" constant="12" id="DBN-E9-xtF"/>
+                                                <constraint firstItem="8Js-SD-RGK" firstAttribute="leading" secondItem="Wlq-d3-qpY" secondAttribute="leadingMargin" constant="12" id="Pne-eO-BNi"/>
+                                                <constraint firstItem="8Js-SD-RGK" firstAttribute="top" secondItem="Wlq-d3-qpY" secondAttribute="topMargin" constant="52" id="dgY-cp-9uO"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="aeW-Mz-etc">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aeW-Mz-etc" id="Kqe-PC-3xH">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="Iue-Cd-XzR">
+                                                    <rect key="frame" x="20" y="10" width="560" height="40"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="40" id="bKU-CK-Jcf"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="12"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Iue-Cd-XzR" firstAttribute="top" secondItem="Kqe-PC-3xH" secondAttribute="topMargin" constant="2" id="8GB-B5-Jkr"/>
+                                                <constraint firstItem="Iue-Cd-XzR" firstAttribute="leading" secondItem="Kqe-PC-3xH" secondAttribute="leadingMargin" constant="12" id="IA3-Xg-ZhO"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Iue-Cd-XzR" secondAttribute="trailing" constant="12" id="PIW-AG-LNg"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="mSg-L5-bqx">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mSg-L5-bqx" id="hM3-uK-7XS">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Major" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9C1-RW-AGl">
+                                                    <rect key="frame" x="20" y="10" width="560" height="40"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="40" id="yDO-Xh-syx"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="9C1-RW-AGl" firstAttribute="top" secondItem="hM3-uK-7XS" secondAttribute="topMargin" constant="2" id="Et8-aZ-wz0"/>
+                                                <constraint firstItem="9C1-RW-AGl" firstAttribute="leading" secondItem="hM3-uK-7XS" secondAttribute="leadingMargin" constant="12" id="hIW-iB-L9k"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="9C1-RW-AGl" secondAttribute="trailing" constant="12" id="n5c-1c-Liy"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="60" id="hbb-eh-kUS">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hbb-eh-kUS" id="ZwE-Qk-1xZ">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Minor" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="enk-zQ-F1J">
+                                                    <rect key="frame" x="20" y="10" width="560" height="40"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="40" id="Hhe-wy-HP4"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="enk-zQ-F1J" firstAttribute="leading" secondItem="ZwE-Qk-1xZ" secondAttribute="leadingMargin" constant="12" id="OZ4-Fi-Eyu"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="enk-zQ-F1J" secondAttribute="trailing" constant="12" id="Q7h-Qf-hrm"/>
+                                                <constraint firstItem="enk-zQ-F1J" firstAttribute="top" secondItem="ZwE-Qk-1xZ" secondAttribute="topMargin" constant="2" id="bia-wn-sgR"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="iAU-So-clP">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iAU-So-clP" id="LRh-AW-AYW">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I0T-fJ-Seb">
+                                                    <rect key="frame" x="20" y="11" width="560" height="37"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <state key="normal" title="Generate UUID">
+                                                        <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="generateUUID:" destination="sHZ-C7-U0G" eventType="touchDown" id="dMi-4J-cbJ"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="I0T-fJ-Seb" firstAttribute="leading" secondItem="LRh-AW-AYW" secondAttribute="leadingMargin" constant="12" id="FbI-BC-jdF"/>
+                                                <constraint firstItem="I0T-fJ-Seb" firstAttribute="top" secondItem="LRh-AW-AYW" secondAttribute="topMargin" constant="3" id="JNd-gb-fYH"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="I0T-fJ-Seb" secondAttribute="trailing" constant="12" id="vyg-x6-v1w"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="sHZ-C7-U0G" id="fc2-lw-LyD"/>
+                            <outlet property="delegate" destination="sHZ-C7-U0G" id="rYv-Bh-VW5"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <outlet property="generateUUIDButton" destination="I0T-fJ-Seb" id="GOq-ZQ-zCW"/>
+                        <outlet property="majorTextField" destination="9C1-RW-AGl" id="Cxd-HH-8k7"/>
+                        <outlet property="minorTextField" destination="enk-zQ-F1J" id="cwz-BJ-WId"/>
+                        <outlet property="nameTextField" destination="8Js-SD-RGK" id="snK-KH-0l5"/>
+                        <outlet property="startAdvertisingLabel" destination="Tpv-Cv-Xaj" id="pDy-gy-UD5"/>
+                        <outlet property="startAdvertisingSwitch" destination="DaL-2G-Xqt" id="MfG-80-a8o"/>
+                        <outlet property="uuidTextField" destination="Iue-Cd-XzR" id="9k4-bL-tCq"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="n7b-2V-zSb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="463" y="471"/>
+        </scene>
+    </scenes>
+</document>
