@@ -28,7 +28,6 @@ public protocol PeripheralManagerWrappable {
     func addWrappedService(service:WrappedService)
     func removeWrappedService(service:WrappedService)
     func removeAllWrappedServices()
-
 }
 
 public struct PeripheralQueue {

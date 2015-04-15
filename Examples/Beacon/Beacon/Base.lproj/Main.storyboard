@@ -27,10 +27,10 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DaL-2G-Xqt">
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="DaL-2G-Xqt">
                                                     <rect key="frame" x="531" y="16" width="51" height="31"/>
                                                     <connections>
-                                                        <action selector="toggleAdvertising:" destination="sHZ-C7-U0G" eventType="valueChanged" id="Z42-y1-rXF"/>
+                                                        <action selector="toggleAdvertise:" destination="sHZ-C7-U0G" eventType="valueChanged" id="zv3-Vk-9rB"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>

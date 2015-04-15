@@ -34,7 +34,7 @@ class BeaconStore {
         NSUserDefaults.standardUserDefaults().setObject(uuid.UUIDString, forKey:"beaconUUID")
     }
 
-    class func getBeaconName() -> String {
+    class func getBeaconName() -> String? {
         return NSUserDefaults.standardUserDefaults().stringForKey("beaconName")
     }
 
@@ -43,49 +43,27 @@ class BeaconStore {
     }
         
 
-    class func addBeacon(name:String, uuid:NSUUID) {
-        var beacons = self.getBeacons()
-        beacons[name] = uuid
-        self.setBeacons(beacons)
-    }
-    
-    class func removeBeacon(name:String) {
-        var beacons = self.getBeacons()
-        beacons.removeValueForKey(name)
-        self.setBeacons(beacons)
-    }
-    
-    class func getBeacon(name:String) -> NSUUID? {
-        let beacons = self.getBeacons()
-        return beacons[name]
-    }
-    
-    class func getBeaconConfigs() -> [String:[UInt16]] {
+    class func getBeaconConfig() -> [UInt16] {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let storedConfigs = userDefaults.dictionaryForKey("beaconConfig") {
-            var configs = [String:[UInt16]]()
-            for (name, config) in storedConfigs {
-                if let name = name as? String {
-                    if config.count == 2 {
-                        let minor = config[0] as! NSNumber
-                        let major = config[1] as! NSNumber
-                        configs[name] = [minor.unsignedShortValue, major.unsignedShortValue]
-                    }
-                }
+        if let storedConfig = userDefaults.arrayForKey("beaconConfig") {
+            var config = [UInt16]()
+            if storedConfig.count == 2 {
+                let minor = storedConfig[0] as! NSNumber
+                let major = storedConfig[1] as! NSNumber
+                config = [minor.unsignedShortValue, major.unsignedShortValue]
             }
-            return configs
+            return config
         } else {
-            return [:]
+            return []
         }
     }
     
-    class func setBeaconConfigs(configs:[String:[UInt16]]) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        var storeConfigs = [String:[NSNumber]]()
-        for (name, config) in configs {
-            storeConfigs[name] = [NSNumber(unsignedShort:config[0]), NSNumber(unsignedShort:config[1])]
+    class func setBeaconConfig(config:[UInt16]) {
+        if config.count == 2 {
+            let userDefaults = NSUserDefaults.standardUserDefaults()
+            var storeConfigs = [NSNumber(unsignedShort:config[0]), NSNumber(unsignedShort:config[1])]
+            userDefaults.setObject(storeConfigs, forKey:"beaconConfig")
         }
-        userDefaults.setObject(storeConfigs, forKey:"beaconConfig")
     }
     
 

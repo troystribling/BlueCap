@@ -132,14 +132,14 @@
 		05EAD68B1ADC1F5F00DCCBB7 /* Beacon */ = {
 			isa = PBXGroup;
 			children = (
-				05EAD6D91ADD6F0A00DCCBB7 /* UIAlertControllerExtensions.swift */,
 				05EAD68E1ADC1F5F00DCCBB7 /* AppDelegate.swift */,
+				05EAD6D11ADCBAB500DCCBB7 /* BeaconStore.swift */,
 				05EAD6AE1ADC1FD200DCCBB7 /* BeaconViewControllerTableViewController.swift */,
 				05EAD6951ADC1F5F00DCCBB7 /* Images.xcassets */,
 				05EAD6971ADC1F5F00DCCBB7 /* LaunchScreen.xib */,
 				05EAD6921ADC1F5F00DCCBB7 /* Main.storyboard */,
 				05EAD68C1ADC1F5F00DCCBB7 /* Supporting Files */,
-				05EAD6D11ADCBAB500DCCBB7 /* BeaconStore.swift */,
+				05EAD6D91ADD6F0A00DCCBB7 /* UIAlertControllerExtensions.swift */,
 			);
 			path = Beacon;
 			sourceTree = "<group>";

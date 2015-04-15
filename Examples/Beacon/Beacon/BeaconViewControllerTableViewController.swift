@@ -26,16 +26,10 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let beaconName = self.beaconName {
-            self.navigationItem.title = beaconName
-            self.nameTextField.text = beaconName
-            self.doneBarButtonItem.enabled = false
-            if let uuid = PeripheralStore.getBeacon(beaconName) {
-                self.uuidTextField.text = uuid.UUIDString
-            }
-            let beaconConfig = PeripheralStore.getBeaconConfig(beaconName)
-            self.minorTextField.text = "\(beaconConfig[0])"
-            self.majorTextField.text = "\(beaconConfig[1])"
+        self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+        self.startAdvertisingSwitch.on = false
+        if !PeripheralManager.sharedInstance.isAdvertising {
+            self.setUI()
         }
     }
     
@@ -45,36 +39,17 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func didResignActive() {
-        Logger.debug("PeripheralManagerBeaconViewController#didResignActive")
-        if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
-        }
-    }
-    
-    func didBecomeActive() {
-        Logger.debug("PeripheralManagerBeaconViewController#didBecomeActive")
-    }
-
     func enableAdvertising() {
-        
     }
     
     func disableAdvertising() {
-        
     }
     
-
     @IBAction func generateUUID(sender:AnyObject) {
         self.uuidTextField.text = NSUUID().UUIDString
-        self.enableAdvertising()
-    }
-    
-    @IBAction func toggleAdvertising(sender:AnyObject) {
-    
+        self.setUI()
     }
     
     // UITextFieldDelegate
@@ -88,24 +63,22 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
         let enteredName = self.nameTextField.text
         let enteredMajor = self.majorTextField.text
         let enteredMinor = self.minorTextField.text
-        if let enteredUUID self.uuidTextField.text, enteredName = self.nameTextField.text, enteredMajor = self.majorTextField.text, enteredMinor = self.minorTextField.text where (!enteredName.isEmpty && !enteredUUID.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty) {
-//                if let uuid = NSUUID(UUIDString:enteredUUID) {
-//                    if let minor = enteredMinor!.toInt() {
-//                        if let major = enteredMajor!.toInt() {
-//                            if minor < 65536 && major < 65536 {
-//                                PeripheralStore.addBeaconConfig(enteredName!, config:[UInt16(minor), UInt16(major)])
-//                            } else {
-//                                self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor must be less than 65536"), animated:true, completion:nil)
-//                                return false
-//                            }
-//                        } else {
-//                            self.presentViewController(UIAlertController.alertOnErrorWithMessage("major is not convertable to a number"), animated:true, completion:nil)
-//                            return false
-//                        }
-//                    } else {
-//                        self.presentViewController(UIAlertController.alertOnErrorWithMessage("minor is not convertable to a number"), animated:true, completion:nil)
-//                        return false
-//                    }
+        if let enteredUUID = self.uuidTextField.text, enteredName = self.nameTextField.text, enteredMajor = self.majorTextField.text, enteredMinor = self.minorTextField.text where (!enteredName.isEmpty && !enteredUUID.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty) {
+            if let uuid = NSUUID(UUIDString:enteredUUID), minor = enteredMinor.toInt(),  major = enteredMajor.toInt() {
+                if minor < 65536 && major < 65536 {
+                    BeaconStore.setBeaconConfig([UInt16(minor), UInt16(major)])
+                } else {
+                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor must be less than 65536"), animated:true, completion:nil)
+                    return false
+                }
+            } else {
+                self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor not convertable to a number"), animated:true, completion:nil)
+                return false
+            }
+        } else {
+            self.presentViewController(UIAlertController.alertOnErrorWithMessage("minor is not convertable to a number"), animated:true, completion:nil)
+            return false
+        }
 //                    PeripheralStore.addBeacon(enteredName!, uuid:uuid)
 //                    if let beaconName = self.beaconName {
 //                        if self.beaconName != enteredName! {
@@ -119,12 +92,13 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
 //                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
 //                    return false
 //                }
-        } else {
-            return false
-        }
+//        } else {
+//            return false
+//        }
+        return false
     }
     
-//    @IBAction func toggleAdvertise(sender:AnyObject) {
+    @IBAction func toggleAdvertise(sender:AnyObject) {
 //        let manager = PeripheralManager.sharedInstance
 //        if manager.isAdvertising {
 //            manager.stopAdvertising().onSuccess {
@@ -161,8 +135,8 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
 //                }
 //            }
 //        }
-//    }
-//    
+    }
+//
 //    @IBAction func toggleBeacon(sender:AnyObject) {
 //        if let peripheral = self.peripheral {
 //            if PeripheralStore.getBeaconEnabled(peripheral) {
@@ -180,5 +154,19 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
 //        }
 //    }
     
-
+    func setUI() {
+        if let uuid = BeaconStore.getBeaconUUID() {
+            self.uuidTextField.text = uuid.UUIDString
+            if let name = BeaconStore.getBeaconName() {
+                self.nameTextField.text = name
+                let beaconConfig = BeaconStore.getBeaconConfig()
+                if beaconConfig.count == 2 {
+                    self.minorTextField.text = "\(beaconConfig[0])"
+                    self.majorTextField.text = "\(beaconConfig[1])"
+                    self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+                    self.startAdvertisingSwitch.on = false
+                }
+            }
+        }
+    }
 }
