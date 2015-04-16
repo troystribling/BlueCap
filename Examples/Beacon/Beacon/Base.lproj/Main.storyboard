@@ -9,10 +9,10 @@
         <scene sceneID="WZa-Hp-fK8">
             <objects>
                 <tableViewController id="sHZ-C7-U0G" customClass="BeaconViewControllerTableViewController" customModule="Beacon" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Fbn-wc-fAP">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Fbn-wc-fAP">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
                             <tableViewSection headerTitle=" Status" id="IG7-iT-AuR">
                                 <cells>
@@ -46,14 +46,15 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Configure" id="SNj-VC-jSv">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="110" id="kbs-Lh-B2t">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="kbs-Lh-B2t">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kbs-Lh-B2t" id="Wlq-d3-qpY">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="8Js-SD-RGK">
-                                                    <rect key="frame" x="20" y="60" width="560" height="40"/>
+                                                    <rect key="frame" x="20" y="11" width="560" height="40"/>
                                                     <constraints>
+                                                        <constraint firstAttribute="width" constant="560" id="UgF-Wl-U29"/>
                                                         <constraint firstAttribute="height" constant="40" id="hdb-hb-WK1"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
@@ -63,7 +64,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="8Js-SD-RGK" secondAttribute="trailing" constant="12" id="DBN-E9-xtF"/>
                                                 <constraint firstItem="8Js-SD-RGK" firstAttribute="leading" secondItem="Wlq-d3-qpY" secondAttribute="leadingMargin" constant="12" id="Pne-eO-BNi"/>
-                                                <constraint firstItem="8Js-SD-RGK" firstAttribute="top" secondItem="Wlq-d3-qpY" secondAttribute="topMargin" constant="52" id="dgY-cp-9uO"/>
+                                                <constraint firstItem="8Js-SD-RGK" firstAttribute="top" secondItem="Wlq-d3-qpY" secondAttribute="topMargin" constant="3" id="dgY-cp-9uO"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>

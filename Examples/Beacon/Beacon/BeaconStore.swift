@@ -30,7 +30,7 @@ class BeaconStore {
         }
     }
     
-    class func setBeacon(uuid:NSUUID) {
+    class func setBeaconUUID(uuid:NSUUID) {
         NSUserDefaults.standardUserDefaults().setObject(uuid.UUIDString, forKey:"beaconUUID")
     }
 

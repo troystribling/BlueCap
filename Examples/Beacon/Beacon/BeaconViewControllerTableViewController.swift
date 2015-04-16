@@ -67,6 +67,10 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
             if let uuid = NSUUID(UUIDString:enteredUUID), minor = enteredMinor.toInt(),  major = enteredMajor.toInt() {
                 if minor < 65536 && major < 65536 {
                     BeaconStore.setBeaconConfig([UInt16(minor), UInt16(major)])
+                    BeaconStore.setBeaconUUID(uuid)
+                    BeaconStore.setBeaconName(enteredName)
+                    self.setUI()
+                    return true
                 } else {
                     self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor must be less than 65536"), animated:true, completion:nil)
                     return false
@@ -76,83 +80,34 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
                 return false
             }
         } else {
-            self.presentViewController(UIAlertController.alertOnErrorWithMessage("minor is not convertable to a number"), animated:true, completion:nil)
+            self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
             return false
         }
-//                    PeripheralStore.addBeacon(enteredName!, uuid:uuid)
-//                    if let beaconName = self.beaconName {
-//                        if self.beaconName != enteredName! {
-//                            PeripheralStore.removeBeacon(beaconName)
-//                            PeripheralStore.removeBeaconConfig(beaconName)
-//                        }
-//                    }
-//                    self.navigationController?.popViewControllerAnimated(true)
-//                    return true
-//                } else {
-//                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
-//                    return false
-//                }
-//        } else {
-//            return false
-//        }
-        return false
     }
     
     @IBAction func toggleAdvertise(sender:AnyObject) {
-//        let manager = PeripheralManager.sharedInstance
-//        if manager.isAdvertising {
-//            manager.stopAdvertising().onSuccess {
-//                self.setUIState()
-//            }
-//        } else {
-//            if let peripheral = self.peripheral {
-//                let afterAdvertisingStarted = {
-//                    self.setUIState()
-//                }
-//                let afterAdvertisingStartFailed:(error:NSError)->() = {(error) in
-//                    self.setUIState()
-//                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-//                }
-//                let advertisedServices = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-//                if PeripheralStore.getBeaconEnabled(peripheral) {
-//                    if let name = self.advertisedBeaconLabel.text {
-//                        if let uuid = PeripheralStore.getBeacon(name) {
-//                            let beaconConfig = PeripheralStore.getBeaconConfig(name)
-//                            let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:beaconConfig[1], minor:beaconConfig[0])
-//                            let future = manager.startAdvertising(beaconRegion)
-//                            future.onSuccess(afterAdvertisingStarted)
-//                            future.onFailure(afterAdvertisingStartFailed)
-//                        }
-//                    }
-//                } else if advertisedServices.count > 0 {
-//                    let future = manager.startAdvertising(peripheral, uuids:advertisedServices)
-//                    future.onSuccess(afterAdvertisingStarted)
-//                    future.onFailure(afterAdvertisingStartFailed)
-//                } else {
-//                    let future = manager.startAdvertising(peripheral)
-//                    future.onSuccess(afterAdvertisingStarted)
-//                    future.onFailure(afterAdvertisingStartFailed)
-//                }
-//            }
-//        }
+        let manager = PeripheralManager.sharedInstance
+        if manager.isAdvertising {
+            manager.stopAdvertising().onSuccess {
+            }
+        } else {
+            if let name = BeaconStore.getBeaconName(), uuid = BeaconStore.getBeaconUUID() {
+                let config = BeaconStore.getBeaconConfig()
+                if config.count == 2 {
+                    let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:config[1], minor:config[0])
+                    let future = manager.startAdvertising(beaconRegion)
+                    future.onSuccess{
+                    }
+                    future.onFailure{error in
+                    }
+                } else {
+                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("configuration invalid"), animated:true, completion:nil)
+                }
+            } else {
+                self.presentViewController(UIAlertController.alertOnErrorWithMessage("configuration invalid"), animated:true, completion:nil)
+            }
+        }
     }
-//
-//    @IBAction func toggleBeacon(sender:AnyObject) {
-//        if let peripheral = self.peripheral {
-//            if PeripheralStore.getBeaconEnabled(peripheral) {
-//                PeripheralStore.setBeaconEnabled(peripheral, enabled:false)
-//            } else {
-//                if let name = self.advertisedBeaconLabel.text {
-//                    if let uuid = PeripheralStore.getBeacon(name) {
-//                        PeripheralStore.setBeaconEnabled(peripheral, enabled:true)
-//                    } else {
-//                        self.presentViewController(UIAlertController.alertWithMessage("iBeacon is invalid"), animated:true, completion:nil)
-//                    }
-//                }
-//            }
-//            self.setUIState()
-//        }
-//    }
     
     func setUI() {
         if let uuid = BeaconStore.getBeaconUUID() {
