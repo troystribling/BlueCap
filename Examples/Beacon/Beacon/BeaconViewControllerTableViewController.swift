@@ -26,15 +26,15 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
         self.startAdvertisingSwitch.on = false
         if !PeripheralManager.sharedInstance.isAdvertising {
             self.setUI()
         }
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -48,27 +48,38 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
     }
     
     @IBAction func generateUUID(sender:AnyObject) {
-        self.uuidTextField.text = NSUUID().UUIDString
+        let uuid = NSUUID()
+        self.uuidTextField.text = uuid.UUIDString
+        BeaconStore.setBeaconUUID(uuid)
         self.setUI()
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return self.addBeacon()
+    func textFieldShouldReturn(textField:UITextField) -> Bool {
+        return self.addBeacon(textField)
     }
     
-    func addBeacon() -> Bool {
+    func addBeacon(textField:UITextField) -> Bool {
         let enteredUUID = self.uuidTextField.text
         let enteredName = self.nameTextField.text
         let enteredMajor = self.majorTextField.text
         let enteredMinor = self.minorTextField.text
-        if let enteredUUID = self.uuidTextField.text, enteredName = self.nameTextField.text, enteredMajor = self.majorTextField.text, enteredMinor = self.minorTextField.text where (!enteredName.isEmpty && !enteredUUID.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty) {
-            if let uuid = NSUUID(UUIDString:enteredUUID), minor = enteredMinor.toInt(),  major = enteredMajor.toInt() {
+        if let enteredName = self.nameTextField.text, enteredMajor = self.majorTextField.text, enteredMinor = self.minorTextField.text
+            where !enteredName.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty {
+            if let minor = enteredMinor.toInt(),  major = enteredMajor.toInt() {
                 if minor < 65536 && major < 65536 {
+                    if let enteredUUID = self.uuidTextField.text where !enteredUUID.isEmpty {
+                        if let uuid = NSUUID(UUIDString:enteredUUID), minor = enteredMinor.toInt(),  major = enteredMajor.toInt() {
+                            BeaconStore.setBeaconUUID(uuid)
+                        } else {
+                            self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                            self.startAdvertisingSwitch.on = false
+                            return false
+                        }
+                    }
                     BeaconStore.setBeaconConfig([UInt16(minor), UInt16(major)])
-                    BeaconStore.setBeaconUUID(uuid)
                     BeaconStore.setBeaconName(enteredName)
+                    textField.resignFirstResponder()
                     self.setUI()
                     return true
                 } else {
@@ -80,7 +91,6 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
                 return false
             }
         } else {
-            self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
             return false
         }
     }
@@ -97,8 +107,10 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
                     let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:config[1], minor:config[0])
                     let future = manager.startAdvertising(beaconRegion)
                     future.onSuccess{
+                        self.presentViewController(UIAlertController.alertWithMessage("started advertising"), animated:true, completion:nil)
                     }
                     future.onFailure{error in
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                     }
                 } else {
                     self.presentViewController(UIAlertController.alertOnErrorWithMessage("configuration invalid"), animated:true, completion:nil)
@@ -110,18 +122,29 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
     }
     
     func setUI() {
+        var uuidSet = false
         if let uuid = BeaconStore.getBeaconUUID() {
             self.uuidTextField.text = uuid.UUIDString
-            if let name = BeaconStore.getBeaconName() {
-                self.nameTextField.text = name
-                let beaconConfig = BeaconStore.getBeaconConfig()
-                if beaconConfig.count == 2 {
-                    self.minorTextField.text = "\(beaconConfig[0])"
-                    self.majorTextField.text = "\(beaconConfig[1])"
-                    self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
-                    self.startAdvertisingSwitch.on = false
-                }
-            }
+            uuidSet = true
+        }
+        var nameSet = false
+        if let name = BeaconStore.getBeaconName() {
+            self.nameTextField.text = name
+            nameSet = true
+        }
+        var majoMinorSet = false
+        let beaconConfig = BeaconStore.getBeaconConfig()
+        if beaconConfig.count == 2 {
+            self.minorTextField.text = "\(beaconConfig[0])"
+            self.majorTextField.text = "\(beaconConfig[1])"
+            majoMinorSet = true
+        }
+        if uuidSet && nameSet && majoMinorSet {
+            self.startAdvertisingLabel.textColor = UIColor.blackColor()
+            self.startAdvertisingSwitch.enabled = true
+        } else {
+            self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+            self.startAdvertisingSwitch.enabled = false
         }
     }
 }

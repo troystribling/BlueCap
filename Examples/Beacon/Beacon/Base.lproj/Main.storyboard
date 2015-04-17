@@ -54,11 +54,13 @@
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="8Js-SD-RGK">
                                                     <rect key="frame" x="20" y="11" width="560" height="40"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="560" id="UgF-Wl-U29"/>
                                                         <constraint firstAttribute="height" constant="40" id="hdb-hb-WK1"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="sHZ-C7-U0G" id="ftE-4H-0b7"/>
+                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -73,13 +75,16 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aeW-Mz-etc" id="Kqe-PC-3xH">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="Iue-Cd-XzR">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="UUID" textAlignment="center" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="Iue-Cd-XzR">
                                                     <rect key="frame" x="20" y="10" width="560" height="40"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="40" id="bKU-CK-Jcf"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="12"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="11"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="sHZ-C7-U0G" id="p8n-s3-wHz"/>
+                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -101,6 +106,9 @@
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="sHZ-C7-U0G" id="2aK-OG-jI7"/>
+                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -122,6 +130,9 @@
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="sHZ-C7-U0G" id="Pp4-o9-ANk"/>
+                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
