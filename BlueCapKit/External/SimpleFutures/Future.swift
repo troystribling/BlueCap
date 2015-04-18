@@ -257,11 +257,11 @@ public class Future<T> {
         return self.flatMap(nil, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
 
-    public func flatMap<M>(capacity:Int, executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M>  {
+    public func flatmap<M>(capacity:Int, executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M>  {
         return self.flatMap(capacity, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
 
-    public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M>  {
+    public func flatmap<M>(executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M>  {
         return self.flatMap(nil, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
 

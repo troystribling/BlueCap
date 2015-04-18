@@ -235,10 +235,10 @@ public class FutureStream<T> {
     
     // future stream extensions
     public func flatmap<M>(mapping:T -> Future<M>) -> FutureStream<M> {
-        return self.flatMap(self.defaultExecutionContext, mapping:mapping)
+        return self.flatmap(self.defaultExecutionContext, mapping:mapping)
     }
     
-    public func flatMap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> FutureStream<M> {
+    public func flatmap<M>(executionContext:ExecutionContext, mapping:T -> Future<M>) -> FutureStream<M> {
         let future = FutureStream<M>(capacity:self.capacity)
         self.onComplete(executionContext) {result in
             switch result {
