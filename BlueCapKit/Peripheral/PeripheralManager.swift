@@ -57,24 +57,22 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     
     private var afterAdvertisingStartedPromise      = Promise<Void>()
     private var afterAdvertsingStoppedPromise       = Promise<Void>()
-    private var afterPowerOnPromise                 = Promise<Void>()
-    private var afterPowerOffPromise                = Promise<Void>()
+    private let afterPowerOnPromise                 = StreamPromise<Void>()
+    private let afterPowerOffPromise                = StreamPromise<Void>()
     private var afterSeriviceAddPromise             = Promise<Void>()
     
     
     // power on
-    public func powerOn(peripheral:Wrapper) -> Future<Void> {
+    public func powerOn(peripheral:Wrapper) -> FutureStream<Void> {
         Logger.debug("PeripheralManagerImpl#powerOn")
-        self.afterPowerOnPromise = Promise<Void>()
         if peripheral.poweredOn {
             self.afterPowerOnPromise.success()
         }
         return self.afterPowerOnPromise.future
     }
     
-    public func powerOff(peripheral:Wrapper) -> Future<Void> {
+    public func powerOff(peripheral:Wrapper) -> FutureStream<Void> {
         Logger.debug("PeripheralManagerImpl#powerOff")
-        self.afterPowerOffPromise = Promise<Void>()
         if peripheral.poweredOff {
             self.afterPowerOffPromise.success()
         }
@@ -331,11 +329,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     }
     
     // power on
-    public func powerOn() -> Future<Void> {
+    public func powerOn() -> FutureStream<Void> {
         return self.impl.powerOn(self)
     }
     
-    public func powerOff() -> Future<Void> {
+    public func powerOff() -> FutureStream<Void> {
         return self.impl.powerOff(self)
     }
 

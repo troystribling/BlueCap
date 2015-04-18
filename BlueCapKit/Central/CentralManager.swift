@@ -46,8 +46,8 @@ public struct CentralQueue {
 public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
                                                     Wrapper.WrappedPeripheral:PeripheralWrappable> {
     
-    private var afterPowerOnPromise                 = Promise<Void>()
-    private var afterPowerOffPromise                = Promise<Void>()
+    private var afterPowerOnPromise                 = StreamPromise<Void>()
+    private var afterPowerOffPromise                = StreamPromise<Void>()
     internal var afterPeripheralDiscoveredPromise   = StreamPromise<Wrapper.WrappedPeripheral>()
 
     private var _isScanning      = false
@@ -95,9 +95,8 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     
     // power up
-    public func powerOn(central:Wrapper) -> Future<Void> {
+    public func powerOn(central:Wrapper) -> FutureStream<Void> {
         Logger.debug("CentralManagerImpl#powerOn")
-        self.afterPowerOnPromise = Promise<Void>()
         let future = self.afterPowerOnPromise.future
         if central.poweredOn {
             self.afterPowerOnPromise.success()
@@ -105,9 +104,8 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
         return future
     }
     
-    public func powerOff(central:Wrapper) -> Future<Void> {
+    public func powerOff(central:Wrapper) -> FutureStream<Void> {
         Logger.debug("CentralManagerImpl#powerOff")
-        self.afterPowerOffPromise = Promise<Void>()
         let future = self.afterPowerOffPromise.future
         if central.poweredOff {
             self.afterPowerOffPromise.success()
@@ -236,11 +234,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     // power up
-    public func powerOn() -> Future<Void> {
+    public func powerOn() -> FutureStream<Void> {
         return self.impl.powerOn(self)
     }
     
-    public func powerOff() -> Future<Void> {
+    public func powerOff() -> FutureStream<Void> {
         return self.impl.powerOff(self)
     }
     
