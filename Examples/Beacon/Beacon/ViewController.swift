@@ -1,5 +1,5 @@
 //
-//  BeaconViewControllerTableViewController.swift
+//  ViewController.swift
 //  Beacon
 //
 //  Created by Troy Stribling on 4/13/15.
@@ -10,7 +10,7 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
-class BeaconViewControllerTableViewController: UITableViewController, UITextFieldDelegate {
+class ViewController: UITableViewController, UITextFieldDelegate {
     
     @IBOutlet var nameTextField             : UITextField!
     @IBOutlet var uuidTextField             : UITextField!
@@ -19,6 +19,10 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
     @IBOutlet var generateUUIDButton        : UIButton!
     @IBOutlet var startAdvertisingSwitch    : UISwitch!
     @IBOutlet var startAdvertisingLabel     : UILabel!
+    
+    var startAdvertiseFuture    : Future<Void>?
+    var stopAdvertiseFuture     : Future<Void>?
+    var powerOnFuture           : Future<Void>?
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -32,19 +36,11 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
         super.viewWillAppear(animated)
         self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
         self.startAdvertisingSwitch.on = false
-        if !PeripheralManager.sharedInstance.isAdvertising {
-            self.setUI()
-        }
+        self.setUI()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-    }
-    
-    func enableAdvertising() {
-    }
-    
-    func disableAdvertising() {
     }
     
     @IBAction func generateUUID(sender:AnyObject) {
@@ -99,25 +95,55 @@ class BeaconViewControllerTableViewController: UITableViewController, UITextFiel
         let manager = PeripheralManager.sharedInstance
         if manager.isAdvertising {
             manager.stopAdvertising().onSuccess {
+                self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated:true, completion:nil)
             }
         } else {
-            if let name = BeaconStore.getBeaconName(), uuid = BeaconStore.getBeaconUUID() {
-                let config = BeaconStore.getBeaconConfig()
-                if config.count == 2 {
-                    let beaconRegion = BeaconRegion(proximityUUID:uuid, identifier:name, major:config[1], minor:config[0])
-                    let future = manager.startAdvertising(beaconRegion)
-                    future.onSuccess{
-                        self.presentViewController(UIAlertController.alertWithMessage("started advertising"), animated:true, completion:nil)
-                    }
-                    future.onFailure{error in
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    }
-                } else {
-                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("configuration invalid"), animated:true, completion:nil)
+            if let beaconRegion = self.createBeaconRegion() {
+                self.startAdvertiseFuture = manager.powerOn().flatmap{ _ -> Future<Void> in
+                    manager.startAdvertising(beaconRegion)
                 }
+                self.startAdvertiseFuture?.onSuccess {
+                    self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated:true, completion:nil)
+                }
+                self.startAdvertiseFuture?.onFailure {error in
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.startAdvertisingSwitch.on = false
+                }
+            }
+            self.stopAdvertiseFuture = manager.powerOff().flatmap { _ -> Future<Void> in
+                manager.stopAdvertising()
+            }
+            self.stopAdvertiseFuture?.onSuccess {
+                self.startAdvertisingSwitch.on = false
+                self.startAdvertisingSwitch.enabled = false
+                self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+                self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
+            }
+            self.stopAdvertiseFuture?.onFailure {error in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
+            self.powerOnFuture = self.stopAdvertiseFuture?.flatmap { _ -> Future<Void> in
+                manager.powerOn()
+            }
+            self.powerOnFuture?.onSuccess {
+                self.startAdvertisingSwitch.enabled = true
+                self.startAdvertisingLabel.textColor = UIColor.blackColor()
+            }
+        }
+    }
+
+    func createBeaconRegion() -> BeaconRegion? {
+        if let name = BeaconStore.getBeaconName(), uuid = BeaconStore.getBeaconUUID() {
+            let config = BeaconStore.getBeaconConfig()
+            if config.count == 2 {
+                return BeaconRegion(proximityUUID:uuid, identifier:name, major:config[1], minor:config[0])
             } else {
                 self.presentViewController(UIAlertController.alertOnErrorWithMessage("configuration invalid"), animated:true, completion:nil)
+                return nil
             }
+        } else {
+            self.presentViewController(UIAlertController.alertOnErrorWithMessage("configuration invalid"), animated:true, completion:nil)
+            return nil
         }
     }
     

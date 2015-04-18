@@ -57,22 +57,24 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     
     private var afterAdvertisingStartedPromise      = Promise<Void>()
     private var afterAdvertsingStoppedPromise       = Promise<Void>()
-    private let afterPowerOnPromise                 = StreamPromise<Void>()
-    private let afterPowerOffPromise                = StreamPromise<Void>()
+    private var afterPowerOnPromise                 = Promise<Void>()
+    private var afterPowerOffPromise                = Promise<Void>()
     private var afterSeriviceAddPromise             = Promise<Void>()
     
     
     // power on
-    public func powerOn(peripheral:Wrapper) -> FutureStream<Void> {
+    public func powerOn(peripheral:Wrapper) -> Future<Void> {
         Logger.debug("PeripheralManagerImpl#powerOn")
+        self.afterPowerOnPromise = Promise<Void>()
         if peripheral.poweredOn {
             self.afterPowerOnPromise.success()
         }
         return self.afterPowerOnPromise.future
     }
     
-    public func powerOff(peripheral:Wrapper) -> FutureStream<Void> {
+    public func powerOff(peripheral:Wrapper) -> Future<Void> {
         Logger.debug("PeripheralManagerImpl#powerOff")
+        self.afterPowerOffPromise = Promise<Void>()
         if peripheral.poweredOff {
             self.afterPowerOffPromise.success()
         }
@@ -191,10 +193,12 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         case CBPeripheralManagerState.PoweredOn:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOn")
             self.afterPowerOnPromise.success()
+            self.afterPowerOffPromise = Promise<Void>()
             break
         case CBPeripheralManagerState.PoweredOff:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOff")
             self.afterPowerOffPromise.success()
+            self.afterPowerOnPromise = Promise<Void>()
             break
         case CBPeripheralManagerState.Resetting:
             break
@@ -329,11 +333,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     }
     
     // power on
-    public func powerOn() -> FutureStream<Void> {
+    public func powerOn() -> Future<Void> {
         return self.impl.powerOn(self)
     }
     
-    public func powerOff() -> FutureStream<Void> {
+    public func powerOff() -> Future<Void> {
         return self.impl.powerOff(self)
     }
 
