@@ -192,13 +192,13 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         switch peripheral.state {
         case CBPeripheralManagerState.PoweredOn:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOn")
-            if !self.afterPowerOnPromise.completed() {
+            if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
             break
         case CBPeripheralManagerState.PoweredOff:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOff")
-            if !self.afterPowerOffPromise.completed() {
+            if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
             break

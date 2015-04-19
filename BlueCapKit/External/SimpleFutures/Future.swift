@@ -22,6 +22,10 @@ public struct SimpleFuturesException {
 public class Promise<T> {
     
     public let future = Future<T>()
+
+    public var completed : Bool {
+        return self.future.completed
+    }
     
     public init() {
     }
@@ -36,10 +40,6 @@ public class Promise<T> {
     
     public func complete(result:Try<T>) {
         self.future.complete(result)
-    }
-    
-    public func completed() -> Bool {
-        return self.future.completed()
     }
     
     public func success(value:T) {
@@ -60,6 +60,10 @@ public class Future<T> {
     internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
     typealias OnComplete                                    = Try<T> -> Void
     private var saveCompletes                               = [OnComplete]()
+    
+    public var completed : Bool {
+        return self.result != nil
+    }
     
     public init() {
     }
@@ -92,10 +96,6 @@ public class Future<T> {
             }
             self.saveCompletes.removeAll()
         }
-    }
-    
-    public func completed() -> Bool {
-        return self.result != nil
     }
     
     public func onComplete(complete:Try<T> -> Void) {

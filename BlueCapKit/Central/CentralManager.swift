@@ -134,13 +134,13 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
             break
         case .PoweredOff:
             Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: PoweredOff")
-            if !self.afterPowerOffPromise.completed() {
+            if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            if !self.afterPowerOnPromise.completed() {
+            if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
             break
