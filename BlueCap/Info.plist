@@ -30,6 +30,7 @@
 	<string>Required for iBeacon ranging.</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>bluetooth-central</string>
 		<string>bluetooth-peripheral</string>
 		<string>location</string>
 	</array>

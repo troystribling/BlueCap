@@ -20,9 +20,11 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var startAdvertisingSwitch    : UISwitch!
     @IBOutlet var startAdvertisingLabel     : UILabel!
     
-    var startAdvertiseFuture    : Future<Void>?
-    var stopAdvertiseFuture     : Future<Void>?
-    var powerOnFuture           : Future<Void>?
+    var startAdvertiseFuture            : Future<Void>?
+    var stopAdvertiseFuture             : Future<Void>?
+    var powerOffFuture                  : Future<Void>?
+    var turnedOffBluetoothFuture        : Future<Void>?
+    var bluetoothTurnedOffonStartFuture : Future<Void>?
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -94,8 +96,12 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBAction func toggleAdvertise(sender:AnyObject) {
         let manager = PeripheralManager.sharedInstance
         if manager.isAdvertising {
-            manager.stopAdvertising().onSuccess {
+            self.stopAdvertiseFuture = manager.stopAdvertising()
+            self.stopAdvertiseFuture?.onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated:true, completion:nil)
+            }
+            self.stopAdvertiseFuture?.onFailure {error in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
         } else {
             if let beaconRegion = self.createBeaconRegion() {
@@ -110,22 +116,34 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                     self.startAdvertisingSwitch.on = false
                 }
             }
-            self.stopAdvertiseFuture = manager.powerOff().flatmap { _ -> Future<Void> in
+            self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
                 manager.stopAdvertising()
             }
-            self.stopAdvertiseFuture?.onSuccess {
+            self.powerOffFuture?.onSuccess {
                 self.startAdvertisingSwitch.on = false
                 self.startAdvertisingSwitch.enabled = false
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
             }
-            self.stopAdvertiseFuture?.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            self.powerOffFuture?.onFailure {error in
+                self.startAdvertisingSwitch.on = false
+                self.startAdvertisingSwitch.enabled = false
+                self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+                if error.domain != BCError.domain || error.code != PeripheralManagerError.IsNotAdvertising.rawValue {
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                }
             }
-            self.powerOnFuture = self.stopAdvertiseFuture?.flatmap { _ -> Future<Void> in
+            self.turnedOffBluetoothFuture = self.powerOffFuture?.flatmap { _ -> Future<Void> in
                 manager.powerOn()
             }
-            self.powerOnFuture?.onSuccess {
+            self.turnedOffBluetoothFuture?.onSuccess {
+                self.startAdvertisingSwitch.enabled = true
+                self.startAdvertisingLabel.textColor = UIColor.blackColor()
+            }
+            self.bluetoothTurnedOffonStartFuture = self.powerOffFuture?.recoverWith { _  -> Future<Void> in
+                manager.powerOn()
+            }
+            self.bluetoothTurnedOffonStartFuture?.onSuccess {
                 self.startAdvertisingSwitch.enabled = true
                 self.startAdvertisingLabel.textColor = UIColor.blackColor()
             }
