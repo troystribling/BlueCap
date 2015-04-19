@@ -133,7 +133,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
             }
-            // enable controlls when bluetooth is powered on again when stop advertising is successul
+            // enable controls when bluetooth is powered on again when stop advertising is successul
             self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap { _ -> Future<Void> in
                 manager.powerOn()
             }
@@ -141,7 +141,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 self.startAdvertisingSwitch.enabled = true
                 self.startAdvertisingLabel.textColor = UIColor.blackColor()
             }
-            // enable controlls when bluetooth is powered on again when stop advertising fails
+            // enable controls when bluetooth is powered on again when stop advertising fails
             self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith { _  -> Future<Void> in
                 manager.powerOn()
             }

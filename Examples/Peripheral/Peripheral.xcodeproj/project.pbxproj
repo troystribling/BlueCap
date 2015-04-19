@@ -17,6 +17,8 @@
 		0513E2BA1AE2D7050062C505 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0513E2B61AE2D6EE0062C505 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0513E2BF1AE2D71B0062C505 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0513E2BE1AE2D71A0062C505 /* CoreBluetooth.framework */; };
 		0513E2C21AE2DC8D0062C505 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0513E2C11AE2DC8D0062C505 /* UIAlertControllerExtensions.swift */; };
+		05313CAC1AE42C2400647E77 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05313CAB1AE42C2400647E77 /* CoreMotion.framework */; };
+		05313CAE1AE42DC000647E77 /* Accelerometer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05313CAD1AE42DC000647E77 /* Accelerometer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +80,8 @@
 		0513E2B01AE2D6EE0062C505 /* BlueCapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BlueCapKit.xcodeproj; path = ../../BlueCapKit.xcodeproj; sourceTree = "<group>"; };
 		0513E2BE1AE2D71A0062C505 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		0513E2C11AE2DC8D0062C505 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
+		05313CAB1AE42C2400647E77 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		05313CAD1AE42DC000647E77 /* Accelerometer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Accelerometer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05313CAC1AE42C2400647E77 /* CoreMotion.framework in Frameworks */,
 				0513E2BF1AE2D71B0062C505 /* CoreBluetooth.framework in Frameworks */,
 				0513E2B91AE2D7050062C505 /* BlueCapKit.framework in Frameworks */,
 			);
@@ -103,6 +108,7 @@
 		0513E2821AE2D6AF0062C505 = {
 			isa = PBXGroup;
 			children = (
+				05313CAB1AE42C2400647E77 /* CoreMotion.framework */,
 				0513E2BE1AE2D71A0062C505 /* CoreBluetooth.framework */,
 				0513E2B01AE2D6EE0062C505 /* BlueCapKit.xcodeproj */,
 				0513E28D1AE2D6AF0062C505 /* Peripheral */,
@@ -123,6 +129,7 @@
 		0513E28D1AE2D6AF0062C505 /* Peripheral */ = {
 			isa = PBXGroup;
 			children = (
+				05313CAD1AE42DC000647E77 /* Accelerometer.swift */,
 				0513E2901AE2D6AF0062C505 /* AppDelegate.swift */,
 				0513E2C11AE2DC8D0062C505 /* UIAlertControllerExtensions.swift */,
 				0513E2921AE2D6AF0062C505 /* ViewController.swift */,
@@ -294,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0513E2931AE2D6AF0062C505 /* ViewController.swift in Sources */,
+				05313CAE1AE42DC000647E77 /* Accelerometer.swift in Sources */,
 				0513E2C21AE2DC8D0062C505 /* UIAlertControllerExtensions.swift in Sources */,
 				0513E2911AE2D6AF0062C505 /* AppDelegate.swift in Sources */,
 			);
@@ -429,6 +437,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Peripheral/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -496,6 +505,7 @@
 				0513E2AC1AE2D6AF0062C505 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0513E2AD1AE2D6AF0062C505 /* Build configuration list for PBXNativeTarget "PeripheralTests" */ = {
 			isa = XCConfigurationList;
@@ -504,6 +514,7 @@
 				0513E2AF1AE2D6AF0062C505 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
