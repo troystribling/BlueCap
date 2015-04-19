@@ -192,13 +192,15 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         switch peripheral.state {
         case CBPeripheralManagerState.PoweredOn:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOn")
-            self.afterPowerOnPromise.success()
-            self.afterPowerOffPromise = Promise<Void>()
+            if !self.afterPowerOnPromise.completed() {
+                self.afterPowerOnPromise.success()
+            }
             break
         case CBPeripheralManagerState.PoweredOff:
             Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOff")
-            self.afterPowerOffPromise.success()
-            self.afterPowerOnPromise = Promise<Void>()
+            if !self.afterPowerOffPromise.completed() {
+                self.afterPowerOffPromise.success()
+            }
             break
         case CBPeripheralManagerState.Resetting:
             break
@@ -240,7 +242,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
                 self.lookForAdvertisingToStop(peripheral)
             }
         } else {
-            Logger.debug("Peripheral#lookForAdvertisingToStop: Advertising stopped")
+            Logger.debug("PeripheralImpl#lookForAdvertisingToStop: Advertising stopped")
             self.afterAdvertsingStoppedPromise.success()
         }
     }

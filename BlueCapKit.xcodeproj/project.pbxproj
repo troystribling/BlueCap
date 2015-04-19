@@ -245,9 +245,9 @@
 		0551208E19F5506000ED3B74 /* BlueCapKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				0562D3211A5D83F1001013C9 /* Central */,
 				053139AC1AC1AD44002B4B36 /* Peripheral */,
 				0562D3241A5D8585001013C9 /* SerDe */,
-				0562D3211A5D83F1001013C9 /* Central */,
 				0551208F19F5506000ED3B74 /* Supporting Files */,
 			);
 			path = BlueCapKitTests;

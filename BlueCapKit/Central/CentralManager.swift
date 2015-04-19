@@ -46,8 +46,8 @@ public struct CentralQueue {
 public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
                                                     Wrapper.WrappedPeripheral:PeripheralWrappable> {
     
-    private var afterPowerOnPromise                 = StreamPromise<Void>()
-    private var afterPowerOffPromise                = StreamPromise<Void>()
+    private var afterPowerOnPromise                 = Promise<Void>()
+    private var afterPowerOffPromise                = Promise<Void>()
     internal var afterPeripheralDiscoveredPromise   = StreamPromise<Wrapper.WrappedPeripheral>()
 
     private var _isScanning      = false
@@ -95,22 +95,22 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     
     // power up
-    public func powerOn(central:Wrapper) -> FutureStream<Void> {
+    public func powerOn(central:Wrapper) -> Future<Void> {
         Logger.debug("CentralManagerImpl#powerOn")
-        let future = self.afterPowerOnPromise.future
+        self.afterPowerOnPromise = Promise<Void>()
         if central.poweredOn {
             self.afterPowerOnPromise.success()
         }
-        return future
+        return self.afterPowerOnPromise.future
     }
     
-    public func powerOff(central:Wrapper) -> FutureStream<Void> {
+    public func powerOff(central:Wrapper) -> Future<Void> {
         Logger.debug("CentralManagerImpl#powerOff")
-        let future = self.afterPowerOffPromise.future
+        self.afterPowerOffPromise = Promise<Void>()
         if central.poweredOff {
             self.afterPowerOffPromise.success()
         }
-        return future
+        return self.afterPowerOffPromise.future
     }
     
     public func didDiscoverPeripheral(peripheral:Wrapper.WrappedPeripheral) {
@@ -134,11 +134,15 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
             break
         case .PoweredOff:
             Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: PoweredOff")
-            self.afterPowerOffPromise.success()
+            if !self.afterPowerOffPromise.completed() {
+                self.afterPowerOffPromise.success()
+            }
             break
         case .PoweredOn:
             Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
-            self.afterPowerOnPromise.success()
+            if !self.afterPowerOnPromise.completed() {
+                self.afterPowerOnPromise.success()
+            }
             break
         }
     }
@@ -234,11 +238,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     // power up
-    public func powerOn() -> FutureStream<Void> {
+    public func powerOn() -> Future<Void> {
         return self.impl.powerOn(self)
     }
     
-    public func powerOff() -> FutureStream<Void> {
+    public func powerOff() -> Future<Void> {
         return self.impl.powerOff(self)
     }
     

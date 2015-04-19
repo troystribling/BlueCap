@@ -126,6 +126,7 @@ class PeripheralManagerTests: XCTestCase {
         super.tearDown()
     }
 
+    
     func testPowerOnWhenPoweredOn() {
         let mock = PeripheralManagerMock(isAdvertising:false, state:.PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
