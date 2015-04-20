@@ -227,7 +227,7 @@
 				055120AE19F5513700ED3B74 /* Peripheral */,
 				055120B219F5513700ED3B74 /* SerDe */,
 				055120B919F5513700ED3B74 /* Service Profiles */,
-				055120C219F5513700ED3B74 /* Service Profiles Definitions */,
+				055120C219F5513700ED3B74 /* Service Profile Definitions */,
 				0551208519F5506000ED3B74 /* Supporting Files */,
 				055120C819F5513700ED3B74 /* Utilities */,
 			);
@@ -308,7 +308,7 @@
 			path = "Service Profiles";
 			sourceTree = "<group>";
 		};
-		055120C219F5513700ED3B74 /* Service Profiles Definitions */ = {
+		055120C219F5513700ED3B74 /* Service Profile Definitions */ = {
 			isa = PBXGroup;
 			children = (
 				055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */,
@@ -317,7 +317,6 @@
 				055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */,
 				055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */,
 			);
-			name = "Service Profiles Definitions";
 			path = "Service Profile Definitions";
 			sourceTree = "<group>";
 		};

@@ -68,29 +68,59 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="Ll7-ei-umK">
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Update Period" id="Wmu-oZ-a2o">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="ATO-0Z-9LG">
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ll7-ei-umK" id="Kl0-cY-QDU">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ATO-0Z-9LG" id="gur-ia-1oR">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Update Period" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fkl-Nw-m9r">
-                                                    <rect key="frame" x="20" y="17" width="129" height="25"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value (ms)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LU0-RC-EjJ">
+                                                    <rect key="frame" x="20" y="17" width="101" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R45-Ib-Cgu">
-                                                    <rect key="frame" x="548" y="17" width="32" height="25"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7t-aT-zue">
+                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="R45-Ib-Cgu" firstAttribute="top" secondItem="Kl0-cY-QDU" secondAttribute="topMargin" constant="9" id="gIQ-G3-nhq"/>
-                                                <constraint firstItem="fkl-Nw-m9r" firstAttribute="leading" secondItem="Kl0-cY-QDU" secondAttribute="leadingMargin" constant="12" id="mEx-8r-lPF"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="R45-Ib-Cgu" secondAttribute="trailing" constant="12" id="sag-eu-PGV"/>
-                                                <constraint firstItem="fkl-Nw-m9r" firstAttribute="top" secondItem="Kl0-cY-QDU" secondAttribute="topMargin" constant="9" id="wC1-fV-6Kk"/>
+                                                <constraint firstItem="G7t-aT-zue" firstAttribute="top" secondItem="gur-ia-1oR" secondAttribute="topMargin" constant="9" id="D0H-Yd-Tq1"/>
+                                                <constraint firstItem="LU0-RC-EjJ" firstAttribute="top" secondItem="gur-ia-1oR" secondAttribute="topMargin" constant="9" id="WtD-gj-nAK"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="G7t-aT-zue" secondAttribute="trailing" constant="12" id="zK0-dp-DKj"/>
+                                                <constraint firstItem="LU0-RC-EjJ" firstAttribute="leading" secondItem="gur-ia-1oR" secondAttribute="leadingMargin" constant="12" id="zbW-hS-7Qv"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="N9T-zc-m28">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="N9T-zc-m28" id="ztB-Kp-4lS">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Raw Value" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GhO-TH-wKM">
+                                                    <rect key="frame" x="20" y="17" width="94" height="25"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pAY-6I-cU8">
+                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="GhO-TH-wKM" firstAttribute="leading" secondItem="ztB-Kp-4lS" secondAttribute="leadingMargin" constant="12" id="0OV-9S-BpY"/>
+                                                <constraint firstItem="pAY-6I-cU8" firstAttribute="top" secondItem="ztB-Kp-4lS" secondAttribute="topMargin" constant="9" id="GPJ-ZW-TXl"/>
+                                                <constraint firstItem="GhO-TH-wKM" firstAttribute="top" secondItem="ztB-Kp-4lS" secondAttribute="topMargin" constant="9" id="UC3-ig-aab"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="pAY-6I-cU8" secondAttribute="trailing" constant="12" id="v5k-i2-jch"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -267,10 +297,12 @@
                         </connections>
                     </tableView>
                     <connections>
+                        <outlet property="enableLabel" destination="Ord-Gz-DQs" id="adw-0p-FbI"/>
                         <outlet property="enabledSwitch" destination="GyD-6e-bBB" id="CNE-fR-5Tw"/>
+                        <outlet property="rawUpdatePeriodlabel" destination="pAY-6I-cU8" id="KB2-Ij-sAQ"/>
                         <outlet property="startAdvertisingLabel" destination="teB-n6-0e4" id="9XS-rK-Myo"/>
                         <outlet property="startAdvertisingSwitch" destination="vTf-mE-M5l" id="Kd6-xs-OpZ"/>
-                        <outlet property="updatePeriodLabel" destination="R45-Ib-Cgu" id="yG6-zI-YWc"/>
+                        <outlet property="updatePeriodLabel" destination="G7t-aT-zue" id="4WA-SP-CdA"/>
                         <outlet property="xAccelerationLabel" destination="SVK-Z8-RqJ" id="yD6-1h-jZo"/>
                         <outlet property="xRawAccelerationLabel" destination="N7L-4n-9xO" id="es3-w7-aEV"/>
                         <outlet property="yAccelerationLabel" destination="yCm-ac-0mL" id="zPe-A0-bn7"/>

@@ -8,9 +8,12 @@
 
 import UIKit
 import CoreBluetooth
+import CoreMotion
 import BlueCapKit
 
 class ViewController: UITableViewController {
+    
+    let g =  9.81
     
     @IBOutlet var xAccelerationLabel        : UILabel!
     @IBOutlet var yAccelerationLabel        : UILabel!
@@ -18,10 +21,14 @@ class ViewController: UITableViewController {
     @IBOutlet var xRawAccelerationLabel     : UILabel!
     @IBOutlet var yRawAccelerationLabel     : UILabel!
     @IBOutlet var zRawAccelerationLabel     : UILabel!
+    
+    @IBOutlet var rawUpdatePeriodlabel      : UILabel!
     @IBOutlet var updatePeriodLabel         : UILabel!
+
     @IBOutlet var startAdvertisingSwitch    : UISwitch!
-    @IBOutlet var enabledSwitch             : UISwitch!
     @IBOutlet var startAdvertisingLabel     : UILabel!
+    @IBOutlet var enableLabel               : UILabel!
+    @IBOutlet var enabledSwitch             : UISwitch!
     
     var startAdvertiseFuture            : Future<Void>?
     var stopAdvertiseFuture             : Future<Void>?
@@ -29,7 +36,8 @@ class ViewController: UITableViewController {
     var powerOffFutureSuccessFuture     : Future<Void>?
     var powerOffFutureFailedFuture      : Future<Void>?
     
-    let acceleromter = Accelerometer()
+    let accelerometer           = Accelerometer()
+    var accelrometerDataFuture  : FutureStream<CMAcceleration>?
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -41,6 +49,20 @@ class ViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        if self.accelerometer.accelerometerAvailable {
+            self.startAdvertisingSwitch.enabled = true
+            self.startAdvertisingLabel.textColor = UIColor.blackColor()
+            self.enabledSwitch.enabled = true
+            self.enableLabel.textColor = UIColor.blackColor()
+            self.updatePeriod()
+        } else {
+            self.startAdvertisingSwitch.enabled = false
+            self.startAdvertisingSwitch.on = false
+            self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+            self.enabledSwitch.enabled = false
+            self.enabledSwitch.on = false
+            self.enableLabel.textColor = UIColor.lightGrayColor()
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -48,7 +70,17 @@ class ViewController: UITableViewController {
     }
     
     @IBAction func toggleEnabled(sender:AnyObject) {
-        
+        if self.accelerometer.accelerometerActive {
+            self.accelerometer.stopAccelerometerUpdates()
+        } else {
+            self.accelrometerDataFuture = self.accelerometer.startAcceleromterUpdates()
+            self.accelrometerDataFuture?.onSuccess {data in
+                self.updateAccelerometerData(data)
+            }
+            self.accelrometerDataFuture?.onFailure {error in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
+        }
     }
     
     @IBAction func toggleAdvertise(sender:AnyObject) {
@@ -85,7 +117,7 @@ class ViewController: UITableViewController {
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
             }
-            // enable controls when bluetooth is powered on again when stop advertising is successul
+            // enable controls when bluetooth is powered on again after stop advertising is successul
             self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap { _ -> Future<Void> in
                 manager.powerOn()
             }
@@ -93,7 +125,7 @@ class ViewController: UITableViewController {
                 self.startAdvertisingSwitch.enabled = true
                 self.startAdvertisingLabel.textColor = UIColor.blackColor()
             }
-            // enable controls when bluetooth is powered on again when stop advertising fails
+            // enable controls when bluetooth is powered on again after     stop advertising fails
             self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith { _  -> Future<Void> in
                 manager.powerOn()
             }
@@ -103,6 +135,25 @@ class ViewController: UITableViewController {
                     self.startAdvertisingLabel.textColor = UIColor.blackColor()
                 }
             }
+        }
+    }
+    
+    func updateAccelerometerData(data:CMAcceleration) {
+        self.xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
+        self.yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
+        self.zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
+        if let xRaw = Int8(doubleValue:(-64.0*data.x)), yRaw = Int8(doubleValue:(-64.0*data.y)), zRaw = Int8(doubleValue:(64.0*data.z)) {
+            self.xRawAccelerationLabel.text = "\(xRaw)"
+            self.yRawAccelerationLabel.text = "\(yRaw)"
+            self.zRawAccelerationLabel.text = "\(zRaw)"
+        }
+    }
+    
+    func updatePeriod() {
+        let value = self.accelerometer.updatePeriod
+        if let msValue = UInt16(doubleValue:1000.0*value), rawValue = UInt16(doubleValue:100.0*value) {
+            self.updatePeriodLabel.text =  NSString(format: "%d", msValue) as String
+            self.rawUpdatePeriodlabel.text = NSString(format: "%d", rawValue) as String
         }
     }
     
