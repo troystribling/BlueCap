@@ -91,48 +91,58 @@ class ViewController: UITableViewController {
             }
         } else {
             // start monitoring when bluetooth is powered on
-            self.startAdvertiseFuture = manager.powerOn().flatmap{ _ -> Future<Void> in
-                manager.startAdvertising("BluecapKit")
-            }
-            self.startAdvertiseFuture?.onSuccess {
-                self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated:true, completion:nil)
-            }
-            self.startAdvertiseFuture?.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                self.startAdvertisingSwitch.on = false
-            }
-            // stop advertising on bluetooth power off
-            self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
-                manager.stopAdvertising()
-            }
-            self.powerOffFuture?.onSuccess {
-                self.startAdvertisingSwitch.on = false
-                self.startAdvertisingSwitch.enabled = false
-                self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
-                self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
-            }
-            self.powerOffFuture?.onFailure {error in
-                self.startAdvertisingSwitch.on = false
-                self.startAdvertisingSwitch.enabled = false
-                self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
-                self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
-            }
-            // enable controls when bluetooth is powered on again after stop advertising is successul
-            self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap { _ -> Future<Void> in
-                manager.powerOn()
-            }
-            self.powerOffFutureSuccessFuture?.onSuccess {
-                self.startAdvertisingSwitch.enabled = true
-                self.startAdvertisingLabel.textColor = UIColor.blackColor()
-            }
-            // enable controls when bluetooth is powered on again after     stop advertising fails
-            self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith { _  -> Future<Void> in
-                manager.powerOn()
-            }
-            self.powerOffFutureFailedFuture?.onSuccess {
-                if PeripheralManager.sharedInstance.poweredOn {
-                    self.startAdvertisingSwitch.enabled = true
-                    self.startAdvertisingLabel.textColor = UIColor.blackColor()
+            if let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid) {
+                if let serviceProfile = ProfileManager.sharedInstance.service(uuid) {
+                    let service = MutableService(profile:serviceProfile)
+                    service.characteristicsFromProfiles(serviceProfile.characteristics)
+                    self.startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
+                        manager.removeAllServices()
+                    }.flatmap {_ -> Future<Void> in
+                        manager.addService(service)
+                    }.flatmap {_ -> Future<Void> in
+                        manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
+                    }
+                    self.startAdvertiseFuture?.onSuccess {
+                        self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated:true, completion:nil)
+                    }
+                    self.startAdvertiseFuture?.onFailure {error in
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        self.startAdvertisingSwitch.on = false
+                    }
+                    // stop advertising on bluetooth power off
+                    self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
+                        manager.stopAdvertising()
+                    }
+                    self.powerOffFuture?.onSuccess {
+                        self.startAdvertisingSwitch.on = false
+                        self.startAdvertisingSwitch.enabled = false
+                        self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+                        self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
+                    }
+                    self.powerOffFuture?.onFailure {error in
+                        self.startAdvertisingSwitch.on = false
+                        self.startAdvertisingSwitch.enabled = false
+                        self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+                        self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
+                    }
+                    // enable controls when bluetooth is powered on again after stop advertising is successul
+                    self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap {_ -> Future<Void> in
+                        manager.powerOn()
+                    }
+                    self.powerOffFutureSuccessFuture?.onSuccess {
+                        self.startAdvertisingSwitch.enabled = true
+                        self.startAdvertisingLabel.textColor = UIColor.blackColor()
+                    }
+                    // enable controls when bluetooth is powered on again after     stop advertising fails
+                    self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith {_  -> Future<Void> in
+                        manager.powerOn()
+                    }
+                    self.powerOffFutureFailedFuture?.onSuccess {
+                        if PeripheralManager.sharedInstance.poweredOn {
+                            self.startAdvertisingSwitch.enabled = true
+                            self.startAdvertisingLabel.textColor = UIColor.blackColor()
+                        }
+                    }
                 }
             }
         }
@@ -146,6 +156,9 @@ class ViewController: UITableViewController {
             self.xRawAccelerationLabel.text = "\(xRaw)"
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
+            if PeripheralManager.sharedInstance.isAdvertising {
+                
+            }
         }
     }
     
