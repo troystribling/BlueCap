@@ -39,18 +39,16 @@ class ViewController: UITableViewController {
     let accelerometer           = Accelerometer()
     var accelrometerDataFuture  : FutureStream<CMAcceleration>?
     
-    let accelerometerService                    : MutableService
-    let accelerometerDataCharacteristic         : MutableCharacteristic
-    let accelerometerEnabledCharacteristic      : MutableCharacteristic
-    let accelerometerUpdatePeriodCharacteristic : MutableCharacteristic
+    let accelerometerService                    = MutableService(uuid:TISensorTag.AccelerometerService.uuid)
+    let accelerometerDataCharacteristic         = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Data.uuid)
+    let accelerometerEnabledCharacteristic      = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Enabled.uuid)
+    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid)
     
     required init(coder aDecoder:NSCoder) {
-        self.accelerometerService = MutableService(profile:ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
-        self.accelerometerDataCharacteristic = MutableCharacteristic(profile:RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
-        self.accelerometerEnabledCharacteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
-        self.accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
-        self.accelerometerService.characteristics = [self.accelerometerDataCharacteristic, self.accelerometerEnabledCharacteristic, self.accelerometerUpdatePeriodCharacteristic]
+        self.accelerometerService.characteristics =
+            [self.accelerometerDataCharacteristic, self.accelerometerEnabledCharacteristic, self.accelerometerUpdatePeriodCharacteristic]
         super.init(coder:aDecoder)
+        self.setInitialValues()
     }
     
     override func viewDidLoad() {
@@ -100,56 +98,60 @@ class ViewController: UITableViewController {
                 self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated:true, completion:nil)
             }
         } else {
-            // start monitoring
-            if let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid) {
-                // on power on remove all services add service and start advertising
-                self.startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
-                    manager.removeAllServices()
-                }.flatmap {_ -> Future<Void> in
-                    manager.addService(self.accelerometerService)
-                }.flatmap {_ -> Future<Void> in
-                    manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
-                }
-                self.startAdvertiseFuture?.onSuccess {
-                    self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated:true, completion:nil)
-                }
-                self.startAdvertiseFuture?.onFailure {error in
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    self.startAdvertisingSwitch.on = false
-                }
-                // stop advertising on bluetooth power off
-                self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
-                    manager.stopAdvertising()
-                }
-                self.powerOffFuture?.onSuccess {
-                    self.startAdvertisingSwitch.on = false
-                    self.startAdvertisingSwitch.enabled = false
-                    self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
-                    self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
-                }
-                self.powerOffFuture?.onFailure {error in
-                    self.startAdvertisingSwitch.on = false
-                    self.startAdvertisingSwitch.enabled = false
-                    self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
-                    self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
-                }
-                // enable controls when bluetooth is powered on again after stop advertising is successul
-                self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap {_ -> Future<Void> in
-                    manager.powerOn()
-                }
-                self.powerOffFutureSuccessFuture?.onSuccess {
+            self.startAdvertising()
+        }
+    }
+    
+    func startAdvertising() {
+        if let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid) {
+            let manager = PeripheralManager.sharedInstance
+            // on power on remove all services add service and start advertising
+            self.startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
+                manager.removeAllServices()
+            }.flatmap {_ -> Future<Void> in
+                manager.addService(self.accelerometerService)
+            }.flatmap {_ -> Future<Void> in
+                manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
+            }
+            self.startAdvertiseFuture?.onSuccess {
+                self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated:true, completion:nil)
+            }
+            self.startAdvertiseFuture?.onFailure {error in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.startAdvertisingSwitch.on = false
+            }
+            // stop advertising on bluetooth power off
+            self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
+                manager.stopAdvertising()
+            }
+            self.powerOffFuture?.onSuccess {
+                self.startAdvertisingSwitch.on = false
+                self.startAdvertisingSwitch.enabled = false
+                self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+                self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
+            }
+            self.powerOffFuture?.onFailure {error in
+                self.startAdvertisingSwitch.on = false
+                self.startAdvertisingSwitch.enabled = false
+                self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
+                self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
+            }
+            // enable controls when bluetooth is powered on again after stop advertising is successul
+            self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap {_ -> Future<Void> in
+                manager.powerOn()
+            }
+            self.powerOffFutureSuccessFuture?.onSuccess {
+                self.startAdvertisingSwitch.enabled = true
+                self.startAdvertisingLabel.textColor = UIColor.blackColor()
+            }
+            // enable controls when bluetooth is powered on again after     stop advertising fails
+            self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith {_  -> Future<Void> in
+                manager.powerOn()
+            }
+            self.powerOffFutureFailedFuture?.onSuccess {
+                if PeripheralManager.sharedInstance.poweredOn {
                     self.startAdvertisingSwitch.enabled = true
                     self.startAdvertisingLabel.textColor = UIColor.blackColor()
-                }
-                // enable controls when bluetooth is powered on again after stop advertising fails
-                self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith {_  -> Future<Void> in
-                    manager.powerOn()
-                }
-                self.powerOffFutureFailedFuture?.onSuccess {
-                    if PeripheralManager.sharedInstance.poweredOn {
-                        self.startAdvertisingSwitch.enabled = true
-                        self.startAdvertisingLabel.textColor = UIColor.blackColor()
-                    }
                 }
             }
         }
@@ -177,4 +179,13 @@ class ViewController: UITableViewController {
         }
     }
     
+    func setInitialValues() {
+        self.accelerometerEnabledCharacteristic.updateValue(TISensorTag.AccelerometerService.Enabled.No)
+        if let period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue:10) {
+            self.accelerometerUpdatePeriodCharacteristic.updateValue(period)
+        }
+        if let data = TISensorTag.AccelerometerService.Data(x:0.0, y:0.0, z:0.0) {
+            self.accelerometerDataCharacteristic.updateValue(data)
+        }
+    }
 }

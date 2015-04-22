@@ -365,10 +365,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     
     // services
     public func addService(service:MutableService) -> Future<Void> {
+        self.addConfiguredCharacteristics(service.characteristics)
         return self.impl.addService(self, service:service)
     }
     
     public func addServices(services:[MutableService]) -> Future<Void> {
+        for service in services {
+            self.addConfiguredCharacteristics(service.characteristics)
+        }
         return self.impl.addServices(self, services:services)
     }
 
@@ -445,4 +449,9 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:PeripheralQueue.queue)
     }
     
+    private func addConfiguredCharacteristics(characteristics:[MutableCharacteristic]) {
+        for characteristic in characteristics {
+            self.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
+        }
+    }
 }

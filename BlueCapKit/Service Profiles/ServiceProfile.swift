@@ -31,6 +31,10 @@ public class ServiceProfile {
         self.tag = tag
     }
     
+    public convenience init(uuid:String) {
+        self.init(uuid:uuid, name:"Unknown")
+    }
+
     public func addCharacteristic(characteristicProfile:CharacteristicProfile) {
         Logger.debug("ServiceProfile#createCharateristic: name=\(characteristicProfile.name), uuid=\(characteristicProfile.uuid.UUIDString)")
         self.characteristicProfiles[characteristicProfile.uuid] = characteristicProfile

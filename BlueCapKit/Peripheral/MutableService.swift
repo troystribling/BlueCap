@@ -42,7 +42,6 @@ public class MutableService : NSObject, MutableServiceWrappable {
         set {
             self._characteristics = newValue
             let cbCharacteristics = self._characteristics.reduce([CBMutableCharacteristic]()) {(cbCharacteristics, characteristic) in
-                PeripheralManager.sharedInstance.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
                 return cbCharacteristics + [characteristic.cbMutableChracteristic]
             }
             self.cbMutableService.characteristics = cbCharacteristics
@@ -55,6 +54,10 @@ public class MutableService : NSObject, MutableServiceWrappable {
         super.init()
     }
     
+    public convenience init(uuid:String) {
+        self.init(profile:ServiceProfile(uuid:uuid))
+    }
+
     public func characteristicsFromProfiles(profiles:[CharacteristicProfile]) {
         self.characteristics = profiles.map{MutableCharacteristic(profile:$0)}
     }
