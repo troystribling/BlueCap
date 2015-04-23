@@ -27,7 +27,7 @@ public protocol MutableCharacteristicWrappable {
     
     func dataFromStringValue(stringValue:[String:String]) -> NSData?
     
-    func updateValueWithData(value:NSData)
+    func updateValueWithData(value:NSData) -> Bool
     func respondToWrappedRequest(request:RequestWrapper, withResult result:ResultWrapper)
 }
 
@@ -66,23 +66,23 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
     }
     
     
-    public func updateValue<T:Deserializable>(characteristic:Wrapper, value:T) {
+    public func updateValue<T:Deserializable>(characteristic:Wrapper, value:T) -> Bool  {
         return characteristic.updateValueWithData(Serde.serialize(value))
     }
     
-    public func updateValue<T:RawDeserializable>(characteristic:Wrapper, value:T) {
+    public func updateValue<T:RawDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
         return characteristic.updateValueWithData(Serde.serialize(value))
     }
     
-    public func updateValue<T:RawArrayDeserializable>(characteristic:Wrapper, value:T) {
+    public func updateValue<T:RawArrayDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
         return characteristic.updateValueWithData(Serde.serialize(value))
     }
     
-    public func updateValue<T:RawPairDeserializable>(characteristic:Wrapper, value:T) {
+    public func updateValue<T:RawPairDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
         return characteristic.updateValueWithData(Serde.serialize(value))
     }
     
-    public func updateValue<T:RawArrayPairDeserializable>(characteristic:Wrapper, value:T) {
+    public func updateValue<T:RawArrayPairDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
         return characteristic.updateValueWithData(Serde.serialize(value))
     }
     
@@ -150,9 +150,12 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         return self.profile.dataFromStringValue(stringValue)
     }
     
-    public func updateValueWithData(value:NSData) {
+    public func updateValueWithData(value:NSData) -> Bool  {
         self._value = value
-        PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
+        if self.isUpdating {
+            self.isUpdating = PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
+        }
+        return self.isUpdating
     }
     
     public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
@@ -162,9 +165,11 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
 
     private let profile                         : CharacteristicProfile!
     private var _value                          : NSData?
-    
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
     
+    private var hasSubscriber   = false
+    private var isUpdating      = false
+
     public var permissions : CBAttributePermissions {
         return self.cbMutableChracteristic.permissions
     }
@@ -199,6 +204,22 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         return self.impl.didRespondToWriteRequest(request)
     }
     
+    public func didSubscribeToCharacteristic() {
+        self.hasSubscriber = true
+        self.isUpdating = true
+    }
+    
+    public func didUnsubscribeFromCharacteristic() {
+        self.hasSubscriber = false
+        self.isUpdating = false
+    }
+
+    public func peripheralManagerIsReadyToUpdateSubscribers() {
+        if self.hasSubscriber {
+            self.isUpdating = true
+        }
+    }
+
     public func updateValueWithString(value:Dictionary<String, String>) {
         if let data = self.profile.dataFromStringValue(value) {
             self.updateValueWithData(data)
@@ -211,23 +232,23 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         self.impl.respondToRequest(self, request:request, withResult:result)
     }
     
-    public func updateValue<T:Deserializable>(value:T) {
+    public func updateValue<T:Deserializable>(value:T) -> Bool {
         return self.impl.updateValue(self, value:value)
     }
 
-    public func updateValue<T:RawDeserializable>(value:T) {
+    public func updateValue<T:RawDeserializable>(value:T) -> Bool  {
         return self.impl.updateValue(self, value:value)
     }
 
-    public func updateValue<T:RawArrayDeserializable>(value:T) {
+    public func updateValue<T:RawArrayDeserializable>(value:T) -> Bool  {
         return self.impl.updateValue(self, value:value)
     }
 
-    public func updateValue<T:RawPairDeserializable>(value:T) {
+    public func updateValue<T:RawPairDeserializable>(value:T) -> Bool  {
         return self.impl.updateValue(self, value:value)
     }
 
-    public func updateValue<T:RawArrayPairDeserializable>(value:T) {
+    public func updateValue<T:RawArrayPairDeserializable>(value:T) -> Bool  {
         return self.impl.updateValue(self, value:value)
     }
 

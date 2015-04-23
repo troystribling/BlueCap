@@ -35,6 +35,8 @@ class ViewController: UITableViewController {
     var powerOffFuture                      : Future<Void>?
     var powerOffFutureSuccessFuture         : Future<Void>?
     var powerOffFutureFailedFuture          : Future<Void>?
+    var accelerometerUpdatePeriodFuture     : FutureStream<CBATTRequest>?
+    var accelerometerEnabledFuture          : FutureStream<CBATTRequest>?
     
     let accelerometer           = Accelerometer()
     var accelrometerDataFuture  : FutureStream<CMAcceleration>?
@@ -97,6 +99,7 @@ class ViewController: UITableViewController {
             manager.stopAdvertising().onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated:true, completion:nil)
             }
+            self.accelerometerUpdatePeriodCharacteristic.stopProcessingWriteRequests()
         } else {
             self.startAdvertising()
         }
@@ -154,6 +157,27 @@ class ViewController: UITableViewController {
                     self.startAdvertisingLabel.textColor = UIColor.blackColor()
                 }
             }
+            self.accelerometerUpdatePeriodFuture = self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(capacity:2)
+            self.accelerometerUpdatePeriodFuture?.onSuccess {request in
+                if request.value.length == 8 {
+                    self.accelerometerUpdatePeriodCharacteristic.value = request.value
+                    self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
+                    self.updatePeriod()
+                } else {
+                    self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+                }
+            }
+            self.accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity:2)
+            self.accelerometerEnabledFuture?.onSuccess {request in
+                if request.value.length == 8 {
+                    self.accelerometerEnabledCharacteristic.value = request.value
+                    self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
+                    self.updatePeriod()
+                } else {
+                    self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+                }
+            }
+            
         }
     }
     
@@ -165,8 +189,8 @@ class ViewController: UITableViewController {
             self.xRawAccelerationLabel.text = "\(xRaw)"
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
-            if PeripheralManager.sharedInstance.isAdvertising {
-                
+            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) {
+                self.accelerometerDataCharacteristic.updateValue(data)
             }
         }
     }
@@ -181,8 +205,10 @@ class ViewController: UITableViewController {
     
     func setInitialValues() {
         self.accelerometerEnabledCharacteristic.updateValue(TISensorTag.AccelerometerService.Enabled.No)
-        if let period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue:10) {
-            self.accelerometerUpdatePeriodCharacteristic.updateValue(period)
+        if let rawPeriod = UInt8(doubleValue:100.0*self.accelerometer.updatePeriod) {
+            if let period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue:rawPeriod) {
+                self.accelerometerUpdatePeriodCharacteristic.updateValue(period)
+            }
         }
         if let data = TISensorTag.AccelerometerService.Data(x:0.0, y:0.0, z:0.0) {
             self.accelerometerDataCharacteristic.updateValue(data)

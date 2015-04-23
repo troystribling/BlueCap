@@ -34,7 +34,7 @@ class Accelerometer {
     }
     
     init() {
-        self.motionManager.accelerometerUpdateInterval = 0.1
+        self.motionManager.accelerometerUpdateInterval = 1.0
     }
 
     func startAcceleromterUpdates() -> FutureStream<CMAcceleration> {

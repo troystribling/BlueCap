@@ -405,10 +405,16 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     
     public func peripheralManager(_:CBPeripheralManager!, central:CBCentral!, didSubscribeToCharacteristic characteristic:CBCharacteristic!) {
         Logger.debug("PeripheralManager#didSubscribeToCharacteristic")
+        if let characteristic = self.configuredCharcteristics[characteristic] {
+            characteristic.didSubscribeToCharacteristic()
+        }
     }
     
     public func peripheralManager(_:CBPeripheralManager!, central:CBCentral!, didUnsubscribeFromCharacteristic characteristic:CBCharacteristic!) {
         Logger.debug("PeripheralManager#didUnsubscribeFromCharacteristic")
+        if let characteristic = self.configuredCharcteristics[characteristic] {
+            characteristic.didUnsubscribeFromCharacteristic()
+        }
     }
     
     public func peripheralManagerIsReadyToUpdateSubscribers(_:CBPeripheralManager!) {
