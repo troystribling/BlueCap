@@ -49,11 +49,7 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
     }
     
     public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<Wrapper.RequestWrapper> {
-        if let capacity = capacity {
-            self.processWriteRequestPromise = StreamPromise<Wrapper.RequestWrapper>(capacity:capacity)
-        } else {
-            self.processWriteRequestPromise = StreamPromise<Wrapper.RequestWrapper>()
-        }
+        self.processWriteRequestPromise = StreamPromise<Wrapper.RequestWrapper>(capacity:capacity)
         return self.processWriteRequestPromise!.future
     }
     
@@ -186,6 +182,12 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         self.profile = profile
         self._value = profile.initialValue
         self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
+    }
+
+    public init(uuid:String, properties:CBCharacteristicProperties, permissions:CBAttributePermissions, value:NSData?) {
+        self.profile = CharacteristicProfile(uuid:uuid)
+        self._value = value
+        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
     }
 
     public convenience init(uuid:String) {

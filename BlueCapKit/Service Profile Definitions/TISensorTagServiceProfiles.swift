@@ -124,6 +124,14 @@ public struct TISensorTag {
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
             
+            public init(boolValue:Bool) {
+                if boolValue {
+                    self = Enabled.Yes
+                } else {
+                    self = Enabled.No
+                }
+            }
+            
             public init?(stringValue:[String:String]) {
                 if let value = stringValue[Enabled.name] {
                     switch value {
@@ -145,6 +153,15 @@ public struct TISensorTag {
                     return [Enabled.name:"No"]
                 case .Yes:
                     return [Enabled.name:"Yes"]
+                }
+            }
+            
+            public var boolValue : Bool {
+                switch self {
+                case .No:
+                    return false
+                case .Yes:
+                    return true
                 }
             }
         }
