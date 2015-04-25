@@ -132,9 +132,13 @@ class ViewController: UITableViewController {
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 self.startAdvertisingSwitch.on = false
             }
-            // stop advertising on bluetooth power off
+            // stop advertising and updating accelerometer on bluetooth power off
             self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
-                manager.stopAdvertising()
+                if self.accelerometer.accelerometerActive {
+                    self.accelerometer.stopAccelerometerUpdates()
+                    self.enabledSwitch.on = false
+                }
+                return manager.stopAdvertising()
             }
             self.powerOffFuture?.onSuccess {
                 self.startAdvertisingSwitch.on = false
@@ -215,7 +219,7 @@ class ViewController: UITableViewController {
     }
     
     func updateEnabled() {
-        if let enabled : TISensorTag.AccelerometerService.Enabled = Serde.deserialize(self.accelerometerEnabledCharacteristic.value) {
+        if let enabled : TISensorTag.AccelerometerService.Enabled = Serde.deserialize(self.accelerometerEnabledCharacteristic.value)  where self.enabledSwitch.on != enabled.boolValue {
             self.enabledSwitch.on = enabled.boolValue
             self.toggleEnabled(self)
         }
