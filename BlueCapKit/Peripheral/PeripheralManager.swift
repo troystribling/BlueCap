@@ -419,6 +419,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     
     public func peripheralManagerIsReadyToUpdateSubscribers(_:CBPeripheralManager!) {
         Logger.debug("PeripheralManager#peripheralManagerIsReadyToUpdateSubscribers")
+        for characteristic in self.configuredCharcteristics.values {
+            if characteristic.hasSubscriber {
+                characteristic.peripheralManagerIsReadyToUpdateSubscribers()
+            }
+        }
     }
     
     public func peripheralManager(_:CBPeripheralManager!, didReceiveReadRequest request:CBATTRequest!) {

@@ -19,6 +19,7 @@ public protocol MutableCharacteristicWrappable {
     var uuid            : CBUUID            {get}
     var name            : String            {get}
     var value           : NSData!           {get}
+    var hasSubscriber   : Bool              {get}
     var stringValues    : [String]          {get}
     var stringValue     : [String:String]?  {get}
 
@@ -44,6 +45,9 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
                                                      Wrapper.ResultWrapper:CBATTErrorWrappable> {
     
     internal var processWriteRequestPromise : StreamPromise<Wrapper.RequestWrapper>?
+    internal var hasSubscriber   = false
+    internal var isUpdating      = false
+
     
     public init() {
     }
@@ -61,25 +65,31 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
         characteristic.respondToWrappedRequest(request, withResult:result)
     }
     
+    public func updateValueWithData(characteristic:Wrapper, value:NSData) -> Bool  {
+        if self.isUpdating && characteristic.propertyEnabled(.Notify) {
+            self.isUpdating = characteristic.updateValueWithData(value)
+        }
+        return self.isUpdating
+    }
     
     public func updateValue<T:Deserializable>(characteristic:Wrapper, value:T) -> Bool  {
-        return characteristic.updateValueWithData(Serde.serialize(value))
+        return self.updateValueWithData(characteristic, value:Serde.serialize(value))
     }
     
     public func updateValue<T:RawDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
-        return characteristic.updateValueWithData(Serde.serialize(value))
+        return self.updateValueWithData(characteristic, value:Serde.serialize(value))
     }
     
     public func updateValue<T:RawArrayDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
-        return characteristic.updateValueWithData(Serde.serialize(value))
+        return self.updateValueWithData(characteristic, value:Serde.serialize(value))
     }
     
     public func updateValue<T:RawPairDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
-        return characteristic.updateValueWithData(Serde.serialize(value))
+        return self.updateValueWithData(characteristic, value:Serde.serialize(value))
     }
     
     public func updateValue<T:RawArrayPairDeserializable>(characteristic:Wrapper, value:T) -> Bool  {
-        return characteristic.updateValueWithData(Serde.serialize(value))
+        return self.updateValueWithData(characteristic, value:Serde.serialize(value))
     }
     
     public func didRespondToWriteRequest(request:Wrapper.RequestWrapper) -> Bool {
@@ -88,6 +98,22 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
             return true
         } else {
             return false
+        }
+    }
+
+    public func didSubscribeToCharacteristic() {
+        self.hasSubscriber = true
+        self.isUpdating = true
+    }
+    
+    public func didUnsubscribeFromCharacteristic() {
+        self.hasSubscriber = false
+        self.isUpdating = false
+    }
+    
+    public func peripheralManagerIsReadyToUpdateSubscribers() {
+        if self.hasSubscriber {
+            self.isUpdating = true
         }
     }
 
@@ -122,6 +148,10 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         }
     }
 
+    public var hasSubscriber : Bool {
+        return self.impl.hasSubscriber
+    }
+    
     public var stringValues : [String] {
         return self.profile.stringValues
     }
@@ -147,11 +177,7 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     }
     
     public func updateValueWithData(value:NSData) -> Bool  {
-        self._value = value
-        if self.isUpdating {
-            self.isUpdating = PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
-        }
-        return self.isUpdating
+            return PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
     public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
@@ -163,9 +189,6 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     private var _value                          : NSData?
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
     
-    private var hasSubscriber   = false
-    private var isUpdating      = false
-
     public var permissions : CBAttributePermissions {
         return self.cbMutableChracteristic.permissions
     }
@@ -207,19 +230,15 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     }
     
     public func didSubscribeToCharacteristic() {
-        self.hasSubscriber = true
-        self.isUpdating = true
+        self.impl.didSubscribeToCharacteristic()
     }
     
     public func didUnsubscribeFromCharacteristic() {
-        self.hasSubscriber = false
-        self.isUpdating = false
+        self.impl.didUnsubscribeFromCharacteristic()
     }
 
     public func peripheralManagerIsReadyToUpdateSubscribers() {
-        if self.hasSubscriber {
-            self.isUpdating = true
-        }
+        self.impl.peripheralManagerIsReadyToUpdateSubscribers()
     }
 
     public func updateValueWithString(value:Dictionary<String, String>) {
