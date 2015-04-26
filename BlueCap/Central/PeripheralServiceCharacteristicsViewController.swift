@@ -59,7 +59,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {
-        Logger.debug("PeripheralServiceCharacteristicsViewController#peripheralDisconnected")
+        Logger.debug()
         self.tableView.reloadData()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
@@ -73,11 +73,11 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug("PeripheralServiceCharacteristicsViewController#didResignActive")
+        Logger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralServiceCharacteristicsViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITableViewDataSource

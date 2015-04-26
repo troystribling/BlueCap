@@ -52,14 +52,14 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     }
     
     func didResignActive() {
-        Logger.debug("PeripheralManagerBeaconViewController#didResignActive")
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralManagerBeaconViewController#didBecomeActive")
+        Logger.debug()
     }
 
     @IBAction func generateUUID(sender:AnyObject) {

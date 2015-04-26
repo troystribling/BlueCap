@@ -91,14 +91,14 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
     }
     
     func didResignActive() {
-        Logger.debug("PeripheralManagerServiceCharacteristicViewController#didResignActive")
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralManagerServiceCharacteristicViewController#didBecomeActive")
+        Logger.debug()
     }
 
     func booleanStringValue(value:Bool) -> String {

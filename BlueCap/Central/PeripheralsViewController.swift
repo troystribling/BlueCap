@@ -77,7 +77,7 @@ class PeripheralsViewController : UITableViewController {
     func toggleScan(sender:AnyObject) {
         if BeaconManager.sharedInstance.isMonitoring == false {
             let central = CentralManager.sharedInstance
-            Logger.debug("isScanning: \(central.isScanning)")
+            Logger.debug(message:"isScanning: \(central.isScanning)")
             if central.isScanning {
                 if  ConfigStore.getScanTimeoutEnabled() {
                     TimedScannerator.sharedInstance.stopScanning()
@@ -100,11 +100,11 @@ class PeripheralsViewController : UITableViewController {
     
     // utils
     func didResignActive() {
-        Logger.debug("PeripheralsViewController#didResignActive")
+        Logger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralsViewController#didBecomeActive")
+        Logger.debug()
         self.tableView.reloadData()
         self.setScanButton()
     }
@@ -119,7 +119,7 @@ class PeripheralsViewController : UITableViewController {
     
     func powerOn() {
         CentralManager.sharedInstance.powerOn().onSuccess {
-            Logger.debug("PeripheralsViewController#powerOn")
+            Logger.debug()
             self.startScan()
             self.setScanButton()
         }
@@ -133,8 +133,8 @@ class PeripheralsViewController : UITableViewController {
         }
         let future = connectorator.onConnect()
         future.onSuccess {_ in
-            Logger.debug("Connectorator#connect")
-            Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+            Logger.debug()
+            Notify.withMessage("peripheral: '\(peripheral.name)'")
             self.updateWhenActive()
         }
         future.onFailure {error in
@@ -142,26 +142,26 @@ class PeripheralsViewController : UITableViewController {
                 if let connectoratorError = ConnectoratorError(rawValue:error.code) {
                     switch connectoratorError {
                     case .Timeout:
-                        Logger.debug("Connectorator#Timeout: '\(peripheral.name)'")
+                        Logger.debug(message:"Timeout: '\(peripheral.name)'")
                         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                         peripheral.reconnect()
                         self.updateWhenActive()
                     case .Disconnect:
-                        Logger.debug("Connectorator#Disconnect")
+                        Logger.debug(message:"Disconnect")
                         Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                         peripheral.reconnect()
                         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                         self.updateWhenActive()
                     case .ForceDisconnect:
-                        Logger.debug("Connectorator#ForcedDisconnect")
+                        Logger.debug(message:"ForcedDisconnect")
                         Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                         self.updateWhenActive()
                     case .Failed:
-                        Logger.debug("Connectorator#Failed")
+                        Logger.debug(message:"Failed")
                         self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                     case .GiveUp:
-                        Logger.debug("Connectorator#GiveUp: '\(peripheral.name)'")
+                        Logger.debug(message:"GiveUp: '\(peripheral.name)'")
                         peripheral.terminate()
                         self.updateWhenActive()
                     }
@@ -184,7 +184,7 @@ class PeripheralsViewController : UITableViewController {
         }
         let afterTimeout = {(error:NSError) -> Void in
             if error.domain == BCError.domain && error.code == PeripheralError.DiscoveryTimeout.rawValue {
-                Logger.debug("Scannerator#timeoutScan: timing out")
+                Logger.debug(message:"timeoutScan: timing out")
                 TimedScannerator.sharedInstance.stopScanning()
                 self.setScanButton()
             }
@@ -217,7 +217,7 @@ class PeripheralsViewController : UITableViewController {
                 future.onFailure(afterTimeout)
             }
         default:
-            Logger.debug("Scan Mode :'\(scanMode)' invalid")
+            Logger.debug(message:"Scan Mode :'\(scanMode)' invalid")
         }
     }
         

@@ -102,7 +102,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     func peripheralDisconnected() {
-        Logger.debug("PeripheralServiceCharacteristicValuesViewController#peripheralDisconnected")
+        Logger.debug()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
                 self.progressView.remove()
@@ -115,11 +115,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
 
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-       Logger.debug("PeripheralServiceCharacteristicValuesViewController#didResignActive")
+       Logger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralServiceCharacteristicValuesViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITableViewDataSource

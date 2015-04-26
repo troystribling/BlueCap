@@ -39,14 +39,14 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     func didResignActive() {
-        Logger.debug("PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController#didResignActive")
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITableViewDataSource

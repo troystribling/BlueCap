@@ -44,11 +44,11 @@ class PeripheralAdvertisementsViewController : UITableViewController {
 
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#didResignActive")
+        Logger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralServiceCharacteristicEditDiscreteValuesViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITableViewDataSource

@@ -43,14 +43,14 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
     }
 
     func didResignActive() {
-        Logger.debug("PeripheralManagerServiceCharacteristicEditValueViewController#didResignActive")
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralManagerServiceCharacteristicEditValueViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITextFieldDelegate

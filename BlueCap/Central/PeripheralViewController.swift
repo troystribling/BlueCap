@@ -99,7 +99,7 @@ class PeripheralViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {        
-        Logger.debug("PeripheralViewController#peripheralDisconnected")
+        Logger.debug()
         self.progressView.remove()
         if self.peripehealConnected {
             self.peripehealConnected = false
@@ -110,12 +110,12 @@ class PeripheralViewController : UITableViewController {
     }
     
     func didResignActive() {
-        Logger.debug("PeripheralViewController#didResignActive")
+        Logger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralViewController#didBecomeActive")
+        Logger.debug()
     }
     
     func setStateLabel() {

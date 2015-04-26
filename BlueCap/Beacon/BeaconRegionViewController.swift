@@ -43,12 +43,12 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     }
     
     func didResignActive() {
-        Logger.debug("BeaconRegionsViewController#didResignActive")
+        Logger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func didBecomeActive() {
-        Logger.debug("BeaconRegionsViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITextFieldDelegate

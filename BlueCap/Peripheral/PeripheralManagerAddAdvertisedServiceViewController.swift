@@ -53,14 +53,14 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     }
     
     func didResignActive() {
-        Logger.debug("PeripheralManagerAdvertisedServicesViewController#didResignActive")
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralManagerAdvertisedServicesViewController#didBecomeActive")
+        Logger.debug()
     }
 
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {

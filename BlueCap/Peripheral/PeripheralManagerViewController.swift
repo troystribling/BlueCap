@@ -211,11 +211,11 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
     
     func didResignActive() {
-        Logger.debug("PeripheralManagerViewController#didResignActive")
+        Logger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralManagerViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITextFieldDelegate

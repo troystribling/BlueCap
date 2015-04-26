@@ -46,7 +46,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     }
     
     func peripheralDisconnected() {
-        Logger.debug("PeripheralServiceCharacteristicEditValueViewController#peripheralDisconnected")
+        Logger.debug()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
                 self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
@@ -59,11 +59,11 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
 
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug("PeripheralServiceCharacteristicEditValueViewController#didResignActive")
+        Logger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralServiceCharacteristicEditValueViewController#didBecomeActive")
+        Logger.debug()
     }
 
     // UITextFieldDelegate
@@ -94,7 +94,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                     write.onFailure(afterWriteFailed)
                 }
             } else {
-                Logger.debug("VALUE: \(newValue.dataFromHexString())")
+                Logger.debug(message:"VALUE: \(newValue.dataFromHexString())")
                 let write = characteristic.writeData(newValue.dataFromHexString())
                 write.onSuccess(afterWriteSuceses)
                 write.onFailure(afterWriteFailed)

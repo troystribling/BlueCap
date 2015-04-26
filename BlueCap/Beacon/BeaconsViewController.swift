@@ -48,7 +48,7 @@ class BeaconsViewController: UITableViewController {
     }
 
     func updateBeacons() {
-        Logger.debug("BeaconRegionsViewController#updateBeacons")
+        Logger.debug()
         self.tableView.reloadData()
     }
     
@@ -63,12 +63,12 @@ class BeaconsViewController: UITableViewController {
     }
     
     func didResignActive() {
-        Logger.debug("BeaconRegionsViewController#didResignActive")
+        Logger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func didBecomeActive() {
-        Logger.debug("BeaconRegionsViewController#didBecomeActive")
+        Logger.debug()
     }
     
     // UITableViewDataSource

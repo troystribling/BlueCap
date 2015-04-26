@@ -79,14 +79,14 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     }
     
     func didResignActive() {
-        Logger.debug("PeripheralManagerServicesViewController#didResignActive")
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralManagerServicesViewController#didBecomeActive")
+        Logger.debug()
     }
 
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {

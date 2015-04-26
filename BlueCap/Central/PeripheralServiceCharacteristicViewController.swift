@@ -148,7 +148,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {
-        Logger.debug("PeripheralServiceCharacteristicViewController#peripheralDisconnected")
+        Logger.debug()
         if self.peripheralViewController.peripehealConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
                     self.peripheralViewController.peripehealConnected = false
@@ -159,11 +159,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
 
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-       Logger.debug("PeripheralServiceCharacteristicViewController#didResignActive")
+       Logger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug("PeripheralServiceCharacteristicViewController#didBecomeActive")
+        Logger.debug()
     }
     
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
