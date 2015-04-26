@@ -157,17 +157,15 @@ class ViewController: UITableViewController {
                 manager.powerOn()
             }
             self.powerOffFutureSuccessFuture?.onSuccess {
-                self.startAdvertisingSwitch.enabled = true
-                self.startAdvertisingLabel.textColor = UIColor.blackColor()
+                self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
             }
-            // enable controls when bluetooth is powered on again after     stop advertising fails
+            // enable controls when bluetooth is powered on again after stop advertising fails
             self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith {_  -> Future<Void> in
                 manager.powerOn()
             }
             self.powerOffFutureFailedFuture?.onSuccess {
                 if PeripheralManager.sharedInstance.poweredOn {
-                    self.startAdvertisingSwitch.enabled = true
-                    self.startAdvertisingLabel.textColor = UIColor.blackColor()
+                    self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
                 }
             }
         }
