@@ -58,7 +58,7 @@ public class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappabl
     }
     
     internal func timeoutScan(scanner:Wrapper) {
-        Logger.debug("Scannerator#timeoutScan: \(self.timeoutSeconds)s")
+        Logger.debug(message:"timeout in \(self.timeoutSeconds)s")
         CentralQueue.delay(self.timeoutSeconds) {
             if scanner.peripherals.count == 0 {
                 scanner.timeout()

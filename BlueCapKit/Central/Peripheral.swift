@@ -72,7 +72,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     // connect  (Called on User queue)
     public func reconnect(peripheral:Wrapper) {
         if peripheral.state == .Disconnected {
-            Logger.debug("PeripheralImpl#reconnect: \(peripheral.name)")
+            Logger.debug(message:"reconnect peripheral \(peripheral.name)")
             peripheral.connect()
             self.forcedDisconnect = false
             ++self.connectionSequence
@@ -84,14 +84,14 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         CentralQueue.sync {
             self._connectorator = connectorator
         }
-        Logger.debug("PeripheralImpl#connect: \(peripheral.name)")
+        Logger.debug(message:"connect peripheral \(peripheral.name)")
         self.reconnect(peripheral)
     }
     
     public func disconnect(peripheral:Wrapper) {
         self.forcedDisconnect = true
         if peripheral.state == .Connected {
-            Logger.debug("Peripheral#disconnect: \(peripheral.name)")
+            Logger.debug(message:"disconnect peripheral \(peripheral.name)")
             peripheral.cancel()
         } else {
             self.didDisconnectPeripheral(peripheral)
@@ -104,25 +104,25 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     
     // service discovery (Called on Central queue)
     public func discoverAllServices(peripheral:Wrapper) -> Future<Wrapper> {
-        Logger.debug("PeripheralImpl#discoverAllServices: \(peripheral.name)")
+        Logger.debug(message:"peripheral name \(peripheral.name)")
         return self.discoverServices(peripheral, services:nil)
     }
     
     public func discoverServices(peripheral:Wrapper, services:[CBUUID]!) -> Future<Wrapper> {
-        Logger.debug("PeripheralImpl#discoverAllServices: \(peripheral.name)")
+        Logger.debug(message:" \(peripheral.name)")
         self.servicesDiscoveredPromise = Promise<Wrapper>()
         self.discoverIfConnected(peripheral, services:services)
         return self.servicesDiscoveredPromise.future
     }
     
     public func discoverAllPeripheralServices(peripheral:Wrapper) -> Future<Wrapper> {
-        Logger.debug("PeripheralImpl#discoverAllPeripheralServices: \(peripheral.name)")
+        Logger.debug(message:"peripheral name \(peripheral.name)")
         return self.discoverPeripheralServices(peripheral, services:nil)
     }
     
     public func discoverPeripheralServices(peripheral:Wrapper, services:[CBUUID]!) -> Future<Wrapper> {
         let peripheralDiscoveredPromise = Promise<Wrapper>()
-        Logger.debug("PeripheralImpl#discoverPeripheralServices: \(peripheral.name)")
+        Logger.debug(message:"peripheral name \(peripheral.name)")
         let servicesDiscoveredFuture = self.discoverServices(peripheral, services:services)
         servicesDiscoveredFuture.onSuccess {services in
             if peripheral.services.count > 1 {
@@ -155,7 +155,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     // CBPeripheralDelegate
     // services
     public func didDiscoverServices(peripheral:Wrapper, error:NSError!) {
-        Logger.debug("PeripheralImpl#didDiscoverServices: \(peripheral.name)")
+        Logger.debug(message:"peripheral name \(peripheral.name)")
         if let error = error {
             self.servicesDiscoveredPromise.failure(error)
         } else {
@@ -182,14 +182,14 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         if let connectorator = self.connectorator {
             timeout = connectorator.connectionTimeout
         }
-        Logger.debug("PeripheralImpl#timeoutConnection: sequence \(sequence), timeout:\(timeout)")
+        Logger.debug(message:"sequence \(sequence), timeout:\(timeout)")
         CentralQueue.delay(timeout) {
             if peripheral.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
-                Logger.debug("PeripheralImpl#timeoutConnection: timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
+                Logger.debug(message:"timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
                 peripheral.cancel()
             } else {
-                Logger.debug("Peripheral#timeoutConnection: expired")
+                Logger.debug()
             }
         }
     }
@@ -203,20 +203,20 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     }
     
     public func didDisconnectPeripheral(peripheral:Wrapper) {
-        Logger.debug("PeripheralImpl#didDisconnectPeripheral")
+        Logger.debug()
         self._disconnectedAt = NSDate()
         if let connectorator = self.connectorator {
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
-                Logger.debug("PeripheralImpl#didDisconnectPeripheral: forced disconnect")
+                Logger.debug(message:"forced disconnect")
                 connectorator.didForceDisconnect()
             } else {
                 switch(self.currentError) {
                 case .None:
-                    Logger.debug("PeripheralImpl#didDisconnectPeripheral: No errors disconnecting")
+                    Logger.debug(message:"no errors disconnecting")
                     connectorator.didDisconnect()
                 case .Timeout:
-                    Logger.debug("PeripheralImpl#didDisconnectPeripheral: Timeout reconnecting")
+                    Logger.debug(message:"timeout reconnecting")
                     connectorator.didTimeout()
                 }
             }
@@ -224,19 +224,19 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     }
     
     public func didConnectPeripheral(peripheral:Wrapper) {
-        Logger.debug("PeripheralImpl#didConnectPeripheral PeripheralConnectionError")
+        Logger.debug()
         self._connectedAt = NSDate()
         self.connectorator?.didConnect()
     }
     
     public func didFailToConnectPeripheral(peripheral:Wrapper, error:NSError?) {
-        Logger.debug("PeripheralImpl#didFailToConnectPeripheral: PeripheralConnectionError")
+        Logger.debug()
         self.connectorator?.didFailConnect(error)
     }
     
     internal func discoverService(peripheral:Wrapper, head:Wrapper.WrappedService, tail:[Wrapper.WrappedService], promise:Promise<Wrapper>) {
         let discoveryFuture = head.discoverAllCharacteristics()
-        Logger.debug("PeripheralImpl#discoverService: \(head.name), count \(tail.count + 1)")
+        Logger.debug(message:"service name \(head.name) count \(tail.count + 1)")
         if tail.count > 0 {
             discoveryFuture.onSuccess {_ in
                 self.discoverService(peripheral, head:tail[0], tail:Array(tail[1..<tail.count]), promise:promise)
@@ -303,7 +303,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
                 if let cbService = cbService as? CBService {
                     let bcService = Service(cbService:cbService, peripheral:self)
                     self.discoveredServices[bcService.uuid] = bcService
-                    Logger.debug("Peripheral#didDiscoverServices: uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+                    Logger.debug(message:"uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
                 }
             }
         }
@@ -382,32 +382,32 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     // CBPeripheralDelegate
     // peripheral
     public func peripheralDidUpdateName(_:CBPeripheral!) {
-        Logger.debug("Peripheral#peripheralDidUpdateName")
+        Logger.debug()
     }
     
     public func peripheral(_:CBPeripheral!, didModifyServices invalidatedServices:[AnyObject]!) {
-        Logger.debug("Peripheral#didModifyServices")
+        Logger.debug()
     }
     
     public func peripheral(_:CBPeripheral!, didReadRSSI RSSI:NSNumber!, error:NSError!) {
-        Logger.debug("Peripheral#didReadRSSI")
+        Logger.debug()
         self.impl.didReadRSSI(RSSI, error:error)
     }
     
     // services
     public func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
-        Logger.debug("Peripheral#didDiscoverServices: \(self.name)")
+        Logger.debug(message:"service name \(self.name)")
         self.clearAll()
         self.impl.didDiscoverServices(self, error:error)
     }
     
     public func peripheral(_:CBPeripheral!, didDiscoverIncludedServicesForService service:CBService!, error:NSError!) {
-        Logger.debug("Peripheral#didDiscoverIncludedServicesForService: \(self.name)")
+        Logger.debug(message:"service name \(self.name)")
     }
     
     // characteristics
     public func peripheral(_:CBPeripheral!, didDiscoverCharacteristicsForService service:CBService!, error:NSError!) {
-        Logger.debug("Peripheral#didDiscoverCharacteristicsForService: \(self.name)")
+        Logger.debug(message:"service name \(self.name)")
         if let service = service, bcService = self.discoveredServices[service.UUID], cbCharacteristics = service.characteristics {
             bcService.didDiscoverCharacteristics(error)
             if error == nil {
@@ -421,30 +421,30 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     }
     
     public func peripheral(_:CBPeripheral!, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
-        Logger.debug("Peripheral#didUpdateNotificationStateForCharacteristic")
+        Logger.debug()
         if let characteristic = characteristic {
             if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
-                Logger.debug("Peripheral#didUpdateNotificationStateForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                Logger.debug(message:"uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
                 bcCharacteristic.didUpdateNotificationState(error)
             }
         }
     }
 
     public func peripheral(_:CBPeripheral!, didUpdateValueForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
-        Logger.debug("Peripheral#didUpdateValueForCharacteristic")
+        Logger.debug()
         if let characteristic = characteristic {
             if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
-                Logger.debug("Peripheral#didUpdateValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                Logger.debug(message:"uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
                 bcCharacteristic.didUpdate(error)
             }
         }
     }
 
     public func peripheral(_:CBPeripheral!, didWriteValueForCharacteristic characteristic:CBCharacteristic!, error: NSError!) {
-        Logger.debug("Peripheral#didWriteValueForCharacteristic")
+        Logger.debug()
         if let characteristic = characteristic {
             if let bcCharacteristic = self.discoveredCharacteristics[characteristic] {
-                Logger.debug("Peripheral#didWriteValueForCharacteristic: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                Logger.debug(message:"uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
                 bcCharacteristic.didWrite(error)
             }
         }
@@ -452,15 +452,15 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     
     // descriptors
     public func peripheral(_:CBPeripheral!, didDiscoverDescriptorsForCharacteristic characteristic:CBCharacteristic!, error:NSError!) {
-        Logger.debug("Peripheral#didDiscoverDescriptorsForCharacteristic")
+        Logger.debug()
     }
     
     public func peripheral(_:CBPeripheral!, didUpdateValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
-        Logger.debug("Peripheral#didUpdateValueForDescriptor")
+        Logger.debug()
     }
     
     public func peripheral(_:CBPeripheral!, didWriteValueForDescriptor descriptor:CBDescriptor!, error:NSError!) {
-        Logger.debug("Peripheral#didWriteValueForDescriptor")
+        Logger.debug()
     }
     
     // utils

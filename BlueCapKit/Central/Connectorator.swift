@@ -47,7 +47,7 @@ public class Connectorator {
     }
     
     internal func didTimeout() {
-        Logger.debug("Connectorator#didTimeout")
+        Logger.debug()
         if self.timeoutRetries > 0 {
             if self.timeoutCount < self.timeoutRetries {
                 self.callDidTimeout()
@@ -62,7 +62,7 @@ public class Connectorator {
     }
 
     internal func didDisconnect() {
-        Logger.debug("Connectorator#didDisconnect")
+        Logger.debug()
         if self.disconnectRetries > 0 {
             if self.disconnectCount < self.disconnectRetries {
                 ++self.disconnectCount
@@ -77,17 +77,17 @@ public class Connectorator {
     }
     
     internal func didForceDisconnect() {
-        Logger.debug("Connectorator#didForceDisconnect")
+        Logger.debug()
         self.promise.failure(BCError.connectoratorForcedDisconnect)
     }
     
     internal func didConnect() {
-        Logger.debug("Connectorator#didConnect")
+        Logger.debug()
         self.promise.success()
     }
     
     internal func didFailConnect(error:NSError?) {
-        Logger.debug("Connectorator#didFailConnect")
+        Logger.debug()
         if let error = error {
             self.promise.failure(error)
         } else {

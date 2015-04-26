@@ -64,7 +64,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     
     // power on
     public func powerOn(peripheral:Wrapper) -> Future<Void> {
-        Logger.debug("PeripheralManagerImpl#powerOn")
+        Logger.debug()
         self.afterPowerOnPromise = Promise<Void>()
         if peripheral.poweredOn {
             self.afterPowerOnPromise.success()
@@ -73,7 +73,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     }
     
     public func powerOff(peripheral:Wrapper) -> Future<Void> {
-        Logger.debug("PeripheralManagerImpl#powerOff")
+        Logger.debug()
         self.afterPowerOffPromise = Promise<Void>()
         if peripheral.poweredOff {
             self.afterPowerOffPromise.success()
@@ -126,7 +126,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         self.afterSeriviceAddPromise = Promise<Void>()
         if !peripheral.isAdvertising {
             peripheral.addWrappedService(service)
-            Logger.debug("PeripheralManagerImpl#addService:\(service.name), \(service.uuid)")
+            Logger.debug(message:"service name=\(service.name), uuid=\(service.uuid)")
         } else {
             self.afterSeriviceAddPromise.failure(BCError.peripheralManagerIsAdvertising)
         }
@@ -134,7 +134,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     }
     
     public func addServices(peripheral:Wrapper, services:[Wrapper.WrappedService]) -> Future<Void> {
-        Logger.debug("PeripheralManagerImpl#addServices: service count \(services.count)")
+        Logger.debug(message:"service count \(services.count)")
         let promise = Promise<Void>()
         self.addService(peripheral, promise:promise, services:services)
         return promise.future
@@ -146,17 +146,17 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
             future.onSuccess {
                 if services.count > 1 {
                     let servicesTail = Array(services[1...services.count-1])
-                    Logger.debug("PeripheralManagerImpl#addServices: services remaining \(servicesTail.count)")
+                    Logger.debug(message:"services remaining \(servicesTail.count)")
                     self.addService(peripheral, promise:promise, services:servicesTail)
                 } else {
-                    Logger.debug("PeripheralManagerImpl#addServices: completed")
+                    Logger.debug(message:"completed")
                     promise.success()
                 }
             }
             future.onFailure {(error) in
                 let future = self.removeAllServices(peripheral)
                 future.onSuccess {
-                    Logger.debug("PeripheralManagerImpl#addServices: failed '\(error.localizedDescription)'")
+                    Logger.debug(message:"failed '\(error.localizedDescription)'")
                     promise.failure(error)
                 }
             }
@@ -166,7 +166,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     public func removeService(peripheral:Wrapper, service:Wrapper.WrappedService) -> Future<Void> {
         let promise = Promise<Void>()
         if !peripheral.isAdvertising {
-            Logger.debug("PeripheralManagerImpl#removeService: \(service.uuid.UUIDString)")
+            Logger.debug(message:"removing service \(service.uuid.UUIDString)")
             peripheral.removeWrappedService(service)
             promise.success()
         } else {
@@ -178,7 +178,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     public func removeAllServices(peripheral:Wrapper) -> Future<Void> {
         let promise = Promise<Void>()
         if !peripheral.isAdvertising {
-            Logger.debug("PeripheralManagerImpl#removeAllServices")
+            Logger.debug()
             peripheral.removeAllWrappedServices()
             promise.success()
         } else {
@@ -191,13 +191,13 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     public func didUpdateState(peripheral:Wrapper) {
         switch peripheral.state {
         case CBPeripheralManagerState.PoweredOn:
-            Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOn")
+            Logger.debug(message:"poweredOn")
             if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
             break
         case CBPeripheralManagerState.PoweredOff:
-            Logger.debug("PeripheralManagerImpl#peripheralManagerDidUpdateState: poweredOff")
+            Logger.debug(message:"poweredOff")
             if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
@@ -215,20 +215,20 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     
     public func didStartAdvertising(error:NSError!) {
         if let error = error {
-            Logger.debug("PeripheralManagerImpl#peripheralManagerDidStartAdvertising: Failed '\(error.localizedDescription)'")
+            Logger.debug(message:"failed '\(error.localizedDescription)'")
             self.afterAdvertisingStartedPromise.failure(error)
         } else {
-            Logger.debug("PeripheralManagerImpl#peripheralManagerDidStartAdvertising: Success")
+            Logger.debug(message:"success")
             self.afterAdvertisingStartedPromise.success()
         }
     }
     
     public func didAddService(error:NSError!) {
         if let error = error {
-            Logger.debug("PeripheralManagerImpl#didAddService: Failed '\(error.localizedDescription)'")
+            Logger.debug(message:"failed '\(error.localizedDescription)'")
             self.afterSeriviceAddPromise.failure(error)
         } else {
-            Logger.debug("PeripheralManagerImpl#didAddService: Success")
+            Logger.debug(message:"success")
             self.afterSeriviceAddPromise.success()
         }
     }
@@ -242,7 +242,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
                 self.lookForAdvertisingToStop(peripheral)
             }
         } else {
-            Logger.debug("PeripheralImpl#lookForAdvertisingToStop: Advertising stopped")
+            Logger.debug(message:"advertising stopped")
             self.afterAdvertsingStoppedPromise.success()
         }
     }
@@ -404,21 +404,21 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     }
     
     public func peripheralManager(_:CBPeripheralManager!, central:CBCentral!, didSubscribeToCharacteristic characteristic:CBCharacteristic!) {
-        Logger.debug("PeripheralManager#didSubscribeToCharacteristic")
+        Logger.debug()
         if let characteristic = self.configuredCharcteristics[characteristic] {
             characteristic.didSubscribeToCharacteristic()
         }
     }
     
     public func peripheralManager(_:CBPeripheralManager!, central:CBCentral!, didUnsubscribeFromCharacteristic characteristic:CBCharacteristic!) {
-        Logger.debug("PeripheralManager#didUnsubscribeFromCharacteristic")
+        Logger.debug()
         if let characteristic = self.configuredCharcteristics[characteristic] {
             characteristic.didUnsubscribeFromCharacteristic()
         }
     }
     
     public func peripheralManagerIsReadyToUpdateSubscribers(_:CBPeripheralManager!) {
-        Logger.debug("PeripheralManager#peripheralManagerIsReadyToUpdateSubscribers")
+        Logger.debug()
         for characteristic in self.configuredCharcteristics.values {
             if characteristic.hasSubscriber {
                 characteristic.peripheralManagerIsReadyToUpdateSubscribers()
@@ -427,30 +427,30 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     }
     
     public func peripheralManager(_:CBPeripheralManager!, didReceiveReadRequest request:CBATTRequest!) {
-        Logger.debug("PeripheralManager#didReceiveReadRequest: chracteracteristic \(request.characteristic.UUID)")
+        Logger.debug(message:"chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic] {
-            Logger.debug("Responding with data: \(characteristic.stringValue)")
+            Logger.debug(message:"responding with data: \(characteristic.stringValue)")
             request.value = characteristic.value
             self.cbPeripheralManager.respondToRequest(request, withResult:CBATTError.Success)
         } else {
-            Logger.debug("Error: characteristic not found")
+            Logger.debug(message:"characteristic not found")
             self.cbPeripheralManager.respondToRequest(request, withResult:CBATTError.AttributeNotFound)
         }
     }
     
     public func peripheralManager(_:CBPeripheralManager!, didReceiveWriteRequests requests:[AnyObject]!) {
-        Logger.debug("PeripheralManager#didReceiveWriteRequests")
+        Logger.debug()
         for request in requests {
             let cbattRequest = request as! CBATTRequest
             if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
-                Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
+                Logger.debug(message:"characteristic write request received for \(characteristic.uuid.UUIDString)")
                 if characteristic.didRespondToWriteRequest(cbattRequest) {
                     characteristic.value = cbattRequest.value
                 } else {
                     characteristic.respondToRequest(cbattRequest, withResult:CBATTError.WriteNotPermitted)
                 }
             } else {
-                Logger.debug("Error: characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
+                Logger.debug(message:"error writing characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
             }
         }
     }

@@ -28,16 +28,7 @@ class ViewController: UITableViewController {
     @IBOutlet var enableLabel               : UILabel!
     @IBOutlet var enabledSwitch             : UISwitch!
     
-    var startAdvertiseFuture                : Future<Void>?
-    var stopAdvertiseFuture                 : Future<Void>?
-    var powerOffFuture                      : Future<Void>?
-    var powerOffFutureSuccessFuture         : Future<Void>?
-    var powerOffFutureFailedFuture          : Future<Void>?
-    var accelerometerUpdatePeriodFuture     : FutureStream<CBATTRequest>?
-    var accelerometerEnabledFuture          : FutureStream<CBATTRequest>?
-    
-    let accelerometer           = Accelerometer()
-    var accelrometerDataFuture  : FutureStream<CMAcceleration>?
+    let accelerometer                           = Accelerometer()
     
     let accelerometerService                    = MutableService(uuid:TISensorTag.AccelerometerService.uuid)
     let accelerometerDataCharacteristic         = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Data.uuid,
@@ -90,11 +81,11 @@ class ViewController: UITableViewController {
         if self.accelerometer.accelerometerActive {
             self.accelerometer.stopAccelerometerUpdates()
         } else {
-            self.accelrometerDataFuture = self.accelerometer.startAcceleromterUpdates()
-            self.accelrometerDataFuture?.onSuccess {data in
+            let accelrometerDataFuture = self.accelerometer.startAcceleromterUpdates()
+            accelrometerDataFuture.onSuccess {data in
                 self.updateAccelerometerData(data)
             }
-            self.accelrometerDataFuture?.onFailure {error in
+            accelrometerDataFuture.onFailure {error in
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
         }
@@ -116,52 +107,52 @@ class ViewController: UITableViewController {
         if let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid) {
             let manager = PeripheralManager.sharedInstance
             // on power on remove all services add service and start advertising
-            self.startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
+            let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
                 manager.removeAllServices()
                 }.flatmap {_ -> Future<Void> in
                     manager.addService(self.accelerometerService)
                 }.flatmap {_ -> Future<Void> in
                     manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
             }
-            self.startAdvertiseFuture?.onSuccess {
+            startAdvertiseFuture.onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated:true, completion:nil)
             }
-            self.startAdvertiseFuture?.onFailure {error in
+            startAdvertiseFuture.onFailure {error in
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 self.startAdvertisingSwitch.on = false
             }
             // stop advertising and updating accelerometer on bluetooth power off
-            self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
+            let powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
                 if self.accelerometer.accelerometerActive {
                     self.accelerometer.stopAccelerometerUpdates()
                     self.enabledSwitch.on = false
                 }
                 return manager.stopAdvertising()
             }
-            self.powerOffFuture?.onSuccess {
+            powerOffFuture.onSuccess {
                 self.startAdvertisingSwitch.on = false
                 self.startAdvertisingSwitch.enabled = false
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
             }
-            self.powerOffFuture?.onFailure {error in
+            powerOffFuture.onFailure {error in
                 self.startAdvertisingSwitch.on = false
                 self.startAdvertisingSwitch.enabled = false
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
             }
             // enable controls when bluetooth is powered on again after stop advertising is successul
-            self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap {_ -> Future<Void> in
+            let powerOffFutureSuccessFuture = powerOffFuture.flatmap {_ -> Future<Void> in
                 manager.powerOn()
             }
-            self.powerOffFutureSuccessFuture?.onSuccess {
+            powerOffFutureSuccessFuture.onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
             }
             // enable controls when bluetooth is powered on again after stop advertising fails
-            self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith {_  -> Future<Void> in
+            let powerOffFutureFailedFuture = powerOffFuture.recoverWith {_  -> Future<Void> in
                 manager.powerOn()
             }
-            self.powerOffFutureFailedFuture?.onSuccess {
+            powerOffFutureFailedFuture.onSuccess {
                 if PeripheralManager.sharedInstance.poweredOn {
                     self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
                 }
@@ -170,8 +161,8 @@ class ViewController: UITableViewController {
     }
     
     func respondToWriteRequests() {
-        self.accelerometerUpdatePeriodFuture = self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(capacity:2)
-        self.accelerometerUpdatePeriodFuture?.onSuccess {request in
+        let accelerometerUpdatePeriodFuture = self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(capacity:2)
+        accelerometerUpdatePeriodFuture.onSuccess {request in
             if request.value.length > 0 &&  request.value.length <= 8 {
                 self.accelerometerUpdatePeriodCharacteristic.value = request.value
                 self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
@@ -180,8 +171,8 @@ class ViewController: UITableViewController {
                 self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
             }
         }
-        self.accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity:2)
-        self.accelerometerEnabledFuture?.onSuccess {request in
+        let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity:2)
+        accelerometerEnabledFuture.onSuccess {request in
             if request.value.length == 1 {
                 self.accelerometerEnabledCharacteristic.value = request.value
                 self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.Success)

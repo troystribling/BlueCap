@@ -92,26 +92,26 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
     
     // CLLocationManagerDelegate
     public func didEnterRegion(region:Wrapper.WrappedRegion) {
-        Logger.debug("RegionManagerImpl#didEnterRegion: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         region.regionPromise.success(.Inside)
     }
     
     public func didExitRegion(region:Wrapper.WrappedRegion) {
-        Logger.debug("RegionManagerImpl#didExitRegion: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         region.regionPromise.success(.Outside)
     }
     
     public func didDetermineState(state:CLRegionState, forRegion region:Wrapper.WrappedRegion) {
-        Logger.debug("RegionManagerImpl#didDetermineState: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
     }
     
     public func didFailMonitoringForRegion(region:Wrapper.WrappedRegion, error:NSError!) {
-        Logger.debug("RegionManagerImpl#monitoringDidFailForRegion: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         region.regionPromise.failure(error)
     }
     
     public func didStartMonitoringForRegion(region:Wrapper.WrappedRegion) {
-        Logger.debug("RegionManagerImpl#didStartMonitoringForRegion: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         region.regionPromise.success(.Start)
     }
 }
@@ -200,35 +200,35 @@ public class RegionManager : LocationManager, RegionManagerWrappable {
 
     // CLLocationManagerDelegate
     public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
-        Logger.debug("RegionManager#didEnterRegion: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
            self.regionImpl.didEnterRegion(bcregion)
         }
     }
     
     public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
-        Logger.debug("RegionManager#didExitRegion: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
             self.regionImpl.didExitRegion(bcregion)
         }
     }
     
     public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
-        Logger.debug("RegionManager#didDetermineState: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
             self.regionImpl.didDetermineState(state, forRegion:bcregion)
         }
     }
     
     public func locationManager(_:CLLocationManager!, monitoringDidFailForRegion region:CLRegion!, withError error:NSError!) {
-        Logger.debug("RegionManager#monitoringDidFailForRegion: \(region.identifier)")
+        Logger.debug(message:"region identifier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
             self.regionImpl.didFailMonitoringForRegion(bcregion, error:error)
         }
     }
     
     public func locationManager(_:CLLocationManager!, didStartMonitoringForRegion region:CLRegion!) {
-        Logger.debug("RegionManager#didStartMonitoringForRegion: \(region.identifier)")
+        Logger.debug(message:"region identiufier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
             self.regionImpl.didStartMonitoringForRegion(bcregion)
         }

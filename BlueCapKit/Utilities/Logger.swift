@@ -9,9 +9,13 @@
 import Foundation
 
 public class Logger {
-    public class func debug(message:String) {
+    public class func debug(message:String? = nil, function: String = __FUNCTION__, file: String = __FILE__, line: Int = __LINE__) {
 #if DEBUG
-        println("\(message)")
+        if let message = message {
+            println("\(file):\(function):\(line): \(message)")
+        } else {
+            println("\(file):\(function):\(line)")
+        }
 #endif
     }
 

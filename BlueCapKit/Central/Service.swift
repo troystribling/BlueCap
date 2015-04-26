@@ -28,12 +28,12 @@ public final class ServiceImpl<Wrapper:ServiceWrappable> {
     private var characteristicsDiscoveredPromise = Promise<Wrapper>()
     
     public func discoverAllCharacteristics(service:Wrapper) -> Future<Wrapper> {
-        Logger.debug("ServiceImpl#discoverAllCharacteristics: uuid=\(service.uuid.UUIDString), name=\(service.name)")
+        Logger.debug(message:"uuid=\(service.uuid.UUIDString), name=\(service.name)")
         return self.discoverIfConnected(service, characteristics:nil)
     }
     
     public func discoverCharacteristics(service:Wrapper, characteristics:[CBUUID]!) -> Future<Wrapper> {
-        Logger.debug("ServiceImpl#discoverCharacteristics: uuid=\(service.uuid.UUIDString), name=\(service.name)")
+        Logger.debug(message:"uuid=\(service.uuid.UUIDString), name=\(service.name)")
         return self.discoverIfConnected(service, characteristics:characteristics)
     }
     
@@ -52,11 +52,11 @@ public final class ServiceImpl<Wrapper:ServiceWrappable> {
     
     public func didDiscoverCharacteristics(service:Wrapper, error:NSError!) {
         if let error = error {
-            Logger.debug("ServiceImpl#didDiscoverCharacteristics failed")
+            Logger.debug(message:"discover failed")
             self.characteristicsDiscoveredPromise.failure(error)
         } else {
             service.createCharacteristics()
-            Logger.debug("ServiceImpl#didDiscoverCharacteristics success")
+            Logger.debug(message:"discover success")
             self.characteristicsDiscoveredPromise.success(service)
         }
     }
@@ -97,13 +97,13 @@ public final class Service : ServiceWrappable {
             let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
             self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
             bcCharacteristic.didDiscover()
-            Logger.debug("Service#didDiscoverCharacteristics: uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            Logger.debug(message:"uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
         }
         
     }
     
     public func discoverAllCharacteristics() -> Future<Service> {
-        Logger.debug("Service#discoverAllCharacteristics: ")
+        Logger.debug()
         return self.impl.discoverIfConnected(self, characteristics:nil)
     }
     
@@ -128,7 +128,7 @@ public final class Service : ServiceWrappable {
     }
     
     public func discoverCharacteristics(characteristics:[CBUUID]) -> Future<Service> {
-        Logger.debug("Service#discoverCharacteristics")
+        Logger.debug()
         return self.impl.discoverIfConnected(self, characteristics:characteristics)
     }
     

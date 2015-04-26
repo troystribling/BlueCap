@@ -36,7 +36,7 @@ public class ServiceProfile {
     }
 
     public func addCharacteristic(characteristicProfile:CharacteristicProfile) {
-        Logger.debug("ServiceProfile#createCharateristic: name=\(characteristicProfile.name), uuid=\(characteristicProfile.uuid.UUIDString)")
+        Logger.debug(message: "name=\(characteristicProfile.name), uuid=\(characteristicProfile.uuid.UUIDString)")
         self.characteristicProfiles[characteristicProfile.uuid] = characteristicProfile
     }
     

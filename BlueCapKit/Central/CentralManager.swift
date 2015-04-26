@@ -65,7 +65,7 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     public func startScanningForServiceUUIDs(central:Wrapper, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
         if !self._isScanning {
-            Logger.debug("CentralManagerImpl#startScanningForServiceUUIDs: \(uuids)")
+            Logger.debug(message:"UUIDs \(uuids)")
             self._isScanning = true
             if let capacity = capacity {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Wrapper.WrappedPeripheral>(capacity:capacity)
@@ -79,7 +79,7 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     public func stopScanning(central:Wrapper) {
         if self._isScanning {
-            Logger.debug("CentralManagerImpl#stopScanning")
+            Logger.debug()
             self._isScanning = false
             central.stopScan()
         }
@@ -87,7 +87,7 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     // connection
     public func disconnectAllPeripherals(central:Wrapper) {
-        Logger.debug("CentralManagerImpl#disconnectAllPeripherals")
+        Logger.debug()
         for peripheral in central.peripherals {
             peripheral.disconnect()
         }
@@ -96,7 +96,7 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     // power up
     public func powerOn(central:Wrapper) -> Future<Void> {
-        Logger.debug("CentralManagerImpl#powerOn")
+        Logger.debug()
         self.afterPowerOnPromise = Promise<Void>()
         if central.poweredOn {
             self.afterPowerOnPromise.success()
@@ -105,7 +105,7 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     }
     
     public func powerOff(central:Wrapper) -> Future<Void> {
-        Logger.debug("CentralManagerImpl#powerOff")
+        Logger.debug()
         self.afterPowerOffPromise = Promise<Void>()
         if central.poweredOff {
             self.afterPowerOffPromise.success()
@@ -121,25 +121,25 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     public func didUpdateState(central:Wrapper) {
         switch(central.state) {
         case .Unauthorized:
-            Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: Unauthorized")
+            Logger.debug(message:"Unauthorized")
             break
         case .Unknown:
-            Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: Unknown")
+            Logger.debug(message:"Unknown")
             break
         case .Unsupported:
-            Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: Unsupported")
+            Logger.debug(message:"Unsupported")
             break
         case .Resetting:
-            Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: Resetting")
+            Logger.debug(message:"Resetting")
             break
         case .PoweredOff:
-            Logger.debug("CentralManagerImpl#centralManagerDidUpdateState: PoweredOff")
+            Logger.debug(message:"PoweredOff")
             if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
             break
         case .PoweredOn:
-            Logger.debug("CentralManager#centralManagerDidUpdateState: PoweredOn")
+            Logger.debug(message:"PoweredOn")
             if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
@@ -228,12 +228,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     public func connectPeripheral(peripheral:Peripheral) {
-        Logger.debug("CentralManager#connectPeripheral")
+        Logger.debug()
         self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
     }
     
     internal func cancelPeripheralConnection(peripheral:Peripheral) {
-        Logger.debug("CentralManager#cancelPeripheralConnection")
+        Logger.debug()
         self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
     
@@ -248,14 +248,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     
     // CBCentralManagerDelegate
     public func centralManager(_:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
-        Logger.debug("CentralManager#didConnectPeripheral: \(peripheral.name)")
+        Logger.debug(message:"peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     public func centralManager(_:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
-        Logger.debug("CentralManager#didDisconnectPeripheral: \(peripheral.name)")
+        Logger.debug(message:"peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }
@@ -264,30 +264,30 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:[NSObject:AnyObject]!, RSSI:NSNumber!) {
         if self.discoveredPeripherals[peripheral] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
-            Logger.debug("CentralManager#didDiscoverPeripheral: \(bcPeripheral.name)")
+            Logger.debug(message:"peripheral name \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
             self.impl.didDiscoverPeripheral(bcPeripheral)
         }
     }
     
     public func centralManager(_:CBCentralManager!, didFailToConnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
-        Logger.debug("CentralManager#didFailToConnectPeripheral")
+        Logger.debug()
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didFailToConnectPeripheral(error)
         }
     }
     
     public func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:[AnyObject]!) {
-        Logger.debug("CentralManager#didRetrieveConnectedPeripherals")
+        Logger.debug()
     }
     
     public func centralManager(_:CBCentralManager!, didRetrievePeripherals peripherals:[AnyObject]!) {
-        Logger.debug("CentralManager#didRetrievePeripherals")
+        Logger.debug()
     }
     
     // central manager state
     public func centralManager(_:CBCentralManager!, willRestoreState dict:[NSObject:AnyObject]!!) {
-        Logger.debug("CentralManager#willRestoreState")
+        Logger.debug()
     }
     
     public func centralManagerDidUpdateState(_:CBCentralManager!) {
@@ -300,7 +300,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     internal func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
-        Logger.debug("CentralManager#unpackAdvertisements found \(advertDictionary.count) advertisements")
+        Logger.debug(message:"number of advertisements found \(advertDictionary.count)")
         var advertisements = [String:String]()
         func addKey(key:String, andValue value:AnyObject) -> () {
             if value is NSString {
@@ -308,7 +308,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
             } else {
                 advertisements[key] = value.stringValue
             }
-            Logger.debug("CentralManager#unpackAdvertisements key:\(key), value:\(advertisements[key])")
+            Logger.debug(message:"advertisement key=\(key), value=\(advertisements[key])")
         }
         if advertDictionary != nil {
             for keyObject : NSObject in advertDictionary.keys {
@@ -325,7 +325,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
                 }
             }
         }
-        Logger.debug("CentralManager#unpackAdvertisements unpacked \(advertisements.count) advertisements")
         return advertisements
     }
     

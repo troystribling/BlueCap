@@ -31,7 +31,7 @@ public class ProfileManager {
     }
     
     public func addService(serviceProfile:ServiceProfile) -> ServiceProfile {
-        Logger.debug("ProfileManager#createServiceProfile: name=\(serviceProfile.name), uuid=\(serviceProfile.uuid.UUIDString)")
+        Logger.debug(message:"name=\(serviceProfile.name), uuid=\(serviceProfile.uuid.UUIDString)")
         self.serviceProfiles[serviceProfile.uuid] = serviceProfile
         return serviceProfile
     }

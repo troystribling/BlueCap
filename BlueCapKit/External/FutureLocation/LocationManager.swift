@@ -93,21 +93,21 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
 
     // CLLocationManagerDelegate
     public func didUpdateLocations(locations:[Wrapper.WrappedCLLocation]) {
-        Logger.debug("LocationManagerImpl#didUpdateLocations")
+        Logger.debug()
         if let locationUpdatePromise = self.locationUpdatePromise {
             locationUpdatePromise.success(locations)
         }
     }
     
     public func didFailWithError(error:NSError!) {
-        Logger.debug("LocationManagerImpl#didFailWithError: \(error.localizedDescription)")
+        Logger.debug(message:"error \(error.localizedDescription)")
         if let locationUpdatePromise = self.locationUpdatePromise {
             locationUpdatePromise.failure(error)
         }
     }
     
     public func didChangeAuthorizationStatus(status:CLAuthorizationStatus) {
-        Logger.debug("LocationManagerImpl#didChangeAuthorizationStatus: \(status)")
+        Logger.debug(message:"status: \(status)")
         self.authorizationStatusChangedPromise?.success(status)
         self.authorizationStatusChangedPromise = nil
     }
@@ -120,10 +120,10 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
             case .AuthorizedAlways:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .AuthorizedAlways {
-                        Logger.debug("LocationManager#authorize: Location Authorized succcess")
+                        Logger.debug(message:"location AuthorizedAlways succcess")
                         promise.success()
                     } else {
-                        Logger.debug("LocationManager#authorize: Location Authorized failed")
+                        Logger.debug(message:"location AuthorizedAlways failed")
                         promise.failure(FLError.authoizationAlwaysFailed)
                     }
                 }
@@ -132,17 +132,17 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
             case .AuthorizedWhenInUse:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .AuthorizedWhenInUse {
-                        Logger.debug("LocationManager#authorize: Location AuthorizedWhenInUse success")
+                        Logger.debug(message:"location AuthorizedWhenInUse succcess")
                         promise.success()
                     } else {
-                        Logger.debug("LocationManager#authorize: Location AuthorizedWhenInUse failed")
+                        Logger.debug(message:"location AuthorizedWhenInUse failed")
                         promise.failure(FLError.authoizationWhenInUseFailed)
                     }
                 }
                 locationManager.requestWhenInUseAuthorization()
                 break
             default:
-                Logger.debug("LocationManager#authorize: Location Authorization invalid")
+                Logger.debug(message:"location authorization invalid")
                 break
             }
         } else {
