@@ -20,12 +20,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var startAdvertisingSwitch    : UISwitch!
     @IBOutlet var startAdvertisingLabel     : UILabel!
     
-    var startAdvertiseFuture            : Future<Void>?
-    var stopAdvertiseFuture             : Future<Void>?
-    var powerOffFuture                  : Future<Void>?
-    var powerOffFutureSuccessFuture     : Future<Void>?
-    var powerOffFutureFailedFuture      : Future<Void>?
-    
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
@@ -96,56 +90,56 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBAction func toggleAdvertise(sender:AnyObject) {
         let manager = PeripheralManager.sharedInstance
         if manager.isAdvertising {
-            self.stopAdvertiseFuture = manager.stopAdvertising()
-            self.stopAdvertiseFuture?.onSuccess {
+            let stopAdvertiseFuture = manager.stopAdvertising()
+            stopAdvertiseFuture.onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated:true, completion:nil)
             }
-            self.stopAdvertiseFuture?.onFailure {error in
+            stopAdvertiseFuture.onFailure {error in
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
         } else {
             // Start advertising on bluetooth power on
             if let beaconRegion = self.createBeaconRegion() {
-                self.startAdvertiseFuture = manager.powerOn().flatmap{ _ -> Future<Void> in
+                let startAdvertiseFuture = manager.powerOn().flatmap{ _ -> Future<Void> in
                     manager.startAdvertising(beaconRegion)
                 }
-                self.startAdvertiseFuture?.onSuccess {
+                startAdvertiseFuture.onSuccess {
                     self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated:true, completion:nil)
                 }
-                self.startAdvertiseFuture?.onFailure {error in
+                startAdvertiseFuture.onFailure {error in
                     self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
                     self.startAdvertisingSwitch.on = false
                 }
             }
             // stop advertising on bluetooth power off
-            self.powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
+            let powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
                 manager.stopAdvertising()
             }
-            self.powerOffFuture?.onSuccess {
+            powerOffFuture.onSuccess {
                 self.startAdvertisingSwitch.on = false
                 self.startAdvertisingSwitch.enabled = false
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("powered off and stopped advertising"), animated:true, completion:nil)
             }
-            self.powerOffFuture?.onFailure {error in
+            powerOffFuture.onFailure {error in
                 self.startAdvertisingSwitch.on = false
                 self.startAdvertisingSwitch.enabled = false
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated:true, completion:nil)
             }
             // enable controls when bluetooth is powered on again after stop advertising is successul
-            self.powerOffFutureSuccessFuture = self.powerOffFuture?.flatmap { _ -> Future<Void> in
+            let powerOffFutureSuccessFuture = powerOffFuture.flatmap { _ -> Future<Void> in
                 manager.powerOn()
             }
-            self.powerOffFutureSuccessFuture?.onSuccess {
+            powerOffFutureSuccessFuture.onSuccess {
                 self.startAdvertisingSwitch.enabled = true
                 self.startAdvertisingLabel.textColor = UIColor.blackColor()
             }
             // enable controls when bluetooth is powered on again after stop advertising fails
-            self.powerOffFutureFailedFuture = self.powerOffFuture?.recoverWith { _  -> Future<Void> in
+            let powerOffFutureFailedFuture = powerOffFuture.recoverWith { _  -> Future<Void> in
                 manager.powerOn()
             }
-            self.powerOffFutureFailedFuture?.onSuccess {
+            powerOffFutureFailedFuture.onSuccess {
                 if PeripheralManager.sharedInstance.poweredOn {
                     self.startAdvertisingSwitch.enabled = true
                     self.startAdvertisingLabel.textColor = UIColor.blackColor()
