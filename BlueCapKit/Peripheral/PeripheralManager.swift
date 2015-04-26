@@ -24,7 +24,7 @@ public protocol PeripheralManagerWrappable {
     
     func startAdvertising(advertisementData:[NSObject:AnyObject])
     func startAdversting(beaconRegion:WrappedBeaconRegion)
-    func stopAdvertising()
+    func stopAdvertisingWrapped()
     func addWrappedService(service:WrappedService)
     func removeWrappedService(service:WrappedService)
     func removeAllWrappedServices()
@@ -113,7 +113,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     public func stopAdvertising(peripheral:Wrapper) -> Future<Void> {
         self.afterAdvertsingStoppedPromise = Promise<Void>()
         if peripheral.isAdvertising {
-            peripheral.stopAdvertising()
+            peripheral.stopAdvertisingWrapped()
             PeripheralQueue.async{self.lookForAdvertisingToStop(peripheral)}
         } else {
             self.afterAdvertsingStoppedPromise.failure(BCError.peripheralManagerIsNotAdvertising)
@@ -283,7 +283,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower())
     }
     
-    public func stopAdvertising() {
+    public func stopAdvertisingWrapped() {
         self.cbPeripheralManager.stopAdvertising()
     }
     

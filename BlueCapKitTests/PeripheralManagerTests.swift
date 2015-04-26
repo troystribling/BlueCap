@@ -55,7 +55,7 @@ class PeripheralManagerTests: XCTestCase {
             self._isAdvertising = true
         }
         
-        func stopAdvertising() {
+        func stopAdvertisingWrapped() {
             self._isAdvertising = false
         }
         

@@ -24,7 +24,7 @@ class MutableCharacteristicTests: XCTestCase {
         var _permissionEnabled  : Bool
         var _updateStatus       : Bool
 
-        var _value =  "01".dataFromHexString()
+        var value : NSData? =  "01".dataFromHexString()
         
         var uuid : CBUUID {
             return CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6c1a")
@@ -32,10 +32,6 @@ class MutableCharacteristicTests: XCTestCase {
         
         var name : String {
             return "Mock"
-        }
-        
-        var value : NSData! {
-            return self._value
         }
         
         var stringValues : [String] {
@@ -69,7 +65,7 @@ class MutableCharacteristicTests: XCTestCase {
         }
         
         func updateValueWithData(value:NSData) -> Bool {
-            self._value = value
+            self.value = value
             self.updateCalled = true
             return self._updateStatus
         }
