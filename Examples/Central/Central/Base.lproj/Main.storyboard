@@ -47,17 +47,19 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rLb-7V-O3g" id="sW2-br-QtX">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disconnected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q4d-Mi-Cxk">
-                                                    <rect key="frame" x="20" y="17" width="560" height="25"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="whK-Je-oiE">
+                                                    <rect key="frame" x="20" y="14" width="560" height="37"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.61960784310000006" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <state key="normal" title="Disconnect">
+                                                        <color key="titleColor" red="0.61960784310000006" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="q4d-Mi-Cxk" secondAttribute="trailing" constant="12" id="5Dq-pC-JZa"/>
-                                                <constraint firstItem="q4d-Mi-Cxk" firstAttribute="leading" secondItem="sW2-br-QtX" secondAttribute="leadingMargin" constant="12" id="Jel-CK-XSf"/>
-                                                <constraint firstItem="q4d-Mi-Cxk" firstAttribute="top" secondItem="sW2-br-QtX" secondAttribute="topMargin" constant="9" id="QX5-zx-dC6"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="whK-Je-oiE" secondAttribute="trailing" constant="12" id="Zg0-9a-Uxe"/>
+                                                <constraint firstItem="whK-Je-oiE" firstAttribute="leading" secondItem="sW2-br-QtX" secondAttribute="leadingMargin" constant="12" id="fZo-nJ-GjN"/>
+                                                <constraint firstItem="whK-Je-oiE" firstAttribute="top" secondItem="sW2-br-QtX" secondAttribute="topMargin" constant="6" id="jWm-VQ-kP7"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -320,17 +322,19 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <outlet property="enableLabel" destination="q4d-Mi-Cxk" id="dyS-RY-wms"/>
-                        <outlet property="rawUpdatePeriodlabel" destination="OnS-gr-RVo" id="Uyq-8l-VBF"/>
-                        <outlet property="startAdvertisingLabel" destination="iv9-51-e5T" id="ovc-Ai-UDj"/>
-                        <outlet property="startAdvertisingSwitch" destination="W6f-pm-5Qz" id="CU0-dQ-edi"/>
-                        <outlet property="updatePeriodLabel" destination="0W8-2J-F0r" id="4QU-JQ-dK2"/>
-                        <outlet property="xAccelerationLabel" destination="ArD-NS-2hL" id="UDk-4W-Jwg"/>
-                        <outlet property="xRawAccelerationLabel" destination="qom-3L-CTs" id="9CP-7C-BpP"/>
-                        <outlet property="yAccelerationLabel" destination="NrD-mM-8yz" id="AYT-ki-HkW"/>
-                        <outlet property="yRawAccelerationLabel" destination="lnb-me-obV" id="Lk8-yu-ED1"/>
-                        <outlet property="zAccelerationLabel" destination="RE8-on-hM2" id="Gp1-wF-75S"/>
-                        <outlet property="zRawAccelerationLabel" destination="JAh-II-Fwp" id="FBK-gL-DZK"/>
+                        <outlet property="disconnectButton" destination="whK-Je-oiE" id="9b6-dF-gMk"/>
+                        <outlet property="enabledLabel" destination="z9C-YP-M4U" id="1k6-SH-iWf"/>
+                        <outlet property="enabledSwitch" destination="hh0-2g-Xsn" id="HHJ-63-2j5"/>
+                        <outlet property="rawUpdatePeriodlabel" destination="OnS-gr-RVo" id="c4V-mY-Qtc"/>
+                        <outlet property="scanLabel" destination="iv9-51-e5T" id="uop-x8-rzs"/>
+                        <outlet property="scanSwitch" destination="W6f-pm-5Qz" id="PTe-Sy-3Bb"/>
+                        <outlet property="updatePeriodLabel" destination="0W8-2J-F0r" id="YrR-Sg-7Wt"/>
+                        <outlet property="xAccelerationLabel" destination="ArD-NS-2hL" id="VWt-0o-Sii"/>
+                        <outlet property="xRawAccelerationLabel" destination="qom-3L-CTs" id="aWr-Ip-34g"/>
+                        <outlet property="yAccelerationLabel" destination="NrD-mM-8yz" id="Tlp-QC-wRb"/>
+                        <outlet property="yRawAccelerationLabel" destination="lnb-me-obV" id="TvE-5L-bZ8"/>
+                        <outlet property="zAccelerationLabel" destination="RE8-on-hM2" id="Loe-bt-SpP"/>
+                        <outlet property="zRawAccelerationLabel" destination="JAh-II-Fwp" id="IjX-2W-8v8"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nkj-mz-Edf" userLabel="First Responder" sceneMemberID="firstResponder"/>
