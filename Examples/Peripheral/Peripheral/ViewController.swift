@@ -198,17 +198,21 @@ class ViewController: UITableViewController {
     }
     
     func updatePeriod() {
-        if let period : TISensorTag.AccelerometerService.UpdatePeriod = Serde.deserialize(self.accelerometerUpdatePeriodCharacteristic.value) {
-            self.accelerometer.updatePeriod = Double(period.period)/1000.0
-            self.updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
-            self.rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
+        if let value = self.accelerometerUpdatePeriodCharacteristic.value {
+            if let period : TISensorTag.AccelerometerService.UpdatePeriod = Serde.deserialize(value) {
+                self.accelerometer.updatePeriod = Double(period.period)/1000.0
+                self.updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
+                self.rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
+            }
         }
     }
     
     func updateEnabled() {
-        if let enabled : TISensorTag.AccelerometerService.Enabled = Serde.deserialize(self.accelerometerEnabledCharacteristic.value)  where self.enabledSwitch.on != enabled.boolValue {
-            self.enabledSwitch.on = enabled.boolValue
-            self.toggleEnabled(self)
+        if let value = self.accelerometerEnabledCharacteristic.value {
+            if let enabled : TISensorTag.AccelerometerService.Enabled = Serde.deserialize(value)  where self.enabledSwitch.on != enabled.boolValue {
+                self.enabledSwitch.on = enabled.boolValue
+                self.toggleEnabled(self)
+            }
         }
     }
 }

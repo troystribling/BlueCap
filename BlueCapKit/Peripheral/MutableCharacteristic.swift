@@ -11,14 +11,14 @@ import CoreBluetooth
 
 ///////////////////////////////////////////
 // MutableCharacteristicImpl
-public protocol MutableCharacteristicWrappable {
+public protocol MutableCharacteristicWrappable : class {
     
     typealias RequestWrapper
     typealias ResultWrapper
   
     var uuid            : CBUUID            {get}
     var name            : String            {get}
-    var value           : NSData!           {get}
+    var value           : NSData?           {get set}
     var stringValues    : [String]          {get}
     var stringValue     : [String:String]?  {get}
 
@@ -74,6 +74,7 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
     }
     
     public func updateValueWithData(characteristic:Wrapper, value:NSData) -> Bool  {
+        characteristic.value = value
         if self._isUpdating && characteristic.propertyEnabled(.Notify) {
             self._isUpdating = characteristic.updateValueWithData(value)
         }
@@ -137,8 +138,10 @@ extension CBATTError : CBATTErrorWrappable {
 public class MutableCharacteristic : MutableCharacteristicWrappable {
 
     var impl = MutableCharacteristicImpl<MutableCharacteristic>()
-    
+
     // MutableCharacteristicWrappable
+    public var value : NSData?
+
     public var uuid : CBUUID {
         return self.profile.uuid
     }
@@ -147,15 +150,6 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         return self.profile.name
     }
     
-    public var value : NSData! {
-        get {
-            return self._value
-        }
-        set {
-            self._value = newValue
-        }
-    }
-
     public var stringValues : [String] {
         return self.profile.stringValues
     }
@@ -169,8 +163,8 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     }
 
     public var stringValue : [String:String]? {
-        if self.value != nil {
-            return self.profile.stringValue(self.value)
+        if let value = self.value {
+            return self.profile.stringValue(value)
         } else {
             return nil
         }
@@ -181,7 +175,6 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     }
     
     public func updateValueWithData(value:NSData) -> Bool  {
-        self._value = value
         return PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
@@ -191,7 +184,6 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     // MutableCharacteristicWrappable
 
     private let profile                         : CharacteristicProfile!
-    private var _value                          : NSData?
     internal let cbMutableChracteristic         : CBMutableCharacteristic!
     
     public var permissions : CBAttributePermissions {
@@ -212,13 +204,13 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     
     public init(profile:CharacteristicProfile) {
         self.profile = profile
-        self._value = profile.initialValue
+        self.value = profile.initialValue
         self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
     }
 
     public init(uuid:String, properties:CBCharacteristicProperties, permissions:CBAttributePermissions, value:NSData?) {
         self.profile = CharacteristicProfile(uuid:uuid)
-        self._value = value
+        self.value = value
         self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
     }
 
