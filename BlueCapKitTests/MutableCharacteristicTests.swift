@@ -17,9 +17,12 @@ class MutableCharacteristicTests: XCTestCase {
     class MutableCharacteristicMock : MutableCharacteristicWrappable {
 
         var impl = MutableCharacteristicImpl<MutableCharacteristicMock>()
-        
-        var _propertyEnabled : Bool
-        var _permissionEnabled : Bool
+
+        var updateCalled        = false
+
+        var _propertyEnabled    : Bool
+        var _permissionEnabled  : Bool
+        var _updateStatus       : Bool
 
         var _value =  "01".dataFromHexString()
         
@@ -43,9 +46,10 @@ class MutableCharacteristicTests: XCTestCase {
             return ["Mock":"1"]
         }
         
-        init(propertyEnabled:Bool=false, permissionEnabled:Bool=false) {
+        init(propertyEnabled:Bool=false, permissionEnabled:Bool=false, updateStatus:Bool=true) {
             self._propertyEnabled = propertyEnabled
             self._permissionEnabled = permissionEnabled
+            self._updateStatus = updateStatus
         }
         
         func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
@@ -64,8 +68,10 @@ class MutableCharacteristicTests: XCTestCase {
             }
         }
         
-        func updateValueWithData(value:NSData) {
+        func updateValueWithData(value:NSData) -> Bool {
             self._value = value
+            self.updateCalled = true
+            return self._updateStatus
         }
         
         func respondToWrappedRequest(request:RequestMock, withResult result:ResultMock) {
@@ -91,6 +97,54 @@ class MutableCharacteristicTests: XCTestCase {
         super.tearDown()
     }
 
+    func testNotSubscribeToUpdates() {
+        let mock = MutableCharacteristicMock(propertyEnabled:true)
+        XCTAssert(mock.impl.hasSubscriber == false, "hasSubscriber value invalid")
+        XCTAssert(mock.impl.isUpdating == false, "isUpdating value invalid")
+        XCTAssert(mock.impl.updateValueWithData(mock, value:"0".dataFromHexString()) == false, "updateValueWithData invalid return status")
+        XCTAssert(mock.updateCalled == false, "updateValueWithData not called")
+    }
+
+    func testSubscribeToUpdates() {
+        let mock = MutableCharacteristicMock(propertyEnabled:true, updateStatus:true)
+        mock.impl.didSubscribeToCharacteristic()
+        XCTAssert(mock.impl.hasSubscriber, "hasSubscriber value invalid")
+        XCTAssert(mock.impl.isUpdating, "isUpdating value invalid")
+        XCTAssert(mock.impl.updateValueWithData(mock, value:"0".dataFromHexString()), "updateValueWithData invalid return status")
+        XCTAssert(mock.updateCalled, "updateValueWithData not called")
+    }
+    
+    func testUnsubscribeToUpdates() {
+        let mock = MutableCharacteristicMock(propertyEnabled:true, updateStatus:true)
+        mock.impl.didSubscribeToCharacteristic()
+        mock.impl.didUnsubscribeFromCharacteristic()
+        XCTAssert(mock.impl.hasSubscriber == false, "hasSubscriber value invalid")
+        XCTAssert(mock.impl.isUpdating == false, "isUpdating value invalid")
+        XCTAssert(mock.impl.updateValueWithData(mock, value:"0".dataFromHexString()) == false, "updateValueWithData invalid return status")
+        XCTAssert(mock.updateCalled == false, "updateValueWithData called")
+    }
+    
+    func testSubscriberUpdateFailed() {
+        let mock = MutableCharacteristicMock(propertyEnabled:true, updateStatus:false)
+        mock.impl.didSubscribeToCharacteristic()
+        XCTAssert(mock.impl.hasSubscriber, "hasSubscriber not set")
+        XCTAssert(mock.impl.isUpdating, "isUpdating not set")
+        XCTAssert(mock.impl.updateValueWithData(mock, value:"0".dataFromHexString()) == false, "updateValueWithData invalid return status")
+        XCTAssert(mock.impl.isUpdating == false, "isUpdating not set")
+        XCTAssert(mock.updateCalled, "updateValueWithData not called")
+    }
+    
+    func testResumeSubscriberUpdates() {
+        let mock = MutableCharacteristicMock(propertyEnabled:true, updateStatus:false)
+        mock.impl.didSubscribeToCharacteristic()
+        XCTAssert(mock.impl.hasSubscriber, "hasSubscriber not set")
+        XCTAssert(mock.impl.updateValueWithData(mock, value:"0".dataFromHexString()) == false, "updateValueWithData invalid return status")
+        XCTAssert(mock.impl.isUpdating == false, "isUpdating not set")
+        XCTAssert(mock.updateCalled, "updateValueWithData not called")
+        mock.impl.peripheralManagerIsReadyToUpdateSubscribers()
+        XCTAssert(mock.impl.isUpdating, "isUpdating not set")
+    }
+    
     func testStartRespondingToWriteRequests() {
         let mock = MutableCharacteristicMock()
         let expectation = expectationWithDescription("onFailure fulfilled for future")

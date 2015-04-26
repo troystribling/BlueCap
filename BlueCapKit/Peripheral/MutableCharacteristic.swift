@@ -19,7 +19,6 @@ public protocol MutableCharacteristicWrappable {
     var uuid            : CBUUID            {get}
     var name            : String            {get}
     var value           : NSData!           {get}
-    var hasSubscriber   : Bool              {get}
     var stringValues    : [String]          {get}
     var stringValue     : [String:String]?  {get}
 
@@ -45,10 +44,19 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
                                                      Wrapper.ResultWrapper:CBATTErrorWrappable> {
     
     internal var processWriteRequestPromise : StreamPromise<Wrapper.RequestWrapper>?
-    internal var hasSubscriber   = false
-    internal var isUpdating      = false
+
+    private var _hasSubscriber   = false
+    private var _isUpdating      = false
 
     
+    public var hasSubscriber : Bool {
+        return self._hasSubscriber
+    }
+
+    public var isUpdating : Bool {
+        return self._isUpdating
+    }
+
     public init() {
     }
     
@@ -66,10 +74,10 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
     }
     
     public func updateValueWithData(characteristic:Wrapper, value:NSData) -> Bool  {
-        if self.isUpdating && characteristic.propertyEnabled(.Notify) {
-            self.isUpdating = characteristic.updateValueWithData(value)
+        if self._isUpdating && characteristic.propertyEnabled(.Notify) {
+            self._isUpdating = characteristic.updateValueWithData(value)
         }
-        return self.isUpdating
+        return self._isUpdating
     }
     
     public func updateValue<T:Deserializable>(characteristic:Wrapper, value:T) -> Bool  {
@@ -102,18 +110,18 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
     }
 
     public func didSubscribeToCharacteristic() {
-        self.hasSubscriber = true
-        self.isUpdating = true
+        self._hasSubscriber = true
+        self._isUpdating = true
     }
     
     public func didUnsubscribeFromCharacteristic() {
-        self.hasSubscriber = false
-        self.isUpdating = false
+        self._hasSubscriber = false
+        self._isUpdating = false
     }
     
     public func peripheralManagerIsReadyToUpdateSubscribers() {
-        if self.hasSubscriber {
-            self.isUpdating = true
+        if self._hasSubscriber {
+            self._isUpdating = true
         }
     }
 
@@ -148,10 +156,6 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         }
     }
 
-    public var hasSubscriber : Bool {
-        return self.impl.hasSubscriber
-    }
-    
     public var stringValues : [String] {
         return self.profile.stringValues
     }
@@ -177,7 +181,8 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     }
     
     public func updateValueWithData(value:NSData) -> Bool  {
-            return PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
+        self._value = value
+        return PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
     public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
@@ -195,6 +200,10 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     
     public var properties : CBCharacteristicProperties {
         return self.cbMutableChracteristic.properties
+    }
+    
+    public var hasSubscriber : Bool {
+        return self.impl.hasSubscriber
     }
     
     public class func withProfiles(profiles:[CharacteristicProfile]) -> [MutableCharacteristic] {
