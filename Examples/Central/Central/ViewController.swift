@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreBluetooth
-import CoreMotion
 import BlueCapKit
 
 class ViewController: UITableViewController {
@@ -23,10 +22,9 @@ class ViewController: UITableViewController {
     @IBOutlet var rawUpdatePeriodlabel      : UILabel!
     @IBOutlet var updatePeriodLabel         : UILabel!
     
-    @IBOutlet var startAdvertisingSwitch    : UISwitch!
-    @IBOutlet var startAdvertisingLabel     : UILabel!
-    @IBOutlet var enableLabel               : UILabel!
-    @IBOutlet var enabledSwitch             : UISwitch!
+    @IBOutlet var scanLabel                 : UILabel!
+    @IBOutlet var scanSwitch                : UISwitch!
+    @IBOutlet var statusLabel               : UILabel!
     
     var startAdvertiseFuture                : Future<Void>?
     var stopAdvertiseFuture                 : Future<Void>?
@@ -41,17 +39,17 @@ class ViewController: UITableViewController {
     
     let accelerometerService                    = MutableService(uuid:TISensorTag.AccelerometerService.uuid)
     let accelerometerDataCharacteristic         = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Data.uuid,
-                                                    properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Notify,
-                                                    permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
-                                                    value:Serde.serialize(TISensorTag.AccelerometerService.Data(x:1.0, y:0.5, z:-1.5)!))
+        properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Notify,
+        permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
+        value:Serde.serialize(TISensorTag.AccelerometerService.Data(x:1.0, y:0.5, z:-1.5)!))
     let accelerometerEnabledCharacteristic      = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Enabled.uuid,
-                                                    properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,
-                                                    permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
-                                                    value:Serde.serialize(TISensorTag.AccelerometerService.Enabled.No.rawValue))
+        properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,
+        permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
+        value:Serde.serialize(TISensorTag.AccelerometerService.Enabled.No.rawValue))
     let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid,
-                                                    properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,
-                                                    permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
-                                                    value:Serde.serialize(UInt8(100)))
+        properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,
+        permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
+        value:Serde.serialize(UInt8(100)))
     
     required init(coder aDecoder:NSCoder) {
         self.accelerometerService.characteristics =
