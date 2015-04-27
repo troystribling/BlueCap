@@ -25,7 +25,9 @@ public protocol PeripheralWrappable {
     var services        : [WrappedService]      {get}
     
     func connect()
+    func reconnect()
     func cancel()
+    func terminate()
     func disconnect()
     func discoverServices(services:[CBUUID]!)
     func didDiscoverServices()
@@ -48,7 +50,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
 
     private var _connectedAt                : NSDate?
     private var _disconnectedAt             : NSDate?
-    private var _connectorator              : Connectorator?
+    private var _connectorator              : Connectorator<Wrapper>?
     
     public var discoveredAt : NSDate {
         return self._discoveredAt
@@ -62,7 +64,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         return self._disconnectedAt
     }
     
-    public var connectorator : Connectorator? {
+    public var connectorator : Connectorator<Wrapper>? {
         return self._connectorator
     }
     
@@ -80,12 +82,13 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         }
     }
     
-    public func connect(peripheral:Wrapper, connectorator:Connectorator) {
+    public func connect(peripheral:Wrapper, connectorator:Connectorator<Wrapper>) -> FutureStream<(Wrapper, ConnectionEvent)> {
         CentralQueue.sync {
             self._connectorator = connectorator
         }
         Logger.debug(message:"connect peripheral \(peripheral.name)")
         self.reconnect(peripheral)
+        return connectorator.connect()
     }
     
     public func disconnect(peripheral:Wrapper) {
@@ -209,15 +212,15 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
             if (self.forcedDisconnect) {
                 self.forcedDisconnect = false
                 Logger.debug(message:"forced disconnect")
-                connectorator.didForceDisconnect()
+                connectorator.didForceDisconnect(peripheral)
             } else {
                 switch(self.currentError) {
                 case .None:
                     Logger.debug(message:"no errors disconnecting")
-                    connectorator.didDisconnect()
+                    connectorator.didDisconnect(peripheral)
                 case .Timeout:
                     Logger.debug(message:"timeout reconnecting")
-                    connectorator.didTimeout()
+                    connectorator.didTimeout(peripheral)
                 }
             }
         }
@@ -226,12 +229,16 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     public func didConnectPeripheral(peripheral:Wrapper) {
         Logger.debug()
         self._connectedAt = NSDate()
-        self.connectorator?.didConnect()
+        self.connectorator?.didConnect(peripheral)
     }
     
     public func didFailToConnectPeripheral(peripheral:Wrapper, error:NSError?) {
         Logger.debug()
-        self.connectorator?.didFailConnect(error)
+        if let error = error {
+            self.connectorator?.didHaveConnectError(error)
+        } else {
+            self.connectorator?.didFailConnect(peripheral)
+        }
     }
     
     internal func discoverService(peripheral:Wrapper, head:Wrapper.WrappedService, tail:[Wrapper.WrappedService], promise:Promise<Wrapper>) {
@@ -272,7 +279,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         return self.cbPeripheral.state
     }
     
-    public var connectorator : Connectorator? {
+    public var connectorator : Connectorator<Peripheral>? {
         return self.impl._connectorator
     }
 
@@ -354,7 +361,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         self.impl.reconnect(self)
     }
      
-    public func connect(connectorator:Connectorator) {
+    public func connect(connectorator:Connectorator<Peripheral>) -> FutureStream<(Peripheral, ConnectionEvent)> {
         self.impl.connect(self, connectorator:connectorator)
     }
     

@@ -16,14 +16,6 @@ public enum CharacteristicError : Int {
     case WriteNotSupported  = 5
 }
 
-public enum ConnectoratorError : Int {
-    case Timeout            = 10
-    case Disconnect         = 11
-    case ForceDisconnect    = 12
-    case Failed             = 13
-    case GiveUp             = 14
-}
-
 public enum PeripheralError : Int {
     case DiscoveryTimeout   = 20
     case Disconnected       = 21
@@ -47,12 +39,6 @@ public struct BCError {
     public static let characteristicNotSerilaizable = NSError(domain:domain, code:CharacteristicError.NotSerializable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic not serializable"])
     public static let characteristicReadNotSupported = NSError(domain:domain, code:CharacteristicError.ReadNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic read not supported"])
     public static let characteristicWriteNotSupported = NSError(domain:domain, code:CharacteristicError.WriteNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic write not supported"])
-
-    public static let connectoratorTimeout = NSError(domain:domain, code:ConnectoratorError.Timeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator timeout"])
-    public static let connectoratorDisconnect = NSError(domain:domain, code:ConnectoratorError.Disconnect.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator disconnect"])
-    public static let connectoratorForcedDisconnect = NSError(domain:domain, code:ConnectoratorError.ForceDisconnect.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator forced disconnected"])
-    public static let connectoratorFailed = NSError(domain:domain, code:ConnectoratorError.Failed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator connection failed"])
-    public static let connectoratorGiveUp = NSError(domain:domain, code:ConnectoratorError.GiveUp.rawValue, userInfo:[NSLocalizedDescriptionKey:"Connectorator giving up"])
 
     public static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.Disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
     public static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.DiscoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])

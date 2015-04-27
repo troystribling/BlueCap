@@ -8,24 +8,24 @@
 
 import Foundation
 
-public class Connectorator {
+public enum ConnectionEvent {
+    case Connect, Timeout, Disconnect, ForceDisconnect, Failed, GiveUp
+}
+
+public class Connectorator<T:PeripheralWrappable> {
 
     private var timeoutCount    = 0
     private var disconnectCount = 0
     
-    private let promise : StreamPromise<Void>
+    private let promise : StreamPromise<(T, ConnectionEvent)>
 
     public var timeoutRetries           = -1
     public var disconnectRetries        = -1
     public var connectionTimeout        = 10.0
     public var characteristicTimeout    = 10.0
 
-    public init () {
-        self.promise = StreamPromise<Void>()
-    }
-
-    public init (capacity:Int) {
-        self.promise = StreamPromise<Void>(capacity:capacity)
+    public init (capacity:Int?=nil) {
+        self.promise = StreamPromise<(T, ConnectionEvent)>(capacity:capacity)
     }
     
     convenience public init(initializer:((connectorator:Connectorator) -> Void)?) {
@@ -42,68 +42,70 @@ public class Connectorator {
         }
     }
 
-    public func onConnect() -> FutureStream<Void> {
+    public func connect() -> FutureStream<(T, ConnectionEvent)> {
         return self.promise.future
     }
     
-    internal func didTimeout() {
+    internal func didTimeout(peripheral:T) {
         Logger.debug()
         if self.timeoutRetries > 0 {
             if self.timeoutCount < self.timeoutRetries {
-                self.callDidTimeout()
+                self.callDidTimeout(peripheral)
                 ++self.timeoutCount
             } else {
-                self.callDidGiveUp()
+                self.callDidGiveUp(peripheral)
                 self.timeoutCount = 0
             }
         } else {
-            self.callDidTimeout()
+            self.callDidTimeout(peripheral)
         }
     }
 
-    internal func didDisconnect() {
+    internal func didDisconnect(peripheral:T) {
         Logger.debug()
         if self.disconnectRetries > 0 {
             if self.disconnectCount < self.disconnectRetries {
                 ++self.disconnectCount
-                self.callDidDisconnect()
+                self.callDidDisconnect(peripheral)
             } else {
                 self.disconnectCount = 0
-                self.callDidGiveUp()
+                self.callDidGiveUp(peripheral)
             }
         } else {
-            self.callDidDisconnect()
+            self.callDidDisconnect(peripheral)
         }
     }
     
-    internal func didForceDisconnect() {
+    internal func didForceDisconnect(peripheral:T) {
         Logger.debug()
-        self.promise.failure(BCError.connectoratorForcedDisconnect)
+        self.promise.success((peripheral, ConnectionEvent.ForceDisconnect))
     }
     
-    internal func didConnect() {
+    internal func didConnect(peripheral:T) {
         Logger.debug()
-        self.promise.success()
+        self.promise.success((peripheral, ConnectionEvent.Connect))
     }
     
-    internal func didFailConnect(error:NSError?) {
+    internal func didFailConnect(peripheral:T) {
         Logger.debug()
-        if let error = error {
-            self.promise.failure(error)
-        } else {
-            self.promise.failure(BCError.connectoratorFailed)
-        }
+        self.promise.success((peripheral, ConnectionEvent.Failed))
+    }
+
+    internal func callDidTimeout(peripheral:T) {
+        self.promise.success((peripheral, ConnectionEvent.Timeout))
     }
     
-    internal func callDidTimeout() {
-        self.promise.failure(BCError.connectoratorTimeout)
+    internal func callDidDisconnect(peripheral:T) {
+        self.promise.success((peripheral, ConnectionEvent.Disconnect))
     }
     
-    internal func callDidDisconnect() {
-        self.promise.failure(BCError.connectoratorDisconnect)
+    internal func callDidGiveUp(peripheral:T) {
+        self.promise.success((peripheral, ConnectionEvent.GiveUp))
     }
     
-    internal func callDidGiveUp() {
-        self.promise.failure(BCError.connectoratorGiveUp)
+    internal func didHaveConnectError(error:NSError) {
+        Logger.debug()
+        self.promise.failure(error)
     }
+
 }

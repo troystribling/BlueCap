@@ -70,16 +70,41 @@ class ViewController: UITableViewController {
         if let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid) {
             let manager = CentralManager.sharedInstance
             // on power, start scanning and when peripoheral is discovered stop scanning
-            let startScanningFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
+            let peripheraConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
                 manager.startScanningForServiceUUIDs([uuid], capacity:10)
-            }
-            startScanningFuture.onSuccess {peripheral in
+            }.flatmap {peripheral -> FutureStream<Void> in
                 if self.peripheral == nil {
+                    let connectorator = Connectorator(capacity:10)
                     self.peripheral = peripheral
+                    connectorator.onConnect()
                     manager.stopScanning()
                 }
             }
-            startScanningFuture.onFailure {error in
+            peripheraConnectFuture.onSuccess {
+            }
+            peripheraConnectFuture.onFailure {error in
+                if error.domain == BCError.domain {
+                    if let connectoratorError = ConnectoratorError(rawValue:error.code) {
+                        switch connectoratorError {
+                        case .Timeout:
+                            Logger.debug(message:"Timeout: '\(peripheral.name)'")
+                            peripheral.reconnect()
+                        case .Disconnect:
+                            Logger.debug(message:"Disconnect")
+                            Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
+                            peripheral.reconnect()
+                        case .ForceDisconnect:
+                            Logger.debug(message:"ForcedDisconnect")
+                        case .Failed:
+                            Logger.debug(message:"Failed")
+                            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                        case .GiveUp:
+                            Logger.debug(message:"GiveUp: '\(peripheral.name)'")
+                            peripheral.terminate()
+                        }
+                    } else {
+                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    }
             }
 //            // stop advertising and updating accelerometer on bluetooth power off
 //            let powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
