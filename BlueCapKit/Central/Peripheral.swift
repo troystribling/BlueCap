@@ -47,10 +47,9 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     private var servicesDiscoveredPromise   = Promise<Wrapper>()
     private var readRSSIPromise             = Promise<Int>()
     
-    public var timeoutRetries           = -1
-    public var disconnectRetries        = -1
-    public var connectionTimeout        = 10.0
-    public var characteristicTimeout    = 10.0
+    internal var timeoutRetries         = -1
+    internal var disconnectRetries      = -1
+    internal var connectionTimeout      = 10.0
     
     private var connectionSequence      = 0
     private var currentError            = PeripheralConnectionError.None
@@ -181,7 +180,15 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         }
     }
 
-    // utils
+    private func discoverIfConnected(peripheral:Wrapper, services:[CBUUID]!) {
+        if peripheral.state == .Connected {
+            peripheral.discoverServices(services)
+        } else {
+            self.servicesDiscoveredPromise.failure(BCError.peripheralDisconnected)
+        }
+    }
+    
+    // connection events
     private func timeoutConnection(peripheral:Wrapper, sequence:Int) {
         Logger.debug(message:"sequence \(sequence), timeout:\(self.connectionTimeout)")
         CentralQueue.delay(self.connectionTimeout) {
@@ -192,14 +199,6 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
             } else {
                 Logger.debug()
             }
-        }
-    }
-    
-    private func discoverIfConnected(peripheral:Wrapper, services:[CBUUID]!) {
-        if peripheral.state == .Connected {
-            peripheral.discoverServices(services)
-        } else {
-            self.servicesDiscoveredPromise.failure(BCError.peripheralDisconnected)
         }
     }
     
@@ -344,7 +343,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     private var discoveredCharacteristics   = [CBCharacteristic:Characteristic]()
     
     internal let cbPeripheral   : CBPeripheral
-
+    
     public let advertisements   : [String: String]
     public let rssi             : Int
     
@@ -384,8 +383,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         self.impl.reconnect(self)
     }
      
-    public func connect(capacity:Int? = nil, timeoutRetries:Int = -1, disconnectRetries:Int = -1, connectionTimeout:Double = 10.0, characteristicTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)> {
-        return self.impl.connect(self, capacity:capacity, timeoutRetries:timeoutRetries, disconnectRetries:disconnectRetries, connectionTimeout:connectionTimeout, characteristicTimeout:characteristicTimeout)
+    public func connect(capacity:Int? = nil, timeoutRetries:Int = -1, disconnectRetries:Int = -1, connectionTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)> {
+        return self.impl.connect(self, capacity:capacity, timeoutRetries:timeoutRetries, disconnectRetries:disconnectRetries, connectionTimeout:connectionTimeout)
     }
     
     public func terminate() {

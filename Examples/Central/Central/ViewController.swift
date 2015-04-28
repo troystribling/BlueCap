@@ -72,39 +72,32 @@ class ViewController: UITableViewController {
             // on power, start scanning and when peripoheral is discovered stop scanning
             let peripheraConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
                 manager.startScanningForServiceUUIDs([uuid], capacity:10)
-            }.flatmap {peripheral -> FutureStream<Void> in
-                if self.peripheral == nil {
-                    let connectorator = Connectorator(capacity:10)
-                    self.peripheral = peripheral
-                    connectorator.onConnect()
-                    manager.stopScanning()
+            }.flatmap {peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
+                manager.stopScanning()
+                self.peripheral = peripheral
+                return peripheral.connect()
+            }
+            peripheraConnectFuture.onSuccess{(peripheral, connectionEvent) in
+                switch connectionEvent {
+                case .Connect:
+                    self.presentViewController(UIAlertController.alertWithMessage("Connected"), animated:true, completion:nil)
+                case .Timeout:
+                    peripheral.reconnect()
+                case .Disconnect:
+                    peripheral.reconnect()
+                case .ForceDisconnect:
+                    self.presentViewController(UIAlertController.alertWithMessage("Disconnected"), animated:true, completion:nil)
+                case .Failed:
+                    self.presentViewController(UIAlertController.alertWithMessage("Connection Failed"), animated:true, completion:nil)
+                case .GiveUp:
+                    peripheral.terminate()
+                    self.presentViewController(UIAlertController.alertWithMessage("Giving up"), animated:true, completion:nil)
                 }
             }
-            peripheraConnectFuture.onSuccess {
-            }
             peripheraConnectFuture.onFailure {error in
-                if error.domain == BCError.domain {
-                    if let connectoratorError = ConnectoratorError(rawValue:error.code) {
-                        switch connectoratorError {
-                        case .Timeout:
-                            Logger.debug(message:"Timeout: '\(peripheral.name)'")
-                            peripheral.reconnect()
-                        case .Disconnect:
-                            Logger.debug(message:"Disconnect")
-                            Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
-                            peripheral.reconnect()
-                        case .ForceDisconnect:
-                            Logger.debug(message:"ForcedDisconnect")
-                        case .Failed:
-                            Logger.debug(message:"Failed")
-                            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                        case .GiveUp:
-                            Logger.debug(message:"GiveUp: '\(peripheral.name)'")
-                            peripheral.terminate()
-                        }
-                    } else {
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    }
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
+            peripheraConnectFuture.flatmap {
             }
 //            // stop advertising and updating accelerometer on bluetooth power off
 //            let powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in

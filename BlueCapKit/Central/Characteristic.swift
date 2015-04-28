@@ -15,11 +15,9 @@ public protocol CharacteristicWrappable {
     
     var uuid                    : CBUUID!                   {get}
     var name                    : String                    {get}
-    var connectorator           : Connectorator?            {get}
     var isNotifying             : Bool                      {get}
     var stringValues            : [String]                  {get}
     var afterDiscoveredPromise  : StreamPromise<Self>?  {get}
-    
     
     func stringValue(data:NSData?) -> [String:String]?
     func dataFromStringValue(stringValue:[String:String]) -> NSData?
@@ -121,35 +119,35 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         self.notificationUpdatePromise = nil
     }
     
-    public func read(characteristic:Wrapper) -> Future<Wrapper> {
+    public func read(characteristic:Wrapper, timeout:Double = 10.0) -> Future<Wrapper> {
         self.readPromise = Promise<Wrapper>()
         if characteristic.propertyEnabled(.Read) {
             Logger.debug(message:"read characteristic \(characteristic.uuid.UUIDString)")
             characteristic.readValueForCharacteristic()
             self.reading = true
             ++self.readSequence
-            self.timeoutRead(characteristic, sequence:self.readSequence)
+            self.timeoutRead(characteristic, sequence:self.readSequence, timeout:timeout)
         } else {
             self.readPromise.failure(BCError.characteristicReadNotSupported)
         }
         return self.readPromise.future
     }
     
-    public func writeData(characteristic:Wrapper, value:NSData) -> Future<Wrapper> {
+    public func writeData(characteristic:Wrapper, value:NSData, timeout:Double = 10.0) -> Future<Wrapper> {
         self.writePromise = Promise<Wrapper>()
         if characteristic.propertyEnabled(.Write) {
             Logger.debug(message:"write characteristic value=\(value.hexStringValue()), uuid=\(characteristic.uuid.UUIDString)")
             characteristic.writeValue(value)
             self.writing = true
             ++self.writeSequence
-            self.timeoutWrite(characteristic, sequence:self.writeSequence)
+            self.timeoutWrite(characteristic, sequence:self.writeSequence, timeout:timeout)
         } else {
             self.writePromise.failure(BCError.characteristicWriteNotSupported)
         }
         return self.writePromise.future
     }
     
-    public func writeString(characteristic:Wrapper, stringValue:[String:String]) -> Future<Wrapper> {
+    public func writeString(characteristic:Wrapper, stringValue:[String:String], timeout:Double = 10.0) -> Future<Wrapper> {
         if let value = characteristic.dataFromStringValue(stringValue) {
             return self.writeData(characteristic, value:value)
         } else {
@@ -159,29 +157,29 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         }
     }
     
-    public func write<T:Deserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
-        return self.writeData(characteristic, value:Serde.serialize(value))
+    public func write<T:Deserializable>(characteristic:Wrapper, value:T, timeout:Double = 10.0) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value), timeout:timeout)
     }
     
-    public func write<T:RawDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
-        return self.writeData(characteristic, value:Serde.serialize(value))
+    public func write<T:RawDeserializable>(characteristic:Wrapper, value:T, timeout:Double = 10.0) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value), timeout:timeout)
     }
     
-    public func write<T:RawArrayDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
-        return self.writeData(characteristic, value:Serde.serialize(value))
+    public func write<T:RawArrayDeserializable>(characteristic:Wrapper, value:T, timeout:Double = 10.0) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value), timeout:timeout)
     }
     
-    public func write<T:RawPairDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
-        return self.writeData(characteristic, value:Serde.serialize(value))
+    public func write<T:RawPairDeserializable>(characteristic:Wrapper, value:T, timeout:Double = 10.0) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value), timeout:timeout)
     }
     
-    public func write<T:RawArrayPairDeserializable>(characteristic:Wrapper, value:T) -> Future<Wrapper> {
-        return self.writeData(characteristic, value:Serde.serialize(value))
+    public func write<T:RawArrayPairDeserializable>(characteristic:Wrapper, value:T, timeout:Double = 10.0) -> Future<Wrapper> {
+        return self.writeData(characteristic, value:Serde.serialize(value), timeout:timeout)
     }
     
-    private func timeoutRead(characteristic:Wrapper, sequence:Int) {
-        Logger.debug(message:"sequence \(sequence), timeout:\(self.readWriteTimeout(characteristic))")
-        CentralQueue.delay(self.readWriteTimeout(characteristic)) {
+    private func timeoutRead(characteristic:Wrapper, sequence:Int, timeout:Double) {
+        Logger.debug(message:"sequence \(sequence), timeout:\(timeout))")
+        CentralQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug(message:"timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
@@ -192,9 +190,9 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         }
     }
     
-    private func timeoutWrite(characteristic:Wrapper, sequence:Int) {
-        Logger.debug(message:"sequence \(sequence), timeout:\(self.readWriteTimeout(characteristic))")
-        CentralQueue.delay(self.readWriteTimeout(characteristic)) {
+    private func timeoutWrite(characteristic:Wrapper, sequence:Int, timeout:Double) {
+        Logger.debug(message:"sequence \(sequence), timeout:\(timeout)")
+        CentralQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug(message:"timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
@@ -202,14 +200,6 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
             } else {
                 Logger.debug(message:"timeout expired")
             }
-        }
-    }
-    
-    private func readWriteTimeout(characteristic:Wrapper) -> Double {
-        if let connectorator = characteristic.connectorator {
-            return connectorator.characteristicTimeout
-        } else {
-            return self.defaultTimeout
         }
     }
     
@@ -279,10 +269,6 @@ public final class Characteristic : CharacteristicWrappable {
     
     public var name : String {
         return self.profile.name
-    }
-    
-    public var connectorator : Connectorator? {
-        return self.service.peripheral.connectorator
     }
     
     public var isNotifying : Bool {
@@ -382,36 +368,36 @@ public final class Characteristic : CharacteristicWrappable {
         self.impl.stopNotificationUpdates()
     }
     
-    public func read() -> Future<Characteristic> {
-        return self.impl.read(self)
+    public func read(timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.read(self, timeout:timeout)
     }
 
-    public func writeData(value:NSData) -> Future<Characteristic> {
-        return self.impl.writeData(self, value:value)
+    public func writeData(value:NSData, timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.writeData(self, value:value, timeout:timeout)
     }
 
-    public func writeString(stringValue:[String:String]) -> Future<Characteristic> {
-        return self.impl.writeString(self, stringValue:stringValue)
+    public func writeString(stringValue:[String:String], timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.writeString(self, stringValue:stringValue, timeout:timeout)
     }
 
-    public func write<T:Deserializable>(value:T) -> Future<Characteristic> {
-        return self.impl.write(self, value:value)
+    public func write<T:Deserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.write(self, value:value, timeout:timeout)
     }
     
-    public func write<T:RawDeserializable>(value:T) -> Future<Characteristic> {
-        return self.impl.write(self, value:value)
+    public func write<T:RawDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.write(self, value:value, timeout:timeout)
     }
 
-    public func write<T:RawArrayDeserializable>(value:T) -> Future<Characteristic> {
-        return self.impl.write(self, value:value)
+    public func write<T:RawArrayDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.write(self, value:value, timeout:timeout)
     }
 
-    public func write<T:RawPairDeserializable>(value:T) -> Future<Characteristic> {
-        return self.impl.write(self, value:value)
+    public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.write(self, value:value, timeout:timeout)
     }
     
-    public func write<T:RawArrayPairDeserializable>(value:T) -> Future<Characteristic> {
-        return self.impl.write(self, value:value)
+    public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
+        return self.impl.write(self, value:value, timeout:timeout)
     }
 
     internal init(cbCharacteristic:CBCharacteristic, service:Service) {
