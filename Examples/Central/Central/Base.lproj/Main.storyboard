@@ -30,7 +30,7 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="W6f-pm-5Qz">
                                                     <rect key="frame" x="531" y="16" width="51" height="31"/>
                                                     <connections>
-                                                        <action selector="toggleAdvertise:" destination="Ach-1a-3TE" eventType="valueChanged" id="KcU-5N-KF5"/>
+                                                        <action selector="toggleScan:" destination="Ach-1a-3TE" eventType="valueChanged" id="g9l-Xq-1Cw"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>

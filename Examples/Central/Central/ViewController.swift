@@ -57,19 +57,24 @@ class ViewController: UITableViewController {
     }
     
     @IBAction func toggleScan(sender:AnyObject) {
-        if let peripheral = self.peripheral {
+        let manager = CentralManager.sharedInstance
+        if manager.isScanning {
+            manager.stopScanning()
+        } else {
+            self.startScanning()
         }
     }
     
     @IBAction func disconnect(sender:AnyObject) {
-        if let peripheral = self.peripheral {
+        if let peripheral = self.peripheral where peripheral.state != .Disconnected {
+            peripheral.disconnect()
         }
     }
     
     func startScanning() {
         if let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid) {
             let manager = CentralManager.sharedInstance
-            // on power, start scanning and when peripoheral is discovered stop scanning
+            // on power, start scanning and when peripoheral is discovered connect and stop scanning
             let peripheraConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
                 manager.startScanningForServiceUUIDs([uuid], capacity:10)
             }.flatmap {peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
@@ -97,25 +102,32 @@ class ViewController: UITableViewController {
             peripheraConnectFuture.onFailure {error in
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
-            peripheraConnectFuture.flatmap {
+            let peripheralDiscoveryFuture = peripheraConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
+                peripheral.discoverAllPeripheralServices()
             }
-//            // stop advertising and updating accelerometer on bluetooth power off
-//            let powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
-//            }
-//            powerOffFuture?.onSuccess {
-//            }
-//            powerOffFuture?.onFailure {error in
-//            }
-//            // enable controls when bluetooth is powered on again after stop advertising is successul
-//            let powerOffFutureSuccessFuture = powerOffFuture.flatmap {_ -> Future<Void> in
-//            }
-//            powerOffFutureSuccessFuture.onSuccess {
-//            }
-//            // enable controls when bluetooth is powered on again after stop advertising fails
-//            let powerOffFutureFailedFuture = powerOffFuture.recoverWith {_  -> Future<Void> in
-//            }
-//            powerOffFutureFailedFuture.onSuccess {
-//            }
+            peripheralDiscoveryFuture.onSuccess {_ in
+            }
+            peripheralDiscoveryFuture.onFailure {error in
+                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            }
+            // handle bluetooth power off
+            let powerOffFuture = manager.powerOff()
+            powerOffFuture.onSuccess {
+            }
+            powerOffFuture.onFailure {error in
+            }
+            // enable controls when bluetooth is powered on again after stop advertising is successul
+            let powerOffFutureSuccessFuture = powerOffFuture.flatmap {_ -> Future<Void> in
+                manager.powerOn()
+            }
+            powerOffFutureSuccessFuture.onSuccess {
+            }
+            // enable controls when bluetooth is powered on again after stop advertising fails
+            let powerOffFutureFailedFuture = powerOffFuture.recoverWith {_  -> Future<Void> in
+                manager.powerOn()
+            }
+            powerOffFutureFailedFuture.onSuccess {
+            }
         }
     }
     

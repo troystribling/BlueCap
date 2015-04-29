@@ -65,33 +65,39 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     // power on
     public func powerOn(peripheral:Wrapper) -> Future<Void> {
         Logger.debug()
-        self.afterPowerOnPromise = Promise<Void>()
-        if peripheral.poweredOn {
-            self.afterPowerOnPromise.success()
+        PeripheralQueue.sync {
+            self.afterPowerOnPromise = Promise<Void>()
+            if peripheral.poweredOn {
+                self.afterPowerOnPromise.success()
+            }
         }
         return self.afterPowerOnPromise.future
     }
     
     public func powerOff(peripheral:Wrapper) -> Future<Void> {
         Logger.debug()
-        self.afterPowerOffPromise = Promise<Void>()
-        if peripheral.poweredOff {
-            self.afterPowerOffPromise.success()
+        PeripheralQueue.sync {
+            self.afterPowerOffPromise = Promise<Void>()
+            if peripheral.poweredOff {
+                self.afterPowerOffPromise.success()
+            }
         }
         return self.afterPowerOffPromise.future
     }
     
     // advertising
     public func startAdvertising(peripheral:Wrapper, name:String, uuids:[CBUUID]?) -> Future<Void> {
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        if !peripheral.isAdvertising {
-            var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
-            if let uuids = uuids {
-                advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+        PeripheralQueue.sync {
+            self.afterAdvertisingStartedPromise = Promise<Void>()
+            if !peripheral.isAdvertising {
+                var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+                if let uuids = uuids {
+                    advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+                }
+                peripheral.startAdvertising(advertisementData)
+            } else {
+                self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
             }
-            peripheral.startAdvertising(advertisementData)
-        } else {
-            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
         }
         return self.afterAdvertisingStartedPromise.future
     }
@@ -101,34 +107,40 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     }
     
     public func startAdvertising(peripheral:Wrapper, region:Wrapper.WrappedBeaconRegion) -> Future<Void> {
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        if !peripheral.isAdvertising {
-            peripheral.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
-        } else {
-            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+        PeripheralQueue.sync {
+            self.afterAdvertisingStartedPromise = Promise<Void>()
+            if !peripheral.isAdvertising {
+                peripheral.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
+            } else {
+                self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+            }
         }
         return self.afterAdvertisingStartedPromise.future
     }
     
     public func stopAdvertising(peripheral:Wrapper) -> Future<Void> {
-        self.afterAdvertsingStoppedPromise = Promise<Void>()
-        if peripheral.isAdvertising {
-            peripheral.stopAdvertisingWrapped()
-            PeripheralQueue.async{self.lookForAdvertisingToStop(peripheral)}
-        } else {
-            self.afterAdvertsingStoppedPromise.failure(BCError.peripheralManagerIsNotAdvertising)
+        PeripheralQueue.sync {
+            self.afterAdvertsingStoppedPromise = Promise<Void>()
+            if peripheral.isAdvertising {
+                peripheral.stopAdvertisingWrapped()
+                PeripheralQueue.async{self.lookForAdvertisingToStop(peripheral)}
+            } else {
+                self.afterAdvertsingStoppedPromise.failure(BCError.peripheralManagerIsNotAdvertising)
+            }
         }
         return self.afterAdvertsingStoppedPromise.future
     }
     
     // services
     public func addService(peripheral:Wrapper, service:Wrapper.WrappedService) -> Future<Void> {
-        self.afterSeriviceAddPromise = Promise<Void>()
-        if !peripheral.isAdvertising {
-            peripheral.addWrappedService(service)
-            Logger.debug(message:"service name=\(service.name), uuid=\(service.uuid)")
-        } else {
-            self.afterSeriviceAddPromise.failure(BCError.peripheralManagerIsAdvertising)
+        PeripheralQueue.sync {
+            self.afterSeriviceAddPromise = Promise<Void>()
+            if !peripheral.isAdvertising {
+                peripheral.addWrappedService(service)
+                Logger.debug(message:"service name=\(service.name), uuid=\(service.uuid)")
+            } else {
+                self.afterSeriviceAddPromise.failure(BCError.peripheralManagerIsAdvertising)
+            }
         }
         return self.afterSeriviceAddPromise.future
     }

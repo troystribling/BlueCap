@@ -97,18 +97,22 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     // power up
     public func powerOn(central:Wrapper) -> Future<Void> {
         Logger.debug()
-        self.afterPowerOnPromise = Promise<Void>()
-        if central.poweredOn {
-            self.afterPowerOnPromise.success()
+        CentralQueue.sync {
+            self.afterPowerOnPromise = Promise<Void>()
+            if central.poweredOn {
+                self.afterPowerOnPromise.success()
+            }
         }
         return self.afterPowerOnPromise.future
     }
     
     public func powerOff(central:Wrapper) -> Future<Void> {
         Logger.debug()
-        self.afterPowerOffPromise = Promise<Void>()
-        if central.poweredOff {
-            self.afterPowerOffPromise.success()
+        CentralQueue.sync {
+            self.afterPowerOffPromise = Promise<Void>()
+            if central.poweredOff {
+                self.afterPowerOffPromise.success()
+            }
         }
         return self.afterPowerOffPromise.future
     }

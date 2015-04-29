@@ -114,8 +114,10 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     
     public func discoverServices(peripheral:Wrapper, services:[CBUUID]!) -> Future<Wrapper> {
         Logger.debug(message:" \(peripheral.name)")
-        self.servicesDiscoveredPromise = Promise<Wrapper>()
-        self.discoverIfConnected(peripheral, services:services)
+        CentralQueue.sync {
+            self.servicesDiscoveredPromise = Promise<Wrapper>()
+            self.discoverIfConnected(peripheral, services:services)
+        }
         return self.servicesDiscoveredPromise.future
     }
     
@@ -152,7 +154,9 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     
     // RSSI
     public func readRSSI() -> Future<Int> {
-        self.readRSSIPromise = Promise<Int>()
+        CentralQueue.sync {
+            self.readRSSIPromise = Promise<Int>()
+        }
         return self.readRSSIPromise.future
     }
     
@@ -173,8 +177,6 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
             self.readRSSIPromise.failure(error)
         } else {
             if let RSSI = RSSI {
-                self.readRSSIPromise.success(RSSI.integerValue)
-            } else {
                 self.readRSSIPromise.success(RSSI.integerValue)
             }
         }
