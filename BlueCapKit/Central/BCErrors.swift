@@ -28,7 +28,7 @@ public enum PeripheralManagerError : Int {
 }
 
 public enum CentralError : Int {
-    case IsScannong         = 50
+    case IsScanning         = 50
 }
 
 public struct BCError {
@@ -47,7 +47,7 @@ public struct BCError {
     public static let peripheralManagerIsNotAdvertising = NSError(domain:domain, code:PeripheralManagerError.IsNotAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is not Advertising"])
     public static let peripheralManagerAddServiceFailed = NSError(domain:domain, code:PeripheralManagerError.AddServiceFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Add service failed because service peripheral is advertising"])
     
-    public static let centralIsScanning = NSError(domain:domain, code:CentralError.IsScannong.rawValue, userInfo:[NSLocalizedDescriptionKey:"Central is scanning"])
+    public static let centralIsScanning = NSError(domain:domain, code:CentralError.IsScanning.rawValue, userInfo:[NSLocalizedDescriptionKey:"Central is scanning"])
 
 }
 

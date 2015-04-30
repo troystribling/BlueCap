@@ -10,6 +10,19 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
+public enum CentralExampleError : Int {
+    case DataCharactertisticNotFound        = 1
+    case EnabledCharactertisticNotFound     = 2
+    case ServiceNotFound                    = 3
+}
+
+public struct CenteralError {
+    public static let domain = "Central Example"
+    public static let dataCharacteristicNotFound = NSError(domain:domain, code:CentralExampleError.DataCharactertisticNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Data Chacateristic Not Found"])
+    public static let enabledCharacteristicNotFound = NSError(domain:domain, code:CentralExampleError.EnabledCharactertisticNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Enabled Chacateristic Not Found"])
+    public static let serviceNotFound = NSError(domain:domain, code:CentralExampleError.ServiceNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Service Not Found"])
+}
+
 class ViewController: UITableViewController {
     
     @IBOutlet var xAccelerationLabel        : UILabel!
@@ -28,7 +41,10 @@ class ViewController: UITableViewController {
     @IBOutlet var enabledLabel              : UILabel!
     @IBOutlet var disconnectButton          : UIButton!
     
-    var peripheral : Peripheral?
+    var peripheral                                  : Peripheral?
+    var accelerometerDataCharacteristic             : Characteristic?
+    var accelerometerEnabledCharacteristic          : Characteristic?
+    var accelerometerUpdatePeriodCharacteristic     : Characteristic?
     
     required init(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -72,11 +88,16 @@ class ViewController: UITableViewController {
     }
     
     func startScanning() {
-        if let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid) {
+        if let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid),
+               dataUUID = CBUUID(string:TISensorTag.AccelerometerService.Data.uuid),
+               enabledUUID = CBUUID(string:TISensorTag.AccelerometerService.Enabled.uuid),
+               updatePeriodUUID = CBUUID(string:TISensorTag.AccelerometerService.UpdatePeriod.uuid) {
+                
             let manager = CentralManager.sharedInstance
+                
             // on power, start scanning and when peripoheral is discovered connect and stop scanning
             let peripheraConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
-                manager.startScanningForServiceUUIDs([uuid], capacity:10)
+                manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
             }.flatmap {peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
                 manager.stopScanning()
                 self.peripheral = peripheral
@@ -85,31 +106,64 @@ class ViewController: UITableViewController {
             peripheraConnectFuture.onSuccess{(peripheral, connectionEvent) in
                 switch connectionEvent {
                 case .Connect:
+                    self.enableDisconnectButton(true)
                     self.presentViewController(UIAlertController.alertWithMessage("Connected"), animated:true, completion:nil)
                 case .Timeout:
                     peripheral.reconnect()
                 case .Disconnect:
                     peripheral.reconnect()
+                    self.enableDisconnectButton(false)
                 case .ForceDisconnect:
                     self.presentViewController(UIAlertController.alertWithMessage("Disconnected"), animated:true, completion:nil)
+                    self.enableDisconnectButton(false)
                 case .Failed:
+                    self.enableDisconnectButton(false)
                     self.presentViewController(UIAlertController.alertWithMessage("Connection Failed"), animated:true, completion:nil)
                 case .GiveUp:
                     peripheral.terminate()
+                    self.enableDisconnectButton(false)
                     self.presentViewController(UIAlertController.alertWithMessage("Giving up"), animated:true, completion:nil)
                 }
             }
             peripheraConnectFuture.onFailure {error in
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
-            let peripheralDiscoveryFuture = peripheraConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
-                peripheral.discoverAllPeripheralServices()
+            
+            // discover sevices and characteristics enable acclerometer and subscribe to acceleration data updates
+            let dataCharacteristicSubscribedFuture = peripheraConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
+                peripheral.discoverPeripheralServices([serviceUUID])
+            }.flatmap {peripheral -> Future<Characteristic> in
+                if let service = peripheral.service(serviceUUID) {
+                    self.accelerometerDataCharacteristic = service.characteristic(dataUUID)
+                    self.accelerometerEnabledCharacteristic = service.characteristic(enabledUUID)
+                    if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
+                        return accelerometerEnabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.Yes)
+                    } else {
+                        let promise = Promise<Characteristic>()
+                        promise.failure(CenteralError.enabledCharacteristicNotFound)
+                        return promise.future
+                    }
+                } else {
+                    let promise = Promise<Characteristic>()
+                    promise.failure(CenteralError.serviceNotFound)
+                    return promise.future
+                }
+            }.flatmap {_ -> FutureStream<Characteristic> in
+                if let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic {
+                    return accelerometerDataCharacteristic.recieveNotificationUpdates(capacity:10)
+                } else {
+                    let promise = StreamPromise<Characteristic>()
+                    promise.failure(CenteralError.serviceNotFound)
+                    return promise.future
+                }
             }
-            peripheralDiscoveryFuture.onSuccess {_ in
+            dataCharacteristicSubscribedFuture.onSuccess {_ in
+                
             }
-            peripheralDiscoveryFuture.onFailure {error in
+            dataCharacteristicSubscribedFuture.onFailure {error in
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
+            
             // handle bluetooth power off
             let powerOffFuture = manager.powerOff()
             powerOffFuture.onSuccess {
@@ -128,6 +182,16 @@ class ViewController: UITableViewController {
             }
             powerOffFutureFailedFuture.onSuccess {
             }
+        }
+    }
+    
+    func enableDisconnectButton(enabled:Bool) {
+        self.disconnectButton.enabled = enabled
+        if enabled {
+            self.disconnectButton.setTitleColor(UIColor.redColor(), forState:UIControlState.Normal)
+            
+        } else {
+            self.disconnectButton.setTitleColor(UIColor.redColor(), forState:UIControlState.Normal)
         }
     }
     

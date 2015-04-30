@@ -138,4 +138,8 @@ public final class Service : ServiceWrappable {
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
     }
     
+    public func characteristic(uuid:CBUUID) -> Characteristic? {
+        return self.discoveredCharacteristics[uuid]
+    }
+    
 }

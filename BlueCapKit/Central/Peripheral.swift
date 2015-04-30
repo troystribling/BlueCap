@@ -365,7 +365,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         return self.cbPeripheral.identifier
     }
     
-    
     internal init(cbPeripheral:CBPeripheral, advertisements:[String:String], rssi:Int) {
         self.cbPeripheral = cbPeripheral
         self.advertisements = advertisements
@@ -374,6 +373,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         self.cbPeripheral.delegate = self
     }
     
+    public func service(uuid:CBUUID) -> Service? {
+        return self.discoveredServices[uuid]
+    }
+
     // rssi
     func readRSSI() -> Future<Int> {
         self.cbPeripheral.readRSSI()
