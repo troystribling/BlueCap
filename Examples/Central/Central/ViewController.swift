@@ -35,11 +35,10 @@ class ViewController: UITableViewController {
     @IBOutlet var rawUpdatePeriodlabel      : UILabel!
     @IBOutlet var updatePeriodLabel         : UILabel!
     
-    @IBOutlet var scanLabel                 : UILabel!
-    @IBOutlet var scanSwitch                : UISwitch!
+    @IBOutlet var activateSwitch            : UISwitch!
     @IBOutlet var enabledSwitch             : UISwitch!
     @IBOutlet var enabledLabel              : UILabel!
-    @IBOutlet var disconnectButton          : UIButton!
+    @IBOutlet var statusLabel               : UILabel!
     
     var peripheral                                  : Peripheral?
     var accelerometerDataCharacteristic             : Characteristic?
@@ -56,11 +55,7 @@ class ViewController: UITableViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        if let peripheral = self.peripheral {
-            
-        } else {
-            
-        }
+        self.updateUIStatus()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -72,12 +67,13 @@ class ViewController: UITableViewController {
         }
     }
     
-    @IBAction func toggleScan(sender:AnyObject) {
-        let manager = CentralManager.sharedInstance
-        if manager.isScanning {
-            manager.stopScanning()
-        } else {
+    @IBAction func toggleActivate(sender:AnyObject) {
+        if self.activateSwitch.on  {
             self.startScanning()
+        } else {
+            CentralManager.sharedInstance.stopScanning()
+            self.peripheral?.terminate()
+            self.updateUIStatus()
         }
     }
     
@@ -106,22 +102,23 @@ class ViewController: UITableViewController {
             peripheraConnectFuture.onSuccess{(peripheral, connectionEvent) in
                 switch connectionEvent {
                 case .Connect:
-                    self.enableDisconnectButton(true)
+                    self.updateUIStatus()
                     self.presentViewController(UIAlertController.alertWithMessage("Connected"), animated:true, completion:nil)
                 case .Timeout:
+                    self.updateUIStatus()
                     peripheral.reconnect()
                 case .Disconnect:
                     peripheral.reconnect()
-                    self.enableDisconnectButton(false)
+                    self.updateUIStatus()
                 case .ForceDisconnect:
                     self.presentViewController(UIAlertController.alertWithMessage("Disconnected"), animated:true, completion:nil)
-                    self.enableDisconnectButton(false)
+                    self.updateUIStatus()
                 case .Failed:
-                    self.enableDisconnectButton(false)
+                    self.updateUIStatus()
                     self.presentViewController(UIAlertController.alertWithMessage("Connection Failed"), animated:true, completion:nil)
                 case .GiveUp:
                     peripheral.terminate()
-                    self.enableDisconnectButton(false)
+                    self.updateUIStatus()
                     self.presentViewController(UIAlertController.alertWithMessage("Giving up"), animated:true, completion:nil)
                 }
             }
@@ -130,7 +127,7 @@ class ViewController: UITableViewController {
             }
             
             // discover sevices and characteristics enable acclerometer and subscribe to acceleration data updates
-            let dataCharacteristicSubscribedFuture = peripheraConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
+            let dataCharacteristicSubscriptionFuture = peripheraConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
                 peripheral.discoverPeripheralServices([serviceUUID])
             }.flatmap {peripheral -> Future<Characteristic> in
                 if let service = peripheral.service(serviceUUID) {
@@ -148,19 +145,26 @@ class ViewController: UITableViewController {
                     promise.failure(CenteralError.serviceNotFound)
                     return promise.future
                 }
-            }.flatmap {_ -> FutureStream<Characteristic> in
-                if let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic {
-                    return accelerometerDataCharacteristic.recieveNotificationUpdates(capacity:10)
-                } else {
-                    let promise = StreamPromise<Characteristic>()
-                    promise.failure(CenteralError.serviceNotFound)
-                    return promise.future
-                }
+            }.flatmap {_ -> Future<Characteristic> in
+                    if let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic {
+                        return accelerometerDataCharacteristic.startNotifying()
+                    } else {
+                        let promise = Promise<Characteristic>()
+                        promise.failure(CenteralError.serviceNotFound)
+                        return promise.future
+                    }
+            }.flatmap {characteristic -> FutureStream<Characteristic> in
+                    if let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic {
+                        return accelerometerDataCharacteristic.recieveNotificationUpdates(capacity:10)
+                    } else {
+                        let promise = StreamPromise<Characteristic>()
+                        promise.failure(CenteralError.serviceNotFound)
+                        return promise.future
+                    }
             }
-            dataCharacteristicSubscribedFuture.onSuccess {_ in
-                
+            dataCharacteristicSubscriptionFuture.onSuccess {_ in
             }
-            dataCharacteristicSubscribedFuture.onFailure {error in
+            dataCharacteristicSubscriptionFuture.onFailure {error in
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
             
@@ -185,13 +189,22 @@ class ViewController: UITableViewController {
         }
     }
     
-    func enableDisconnectButton(enabled:Bool) {
-        self.disconnectButton.enabled = enabled
-        if enabled {
-            self.disconnectButton.setTitleColor(UIColor.redColor(), forState:UIControlState.Normal)
-            
+    func updateUIStatus() {
+        if let peripheral = self.peripheral {
+            switch peripheral.state {
+            case .Connected:
+                self.statusLabel.text = "Connected"
+                self.statusLabel.textColor = UIColor(red:0.2, green:0.7, blue:0.2, alpha:1.0)
+            case .Connecting:
+                self.statusLabel.text = "Connecting"
+                self.statusLabel.textColor = UIColor(red:0.2, green:0.7, blue:0.7, alpha:1.0)
+            case .Disconnected:
+                self.statusLabel.text = "Disconnected"
+                self.statusLabel.textColor = UIColor.lightGrayColor()
+            }
         } else {
-            self.disconnectButton.setTitleColor(UIColor.redColor(), forState:UIControlState.Normal)
+            self.statusLabel.text = "Disconnected"
+            self.statusLabel.textColor = UIColor.lightGrayColor()
         }
     }
     
