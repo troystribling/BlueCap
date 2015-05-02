@@ -21,8 +21,8 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9rL-Ca-HYC" id="D5m-rN-O08">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Active" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iv9-51-e5T">
-                                                    <rect key="frame" x="20" y="19" width="59" height="25"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Activate" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iv9-51-e5T">
+                                                    <rect key="frame" x="20" y="19" width="78" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -93,7 +93,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Update Period" id="8co-cc-Y7C">
+                            <tableViewSection headerTitle="Accelerometer Update Period" id="8co-cc-Y7C">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="3yZ-R2-hgG">
                                         <autoresizingMask key="autoresizingMask"/>
@@ -323,7 +323,7 @@
                         <outlet property="activateSwitch" destination="W6f-pm-5Qz" id="bA1-iz-wxE"/>
                         <outlet property="enabledLabel" destination="z9C-YP-M4U" id="NMf-vv-sJr"/>
                         <outlet property="enabledSwitch" destination="hh0-2g-Xsn" id="UMM-7O-e6f"/>
-                        <outlet property="rawUpdatePeriodlabel" destination="DXJ-dh-bTp" id="6qz-Be-Zdc"/>
+                        <outlet property="rawUpdatePeriodlabel" destination="OnS-gr-RVo" id="IER-Oa-Fhz"/>
                         <outlet property="statusLabel" destination="DXJ-dh-bTp" id="cb2-tg-stf"/>
                         <outlet property="updatePeriodLabel" destination="0W8-2J-F0r" id="YrR-Sg-7Wt"/>
                         <outlet property="xAccelerationLabel" destination="ArD-NS-2hL" id="VWt-0o-Sii"/>
