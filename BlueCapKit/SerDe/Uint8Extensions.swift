@@ -27,10 +27,26 @@ extension UInt8 : Deserializable {
     }
 
     public init?(doubleValue:Double) {
-        if doubleValue >= 255.0 || doubleValue <= 0.0 {
+        if doubleValue > 255.0 || doubleValue < 0.0 {
             return nil
         } else {
             self = UInt8(doubleValue)
+        }
+    }
+
+    public init?(uintValue:UInt16) {
+        if uintValue > 255 {
+            return nil
+        } else {
+            self = UInt8(uintValue)
+        }
+    }
+
+    public init?(intValue:Int16) {
+        if intValue > 255 || intValue < 0 {
+            return nil
+        } else {
+            self = UInt8(intValue)
         }
     }
 

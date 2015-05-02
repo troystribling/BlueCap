@@ -34,6 +34,22 @@ extension Int8 : Deserializable {
         }
     }
 
+    public init?(uintValue:UInt16) {
+        if uintValue > 255 {
+            return nil
+        } else {
+            self = Int8(uintValue)
+        }
+    }
+    
+    public init?(intValue:Int16) {
+        if intValue > 255 || intValue < 0 {
+            return nil
+        } else {
+            self = Int8(intValue)
+        }
+    }
+
     public static func deserialize(data:NSData) -> Int8? {
         if data.length >= sizeof(Int8) {
             var value : Int8 = 0

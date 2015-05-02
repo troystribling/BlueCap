@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		054E749D1AF533EE002E7DDC /* SetUpdatePeriodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054E749C1AF533EE002E7DDC /* SetUpdatePeriodViewController.swift */; };
 		05C0C4951AEC9DD200FAEBE1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C0C4941AEC9DD200FAEBE1 /* AppDelegate.swift */; };
 		05C0C4971AEC9DD200FAEBE1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C0C4961AEC9DD200FAEBE1 /* ViewController.swift */; };
 		05C0C49A1AEC9DD200FAEBE1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05C0C4981AEC9DD200FAEBE1 /* Main.storyboard */; };
@@ -72,6 +73,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		054E749C1AF533EE002E7DDC /* SetUpdatePeriodViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetUpdatePeriodViewController.swift; sourceTree = "<group>"; };
 		05C0C48F1AEC9DD200FAEBE1 /* Central.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Central.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05C0C4931AEC9DD200FAEBE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05C0C4941AEC9DD200FAEBE1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -130,12 +132,13 @@
 		05C0C4911AEC9DD200FAEBE1 /* Central */ = {
 			isa = PBXGroup;
 			children = (
-				05C0C4C71AED434900FAEBE1 /* UIAlertControllerExtensions.swift */,
 				05C0C4941AEC9DD200FAEBE1 /* AppDelegate.swift */,
+				054E749C1AF533EE002E7DDC /* SetUpdatePeriodViewController.swift */,
+				05C0C4C71AED434900FAEBE1 /* UIAlertControllerExtensions.swift */,
 				05C0C4961AEC9DD200FAEBE1 /* ViewController.swift */,
-				05C0C4981AEC9DD200FAEBE1 /* Main.storyboard */,
 				05C0C49B1AEC9DD200FAEBE1 /* Images.xcassets */,
 				05C0C49D1AEC9DD200FAEBE1 /* LaunchScreen.xib */,
+				05C0C4981AEC9DD200FAEBE1 /* Main.storyboard */,
 				05C0C4921AEC9DD200FAEBE1 /* Supporting Files */,
 			);
 			path = Central;
@@ -302,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05C0C4971AEC9DD200FAEBE1 /* ViewController.swift in Sources */,
+				054E749D1AF533EE002E7DDC /* SetUpdatePeriodViewController.swift in Sources */,
 				05C0C4C81AED434900FAEBE1 /* UIAlertControllerExtensions.swift in Sources */,
 				05C0C4951AEC9DD200FAEBE1 /* AppDelegate.swift in Sources */,
 			);

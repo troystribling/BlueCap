@@ -85,8 +85,11 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         }
     }
     
-    public func connect(peripheral:Wrapper, capacity:Int? = nil, timeoutRetries:Int = -1, disconnectRetries:Int = -1, connectionTimeout:Double = 10.0, characteristicTimeout:Double = 10.0) -> FutureStream<(Wrapper, ConnectionEvent)> {
+    public func connect(peripheral:Wrapper, capacity:Int? = nil, timeoutRetries:Int = -1, disconnectRetries:Int = -1, connectionTimeout:Double = 10.0) -> FutureStream<(Wrapper, ConnectionEvent)> {
         self.connectionPromise = StreamPromise<(Wrapper, ConnectionEvent)>(capacity:capacity)
+        self.timeoutRetries = timeoutRetries
+        self.disconnectRetries = disconnectRetries
+        self.connectionTimeout = connectionTimeout
         Logger.debug(message:"connect peripheral \(peripheral.name)")
         self.reconnect(peripheral)
         return self.connectionPromise!.future

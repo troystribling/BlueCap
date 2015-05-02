@@ -179,7 +179,7 @@ public struct TISensorTag {
                 }
                 return period
             }
-            
+
             // CharacteristicConfigurable
             public static let uuid                      = "F000AA13-0451-4000-B000-000000000000"
             public static let name                      = "Accelerometer Update Period"
@@ -195,7 +195,7 @@ public struct TISensorTag {
                 self.periodRaw = rawValue
                 self.period = UpdatePeriod.valueFromRaw(self.periodRaw)
             }
-            
+
             // StringDeserializable
             public static let stringValues = [String]()
             

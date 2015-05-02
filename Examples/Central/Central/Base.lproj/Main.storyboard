@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Ach-1a-3TE">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Mw3-a6-pZu">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Central Example-->
         <scene sceneID="rei-dn-ydJ">
             <objects>
                 <tableViewController id="Ach-1a-3TE" customClass="ViewController" customModule="Central" customModuleProvider="target" sceneMemberID="viewController">
@@ -95,7 +95,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Accelerometer Update Period" id="8co-cc-Y7C">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="3yZ-R2-hgG">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="60" id="3yZ-R2-hgG">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3yZ-R2-hgG" id="PsE-SY-Dtz">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -107,7 +107,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0W8-2J-F0r">
-                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                    <rect key="frame" x="546" y="17" width="13" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -115,13 +115,16 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Qig-ks-br0" firstAttribute="top" secondItem="PsE-SY-Dtz" secondAttribute="topMargin" constant="9" id="LIl-O6-fVs"/>
+                                                <constraint firstItem="0W8-2J-F0r" firstAttribute="trailing" secondItem="PsE-SY-Dtz" secondAttribute="trailingMargin" id="Z0d-Uz-sE4"/>
                                                 <constraint firstItem="0W8-2J-F0r" firstAttribute="top" secondItem="PsE-SY-Dtz" secondAttribute="topMargin" constant="9" id="ezE-DN-OJA"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="0W8-2J-F0r" secondAttribute="trailing" constant="12" id="okC-P5-AC0"/>
                                                 <constraint firstItem="Qig-ks-br0" firstAttribute="leading" secondItem="PsE-SY-Dtz" secondAttribute="leadingMargin" constant="12" id="vxH-jH-MXT"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="9mN-oe-3Tk" kind="show" identifier="UpdatePeriodValue" id="G03-v7-V96"/>
+                                        </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="xSq-bF-le5">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="60" id="xSq-bF-le5">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xSq-bF-le5" id="8WA-Ex-0H0">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -133,7 +136,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OnS-gr-RVo">
-                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                    <rect key="frame" x="546" y="17" width="13" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -143,9 +146,12 @@
                                                 <constraint firstItem="Fh5-TR-Ns1" firstAttribute="leading" secondItem="8WA-Ex-0H0" secondAttribute="leadingMargin" constant="12" id="YkX-cJ-KFe"/>
                                                 <constraint firstItem="Fh5-TR-Ns1" firstAttribute="top" secondItem="8WA-Ex-0H0" secondAttribute="topMargin" constant="9" id="cCC-Bf-ay4"/>
                                                 <constraint firstItem="OnS-gr-RVo" firstAttribute="top" secondItem="8WA-Ex-0H0" secondAttribute="topMargin" constant="9" id="dG0-sq-pN6"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="OnS-gr-RVo" secondAttribute="trailing" constant="12" id="zST-Bb-jWZ"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="OnS-gr-RVo" secondAttribute="trailing" id="zST-Bb-jWZ"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="9mN-oe-3Tk" kind="show" identifier="UpdatePeriodRawValue" id="6Bf-c7-zif"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -319,6 +325,7 @@
                             <outlet property="delegate" destination="Ach-1a-3TE" id="4u4-OJ-cEl"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Central Example" id="Rew-TU-7S0"/>
                     <connections>
                         <outlet property="activateSwitch" destination="W6f-pm-5Qz" id="bA1-iz-wxE"/>
                         <outlet property="enabledLabel" destination="z9C-YP-M4U" id="NMf-vv-sJr"/>
@@ -336,7 +343,78 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nkj-mz-Edf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="723" y="586"/>
+            <point key="canvasLocation" x="1083" y="450"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Kup-Xt-DJG">
+            <objects>
+                <navigationController id="Mw3-a6-pZu" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="UPD-PV-keg">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Ach-1a-3TE" kind="relationship" relationship="rootViewController" id="LyZ-5g-nyg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Lvd-fz-wg5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="364" y="450"/>
+        </scene>
+        <!--Update Period (ms)-->
+        <scene sceneID="TED-0A-NeX">
+            <objects>
+                <tableViewController id="9mN-oe-3Tk" customClass="SetUpdatePeriodViewController" customModule="Central" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="URd-Wt-iTW">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <sections>
+                            <tableViewSection headerTitle="Update Period" id="7MD-Pw-ZRU">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="Drk-od-XHP">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Drk-od-XHP" id="5qU-Jh-572">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Update Period" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="9R7-a9-pCH">
+                                                    <rect key="frame" x="20" y="11" width="560" height="40"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="40" id="sdR-kM-tQ0"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="9mN-oe-3Tk" id="yva-eG-8wM"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="9R7-a9-pCH" firstAttribute="leading" secondItem="5qU-Jh-572" secondAttribute="leadingMargin" constant="12" id="YnF-AZ-qoj"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="9R7-a9-pCH" secondAttribute="trailing" constant="12" id="gcV-Ys-p02"/>
+                                                <constraint firstItem="9R7-a9-pCH" firstAttribute="top" secondItem="5qU-Jh-572" secondAttribute="topMargin" constant="3" id="tVr-Fy-zNN"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="9mN-oe-3Tk" id="93N-NY-Ip6"/>
+                            <outlet property="delegate" destination="9mN-oe-3Tk" id="Cv3-ZX-o7X"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Update Period (ms)" id="cXJ-Tk-Hjd"/>
+                    <connections>
+                        <outlet property="updatePeriodTextField" destination="9R7-a9-pCH" id="cZy-hb-2bz"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="erH-3R-5Wa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1795" y="450"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="6Bf-c7-zif"/>
+    </inferredMetricsTieBreakers>
 </document>
