@@ -85,7 +85,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 }
             } else if characteristic.propertyEnabled(.Read) {
                 self.progressView.show()
-                let future = characteristic.read()
+                let future = characteristic.read(timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 future.onSuccess {_ in
                     self.updateWhenActive()
                     self.progressView.remove()

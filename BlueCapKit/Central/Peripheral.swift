@@ -40,15 +40,15 @@ public protocol PeripheralWrappable {
 public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
                                           Wrapper.WrappedService:ServiceWrappable> {
     
-    private var timeoutCount    = 0
-    private var disconnectCount = 0
+    private var timeoutCount    : UInt = 0
+    private var disconnectCount : UInt = 0
     
     private var connectionPromise : StreamPromise<(Wrapper, ConnectionEvent)>?
     private var servicesDiscoveredPromise   = Promise<Wrapper>()
     private var readRSSIPromise             = Promise<Int>()
     
-    internal var timeoutRetries         = -1
-    internal var disconnectRetries      = -1
+    internal var timeoutRetries         : UInt?
+    internal var disconnectRetries      : UInt?
     internal var connectionTimeout      = 10.0
     
     private var connectionSequence      = 0
@@ -85,7 +85,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         }
     }
     
-    public func connect(peripheral:Wrapper, capacity:Int? = nil, timeoutRetries:Int = -1, disconnectRetries:Int = -1, connectionTimeout:Double = 10.0) -> FutureStream<(Wrapper, ConnectionEvent)> {
+    public func connect(peripheral:Wrapper, capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectRetries:UInt? = nil, connectionTimeout:Double = 10.0) -> FutureStream<(Wrapper, ConnectionEvent)> {
         self.connectionPromise = StreamPromise<(Wrapper, ConnectionEvent)>(capacity:capacity)
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
@@ -261,8 +261,8 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
 
     internal func callDidTimeout(peripheral:Wrapper) {
         Logger.debug()
-        if self.timeoutRetries > 0 {
-            if self.timeoutCount < self.timeoutRetries {
+        if let timeoutRetries = self.timeoutRetries {
+            if self.timeoutCount < timeoutRetries {
                 self.connectionPromise?.success((peripheral, ConnectionEvent.Timeout))
                 ++self.timeoutCount
             } else {
@@ -276,7 +276,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
     
     internal func callDidDisconnect(peripheral:Wrapper) {
         Logger.debug()
-        if self.disconnectRetries > 0 {
+        if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < self.disconnectRetries {
                 ++self.disconnectCount
                 self.connectionPromise?.success((peripheral, ConnectionEvent.Disconnect))
@@ -391,7 +391,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         self.impl.reconnect(self)
     }
      
-    public func connect(capacity:Int? = nil, timeoutRetries:Int = -1, disconnectRetries:Int = -1, connectionTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)> {
+    public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectRetries:UInt? = nil, connectionTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)> {
         return self.impl.connect(self, capacity:capacity, timeoutRetries:timeoutRetries, disconnectRetries:disconnectRetries, connectionTimeout:connectionTimeout)
     }
     

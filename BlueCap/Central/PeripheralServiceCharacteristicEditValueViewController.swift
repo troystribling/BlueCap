@@ -85,17 +85,17 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
             if let valueName = self.valueName {
                 if var values = self.characteristic.stringValue {
                     values[valueName] = newValue
-                    let write = characteristic.writeString(values)
+                    let write = characteristic.writeString(values, timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                     write.onSuccess(afterWriteSuceses)
                     write.onFailure(afterWriteFailed)
                 } else {
-                    let write = characteristic.writeData(newValue.dataFromHexString())
+                    let write = characteristic.writeData(newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                     write.onSuccess(afterWriteSuceses)
                     write.onFailure(afterWriteFailed)
                 }
             } else {
                 Logger.debug(message:"VALUE: \(newValue.dataFromHexString())")
-                let write = characteristic.writeData(newValue.dataFromHexString())
+                let write = characteristic.writeData(newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 write.onSuccess(afterWriteSuceses)
                 write.onFailure(afterWriteFailed)
             }

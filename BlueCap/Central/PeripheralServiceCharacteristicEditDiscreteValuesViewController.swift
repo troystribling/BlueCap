@@ -97,7 +97,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         if let characteristic = self.characteristic {
             if let valueName = characteristic.stringValue?.keys.first {
                 let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
-                let write = characteristic.writeString(stringValue)
+                let write = characteristic.writeString(stringValue, timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 write.onSuccess {characteristic in
                     self.progressView.remove()
                     self.navigationController?.popViewControllerAnimated(true)

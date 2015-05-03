@@ -126,53 +126,41 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        let connectorator = Connectorator(capacity:10) {config in
-            config.timeoutRetries = ConfigStore.getMaximumReconnections()
-            config.connectionTimeout = Double(ConfigStore.getPeripheralConnectionTimeout())
-            config.characteristicTimeout = Double(ConfigStore.getCharacteristicReadWriteTimeout())
-        }
-        let future = connectorator.onConnect()
-        future.onSuccess {_ in
-            Logger.debug()
-            Notify.withMessage("peripheral: '\(peripheral.name)'")
-            self.updateWhenActive()
-        }
-        future.onFailure {error in
-            if error.domain == BCError.domain {
-                if let connectoratorError = ConnectoratorError(rawValue:error.code) {
-                    switch connectoratorError {
-                    case .Timeout:
-                        Logger.debug(message:"Timeout: '\(peripheral.name)'")
-                        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                        peripheral.reconnect()
-                        self.updateWhenActive()
-                    case .Disconnect:
-                        Logger.debug(message:"Disconnect")
-                        Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
-                        peripheral.reconnect()
-                        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                        self.updateWhenActive()
-                    case .ForceDisconnect:
-                        Logger.debug(message:"ForcedDisconnect")
-                        Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
-                        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                        self.updateWhenActive()
-                    case .Failed:
-                        Logger.debug(message:"Failed")
-                        self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                    case .GiveUp:
-                        Logger.debug(message:"GiveUp: '\(peripheral.name)'")
-                        peripheral.terminate()
-                        self.updateWhenActive()
-                    }
-                } else {
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                }
-            } else {
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+        let future = peripheral.connect(capacity:10, timeoutRetries:ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
+        future.onSuccess {(peripheral, connectionEvent) in
+            switch connectionEvent {
+            case .Connect:
+                Logger.debug(message: "Connected")
+                Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+                self.updateWhenActive()
+            case .Timeout:
+                Logger.debug(message:"Timeout: '\(peripheral.name)'")
+                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                peripheral.reconnect()
+                self.updateWhenActive()
+            case .Disconnect:
+                Logger.debug(message:"Disconnect")
+                Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
+                peripheral.reconnect()
+                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                self.updateWhenActive()
+            case .ForceDisconnect:
+                Logger.debug(message:"ForcedDisconnect")
+                Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
+                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                self.updateWhenActive()
+            case .Failed:
+                Logger.debug(message:"Failed")
+                Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
+            case .GiveUp:
+                Logger.debug(message:"GiveUp: '\(peripheral.name)'")
+                peripheral.terminate()
+                self.updateWhenActive()
             }
         }
-        peripheral.connect(connectorator)
+        future.onFailure {error in
+            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+        }
     }
     
     func startScan() {

@@ -13,7 +13,6 @@
 		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
 		055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209E19F5513700ED3B74 /* CentralManager.swift */; };
 		055120CE19F5513700ED3B74 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209F19F5513700ED3B74 /* Characteristic.swift */; };
-		055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A019F5513700ED3B74 /* Connectorator.swift */; };
 		055120D019F5513700ED3B74 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A119F5513700ED3B74 /* Peripheral.swift */; };
 		055120D219F5513700ED3B74 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A319F5513700ED3B74 /* Service.swift */; };
 		055120D319F5513700ED3B74 /* TimedScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A419F5513700ED3B74 /* TimedScannerator.swift */; };
@@ -100,7 +99,6 @@
 		0551209D19F5513700ED3B74 /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		0551209E19F5513700ED3B74 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
 		0551209F19F5513700ED3B74 /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
-		055120A019F5513700ED3B74 /* Connectorator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connectorator.swift; sourceTree = "<group>"; };
 		055120A119F5513700ED3B74 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		055120A319F5513700ED3B74 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		055120A419F5513700ED3B74 /* TimedScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScannerator.swift; sourceTree = "<group>"; };
@@ -267,7 +265,6 @@
 				0551209D19F5513700ED3B74 /* BCErrors.swift */,
 				0551209E19F5513700ED3B74 /* CentralManager.swift */,
 				0551209F19F5513700ED3B74 /* Characteristic.swift */,
-				055120A019F5513700ED3B74 /* Connectorator.swift */,
 				055120A119F5513700ED3B74 /* Peripheral.swift */,
 				055120A319F5513700ED3B74 /* Service.swift */,
 				055120A419F5513700ED3B74 /* TimedScannerator.swift */,
@@ -582,7 +579,6 @@
 				055120DC19F5513700ED3B74 /* MutableCharacteristic.swift in Sources */,
 				055120E219F5513700ED3B74 /* SerDe.swift in Sources */,
 				05D3B9361A2B8D61008E794E /* Float.swift in Sources */,
-				055120CF19F5513700ED3B74 /* Connectorator.swift in Sources */,
 				05E1A72D1A55BE1600A00C02 /* ExecutionContext.swift in Sources */,
 				05D3B9351A2B8D61008E794E /* ExSwift.swift in Sources */,
 			);
