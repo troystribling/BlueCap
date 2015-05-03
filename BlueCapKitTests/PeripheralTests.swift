@@ -13,102 +13,6 @@ import BlueCapKit
 
 class PeripheralTests: XCTestCase {
 
-    // PeripheralMock
-    class PeripheralMock : PeripheralWrappable {
-        
-        let impl = PeripheralImpl<PeripheralMock>()
-
-        var _state :CBPeripheralState
-
-        let _services = [ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"), name:"Service Mock-1"),
-                         ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6aaa"), name:"Service Mock-2")]
-        
-        var name : String {
-            return "Mock Periphearl"
-        }
-        
-        var state: CBPeripheralState {
-            return self._state
-        }
-        
-        var services : [ServiceMock] {
-            return self._services
-        }
-
-        init(state:CBPeripheralState = .Disconnected) {
-            self._state = state
-        }
-
-        func connect() {
-        }
-        
-        func reconnect() {
-        }
-        
-        func terminate() {
-        }
-        
-        func cancel() {
-            if self.state == .Disconnected {
-                CentralQueue.async {
-                    self.impl.didDisconnectPeripheral(self)
-                }
-            }
-        }
-        
-        func disconnect() {
-        }
-        
-        func discoverServices(services:[CBUUID]!) {
-        }
-        
-        func didDiscoverServices() {
-        }
-
-    }
-
-    struct ServiceMockValues {
-        static var error : NSError? = nil
-    }
-
-    struct ServiceMock : ServiceWrappable {
-        
-        let uuid:CBUUID!
-        let name:String
-        
-        let _state :CBPeripheralState = .Connected
-        let impl = ServiceImpl<ServiceMock>()
-        
-        init(uuid:CBUUID, name:String) {
-            self.uuid = uuid
-            self.name = name
-        }
-        
-        var state: CBPeripheralState {
-            return self._state
-        }
-        
-        func discoverCharacteristics(characteristics:[CBUUID]!) {
-        }
-        
-        func didDiscoverCharacteristics(error:NSError!) {
-            CentralQueue.async {
-                self.impl.didDiscoverCharacteristics(self, error:ServiceMockValues.error)
-            }
-        }
-        
-        func createCharacteristics() {
-        }
-        
-        func discoverAllCharacteristics() -> Future<ServiceMock> {
-            let future = self.impl.discoverIfConnected(self, characteristics:nil)
-            self.didDiscoverCharacteristics(ServiceMockValues.error)
-            return future
-        }
-        
-    }
-    // PeripheralMock
-    
     override func setUp() {
         super.setUp()
     }
@@ -272,7 +176,7 @@ class PeripheralTests: XCTestCase {
     }
 
     func testFailedConnectWithError() {
-        let mock = PeripheralMock()
+        let mock = PeripheralMock(state:.Connected)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = mock.impl.connect(mock)
         future.onSuccess{(peripheral, connectionEvent) in
@@ -294,14 +198,12 @@ class PeripheralTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
         }
-        mock._state = .Connected
         CentralQueue.sync {
             mock.impl.didFailToConnectPeripheral(mock, error:TestFailure.error)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
-        mock._state = .Disconnected
     }
 
     func testForcedDisconnectWhenDisconnected() {
@@ -334,7 +236,7 @@ class PeripheralTests: XCTestCase {
     }
     
     func testForcedDisconnectWhenConnected() {
-        let mock = PeripheralMock()
+        let mock = PeripheralMock(state:.Connected)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = mock.impl.connect(mock)
         future.onSuccess{(peripheral, connectionEvent) in
@@ -356,7 +258,6 @@ class PeripheralTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        mock._state = .Connected
         mock.impl.disconnect(mock)
         CentralQueue.sync {
             mock.impl.didDisconnectPeripheral(mock)
@@ -489,7 +390,7 @@ class PeripheralTests: XCTestCase {
     }
     
     func testReconnectOnDisconnect() {
-        let mock = PeripheralMock()
+        let mock = PeripheralMock(state:.Disconnected)
         let disconnectExpectation = expectationWithDescription("onFailure fulfilled for Disconnect")
         let onConnectionExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = mock.impl.connect(mock)

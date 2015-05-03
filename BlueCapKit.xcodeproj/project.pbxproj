@@ -76,6 +76,7 @@
 		05E1A7301A55BE1600A00C02 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72A1A55BE1600A00C02 /* Box.swift */; };
 		05E1A7311A55BE1600A00C02 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72B1A55BE1600A00C02 /* Optional.swift */; };
 		05E1A7321A55BE1600A00C02 /* Try.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1A72C1A55BE1600A00C02 /* Try.swift */; };
+		05E2D0241AF5ECF100B34637 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0231AF5ECF100B34637 /* Mocks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,6 +162,7 @@
 		05E1A72A1A55BE1600A00C02 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		05E1A72B1A55BE1600A00C02 /* Optional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		05E1A72C1A55BE1600A00C02 /* Try.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Try.swift; sourceTree = "<group>"; };
+		05E2D0231AF5ECF100B34637 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,6 +249,7 @@
 				053139AC1AC1AD44002B4B36 /* Peripheral */,
 				0562D3241A5D8585001013C9 /* SerDe */,
 				0551208F19F5506000ED3B74 /* Supporting Files */,
+				05E2D0231AF5ECF100B34637 /* Mocks.swift */,
 			);
 			path = BlueCapKitTests;
 			sourceTree = "<group>";
@@ -599,6 +602,7 @@
 				0565EC711A87D14600CA8B6E /* SerializableTests.swift in Sources */,
 				0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */,
 				0565EC7C1A89CDA500CA8B6E /* RawPairDeserializableTests.swift in Sources */,
+				05E2D0241AF5ECF100B34637 /* Mocks.swift in Sources */,
 				053139B01AC1ADC4002B4B36 /* MutableCharacteristicTests.swift in Sources */,
 				0562D3201A5D83E9001013C9 /* ServiceTests.swift in Sources */,
 			);

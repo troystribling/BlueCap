@@ -11,72 +11,7 @@ import XCTest
 import CoreBluetooth
 import BlueCapKit
 
-struct TestFailure {
-    static let error = NSError(domain:"BlueCapKit Tests", code:100, userInfo:[NSLocalizedDescriptionKey:"Testing"])
-}
-
 class CharacteristicTests: XCTestCase {
-
-    // CharacteristicMock
-    final class CharacteristicMock : CharacteristicWrappable {
-
-        var _isNotifying             = false
-        var _stringValues            = [String]()
-        var _propertyEnabled         = true
-        var _stringValue             = ["Mock":"1"]
-        var _dataFromStringValue     = "01".dataFromHexString()
-        var _afterDiscoveredPromise  = StreamPromise<CharacteristicMock>()
-
-        let impl = CharacteristicImpl<CharacteristicMock>()
-
-        var uuid : CBUUID! {
-            return CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6c1a")
-        }
-        
-        init (propertyEnabled:Bool = true) {
-            self._propertyEnabled = propertyEnabled
-        }
-        
-        var name : String {
-            return "Mock"
-        }
-        
-        var isNotifying : Bool {
-            return self._isNotifying
-        }
-        
-        var stringValues : [String] {
-            return self._stringValues
-        }
-        
-        var afterDiscoveredPromise  : StreamPromise<CharacteristicMock>? {
-            return self._afterDiscoveredPromise
-        }
-        
-        func stringValue(data:NSData?) -> [String:String]? {
-            return self._stringValue
-        }
-        
-        func dataFromStringValue(stringValue:[String:String]) -> NSData? {
-            return self._dataFromStringValue
-        }
-        
-        func setNotifyValue(state:Bool) {
-            self._isNotifying = state
-        }
-        
-        func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
-            return self._propertyEnabled
-        }
-        
-        func readValueForCharacteristic() {
-        }
-        
-        func writeValue(value:NSData) {
-        }
-    }
-    
-    // CharacteristicMock
     
     override func setUp() {
         super.setUp()

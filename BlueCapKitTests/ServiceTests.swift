@@ -12,45 +12,6 @@ import CoreBluetooth
 import BlueCapKit
 
 class ServiceTests: XCTestCase {
-
-    // ServiceMock
-    struct ServiceMock : ServiceWrappable {
-        
-        let impl = ServiceImpl<ServiceMock>()
-        
-        var _state :CBPeripheralState
-
-        init(state:CBPeripheralState = .Connected) {
-            self._state = state
-        }
-        
-        var uuid : CBUUID! {
-            return CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")
-        }
-        
-        var name : String {
-            return "Mock"
-        }
-        
-        var state: CBPeripheralState {
-            return self._state
-        }
-        
-        func discoverCharacteristics(characteristics:[CBUUID]!) {
-        }
-        
-        func didDiscoverCharacteristics(error:NSError!) {            
-        }
-        
-        func createCharacteristics() {
-        }
-
-        func discoverAllCharacteristics() -> Future<ServiceMock> {
-            return self.impl.discoverIfConnected(self, characteristics:nil)
-        }
-
-    }
-    // ServiceMock
     
     override func setUp() {
         super.setUp()
