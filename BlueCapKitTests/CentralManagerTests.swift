@@ -86,6 +86,12 @@ class CentralManagerTests: XCTestCase {
             }
         }
         
+        func reconnect() {
+        }
+        
+        func terminate() {
+        }
+        
         func disconnect() {
         }
         

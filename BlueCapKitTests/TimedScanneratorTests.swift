@@ -79,6 +79,12 @@ class TimedScanneratorTests: XCTestCase {
         func connect() {
         }
         
+        func reconnect() {
+        }
+        
+        func terminate() {
+        }
+        
         func cancel() {
             if self.state == .Disconnected {
                 CentralQueue.async {

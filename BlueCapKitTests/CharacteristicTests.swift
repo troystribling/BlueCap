@@ -25,7 +25,6 @@ class CharacteristicTests: XCTestCase {
         var _propertyEnabled         = true
         var _stringValue             = ["Mock":"1"]
         var _dataFromStringValue     = "01".dataFromHexString()
-        var _connectorator           = Connectorator()
         var _afterDiscoveredPromise  = StreamPromise<CharacteristicMock>()
 
         let impl = CharacteristicImpl<CharacteristicMock>()
@@ -40,10 +39,6 @@ class CharacteristicTests: XCTestCase {
         
         var name : String {
             return "Mock"
-        }
-        
-        var connectorator : Connectorator? {
-            return self._connectorator
         }
         
         var isNotifying : Bool {

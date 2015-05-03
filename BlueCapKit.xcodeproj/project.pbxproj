@@ -37,7 +37,7 @@
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
 		0562D3181A5D7FE1001013C9 /* CentralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3171A5D7FE1001013C9 /* CentralManagerTests.swift */; };
-		0562D31A1A5D8308001013C9 /* PertipheralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3191A5D8308001013C9 /* PertipheralTests.swift */; };
+		0562D31A1A5D8308001013C9 /* PeripheralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3191A5D8308001013C9 /* PeripheralTests.swift */; };
 		0562D31E1A5D8378001013C9 /* TimedScanneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31D1A5D8378001013C9 /* TimedScanneratorTests.swift */; };
 		0562D3201A5D83E9001013C9 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31F1A5D83E9001013C9 /* ServiceTests.swift */; };
 		0562D3231A5D8503001013C9 /* CharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3221A5D8503001013C9 /* CharacteristicTests.swift */; };
@@ -123,7 +123,7 @@
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		0562D3171A5D7FE1001013C9 /* CentralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManagerTests.swift; sourceTree = "<group>"; };
-		0562D3191A5D8308001013C9 /* PertipheralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PertipheralTests.swift; sourceTree = "<group>"; };
+		0562D3191A5D8308001013C9 /* PeripheralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralTests.swift; sourceTree = "<group>"; };
 		0562D31D1A5D8378001013C9 /* TimedScanneratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScanneratorTests.swift; sourceTree = "<group>"; };
 		0562D31F1A5D83E9001013C9 /* ServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
 		0562D3221A5D8503001013C9 /* CharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicTests.swift; sourceTree = "<group>"; };
@@ -330,7 +330,7 @@
 			children = (
 				0562D3171A5D7FE1001013C9 /* CentralManagerTests.swift */,
 				0562D3221A5D8503001013C9 /* CharacteristicTests.swift */,
-				0562D3191A5D8308001013C9 /* PertipheralTests.swift */,
+				0562D3191A5D8308001013C9 /* PeripheralTests.swift */,
 				0562D31F1A5D83E9001013C9 /* ServiceTests.swift */,
 				0562D31D1A5D8378001013C9 /* TimedScanneratorTests.swift */,
 			);
@@ -594,7 +594,7 @@
 				0562D31E1A5D8378001013C9 /* TimedScanneratorTests.swift in Sources */,
 				0565EC7E1A8B1D4800CA8B6E /* RawArrayPairDeserializableTests.swift in Sources */,
 				053139B41AC2CE23002B4B36 /* PeripheralManagerTests.swift in Sources */,
-				0562D31A1A5D8308001013C9 /* PertipheralTests.swift in Sources */,
+				0562D31A1A5D8308001013C9 /* PeripheralTests.swift in Sources */,
 				0562D3181A5D7FE1001013C9 /* CentralManagerTests.swift in Sources */,
 				0565EC711A87D14600CA8B6E /* SerializableTests.swift in Sources */,
 				0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */,
