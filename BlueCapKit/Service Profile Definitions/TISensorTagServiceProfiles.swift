@@ -87,18 +87,19 @@ public struct TISensorTag {
             public static let stringValues = [String]()
             
             public var stringValue : Dictionary<String,String> {
-                return ["x":"\(self.x)", "y":"\(self.y)", "z":"\(self.z)",
-                        "xRaw":"\(self.xRaw)", "yRaw":"\(self.yRaw)", "zRaw":"\(self.zRaw)"]
+                return ["x":NSString(format: "%.2f", self.x) as String,
+                        "y":NSString(format: "%.2f", self.y) as String,
+                        "z":NSString(format: "%.2f", self.z) as String,
+                        "xRaw":"\(self.xRaw)",
+                        "yRaw":"\(self.yRaw)",
+                        "zRaw":"\(self.zRaw)"]
             }
 
             public init?(stringValue:[String:String]) {
-                let xRawInit = int8ValueFromStringValue("xRaw", stringValue)
-                let yRawInit = int8ValueFromStringValue("yRaw", stringValue)
-                let zRawInit = int8ValueFromStringValue("zRaw", stringValue)
-                if xRawInit != nil && yRawInit != nil && zRawInit != nil {
-                    self.xRaw = xRawInit!
-                    self.yRaw = yRawInit!
-                    self.zRaw = zRawInit!
+                if  let xRawInit = int8ValueFromStringValue("xRaw", stringValue), yRawInit = int8ValueFromStringValue("yRaw", stringValue), zRawInit = int8ValueFromStringValue("zRaw", stringValue) {
+                    self.xRaw = xRawInit
+                    self.yRaw = yRawInit
+                    self.zRaw = zRawInit
                     (self.x, self.y, self.z) = Data.valuesFromRaw([self.xRaw, self.yRaw, self.zRaw])
                 } else {
                     return nil

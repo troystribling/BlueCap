@@ -152,22 +152,12 @@ class ViewController: UITableViewController {
                     promise.failure(CenteralError.peripheralNotConnected)
                     return promise.future
                 }
-            }.flatmap {peripheral -> Future<Characteristic> in
+            }
+            peripheralDiscoveredFuture.onSuccess {peripheral in
                 if let service = peripheral.service(serviceUUID) {
                     self.accelerometerDataCharacteristic = service.characteristic(dataUUID)
                     self.accelerometerEnabledCharacteristic = service.characteristic(enabledUUID)
                     self.accelerometerUpdatePeriodCharacteristic = service.characteristic(updatePeriodUUID)
-                    if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
-                        return accelerometerEnabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.Yes)
-                    } else {
-                        let promise = Promise<Characteristic>()
-                        promise.failure(CenteralError.enabledCharacteristicNotFound)
-                        return promise.future
-                    }
-                } else {
-                    let promise = Promise<Characteristic>()
-                    promise.failure(CenteralError.serviceNotFound)
-                    return promise.future
                 }
             }
 
@@ -278,15 +268,15 @@ class ViewController: UITableViewController {
     }
     
     func updateEnabled(characteristic:Characteristic) {
-        if let value : TISensorTag.AccelerometerService.Enabled = characteristic.value() {
-            self.enabledSwitch.on = value.boolValue
+        if let data = characteristic.stringValue, value = data.values.first {
+            self.enabledSwitch.on = value == "Yes"
         }
     }
 
     func updatePeriod(characteristic:Characteristic) {
-        if let value : TISensorTag.AccelerometerService.UpdatePeriod = characteristic.value() {
-            self.updatePeriodLabel.text = "\(value.period)"
-            self.rawUpdatePeriodlabel.text = "\(value.rawValue)"
+        if let data = characteristic.stringValue, period = data["period"], rawPeriod = data["periodRaw"] {
+            self.updatePeriodLabel.text = period
+            self.rawUpdatePeriodlabel.text = rawPeriod
         }
     }
 
@@ -301,14 +291,15 @@ class ViewController: UITableViewController {
     }
 
     func updateData(characteristic:Characteristic) {
-        if let data : TISensorTag.AccelerometerService.Data = characteristic.value() {
-            self.xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
-            self.yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
-            self.zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
-            let rawValue = data.rawValue
-            self.xRawAccelerationLabel.text = "\(rawValue[0])"
-            self.yRawAccelerationLabel.text = "\(rawValue[1])"
-            self.zRawAccelerationLabel.text = "\(rawValue[2])"
+            if let data = characteristic.stringValue,
+                x = data["x"], y = data["y"], z = data["z"],
+                xRaw = data["xRaw"], yRaw = data["yRaw"], zRaw = data["zRaw"] {
+            self.xAccelerationLabel.text = x
+            self.yAccelerationLabel.text = y
+            self.zAccelerationLabel.text = z
+            self.xRawAccelerationLabel.text = xRaw
+            self.yRawAccelerationLabel.text = yRaw
+            self.zRawAccelerationLabel.text = zRaw
         }
     }
 

@@ -247,10 +247,14 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         self.writing = false
         if let error = error {
             Logger.debug(message:"failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
-            self.writePromise.failure(error)
+            if !self.writePromise.completed {
+                self.writePromise.failure(error)
+            }
         } else {
             Logger.debug(message:"success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
-            self.writePromise.success(characteristic)
+            if !self.writePromise.completed {
+                self.writePromise.success(characteristic)
+            }
         }
     }
 
