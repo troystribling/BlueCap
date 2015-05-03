@@ -95,10 +95,7 @@ class ViewController: UITableViewController {
         if self.activateSwitch.on  {
             self.activate()
         } else {
-            CentralManager.sharedInstance.stopScanning()
-            self.peripheral?.terminate()
-            self.peripheral = nil
-            self.updateUIStatus()
+            self.deactivate()
         }
     }
     
@@ -222,24 +219,29 @@ class ViewController: UITableViewController {
                 self.updateData(characteristic)
             }
                 
-
             // handle bluetooth power off
             let powerOffFuture = manager.powerOff()
             powerOffFuture.onSuccess {
+                self.deactivate()
             }
             powerOffFuture.onFailure {error in
+                Logger.debug(message:"powerOffFuture failure")
             }
             // enable controls when bluetooth is powered on again after stop advertising is successul
             let powerOffFutureSuccessFuture = powerOffFuture.flatmap {_ -> Future<Void> in
                 manager.powerOn()
             }
             powerOffFutureSuccessFuture.onSuccess {
+                self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
             }
             // enable controls when bluetooth is powered on again after stop advertising fails
             let powerOffFutureFailedFuture = powerOffFuture.recoverWith {_  -> Future<Void> in
                 manager.powerOn()
             }
             powerOffFutureFailedFuture.onSuccess {
+                if CentralManager.sharedInstance.poweredOn {
+                    self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
+                }
             }
         }
     }
@@ -263,6 +265,7 @@ class ViewController: UITableViewController {
             } else {
                 self.enabledLabel.textColor = UIColor.lightGrayColor()
                 self.enabledSwitch.enabled = false
+                self.enabledSwitch.on = false
             }
         } else {
             self.statusLabel.text = "Disconnected"
@@ -270,6 +273,7 @@ class ViewController: UITableViewController {
             self.enabledLabel.textColor = UIColor.lightGrayColor()
             self.enabledSwitch.on = false
             self.enabledSwitch.enabled = false
+            self.activateSwitch.on = false
         }
     }
     
@@ -315,4 +319,15 @@ class ViewController: UITableViewController {
         }
     }
     
+    func deactivate() {
+        let manager = CentralManager.sharedInstance
+        if manager.isScanning {
+        CentralManager.sharedInstance.stopScanning()
+        }
+        if let peripheral = self.peripheral where peripheral.state == .Connected {
+            peripheral.terminate()
+        }
+        self.peripheral = nil
+        self.updateUIStatus()
+    }
 }
