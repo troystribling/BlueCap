@@ -61,9 +61,7 @@ class PeripheralManagerTests: XCTestCase {
         
         func addWrappedService(service:MutableServiceMock) {
             self._services.append(service)
-            PeripheralQueue.sync {
-                self.impl.didAddService(service.error)
-            }
+            self.impl.didAddService(service.error)
         }
         
         func removeWrappedService(service:MutableServiceMock) {
