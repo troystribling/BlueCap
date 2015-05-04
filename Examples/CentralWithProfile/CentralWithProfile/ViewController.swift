@@ -313,9 +313,9 @@ class ViewController: UITableViewController {
     func deactivate() {
         let manager = CentralManager.sharedInstance
         if manager.isScanning {
-        CentralManager.sharedInstance.stopScanning()
+            CentralManager.sharedInstance.stopScanning()
         }
-        if let peripheral = self.peripheral where peripheral.state == .Connected {
+        if let peripheral = self.peripheral {
             peripheral.terminate()
         }
         self.peripheral = nil

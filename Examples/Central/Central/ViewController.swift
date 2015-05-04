@@ -225,7 +225,6 @@ class ViewController: UITableViewController {
                 self.deactivate()
             }
             powerOffFuture.onFailure {error in
-                Logger.debug(message:"powerOffFuture failure")
             }
             // enable controls when bluetooth is powered on again after stop advertising is successul
             let powerOffFutureSuccessFuture = powerOffFuture.flatmap {_ -> Future<Void> in
@@ -324,7 +323,7 @@ class ViewController: UITableViewController {
         if manager.isScanning {
         CentralManager.sharedInstance.stopScanning()
         }
-        if let peripheral = self.peripheral where peripheral.state == .Connected {
+        if let peripheral = self.peripheral {
             peripheral.terminate()
         }
         self.peripheral = nil
