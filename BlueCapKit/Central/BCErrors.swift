@@ -19,6 +19,7 @@ public enum CharacteristicError : Int {
 public enum PeripheralError : Int {
     case DiscoveryTimeout   = 20
     case Disconnected       = 21
+    case NoServices         = 22
 }
 
 public enum PeripheralManagerError : Int {
@@ -42,7 +43,8 @@ public struct BCError {
 
     public static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.Disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
     public static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.DiscoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])
-        
+    public static let peripheralNoServices = NSError(domain:domain, code:PeripheralError.NoServices.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral services not found"])
+    
     public static let peripheralManagerIsAdvertising = NSError(domain:domain, code:PeripheralManagerError.IsAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is Advertising"])
     public static let peripheralManagerIsNotAdvertising = NSError(domain:domain, code:PeripheralManagerError.IsNotAdvertising.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral Manager is not Advertising"])
     public static let peripheralManagerAddServiceFailed = NSError(domain:domain, code:PeripheralManagerError.AddServiceFailed.rawValue, userInfo:[NSLocalizedDescriptionKey:"Add service failed because service peripheral is advertising"])

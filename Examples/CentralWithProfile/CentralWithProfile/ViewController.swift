@@ -149,7 +149,7 @@ class ViewController: UITableViewController {
                     return peripheral.discoverPeripheralServices([serviceUUID])
                 } else {
                     let promise = Promise<Peripheral>()
-                    promise.failure(CenteralError.peripheralNotConnected)
+                    promise.success(peripheral)
                     return promise.future
                 }
             }
@@ -200,7 +200,9 @@ class ViewController: UITableViewController {
                 }
             }
             dataSubscriptionFuture.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                if error.domain != CenteralError.domain || error.code == CentralExampleError.PeripheralNotConnected.rawValue {
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                }
             }
 
             dataSubscriptionFuture.flatmap {characteristic -> FutureStream<Characteristic> in

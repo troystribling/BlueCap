@@ -140,12 +140,16 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
                                      tail:Array(peripheral.services[1..<peripheral.services.count]),
                                      promise:peripheralDiscoveredPromise)
             } else {
-                let discoveryFuture = peripheral.services[0].discoverAllCharacteristics()
-                discoveryFuture.onSuccess {_ in
-                    peripheralDiscoveredPromise.success(peripheral)
-                }
-                discoveryFuture.onFailure {error in
-                    peripheralDiscoveredPromise.failure(error)
+                if peripheral.services.count > 0 {
+                    let discoveryFuture = peripheral.services[0].discoverAllCharacteristics()
+                    discoveryFuture.onSuccess {_ in
+                        peripheralDiscoveredPromise.success(peripheral)
+                    }
+                    discoveryFuture.onFailure {error in
+                        peripheralDiscoveredPromise.failure(error)
+                    }
+                } else {
+                    peripheralDiscoveredPromise.failure(BCError.peripheralNoServices)
                 }
             }
         }

@@ -210,7 +210,9 @@ class ViewController: UITableViewController {
                 }
             }
             dataSubscriptionFuture.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                if error.domain != CenteralError.domain || error.code == CentralExampleError.PeripheralNotConnected.rawValue {
+                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                }
             }
 
             dataSubscriptionFuture.flatmap {characteristic -> FutureStream<Characteristic> in
