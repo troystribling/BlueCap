@@ -208,11 +208,9 @@ class ViewController: UITableViewController {
     }
     
     func updateEnabled() {
-        if let value = self.accelerometerEnabledCharacteristic.value {
-            if let enabled : TISensorTag.AccelerometerService.Enabled = Serde.deserialize(value)  where self.enabledSwitch.on != enabled.boolValue {
-                self.enabledSwitch.on = enabled.boolValue
-                self.toggleEnabled(self)
-            }
+        if let value = self.accelerometerEnabledCharacteristic.value, enabled:TISensorTag.AccelerometerService.Enabled = Serde.deserialize(value) where self.enabledSwitch.on != enabled.boolValue {
+            self.enabledSwitch.on = enabled.boolValue
+            self.toggleEnabled(self)
         }
     }
 }

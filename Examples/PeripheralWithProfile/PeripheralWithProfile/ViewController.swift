@@ -30,24 +30,14 @@ class ViewController: UITableViewController {
     
     let accelerometer                           = Accelerometer()
     
-    let accelerometerService                    = MutableService(uuid:TISensorTag.AccelerometerService.uuid)
-    let accelerometerDataCharacteristic         = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Data.uuid,
-                                                    properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Notify,
-                                                    permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
-                                                    value:Serde.serialize(TISensorTag.AccelerometerService.Data(x:1.0, y:0.5, z:-1.5)!))
-    let accelerometerEnabledCharacteristic      = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Enabled.uuid,
-                                                    properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,
-                                                    permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
-                                                    value:Serde.serialize(TISensorTag.AccelerometerService.Enabled.No.rawValue))
-    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.UpdatePeriod.uuid,
-                                                    properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,
-                                                    permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,
-                                                    value:Serde.serialize(UInt8(100)))
+    let accelerometerService                    = MutableService(profile:ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
+    let accelerometerDataCharacteristic         = MutableCharacteristic(profile:RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+    let accelerometerEnabledCharacteristic      = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
     
     required init(coder aDecoder:NSCoder) {
-        self.accelerometerService.characteristics =
-            [self.accelerometerDataCharacteristic, self.accelerometerEnabledCharacteristic, self.accelerometerUpdatePeriodCharacteristic]
         super.init(coder:aDecoder)
+        self.accelerometerService.characteristics = [self.accelerometerDataCharacteristic, self.accelerometerEnabledCharacteristic, self.accelerometerUpdatePeriodCharacteristic]
         self.respondToWriteRequests()
     }
     
@@ -191,28 +181,23 @@ class ViewController: UITableViewController {
             self.xRawAccelerationLabel.text = "\(xRaw)"
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
-            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) {
-                self.accelerometerDataCharacteristic.updateValue(data)
-            }
+            self.accelerometerDataCharacteristic.updateValueWithString(["xRaw":"\(xRaw)", "yRaw":"\(yRaw)","zRaw":"\(zRaw)"])
         }
     }
     
     func updatePeriod() {
-        if let value = self.accelerometerUpdatePeriodCharacteristic.value {
-            if let period : TISensorTag.AccelerometerService.UpdatePeriod = Serde.deserialize(value) {
-                self.accelerometer.updatePeriod = Double(period.period)/1000.0
-                self.updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
-                self.rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
-            }
+        if let data = self.accelerometerUpdatePeriodCharacteristic.stringValue, period = data["period"], periodRaw = data["periodRaw"], periodInt = period.toInt() {
+            self.accelerometer.updatePeriod = Double(periodInt)/1000.0
+            self.updatePeriodLabel.text =  period
+            self.rawUpdatePeriodlabel.text = periodRaw
         }
     }
     
     func updateEnabled() {
-        if let value = self.accelerometerEnabledCharacteristic.value {
-            if let enabled : TISensorTag.AccelerometerService.Enabled = Serde.deserialize(value)  where self.enabledSwitch.on != enabled.boolValue {
-                self.enabledSwitch.on = enabled.boolValue
-                self.toggleEnabled(self)
-            }
+        let currentValue = self.enabledSwitch.on ? "Yes" : "No"
+        if let data = self.accelerometerEnabledCharacteristic.stringValue, enabled = data.values.first where currentValue != enabled {
+            self.enabledSwitch.on = enabled == "Yes"
+            self.toggleEnabled(self)
         }
     }
 }
