@@ -133,7 +133,7 @@ public class PeripheralImpl<Wrapper where Wrapper:PeripheralWrappable,
         let peripheralDiscoveredPromise = Promise<Wrapper>()
         Logger.debug(message:"peripheral name \(peripheral.name)")
         let servicesDiscoveredFuture = self.discoverServices(peripheral, services:services)
-        servicesDiscoveredFuture.onSuccess {services in
+        servicesDiscoveredFuture.onSuccess {_ in
             if peripheral.services.count > 1 {
                 self.discoverService(peripheral,
                                      head:peripheral.services[0],

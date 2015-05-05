@@ -113,6 +113,27 @@ class PeripheralTests: XCTestCase {
         ServiceMockValues.error = nil
     }
 
+    func testDiscoverPeripheralServicesNoNersicesFoundFailure() {
+        let mock = PeripheralMock(state:.Connected, services:[ServiceMock]())
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = mock.impl.discoverPeripheralServices(mock, services:nil)
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+            XCTAssert(error.domain == BCError.domain, "message domain invalid")
+            XCTAssert(error.code == PeripheralError.NoServices.rawValue, "message code invalid")
+        }
+        CentralQueue.sync {
+            mock.impl.didDiscoverServices(mock, error:nil)
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+        ServiceMockValues.error = nil
+    }
+
     func testConnect() {
         let mock = PeripheralMock()
         let onConnectionExpectation = expectationWithDescription("onSuccess fulfilled for future")

@@ -51,16 +51,14 @@ class PeripheralMock : PeripheralWrappable {
     let state :CBPeripheralState
     let name : String
     
-    let _services = [ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"), name:"Service Mock-1"),
-        ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6aaa"), name:"Service Mock-2")]
+    let services : [ServiceMock]
     
-    var services : [ServiceMock] {
-        return self._services
-    }
-    
-    init(name:String = "Mock Peripheral", state:CBPeripheralState = .Disconnected) {
+    init(name:String = "Mock Peripheral", state:CBPeripheralState = .Disconnected,
+        services:[ServiceMock]=[ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"), name:"Service Mock-1"),
+                                ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6aaa"), name:"Service Mock-2")]) {
         self.state = state
         self.name = name
+        self.services = services
     }
     
     func connect() {
