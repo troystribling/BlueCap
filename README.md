@@ -1,15 +1,43 @@
-![BlueCap: Swifter CoreBluetooth](https://rawgit.com/troystribling/BlueCap/6de55eaf194f101d690ba7c2d0e8b20051fd8299/Assets/banner.png)
+[![BlueCap: Swifter CoreBluetooth](https://rawgit.com/troystribling/BlueCap/6de55eaf194f101d690ba7c2d0e8b20051fd8299/Assets/banner.png)](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#)
+
+BlueCap provides a swift wrapper around CoreBluetooth supporting  the following additional features.
 
 # Features
 
-BlueCap provides a swift wrapper around CoreBluetooth with additional functionality that includes,
+- A futures interface replacing protocol implementations. Using [SimpleFutures](https://github.com/troystribling/SimpleFutures)
+- Connection events for connect, disconnect and timeout.
+- A framework for specification of GATT profiles.
+- Characteristic profile types encapsulating serialization and deserialization.
+- [Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications implementing Central and Peripheral.
+- A full featured extendable Central scanner and Peripheral emulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
+- Comprehensive test coverage
 
-- Trailing closure callbacks to replace protocol implementation for Central Manager peripheral, service and characteristic discovery, characteristic read and write and characteristic value update notifications. Similarly, for Peripheral Managers trailing closures are provided for advertising and characteristic write callbacks.
+# Requirements
 
-- Connectorators and Scannerators provide management of peripheral scan and connection events. Timeouts for connection, scanning, read and write.
+- iOS 8.3+
+- Xcode 6.3+
 
-- A DSL for specification of GATT profiles. Bluetooth LE device manufactures can provide implementations of their GATT profiles for distribution to developer and developers can easily implement GATT profiles for their Bluetooth LE devices.
+# Installation
 
-- Characteristic profile types encapsulating serialization and deserialization of values. Provided types include: Strings, Byte, Int8, UInt16, Int16 and Enum and more. New types can be added by users. Implementations of characteristic profiles for [TI Sensor tag](http://www.ti.com/ww/en/wireless_connectivity/sensortag/index.shtml?DCMP=PPC_Google_TI&k_clickid=1f619e48-1938-ba89-3b95-000078cf17fd), some [BLESIG GATT Profiles](https://developer.bluetooth.org/TechnologyOverview/Pages/Profiles.aspx) and more.
+# Usage
 
-- A peripheral scanner application provides and example implementation of a Central Manager and a peripheral emulator an example implementation of a Peripheral Manager.
+## Serialization/Deserialization
+
+## Central
+
+### PowerOn/PowerOff
+
+### Service Scanning
+
+### Peripheral Connection
+
+### Service and Characteristic Discovery
+
+### Characteristic Read/Write
+
+### Characteristic Update Notifications
+
+## Peripheral
+
+
+
