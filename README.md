@@ -1,8 +1,8 @@
-# BlueCap
+![BlueCap: Swifter CoreBluetooth](https://rawgit.com/troystribling/BlueCap/6de55eaf194f101d690ba7c2d0e8b20051fd8299/Assets/banner.png)
 
-## Description
+# Features
 
-BlueCap provides a swift wrapper around Core Bluetooth with additional functionality that includes,
+BlueCap provides a swift wrapper around CoreBluetooth with additional functionality that includes,
 
 - Trailing closure callbacks to replace protocol implementation for Central Manager peripheral, service and characteristic discovery, characteristic read and write and characteristic value update notifications. Similarly, for Peripheral Managers trailing closures are provided for advertising and characteristic write callbacks.
 
