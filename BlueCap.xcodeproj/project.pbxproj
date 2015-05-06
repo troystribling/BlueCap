@@ -431,7 +431,6 @@
 				TargetAttributes = {
 					05840F5E194206F100C744E6 = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = HZEX459C37;
 					};
 					05840F72194206F100C744E6 = {
 						CreatedOnToolsVersion = 6.0;
