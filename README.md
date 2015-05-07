@@ -4,8 +4,9 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 # Features
 
-- A futures interface replacing protocol implementations, using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
+- A [futures](https://github.com/troystribling/SimpleFutures) interface replacing protocol implementations.
 - Connection events for connect, disconnect and timeout.
+- Service scan timeout.
 - A framework for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
 - [Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications implementing Central and Peripheral.
@@ -19,45 +20,54 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 # Installation
 
+1. Place the BlueCap somewhere in your project directory. You can either copy it or add it as a git submodule.
+2. Open the BluCap project folder and drag BlueCapKit.xcodeproj into the project navigator of your applications Xcode project.
+3. Under your Projects Info tab set the iOS Deployment Target to 8.0 and that the BlueCapKit.xcodeproj iOS Deployment Target is also 8.0.
+4. Under the General tab for your project target add the top BlueCapKit.framework as an Embedded Binary.
+5. Under the Build Phases tab add BlueCapKit.framework as a Target Dependency and under Link Binary With Libraries add CoreLocation.framework and CoreBluetooth.framework.
+6. To enable debug log output select your project target and the Build Settings tab. Under Other Swift Flags under Debug add -D DEBUG.
+
 # Usage
 
+With BlueCap you can serialize and deserialize messages exchanged with bluetooth devices, define reusable GATT profile definitions and easily implement Central and Peripheral applications. The following sections will address each of these items in some detail. [Simple example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
+ 
 ## Serialization/Deserialization
 
-### `Deserializable` Protocol
+### Deserializable Protocol
 
-### `RawDeserializable` Protocol
+### RawDeserializable Protocol
 
-### `RawArrayDeserializable` Protocol
+### RawArrayDeserializable Protocol
 
-### `RawPairDeserializable` Protocol
+### RawPairDeserializable Protocol
 
-### `RawArrayPairDeserializable` Protocol
+### RawArrayPairDeserializable Protocol
 
-### `Serde`
+### Serde
 
 ## GATT Profile Definition
 
-### `ServiceConfigurable` Protocol
+### ServiceConfigurable Protocol
 
-### `CharacteristicConfigurable` Protocol
+### CharacteristicConfigurable Protocol
 
-### `StringDeserializable` Protocol
+### StringDeserializable Protocol
 
-### `ConfiguredServiceProfile`
+### ConfiguredServiceProfile
 
-### `RawCharacteristicProfile`
+### RawCharacteristicProfile
 
-### `RawArrayCharacteristicProfile`
+### RawArrayCharacteristicProfile
 
-### `RawPairCharacteristicProfile`
+### RawPairCharacteristicProfile
 
-### `RawArrayPairCharacteristicProfile`
+### RawArrayPairCharacteristicProfile
 
-### `StringCharacteristicProfile`
+### StringCharacteristicProfile
 
-### `ProfileManager`
+### ProfileManager
 
-### `Strings`
+### Strings
 
 ### Add Profile to BlueCap App
 
