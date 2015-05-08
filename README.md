@@ -49,21 +49,19 @@ public protocol Deserializable {
 }
 ```
 
-BlueCalKit provides implementation of Deserializable for [UInt8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Uint8Extensions.swift), [Int8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int8Extensions.swift), [UInt16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/UInt16Extensions.swift) and [Int16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int16Extensions.swift).
-
-The Serde serialize and deserialize are defined by,
+BlueCalKit provides implementation of Deserializable for [UInt8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Uint8Extensions.swift), [Int8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int8Extensions.swift), [UInt16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/UInt16Extensions.swift) and [Int16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int16Extensions.swift). The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:Deserializable>(data:NSData) -> T?
 public static func serialize<T:Deserializable>(value:T) -> NSData
 ```
 
-and for Uint 8 data we have,
+for Uint 8 data we have,
 
 ```swift
 let data = Serde.serialize(UInt8(31))
 if let value : UInt8 = Serde.deserialize(data) {
-    println(“\(value)”)
+    println("\(value)")
 }
 ```
 
@@ -92,8 +90,8 @@ note that RawType is required to be Deserializable. An Enum partially supports R
 ```swift
 enum Enabled : UInt8, RawDeserializable {
 	case No  = 0
-  case Yes = 1
-  public static let uuid = “F000AA12-0451-4000-B000-000000000000”
+	case Yes = 1
+	public static let uuid = "F000AA12-0451-4000-B000-000000000000"
 }
 ```
 
@@ -102,7 +100,7 @@ and,
 ```swift
 let data = Serde.serialize(Enabled.Yes)
 if let value : Enabled Serde.deserialize(data) {
-    println(“\(value.rawValue)”)
+    println("\(value.rawValue)")
 }
 ```
 
@@ -112,7 +110,7 @@ RawDeserializable can also be implemented in a struct or class.
 public struct Value : RawDeserializable {
     
     public let rawValue : UInt8
-    public static let uuid = “F000AA13-0451-4000-B000-000000000000”
+    public static let uuid = "F000AA13-0451-4000-B000-000000000000"
 
     public init?(rawValue:UInt8) {
         self.rawValue = rawValue
