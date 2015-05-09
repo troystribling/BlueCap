@@ -3,7 +3,7 @@
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 5/2/15.
-//  Copyright (c) 2015 gnos.us. All rights reserved.
+//  Copyright (c) 2015 Troy Stribling. The MIT License (MIT).
 //
 
 import UIKit

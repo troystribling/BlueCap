@@ -3,7 +3,7 @@
 //  BlueCap
 //
 //  Created by Troy Stribling on 9/16/14.
-//  Copyright (c) 2014 gnos.us. All rights reserved.
+//  Copyright (c) 2014 Troy Stribling. The MIT License (MIT).
 //
 
 import Foundation

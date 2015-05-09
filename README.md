@@ -78,7 +78,7 @@ public protocol RawDeserializable {
 }
 ```
 
-It would be used to define a message that contains a single value. The Serde serialize and deserialize are defined by,
+RawDeserializable is used to define a message that contains a single value. The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawDeserializable where T.RawType:Deserializable>(data:NSData) -> T?
@@ -109,7 +109,7 @@ RawDeserializable can also be implemented in a struct or class.
 ```swift
 public struct Value : RawDeserializable {
     
-    public let rawValue : UInt8
+		public let rawValue    : UInt8
     public static let uuid = "F000AA13-0451-4000-B000-000000000000"
 
     public init?(rawValue:UInt8) {
