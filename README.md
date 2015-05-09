@@ -50,7 +50,7 @@ public protocol Deserializable {
 }
 ```
 
-BlueCalKit provides implementation of `Deserializable` for [UInt8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Uint8Extensions.swift), [Int8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int8Extensions.swift), [UInt16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/UInt16Extensions.swift) and [Int16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int16Extensions.swift). The `Serde` `serialize` and `deserialize `are defined by,
+BlueCalKit provides implementation of `Deserializable` for [`UInt8`](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Uint8Extensions.swift), [`Int8`](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int8Extensions.swift), [`UInt16`](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/UInt16Extensions.swift) and [`Int16`](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int16Extensions.swift). The `Serde` `serialize` and `deserialize `are defined by,
 
 ```swift
 public static func deserialize<T:Deserializable>(data:NSData) -> T?
