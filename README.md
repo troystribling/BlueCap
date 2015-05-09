@@ -106,12 +106,11 @@ if let value : Enabled Serde.deserialize(data) {
 `RawDeserializable` can also be implemented in a struct or class.
 
 ```swift
-public struct Value : RawDeserializable {
-    
-		public let rawValue    : UInt8
-    public static let uuid = "F000AA13-0451-4000-B000-000000000000"
+struct Value : RawDeserializable {
+		let rawValue : UInt8
+	  static let uuid = "F000AA13-0451-4000-B000-000000000000"
 
-    public init?(rawValue:UInt8) {
+    init?(rawValue:UInt8) {
         self.rawValue = rawValue
     }
 }
@@ -149,11 +148,9 @@ public static func serialize<T:RawArrayDeserializable>(value:T) -> NSData
 note that `RawType` is required to be `Deserializable`. `RawArrayDeserializable` can be implemented in a struct or class.
 
 ```swift
-struct RawArrayValue : RawArrayDeserializable {
-    
+struct RawArrayValue : RawArrayDeserializable {    
     let rawValue : [UInt8]
     static let uuid = "F000AA13-0451-4000-B000-000000000000"
-    
     static let size = 2
     
     init?(rawValue:[UInt8]) {
@@ -201,7 +198,6 @@ note that `RawType1` and `RawType2` are required to be `Deserializable`. `RawPai
 
 ```swift
 struct RawPairValue : RawPairDeserializable {
-    
     let rawValue1 : UInt8
     let rawValue2 : Int8
     static let uuid = "F000AA13-0451-4000-B000-000000000000"
@@ -251,13 +247,11 @@ note that `RawType1` and `RawType2` are required to be `Deserializable`. `RawArr
 
 ```swift
 struct RawArrayPairValue : RawArrayPairDeserializable {
-    
     let rawValue1 : [UInt8]
     let rawValue2 : [Int8]
     static let uuid = "F000AA13-0451-4000-B000-000000000000"
     static let size1 = 2
     static let size2 = 2
-    
     
     init?(rawValue1:[UInt8], rawValue2:[Int8]) {
         if rawValue1.count == 2 && rawValue2.count == 2 {
