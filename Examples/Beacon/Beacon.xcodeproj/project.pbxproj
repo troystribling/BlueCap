@@ -226,7 +226,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0630;
-				ORGANIZATIONNAME = gnos.us;
+				ORGANIZATIONNAME = "Troy Stribling";
 				TargetAttributes = {
 					05EAD6881ADC1F5F00DCCBB7 = {
 						CreatedOnToolsVersion = 6.3;
