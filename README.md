@@ -36,6 +36,23 @@ With BlueCap it is possible to serialize and deserialize messages exchanged with
 
 Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on `Serde`. This section will describe how this is done. Example implantations of each protocol can be found in the [Ti Sensor Tag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/BlueCap.playground). 
 
+### `Strings`
+
+For `Strings` The `Serde` `serialize` and `deserialize `are defined by,
+
+```swift
+public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData?
+public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String?
+```
+and,
+```swift
+if let data = Serde.serialize("Test") {
+    if let value = Serde.deserialize(data) {
+        println(value)
+    }
+}
+```
+
 ### `Deserializable` Protocol
 
 The `Deserializable` protocol is defined by,
@@ -276,27 +293,27 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
 
 ## GATT Profile Definition
 
-### ServiceConfigurable Protocol
+GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings.
 
-### CharacteristicConfigurable Protocol
+### `ServiceConfigurable` Protocol
 
-### StringDeserializable Protocol
+### `CharacteristicConfigurable` Protocol
 
-### ConfiguredServiceProfile
+### `StringDeserializable` Protocol
 
-### RawCharacteristicProfile
+### `ConfiguredServiceProfile`
 
-### RawArrayCharacteristicProfile
+### `RawCharacteristicProfile`
 
-### RawPairCharacteristicProfile
+### `RawArrayCharacteristicProfile`
 
-### RawArrayPairCharacteristicProfile
+### `RawPairCharacteristicProfile`
 
-### StringCharacteristicProfile
+### `RawArrayPairCharacteristicProfile`
 
-### ProfileManager
+### `StringCharacteristicProfile`
 
-### Strings
+### `ProfileManager`
 
 ### Add Profile to BlueCap App
 

@@ -3,6 +3,13 @@
 import UIKit
 import BlueCapKit
 
+// Strings
+if let stringData = Serde.serialize("Test") {
+    if let value = Serde.deserialize(stringData) {
+        println(value)
+    }
+}
+
 // Deserializable Protocol
 let data1 = Serde.serialize(UInt8(31))
 if let value : UInt8 = Serde.deserialize(data1) {
