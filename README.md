@@ -46,10 +46,11 @@ public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8St
 
 **Parameters**
 
-|Parameter|Description|
-|————|—————|
-|data|NSData object containing message|
-|encoding|String encoding. See [NSUTF8StringEncoding](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/#//apple_ref/doc/constant_group/String_Encodings) for possible values. Default is UTF-8|
+|Header |Column 1 | Column 2 | Column 3  | 
+|:— |:—— |:——:| ——:|
+|1. Row| is | is | is  |
+|2. Row| left | nicely | right  |
+|3. Row| aligned | centered | aligned  | 
 
 ```swift
 public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData?
