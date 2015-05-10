@@ -21,24 +21,24 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 # Installation
 
-1. Place the <code>BlueCap</code> somewhere in your project directory. You can either copy it or add it as a git submodule.
-2. Open the <code>BluCap</code> project folder and drag <code>BlueCapKit.xcodeproj</code> into the project navigator of your applications Xcode project.
-3. Under your Projects Info tab set the iOS Deployment Target to 8.0 and that the <code>BlueCapKit.xcodeproj iOS Deployment Target<code> is also 8.0.
-4. Under the General tab for your project target add the top <code>BlueCapKit.framework</code> as an Embedded Binary.
-5. Under the <code>Build Phases</code> tab add <code>BlueCapKit.framework</code> as a <code>Target Dependency</code> and under <code>Link Binary With Libraries</code> add <code>CoreLocation.framework</code> and <code>CoreBluetooth.framework</code>.
-6. To enable debug log output select your project target and the <code>Build Settings</code> tab. Under <code>Other Swift Flags</code> and Debug add <code>-D DEBUG</code>.
+1. Place the BlueCap somewhere in your project directory. You can either copy it or add it as a git submodule.
+2. Open the BluCap project folder and drag BlueCapKit.xcodeproj into the project navigator of your applications Xcode project.
+3. Under your Projects Info tab set the iOS Deployment Target to 8.0 and that the BlueCapKit.xcodeproj iOS Deployment Target is also 8.0.
+4. Under the General tab for your project target add the top BlueCapKit.framework as an Embedded Binary.
+5. Under the Build Phases tab add BlueCapKit.framework as a Target Dependency and under Link Binary With Libraries add CoreLocation.framework and CoreBluetooth.framework.
+6. To enable debug log output select your project target and the Build Settings tab. Under Other Swift Flags and Debug add -D DEBUG.
 
 # Usage
 
-With <code>BlueCap</code> it is possible to serialize and deserialize messages exchanged with bluetooth devices, define reusable GATT profile definitions and easily implement Central and Peripheral applications. The following sections will address each of these items in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
+With BlueCap it is possible to serialize and deserialize messages exchanged with bluetooth devices, define reusable GATT profile definitions and easily implement Central and Peripheral applications. The following sections will address each of these items in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
  
 ## Serialization/Deserialization
 
-Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on <code>Serde</code>. This section will describe how this is done. Example implantations of each protocol can be found in the [Ti Sensor Tag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/BlueCap.playground). 
+Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. This section will describe how this is done. Example implantations of each protocol can be found in the [Ti Sensor Tag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/BlueCap.playground). 
 
-### <code>Strings</code>
+### Strings
 
-For <code>Strings</code> The <code>Serde serialize</code> and <code>deserialize</code> are defined by,
+For Strings The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String?
@@ -49,15 +49,15 @@ public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8Str
 
 <table>
 	<tr>
-		<td><code>data</code></td>
+		<td>data</td>
 		<td>NSData object containing serialized message</td>
 	</tr>
 	<tr>
-		<td><code>value</code></td>
+		<td>value</td>
 		<td>Deserialized message</td>
 	</tr>
   <tr>
-		<td><code>encoding</code></td>
+		<td>encoding</td>
 		<td>String encoding.Default is UTF-8.</td>
 	</tr>
 </table>
@@ -71,9 +71,9 @@ if let data = Serde.serialize("Test") {
 }
 ```
 
-### <code>Deserializable</code> Protocol
+### Deserializable Protocol
 
-The <code>Deserializable</code> protocol is defined by,
+The Deserializable protocol is defined by,
 
 ```swift
 public protocol Deserializable {
@@ -88,28 +88,28 @@ public protocol Deserializable {
 **Description**
 <table>
 	<tr>
-		<td><code>size</code></td>
+		<td>size</td>
 		<td>Size of object in bytes</td>
 	</tr>
 	<tr>
-		<td><code>deserialize(data:NSData) -> Self?</code></td>
+		<td>deserialize(data:NSData) -> Self?</td>
 		<td>Deserialize entire message to object</td>
 	</tr>
 	<tr>
-		<td><code>deserialize(data:NSData, start:Int) -> Self?</code></td>
+		<td>deserialize(data:NSData, start:Int) -> Self?</td>
 		<td>Deserialize message starting at offset to object</td>
 	</tr>
 	<tr>
-		<td><code>deserialize(data:NSData) -> [Self]</code></td>
+		<td>deserialize(data:NSData) -> [Self]</td>
 		<td>Deserialize entire message to array of objects</td>
 	</tr>
 	<tr>
-		<td><code>init?(stringValue:String)</code></td>
+		<td>init?(stringValue:String)</td>
 		<td>Create object from string</td>
 	</tr>
 </table>
 
-<code>BlueCalKit</code> provides implementation of <code>Deserializable</code> for [<code>UInt8<pcode>](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Uint8Extensions.swift), [<code>Int8</code>](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int8Extensions.swift), [<code>UInt16</code>](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/UInt16Extensions.swift) and [<code>Int16</code>](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int16Extensions.swift). The <code>Serde serialize</code> and <code>deserialize</code> are defined by,
+BlueCalKit provides implementation of Deserializable for [UInt8<pcode>](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Uint8Extensions.swift), [Int8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int8Extensions.swift), [UInt16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/UInt16Extensions.swift) and [Int16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int16Extensions.swift). The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:Deserializable>(data:NSData) -> T?
@@ -120,16 +120,16 @@ public static func serialize<T:Deserializable>(value:T) -> NSData
 
 <table>
 	<tr>
-		<td><code>data</code></td>
+		<td>data</td>
 		<td>NSData object containing serialized message</td>
 	</tr>
 	<tr>
-		<td><code>value</code></td>
+		<td>value</td>
 		<td>Deserialized message</td>
 	</tr>
 </table>
 
-For <code>UInt8</code> data,
+For UInt8 data,
 
 ```swift
 let data = Serde.serialize(UInt8(31))
@@ -138,9 +138,9 @@ if let value : UInt8 = Serde.deserialize(data) {
 }
 ```
 
-### <code>RawDeserializable</code> Protocol
+### RawDeserializable Protocol
 
-The <code>RawDeserializable</code> protocol is defined by,
+The RawDeserializable protocol is defined by,
 
 ```swift
 public protocol RawDeserializable {
@@ -154,20 +154,20 @@ public protocol RawDeserializable {
 **Description**
 <table>
 	<tr>
-		<td><code>uuid</code></td>
+		<td>uuid</td>
 		<td>Characteristic UUID</td>
 	</tr>
 	<tr>
-		<td><code>rawValue</code></td>
+		<td>rawValue</td>
 		<td>Characteristic RawType value</td>
 	</tr>
 	<tr>
-		<td><code>init?(rawValue:RawType)</code></td>
+		<td>init?(rawValue:RawType)</td>
 		<td>Create object from rawValue</td>
 	</tr>
 </table>
 
-<code>RawDeserializable</code> is used to define a message that contains a single value. The <code>Serde serialize</code> and <code>deserialize</code> are defined by,
+RawDeserializable is used to define a message that contains a single value. The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawDeserializable where T.RawType:Deserializable>(data:NSData) -> T?
@@ -178,16 +178,16 @@ public static func serialize<T:RawDeserializable>(value:T) -> NSData
 
 <table>
 	<tr>
-		<td><code>data</code></td>
+		<td>data</td>
 		<td>NSData object containing serialized message</td>
 	</tr>
 	<tr>
-		<td><code>value</code></td>
+		<td>value</td>
 		<td>Deserialized message</td>
 	</tr>
 </table>
 
-note that <code>RawType</code> is required to be <code>Deserializable</code>. An Enum partially supports <code>RawDeserializable</code>, so,
+note that RawType is required to be Deserializable. An Enum partially supports RawDeserializable, so,
 
 ```swift
 enum Enabled : UInt8, RawDeserializable {
@@ -204,7 +204,7 @@ if let value : Enabled Serde.deserialize(data) {
 }
 ```
 
-<code>RawDeserializable</code> can also be implemented in a struct or class.
+RawDeserializable can also be implemented in a struct or class.
 
 ```swift
 struct Value : RawDeserializable {
@@ -225,9 +225,9 @@ if let initValue = Value(rawValue:10) {
     }
 }
 ```
-### <code>RawArrayDeserializable</code> Protocol
+### RawArrayDeserializable Protocol
 
-The <code>RawArrayDeserializable</code> protocol is defined by,
+The RawArrayDeserializable protocol is defined by,
 
 ```swift
 public protocol RawArrayDeserializable {
@@ -243,24 +243,24 @@ public protocol RawArrayDeserializable {
 
 <table>
 	<tr>
-		<td><code>uuid</code></td>
+		<td>uuid</td>
 		<td>Characteristic UUID</td>
 	</tr>
 	<tr>
-		<td><code>size</code></td>
+		<td>size</td>
 		<td>Size of array</td>
 	</tr>
 	<tr>
-		<td><code>rawValue</code></td>
+		<td>rawValue</td>
 		<td>Characteristic RawType values</td>
 	</tr>
 	<tr>
-		<td><code>init?(rawValue:[RawType])</code></td>
+		<td>init?(rawValue:[RawType])</td>
 		<td>Create object from rawValues</td>
 	</tr>
 </table>
 
-<code>RawArrayDeserializable</code> is used to define a message that contains multiple values of a single type. The <code>Serde serialize</code> and <code>deserialize</code> are defined by,
+RawArrayDeserializable is used to define a message that contains multiple values of a single type. The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawArrayDeserializable where T.RawType:Deserializable>(data:NSData) -> T?
@@ -271,16 +271,16 @@ public static func serialize<T:RawArrayDeserializable>(value:T) -> NSData
 
 <table>
 	<tr>
-		<td><code>data</code></td>
+		<td>data</td>
 		<td>NSData object containing serialized message</td>
 	</tr>
 	<tr>
-		<td><code>value</code></td>
+		<td>value</td>
 		<td>Deserialized message</td>
 	</tr>
 </table>
 
-note that <code>RawType</code> is required to be <code>Deserializable</code>. <code>RawArrayDeserializable</code> can be implemented in a struct or class.
+note that RawType is required to be Deserializable. RawArrayDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawArrayValue : RawArrayDeserializable {    
@@ -307,9 +307,9 @@ if let initValue = RawArrayValue(rawValue:[4,10]) {
 }
 ```
 
-### <code>RawPairDeserializable</code> Protocol
+### RawPairDeserializable Protocol
 
-The <code>RawPairDeserializable</code> protocol is defined by,
+The RawPairDeserializable protocol is defined by,
 
 ```swift
 public protocol RawPairDeserializable {
@@ -326,24 +326,24 @@ public protocol RawPairDeserializable {
 
 <table>
 	<tr>
-		<td><code>uuid</code></td>
+		<td>uuid</td>
 		<td>Characteristic UUID</td>
 	</tr>
 	<tr>
-		<td><code>rawValue1</code></td>
+		<td>rawValue1</td>
 		<td>Characteristic RawType1 value</td>
 	</tr>
 	<tr>
-		<td><code>rawValue2</code></td>
+		<td>rawValue2</td>
 		<td>Characteristic RawType2 value</td>
 	</tr>
 	<tr>
-		<td><code>init?(rawValue1:RawType1, rawValue2:RawType2)</code></td>
+		<td>init?(rawValue1:RawType1, rawValue2:RawType2)</td>
 		<td>Create object from rawValues</td>
 	</tr>
 </table>
 
-<code>RawPairDeserializable</code> is used to define a message that contains two values of different types. The <code>Serde serialize</code> and <code>deserialize</code> are defined by,
+RawPairDeserializable is used to define a message that contains two values of different types. The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T?
@@ -354,16 +354,16 @@ public static func serialize<T:RawPairDeserializable>(value:T) -> NSData
 
 <table>
 	<tr>
-		<td><code>data</code></td>
+		<td>data</td>
 		<td>NSData object containing serialized message</td>
 	</tr>
 	<tr>
-		<td><code>value</code></td>
+		<td>value</td>
 		<td>Deserialized message</td>
 	</tr>
 </table>
 
-note that <code>RawType1</code> and <code>RawType2</code> are required to be <code>Deserializable</code>. <code>RawPairDeserializable</code> can be implemented in a struct or class.
+note that RawType1 and RawType2 are required to be Deserializable. RawPairDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawPairValue : RawPairDeserializable {
@@ -388,9 +388,9 @@ if let initValue = RawPairValue(rawValue1:10, rawValue2:-10) {
 }
 ```
 
-### <code>RawArrayPairDeserializable</code> Protocol
+### RawArrayPairDeserializable Protocol
 
-The <code>RawArrayPairDeserializable</code> protocol is defined by,
+The RawArrayPairDeserializable protocol is defined by,
 
 ```swift
 public protocol RawArrayPairDeserializable {
@@ -409,32 +409,32 @@ public protocol RawArrayPairDeserializable {
 
 <table>
 	<tr>
-		<td><code>uuid</code></td>
+		<td>uuid</td>
 		<td>Characteristic UUID</td>
 	</tr>
   <tr>
-		<td><code>size1</code></td>
+		<td>size1</td>
 		<td>Size of RawType1 array</td>
   </tr>
   <tr>
-		<td><code>size2</code></td>
+		<td>size2</td>
 		<td>Size of RawType2 array</td>
   </tr>
 	<tr>
-		<td><code>rawValue1</code></td>
+		<td>rawValue1</td>
 		<td>Characteristic RawType1 value</td>
 	</tr>
 	<tr>
-		<td><code>rawValue2</code></td>
+		<td>rawValue2</td>
 		<td>Characteristic RawType2 value</td>
 	</tr>
 	<tr>
-		<td><code>init?(rawValue1:[RawType1], rawValue2:[RawType2])</code></td>
+		<td>init?(rawValue1:[RawType1], rawValue2:[RawType2])</td>
 		<td>Create object from rawValues</td>
 	</tr>
 </table>
 
-<code>RawArrayPairDeserializable</code> is used to define a message that contains multiple values of two different types. The <code>Serde serialize</code> and <code>deserialize</code> are defined by,
+RawArrayPairDeserializable is used to define a message that contains multiple values of two different types. The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawArrayPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T?
@@ -445,16 +445,16 @@ public static func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData
 
 <table>
 	<tr>
-		<td><code>data</code></td>
+		<td>data</td>
 		<td>NSData object containing serialized message</td>
 	</tr>
 	<tr>
-		<td><code>value</code></td>
+		<td>value</td>
 		<td>Deserialized message</td>
 	</tr>
 </table>
 
-note that <code>RawType1</code> and <code>RawType2</code> are required to be <code>Deserializable</code>. <code>RawArrayPairDeserializable</code> can be implemented in a struct or class.
+note that RawType1 and RawType2 are required to be Deserializable. RawArrayPairDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawArrayPairValue : RawArrayPairDeserializable {
@@ -489,9 +489,9 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
 
 GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings.
 
-### <code>ServiceConfigurable</code> Protocol
+### ServiceConfigurable Protocol
 
-The <code>ServiceConfigurable</code> protocol defined by,
+The ServiceConfigurable protocol defined by,
 
 ```swift
 public protocol ServiceConfigurable {
@@ -503,7 +503,7 @@ public protocol ServiceConfigurable {
 
 and is used to specify service configuration.
 
-### <code>CharacteristicConfigurable</code> Protocol
+### CharacteristicConfigurable Protocol
 
 ```swift
 public protocol CharacteristicConfigurable {
@@ -515,7 +515,7 @@ public protocol CharacteristicConfigurable {
 }
 ```
 
-### <code>StringDeserializable</code> Protocol
+### StringDeserializable Protocol
 
 ```swift
 public protocol StringDeserializable {
@@ -525,7 +525,7 @@ public protocol StringDeserializable {
 }
 ```
 
-### <code>ConfiguredServiceProfile</code>
+### ConfiguredServiceProfile
 
 ```swift
 ```
@@ -533,7 +533,7 @@ public protocol StringDeserializable {
 ```swift
 ```
 
-### <code>RawCharacteristicProfile</code>
+### RawCharacteristicProfile
 
 ```swift
 ```
@@ -541,7 +541,7 @@ public protocol StringDeserializable {
 ```swift
 ```
 
-### <code>RawArrayCharacteristicProfile</code>
+### RawArrayCharacteristicProfile
 
 ```swift
 ```
@@ -549,7 +549,7 @@ public protocol StringDeserializable {
 ```swift
 ```
 
-### <code>RawPairCharacteristicProfile</code>
+### RawPairCharacteristicProfile
 
 ```swift
 ```
@@ -557,7 +557,7 @@ public protocol StringDeserializable {
 ```swift
 ```
 
-### <code>RawArrayPairCharacteristicProfile</code>
+### RawArrayPairCharacteristicProfile
 
 ```swift
 ```
@@ -565,9 +565,9 @@ public protocol StringDeserializable {
 ```swift
 ```
 
-### <code>StringCharacteristicProfile</code>
+### StringCharacteristicProfile
 
-### <code>ProfileManager</code>
+### ProfileManager
 
 ### Add Profile to BlueCap App
 
