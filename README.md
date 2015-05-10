@@ -41,9 +41,20 @@ Serialization and deserialization of device messages requires protocol implement
 For `Strings` The `Serde` `serialize` and `deserialize `are defined by,
 
 ```swift
-public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData?
 public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String?
 ```
+
+**Parameters**
+
+|Parameter|Description|
+|————|—————|
+|data|NSData object containing message|
+|encoding|String encoding. See [NSUTF8StringEncoding](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/#//apple_ref/doc/constant_group/String_Encodings) for possible values. Default is UTF-8|
+
+```swift
+public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData?
+```
+
 and,
 ```swift
 if let data = Serde.serialize("Test") {
@@ -297,19 +308,79 @@ GATT profile definitions are required to add support for a device to the BlueCap
 
 ### `ServiceConfigurable` Protocol
 
+The `ServiceConfigurable` protocol defined by,
+
+```swift
+public protocol ServiceConfigurable {
+    static var name  : String {get}
+    static var uuid  : String {get}
+    static var tag   : String {get}
+}
+```
+
+and is used to specify service configuration.
+
 ### `CharacteristicConfigurable` Protocol
+
+```swift
+public protocol CharacteristicConfigurable {
+    static var name          : String {get}
+    static var uuid          : String {get}
+    static var permissions   : CBAttributePermissions {get}
+    static var properties    : CBCharacteristicProperties {get}
+    static var initialValue  : NSData? {get}
+}
+```
 
 ### `StringDeserializable` Protocol
 
+```swift
+public protocol StringDeserializable {
+    static var stringValues : [String] {get}
+    var stringValue         : [String:String] {get}
+    init?(stringValue:[String:String])
+}
+```
+
 ### `ConfiguredServiceProfile`
+
+```swift
+```
+
+```swift
+```
 
 ### `RawCharacteristicProfile`
 
+```swift
+```
+
+```swift
+```
+
 ### `RawArrayCharacteristicProfile`
+
+```swift
+```
+
+```swift
+```
 
 ### `RawPairCharacteristicProfile`
 
+```swift
+```
+
+```swift
+```
+
 ### `RawArrayPairCharacteristicProfile`
+
+```swift
+```
+
+```swift
+```
 
 ### `StringCharacteristicProfile`
 
