@@ -32,6 +32,8 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 With BlueCap it is possible to serialize and deserialize messages exchanged with bluetooth devices, define reusable GATT profile definitions and easily implement Central and Peripheral applications. The following sections will address each of these items in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
  
+## Getting Started
+
 ## Serialization/Deserialization
 
 Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. This section will describe how this is done. Example implantations of each protocol can be found in the [Ti Sensor Tag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/BlueCap.playground). 
@@ -58,7 +60,7 @@ public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8Str
 	</tr>
   <tr>
 		<td>encoding</td>
-		<td>String encoding.Default is UTF-8.</td>
+		<td><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/#//apple_ref/doc/constant_group/String_Encodings">String encoding</a>.Default is UTF-8.</td>
 	</tr>
 </table>
 
@@ -487,11 +489,11 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
 
 ## GATT Profile Definition
 
-GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings.
+GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings. The examples in the following sections are taken or derived from the BlueCapKit [TiSensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) implementation.
 
 ### ServiceConfigurable Protocol
 
-The ServiceConfigurable protocol defined by,
+The ServiceConfigurable protocol is used to specify Service configuration and is defined by,
 
 ```swift
 public protocol ServiceConfigurable {
@@ -501,9 +503,26 @@ public protocol ServiceConfigurable {
 }
 ```
 
-and is used to specify service configuration.
+**Description**
+
+<table>
+	<tr>
+		<td>name</td>
+		<td>Service name</td>
+	</tr>
+  <tr>
+		<td>uuid</td>
+		<td>Service UUID</td>
+  </tr>
+  <tr>
+		<td>tag</td>
+		<td>Used to organize services in the BlueCap app profile browser</td>
+  </tr>
+</table>
 
 ### CharacteristicConfigurable Protocol
+
+The CharacteristicConfigurable is used to specify Characteristic configuration and protocol is defined by,
 
 ```swift
 public protocol CharacteristicConfigurable {
@@ -515,7 +534,32 @@ public protocol CharacteristicConfigurable {
 }
 ```
 
+<table>
+	<tr>
+		<td>name</td>
+		<td>Characteristic name</td>
+	</tr>
+  <tr>
+		<td>uuid</td>
+		<td>Characteristic UUID</td>
+  </tr>
+  <tr>
+		<td>permissions</td>
+		<td>Specify <a href="https://developer.apple.com/library/mac/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/swift/struct/CBAttributePermissions">CBAttributePermissions</a></td>
+  </tr>
+  <tr>
+		<td>properties</td>
+		<td>Specify <a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/#//apple_ref/swift/struct/CBCharacteristicProperties">CBCharacteristicProperties</a></td>
+  </tr>
+  <tr>
+		<td>initialValue</td>
+		<td>Characteristic initial value</td>
+  </tr>
+</table>
+
 ### StringDeserializable Protocol
+
+The StringDeserializable protocol is used to specify conversion of rawValues to Strings and is defined by,
 
 ```swift
 public protocol StringDeserializable {
@@ -525,9 +569,33 @@ public protocol StringDeserializable {
 }
 ```
 
+**Description**
+
+<table>
+	<tr>
+		<td>stringValues</td>
+		<td>Used for enums to specify Strings for values but ignored for other types</td>
+	</tr>
+  <tr>
+		<td>stringValue</td>
+		<td>The String values of the rawType</td>
+  </tr>
+  <tr>
+		<td>init?(stringValue:[String:String])</td>
+		<td>Create object from stringValue</td>
+  </tr>
+</table>
+
 ### ConfiguredServiceProfile
 
+A ConfiguredServiceProfile object encapsulates a service configuration that cab be used to instantiate either Service of MutableService object. 
+
 ```swift
+struct AccelerometerService : ServiceConfigurable  {
+  static let uuid  = "F000AA10-0451-4000-B000-000000000000"
+  static let name  = "TI Accelerometer"
+  static let tag   = "TI Sensor Tag"
+}
 ```
 
 ```swift
@@ -535,13 +603,54 @@ public protocol StringDeserializable {
 
 ### RawCharacteristicProfile
 
+A RawCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
+
 ```swift
+enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+  case No     = 0
+  case Yes    = 1
+            
+// CharacteristicConfigurable
+static let uuid = "F000AA12-0451-4000-B000-000000000000"
+static let name = "Accelerometer Enabled"
+static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+static let initialValue : NSData? = Serde.serialize(Enabled.No.rawValue)
+            
+// StringDeserializable
+static let stringValues = ["No", "Yes"]
+            
+init?(stringValue:[String:String]) {
+  if let value = stringValue[Enabled.name] {
+    switch value {
+    case "Yes":
+      self = Enabled.Yes
+    case "No":
+      self = Enabled.No
+    default:
+      return nil
+    }
+  } else {
+    return nil
+  }
+}
+            
+var stringValue : [String:String] {
+  switch self {
+  case .No:
+    return [Enabled.name:"No"]
+  case .Yes:
+    return [Enabled.name:"Yes"]
+  }
+}            
 ```
 
 ```swift
 ```
 
 ### RawArrayCharacteristicProfile
+
+A RawArrayCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawArrayDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
 ```
@@ -551,6 +660,8 @@ public protocol StringDeserializable {
 
 ### RawPairCharacteristicProfile
 
+A RawPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
+
 ```swift
 ```
 
@@ -558,6 +669,8 @@ public protocol StringDeserializable {
 ```
 
 ### RawArrayPairCharacteristicProfile
+
+A RawArrayPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawArrayPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
 ```
