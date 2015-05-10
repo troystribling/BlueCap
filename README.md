@@ -46,11 +46,16 @@ public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8St
 
 **Parameters**
 
-|Header |Column 1 | Column 2 | Column 3  | 
-|:— |:—— |:——:| ——:|
-|1. Row| is | is | is  |
-|2. Row| left | nicely | right  |
-|3. Row| aligned | centered | aligned  | 
+<table>
+	<tr>
+		<td>data</td>
+		<td>NSData object containing message.</td>
+	</tr>
+  <tr>
+		<td>encoding</td>
+		<td>String encoding.Default is UTF-8.</td>
+	</tr>
+</table>
 
 ```swift
 public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData?
