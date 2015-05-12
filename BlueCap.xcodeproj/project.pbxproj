@@ -129,7 +129,6 @@
 		0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconsViewController.swift; sourceTree = "<group>"; };
 		0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconViewController.swift; sourceTree = "<group>"; };
 		053B0CC119BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanTimeoutViewController.swift; sourceTree = "<group>"; };
-		0548BD8E1B01A2D900988B2E /* Profile.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Profile.playground; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
 		055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = BlueCapKit.xcodeproj; sourceTree = "<group>"; };
 		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -184,6 +183,7 @@
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
 		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
+		05E789681B024670005FF2DD /* Profile.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Profile.playground; path = BlueCap/Profile.playground; sourceTree = "<group>"; };
 		05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfilesViewController.swift; sourceTree = "<group>"; };
 		05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileValuesViewController.swift; sourceTree = "<group>"; };
 		05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileViewController.swift; sourceTree = "<group>"; };
@@ -272,8 +272,8 @@
 			children = (
 				05840F8D1942098300C744E6 /* CoreBluetooth.framework */,
 				05B45BE519A788BC009DAF6D /* CoreLocation.framework */,
+				05E789681B024670005FF2DD /* Profile.playground */,
 				056B7C7819E0600A001B7F95 /* SerDe.playground */,
-				0548BD8E1B01A2D900988B2E /* Profile.playground */,
 				055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */,
 				05840F61194206F100C744E6 /* BlueCap */,
 				05840F76194206F100C744E6 /* BlueCapTests */,
