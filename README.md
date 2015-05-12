@@ -32,6 +32,8 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 With BlueCap it is possible to serialize and deserialize messages exchanged with bluetooth devices, define reusable GATT profile definitions and easily implement Central and Peripheral applications. The following sections will address each of these items in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
  
+## BLE Model
+
 ## Getting Started
 
 ## Serialization/Deserialization
@@ -40,31 +42,16 @@ Serialization and deserialization of device messages requires protocol implement
 
 ### Strings
 
-For Strings The Serde serialize and deserialize are defined by,
+For Strings Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String?
 public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData?
 ```
 
- **Parameters**
+[NSStringEncoding](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/#//apple_ref/doc/constant_group/String_Encodings) supports many encodings. 
 
-<table>
-	<tr>
-		<td>data</td>
-		<td>NSData object containing serialized message</td>
-	</tr>
-	<tr>
-		<td>value</td>
-		<td>Deserialized message</td>
-	</tr>
-  <tr>
-		<td>encoding</td>
-		<td><a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/#//apple_ref/doc/constant_group/String_Encodings">String encoding</a>.Default is UTF-8.</td>
-	</tr>
-</table>
-
-and,
+to use,
 ```swift
 if let data = Serde.serialize("Test") {
     if let value = Serde.deserialize(data) {
@@ -75,7 +62,7 @@ if let data = Serde.serialize("Test") {
 
 ### Deserializable Protocol
 
-The Deserializable protocol is defined by,
+The Deserializable protocol is used to define deserialization of  numeric objects and is defined by,
 
 ```swift
 public protocol Deserializable {
@@ -118,19 +105,6 @@ public static func deserialize<T:Deserializable>(data:NSData) -> T?
 public static func serialize<T:Deserializable>(value:T) -> NSData
 ```
 
-**Parameters**
-
-<table>
-	<tr>
-		<td>data</td>
-		<td>NSData object containing serialized message</td>
-	</tr>
-	<tr>
-		<td>value</td>
-		<td>Deserialized message</td>
-	</tr>
-</table>
-
 For UInt8 data,
 
 ```swift
@@ -142,7 +116,7 @@ if let value : UInt8 = Serde.deserialize(data) {
 
 ### RawDeserializable Protocol
 
-The RawDeserializable protocol is defined by,
+The RawDeserializable protocol is used to define a message that contains a single value and is defined by,
 
 ```swift
 public protocol RawDeserializable {
@@ -169,27 +143,14 @@ public protocol RawDeserializable {
 	</tr>
 </table>
 
-RawDeserializable is used to define a message that contains a single value. The Serde serialize and deserialize are defined by,
+The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawDeserializable where T.RawType:Deserializable>(data:NSData) -> T?
 public static func serialize<T:RawDeserializable>(value:T) -> NSData
 ```
 
-**Parameters**
-
-<table>
-	<tr>
-		<td>data</td>
-		<td>NSData object containing serialized message</td>
-	</tr>
-	<tr>
-		<td>value</td>
-		<td>Deserialized message</td>
-	</tr>
-</table>
-
-note that RawType is required to be Deserializable. An Enum partially supports RawDeserializable, so,
+Note that RawType is required to be Deserializable. An Enum partially supports RawDeserializable, so,
 
 ```swift
 enum Enabled : UInt8, RawDeserializable {
@@ -229,7 +190,7 @@ if let initValue = Value(rawValue:10) {
 ```
 ### RawArrayDeserializable Protocol
 
-The RawArrayDeserializable protocol is defined by,
+The RawArrayDeserializable protocol is used to define a message that contains multiple values of a single type and is defined by,
 
 ```swift
 public protocol RawArrayDeserializable {
@@ -262,27 +223,14 @@ public protocol RawArrayDeserializable {
 	</tr>
 </table>
 
-RawArrayDeserializable is used to define a message that contains multiple values of a single type. The Serde serialize and deserialize are defined by,
+The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawArrayDeserializable where T.RawType:Deserializable>(data:NSData) -> T?
 public static func serialize<T:RawArrayDeserializable>(value:T) -> NSData
 ```
 
-**Parameters**
-
-<table>
-	<tr>
-		<td>data</td>
-		<td>NSData object containing serialized message</td>
-	</tr>
-	<tr>
-		<td>value</td>
-		<td>Deserialized message</td>
-	</tr>
-</table>
-
-note that RawType is required to be Deserializable. RawArrayDeserializable can be implemented in a struct or class.
+Note that RawType is required to be Deserializable. RawArrayDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawArrayValue : RawArrayDeserializable {    
@@ -311,7 +259,7 @@ if let initValue = RawArrayValue(rawValue:[4,10]) {
 
 ### RawPairDeserializable Protocol
 
-The RawPairDeserializable protocol is defined by,
+The RawPairDeserializable is used to define a message that contains two values of different types and is defined by,
 
 ```swift
 public protocol RawPairDeserializable {
@@ -345,27 +293,14 @@ public protocol RawPairDeserializable {
 	</tr>
 </table>
 
-RawPairDeserializable is used to define a message that contains two values of different types. The Serde serialize and deserialize are defined by,
+The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T?
 public static func serialize<T:RawPairDeserializable>(value:T) -> NSData
 ```
 
-**Parameters**
-
-<table>
-	<tr>
-		<td>data</td>
-		<td>NSData object containing serialized message</td>
-	</tr>
-	<tr>
-		<td>value</td>
-		<td>Deserialized message</td>
-	</tr>
-</table>
-
-note that RawType1 and RawType2 are required to be Deserializable. RawPairDeserializable can be implemented in a struct or class.
+Note that RawType1 and RawType2 are required to be Deserializable. RawPairDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawPairValue : RawPairDeserializable {
@@ -392,7 +327,7 @@ if let initValue = RawPairValue(rawValue1:10, rawValue2:-10) {
 
 ### RawArrayPairDeserializable Protocol
 
-The RawArrayPairDeserializable protocol is defined by,
+The RawArrayPairDeserializable is used to define a message that contains multiple values of two different types and is defined by,
 
 ```swift
 public protocol RawArrayPairDeserializable {
@@ -436,27 +371,14 @@ public protocol RawArrayPairDeserializable {
 	</tr>
 </table>
 
-RawArrayPairDeserializable is used to define a message that contains multiple values of two different types. The Serde serialize and deserialize are defined by,
+The Serde serialize and deserialize are defined by,
 
 ```swift
 public static func deserialize<T:RawArrayPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T?
 public static func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData
 ```
 
-**Parameters**
-
-<table>
-	<tr>
-		<td>data</td>
-		<td>NSData object containing serialized message</td>
-	</tr>
-	<tr>
-		<td>value</td>
-		<td>Deserialized message</td>
-	</tr>
-</table>
-
-note that RawType1 and RawType2 are required to be Deserializable. RawArrayPairDeserializable can be implemented in a struct or class.
+Note that RawType1 and RawType2 are required to be Deserializable. RawArrayPairDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawArrayPairValue : RawArrayPairDeserializable {
@@ -489,7 +411,7 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
 
 ## GATT Profile Definition
 
-GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings. The examples in the following sections are taken or derived from the BlueCapKit [TiSensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) implementation.
+GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings.
 
 ### ServiceConfigurable Protocol
 
@@ -534,6 +456,8 @@ public protocol CharacteristicConfigurable {
 }
 ```
 
+**Description**
+
 <table>
 	<tr>
 		<td>name</td>
@@ -545,11 +469,11 @@ public protocol CharacteristicConfigurable {
   </tr>
   <tr>
 		<td>permissions</td>
-		<td>Specify <a href="https://developer.apple.com/library/mac/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/swift/struct/CBAttributePermissions">CBAttributePermissions</a></td>
+		<td><a href="https://developer.apple.com/library/mac/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/swift/struct/CBAttributePermissions">CBAttributePermissions</a></td>
   </tr>
   <tr>
 		<td>properties</td>
-		<td>Specify <a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/#//apple_ref/swift/struct/CBCharacteristicProperties">CBCharacteristicProperties</a></td>
+		<td><a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/#//apple_ref/swift/struct/CBCharacteristicProperties">CBCharacteristicProperties</a></td>
   </tr>
   <tr>
 		<td>initialValue</td>
@@ -599,6 +523,7 @@ struct AccelerometerService : ServiceConfigurable  {
 ```
 
 ```swift
+let service = 
 ```
 
 ### RawCharacteristicProfile
@@ -606,43 +531,44 @@ struct AccelerometerService : ServiceConfigurable  {
 A RawCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
-enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
   case No     = 0
   case Yes    = 1
-            
-// CharacteristicConfigurable
-static let uuid = "F000AA12-0451-4000-B000-000000000000"
-static let name = "Accelerometer Enabled"
-static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-static let initialValue : NSData? = Serde.serialize(Enabled.No.rawValue)
-            
-// StringDeserializable
-static let stringValues = ["No", "Yes"]
-            
-init?(stringValue:[String:String]) {
-  if let value = stringValue[Enabled.name] {
-    switch value {
-    case "Yes":
-      self = Enabled.Yes
-    case "No":
-      self = Enabled.No
-    default:
+    
+  // CharacteristicConfigurable
+  static let uuid = "F000AA12-0451-4000-B000-000000000000"
+  static let name = "Accelerometer Enabled"
+  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+  static let initialValue : NSData? = Serde.serialize(Enabled.No.rawValue)
+    
+  // StringDeserializable
+  static let stringValues = ["No", "Yes"]
+    
+  init?(stringValue:[String:String]) {
+    if let value = stringValue[Enabled.name] {
+      switch value {
+      case "Yes":
+        self = Enabled.Yes
+      case "No":
+        self = Enabled.No
+      default:
+        return nil
+      }
+    } else {
       return nil
     }
-  } else {
-    return nil
+  }
+    
+  var stringValue : [String:String] {
+    switch self {
+      case .No:
+        return [Enabled.name:"No"]
+      case .Yes:
+        return [Enabled.name:"Yes"]
+    }
   }
 }
-            
-var stringValue : [String:String] {
-  switch self {
-  case .No:
-    return [Enabled.name:"No"]
-  case .Yes:
-    return [Enabled.name:"Yes"]
-  }
-}            
 ```
 
 ```swift
@@ -653,6 +579,46 @@ var stringValue : [String:String] {
 A RawArrayCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawArrayDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
+struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+    
+  // CharacteristicConfigurable
+  static let uuid = "F000AA11-0451-4000-B000-000000000000"
+  static let name = "Accelerometer Data"
+  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+  static let initialValue : NSData? = Serde.serialize(ArrayData(rawValue:[1,2])!)
+    
+  // RawArrayDeserializable
+  let rawValue : [Int8]
+  static let size = 2
+    
+  init?(rawValue:[Int8]) {
+    if rawValue.count == 2 {
+      self.rawValue = rawValue
+    } else {
+      return nil
+    }
+  }
+    
+  // StringDeserializable
+  static let stringValues = [String]()
+    
+  var stringValue : Dictionary<String,String> {
+    return ["value1":"\(self.rawValue[0])",
+            "value2":"\(self.rawValue[1])"]
+  }
+    
+  init?(stringValue:[String:String]) {
+    if  let stringValue1 = stringValue["value1"],
+            stringValue2 = stringValue["value2"],
+            value1 = Int8(stringValue:stringValue1),
+            value2 = Int8(stringValue:stringValue2) {
+      self.rawValue = [value1, value2]
+    } else {
+      return nil
+    }
+  }
+}
 ```
 
 ```swift
@@ -663,6 +629,43 @@ A RawArrayCharacteristicProfile object encapsulates configuration and String con
 A RawPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
+struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {
+    
+  // CharacteristicConfigurable
+  static let uuid = "F000AA30-0451-4000-B000-000000000000"
+  static let name = "Magnetometer Data"
+  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+  static let initialValue : NSData? = Serde.serialize(PairData(rawValue1:10, rawValue2:-10)!)
+    
+  // RawArrayDeserializable
+  let rawValue1 : UInt8
+  let rawValue2 : Int8
+    
+  init?(rawValue1:UInt8, rawValue2:Int8) {
+    self.rawValue1 = rawValue1
+    self.rawValue2 = rawValue2
+  }
+    
+  // StringDeserializable
+  static let stringValues = [String]()
+    
+  var stringValue : Dictionary<String,String> {
+    return ["value1":"\(self.rawValue1)",
+            "value2":"\(self.rawValue2)"]}
+    
+  init?(stringValue:[String:String]) {
+    if  let stringValue1 = stringValue["value1"],
+            stringValue2 = stringValue["value2"],
+            value1 = UInt8(stringValue:stringValue1),
+            value2 = Int8(stringValue:stringValue2) {
+      self.rawValue1 = value1
+      self.rawValue2 = value2
+    } else {
+      return nil
+    }
+  }            
+}
 ```
 
 ```swift
@@ -673,6 +676,56 @@ A RawPairCharacteristicProfile object encapsulates configuration and String conv
 A RawArrayPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawArrayPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
+struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {
+            
+  // CharacteristicConfigurable
+  static let uuid = "F000AA11-0451-4000-B000-000000000000"
+  static let name = "Accelerometer Data"
+  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
+  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+static let initialValue : NSData? = Serde.serialize()
+            
+	// RawArrayDeserializable
+	let rawValue1 : [UInt8]
+	let rawValue2 : [Int8]
+	static let uuid = "F000AA13-0451-4000-B000-000000000000"
+	static let size1 = 2
+	static let size2 = 2
+
+	init?(rawValue1:[UInt8], rawValue2:[Int8]) {
+	  if rawValue1.count == 2 && rawValue2.count == 2 {
+	     self.rawValue1 = rawValue1
+	     self.rawValue2 = rawValue2
+	  } else {
+      return nil
+	  }
+	}
+            
+	// StringDeserializable
+	static let stringValues = [String]()
+            
+	var stringValue : Dictionary<String,String> {
+	  return ["value11":"\(self.rawValue1[0])",
+            "value12":"\(self.rawValue1[1])"],
+            "value21":"\(self.rawValue2[0])",
+            "value22":"\(self.rawValue2[1])"]}
+
+  init?(stringValue:[String:String]) {
+	  if  let stringValue11 = stringValue["value11"], 
+				 	  stringValue12 = stringValue["value12"]
+            value11 = Int8(stringValue:stringValue11),
+					  value12 = Int8(stringValue:stringValue12),
+					  stringValue21 = stringValue["value21"], 
+					  stringValue22 = stringValue["value22"]
+            value21 = Int8(stringValue:stringValue21),
+					  value22 = Int8(stringValue:stringValue22) {
+        self.rawValue1 = [value11, value12]
+        self.rawValue2 = [value21, value22]
+    } else {
+        return nil
+    }
+  }            
+}
 ```
 
 ```swift

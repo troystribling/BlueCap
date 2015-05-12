@@ -2,6 +2,7 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 // Strings
 if let stringData = Serde.serialize("Test") {
