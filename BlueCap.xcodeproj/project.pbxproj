@@ -183,12 +183,12 @@
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
 		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
-		05E789681B024670005FF2DD /* Profile.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Profile.playground; path = BlueCap/Profile.playground; sourceTree = "<group>"; };
 		05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfilesViewController.swift; sourceTree = "<group>"; };
 		05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileValuesViewController.swift; sourceTree = "<group>"; };
 		05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileViewController.swift; sourceTree = "<group>"; };
 		05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05FAFC3419D30247003725B0 /* Notify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notify.swift; sourceTree = "<group>"; };
+		05FB53431B03185F00E8E37D /* Profile.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Profile.playground; path = BlueCap/Profile.playground; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,9 +270,9 @@
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
+				05FB53431B03185F00E8E37D /* Profile.playground */,
 				05840F8D1942098300C744E6 /* CoreBluetooth.framework */,
 				05B45BE519A788BC009DAF6D /* CoreLocation.framework */,
-				05E789681B024670005FF2DD /* Profile.playground */,
 				056B7C7819E0600A001B7F95 /* SerDe.playground */,
 				055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */,
 				05840F61194206F100C744E6 /* BlueCap */,

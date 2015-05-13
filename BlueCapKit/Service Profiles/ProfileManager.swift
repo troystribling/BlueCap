@@ -23,6 +23,10 @@ public class ProfileManager {
         return self.serviceProfiles.values.array
     }
     
+    public var service : [CBUUID:ServiceProfile] {
+        return self.serviceProfiles
+    }
+
     public class var sharedInstance : ProfileManager {
         struct Static {
             static let instance = ProfileManager()
@@ -36,8 +40,4 @@ public class ProfileManager {
         return serviceProfile
     }
     
-    public func service(uuid:CBUUID) -> ServiceProfile? {
-        return self.serviceProfiles[uuid]
-    }
-
 }

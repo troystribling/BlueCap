@@ -38,7 +38,7 @@ With BlueCap it is possible to serialize and deserialize messages exchanged with
 
 ## Serialization/Deserialization
 
-Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. This section will describe how this is done. Example implantations of each protocol can be found in the [Ti Sensor Tag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/BlueCap.playground). 
+Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. This section will describe how this is done. Example implantations of each protocol can be found in the [Ti Sensor Tag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/SerDe.playground). 
 
 ### Strings
 
@@ -171,12 +171,11 @@ RawDeserializable can also be implemented in a struct or class.
 
 ```swift
 struct Value : RawDeserializable {
-		let rawValue : UInt8
-	  static let uuid = "F000AA13-0451-4000-B000-000000000000"
-
-    init?(rawValue:UInt8) {
-        self.rawValue = rawValue
-    }
+	let rawValue : UInt8
+	static let uuid = "F000AA13-0451-4000-B000-000000000000"
+	init?(rawValue:UInt8) {
+	  self.rawValue = rawValue
+	}
 }
 ```
 and, 
@@ -411,7 +410,7 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
 
 ## GATT Profile Definition
 
-GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings.
+GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings. The examples in this section are also available in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/Profile.playground)
 
 ### ServiceConfigurable Protocol
 
@@ -523,8 +522,16 @@ struct AccelerometerService : ServiceConfigurable  {
 ```
 
 ```swift
-let service = 
+let serviceProfile = ConfiguredServiceProfile<AccelerometerService>() 
 ```
+
+The CharacteristicProfiless belonging to a ServiceProfile are added using the method,
+
+```swift
+public func addCharacteristic(characteristicProfile:CharacteristicProfile)
+```
+ 
+### CharacteristicProfile
 
 ### RawCharacteristicProfile
 
@@ -534,7 +541,7 @@ A RawCharacteristicProfile object encapsulates configuration and String conversi
 enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
   case No     = 0
   case Yes    = 1
-    
+
   // CharacteristicConfigurable
   static let uuid = "F000AA12-0451-4000-B000-000000000000"
   static let name = "Accelerometer Enabled"
@@ -571,7 +578,10 @@ enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicCon
 }
 ```
 
+To instantiate a profile,
+
 ```swift
+let profile = RawCharacteristicProfile<Enabled>()
 ```
 
 ### RawArrayCharacteristicProfile
@@ -580,7 +590,6 @@ A RawArrayCharacteristicProfile object encapsulates configuration and String con
 
 ```swift
 struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
-    
   // CharacteristicConfigurable
   static let uuid = "F000AA11-0451-4000-B000-000000000000"
   static let name = "Accelerometer Data"
@@ -621,7 +630,10 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
 }
 ```
 
+To instantiate a profile,
+
 ```swift
+let profile = RawArrayCharacteristicProfile<ArrayData>()
 ```
 
 ### RawPairCharacteristicProfile
@@ -629,8 +641,7 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
 A RawPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
-struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {
-    
+struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
   // CharacteristicConfigurable
   static let uuid = "F000AA30-0451-4000-B000-000000000000"
   static let name = "Magnetometer Data"
@@ -668,7 +679,10 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
 }
 ```
 
+To instantiate a profile,
+
 ```swift
+let profile = RawPairCharacteristicProfile<PairData>()
 ```
 
 ### RawArrayPairCharacteristicProfile
@@ -676,8 +690,7 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
 A RawArrayPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawArrayPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
 
 ```swift
-struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {
-            
+struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
   // CharacteristicConfigurable
   static let uuid = "F000AA11-0451-4000-B000-000000000000"
   static let name = "Accelerometer Data"
@@ -728,14 +741,113 @@ static let initialValue : NSData? = Serde.serialize()
 }
 ```
 
+To instantiate a profile,
+
 ```swift
+let profile = RawArrayPairCharacteristicProfile<ArrayPairData>()
 ```
 
 ### StringCharacteristicProfile
 
+A String Profile only requires the implementation of characteristic
+
+```swift
+struct SerialNumber : CharacteristicConfigurable {
+  // CharacteristicConfigurable
+  static let uuid = "2a25"
+  static let name = "Device Serial Number"
+  static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+  static let properties   = CBCharacteristicProperties.Read
+  static let initialValue = Serde.serialize("AAA11")          
+}
+```
+
+To instantiate a profile,
+
+```swift
+let profile = StringCharacteristicProfile<SerialNumber>()
+```
+
 ### ProfileManager
 
+ProfileManager is used by the BlueCap app as a repository of GATT profiles to be used to instantiate Services and Characteristics. ProfileManager can be used in an implementation but is not required by the framework.
+
+To add ServiceProfiles and CharacteristicProfiles to ProfileManager,
+
+```swift
+let profileManager = ProfileManager.sharedInstance
+
+let serviceProfile = ConfiguredServiceProfile<AccelerometerService>()
+
+let enabledProfile = RawCharacteristicProfile<Enabled>()
+let rawArrayProfile = RawArrayCharacteristicProfile<ArrayData>()
+
+serviceProfile.addCharacteristic(enabledProfile)
+serviceProfile.addCharacteristic(rawArrayProfile)
+
+profileManager.addService(serviceProfile)
+```
+
 ### Add Profile to BlueCap App
+
+To add a GATT Profile to the BlueCap app you need to add a file to the project containing all Service and Characteristic profile definitions with public access level. See [GnosusProfiles](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/GnosusProfiles.swift) in the BlueCap Project fro an example. A very simple but illustrative example is to consider a Service with a single Characteristic.
+
+```swift
+public struct MyServices {
+
+	// Service
+  public struct NumberService : ServiceConfigurable  {
+    public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
+    public static let name  = "NumberService"
+    public static let tag   = "My Services"
+  }
+
+  public struct Number : RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+
+	  public let rawValue : Int16
+
+    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+    public static let name = "Number"
+    public static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+    public static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+    public static let initialValue : NSData? = Serde.serialize(Enabled.No.rawValue)
+    
+    static let stringValues = []
+    
+    init?(rawValue:Int16) {
+			self.rawValue = rawValue
+		}
+
+    init?(stringValue:[String:String]) {
+      if let svalue = stringValue[Number.name], value = Int16(stringValue:svalue) {
+		    self.rawValue = value
+      } else {
+        return nil
+      }
+  }
+    
+  var stringValue : [String:String] {
+    return [Enabled.name:"\(self.rawValue)"]
+  }
+}
+
+	public static func create() {
+    let profileManager = ProfileManager.sharedInstance
+    let service = ConfiguredServiceProfile<NumberService>()
+		let characteristic = RawCharacteristicProfile<Number>()
+		service(characteristic)
+		profileManager.addService(characteristic)
+	}
+}
+```
+
+Next place,
+
+```swift
+MyServices.create()
+```
+
+in the BlueCap [AppDelegate.swift](https://github.com/troystribling/BlueCap/blob/master/BlueCap/AppDelegate.swift#L37-40) and rebuild the app.
 
 ## Central
 

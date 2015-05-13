@@ -75,15 +75,15 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     
     var stringValue : Dictionary<String,String> {
         return ["value1":"\(self.rawValue[0])",
-                "value2":"\(self.rawValue[1])"]
+            "value2":"\(self.rawValue[1])"]
     }
     
     init?(stringValue:[String:String]) {
         if  let stringValue1 = stringValue["value1"],
-                stringValue2 = stringValue["value2"],
-                value1 = Int8(stringValue:stringValue1),
-                value2 = Int8(stringValue:stringValue2) {
-            self.rawValue = [value1, value2]
+            stringValue2 = stringValue["value2"],
+            value1 = Int8(stringValue:stringValue1),
+            value2 = Int8(stringValue:stringValue2) {
+                self.rawValue = [value1, value2]
         } else {
             return nil
         }
@@ -118,19 +118,19 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
     
     var stringValue : Dictionary<String,String> {
         return ["value1":"\(self.rawValue1)",
-                "value2":"\(self.rawValue2)"]}
+            "value2":"\(self.rawValue2)"]}
     
     init?(stringValue:[String:String]) {
         if  let stringValue1 = stringValue["value1"],
-                stringValue2 = stringValue["value2"],
-                value1 = UInt8(stringValue:stringValue1),
-                value2 = Int8(stringValue:stringValue2) {
-            self.rawValue1 = value1
-            self.rawValue2 = value2
+            stringValue2 = stringValue["value2"],
+            value1 = UInt8(stringValue:stringValue1),
+            value2 = Int8(stringValue:stringValue2) {
+                self.rawValue1 = value1
+                self.rawValue2 = value2
         } else {
             return nil
         }
-    }            
+    }
 }
 
 if let value = PairData(stringValue:["value1":"1", "value2":"-2"]) {
@@ -168,21 +168,21 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
     
     var stringValue : Dictionary<String,String> {
         return ["value11":"\(self.rawValue1[0])",
-                "value12":"\(self.rawValue1[1])",
-                "value21":"\(self.rawValue2[0])",
-                "value22":"\(self.rawValue2[1])"]}
+            "value12":"\(self.rawValue1[1])",
+            "value21":"\(self.rawValue2[0])",
+            "value22":"\(self.rawValue2[1])"]}
     
     init?(stringValue:[String:String]) {
         if  let stringValue11 = stringValue["value11"],
-                stringValue12 = stringValue["value12"],
-                value11 = UInt8(stringValue:stringValue11),
-                value12 = UInt8(stringValue:stringValue12),
-                stringValue21 = stringValue["value21"],
-                stringValue22 = stringValue["value22"],
-                value21 = Int8(stringValue:stringValue21),
-                value22 = Int8(stringValue:stringValue22) {
-            self.rawValue1 = [value11, value12]
-            self.rawValue2 = [value21, value22]
+            stringValue12 = stringValue["value12"],
+            value11 = UInt8(stringValue:stringValue11),
+            value12 = UInt8(stringValue:stringValue12),
+            stringValue21 = stringValue["value21"],
+            stringValue22 = stringValue["value22"],
+            value21 = Int8(stringValue:stringValue21),
+            value22 = Int8(stringValue:stringValue22) {
+                self.rawValue1 = [value11, value12]
+                self.rawValue2 = [value21, value22]
         } else {
             return nil
         }
@@ -192,5 +192,69 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
 if let value = ArrayPairData(stringValue:["value11":"1", "value12":"2", "value21":"-1", "value22":"-2"]) {
     println(value.stringValue)
 }
+
+// StringCharacteristicProfile
+struct SerialNumber : CharacteristicConfigurable {
+    // CharacteristicConfigurable
+    static let uuid = "2a25"
+    static let name = "Device Serial Number"
+    static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+    static let properties   = CBCharacteristicProperties.Read
+    static let initialValue = Serde.serialize("AAA11")
+}
+
+let stringProfile = StringCharacteristicProfile<SerialNumber>()
+
+// MyServices
+public struct MyServices {
+    
+    // Service
+    public struct NumberService : ServiceConfigurable  {
+        public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
+        public static let name  = "NumberService"
+        public static let tag   = "My Services"
+    }
+    
+    // Characteristic
+    public struct Number : RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+        
+        public let rawValue : Int16
+        
+        public init?(rawValue:Int16) {
+            self.rawValue = rawValue
+        }
+        
+        public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+        public static let name = "Number"
+        public static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+        public static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+        public static let initialValue : NSData? = Serde.serialize(Int16(22))
+        
+        public static let stringValues = [String]()
+        
+        public init?(stringValue:[String:String]) {
+            if let svalue = stringValue[Number.name], value = Int16(stringValue:svalue) {
+                self.rawValue = value
+            } else {
+                return nil
+            }
+        }
+        
+        public var stringValue : [String:String] {
+            return [Number.name:"\(self.rawValue)"]
+        }
+    }
+    
+    // add to ProfileManager
+    public static func create() {
+        let profileManager = ProfileManager.sharedInstance
+        let service = ConfiguredServiceProfile<NumberService>()
+        let characteristic = RawCharacteristicProfile<Number>()
+        service.addCharacteristic(characteristic)
+        profileManager.addService(service)
+    }
+    
+}
+
 
 
