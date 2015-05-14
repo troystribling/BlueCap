@@ -119,3 +119,5 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
         println("\(value.rawValue2)")
     }
 }
+
+let manager = ProfileManager.sharedInstance

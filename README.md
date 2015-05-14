@@ -34,6 +34,27 @@ With BlueCap it is possible to serialize and deserialize messages exchanged with
  
 ## BLE Model
 
+Communication in BLE uses the Client-Server model. The Client is  called a Central and the server a Peripheral. The Peripheral presents structured data to the Central organized into Services that have Characteristics. This called is a Generic Attribute Table (GATT) Profile. Characteristics contain the data values as well as attributes describing permissions and properties. At a high level Central and Peripheral use cases are,
+
+<table>
+  <tr>
+    <th>Central</th>
+    <th>Peripheral</th>
+  </tr>
+	<tr>
+		<td>Scans for Services</td>
+		<td>Advertises Services</td>
+	</tr>
+	<tr>
+		<td>Discovers Services and Characteristics</td>
+		<td>Supports GATT Profile</td>
+	</tr>
+	<tr>
+		<td>Data Read/Write/Notifications</td>
+		<td>Data Read/Write/Notifications</td>
+	</tr>
+</table>
+
 ## Getting Started
 
 ## Serialization/Deserialization
@@ -533,6 +554,14 @@ public func addCharacteristic(characteristicProfile:CharacteristicProfile)
  
 ### CharacteristicProfile
 
+CharacteristicProfile is the base class for each of the following profile types and is instantiated as the characteristic profile if a profile is not explicitly defined for a discovered characteristic. In this case with no String conversions implemented in a GATT Profile definition a characteristic will support String conversions to a from hexadecimal Strings.
+
+When defining GATT profile it is sometimes convenient to specify that something be done to the Peripheral after a characteristic is discovered by the Central.
+
+```swift
+public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic>
+``` 
+
 ### RawCharacteristicProfile
 
 A RawCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
@@ -794,50 +823,53 @@ To add a GATT Profile to the BlueCap app you need to add a file to the project c
 
 ```swift
 public struct MyServices {
-
-	// Service
-  public struct NumberService : ServiceConfigurable  {
-    public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
-    public static let name  = "NumberService"
-    public static let tag   = "My Services"
-  }
-
-  public struct Number : RawDeserializable, StringDeserializable, CharacteristicConfigurable {
-
-	  public let rawValue : Int16
-
-    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
-    public static let name = "Number"
-    public static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-    public static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-    public static let initialValue : NSData? = Serde.serialize(Enabled.No.rawValue)
     
-    static let stringValues = []
+    // Service
+    public struct NumberService : ServiceConfigurable  {
+        public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
+        public static let name  = "NumberService"
+        public static let tag   = "My Services"
+    }
     
-    init?(rawValue:Int16) {
-			self.rawValue = rawValue
-		}
-
-    init?(stringValue:[String:String]) {
-      if let svalue = stringValue[Number.name], value = Int16(stringValue:svalue) {
-		    self.rawValue = value
-      } else {
-        return nil
-      }
-  }
+    // Characteristic
+    public struct Number : RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+        
+        public let rawValue : Int16
+        
+        public init?(rawValue:Int16) {
+            self.rawValue = rawValue
+        }
+        
+        public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+        public static let name = "Number"
+        public static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
+        public static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+        public static let initialValue : NSData? = Serde.serialize(Int16(22))
+        
+        public static let stringValues = [String]()
+        
+        public init?(stringValue:[String:String]) {
+            if let svalue = stringValue[Number.name], value = Int16(stringValue:svalue) {
+                self.rawValue = value
+            } else {
+                return nil
+            }
+        }
+        
+        public var stringValue : [String:String] {
+            return [Number.name:"\(self.rawValue)"]
+        }
+    }
     
-  var stringValue : [String:String] {
-    return [Enabled.name:"\(self.rawValue)"]
-  }
-}
-
-	public static func create() {
-    let profileManager = ProfileManager.sharedInstance
-    let service = ConfiguredServiceProfile<NumberService>()
-		let characteristic = RawCharacteristicProfile<Number>()
-		service(characteristic)
-		profileManager.addService(characteristic)
-	}
+    // add to ProfileManager
+    public static func create() {
+        let profileManager = ProfileManager.sharedInstance
+        let service = ConfiguredServiceProfile<NumberService>()
+        let characteristic = RawCharacteristicProfile<Number>()
+        service.addCharacteristic(characteristic)
+        profileManager.addService(service)
+    }
+    
 }
 ```
 

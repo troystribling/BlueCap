@@ -270,9 +270,9 @@
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
-				05FB53431B03185F00E8E37D /* Profile.playground */,
 				05840F8D1942098300C744E6 /* CoreBluetooth.framework */,
 				05B45BE519A788BC009DAF6D /* CoreLocation.framework */,
+				05FB53431B03185F00E8E37D /* Profile.playground */,
 				056B7C7819E0600A001B7F95 /* SerDe.playground */,
 				055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */,
 				05840F61194206F100C744E6 /* BlueCap */,
