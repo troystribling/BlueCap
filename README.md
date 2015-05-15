@@ -30,7 +30,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 # Usage
 
-With BlueCap it is possible to serialize and deserialize messages exchanged with bluetooth devices, define reusable GATT profile definitions and easily implement Central and Peripheral applications. The following sections will address each of these items in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
+With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The following sections will address each of these items in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
  
 ## BLE Model
 
@@ -883,6 +883,8 @@ in the BlueCap [AppDelegate.swift](https://github.com/troystribling/BlueCap/blob
 
 ## Central
 
+The BlueCap Central implementation replaces protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allow chaining asynchronous calls as well as error handling and recovery. Also, provided are callbacks for connections events and connection and service scan timeouts. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap github repository.
+
 ### PowerOn/PowerOff
 
 ### Service Scanning
@@ -895,7 +897,9 @@ in the BlueCap [AppDelegate.swift](https://github.com/troystribling/BlueCap/blob
 
 ### Characteristic Update Notifications
 
-## Peripheral
+## PeripheralManager
+
+The BlueCap PeripheralManager implementation replaces protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allows chaining asynchronous calls as well as error handling and recovery. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap github repository.
 
 ### PowerOn/PowerOff
 
