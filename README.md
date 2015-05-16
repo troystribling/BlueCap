@@ -924,6 +924,7 @@ For an application to scan for peripherals advertising services with uuids after
 
 ```swift
 let manager = CentralManager.sharedInstance
+// power on and start scanning
 let peripheraDiscoveredFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
 	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
 }
@@ -992,7 +993,7 @@ public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectR
 
 **Discussion**
 
-BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<(Peripheral, ConnectionEvent) yielding a tuple containing the connected peripheral and the ConnectionEvent.
+BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<(Peripheral, ConnectionEvent)> yielding a tuple containing the connected peripheral and the ConnectionEvent.
 
 <table>
 	<tr>
@@ -1005,7 +1006,7 @@ BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystri
 	</tr>
 	<tr>
 		<td>disconnectRetries</td>
-		<td>Number of connection retries on disconnect after successful connection. Equals 0 if nil.</td>
+		<td>Number of connection retries on disconnect. Equals 0 if nil.</td>
 	</tr>
 	<tr>
 		<td>connectionTimeout</td>
@@ -1021,12 +1022,16 @@ public func reconnect()
 
 // Disconnect peripheral
 public func disconnect()
+
+// Terminate peripheral
+public func terminate()
 ```
 
-In an application to connect to a peripheral,
+In an application to connect a peripheral,
 
 ```swift
 let manager = CentralManager.sharedInstance
+// power on start scanning and connect discovered peripherals
 let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
 	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
 }.flatmap{peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
@@ -1038,20 +1043,25 @@ peripheralConnectFuture.onSuccess{(peripheral, connectionEvent) in
 	  …
   case .Timeout:
     peripheral.reconnect()
+		…
   case .Disconnect:
     peripheral.reconnect()
+		…
   case .ForceDisconnect:
 	  …
   case .Failed:
 	  …
   case .GiveUp:
-	  peripheral.disconnect()
+	  peripheral.terminate()
+		…
   }
 }
 peripheralConnectFuture.onFailure{error in
 	…
 }
 ```
+
+Here extending the example of the previous section the peripheraDiscoveredFuture is flatmapped to FutureStream<(Peripheral, ConnectionEvent)> and the peripheral is connected. This ensures that connections are made after peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the  peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is generated and the peripheral connection is terminated ending all reconnections attempts.
 
 ### Service and Characteristic Discovery
 
