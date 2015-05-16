@@ -881,15 +881,177 @@ MyServices.create()
 
 in the BlueCap [AppDelegate.swift](https://github.com/troystribling/BlueCap/blob/master/BlueCap/AppDelegate.swift#L37-40) and rebuild the app.
 
-## Central
+## CentralManager
 
-The BlueCap Central implementation replaces protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allow chaining asynchronous calls as well as error handling and recovery. Also, provided are callbacks for connections events and connection and service scan timeouts. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap github repository.
+The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allow chaining asynchronous calls as well as error handling and recovery. Also, provided are callbacks for connections events and connection and service scan timeouts. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap project.
 
 ### PowerOn/PowerOff
 
+The state of the Bluetooth transceiver on a device is communicated to BlueCap CentralManager by the powerOn and powerOff futures,
+
+```swift
+public func powerOn() -> Future<Void>
+public func powerOff() -> Future<Void>
+```
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void> yielding Void. For an application to process events,
+
+```swift
+let manager = CentralManager.sharedInstance
+let powerOnFuture = manager.powerOn()
+powerOnFuture.onSuccess {
+  …
+}
+let powerOffFuture = manager.powerOff()
+powerOffFuture.onSuccess {
+	…
+}
+``` 
+
+When CentralManager is instantiated a message giving the current Bluetooth transceiver state is received and while the CentralManager is instantiated messages are received if the transceiver is powered or powered off.
+
 ### Service Scanning
 
+CentralManager scans for advertising peripherals are initiated by calling the CentarlManager methods,
+
+```swift
+public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral>
+public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
+``` 
+
+The first for will scan promiscuously for all advertising peripherals and the second will scan for peripherals only advertising services with the with the specified UUIDs. Both return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<Peripheral> yielding the discovered peripheral and take the FutureStream capacity as input.
+
+For an application to scan for peripherals advertising services with uuids after powerOn,
+
+```swift
+let manager = CentralManager.sharedInstance
+let peripheraDiscoveredFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
+	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
+}
+peripheraDiscoveredFuture{peripheral in
+	…
+}
+```
+
+Here the powerOn future has been flatmapped to FutureStream<Peripheral> to ensure that the service scan starts after the bluetooth transceiver powerOn future completes.
+
+To stop a peripheral scan use the CentralManager method,
+
+```swift
+public func stopScanning()
+```
+
+and in an application,
+
+```swift
+let manager = CentralManager.sharedInstance
+manager.stopScanning()
+```
+
+### Service with timeout
+
 ### Peripheral Connection
+
+After discovering a peripheral a connection must be established to begin messaging. Connecting and maintaining a connection to a bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. ConnectionEvent is an enum with values,
+
+<table>
+  <tr>
+    <th>Event</th>
+    <th>Description</th>
+  </tr>
+	<tr>
+		<td>Connect</td>
+		<td>Connected to peripheral</td>
+	</tr>
+	<tr>
+		<td>Timeout</td>
+		<td>Connection attempt timeout</td>
+	</tr>
+	<tr>
+		<td>Disconnect</td>
+		<td>Peripheral disconnected</td>
+	</tr>
+	<tr>
+		<td>ForceDisconnect</td>
+		<td>Peripheral disconnected by application</td>
+	</tr>
+	<tr>
+		<td>Failed</td>
+		<td>Connection failed without error</td>
+	</tr>
+	<tr>
+		<td>GiveUp</td>
+		<td>Give-up trying to connect.</td>
+	</tr>
+</table>
+
+To connect to a peripheral use The BlueCap Peripheral method,
+
+```swift
+public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectRetries:UInt? = nil, connectionTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)>
+```
+
+**Discussion**
+
+BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<(Peripheral, ConnectionEvent) yielding a tuple containing the connected peripheral and the ConnectionEvent.
+
+<table>
+	<tr>
+		<td>capacity</td>
+		<td>FutureStream capacity</td>
+	</tr>
+	<tr>
+		<td>timeoutRetries</td>
+		<td>Number of connection retries on timeout. Equals 0 if nil.</td>
+	</tr>
+	<tr>
+		<td>disconnectRetries</td>
+		<td>Number of connection retries on disconnect after successful connection. Equals 0 if nil.</td>
+	</tr>
+	<tr>
+		<td>connectionTimeout</td>
+		<td>Connection timeout in seconds. Default is 10s.</td>
+	</tr>
+</table>
+
+Other BlueCap Peripheral connection management methods are,
+
+```swift
+// Reconnect peripheral if disconnected
+public func reconnect()
+
+// Disconnect peripheral
+public func disconnect()
+```
+
+In an application to connect to a peripheral,
+
+```swift
+let manager = CentralManager.sharedInstance
+let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
+	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
+}.flatmap{peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
+	return peripheral.connect(capacity:10, timeoutRetries:5, disconnectRetries:5, connectionTimeout:10.0)
+}
+peripheralConnectFuture.onSuccess{(peripheral, connectionEvent) in
+	switch connectionEvent {
+  case .Connect:
+	  …
+  case .Timeout:
+    peripheral.reconnect()
+  case .Disconnect:
+    peripheral.reconnect()
+  case .ForceDisconnect:
+	  …
+  case .Failed:
+	  …
+  case .GiveUp:
+	  peripheral.disconnect()
+  }
+}
+peripheralConnectFuture.onFailure{error in
+	…
+}
+```
 
 ### Service and Characteristic Discovery
 
@@ -899,7 +1061,7 @@ The BlueCap Central implementation replaces protocol implementations with with a
 
 ## PeripheralManager
 
-The BlueCap PeripheralManager implementation replaces protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allows chaining asynchronous calls as well as error handling and recovery. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap github repository.
+The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allows chaining asynchronous calls as well as error handling and recovery. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap github repository.
 
 ### PowerOn/PowerOff
 
