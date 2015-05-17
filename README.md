@@ -140,7 +140,7 @@ if let value : UInt8 = Serde.deserialize(data) {
 }
 ```
 
-### RawDeserializable Protocol
+### <a name="rawdeserializable">RawDeserializable Protocol</a>
 
 The RawDeserializable protocol is used to define a message that contains a single value and is defined by,
 
@@ -914,31 +914,35 @@ powerOffFuture.onSuccess {
 
 When CentralManager is instantiated a message giving the current Bluetooth transceiver state is received and while the CentralManager is instantiated messages are received if the transceiver is powered or powered off.
 
-### Service Scanning
+### <a name="peripheraldiscovered">Service Scanning</a>
 
-CentralManager scans for advertising peripherals are initiated by calling the CentarlManager methods,
+CentralManager scans for advertising peripherals are initiated by calling the CentralManager methods,
 
 ```swift
+// Scan promiscuously for all advertising peripherals
 public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral>
+
+// Scan for peripherals advertising services with UUIDs
 public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
 ``` 
 
-The first for will scan promiscuously for all advertising peripherals and the second will scan for peripherals only advertising services with the with the specified UUIDs. Both return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<Peripheral> yielding the discovered peripheral and take the FutureStream capacity as input.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;Peripheral&gt; yielding the discovered peripheral and take the FutureStream capacity as input.
 
 For an application to scan for peripherals advertising services with uuids after powerOn,
 
 ```swift
 let manager = CentralManager.sharedInstance
-// power on and start scanning
+let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
+
 let peripheraDiscoveredFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
 	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
 }
-peripheraDiscoveredFuture{peripheral in
+peripheraDiscoveredFuture.onSuccess {peripheral in
 	…
 }
 ```
 
-Here the powerOn future has been flatmapped to FutureStream<Peripheral> to ensure that the service scan starts after the bluetooth transceiver powerOn future completes.
+Here the powerOn future has been flatmapped to FutureStream&lt;Peripheral&gt; to ensure that the service scan starts after the bluetooth transceiver is powered on.
 
 To stop a peripheral scan use the CentralManager method,
 
@@ -953,9 +957,52 @@ let manager = CentralManager.sharedInstance
 manager.stopScanning()
 ```
 
-### Service with timeout
+### Service Scanning with timeout
 
-### Peripheral Connection
+CentralManager can scan for advertising peripherals with a timeout. TimedScannerator methods are used to start a scan instead ob the CentralManager methods. The declarations include a timeout parameter but are otherwise the same,
+
+```swift
+// Scan promiscuously for all advertising peripherals
+public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Peripheral>
+
+// Scan for peripherals advertising services with UUIDs
+public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
+``` 
+
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;Peripheral&gt; yielding the discovered peripheral and take the FutureStream capacity as input.
+
+For an application to scan for peripherals advertising services  with uuids and a specified timeout after powerOn,
+
+```swift
+let manager = CentralManager.sharedInstance
+let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
+
+let peripheraDiscoveredFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
+	TimedScannerator.sharedinstance.startScanningForServiceUUIDs(10.0, uuids:[serviceUUID], capacity:10)
+}
+peripheraDiscoveredFuture.onSuccess {peripheral in
+	…
+}
+peripheraDiscoveredFuture.onFailure {error in
+	…
+}
+```
+
+Here the powerOn future has been flatmapped to FutureStream&lt;Peripheral&gt; to ensure that the service scan starts after the bluetooth transceiver is powered on. On timeout peripheraDiscoveredFuture will complete with error BCError.peripheralDiscoveryTimeout.
+
+To stop a peripheral scan use the TimedScannerator method,
+
+```swift
+public func stopScanning()
+```
+
+and in an application,
+
+```swift
+TimedScannerator.sharedInstance.stopScanning()
+```
+
+### <a name="peripheralconnect">Peripheral Connection</a>
 
 After discovering a peripheral a connection must be established to begin messaging. Connecting and maintaining a connection to a bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. ConnectionEvent is an enum with values,
 
@@ -998,7 +1045,7 @@ public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectR
 
 **Discussion**
 
-BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<(Peripheral, ConnectionEvent)> yielding a tuple containing the connected peripheral and the ConnectionEvent.
+BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;(Peripheral, ConnectionEvent)&gt; yielding a tuple containing the connected peripheral and the ConnectionEvent.
 
 <table>
 	<tr>
@@ -1032,17 +1079,18 @@ public func disconnect()
 public func terminate()
 ```
 
-In an application to connect a peripheral,
+An application can connect a BlueCap Peripheral using,
 
 ```swift
 let manager = CentralManager.sharedInstance
-// power on start scanning and connect discovered peripherals
+let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
+
 let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
 	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
 }.flatmap{peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
 	return peripheral.connect(capacity:10, timeoutRetries:5, disconnectRetries:5, connectionTimeout:10.0)
 }
-peripheralConnectFuture.onSuccess{(peripheral, connectionEvent) in
+peripheralConnectFuture.onSuccess {(peripheral, connectionEvent) in
 	switch connectionEvent {
   case .Connect:
 	  …
@@ -1061,16 +1109,162 @@ peripheralConnectFuture.onSuccess{(peripheral, connectionEvent) in
 		…
   }
 }
-peripheralConnectFuture.onFailure{error in
+peripheralConnectFuture.onFailure {error in
 	…
 }
 ```
 
-Here extending the example of the previous section the peripheraDiscoveredFuture is flatmapped to FutureStream<(Peripheral, ConnectionEvent)> and the peripheral is connected. This ensures that connections are made after peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the  peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is generated and the peripheral connection is terminated ending all reconnections attempts.
+Here the [peripheraDiscoveredFuture](#peripheraldiscovered) from the previous section is flatmapped to FutureStream&lt;(Peripheral, ConnectionEvent)&gt; and the peripheral is connected. This ensures that connections are made after peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is received and the peripheral connection is terminated ending all reconnection attempts.
 
-### Service and Characteristic Discovery
+### <a name="characteristicdiscovery">Service and Characteristic Discovery</a>
 
-### Characteristic Read/Write
+After a peripheral is connected its services and characteristics must be discovered before characteristic values can be read or written to or update notifications can be received.
+
+There are several BlueCap Peripheral methods that can be used to discover services and characteristics. To discover both BlueCap Services and Characteristics use,
+
+```swift
+// Discover services and characteristics for services with UUIDs
+public func discoverPeripheralServices(services:[CBUUID]!) -> Future<Peripheral>
+
+// Discover all services and characteristics
+public func discoverAllPeripheralServices() -> Future<Peripheral>
+```
+
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future&lt;Peripheral&gt; yielding the connected peripheral.
+
+An application can discover a BlueCap Peripheral using,
+
+```swift
+// errors
+public enum ApplicationErrorCode : Int {
+    case PeripheralNotConnected = 1
+}
+
+public struct ApplicationError {
+    public static let domain = "Application"
+    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
+}
+…
+// peripheralConnectFuture and serviceUUID are defined in previous section
+…
+let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
+	if peripheral.state == .Connected {
+	  return peripheral.discoverPeripheralServices([serviceUUID])
+	} else {
+	  let promise = Promise<Peripheral>()
+    promise.failure(ApplicationError.peripheralNotConnected)
+    return promise.future
+  }
+}
+characteristicsDiscoveredFuture.onSuccess {peripheral in
+	…
+}
+characteristicsDiscoveredFuture.onFailure {error in
+	…
+}
+```
+
+Here the [peripheralConnectFuture](#peripheralconnect) from the previous section is flatmapped to Future&lt;Peripheral&gt;. This ensures that the peripheral is connected before service and characteristic discovery starts. Also, the peripheral is discovered only if it is connected and an error is returned if the peripheral is not connected.
+
+### Characteristic Write
+
+After a peripherals characteristics are discovered writing characteristic values is possible.
+
+Several BlueCap Characteristic methods are available,
+
+```swift
+// Write an NSData object to characteristic value
+public func writeData(value:NSData, timeout:Double = 10.0) -> Future<Characteristic>
+
+// Write a characteristic String Dictionary value
+public func writeString(stringValue:[String:String], timeout:Double = 10.0) -> Future<Characteristic>
+
+// Write a Deserializable characteristic value
+public func write<T:Deserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+
+// Write a RawDeserializable characteristic value
+public func write<T:RawDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+
+// Write a RawArrayDeserializable characteristic value
+public func write<T:RawArrayDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+
+// Write a RawPairDeserializable characteristic value
+public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+
+// Write a RawArrayPairDeserializable characteristic value
+public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+```
+
+Using the [RawDeserializable enum](#rawdeserializable) an application can write to a BlueCap Characteristic as follows,
+
+```swift
+// errors
+public enum ApplicationErrorCode : Int {
+    case CharacteristicNotFound = 1
+}
+
+public struct ApplicationError {
+    public static let domain = "Application"
+    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
+}
+
+// RawDeserializable enum
+enum Enabled : UInt8, RawDeserializable {
+    case No  = 0
+    case Yes = 1
+    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+}
+let enabledUUID = CBUUID(string:Enabled.uuid)!
+…
+// characteristicsDiscoveredFuture and serviceUUID are defined in a previous section
+…
+let writeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future&lt;Characteristic&gt; in
+	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
+		return characteristic.write(Enabled.Yes, timeout:20.0)
+	} else {
+		let promise = Promise<Characteristic>()
+		promise.failure(ApplicationError.characteristicNotFound)
+		return promise.future
+	}
+}
+writeCharacteristicFuture.onSuccess {characteristic in
+	…
+}
+writeCharacteristicFuture.onFailure {error in
+	…
+}
+```
+
+Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to Future&lt;Characteristic&gt;. This ensures that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
+
+### Characteristic Read
+
+After a peripherals characteristics are discovered reading characteristic values is possible.
+
+Several BlueCap Characteristic methods are available,
+
+```swift
+// Read a characteristic from a peripheral service
+public func read(timeout:Double = 10.0) -> Future<Characteristic>
+
+// Return the characteristic value as and NSData object
+public var dataValue : NSData!
+
+// Return the characteristic value as a String Dictionary.
+public var stringValue :[String:String]?
+
+// Return a Deserializable characteristic value
+public func value<T:Deserializable>() -> T?
+
+// Return a RawDeserializable characteristic value
+public func value<T:RawDeserializable where T.RawType:Deserializable>() -> T?
+
+// Return a RawArrayDeserializable characteristic value
+public func value<T:RawArrayDeserializable where T.RawType:Deserializable>() -> T?
+
+// Return a RawPairDeserializable characteristic value
+public func value<T:RawPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>() -> T?
+```
 
 ### Characteristic Update Notifications
 

@@ -24,7 +24,7 @@ public struct CenteralError {
     public static let enabledCharacteristicNotFound = NSError(domain:domain, code:CentralExampleError.EnabledCharactertisticNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Enabled Chacateristic Not Found"])
     public static let serviceNotFound = NSError(domain:domain, code:CentralExampleError.ServiceNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Service Not Found"])
     public static let characteristicNotFound = NSError(domain:domain, code:CentralExampleError.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Characteristic Not Found"])
-    public static let peripheralNotConnected = NSError(domain:domain, code:CentralExampleError.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
+    public static let peripheralNotConnected = NSError(domain:domain, code:CentralExampleError.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
 }
 
 class ViewController: UITableViewController {
@@ -114,14 +114,14 @@ class ViewController: UITableViewController {
             let manager = CentralManager.sharedInstance
                 
             // on power, start scanning. when peripoheral is discovered connect and stop scanning
-            let peripheraConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
+            let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
                 manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
             }.flatmap {peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
                 manager.stopScanning()
                 self.peripheral = peripheral
                 return peripheral.connect(capacity:10, timeoutRetries:5, disconnectRetries:5)
             }
-            peripheraConnectFuture.onSuccess{(peripheral, connectionEvent) in
+            peripheralConnectFuture.onSuccess{(peripheral, connectionEvent) in
                 switch connectionEvent {
                 case .Connect:
                     self.updateUIStatus()
@@ -144,7 +144,7 @@ class ViewController: UITableViewController {
             }
                 
             // discover sevices and characteristics and enable acclerometer
-            let peripheralDiscoveredFuture = peripheraConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
+            let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
                 if peripheral.state == .Connected {
                     return peripheral.discoverPeripheralServices([serviceUUID])
                 } else {
