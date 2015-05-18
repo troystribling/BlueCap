@@ -57,10 +57,10 @@ Communication in BLE uses the Client-Server model. The Client is  called a Centr
 
 ## Usage
 
-* [Serialization/Deserialization](#serde)
-* [GATT Profile Definition](#gatt)
-* [CentralManager](#central)
-* [PeripheralManager](#peripheral)
+1. [Serialization/Deserialization](#serde)
+2. [GATT Profile Definition](#gatt)
+3. [CentralManager](#central)
+4. [PeripheralManager](#peripheral)
 
 ## <a name="serde">Serialization/Deserialization</a>
 
@@ -1164,13 +1164,11 @@ characteristicsDiscoveredFuture.onFailure {error in
 }
 ```
 
-Here the [peripheralConnectFuture](#peripheralconnect) from the previous section is flatmapped to Future&lt;Peripheral&gt;. This ensures that the peripheral is connected before service and characteristic discovery starts. Also, the peripheral is discovered only if it is connected and an error is returned if the peripheral is not connected.
+Here the [peripheralConnectFuture](#peripheralconnect) from the previous section is flatmapped to Future&lt;Peripheral&gt; and the peripheral is services and characteristics are discovered. This ensures that the peripheral is connected before service and characteristic discovery starts. Also, the peripheral is discovered only if it is connected and an error is returned if the peripheral is not connected.
 
 ### Characteristic Write
 
-After a peripherals characteristics are discovered writing characteristic values is possible.
-
-Several BlueCap Characteristic methods are available,
+After a peripherals characteristics are discovered writing characteristic values is possible. Several BlueCap Characteristic methods are available,
 
 ```swift
 // Write an NSData object to characteristic value
@@ -1195,7 +1193,7 @@ public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0) -> Fu
 public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
 ```
 
-Using the [RawDeserializable enum](#rawdeserializable) an application can write to a BlueCap Characteristic as follows,
+Using the [RawDeserializable enum](#rawdeserializable) an application can write a BlueCap Characteristic as follows,
 
 ```swift
 // errors
@@ -1216,9 +1214,10 @@ enum Enabled : UInt8, RawDeserializable {
 }
 let enabledUUID = CBUUID(string:Enabled.uuid)!
 …
-// characteristicsDiscoveredFuture and serviceUUID are defined in a previous section
+// characteristicsDiscoveredFuture and serviceUUID 
+// are defined in a previous section
 …
-let writeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future&lt;Characteristic&gt; in
+let writeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
 	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
 		return characteristic.write(Enabled.Yes, timeout:20.0)
 	} else {
@@ -1235,13 +1234,11 @@ writeCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to Future&lt;Characteristic&gt;. This ensures that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
+Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to Future&lt;Characteristic&gt and the characteristic is read;. This ensures that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
 ### Characteristic Read
 
-After a peripherals characteristics are discovered reading characteristic values is possible.
-
-Several BlueCap Characteristic methods are available,
+After a peripherals characteristics are discovered reading characteristic values is possible. Several BlueCap Characteristic methods are available,
 
 ```swift
 // Read a characteristic from a peripheral service
@@ -1266,7 +1263,135 @@ public func value<T:RawArrayDeserializable where T.RawType:Deserializable>() -> 
 public func value<T:RawPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>() -> T?
 ```
 
+Using the [RawDeserializable enum](#rawdeserializable) an application can read a BlueCap Characteristic as follows,
+
+```swift
+// errors
+public enum ApplicationErrorCode : Int {
+    case CharacteristicNotFound = 1
+}
+
+public struct ApplicationError {
+    public static let domain = "Application"
+    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
+}
+
+// RawDeserializable enum
+enum Enabled : UInt8, RawDeserializable {
+    case No  = 0
+    case Yes = 1
+    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+}
+let enabledUUID = CBUUID(string:Enabled.uuid)!
+…
+// characteristicsDiscoveredFuture and serviceUUID 
+// are defined in a previous section
+…
+let readCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
+	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
+		return characteristic.read(timeout:20.0)
+	} else {
+		let promise = Promise<Characteristic>()
+		promise.failure(ApplicationError.characteristicNotFound)
+		return promise.future
+	}
+}
+writeCharacteristicFuture.onSuccess {characteristic in
+	if let value : Enabled = characteristic.value {
+		…
+	}
+}
+writeCharacteristicFuture.onFailure {error in
+	…
+}
+```
+
+Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to Future&lt;Characteristic&gt; and the characteristic is written. This ensures that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
+
 ### Characteristic Update Notifications
+
+After a peripherals characteristics are discovered subscribing to characteristic value update notifications is possible. Several BlueCap Characteristic methods are available,
+
+```swift
+// subscribe to characteristic update
+public func startNotifying() -> Future<Characteristic>
+
+// receive characteristic value updates
+public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>
+
+// unsubscribe from characteristic updates
+public func stopNotifying() -> Future<Characteristic>
+
+// stop receiving characteristic value updates
+public func stopNotificationUpdates()
+```
+
+Using the [RawDeserializable enum](#rawdeserializable) an application can receive notifications from a BlueCap Characteristic as follows,
+
+```swift
+// errors
+public enum ApplicationErrorCode : Int {
+    case CharacteristicNotFound = 1
+}
+
+public struct ApplicationError {
+    public static let domain = "Application"
+    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
+}
+
+// RawDeserializable enum
+enum Enabled : UInt8, RawDeserializable {
+    case No  = 0
+    case Yes = 1
+    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+}
+let enabledUUID = CBUUID(string:Enabled.uuid)!
+…
+// characteristicsDiscoveredFuture and serviceUUID 
+// are defined in a previous section
+…
+let subscribeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
+	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
+		return characteristic.startNotifying()
+	} else {
+		let promise = Promise<Characteristic>()
+		promise.failure(ApplicationError.characteristicNotFound)
+		return promise.future
+	}
+}
+subscribeCharacteristicFuture.onSuccess {characteristic in
+	…
+}
+subscribeCharacteristicFuture.onFailure {error in
+	…
+}
+
+let updateCharacteristicFuture = subscribeCharacteristicFuture.flatmap{characteristic -> FutureStream<Characteristic> in
+	return characteristic.recieveNotificationUpdates(capacity:10)
+}
+updateCharacteristicFuture.onSuccess {characteristic in
+	if let value : Enabled = characteristic.value {
+		…
+	}
+}
+updateCharacteristicFuture.onFailure {error in 
+}
+```
+
+Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to a subcription for characteristic value updates. This ensures that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to receive characteristic value updates. This ensures that the subsections is completed before receiving updates.
+
+For an application to unsubscribe to characteristic value updates and stop receiving updates,
+
+```swift
+// serviceUUID and enabledUUID are define in the example above
+if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
+	// stop receiving updates
+	characteristic.stopNotificationUpdates()
+
+	// unsubscribe to notifications
+	characteristic.stopNotifying()
+}
+```
 
 ## <a name="peripheral">PeripheralManager</a>
 
