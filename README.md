@@ -942,7 +942,7 @@ peripheraDiscoveredFuture.onSuccess {peripheral in
 }
 ```
 
-Here the powerOn future has been flatmapped to FutureStream&lt;Peripheral&gt; to ensure that the service scan starts after the bluetooth transceiver is powered on.
+Here the powerOn future has been flatmapped to startScanning(capacity:Int?) -> FutureStream<Peripheral> to ensure that the service scan starts after the bluetooth transceiver is powered on.
 
 To stop a peripheral scan use the CentralManager method,
 
@@ -988,7 +988,7 @@ peripheraDiscoveredFuture.onFailure {error in
 }
 ```
 
-Here the powerOn future has been flatmapped to FutureStream&lt;Peripheral&gt; to ensure that the service scan starts after the bluetooth transceiver is powered on. On timeout peripheraDiscoveredFuture will complete with error BCError.peripheralDiscoveryTimeout.
+Here the powerOn future has been flatmapped to startScanning(capacity:Int?) -> FutureStream<Peripheral> to ensure that the service scan starts after the bluetooth transceiver is powered on. On timeout peripheraDiscoveredFuture will complete with error BCError.peripheralDiscoveryTimeout.
 
 To stop a peripheral scan use the TimedScannerator method,
 
@@ -1114,7 +1114,7 @@ peripheralConnectFuture.onFailure {error in
 }
 ```
 
-Here the [peripheraDiscoveredFuture](#peripheraldiscovered) from the previous section is flatmapped to FutureStream&lt;(Peripheral, ConnectionEvent)&gt; and the peripheral is connected. This ensures that connections are made after peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is received and the peripheral connection is terminated ending all reconnection attempts.
+Here the [peripheraDiscoveredFuture](#peripheraldiscovered) from the previous section is flatmapped to connect(capacity:Int? = nil, timeoutRetries:UInt, disconnectRetries:UInt?, connectionTimeout:Double) -> FutureStream<(Peripheral, ConnectionEvent)> to ensure that connections are made after peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is received and the peripheral connection is terminated ending all reconnection attempts.
 
 ### <a name="characteristicdiscovery">Service and Characteristic Discovery</a>
 
@@ -1164,7 +1164,7 @@ characteristicsDiscoveredFuture.onFailure {error in
 }
 ```
 
-Here the [peripheralConnectFuture](#peripheralconnect) from the previous section is flatmapped to Future&lt;Peripheral&gt; and the peripheral is services and characteristics are discovered. This ensures that the peripheral is connected before service and characteristic discovery starts. Also, the peripheral is discovered only if it is connected and an error is returned if the peripheral is not connected.
+Here the [peripheralConnectFuture](#peripheralconnect) from the previous section is flatmapped to discoverPeripheralServices(services:[CBUUID]!) -> Future<Peripheral> to ensures that the peripheral is connected before service and characteristic discovery starts. Also, the peripheral is discovered only if it is connected and an error is returned if the peripheral is not connected.
 
 ### Characteristic Write
 
@@ -1234,7 +1234,7 @@ writeCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to Future&lt;Characteristic&gt and the characteristic is read;. This ensures that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
+Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to func write<T:RawDeserializable>(value:T, timeout:Double) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
 ### Characteristic Read
 
@@ -1306,7 +1306,7 @@ writeCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to Future&lt;Characteristic&gt; and the characteristic is written. This ensures that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
+Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to read(timeout:Double) -> Future<Characteristic> to ensure that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
 
 ### Characteristic Update Notifications
 
@@ -1378,7 +1378,7 @@ updateCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to a subcription for characteristic value updates. This ensures that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to receive characteristic value updates. This ensures that the subsections is completed before receiving updates.
+Here the [characteristicsDiscoveredFuture](#characteristicdiscovery) previously defined is flatmapped to startNotifying() -> Future<Characteristic> to ensure that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to recieveNotificationUpdates(capacity:Int?) -> FutureStream<Characteristic> to ensure that the subsections is completed before receiving updates.
 
 For an application to unsubscribe to characteristic value updates and stop receiving updates,
 
@@ -1399,7 +1399,33 @@ The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelega
 
 ### PowerOn/PowerOff
 
+The state of the Bluetooth transceiver on a device is communicated to BlueCap PeripheralManager by the powerOn and powerOff futures,
+
+```swift
+public func powerOn() -> Future<Void>
+public func powerOff() -> Future<Void>
+```
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void> yielding Void. For an application to process events,
+
+```swift
+let manager = PeripheralManager.sharedInstance
+let powerOnFuture = manager.powerOn()
+powerOnFuture.onSuccess {
+  …
+}
+let powerOffFuture = manager.powerOff()
+powerOffFuture.onSuccess {
+	…
+}
+``` 
+
+When PeripheralManager is instantiated a message giving the current Bluetooth transceiver state is received and while the PeripheralManager is instantiated messages are received if the transceiver is powered or powered off.
+
+### Add Services and Characteristics
+
 ### Advertising
+
+
 
 ### Read Characteristic
 
