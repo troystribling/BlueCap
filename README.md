@@ -916,7 +916,7 @@ When CentralManager is instantiated a message giving the current Bluetooth trans
 
 ### <a name="peripheraldiscovered">Service Scanning</a>
 
-CentralManager scans for advertising peripherals are initiated by calling the CentralManager methods,
+Central scans for advertising peripherals are initiated by calling the BlueCap CentralManager methods,
 
 ```swift
 // Scan promiscuously for all advertising peripherals
@@ -959,7 +959,7 @@ manager.stopScanning()
 
 ### Service Scanning with timeout
 
-CentralManager can scan for advertising peripherals with a timeout. TimedScannerator methods are used to start a scan instead ob the CentralManager methods. The declarations include a timeout parameter but are otherwise the same,
+BlueCap CentralManager can scan for advertising peripherals with a timeout. TimedScannerator methods are used to start a scan instead ob the CentralManager methods. The declarations include a timeout parameter but are otherwise the same,
 
 ```swift
 // Scan promiscuously for all advertising peripherals
@@ -1423,8 +1423,60 @@ When PeripheralManager is instantiated a message giving the current Bluetooth tr
 
 ### Add Services and Characteristics
 
-### Advertising
+Services and characteristics are added to a peripheral application before advertising. The BlueCap PeripheralManager methods used for managing services are,
 
+```swift
+// add a single service
+public func addService(service:MutableService) -> Future<Void>
+
+// add multiple services
+public func addServices(services:[MutableService]) -> Future<Void>
+
+// remove a service
+public func removeService(service:MutableService) -> Future<Void>
+
+// remove all services
+public func removeAllServices() -> Future<Void>
+``` 
+
+All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void>. The methods can only be used before PeripheralManager begins advertising.
+
+The BlueCap MutableService methods are,
+
+```swift
+// add characteristics
+public var characteristics : [MutableCharacteristic] {get set}
+
+// create characteristics from profiles
+public func characteristicsFromProfiles(profiles:[CharacteristicProfile])
+```
+
+A Peripheral application will add Services and Characteristics using,
+
+```swift
+let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")
+enum Enabled : UInt8, RawDeserializable {
+    case No  = 0
+    case Yes = 1
+    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+}
+
+let service = MutableService(uuid:serviceUUID)
+let characteristic = MutableCharacteristic(uuid:Enabled.uuid,                                            properties:CBCharacteristicProperties.Read,                                                 permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,                                                value:Serde.serialize(Enabled.No)!))
+
+service.characteristics = [characteristic]
+let manager = PeripheralManager.sharedInstance
+
+let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
+	manager.removeAllServices()
+}.flatmap {_ -> Future<Void> in
+	manager.addService(service)
+}
+```
+
+First BlueCap MutableServices and MutableCharacteristics are created and the characteristic is added to the service. Then the BlueCap PeripheralManager powerOn() is flatmapped to removeAllServices() which is then flatmapped to addService(). This sequence ensures that the peripheral is powered and with no services before the new services are added.
+
+### Advertising
 
 
 ### Read Characteristic
