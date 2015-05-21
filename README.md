@@ -64,7 +64,7 @@ Communication in BLE uses the Client-Server model. The Client is  called a Centr
 
 ## <a name="serde">Serialization/Deserialization</a>
 
-Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. This section will describe how this is done. Example implantations of each protocol can be found in the [Ti Sensor Tag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/SerDe.playground). 
+Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. This section will describe how this is done. Example implantations of each protocol can be found in the [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/SerDe.playground). 
 
 ### Strings
 
@@ -1454,6 +1454,7 @@ public func characteristicsFromProfiles(profiles:[CharacteristicProfile])
 A Peripheral application will add Services and Characteristics using,
 
 ```swift
+// service UUId and characteristic value definition
 let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")
 enum Enabled : UInt8, RawDeserializable {
     case No  = 0
@@ -1461,29 +1462,87 @@ enum Enabled : UInt8, RawDeserializable {
     public static let uuid = "F000AA12-0451-4000-B000-000000000000"
 }
 
+// create service and characteristic
 let service = MutableService(uuid:serviceUUID)
-let characteristic = MutableCharacteristic(uuid:Enabled.uuid,                                            properties:CBCharacteristicProperties.Read,                                                 permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,                                                value:Serde.serialize(Enabled.No)!))
+let characteristic = MutableCharacteristic(uuid:Enabled.uuid,                                            properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,                                                 permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,                                                value:Serde.serialize(Enabled.No)!))
 
+// add characteristics to service 
 service.characteristics = [characteristic]
-let manager = PeripheralManager.sharedInstance
 
-let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
+// add service to peripheral
+let manager = PeripheralManager.sharedInstance
+let addServiceFuture = manager.powerOn().flatmap {_ -> Future<Void> in
 	manager.removeAllServices()
 }.flatmap {_ -> Future<Void> in
 	manager.addService(service)
 }
+
+addServiceFuture.onSuccess {
+	…
+}
+addServiceFuture.onFailure {error in
+	…
+}
 ```
 
-First BlueCap MutableServices and MutableCharacteristics are created and the characteristic is added to the service. Then the BlueCap PeripheralManager powerOn() is flatmapped to removeAllServices() which is then flatmapped to addService(). This sequence ensures that the peripheral is powered and with no services before the new services are added.
+First BlueCap MutableServices and MutableCharacteristics are created and characteristic [CBCharacteristicProperties](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/index.html#//apple_ref/c/tdef/CBCharacteristicProperties) and [CBAttributePermissions](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/c/tdef/CBAttributePermissions) are specified. The characteristic is then added to the service. Then the BlueCap PeripheralManager powerOn() -> Future<Void> is flatmapped to removeAllServices() -> Future<Void> which is then flatmapped to addServices(services:[MutableService]) -> Future<Void>. This sequence ensures that the peripheral is powered and with no services before the new services are added.
+
+If service and characteristic GATT profile definistions are available creating services and characteristics is a little simpler,
+
+```swift
+let  service = MutableService(profile:ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
+let characteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+```
+
+Here the BlueCap [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift).
 
 ### Advertising
 
+After services and characteristics have been added the peripheral is ready to begin advertising using the methods,
 
-### Read Characteristic
+```swift
+// start advertising with name and services
+public func startAdvertising(name:String, uuids:[CBUUID]?) -> Future<Void>
+
+// start advertising with name and no services
+public func startAdvertising(name:String) -> Future<Void> 
+
+// stop advertising
+public func stopAdvertising() -> Future<Void>
+```
+
+All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void>. For a peripheral application to advertise,
+
+```swift
+// use service and characteristic defined in previous section
+let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
+	manager.removeAllServices()
+}.flatmap {_ -> Future<Void> in
+	manager.addService(service)
+}.flatmap {_ -> Future<Void> in
+	manager.startAdvertising("My Service", uuids:[serviceUUID])
+}
+            
+startAdvertiseFuture.onSuccess {
+	…
+}
+startAdvertiseFuture.onFailure {error in
+	…
+}
+```
+
+Here the addServiceFuture of the previous section is flatmapped to startAdvertising(name:String, uuids:[CBUUID]?) -> Future<Void> ensuring that services and characteristics are available before advertising begins.
 
 ### Set Characteristic Value
 
 ### Updating Characteristic Value
 
+
+### Read Characteristic
+
+After a Peripheral application is discovered by a Central application the Central can read characteristic values.
+
 ### iBeacon Emulation
+
+
 
