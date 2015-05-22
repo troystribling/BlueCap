@@ -1464,7 +1464,7 @@ enum Enabled : UInt8, RawDeserializable {
 
 // create service and characteristic
 let service = MutableService(uuid:serviceUUID)
-let characteristic = MutableCharacteristic(uuid:Enabled.uuid,                                            properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,                                                 permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,                                                value:Serde.serialize(Enabled.No)!))
+let characteristic = MutableCharacteristic(uuid:Enabled.uuid,                                            properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,                                                 permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,                                                value:Serde.serialize(Enabled.No)))
 
 // add characteristics to service 
 service.characteristics = [characteristic]
@@ -1515,6 +1515,7 @@ All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutu
 
 ```swift
 // use service and characteristic defined in previous section
+let manager = PeripheralManager.sharedInstance
 let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
 	manager.removeAllServices()
 }.flatmap {_ -> Future<Void> in
@@ -1535,14 +1536,110 @@ Here the addServiceFuture of the previous section is flatmapped to startAdvertis
 
 ### Set Characteristic Value
 
+A BlueCap Characteristic value can be set any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Only instantiation of he characteristic is required. The BlueCap MutableCharacteristic methods used are,
+
+```swift
+var value : NSData? {get set}
+```
+
+A peripheral application can set a characteristic value using,
+
+```swift
+// Enabled is defined above
+characteristic.value = Serde.serialize(Enabled.Yes)
+```
+
 ### Updating Characteristic Value
 
+If a characteristic value supports the property CBCharacteristicProperties.Notify the Central can subscribed to receive updates. In addition to setting the new value an update notification must be sent. A BlueCap Characteristic value can be set any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. The BlueCap MutableCharacteristic methods used are,
 
-### Read Characteristic
+```swift
+func updateValueWithData(value:NSData) -> Bool
 
-After a Peripheral application is discovered by a Central application the Central can read characteristic values.
+public func updateValueWithString(value:Dictionary<String, String>)
+
+public func updateValue<T:Deserializable>(value:T) -> Bool
+
+public func updateValue<T:RawDeserializable>(value:T) -> Bool
+
+public func updateValue<T:RawArrayDeserializable>(value:T) -> Bool
+
+public func updateValue<T:RawPairDeserializable>(value:T) -> Bool
+
+public func updateValue<T:RawArrayPairDeserializable>(value:T) -> Bool
+```
+
+
+### Respond to Characteristic Wtite
+
+If a characteristic value supports the property CBCharacteristicProperties.Write the Central can change the characteristic value. The BlueCap MutableCharacteristic methods used are,
+
+```swift
+// start processing write requests
+public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest>
+
+// stop processing write requests
+public func stopProcessingWriteRequests()
+```
 
 ### iBeacon Emulation
+
+iBeacon emulation does not require support of services and characteristics. Only advertising is required. The BlueCap PeripheralManager methods used are, 
+
+```swift
+// start advertising beceacon region
+public func startAdvertising(region:BeaconRegion) -> Future<Void>
+
+// stop advertising
+public func stopAdvertising() -> Future<Void>
+```
+
+All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void>. 
+
+Creation of a [FutureLocation](https://github.com/troystribling/FutureLocation) BeaconRegion is also required,
+
+```swift
+public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16)
+```
+
+<table>
+	<tr>
+		<td>proximityUUID</td>
+		<td>The proximity ID of the beacon targeted</td>
+	</tr>
+	<tr>
+		<td>identifier</td>
+		<td>A unique identifier for region used by application</td>
+	</tr>
+	<tr>
+		<td>major</td>
+		<td>The major value used to identify one or more beacons</td>
+	</tr>
+	<tr>
+		<td>minor</td>
+		<td>The minor value used to identify a specific beacon</td>
+	</tr>
+</table>
+
+For an iBeacon application to advertise,
+
+```swift
+// use service and characteristic defined in previous section
+let regionUUID = CBUUID(string:"DE6E8DAD-8D99-4E20-8C4B-D9CC2F9A7E83")!
+let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
+	let beaconRegion = BeaconRegion(proximityUUID:regionUUID, identifier:"My iBeacon", major:100, minor:1, capacity:10)
+	manager.startAdvertising(beaconRegion)
+}
+            
+startAdvertiseFuture.onSuccess {
+	…
+}
+startAdvertiseFuture.onFailure {error in
+	…
+}
+```
+
+Here the powerOn() -> Future<Void> flatmapped to startAdvertising(region:BeaconRegion) -> Future<Void> ensuring that the bluetooth transceiver is powered.
 
 
 

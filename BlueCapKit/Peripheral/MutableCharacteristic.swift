@@ -242,11 +242,12 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         self.impl.peripheralManagerIsReadyToUpdateSubscribers()
     }
 
-    public func updateValueWithString(value:Dictionary<String, String>) {
+    public func updateValueWithString(value:Dictionary<String, String>) -> Bool {
         if let data = self.profile.dataFromStringValue(value) {
-            self.updateValueWithData(data)
+            return self.updateValueWithData(data)
         } else {
             NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
+            return false
         }
     }
     
