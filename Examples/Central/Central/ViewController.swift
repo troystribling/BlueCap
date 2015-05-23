@@ -113,7 +113,7 @@ class ViewController: UITableViewController {
                 
             let manager = CentralManager.sharedInstance
                 
-            // on power, start scanning. when peripoheral is discovered connect and stop scanning
+            // on power, start scanning. when peripheral is discovered connect and stop scanning
             let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
                 manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
             }.flatmap {peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
@@ -143,7 +143,7 @@ class ViewController: UITableViewController {
                 }
             }
                 
-            // discover sevices and characteristics and enable acclerometer
+            // discover services and characteristics and enable accelerometer
             let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
                 if peripheral.state == .Connected {
                     return peripheral.discoverPeripheralServices([serviceUUID])
