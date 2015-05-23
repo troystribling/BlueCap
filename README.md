@@ -1547,7 +1547,7 @@ It is not necessary for the PeripheralManager to be powered on or advertising to
 A peripheral application can set a characteristic value using,
 
 ```swift
-// Enabled is defined above
+// Enabled and characteristic defined above
 characteristic.value = Serde.serialize(Enabled.Yes)
 ```
 
@@ -1556,36 +1556,73 @@ characteristic.value = Serde.serialize(Enabled.Yes)
 If a characteristic value supports the property CBCharacteristicProperties.Notify the Central can subscribed to receive updates. In addition to setting the new value an update notification must be sent. The BlueCap MutableCharacteristic methods used are,
 
 ```swift
+// update with NSData
 func updateValueWithData(value:NSData) -> Bool
 
+// update with String Dictionary
 public func updateValueWithString(value:Dictionary<String, String>) -> Bool
 
+// update with object supporting Deserializable
 public func updateValue<T:Deserializable>(value:T) -> Bool
 
+// update with object supporting RawDeserializable
 public func updateValue<T:RawDeserializable>(value:T) -> Bool
 
+// update with object supporting RawArrayDeserializable
 public func updateValue<T:RawArrayDeserializable>(value:T) -> Bool
 
+// update with object supporting RawPairDeserializable
 public func updateValue<T:RawPairDeserializable>(value:T) -> Bool
 
+// update with object supporting RawArrayPairDeserializable
 public func updateValue<T:RawArrayPairDeserializable>(value:T) -> Bool
 ```
 
-All methods return a Bool which is true if the update succeeds. In addition to sending an update notification to a subscribing central the characteristic value is set. A BlueCap Characteristic value can be updated any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Though in the later case the update will fail and return false.
+All methods return a Bool which is true if the update succeeds and false if there are no subscribers, CBCharacteristicProperties.Notify is not supported or the length of the update queue is exceeded. In addition to sending an update notification to a subscribing central the characteristic value is set. A BlueCap Characteristic value can be updated any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Though in this case the update will fail and return false.
+
+Peripheral applications would send notification updates using,
+
+```swift
+// Enabled and characteristic defined above
+characteristic.updateValue(Enabled.No)
+```
 
 ### Respond to Characteristic Wtite
 
 If a characteristic value supports the property CBCharacteristicProperties.Write the Central can change the characteristic value. The BlueCap MutableCharacteristic methods used are,
 
 ```swift
-// start processing write requests
+// start processing write requests with stream capacity
 public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest>
+
+// respond to received write request
+func respondToRequest(request:CBATTRequest, withResult result:CBATTError)
 
 // stop processing write requests
 public func stopProcessingWriteRequests()
 ```
 
-[CBATTRequest](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBATTRequest_class/index.html) encapsulates Central write requests and a[SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<CBATTRequest> is used to respond to write requests.
+[CBATTRequest](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBATTRequest_class/index.html) encapsulates Central write requests, [CBATTError](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CoreBluetooth_Constants/index.html#//apple_ref/c/tdef/CBATTError) encapsulates response code and a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<CBATTRequest> is used to respond to write requests.
+
+Peripheral applications would start responding to Central writes using,
+
+```swift
+let writeFuture = characteristic.startRespondingToWriteRequests(capacity:10)
+writeFuture.onSuccess {request in
+	if request.value.length == 1 {
+		characteristic.value = request.value
+		characteristic.respondToRequest(request, withResult:CBATTError.Success)
+	} else {  
+		characteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+	}
+}
+```
+
+Peripheral applications would stop responding to write requests using,
+
+```swift
+characteristic.stopProcessingWriteRequests()
+```
 
 ### iBeacon Emulation
 
