@@ -165,9 +165,40 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
 1. [Serialization/Deserialization](#serde)
   1. [String Serialization](#serde_strings)
   2. [Deserializable Protocol](#serde_deserializable)
+  3. [RawDeserializable Protocol](#serde_rawdeserializable)
+  4. [RawArrayDeserializable Protocol](#serde_rawarraydeserializable)
+  5. [RawPairDeserializable Protocol](#serde_rawpairdeserializable)
+  6. [RawArrayPairDeserializable Protocol](#serde_rawarraypairdeserializable)
 2. [GATT Profile Definition](#gatt)
+  1. [ServiceConfigurable Protocol](#gatt_serviceconfigurable)
+  2. [CharacteristicConfigurable Protocol](#gatt_characteristicconfigurable)
+  3. [StringDeserializable Protocol](#gatt_stringdeserializable)
+  4. [ConfiguredServiceProfile](#gatt_configuredserviceprofile)
+  5. [CharacteristicProfile](#gatt_characteristicprofile)
+  6. [RawCharacteristicProfile](#gatt_rawcharacteristicprofile)
+  7. [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile)
+  8. [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile)
+  9. [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile)
+  10. [StringCharacteristicProfile](#gatt_stringcharacteristicprofile)
+  11. [ProfileManager](#gatt_profilemanager)
+  12. [Add Profile to BlueCap App](#gatt_add_profile)
 3. [CentralManager](#central)
+  1. [PowerOn/PowerOff](#central_poweron_poweroff)
+  2. [Service Scanning](#central_service_scanning)
+  3. [Service Scanning with Timeout](#central_service_scan_timeout)
+  4. [Peripheral Connection](#central_peripheral_connection)
+  5. [Service and Characteristic Discovery](#central_characteristic_discovery)
+  6. [Characteristic Write](#central_characteristic_write)
+  7. [Characteristic Read](#central_characteristic_read)
+  8. [Characteristic Update Notifications](#central_characteristic_update)
 4. [PeripheralManager](#peripheral)
+  1. [PowerOn/PowerOff](#peripheral_poweron_poweroff)
+  2. [Add Services and Characteristics](#peripheral_add_characteristics)
+  3. [Advertising](#peripheral_advertising)
+  4. [Set Characteristic Value]($peripheral_set_characteristic_value)
+  5. [Update Characteristic Value](#peripheral_update_characteristic_value)
+  6. [Respond to Characteristic Write](#peripheral_respond_charcateristic_write)
+  7. [iBeacon Emulation](#peripheral_ibeacon_emulation)
 
 ## <a name="serde">Serialization/Deserialization</a>
 
@@ -790,7 +821,7 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
   static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
   static let initialValue : NSData? = Serde.serialize(PairData(rawValue1:10, rawValue2:-10)!)
     
-  // RawArrayDeserializable
+  // RawPairDeserializable
   let rawValue1 : UInt8
   let rawValue2 : Int8
     
@@ -839,7 +870,7 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
   static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
 static let initialValue : NSData? = Serde.serialize()
             
-	// RawArrayDeserializable
+	// RawArrayPairDeserializable
 	let rawValue1 : [UInt8]
 	let rawValue2 : [Int8]
 	static let uuid = "F000AA13-0451-4000-B000-000000000000"
@@ -1109,7 +1140,7 @@ and in an application,
 TimedScannerator.sharedInstance.stopScanning()
 ```
 
-### <a name="central_peripheralconnect">Peripheral Connection</a>
+### <a name="central_peripheral_connect">Peripheral Connection</a>
 
 After discovering a peripheral a connection must be established to begin messaging. Connecting and maintaining a connection to a bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. ConnectionEvent is an enum with values,
 
@@ -1223,7 +1254,7 @@ peripheralConnectFuture.onFailure {error in
 
 Here the [peripheraDiscoveredFuture](#central_service_scanning) from the previous section is flatmapped to connect(capacity:Int? = nil, timeoutRetries:UInt, disconnectRetries:UInt?, connectionTimeout:Double) -> FutureStream<(Peripheral, ConnectionEvent)> to ensure that connections are made after peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is received and the peripheral connection is terminated ending all reconnection attempts.
 
-### <a name="central_characteristicdiscovery">Service and Characteristic Discovery</a>
+### <a name="central_characteristic_discovery">Service and Characteristic Discovery</a>
 
 After a peripheral is connected its services and characteristics must be discovered before characteristic values can be read or written to or update notifications can be received.
 
@@ -1528,7 +1559,7 @@ powerOffFuture.onSuccess {
 
 When PeripheralManager is instantiated a message giving the current Bluetooth transceiver state is received and while the PeripheralManager is instantiated messages are received if the transceiver is powered or powered off.
 
-### <a name="peripheral_add_services_characteristics">Add Services and Characteristics</a>
+### <a name="peripheral_add_characteristics">Add Services and Characteristics</a>
 
 Services and characteristics are added to a peripheral application before advertising. The BlueCap PeripheralManager methods used for managing services are,
 
