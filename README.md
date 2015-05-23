@@ -1374,7 +1374,7 @@ writeCharacteristicFuture.onFailure {error in
 
 Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to func write<T:RawDeserializable>(value:T, timeout:Double) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
-### <a name="central_charcteristic_read">Characteristic Read</a>
+### <a name="central_characteristic_read">Characteristic Read</a>
 
 After a peripherals characteristics are discovered reading characteristic values is possible. Several BlueCap Characteristic methods are available,
 
