@@ -1536,11 +1536,13 @@ Here the addServiceFuture of the previous section is flatmapped to startAdvertis
 
 ### Set Characteristic Value
 
-A BlueCap Characteristic value can be set any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Only instantiation of he characteristic is required. The BlueCap MutableCharacteristic methods used are,
+A BlueCap Characteristic value can be set any time after creation of the characteristic. The BlueCap MutableCharacteristic methods used are,
 
 ```swift
 var value : NSData? {get set}
 ```
+
+It is not necessary for the PeripheralManager to be powered on or advertising to set a characteristic value. Only instantiation of the characteristic is required. 
 
 A peripheral application can set a characteristic value using,
 
@@ -1551,12 +1553,12 @@ characteristic.value = Serde.serialize(Enabled.Yes)
 
 ### Updating Characteristic Value
 
-If a characteristic value supports the property CBCharacteristicProperties.Notify the Central can subscribed to receive updates. In addition to setting the new value an update notification must be sent. A BlueCap Characteristic value can be set any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. The BlueCap MutableCharacteristic methods used are,
+If a characteristic value supports the property CBCharacteristicProperties.Notify the Central can subscribed to receive updates. In addition to setting the new value an update notification must be sent. The BlueCap MutableCharacteristic methods used are,
 
 ```swift
 func updateValueWithData(value:NSData) -> Bool
 
-public func updateValueWithString(value:Dictionary<String, String>)
+public func updateValueWithString(value:Dictionary<String, String>) -> Bool
 
 public func updateValue<T:Deserializable>(value:T) -> Bool
 
@@ -1569,6 +1571,7 @@ public func updateValue<T:RawPairDeserializable>(value:T) -> Bool
 public func updateValue<T:RawArrayPairDeserializable>(value:T) -> Bool
 ```
 
+All methods return a Bool which is true if the update succeeds. In addition to sending an update notification to a subscribing central the characteristic value is set. A BlueCap Characteristic value can be updated any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Though in the later case the update will fail and return false.
 
 ### Respond to Characteristic Wtite
 
@@ -1581,6 +1584,8 @@ public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<
 // stop processing write requests
 public func stopProcessingWriteRequests()
 ```
+
+[CBATTRequest](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBATTRequest_class/index.html) encapsulates Central write requests and a[SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<CBATTRequest> is used to respond to write requests.
 
 ### iBeacon Emulation
 
