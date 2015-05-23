@@ -163,8 +163,8 @@ startAdvertiseFuture.onFailure {error in
 BlueCap supports many features that simplify writing Bluetooth LE applications. This section will describe all features in detail and provide code example.
 
 1. [Serialization/Deserialization](#serde)
-  1. [String Serialization](#serde_strings)
-  2. [Deserializable Protocol](#serde_deserializable)
+ * [String Serialization](#serde_strings)
+ * [Deserializable Protocol](#serde_deserializable)
   3. [RawDeserializable Protocol](#serde_rawdeserializable)
   4. [RawArrayDeserializable Protocol](#serde_rawarraydeserializable)
   5. [RawPairDeserializable Protocol](#serde_rawpairdeserializable)
