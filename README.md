@@ -195,9 +195,9 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
   * [PowerOn/PowerOff](#peripheral_poweron_poweroff)
   * [Add Services and Characteristics](#peripheral_add_characteristics)
   * [Advertising](#peripheral_advertising)
-  * [Set Characteristic Value]($peripheral_set_characteristic_value)
+  * [Set Characteristic Value](#peripheral_set_characteristic_value)
   * [Update Characteristic Value](#peripheral_update_characteristic_value)
-  * [Respond to Characteristic Write](#peripheral_respond_charcateristic_write)
+  * [Respond to Characteristic Write](#peripheral_respond_characteristic_write)
   * [iBeacon Emulation](#peripheral_ibeacon_emulation)
 
 ## <a name="serde">Serialization/Deserialization</a>
@@ -1095,7 +1095,7 @@ let manager = CentralManager.sharedInstance
 manager.stopScanning()
 ```
 
-### <a name="central_service_scan_timeout">Service Scanning with timeout</a>
+### <a name="central_service_scan_timeout">Service Scanning with Timeout</a>
 
 BlueCap CentralManager can scan for advertising peripherals with a timeout. TimedScannerator methods are used to start a scan instead ob the CentralManager methods. The declarations include a timeout parameter but are otherwise the same,
 
@@ -1140,7 +1140,7 @@ and in an application,
 TimedScannerator.sharedInstance.stopScanning()
 ```
 
-### <a name="central_peripheral_connect">Peripheral Connection</a>
+### <a name="central_peripheral_connection">Peripheral Connection</a>
 
 After discovering a peripheral a connection must be established to begin messaging. Connecting and maintaining a connection to a bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. ConnectionEvent is an enum with values,
 
@@ -1374,7 +1374,7 @@ writeCharacteristicFuture.onFailure {error in
 
 Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to func write<T:RawDeserializable>(value:T, timeout:Double) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
-### <a name="central_caharcteristic_read">Characteristic Read</a>
+### <a name="central_charcteristic_read">Characteristic Read</a>
 
 After a peripherals characteristics are discovered reading characteristic values is possible. Several BlueCap Characteristic methods are available,
 
