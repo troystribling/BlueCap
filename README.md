@@ -162,43 +162,43 @@ startAdvertiseFuture.onFailure {error in
 
 BlueCap supports many features that simplify writing Bluetooth LE applications. This section will describe all features in detail and provide code example.
 
-1. [Serialization/Deserialization](#serde)
- * [String Serialization](#serde_strings)
- * [Deserializable Protocol](#serde_deserializable)
- * [RawDeserializable Protocol](#serde_rawdeserializable)
- * [RawArrayDeserializable Protocol](#serde_rawarraydeserializable)
- * [RawPairDeserializable Protocol](#serde_rawpairdeserializable)
- * [RawArrayPairDeserializable Protocol](#serde_rawarraypairdeserializable)
-2. [GATT Profile Definition](#gatt)
-  * [ServiceConfigurable Protocol](#gatt_serviceconfigurable)
-  * [CharacteristicConfigurable Protocol](#gatt_characteristicconfigurable)
-  * [StringDeserializable Protocol](#gatt_stringdeserializable)
-  * [ConfiguredServiceProfile](#gatt_configuredserviceprofile)
-  * [CharacteristicProfile](#gatt_characteristicprofile)
-  * [RawCharacteristicProfile](#gatt_rawcharacteristicprofile)
-  * [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile)
-  * [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile)
-  * [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile)
-  * [StringCharacteristicProfile](#gatt_stringcharacteristicprofile)
-  * [ProfileManager](#gatt_profilemanager)
-  * [Add Profile to BlueCap App](#gatt_add_profile)
-3. [CentralManager](#central)
-  * [PowerOn/PowerOff](#central_poweron_poweroff)
-  * [Service Scanning](#central_service_scanning)
-  * [Service Scanning with Timeout](#central_service_scan_timeout)
-  * [Peripheral Connection](#central_peripheral_connection)
-  * [Service and Characteristic Discovery](#central_characteristic_discovery)
-  * [Characteristic Write](#central_characteristic_write)
-  * [Characteristic Read](#central_characteristic_read)
-  * [Characteristic Update Notifications](#central_characteristic_update)
-4. [PeripheralManager](#peripheral)
-  * [PowerOn/PowerOff](#peripheral_poweron_poweroff)
-  * [Add Services and Characteristics](#peripheral_add_characteristics)
-  * [Advertising](#peripheral_advertising)
-  * [Set Characteristic Value](#peripheral_set_characteristic_value)
-  * [Update Characteristic Value](#peripheral_update_characteristic_value)
-  * [Respond to Characteristic Write](#peripheral_respond_characteristic_write)
-  * [iBeacon Emulation](#peripheral_ibeacon_emulation)
+1. [Serialization/Deserialization](#serde): Serialization and deserialization of device messages.
+ * [String](#serde_strings): String serialization and deserialization.
+ * [Deserializable Protocol](#serde_deserializable): Deserialize numeric types.
+ * [RawDeserializable Protocol](#serde_rawdeserializable): Deserialize messages with a single value of a single Deserializable type.
+ * [RawArrayDeserializable Protocol](#serde_rawarraydeserializable): Deserialize messages with multiple values of single Deserializable type.
+ * [RawPairDeserializable Protocol](#serde_rawpairdeserializable): Deserialize messages with two values of two different Deserializable types.
+ * [RawArrayPairDeserializable Protocol](#serde_rawarraypairdeserializable): Deserialize messages with multiple values of two different Deserializable types.
+2. [GATT Profile Definition](#gatt): Define reusable GATT profiles and add profiles to the BlueCap app.
+  * [ServiceConfigurable Protocol](#gatt_serviceconfigurable): Define a service configuration.
+  * [CharacteristicConfigurable Protocol](#gatt_characteristicconfigurable): Define a characteristic configuration.
+  * [StringDeserializable Protocol](#gatt_stringdeserializable): Convert characteristic values to strings.
+  * [ConfiguredServiceProfile](#gatt_configuredserviceprofile): Define a service profile.
+  * [CharacteristicProfile](#gatt_characteristicprofile): Characteristic profile base class.
+  * [RawCharacteristicProfile](#gatt_rawcharacteristicprofile): Define a characteristic GATT profile for messages supporting RawDeserializable. 
+  * [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile): Define a characteristic GATT profile for messages supporting RawArrayDeserializable.
+  * [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic GATT profile for messages supporting RawPairDeserializable.
+  * [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic GATT profile for messages supporting RawArrayPairDeserializable.
+  * [StringCharacteristicProfile](#gatt_stringcharacteristicprofile): Define a characteristic GATT profile for String messages.
+  * [ProfileManager](#gatt_profilemanager): How the BlueCap app manages GATT profiles.
+  * [Add Profile to BlueCap App](#gatt_add_profile): Add a GATT profile to the BlueCap app.
+3. [CentralManager](#central): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
+  * [PowerOn/PowerOff](#central_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
+  * [Service Scanning](#central_service_scanning): Scan for services.
+  * [Service Scanning with Timeout](#central_service_scan_timeout): Scan for services with timeout.
+  * [Peripheral Connection](#central_peripheral_connection): Connect to Peripherals.
+  * [Service and Characteristic Discovery](#central_characteristic_discovery): Discover Peripheral Services and Characteristics.
+  * [Characteristic Write](#central_characteristic_write): Write a characteristic value to a connected Peripheral.
+  * [Characteristic Read](#central_characteristic_read): Read a characteristic value from a connected Peripheral.
+  * [Characteristic Update Notifications](#central_characteristic_update): Subscribe to characteristic value updates on a connected Peripheral.
+4. [PeripheralManager](#peripheral): The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
+  * [PowerOn/PowerOff](#peripheral_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
+  * [Add Services and Characteristics](#peripheral_add_characteristics): Add services and characteristics to a Peripheral application.
+  * [Advertising](#peripheral_advertising): Advertise a Peripheral application.
+  * [Set Characteristic Value](#peripheral_set_characteristic_value): Set a characteristic value for a Peripheral application.
+  * [Update Characteristic Value](#peripheral_update_characteristic_value): Send characteristic value update notifications to Centrals.
+  * [Respond to Characteristic Write](#peripheral_respond_characteristic_write): Respond to characterize value writes from a Central.
+  * [iBeacon Emulation](#peripheral_ibeacon_emulation): Emulate an iBeacon with a Peripheral application.
 
 ## <a name="serde">Serialization/Deserialization</a>
 
@@ -209,7 +209,10 @@ Serialization and deserialization of device messages requires protocol implement
 For Strings Serde serialize and deserialize are defined by,
 
 ```swift
+// Deserialize Strings
 public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String?
+
+// Serialize Strings
 public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData?
 ```
 
@@ -265,7 +268,10 @@ public protocol Deserializable {
 BlueCalKit provides implementation of Deserializable for [UInt8<pcode>](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Uint8Extensions.swift), [Int8](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int8Extensions.swift), [UInt16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/UInt16Extensions.swift) and [Int16](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/SerDe/Int16Extensions.swift). The Serde serialize and deserialize are defined by,
 
 ```swift
+// Deserialize objects supporting Deserializable
 public static func deserialize<T:Deserializable>(data:NSData) -> T?
+
+// Serialize objects supporting Deserializable
 public static func serialize<T:Deserializable>(value:T) -> NSData
 ```
 
@@ -310,11 +316,14 @@ public protocol RawDeserializable {
 The Serde serialize and deserialize are defined by,
 
 ```swift
+// Deserialize objects supporting RawDeserializable
 public static func deserialize<T:RawDeserializable where T.RawType:Deserializable>(data:NSData) -> T?
+
+// Serialize objects supporting RawDeserializable
 public static func serialize<T:RawDeserializable>(value:T) -> NSData
 ```
 
-Note that RawType is required to be Deserializable. An Enum partially supports RawDeserializable, so,
+Note that RawType is required to be Deserializable to be deserialized. An Enum partially supports RawDeserializable, so,
 
 ```swift
 enum Enabled : UInt8, RawDeserializable {
@@ -389,11 +398,14 @@ public protocol RawArrayDeserializable {
 The Serde serialize and deserialize are defined by,
 
 ```swift
+// Deserialize objects supporting RawArrayDeserializable
 public static func deserialize<T:RawArrayDeserializable where T.RawType:Deserializable>(data:NSData) -> T?
+
+// Serialize objects supporting RawArrayDeserializable
 public static func serialize<T:RawArrayDeserializable>(value:T) -> NSData
 ```
 
-Note that RawType is required to be Deserializable. RawArrayDeserializable can be implemented in a struct or class.
+Note that RawType is required to be Deserializable to be deserialized. RawArrayDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawArrayValue : RawArrayDeserializable {    
@@ -459,11 +471,14 @@ public protocol RawPairDeserializable {
 The Serde serialize and deserialize are defined by,
 
 ```swift
-public static func deserialize<T:RawPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T?
+// Deserialize objects supporting RawPairDeserializable
+public static func deserialize<T:RawPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>(data:NSData) -> T?
+
+// Serialize objects supporting RawPairDeserializable
 public static func serialize<T:RawPairDeserializable>(value:T) -> NSData
 ```
 
-Note that RawType1 and RawType2 are required to be Deserializable. RawPairDeserializable can be implemented in a struct or class.
+Note that RawType1 and RawType2 are required to be Deserializable to be deserialized. RawPairDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawPairValue : RawPairDeserializable {
@@ -537,11 +552,14 @@ public protocol RawArrayPairDeserializable {
 The Serde serialize and deserialize are defined by,
 
 ```swift
+// Deserialize objects supporting RawPairDeserializable
 public static func deserialize<T:RawArrayPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T?
+
+// Deserialize objects supporting RawPairDeserializable
 public static func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData
 ```
 
-Note that RawType1 and RawType2 are required to be Deserializable. RawArrayPairDeserializable can be implemented in a struct or class.
+Note that RawType1 and RawType2 are required to be Deserializable to be deserialized. RawArrayPairDeserializable can be implemented in a struct or class.
 
 ```swift
 struct RawArrayPairValue : RawArrayPairDeserializable {
