@@ -22,11 +22,11 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 # Installation
 
 1. Place the BlueCap somewhere in your project directory. You can either copy it or add it as a git submodule.
-2. Open the BluCap project folder and drag BlueCapKit.xcodeproj into the project navigator of your applications Xcode project.
-3. Under your Projects Info tab set the iOS Deployment Target to 8.0 and that the BlueCapKit.xcodeproj iOS Deployment Target is also 8.0.
-4. Under the General tab for your project target add the top BlueCapKit.framework as an Embedded Binary.
-5. Under the Build Phases tab add BlueCapKit.framework as a Target Dependency and under Link Binary With Libraries add CoreLocation.framework and CoreBluetooth.framework.
-6. To enable debug log output select your project target and the Build Settings tab. Under Other Swift Flags and Debug add -D DEBUG.
+2. Open the BlueCap project folder and drag BlueCapKit.xcodeproj into the project navigator of your applications Xcode project.
+3. Under your Projects *Info* tab set the *iOS Deployment Target* to 8.0 and verify that the BlueCapKit.xcodeproj *iOS Deployment Target* is also 8.0.
+4. Under the *General* tab for your project target add the top BlueCapKit.framework as an *Embedded Binary*.
+5. Under the *Build Phases* tab add BlueCapKit.framework as a *Target Dependency* and under *Link Binary With Libraries* add CoreLocation.framework and CoreBluetooth.framework.
+6. To enable debug log output select your project target and the Build Settings tab. Under *Other Swift Flags* and *Debug* add -D DEBUG.
 
 # Getting Started
 
@@ -57,7 +57,7 @@ Communication in BLE uses the Client-Server model. The Client is  called a Centr
 
 ## Simple Central Implementation
 
-A Central implementation that scans for peripherals advertising a TI SensorTag Accelerometer service, connects on peripheral discovery and then discovers the service characteristics is listed below,
+A simple Central implementation that scans for Peripherals advertising a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217), connects on peripheral discovery and then discovers the service characteristics is listed below,
 
 ```swift
 let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid)!
@@ -70,6 +70,8 @@ let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Perip
 	manager.stopScanning()
 	return peripheral.connect(capacity:10, timeoutRetries:5, disconnectRetries:5)
 }
+
+// on .Timeout and .Disconnect try to reconnect on .Giveup terminate connection
 peripheralConnectFuture.onSuccess{(peripheral, connectionEvent) in
 	switch connectionEvent {
 	case .Connect:
@@ -107,7 +109,7 @@ peripheralDiscoveredFuture.onFailure {error in
 
 ## Simple Peripheral Implementation
 
-A Peripheral application that emulates a TI SensorTag Accelerometer service with all characteristics and responds to characteristic writes is listed below,
+A simple Peripheral application that emulates a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and responds to characteristic writes is listed below,
 
 ```swift
 // create service and characteristics using profile definitions
@@ -160,7 +162,7 @@ startAdvertiseFuture.onFailure {error in
 
 # <a name="usage">Usage</a>
 
-BlueCap supports many features that simplify writing Bluetooth LE applications. This section will describe all features in detail and provide code example.
+BlueCap supports many features that simplify writing Bluetooth LE applications. This section will describe all features in detail and provide code examples.
 
 1. [Serialization/Deserialization](#serde): Serialization and deserialization of device messages.
  * [String](#serde_strings): String serialization and deserialization.
@@ -175,14 +177,14 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
   * [StringDeserializable Protocol](#gatt_stringdeserializable): Convert characteristic values to strings.
   * [ConfiguredServiceProfile](#gatt_configuredserviceprofile): Define a service profile.
   * [CharacteristicProfile](#gatt_characteristicprofile): Characteristic profile base class.
-  * [RawCharacteristicProfile](#gatt_rawcharacteristicprofile): Define a characteristic GATT profile for messages supporting RawDeserializable. 
-  * [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile): Define a characteristic GATT profile for messages supporting RawArrayDeserializable.
-  * [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic GATT profile for messages supporting RawPairDeserializable.
-  * [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic GATT profile for messages supporting RawArrayPairDeserializable.
-  * [StringCharacteristicProfile](#gatt_stringcharacteristicprofile): Define a characteristic GATT profile for String messages.
+  * [RawCharacteristicProfile](#gatt_rawcharacteristicprofile): Define a characteristic profile for messages supporting RawDeserializable. 
+  * [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile): Define a characteristic profile for messages supporting RawArrayDeserializable.
+  * [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic profile for messages supporting RawPairDeserializable.
+  * [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic profile for messages supporting RawArrayPairDeserializable.
+  * [StringCharacteristicProfile](#gatt_stringcharacteristicprofile): Define a characteristic profile for String messages.
   * [ProfileManager](#gatt_profilemanager): How the BlueCap app manages GATT profiles.
   * [Add Profile to BlueCap App](#gatt_add_profile): Add a GATT profile to the BlueCap app.
-3. [CentralManager](#central): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
+3. [CentralManager](#central): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
   * [PowerOn/PowerOff](#central_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
   * [Service Scanning](#central_service_scanning): Scan for services.
   * [Service Scanning with Timeout](#central_service_scan_timeout): Scan for services with timeout.
@@ -191,7 +193,7 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
   * [Characteristic Write](#central_characteristic_write): Write a characteristic value to a connected Peripheral.
   * [Characteristic Read](#central_characteristic_read): Read a characteristic value from a connected Peripheral.
   * [Characteristic Update Notifications](#central_characteristic_update): Subscribe to characteristic value updates on a connected Peripheral.
-4. [PeripheralManager](#peripheral): The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
+4. [PeripheralManager](#peripheral): The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
   * [PowerOn/PowerOff](#peripheral_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
   * [Add Services and Characteristics](#peripheral_add_characteristics): Add services and characteristics to a Peripheral application.
   * [Advertising](#peripheral_advertising): Advertise a Peripheral application.
@@ -202,7 +204,7 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
 
 ## <a name="serde">Serialization/Deserialization</a>
 
-Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. This section will describe how this is done. Example implantations of each protocol can be found in the [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/SerDe.playground). 
+Serialization and deserialization of device messages requires protocol implementations. Then application objects can be converted to and from NSData objects using methods on Serde. Example implantations of each protocol can be found in the [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) available in BlueCapKit and the following examples are implemented in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/SerDe.playground). 
 
 ### <a name="serde_strings">Strings</a>
 
@@ -218,7 +220,7 @@ public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8Str
 
 [NSStringEncoding](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/#//apple_ref/doc/constant_group/String_Encodings) supports many encodings. 
 
-to use,
+to use in an application,
 ```swift
 if let data = Serde.serialize("Test") {
     if let value = Serde.deserialize(data) {
@@ -592,7 +594,7 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
 
 ## <a name="gatt">GATT Profile Definition</a>
 
-GATT profile definitions are required to add support for a device to the BlueCap app but are not required build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure services and characteristics and provides serialization and deserialization of characteristic values to and from strings. The examples in this section are also available in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/Profile.playground)
+GATT profile definitions are required to add support for a device to the BlueCap app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure Services and Characteristics and provides serialization and deserialization of Characteristic values to and from Strings. The examples in this section are also available in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/Profile.playground)
 
 ### <a name="gatt_serviceconfigurable">ServiceConfigurable Protocol</a>
 
@@ -625,7 +627,7 @@ public protocol ServiceConfigurable {
 
 ### <a name="gatt_characteristicconfigurable">CharacteristicConfigurable Protocol</a>
 
-The CharacteristicConfigurable is used to specify Characteristic configuration and protocol is defined by,
+The CharacteristicConfigurable is used to specify Characteristic configuration and is defined by,
 
 ```swift
 public protocol CharacteristicConfigurable {
@@ -693,7 +695,7 @@ public protocol StringDeserializable {
 
 ### <a name="gatt_configuredserviceprofile">ConfiguredServiceProfile</a>
 
-A ConfiguredServiceProfile object encapsulates a service configuration that cab be used to instantiate either Service of MutableService object. 
+A ConfiguredServiceProfile object encapsulates a service configuration and can be used to instantiate either Service or MutableService objects. 
 
 ```swift
 struct AccelerometerService : ServiceConfigurable  {
@@ -707,7 +709,7 @@ struct AccelerometerService : ServiceConfigurable  {
 let serviceProfile = ConfiguredServiceProfile<AccelerometerService>() 
 ```
 
-The CharacteristicProfiless belonging to a ServiceProfile are added using the method,
+The CharacteristicProfiles belonging to a ServiceProfile are added using the method,
 
 ```swift
 public func addCharacteristic(characteristicProfile:CharacteristicProfile)
@@ -715,9 +717,9 @@ public func addCharacteristic(characteristicProfile:CharacteristicProfile)
  
 ### <a name="gatt_characteristicprofile">CharacteristicProfile</a>
 
-CharacteristicProfile is the base class for each of the following profile types and is instantiated as the characteristic profile if a profile is not explicitly defined for a discovered characteristic. In this case with no String conversions implemented in a GATT Profile definition a characteristic will support String conversions to a from hexadecimal Strings.
+CharacteristicProfile is the base class for each of the following profile types and is instantiated as the characteristic profile if a profile is not explicitly defined for a discovered Characteristic. In this case, with no String conversions implemented in a GATT Profile definition, a Characteristic will support String conversions to a from hexadecimal Strings.
 
-When defining GATT profile it is sometimes convenient to specify that something be done to the Peripheral after a characteristic is discovered by the Central.
+When defining a GATT profile it is sometimes convenient to specify that something be done after a Characteristic is discovered by a Central.
 
 ```swift
 public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic>
@@ -725,7 +727,7 @@ public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic>
 
 ### <a name="gatt_rawcharacteristicprofile">RawCharacteristicProfile</a>
 
-A RawCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
+A RawCharacteristicProfile object encapsulates configuration and String conversions for a Characteristic implementing [RawDeserializable](#serde_rawdeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
 
 ```swift
 enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
@@ -768,7 +770,7 @@ enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicCon
 }
 ```
 
-To instantiate a profile,
+To instantiate a profile in an application,
 
 ```swift
 let profile = RawCharacteristicProfile<Enabled>()
@@ -776,7 +778,7 @@ let profile = RawCharacteristicProfile<Enabled>()
 
 ### <a name="gatt_rawarraycharacteristicprofile">RawArrayCharacteristicProfile</a>
 
-A RawArrayCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawArrayDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
+A RawArrayCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing [RawArrayDeserializable](#serde_rawarraydeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
 
 ```swift
 struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
@@ -820,7 +822,7 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
 }
 ```
 
-To instantiate a profile,
+To instantiate a profile in an application,
 
 ```swift
 let profile = RawArrayCharacteristicProfile<ArrayData>()
@@ -828,7 +830,7 @@ let profile = RawArrayCharacteristicProfile<ArrayData>()
 
 ### <a name="gatt_rawpaircharacteristicprofile">RawPairCharacteristicProfile</a>
 
-A RawPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
+A RawPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing [RawPairDeserializable](#serde_rawpairdeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
 
 ```swift
 struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
@@ -869,7 +871,7 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
 }
 ```
 
-To instantiate a profile,
+To instantiate a profile in an application,
 
 ```swift
 let profile = RawPairCharacteristicProfile<PairData>()
@@ -877,7 +879,7 @@ let profile = RawPairCharacteristicProfile<PairData>()
 
 ### <a name="gatt_rawarraypaircharacteristicprofile">RawArrayPairCharacteristicProfile</a>
 
-A RawArrayPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing RawArrayPairDeserializable. It can be used to instantiate both Characteristics and Mutable Characteristics.
+A RawArrayPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing [RawArrayPairDeserializable](#serde_rawarraypairdeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
 
 ```swift
 struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
@@ -931,7 +933,7 @@ static let initialValue : NSData? = Serde.serialize()
 }
 ```
 
-To instantiate a profile,
+To instantiate a profile in an application,
 
 ```swift
 let profile = RawArrayPairCharacteristicProfile<ArrayPairData>()
@@ -939,7 +941,7 @@ let profile = RawArrayPairCharacteristicProfile<ArrayPairData>()
 
 ### <a name="gatt_stringcharacteristicprofile">StringCharacteristicProfile</a>
 
-A String Profile only requires the implementation of characteristic
+A String Profile only requires the implementation of CharacteristicConfigurable
 
 ```swift
 struct SerialNumber : CharacteristicConfigurable {
@@ -952,7 +954,7 @@ struct SerialNumber : CharacteristicConfigurable {
 }
 ```
 
-To instantiate a profile,
+To instantiate a profile in an application,
 
 ```swift
 let profile = StringCharacteristicProfile<SerialNumber>()
@@ -960,7 +962,7 @@ let profile = StringCharacteristicProfile<SerialNumber>()
 
 ### <a name="gatt_profilemanager">ProfileManager</a>
 
-ProfileManager is used by the BlueCap app as a repository of GATT profiles to be used to instantiate Services and Characteristics. ProfileManager can be used in an implementation but is not required by the framework.
+ProfileManager is used by the BlueCap app as a repository of GATT profiles to be used to instantiate Services and Characteristics. ProfileManager can be used in an implementation but is not required.
 
 To add ServiceProfiles and CharacteristicProfiles to ProfileManager,
 
@@ -1044,7 +1046,7 @@ in the BlueCap [AppDelegate.swift](https://github.com/troystribling/BlueCap/blob
 
 ## <a name="central">CentralManager</a>
 
-The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allow chaining asynchronous calls as well as error handling and recovery. Also, provided are callbacks for connections events and connection and service scan timeouts. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap project.
+The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allow chaining asynchronous calls as well as error handling and recovery. Also, provided are callbacks for connection events and connection and service scan timeouts. This section will describe interfaces and give example implementations for all supported use cases. [Simple example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) can be found in the BlueCap project.
 
 ### <a name="central_poweron_poweroff">PowerOn/PowerOff</a>
 
@@ -1054,7 +1056,7 @@ The state of the Bluetooth transceiver on a device is communicated to BlueCap Ce
 public func powerOn() -> Future<Void>
 public func powerOff() -> Future<Void>
 ```
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void> yielding Void. For an application to process events,
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Void&gt;*. For an application to process events,
 
 ```swift
 let manager = CentralManager.sharedInstance
@@ -1082,9 +1084,9 @@ public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral>
 public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
 ``` 
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;Peripheral&gt; yielding the discovered peripheral and take the FutureStream capacity as input.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *FutureStream&lt;Peripheral&gt;* yielding the discovered Peripheral and take the FutureStream capacity as input.
 
-For an application to scan for peripherals advertising services with uuids after powerOn,
+For an application to scan for Peripherals advertising Services with uuids after powerOn,
 
 ```swift
 let manager = CentralManager.sharedInstance
@@ -1098,7 +1100,7 @@ peripheraDiscoveredFuture.onSuccess {peripheral in
 }
 ```
 
-Here the powerOn future has been flatmapped to startScanning(capacity:Int?) -> FutureStream<Peripheral> to ensure that the service scan starts after the bluetooth transceiver is powered on.
+Here the powerOn future has been flatmapped to *startScanning(capacity:Int?) -> FutureStream&lt;Peripheral&gt;* to ensure that the service scan starts after the bluetooth transceiver is powered on.
 
 To stop a peripheral scan use the CentralManager method,
 
@@ -1125,9 +1127,9 @@ public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureS
 public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
 ``` 
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;Peripheral&gt; yielding the discovered peripheral and take the FutureStream capacity as input.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *FutureStream&lt;Peripheral&gt;* yielding the discovered peripheral and take the FutureStream capacity as input.
 
-For an application to scan for peripherals advertising services  with uuids and a specified timeout after powerOn,
+For an application to scan for Peripherals advertising Services  with UUIDs and a specified timeout after powerOn,
 
 ```swift
 let manager = CentralManager.sharedInstance
@@ -1144,7 +1146,7 @@ peripheraDiscoveredFuture.onFailure {error in
 }
 ```
 
-Here the powerOn future has been flatmapped to startScanning(capacity:Int?) -> FutureStream<Peripheral> to ensure that the service scan starts after the bluetooth transceiver is powered on. On timeout peripheraDiscoveredFuture will complete with error BCError.peripheralDiscoveryTimeout.
+Here the powerOn future has been flatmapped to *startScanning(capacity:Int?) -> FutureStream&lt;Peripheral&gt;* to ensure that the service scan starts after the bluetooth transceiver is powered on. On timeout peripheraDiscoveredFuture will complete with error BCError.peripheralDiscoveryTimeout.
 
 To stop a peripheral scan use the TimedScannerator method,
 
@@ -1201,7 +1203,7 @@ public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectR
 
 **Discussion**
 
-BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;(Peripheral, ConnectionEvent)&gt; yielding a tuple containing the connected peripheral and the ConnectionEvent.
+BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *FutureStream&lt;(Peripheral, ConnectionEvent)&gt;* yielding a tuple containing the connected Peripheral and the ConnectionEvent.
 
 <table>
 	<tr>
@@ -1235,7 +1237,7 @@ public func disconnect()
 public func terminate()
 ```
 
-An application can connect a BlueCap Peripheral using,
+An application can connect a Peripheral using,
 
 ```swift
 let manager = CentralManager.sharedInstance
@@ -1270,25 +1272,25 @@ peripheralConnectFuture.onFailure {error in
 }
 ```
 
-Here the [peripheraDiscoveredFuture](#central_service_scanning) from the previous section is flatmapped to connect(capacity:Int? = nil, timeoutRetries:UInt, disconnectRetries:UInt?, connectionTimeout:Double) -> FutureStream<(Peripheral, ConnectionEvent)> to ensure that connections are made after peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is received and the peripheral connection is terminated ending all reconnection attempts.
+Here the [peripheraDiscoveredFuture](#central_service_scanning) from the previous section is flatmapped to *connect(capacity:Int? = nil, timeoutRetries:UInt, disconnectRetries:UInt?, connectionTimeout:Double) -> FutureStream&lt;(Peripheral, ConnectionEvent)&gt;* to ensure that connections are made after Peripherals are discovered. When ConnectionEvents of .Timeout and .Disconnect are received an attempt is made to reconnect the Peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a .GiveUp event is received and the Peripheral connection is terminated ending all reconnection attempts.
 
 ### <a name="central_characteristic_discovery">Service and Characteristic Discovery</a>
 
-After a peripheral is connected its services and characteristics must be discovered before characteristic values can be read or written to or update notifications can be received.
+After a Peripheral is connected its Services and Characteristics must be discovered before Characteristic values can be read or written to or update notifications can be received.
 
-There are several BlueCap Peripheral methods that can be used to discover services and characteristics. To discover both BlueCap Services and Characteristics use,
+There are several BlueCap Peripheral methods that can be used to discover Services and Characteristics.
 
 ```swift
 // Discover services and characteristics for services with UUIDs
 public func discoverPeripheralServices(services:[CBUUID]!) -> Future<Peripheral>
 
-// Discover all services and characteristics
+// Discover all services and characteristics supported by peripheral
 public func discoverAllPeripheralServices() -> Future<Peripheral>
 ```
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future&lt;Peripheral&gt; yielding the connected peripheral.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Peripheral&gt;* yielding the connected Peripheral.
 
-An application can discover a BlueCap Peripheral using,
+An application can discover a Peripheral using,
 
 ```swift
 // errors
@@ -1320,11 +1322,11 @@ characteristicsDiscoveredFuture.onFailure {error in
 }
 ```
 
-Here the [peripheralConnectFuture](#central_peripheralconnect) from the previous section is flatmapped to discoverPeripheralServices(services:[CBUUID]!) -> Future<Peripheral> to ensures that the peripheral is connected before service and characteristic discovery starts. Also, the peripheral is discovered only if it is connected and an error is returned if the peripheral is not connected.
+Here the [peripheralConnectFuture](#central_peripheralconnect) from the previous section is flatmapped to *discoverPeripheralServices(services:[CBUUID]!) -> Future&lt;Peripheral&gt;* to ensure that the Peripheral is connected before Service and Characteristic discovery starts. Also, the Peripheral is discovered only if it is connected and an error is returned if the Peripheral is not connected.
 
 ### <a name="central_characteristic_write">Characteristic Write</a>
 
-After a peripherals characteristics are discovered writing characteristic values is possible. Several BlueCap Characteristic methods are available,
+After a Peripherals Characteristics are discovered writing Characteristic values is possible. Many BlueCap Characteristic methods are available,
 
 ```swift
 // Write an NSData object to characteristic value
@@ -1370,8 +1372,7 @@ enum Enabled : UInt8, RawDeserializable {
 }
 let enabledUUID = CBUUID(string:Enabled.uuid)!
 …
-// characteristicsDiscoveredFuture and serviceUUID 
-// are defined in a previous section
+// characteristicsDiscoveredFuture and serviceUUID are defined in a previous section
 …
 let writeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
 	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
@@ -1390,11 +1391,11 @@ writeCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to func write<T:RawDeserializable>(value:T, timeout:Double) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
+Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *write&lt;T:RawDeserializable&gt;(value:T, timeout:Double) -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_read">Characteristic Read</a>
 
-After a peripherals characteristics are discovered reading characteristic values is possible. Several BlueCap Characteristic methods are available,
+After a Peripherals Characteristics are discovered reading Characteristic values is possible. Many BlueCap Characteristic methods are available,
 
 ```swift
 // Read a characteristic from a peripheral service
@@ -1462,11 +1463,11 @@ writeCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to read(timeout:Double) -> Future<Characteristic> to ensure that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
+Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *read(timeout:Double) -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_update">Characteristic Update Notifications</a>
 
-After a peripherals characteristics are discovered subscribing to characteristic value update notifications is possible. Several BlueCap Characteristic methods are available,
+After a Peripherals Characteristics are discovered subscribing to Characteristic value update notifications is possible. Several BlueCap Characteristic methods are available,
 
 ```swift
 // subscribe to characteristic update
@@ -1503,8 +1504,7 @@ enum Enabled : UInt8, RawDeserializable {
 }
 let enabledUUID = CBUUID(string:Enabled.uuid)!
 …
-// characteristicsDiscoveredFuture and serviceUUID 
-// are defined in a previous section
+// characteristicsDiscoveredFuture and serviceUUID are defined in a previous section
 …
 let subscribeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
 	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
@@ -1534,13 +1534,14 @@ updateCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to startNotifying() -> Future<Characteristic> to ensure that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to recieveNotificationUpdates(capacity:Int?) -> FutureStream<Characteristic> to ensure that the subsections is completed before receiving updates.
+Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *startNotifying() -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to *recieveNotificationUpdates(capacity:Int?) -> FutureStream&lt;Characteristic&gt;* to ensure that the subsections is completed before receiving updates.
 
-For an application to unsubscribe to characteristic value updates and stop receiving updates,
+For an application to unsubscribe to Characteristic value updates and stop receiving updates,
 
 ```swift
 // serviceUUID and enabledUUID are define in the example above
 if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
+	
 	// stop receiving updates
 	characteristic.stopNotificationUpdates()
 
@@ -1551,7 +1552,7 @@ if let service = peripheral.service(serviceUUID), characteristic = service.chara
 
 ## <a name="peripheral">PeripheralManager</a>
 
-The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allows chaining asynchronous calls as well as error handling and recovery. This section will describe interfaces and give example implementations for all supported use cases. [Simple Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications can be found in the BlueCap github repository.
+The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allows chaining asynchronous calls as well as error handling and recovery. This section will describe interfaces and give example implementations for all supported use cases. [Simple example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) can be found in the BlueCap github repository.
 
 ### <a name="peripheral_poweron_poweroff">PowerOn/PowerOff</a>
 
@@ -1575,7 +1576,7 @@ powerOffFuture.onSuccess {
 }
 ``` 
 
-When PeripheralManager is instantiated a message giving the current Bluetooth transceiver state is received and while the PeripheralManager is instantiated messages are received if the transceiver is powered or powered off.
+When PeripheralManager is instantiated a message giving the current bluetooth transceiver state is received and while the PeripheralManager is instantiated messages are received if the transceiver is powered or powered off.
 
 ### <a name="peripheral_add_characteristics">Add Services and Characteristics</a>
 
@@ -1595,7 +1596,7 @@ public func removeService(service:MutableService) -> Future<Void>
 public func removeAllServices() -> Future<Void>
 ``` 
 
-All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void>. The methods can only be used before PeripheralManager begins advertising.
+All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Void&gt;*. The methods can only be used before PeripheralManager begins advertising.
 
 The BlueCap MutableService methods are,
 
@@ -1641,16 +1642,16 @@ addServiceFuture.onFailure {error in
 }
 ```
 
-First BlueCap MutableServices and MutableCharacteristics are created and characteristic [CBCharacteristicProperties](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/index.html#//apple_ref/c/tdef/CBCharacteristicProperties) and [CBAttributePermissions](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/c/tdef/CBAttributePermissions) are specified. The characteristic is then added to the service. Then the BlueCap PeripheralManager powerOn() -> Future<Void> is flatmapped to removeAllServices() -> Future<Void> which is then flatmapped to addServices(services:[MutableService]) -> Future<Void>. This sequence ensures that the peripheral is powered and with no services before the new services are added.
+First BlueCap MutableServices and MutableCharacteristics are created and [CBCharacteristicProperties](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/index.html#//apple_ref/c/tdef/CBCharacteristicProperties) and [CBAttributePermissions](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/c/tdef/CBAttributePermissions) are specified. The Characteristic is then added to the Service. Then the PeripheralManager *powerOn() -> Future&lt;Void&gt;* is flatmapped to *removeAllServices() -> Future&lt;Void&gt;* which is then flatmapped to *addServices(services:[MutableService]) -> Future&lt;Void&gt;*. This sequence ensures that the Peripheral is powered and with no services before the new services are added.
 
-If service and characteristic GATT profile definistions are available creating services and characteristics is a little simpler,
+If Service and Characteristic GATT profile definitions are available creating Services and Characteristics is a little simpler,
 
 ```swift
 let  service = MutableService(profile:ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
 let characteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
 ```
 
-Here the BlueCap [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift).
+Here the BlueCap the [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) was used.
 
 ### <a name="peripheral_advertising">Advertising</a>
 
@@ -1667,7 +1668,7 @@ public func startAdvertising(name:String) -> Future<Void>
 public func stopAdvertising() -> Future<Void>
 ```
 
-All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void>. For a peripheral application to advertise,
+All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Void&gt;*. For a Peripheral application to advertise,
 
 ```swift
 // use service and characteristic defined in previous section
@@ -1688,17 +1689,17 @@ startAdvertiseFuture.onFailure {error in
 }
 ```
 
-Here the addServiceFuture of the previous section is flatmapped to startAdvertising(name:String, uuids:[CBUUID]?) -> Future<Void> ensuring that services and characteristics are available before advertising begins.
+Here the addServiceFuture of the previous section is flatmapped to *startAdvertising(name:String, uuids:[CBUUID]?) -> Future&lt;Void&gt;* ensuring that services and characteristics are available before advertising begins.
 
 ### <a name="peripheral_set_characteristic_value">Set Characteristic Value</a>
 
-A BlueCap Characteristic value can be set any time after creation of the characteristic. The BlueCap MutableCharacteristic methods used are,
+A BlueCap Characteristic value can be set any time after creation of the Characteristic. The BlueCap MutableCharacteristic methods used are,
 
 ```swift
 var value : NSData? {get set}
 ```
 
-It is not necessary for the PeripheralManager to be powered on or advertising to set a characteristic value. Only instantiation of the characteristic is required. 
+It is not necessary for the PeripheralManager to be powered on or advertising to set a characteristic value. 
 
 A peripheral application can set a characteristic value using,
 
@@ -1709,7 +1710,7 @@ characteristic.value = Serde.serialize(Enabled.Yes)
 
 ### <a name="peripheral_update_characteristic_value">Updating Characteristic Value</a>
 
-If a characteristic value supports the property CBCharacteristicProperties.Notify the Central can subscribed to receive updates. In addition to setting the new value an update notification must be sent. The BlueCap MutableCharacteristic methods used are,
+If a Characteristic value supports the property CBCharacteristicProperties.Notify a Central can subscribe to value updates. In addition to setting the new value an update notification must be sent. The BlueCap MutableCharacteristic methods used are,
 
 ```swift
 // update with NSData
@@ -1734,7 +1735,7 @@ public func updateValue<T:RawPairDeserializable>(value:T) -> Bool
 public func updateValue<T:RawArrayPairDeserializable>(value:T) -> Bool
 ```
 
-All methods return a Bool which is true if the update succeeds and false if there are no subscribers, CBCharacteristicProperties.Notify is not supported or the length of the update queue is exceeded. In addition to sending an update notification to a subscribing central the characteristic value is set. A BlueCap Characteristic value can be updated any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Though in this case the update will fail and return false.
+All methods return a Bool which is true if the update succeeds and false if either there are no subscribers, CBCharacteristicProperties.Notify is not supported or the length of the update queue is exceeded. In addition to sending an update notification to a subscribing Central the Characteristic value is set. A BlueCap Characteristic value can be updated any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Though in this case the update will fail and return false.
 
 Peripheral applications would send notification updates using,
 
@@ -1745,7 +1746,7 @@ characteristic.updateValue(Enabled.No)
 
 ### <a name="peripheral_respond_characteristic_write">Respond to Characteristic Write</a>
 
-If a characteristic value supports the property CBCharacteristicProperties.Write the Central can change the characteristic value. The BlueCap MutableCharacteristic methods used are,
+If a Characteristic value supports the property CBCharacteristicProperties.Write a Central can change the Characteristic value. The BlueCap MutableCharacteristic methods used are,
 
 ```swift
 // start processing write requests with stream capacity
@@ -1758,7 +1759,7 @@ func respondToRequest(request:CBATTRequest, withResult result:CBATTError)
 public func stopProcessingWriteRequests()
 ```
 
-[CBATTRequest](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBATTRequest_class/index.html) encapsulates Central write requests, [CBATTError](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CoreBluetooth_Constants/index.html#//apple_ref/c/tdef/CBATTError) encapsulates response code and a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream<CBATTRequest> is used to respond to write requests.
+[CBATTRequest](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBATTRequest_class/index.html) encapsulates Central write requests, [CBATTError](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CoreBluetooth_Constants/index.html#//apple_ref/c/tdef/CBATTError) encapsulates response the code and a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;CBATTRequest&gt; is used to respond to write requests.
 
 Peripheral applications would start responding to Central writes using,
 
@@ -1782,7 +1783,7 @@ characteristic.stopProcessingWriteRequests()
 
 ### <a name="peripheral_ibeacon_emulation">iBeacon Emulation</a>
 
-iBeacon emulation does not require support of services and characteristics. Only advertising is required. The BlueCap PeripheralManager methods used are, 
+iBeacon emulation does not require Services and Characteristics. Only advertising is required. The BlueCap PeripheralManager methods used are, 
 
 ```swift
 // start advertising beceacon region
@@ -1792,9 +1793,7 @@ public func startAdvertising(region:BeaconRegion) -> Future<Void>
 public func stopAdvertising() -> Future<Void>
 ```
 
-All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void>. 
-
-Creation of a [FutureLocation](https://github.com/troystribling/FutureLocation) BeaconRegion is also required,
+All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future&lt;Void&gt;. Creation of a [FutureLocation](https://github.com/troystribling/FutureLocation) BeaconRegion is also required,
 
 ```swift
 public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16)
@@ -1837,7 +1836,7 @@ startAdvertiseFuture.onFailure {error in
 }
 ```
 
-Here the powerOn() -> Future<Void> flatmapped to startAdvertising(region:BeaconRegion) -> Future<Void> ensuring that the bluetooth transceiver is powered.
+Here the *powerOn() -> Future&lt;Void&gt;* flatmapped to *startAdvertising(region:BeaconRegion) -> Future&lt;Void&gt;* ensuring that the bluetooth transceiver is powered on before advertising begins.
 
 
 
