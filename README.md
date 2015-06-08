@@ -337,7 +337,7 @@ enum Enabled : UInt8, RawDeserializable {
 and, 
 ```swift
 let data = Serde.serialize(Enabled.Yes)
-if let value : Enabled Serde.deserialize(data) {
+if let value : Enabled = Serde.deserialize(data) {
     println("\(value.rawValue)")
 }
 ```
