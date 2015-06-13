@@ -8,6 +8,7 @@
 
 import Foundation
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Box
 public final class Box<T> {
     
@@ -26,6 +27,7 @@ public final class Box<T> {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Optional
 extension Optional {
     
@@ -158,6 +160,7 @@ public func forcomp<T,U,V,W>(f:T?, g:U?, h:V?, #filter:(T,U,V) -> Bool, #yield:(
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Try
 public struct TryError {
     public static let domain = "Wrappers"
@@ -377,28 +380,20 @@ public func forcomp<T,U,V,W>(f:Try<T>, g:Try<U>, h:Try<V>, #filter:(T,U,V) -> Bo
     
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ExecutionContext
 public protocol ExecutionContext {
     
     func execute(task:Void->Void)
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // QueueContext
-public class QueueContext : ExecutionContext {
+public struct QueueContext : ExecutionContext {
     
-    public class var main : QueueContext {
-        struct Static {
-            static let instance = QueueContext(queue:Queue.main)
-        }
-        return Static.instance
-    }
+    public static let main =  QueueContext(queue:Queue.main)
     
-    public class var global: QueueContext {
-        struct Static {
-            static let instance : QueueContext = QueueContext(queue:Queue.global)
-        }
-        return Static.instance
-    }
+    public static let global = QueueContext(queue:Queue.global)
     
     let queue:Queue
     
@@ -411,6 +406,7 @@ public class QueueContext : ExecutionContext {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Queue
 public struct Queue {
     
@@ -449,6 +445,7 @@ public struct Queue {
     
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 public struct SimpleFuturesError {
     static let domain = "SimpleFutures"
     static let futureCompleted      = NSError(domain:domain, code:1, userInfo:[NSLocalizedDescriptionKey:"Future has been completed"])
@@ -459,6 +456,7 @@ public struct SimpleFuturesException {
     static let futureCompleted = NSException(name:"Future complete error", reason: "Future previously completed.", userInfo:nil)
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Promise
 public class Promise<T> {
     
@@ -493,6 +491,7 @@ public class Promise<T> {
     
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Future
 public class Future<T> {
     
@@ -509,7 +508,20 @@ public class Future<T> {
     public init() {
     }
     
-    // should be Futureable protocol
+    // should be future mixin
+    internal func complete(result:Try<T>) {
+        Queue.simpleFutures.sync {
+            if self.result != nil {
+                SimpleFuturesException.futureCompleted.raise()
+            }
+            self.result = result
+            for complete in self.saveCompletes {
+                complete(result)
+            }
+            self.saveCompletes.removeAll()
+        }
+    }
+    
     public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) -> Void {
         Queue.simpleFutures.sync {
             let savedCompletion : OnComplete = {result in
@@ -522,20 +534,6 @@ public class Future<T> {
             } else {
                 self.saveCompletes.append(savedCompletion)
             }
-        }
-    }
-    
-    // should be future mixin
-    internal func complete(result:Try<T>) {
-        Queue.simpleFutures.sync {
-            if self.result != nil {
-                SimpleFuturesException.futureCompleted.raise()
-            }
-            self.result = result
-            for complete in self.saveCompletes {
-                complete(result)
-            }
-            self.saveCompletes.removeAll()
         }
     }
     
@@ -691,35 +689,35 @@ public class Future<T> {
     
     // future stream extensions
     public func flatmap<M>(capacity:Int, mapping:T -> FutureStream<M>) -> FutureStream<M> {
-        return self.flatMap(capacity, executionContext:self.defaultExecutionContext, mapping:mapping)
+        return self.flatMapStream(capacity, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
     
     public func flatmap<M>(mapping:T -> FutureStream<M>) -> FutureStream<M> {
-        return self.flatMap(nil, executionContext:self.defaultExecutionContext, mapping:mapping)
+        return self.flatMapStream(nil, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
     
     public func flatmap<M>(capacity:Int, executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M>  {
-        return self.flatMap(capacity, executionContext:self.defaultExecutionContext, mapping:mapping)
+        return self.flatMapStream(capacity, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
     
     public func flatmap<M>(executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M>  {
-        return self.flatMap(nil, executionContext:self.defaultExecutionContext, mapping:mapping)
+        return self.flatMapStream(nil, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
     
     public func recoverWith(recovery:NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWith(nil, executionContext:self.defaultExecutionContext, recovery:recovery)
+        return self.recoverWithStream(nil, executionContext:self.defaultExecutionContext, recovery:recovery)
     }
     
     public func recoverWith(capacity:Int, recovery:NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWith(capacity, executionContext:self.defaultExecutionContext, recovery:recovery)
+        return self.recoverWithStream(capacity, executionContext:self.defaultExecutionContext, recovery:recovery)
     }
     
     public func recoverWith(executionContext:ExecutionContext, recovery:NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWith(nil, executionContext:executionContext, recovery:recovery)
+        return self.recoverWithStream(nil, executionContext:executionContext, recovery:recovery)
     }
     
     public func recoverWith(capacity:Int, executionContext:ExecutionContext, recovery:NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWith(capacity, executionContext:executionContext, recovery:recovery)
+        return self.recoverWithStream(capacity, executionContext:executionContext, recovery:recovery)
     }
     
     internal func completeWith(stream:FutureStream<T>) {
@@ -732,7 +730,7 @@ public class Future<T> {
         }
     }
     
-    internal func flatMap<M>(capacity:Int?, executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M> {
+    internal func flatMapStream<M>(capacity:Int?, executionContext:ExecutionContext, mapping:T -> FutureStream<M>) -> FutureStream<M> {
         let stream = FutureStream<M>(capacity:capacity)
         self.onComplete(executionContext) {result in
             switch result {
@@ -745,7 +743,7 @@ public class Future<T> {
         return stream
     }
     
-    internal func recoverWith(capacity:Int?, executionContext:ExecutionContext, recovery:NSError -> FutureStream<T>) -> FutureStream<T> {
+    internal func recoverWithStream(capacity:Int?, executionContext:ExecutionContext, recovery:NSError -> FutureStream<T>) -> FutureStream<T> {
         let stream = FutureStream<T>(capacity:capacity)
         self.onComplete(executionContext) {result in
             switch result {
@@ -760,6 +758,7 @@ public class Future<T> {
     
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create futures
 public func future<T>(computeResult:Void -> Try<T>) -> Future<T> {
     return future(QueueContext.global, computeResult)
@@ -786,6 +785,7 @@ public func forcomp<T,U>(executionContext:ExecutionContext, f:Future<T>, g:Futur
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // for comprehensions
 public func forcomp<T,U>(f:Future<T>, g:Future<U>, #filter:(T,U) -> Bool, #apply:(T,U) -> Void) -> Void {
     return forcomp(f.defaultExecutionContext, f, g, filter:filter, apply:apply)
@@ -887,6 +887,7 @@ public func forcomp<T,U, V, W>(executionContext:ExecutionContext, f:Future<T>, g
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // StreamPromise
 public class StreamPromise<T> {
     
@@ -905,7 +906,7 @@ public class StreamPromise<T> {
     }
     
     public func completeWith(executionContext:ExecutionContext, future:Future<T>) {
-        future.completeWith(future)
+        future.completeWith(executionContext, future:future)
     }
     
     public func success(value:T) {
@@ -921,11 +922,12 @@ public class StreamPromise<T> {
     }
     
     public func completeWith(executionContext:ExecutionContext, stream:FutureStream<T>) {
-        future.completeWith(stream)
+        future.completeWith(executionContext, stream:stream)
     }
     
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FutureStream
 public class FutureStream<T> {
     
@@ -944,7 +946,18 @@ public class FutureStream<T> {
         self.capacity = capacity
     }
     
-    // Futureable protocol
+    // should be future mixin
+    internal func complete(result:Try<T>) {
+        let future = Future<T>()
+        future.complete(result)
+        Queue.simpleFutureStreams.sync {
+            self.addFuture(future)
+            for complete in self.saveCompletes {
+                complete(future)
+            }
+        }
+    }
+    
     public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) {
         Queue.simpleFutureStreams.sync {
             let futureComplete : InFuture = {future in
@@ -957,18 +970,6 @@ public class FutureStream<T> {
         }
     }
     
-    internal func complete(result:Try<T>) {
-        let future = Future<T>()
-        future.complete(result)
-        Queue.simpleFutureStreams.sync {
-            self.addFuture(future)
-            for complete in self.saveCompletes {
-                complete(future)
-            }
-        }
-    }
-    
-    // should be future mixin
     public func onComplete(complete:Try<T> -> Void) {
         self.onComplete(self.defaultExecutionContext, complete:complete)
     }
