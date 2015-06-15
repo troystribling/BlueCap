@@ -1836,7 +1836,7 @@ startAdvertiseFuture.onFailure {error in
 }
 ```
 
-Here the *powerOn() -> Future&lt;Void&gt;* flatmapped to *startAdvertising(region:BeaconRegion) -> Future&lt;Void&gt;* ensuring that the bluetooth transceiver is powered on before advertising begins.
+Here the powerOn() -> Future&lt;Void&gt; flatmapped to startAdvertising(region:BeaconRegion) -> Future&lt;Void&gt; ensuring that the bluetooth transceiver is powered on before advertising begins.
 
 
 
