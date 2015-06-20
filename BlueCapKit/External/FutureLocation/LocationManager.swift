@@ -100,14 +100,14 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
     }
     
     public func didFailWithError(error:NSError!) {
-        Logger.debug(message:"error \(error.localizedDescription)")
+        Logger.debug("error \(error.localizedDescription)")
         if let locationUpdatePromise = self.locationUpdatePromise {
             locationUpdatePromise.failure(error)
         }
     }
     
     public func didChangeAuthorizationStatus(status:CLAuthorizationStatus) {
-        Logger.debug(message:"status: \(status)")
+        Logger.debug("status: \(status)")
         self.authorizationStatusChangedPromise?.success(status)
         self.authorizationStatusChangedPromise = nil
     }
@@ -120,10 +120,10 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
             case .AuthorizedAlways:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .AuthorizedAlways {
-                        Logger.debug(message:"location AuthorizedAlways succcess")
+                        Logger.debug("location AuthorizedAlways succcess")
                         promise.success()
                     } else {
-                        Logger.debug(message:"location AuthorizedAlways failed")
+                        Logger.debug("location AuthorizedAlways failed")
                         promise.failure(FLError.authoizationAlwaysFailed)
                     }
                 }
@@ -132,17 +132,17 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
             case .AuthorizedWhenInUse:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .AuthorizedWhenInUse {
-                        Logger.debug(message:"location AuthorizedWhenInUse succcess")
+                        Logger.debug("location AuthorizedWhenInUse succcess")
                         promise.success()
                     } else {
-                        Logger.debug(message:"location AuthorizedWhenInUse failed")
+                        Logger.debug("location AuthorizedWhenInUse failed")
                         promise.failure(FLError.authoizationWhenInUseFailed)
                     }
                 }
                 locationManager.requestWhenInUseAuthorization()
                 break
             default:
-                Logger.debug(message:"location authorization invalid")
+                Logger.debug("location authorization invalid")
                 break
             }
         } else {
@@ -253,15 +253,15 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     public class func reverseGeocodeLocation(location:CLLocation) -> Future<[CLPlacemark]>  {
         let geocoder = CLGeocoder()
         let promise = Promise<[CLPlacemark]>()
-        geocoder.reverseGeocodeLocation(location){(placemarks:[AnyObject]!, error:NSError!) in
+        geocoder.reverseGeocodeLocation(location){(placemarks:[CLPlacemark]?, error:NSError?) in
             if let error = error {
                 promise.failure(error)
             } else {
-                var places = [CLPlacemark]()
-                if placemarks != nil {
-                    places = placemarks.map {$0 as! CLPlacemark}
+                if let placemarks = placemarks {
+                    promise.success(placemarks)
+                } else {
+                    promise.success([CLPlacemark]())
                 }
-                promise.success(places)
             }
         }
         return promise.future
@@ -276,7 +276,7 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     // reverse geocode
     public func reverseGeocodeLocation()  -> Future<[CLPlacemark]>  {
         if let location = self.location {
-            return LocationManager.reverseGeocodeLocation(self.location)
+            return LocationManager.reverseGeocodeLocation(location)
         } else {
             let promise = Promise<[CLPlacemark]>()
             promise.failure(FLError.locationUpdateFailed)
@@ -312,21 +312,19 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     }
     
     // CLLocationManagerDelegate
-    public func locationManager(_:CLLocationManager!, didUpdateLocations locations:[AnyObject]!) {
-        if let locations = locations {
-            let cllocations = locations.map{$0 as! CLLocation}
-            self.locationImpl.didUpdateLocations(cllocations)
-        }
+    public func locationManager(_:CLLocationManager, didUpdateLocations locations:[AnyObject]) {
+        let cllocations = locations.map{$0 as! CLLocation}
+        self.locationImpl.didUpdateLocations(cllocations)
     }
     
-    public func locationManager(_:CLLocationManager!, didFailWithError error:NSError!) {
+    public func locationManager(_:CLLocationManager, didFailWithError error:NSError) {
         self.locationImpl.didFailWithError(error)
     }
     
-    public func locationManager(_:CLLocationManager!, didFinishDeferredUpdatesWithError error:NSError!) {
+    public func locationManager(_:CLLocationManager, didFinishDeferredUpdatesWithError error:NSError?) {
     }
         
-    public func locationManager(_:CLLocationManager!, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
+    public func locationManager(_:CLLocationManager, didChangeAuthorizationStatus status:CLAuthorizationStatus) {
         self.locationImpl.didChangeAuthorizationStatus(status)
     }
     

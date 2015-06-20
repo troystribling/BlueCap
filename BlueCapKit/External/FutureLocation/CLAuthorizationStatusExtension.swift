@@ -30,7 +30,7 @@
 
 import CoreLocation
 
-extension CLAuthorizationStatus: Printable {
+extension CLAuthorizationStatus: CustomStringConvertible {
     public var description: String {
         switch self {
         case .AuthorizedAlways:

@@ -9,8 +9,8 @@
 import Foundation
 import CoreLocation
 
-/////////////////////////////////////////////
-// BeaconManagerImpl
+///////////////////////////////////////////////
+//// BeaconManagerImpl
 public protocol BeaconManagerWrappable {
 
     typealias WrappedBeaconRegion
@@ -29,23 +29,17 @@ public protocol BeaconRegionWrappable {
     
     var identifier     : String                         {get}
     var beaconPromise  : StreamPromise<[WrappedBeacon]> {get}
- 
+    
     func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [NSObject:AnyObject]
 }
 
 public protocol BeaconWrappable {
 }
 
-extension BeaconRegion : BeaconRegionWrappable {
-}
-
-extension Beacon : BeaconWrappable {
-}
-
 public class BeaconManagerImpl<Wrapper where
-                                Wrapper:BeaconManagerWrappable,
-                                Wrapper.WrappedBeaconRegion:BeaconRegionWrappable,
-                                Wrapper.WrappedBeaconRegion.WrappedBeacon:BeaconWrappable> {
+                                 Wrapper:BeaconManagerWrappable,
+                                 Wrapper.WrappedBeaconRegion:BeaconRegionWrappable,
+                                 Wrapper.WrappedBeaconRegion.WrappedBeacon:BeaconWrappable> {
 
     private var regionRangingStatus = [String:Bool]()
 
@@ -104,12 +98,12 @@ public class BeaconManagerImpl<Wrapper where
     
     // CLLocationManagerDelegate
     public func didRangeBeacons(beacons:[Wrapper.WrappedBeaconRegion.WrappedBeacon], region:Wrapper.WrappedBeaconRegion) {
-        Logger.debug(message:"region identifier = \(region.identifier)")
+        Logger.debug("region identifier = \(region.identifier)")
         region.beaconPromise.success(beacons)
     }
     
     public func didFailRangingBeaconsForRegion(region:Wrapper.WrappedBeaconRegion, error:NSError!) {
-        Logger.debug(message:"region identifier \(region.identifier)")
+        Logger.debug("region identifier \(region.identifier)")
         region.beaconPromise.failure(error)
     }
 
@@ -202,7 +196,7 @@ public class BeaconManager : RegionManager, BeaconManagerWrappable {
     
     // CLLocationManagerDelegate
     public func locationManager(_:CLLocationManager!, didRangeBeacons beacons:[AnyObject]!, inRegion region:CLBeaconRegion!) {
-        Logger.debug(message: "region identifier \(region.identifier)")
+        Logger.debug("region identifier \(region.identifier)")
         if let beaconRegion = self.configuredBeaconRegions[region] {
             let bcbeacons = beacons.map{Beacon(clbeacon:($0 as! CLBeacon))}
             beaconRegion._beacons = bcbeacons
@@ -211,7 +205,7 @@ public class BeaconManager : RegionManager, BeaconManagerWrappable {
     }
     
     public func locationManager(_:CLLocationManager!, rangingBeaconsDidFailForRegion region:CLBeaconRegion!, withError error:NSError!) {
-        Logger.debug(message:"region identifier \(region.identifier)")
+        Logger.debug("region identifier \(region.identifier)")
         if let beaconRegion = self.configuredBeaconRegions[region] {
             self.beaconImpl.didFailRangingBeaconsForRegion(beaconRegion, error:error)
         }

@@ -13,7 +13,7 @@ public extension Float {
     /**
         Absolute value.
         
-        :returns: fabs(self)
+        - returns: fabs(self)
     */
     func abs () -> Float {
         return fabsf(self)
@@ -22,7 +22,7 @@ public extension Float {
     /**
         Squared root.
     
-        :returns: sqrtf(self)
+        - returns: sqrtf(self)
     */
     func sqrt () -> Float {
         return sqrtf(self)
@@ -31,7 +31,7 @@ public extension Float {
     /**
         Rounds self to the largest integer <= self.
     
-        :returns: floorf(self)
+        - returns: floorf(self)
     */
     func floor () -> Float {
         return floorf(self)
@@ -40,7 +40,7 @@ public extension Float {
     /**
         Rounds self to the smallest integer >= self.
     
-        :returns: ceilf(self)
+        - returns: ceilf(self)
     */
     func ceil () -> Float {
         return ceilf(self)
@@ -49,18 +49,29 @@ public extension Float {
     /**
         Rounds self to the nearest integer.
     
-        :returns: roundf(self)
+        - returns: roundf(self)
     */
     func round () -> Float {
         return roundf(self)
+    }
+        
+    /**
+        Clamps self to a specified range.
+    
+        - parameter min: Lower bound
+        - parameter max: Upper bound
+        - returns: Clamped value
+    */
+    func clamp (min: Float, _ max: Float) -> Float {
+        return Swift.max(min, Swift.min(max, self))
     }
     
     /**
         Random float between min and max (inclusive).
     
-        :param: min
-        :param: max
-        :returns: Random number
+        - parameter min:
+        - parameter max:
+        - returns: Random number
     */
     static func random(min: Float = 0, max: Float) -> Float {
         let diff = max - min;

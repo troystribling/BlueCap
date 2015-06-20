@@ -9,10 +9,18 @@
 import UIKit
 import CoreLocation
 
-public class BeaconRegion : Region {
+public class BeaconRegion : Region, BeaconRegionWrappable {
     
     // BeaconRegionWrappable
     public let beaconPromise  : StreamPromise<[Beacon]>
+    
+    public func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [NSObject:AnyObject] {
+        if let measuredPower = measuredPower {
+            return self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as [NSObject : AnyObject]
+        } else {
+            return self.clBeaconRegion.peripheralDataWithMeasuredPower(nil) as [NSObject : AnyObject]
+        }
+    }    
     // BeaconRegionWrappable
     
     internal var _beacons       = [Beacon]()
@@ -20,7 +28,7 @@ public class BeaconRegion : Region {
     internal  let clBeaconRegion : CLBeaconRegion
     
     public var beacons : [Beacon] {
-        return sorted(self._beacons, {(b1:Beacon, b2:Beacon) -> Bool in
+        return self._beacons.sort() {(b1:Beacon, b2:Beacon) -> Bool in
             switch b1.discoveredAt.compare(b2.discoveredAt) {
             case .OrderedSame:
                 return true
@@ -29,7 +37,7 @@ public class BeaconRegion : Region {
             case .OrderedAscending:
                 return true
             }
-        })
+        }
     }
     
     public var proximityUUID : NSUUID? {
@@ -93,14 +101,4 @@ public class BeaconRegion : Region {
         return CLLocationManager.isMonitoringAvailableForClass(CLBeaconRegion)
     }
     
-    public func peripheralDataWithMeasuredPower(_ measuredPower:Int? = nil) -> [NSObject:AnyObject] {
-        if let measuredPower = measuredPower {
-            let dict = self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as NSDictionary
-            return dict as! [NSObject:AnyObject]
-        } else {
-            let dict = self.clBeaconRegion.peripheralDataWithMeasuredPower(nil) as NSDictionary
-            return dict as! [NSObject:AnyObject]
-        }
-    }
-
 }

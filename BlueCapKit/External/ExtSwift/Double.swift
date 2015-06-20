@@ -13,7 +13,7 @@ public extension Double {
     /**
         Absolute value.
     
-        :returns: fabs(self)
+        - returns: fabs(self)
     */
     func abs () -> Double {
         return Foundation.fabs(self)
@@ -22,7 +22,7 @@ public extension Double {
     /**
         Squared root.
     
-        :returns: sqrt(self)
+        - returns: sqrt(self)
     */
     func sqrt () -> Double {
         return Foundation.sqrt(self)
@@ -31,7 +31,7 @@ public extension Double {
     /**
         Rounds self to the largest integer <= self.
     
-        :returns: floor(self)
+        - returns: floor(self)
     */
     func floor () -> Double {
         return Foundation.floor(self)
@@ -40,7 +40,7 @@ public extension Double {
     /**
         Rounds self to the smallest integer >= self.
     
-        :returns: ceil(self)
+        - returns: ceil(self)
     */
     func ceil () -> Double {
         return Foundation.ceil(self)
@@ -49,23 +49,45 @@ public extension Double {
     /**
         Rounds self to the nearest integer.
     
-        :returns: round(self)
+        - returns: round(self)
     */
     func round () -> Double {
         return Foundation.round(self)
     }
     
     /**
+        Clamps self to a specified range.
+    
+        - parameter min: Lower bound
+        - parameter max: Upper bound
+        - returns: Clamped value
+    */
+    func clamp (min: Double, _ max: Double) -> Double {
+        return Swift.max(min, Swift.min(max, self))
+    }
+    
+    /**
+        Just like round(), except it supports rounding to an arbitrary number, not just 1
+        Be careful about rounding errors
+    
+        :params: increment the increment to round to
+    */
+    func roundToNearest(increment: Double) -> Double {
+        let remainder = self % increment
+        return remainder < increment / 2 ? self - remainder : self - remainder + increment
+    }
+
+    /**
         Random double between min and max (inclusive).
     
         :params: min
         :params: max
-        :returns: Random number
+        - returns: Random number
     */
     static func random(min: Double = 0, max: Double) -> Double {
         let diff = max - min;
         let rand = Double(arc4random() % (UInt32(RAND_MAX) + 1))
         return ((rand / Double(RAND_MAX)) * diff) + min;
     }
-    
+
 }
