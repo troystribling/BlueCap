@@ -14,18 +14,6 @@ extension UInt8 : Deserializable {
         return sizeof(UInt8)
     }
 
-    public init?(stringValue:String) {
-        if let value = stringValue.toInt() {
-            if value > 255 || value < 0 {
-                return nil
-            } else {
-                self = UInt8(value)
-            }
-        } else {
-            return nil
-        }
-    }
-
     public init?(doubleValue:Double) {
         if doubleValue > 255.0 || doubleValue < 0.0 {
             return nil

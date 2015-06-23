@@ -27,7 +27,7 @@ func byteArrayValue<T>(value:T) -> [UInt8] {
 
 func reverseBytes<T>(value:T) -> T {
     var result = value
-    var swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length:sizeof(T))
+    let swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length:sizeof(T))
     swappedBytes.getBytes(&result, length:sizeof(T))
     return result
 }
@@ -37,7 +37,6 @@ public protocol Deserializable {
     static func deserialize(data:NSData) -> Self?
     static func deserialize(data:NSData, start:Int) -> Self?
     static func deserialize(data:NSData) -> [Self]
-    init?(stringValue:String)
 }
 
 public protocol Serializable {

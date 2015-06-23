@@ -65,7 +65,7 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     
     public func startScanningForServiceUUIDs(central:Wrapper, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
         if !self._isScanning {
-            Logger.debug(message:"UUIDs \(uuids)")
+            Logger.debug("UUIDs \(uuids)")
             self._isScanning = true
             if let capacity = capacity {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Wrapper.WrappedPeripheral>(capacity:capacity)
@@ -125,25 +125,25 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
     public func didUpdateState(central:Wrapper) {
         switch(central.state) {
         case .Unauthorized:
-            Logger.debug(message:"Unauthorized")
+            Logger.debug("Unauthorized")
             break
         case .Unknown:
-            Logger.debug(message:"Unknown")
+            Logger.debug("Unknown")
             break
         case .Unsupported:
-            Logger.debug(message:"Unsupported")
+            Logger.debug("Unsupported")
             break
         case .Resetting:
-            Logger.debug(message:"Resetting")
+            Logger.debug("Resetting")
             break
         case .PoweredOff:
-            Logger.debug(message:"PoweredOff")
+            Logger.debug("PoweredOff")
             if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
             break
         case .PoweredOn:
-            Logger.debug(message:"PoweredOn")
+            Logger.debug("PoweredOn")
             if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
@@ -252,14 +252,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     
     // CBCentralManagerDelegate
     public func centralManager(_:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
-        Logger.debug(message:"peripheral name \(peripheral.name)")
+        Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     public func centralManager(_:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
-        Logger.debug(message:"peripheral name \(peripheral.name)")
+        Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }
@@ -268,7 +268,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:[NSObject:AnyObject]!, RSSI:NSNumber!) {
         if self.discoveredPeripherals[peripheral] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
-            Logger.debug(message:"peripheral name \(bcPeripheral.name)")
+            Logger.debug("peripheral name \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
             self.impl.didDiscoverPeripheral(bcPeripheral)
         }
@@ -304,7 +304,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     internal func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
-        Logger.debug(message:"number of advertisements found \(advertDictionary.count)")
+        Logger.debug("number of advertisements found \(advertDictionary.count)")
         var advertisements = [String:String]()
         func addKey(key:String, andValue value:AnyObject) -> () {
             if value is NSString {
@@ -312,7 +312,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
             } else {
                 advertisements[key] = value.stringValue
             }
-            Logger.debug(message:"advertisement key=\(key), value=\(advertisements[key])")
+            Logger.debug("advertisement key=\(key), value=\(advertisements[key])")
         }
         if advertDictionary != nil {
             for keyObject : NSObject in advertDictionary.keys {

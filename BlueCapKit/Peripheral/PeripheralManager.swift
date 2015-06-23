@@ -137,7 +137,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
             self.afterSeriviceAddPromise = Promise<Void>()
             if !peripheral.isAdvertising {
                 peripheral.addWrappedService(service)
-                Logger.debug(message:"service name=\(service.name), uuid=\(service.uuid)")
+                Logger.debug("service name=\(service.name), uuid=\(service.uuid)")
             } else {
                 self.afterSeriviceAddPromise.failure(BCError.peripheralManagerIsAdvertising)
             }
@@ -146,7 +146,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     }
     
     public func addServices(peripheral:Wrapper, services:[Wrapper.WrappedService]) -> Future<Void> {
-        Logger.debug(message:"service count \(services.count)")
+        Logger.debug("service count \(services.count)")
         let promise = Promise<Void>()
         self.addService(peripheral, promise:promise, services:services)
         return promise.future
@@ -158,17 +158,17 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
             future.onSuccess {
                 if services.count > 1 {
                     let servicesTail = Array(services[1...services.count-1])
-                    Logger.debug(message:"services remaining \(servicesTail.count)")
+                    Logger.debug("services remaining \(servicesTail.count)")
                     self.addService(peripheral, promise:promise, services:servicesTail)
                 } else {
-                    Logger.debug(message:"completed")
+                    Logger.debug("completed")
                     promise.success()
                 }
             }
             future.onFailure {(error) in
                 let future = self.removeAllServices(peripheral)
                 future.onSuccess {
-                    Logger.debug(message:"failed '\(error.localizedDescription)'")
+                    Logger.debug("failed '\(error.localizedDescription)'")
                     promise.failure(error)
                 }
             }
@@ -178,7 +178,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     public func removeService(peripheral:Wrapper, service:Wrapper.WrappedService) -> Future<Void> {
         let promise = Promise<Void>()
         if !peripheral.isAdvertising {
-            Logger.debug(message:"removing service \(service.uuid.UUIDString)")
+            Logger.debug("removing service \(service.uuid.UUIDString)")
             peripheral.removeWrappedService(service)
             promise.success()
         } else {
@@ -203,13 +203,13 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     public func didUpdateState(peripheral:Wrapper) {
         switch peripheral.state {
         case CBPeripheralManagerState.PoweredOn:
-            Logger.debug(message:"poweredOn")
+            Logger.debug("poweredOn")
             if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
             break
         case CBPeripheralManagerState.PoweredOff:
-            Logger.debug(message:"poweredOff")
+            Logger.debug("poweredOff")
             if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
@@ -227,20 +227,20 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
     
     public func didStartAdvertising(error:NSError!) {
         if let error = error {
-            Logger.debug(message:"failed '\(error.localizedDescription)'")
+            Logger.debug("failed '\(error.localizedDescription)'")
             self.afterAdvertisingStartedPromise.failure(error)
         } else {
-            Logger.debug(message:"success")
+            Logger.debug("success")
             self.afterAdvertisingStartedPromise.success()
         }
     }
     
     public func didAddService(error:NSError!) {
         if let error = error {
-            Logger.debug(message:"failed '\(error.localizedDescription)'")
+            Logger.debug("failed '\(error.localizedDescription)'")
             self.afterSeriviceAddPromise.failure(error)
         } else {
-            Logger.debug(message:"success")
+            Logger.debug("success")
             self.afterSeriviceAddPromise.success()
         }
     }
@@ -254,7 +254,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
                 self.lookForAdvertisingToStop(peripheral)
             }
         } else {
-            Logger.debug(message:"advertising stopped")
+            Logger.debug("advertising stopped")
             self.afterAdvertsingStoppedPromise.success()
         }
     }
@@ -439,13 +439,13 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     }
     
     public func peripheralManager(_:CBPeripheralManager!, didReceiveReadRequest request:CBATTRequest!) {
-        Logger.debug(message:"chracteracteristic \(request.characteristic.UUID)")
+        Logger.debug("chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic] {
-            Logger.debug(message:"responding with data: \(characteristic.stringValue)")
+            Logger.debug("responding with data: \(characteristic.stringValue)")
             request.value = characteristic.value
             self.cbPeripheralManager.respondToRequest(request, withResult:CBATTError.Success)
         } else {
-            Logger.debug(message:"characteristic not found")
+            Logger.debug("characteristic not found")
             self.cbPeripheralManager.respondToRequest(request, withResult:CBATTError.AttributeNotFound)
         }
     }
@@ -455,14 +455,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         for request in requests {
             let cbattRequest = request as! CBATTRequest
             if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
-                Logger.debug(message:"characteristic write request received for \(characteristic.uuid.UUIDString)")
+                Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
                 if characteristic.didRespondToWriteRequest(cbattRequest) {
                     characteristic.value = cbattRequest.value
                 } else {
                     characteristic.respondToRequest(cbattRequest, withResult:CBATTError.WriteNotPermitted)
                 }
             } else {
-                Logger.debug(message:"error writing characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
+                Logger.debug("error writing characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
             }
         }
     }

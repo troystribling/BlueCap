@@ -122,7 +122,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     public func read(characteristic:Wrapper, timeout:Double = 10.0) -> Future<Wrapper> {
         self.readPromise = Promise<Wrapper>()
         if characteristic.propertyEnabled(.Read) {
-            Logger.debug(message:"read characteristic \(characteristic.uuid.UUIDString)")
+            Logger.debug("read characteristic \(characteristic.uuid.UUIDString)")
             characteristic.readValueForCharacteristic()
             self.reading = true
             ++self.readSequence
@@ -136,7 +136,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     public func writeData(characteristic:Wrapper, value:NSData, timeout:Double = 10.0) -> Future<Wrapper> {
         self.writePromise = Promise<Wrapper>()
         if characteristic.propertyEnabled(.Write) {
-            Logger.debug(message:"write characteristic value=\(value.hexStringValue()), uuid=\(characteristic.uuid.UUIDString)")
+            Logger.debug("write characteristic value=\(value.hexStringValue()), uuid=\(characteristic.uuid.UUIDString)")
             characteristic.writeValue(value)
             self.writing = true
             ++self.writeSequence
@@ -178,33 +178,33 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     }
     
     private func timeoutRead(characteristic:Wrapper, sequence:Int, timeout:Double) {
-        Logger.debug(message:"sequence \(sequence), timeout:\(timeout))")
+        Logger.debug("sequence \(sequence), timeout:\(timeout))")
         CentralQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
-                Logger.debug(message:"timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
+                Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 self.readPromise.failure(BCError.characteristicReadTimeout)
             } else {
-                Logger.debug(message:"timeout expired")
+                Logger.debug("timeout expired")
             }
         }
     }
     
     private func timeoutWrite(characteristic:Wrapper, sequence:Int, timeout:Double) {
-        Logger.debug(message:"sequence \(sequence), timeout:\(timeout)")
+        Logger.debug("sequence \(sequence), timeout:\(timeout)")
         CentralQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
-                Logger.debug(message:"timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
+                Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 self.writePromise.failure(BCError.characteristicWriteTimeout)
             } else {
-                Logger.debug(message:"timeout expired")
+                Logger.debug("timeout expired")
             }
         }
     }
     
     public func didDiscover(characteristic:Wrapper) {
-        Logger.debug(message:"uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+        Logger.debug("uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
         if let afterDiscoveredPromise = characteristic.afterDiscoveredPromise {
             afterDiscoveredPromise.success(characteristic)
         }
@@ -212,10 +212,10 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
     public func didUpdateNotificationState(characteristic:Wrapper, error:NSError!) {
         if let error = error {
-            Logger.debug(message:"failed uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            Logger.debug("failed uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
             self.notificationStateChangedPromise.failure(error)
         } else {
-            Logger.debug(message:"success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            Logger.debug("success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
             self.notificationStateChangedPromise.success(characteristic)
         }
     }
@@ -223,7 +223,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     public func didUpdate(characteristic:Wrapper, error:NSError!) {
         self.reading = false
         if let error = error {
-            Logger.debug(message:"failed uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            Logger.debug("failed uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
             if characteristic.isNotifying {
                 if let notificationUpdatePromise = self.notificationUpdatePromise {
                     notificationUpdatePromise.failure(error)
@@ -232,7 +232,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
                 self.readPromise.failure(error)
             }
         } else {
-            Logger.debug(message:"success uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            Logger.debug("success uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
             if characteristic.isNotifying {
                 if let notificationUpdatePromise = self.notificationUpdatePromise {
                     notificationUpdatePromise.success(characteristic)
@@ -246,12 +246,12 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     public func didWrite(characteristic:Wrapper, error:NSError!) {
         self.writing = false
         if let error = error {
-            Logger.debug(message:"failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            Logger.debug("failed:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
             if !self.writePromise.completed {
                 self.writePromise.failure(error)
             }
         } else {
-            Logger.debug(message:"success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
+            Logger.debug("success:  uuid=\(characteristic.uuid.UUIDString), name=\(characteristic.name)")
             if !self.writePromise.completed {
                 self.writePromise.success(characteristic)
             }
@@ -365,7 +365,7 @@ public final class Characteristic : CharacteristicWrappable {
     }
 
     public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic> {
-        return self.impl.recieveNotificationUpdates(capacity:capacity)
+        return self.impl.recieveNotificationUpdates(capacity)
     }
     
     public func stopNotificationUpdates() {
@@ -408,16 +408,16 @@ public final class Characteristic : CharacteristicWrappable {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
-            Logger.debug(message:"creating characteristic for service profile: \(service.name):\(service.uuid)")
+            Logger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
-                Logger.debug(message:"charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
+                Logger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
                 self.profile = characteristicProfile
             } else {
-                Logger.debug(message:"no characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+                Logger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
                 self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
             }
         } else {
-            Logger.debug(message:"no service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+            Logger.debug("no service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
             self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
         }
     }

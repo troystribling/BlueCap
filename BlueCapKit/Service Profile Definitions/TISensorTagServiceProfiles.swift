@@ -823,14 +823,14 @@ public struct TISensorTag {
             }
 
             public init?(stringValue:[String:String]) {
-                let c1Init = uint16ValueFromStringValue("c1", stringValue)
-                let c2Init = uint16ValueFromStringValue("c2", stringValue)
-                let c3Init = uint16ValueFromStringValue("c3", stringValue)
-                let c4Init = uint16ValueFromStringValue("c4", stringValue)
-                let c5Init = int16ValueFromStringValue("c5", stringValue)
-                let c6Init = int16ValueFromStringValue("c6", stringValue)
-                let c7Init = int16ValueFromStringValue("c7", stringValue)
-                let c8Init = int16ValueFromStringValue("c8", stringValue)
+                let c1Init = uint16ValueFromStringValue("c1", values:stringValue)
+                let c2Init = uint16ValueFromStringValue("c2", values:stringValue)
+                let c3Init = uint16ValueFromStringValue("c3", values:stringValue)
+                let c4Init = uint16ValueFromStringValue("c4", values:stringValue)
+                let c5Init = int16ValueFromStringValue("c5", values:stringValue)
+                let c6Init = int16ValueFromStringValue("c6", values:stringValue)
+                let c7Init = int16ValueFromStringValue("c7", values:stringValue)
+                let c8Init = int16ValueFromStringValue("c8", values:stringValue)
                 if c1Init != nil && c2Init != nil && c3Init != nil && c4Init != nil && c5Init != nil && c6Init != nil && c7Init != nil && c8Init != nil {
                     self.c1 = c1Init!
                     self.c2 = c2Init!
@@ -856,8 +856,8 @@ public struct TISensorTag {
             // CharacteristicConfigurable
             public static let uuid                     = "f000aa42-0451-4000-b000-000000000000"
             public static let name                     = "Baraometer Enabled"
-            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties               = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write]
+            public static let permissions              = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
             public static let initialValue : NSData?   = Serde.serialize(Enabled.No.rawValue)
             
             // StringDeserializable
@@ -919,8 +919,8 @@ public struct TISensorTag {
             // CharacteristicConfigurable
             public static let uuid                      = "f000aa21-0451-4000-b000-000000000000"
             public static let name                      = "Hygrometer Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify]
+            public static let permissions               = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
             public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[2600, 3500])!)
             
             // RawArrayDeserializable
@@ -949,8 +949,8 @@ public struct TISensorTag {
             }
             
             public init?(stringValue:[String:String]) {
-                let temperatureRawInit = uint16ValueFromStringValue("temperatureRaw", stringValue)
-                let humidityRawInit = uint16ValueFromStringValue("humidityRaw", stringValue)
+                let temperatureRawInit = uint16ValueFromStringValue("temperatureRaw", values:stringValue)
+                let humidityRawInit = uint16ValueFromStringValue("humidityRaw", values:stringValue)
                 if temperatureRawInit != nil && humidityRawInit != nil {
                     self.temperatureRaw = temperatureRawInit!
                     self.humidityRaw = humidityRawInit!
@@ -970,8 +970,8 @@ public struct TISensorTag {
             // CharacteristicConfigurable
             public static let uuid                      = "f000aa22-0451-4000-b000-000000000000"
             public static let name                      = "Hygrometer Enabled"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write]
+            public static let permissions               = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
             public static let initialValue : NSData?    = Serde.serialize(Enabled.No.rawValue)
             
             
@@ -1032,7 +1032,7 @@ public struct TISensorTag {
             public static let uuid                      = "f000aa61-0451-4000-b000-000000000000"
             public static let name                      = "Test Data"
             public static let properties                = CBCharacteristicProperties.Read
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let permissions               = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
             public static let initialValue : NSData?    = Serde.serialize(0b11110000 as UInt8)
 
             private static func valuesFromRaw(rawValue:UInt8) -> [Bool] {
@@ -1081,7 +1081,7 @@ public struct TISensorTag {
             }
                 
             public init?(stringValue:[String:String]) {
-                if let rawValue = uint8ValueFromStringValue("resultRaw", stringValue) {
+                if let rawValue = uint8ValueFromStringValue("resultRaw", values:stringValue) {
                     let values = Data.valuesFromRaw(rawValue)
                     self.resultRaw = rawValue
                     self.test1 = values[0]
@@ -1107,8 +1107,8 @@ public struct TISensorTag {
             // CharacteristicConfigurable
             public static let uuid                      = "f000aa62-0451-4000-b000-000000000000"
             public static let name                      = "Test Enabled"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let properties                = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write]
+            public static let permissions               = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
             public static let initialValue : NSData?    = Serde.serialize(Enabled.No.rawValue)
             
             
@@ -1160,7 +1160,7 @@ public struct TISensorTag {
             public static let uuid                      = "ffe1"
             public static let name                      = "Key Pressed"
             public static let properties                = CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+            public static let permissions               = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
             public static let initialValue : NSData?    = Serde.serialize(0x01 as UInt8)
             
             // StringDeserializable
