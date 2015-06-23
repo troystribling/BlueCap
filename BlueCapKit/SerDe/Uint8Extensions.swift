@@ -15,7 +15,7 @@ extension UInt8 : Deserializable {
     }
 
     public init?(stringValue:String) {
-        if let value = stringValue.toInt() {
+        if let value = Int(stringValue) {
             if value > 255 || value < 0 {
                 return nil
             } else {

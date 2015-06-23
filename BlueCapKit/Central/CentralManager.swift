@@ -169,7 +169,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     public var peripherals : [Peripheral] {
-        return sorted(self.discoveredPeripherals.values.array, {(p1:Peripheral, p2:Peripheral) -> Bool in
+        return self.discoveredPeripherals.values.array.sort({(p1:Peripheral, p2:Peripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
             case .OrderedSame:
                 return true
@@ -210,7 +210,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
 
     // scanning
-    public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(capacity capacity:Int? = nil) -> FutureStream<Peripheral> {
         return self.impl.startScanning(self, capacity:capacity)
     }
     
@@ -265,7 +265,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         }
     }
     
-    public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:[NSObject:AnyObject]!, RSSI:NSNumber!) {
+    public func centralManager(_: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         if self.discoveredPeripherals[peripheral] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug(message:"peripheral name \(bcPeripheral.name)")

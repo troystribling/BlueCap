@@ -401,7 +401,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         self.impl.didUpdateState(self)
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
+    public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String : AnyObject]) {
     }
     
     public func peripheralManagerDidStartAdvertising(_:CBPeripheralManager!, error:NSError!) {
@@ -450,10 +450,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         }
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, didReceiveWriteRequests requests:[AnyObject]!) {
+    public func peripheralManager(_: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
         Logger.debug()
         for request in requests {
-            let cbattRequest = request as! CBATTRequest
+            let cbattRequest = request as CBATTRequest
             if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
                 Logger.debug(message:"characteristic write request received for \(characteristic.uuid.UUIDString)")
                 if characteristic.didRespondToWriteRequest(cbattRequest) {

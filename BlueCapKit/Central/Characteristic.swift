@@ -110,7 +110,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
         return self.notificationStateChangedPromise.future
     }
     
-    public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Wrapper> {
+    public func recieveNotificationUpdates(capacity capacity:Int? = nil) -> FutureStream<Wrapper> {
         self.notificationUpdatePromise = StreamPromise<Wrapper>(capacity:capacity)
         return self.notificationUpdatePromise!.future
     }

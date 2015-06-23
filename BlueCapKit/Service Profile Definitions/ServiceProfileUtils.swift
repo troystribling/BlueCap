@@ -8,51 +8,51 @@
 
 import Foundation
 
-func int16ValueFromStringValue(name:String, values:[String:String]) -> Int16? {
-    if let value = values[name]?.toInt() {
-        if value < -32768 || value > 32767 {
-            return nil
-        } else {
-            return Int16(value)
-        }
-    } else {
+func int16ValueFromStringValue(name:String, _ values:[String:String]) -> Int16? {
+    guard let value = Int(values[name]!) else {
         return nil
+    }
+    
+    if value < -32768 || value > 32767 {
+        return nil
+    } else {
+        return Int16(value)
     }
 }
 
-func uint16ValueFromStringValue(name:String, values:[String:String]) -> UInt16? {
-    if let value = values[name]?.toInt() {
-        if value < 0 || value > 65535 {
-            return nil
-        } else {
-            return UInt16(value)
-        }
-    } else {
+func uint16ValueFromStringValue(name:String, _ values:[String:String]) -> UInt16? {
+    guard let value = Int(values[name]!) else {
         return nil
+    }
+    
+    if value < 0 || value > 65535 {
+        return nil
+    } else {
+        return UInt16(value)
     }
 }
 
-func int8ValueFromStringValue(name:String, values:[String:String]) -> Int8? {
-    if let value = values[name]?.toInt() {
-        if value < -128 || value > 127 {
-            return nil
-        } else {
-            return Int8(value)
-        }
-    } else {
+func int8ValueFromStringValue(name:String, _ values:[String:String]) -> Int8? {
+    guard let value = Int(values[name]!) else {
         return nil
+    }
+    
+    if value < -128 || value > 127 {
+        return nil
+    } else {
+        return Int8(value)
     }
 }
 
-func uint8ValueFromStringValue(name:String, values:[String:String]) -> UInt8? {
-    if let value = values[name]?.toInt() {
-        if value < 0 || value > 255 {
-            return nil
-        } else {
-            return UInt8(value)
-        }
-    } else {
+func uint8ValueFromStringValue(name:String, _ values:[String:String]) -> UInt8? {
+    guard let value = Int(values[name]!) else {
         return nil
+    }
+    
+    if value < 0 || value > 255 {
+        return nil
+    } else {
+        return UInt8(value)
     }
 }
 

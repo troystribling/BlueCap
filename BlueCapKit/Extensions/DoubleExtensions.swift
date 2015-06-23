@@ -10,6 +10,6 @@ import Foundation
 
 public extension Double {
     public func format(f: String) -> String {
-        return NSString(format: "%\(f)f", self) as! String
+        return NSString(format: "%\(f)f", self) as String
     }
 }

@@ -426,7 +426,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         Logger.debug()
     }
     
-    public func peripheral(_:CBPeripheral!, didModifyServices invalidatedServices:[AnyObject]!) {
+    public func peripheral(_:CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
         Logger.debug()
     }
     
@@ -436,7 +436,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     }
     
     // services
-    public func peripheral(peripheral:CBPeripheral!, didDiscoverServices error:NSError!) {
+    public func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
         Logger.debug(message:"service name \(self.name)")
         self.clearAll()
         self.impl.didDiscoverServices(self, error:error)

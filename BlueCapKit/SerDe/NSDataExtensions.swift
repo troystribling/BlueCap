@@ -42,7 +42,7 @@ extension NSData : Serializable {
         var dataBytes = [UInt8](count:self.length, repeatedValue:0x0)
         self.getBytes(&dataBytes, length:self.length)
         var hexString = dataBytes.reduce(""){(out:String, dataByte:UInt8) in
-            return out + (NSString(format:"%02lx", dataByte) as! String)
+            return out + (NSString(format:"%02lx", dataByte) as String)
         }
         return hexString
     }

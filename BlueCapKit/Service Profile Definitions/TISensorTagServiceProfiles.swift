@@ -59,11 +59,11 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let uuid                      = "F000AA11-0451-4000-B000-000000000000"
-            public static let name                      = "Accelerometer Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(x:1.0, y:0.5, z:-1.5)!)
+            public static let uuid                                      = "F000AA11-0451-4000-B000-000000000000"
+            public static let name                                      = "Accelerometer Data"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Data(x:1.0, y:0.5, z:-1.5)!)
             
             // RawArrayDeserializable
             public static let size = 3
@@ -115,11 +115,11 @@ public struct TISensorTag {
             case Yes    = 1
             
             // CharacteristicConfigurable
-            public static let uuid                     = "F000AA12-0451-4000-B000-000000000000"
-            public static let name                     = "Accelerometer Enabled"
-            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?   = Serde.serialize(Enabled.No.rawValue)
+            public static let uuid                                      = "F000AA12-0451-4000-B000-000000000000"
+            public static let name                                      = "Accelerometer Enabled"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Enabled.No.rawValue)
             
             
             // StringDeserializable
@@ -182,11 +182,11 @@ public struct TISensorTag {
             }
 
             // CharacteristicConfigurable
-            public static let uuid                      = "F000AA13-0451-4000-B000-000000000000"
-            public static let name                      = "Accelerometer Update Period"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = Serde.serialize(UInt8(100))
+            public static let uuid                                      = "F000AA13-0451-4000-B000-000000000000"
+            public static let name                                      = "Accelerometer Update Period"
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let initialValue : NSData?                    = Serde.serialize(UInt8(100))
             
             // RawDeserializable
             public var rawValue : UInt8 {
@@ -265,11 +265,11 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa31-0451-4000-b000-000000000000"
-            public static let name                      = "Magnetometer Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[-2183, 1916, 1255])!)
+            public static let uuid                                      = "f000aa31-0451-4000-b000-000000000000"
+            public static let name                                      = "Magnetometer Data"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Data(rawValue:[-2183, 1916, 1255])!)
             
             // RawArrayDeserializable
             public static let size = 6
@@ -320,11 +320,11 @@ public struct TISensorTag {
             case Yes    = 1
             
             // CharacteristicConfigurable
-            public static let uuid                     = "f000aa32-0451-4000-b000-000000000000"
-            public static let name                     = "Magnetometer Enabled"
-            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?   = Serde.serialize(Enabled.No.rawValue)
+            public static let uuid                                      = "f000aa32-0451-4000-b000-000000000000"
+            public static let name                                      = "Magnetometer Enabled"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Enabled.No.rawValue)
             
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
@@ -369,11 +369,11 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa33-0451-4000-b000-000000000000"
-            public static let name                      = "Magnetometer Update Period"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = Serde.serialize(UInt16(5000))
+            public static let uuid                                      = "f000aa33-0451-4000-b000-000000000000"
+            public static let name                                      = "Magnetometer Update Period"
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let initialValue : NSData?                    = Serde.serialize(UInt16(5000))
             
             // RawDeserializable
             public var rawValue : UInt8 {
@@ -453,11 +453,11 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa51-0451-4000-b000-000000000000"
-            public static let name                      = "Gyroscope Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[-24, -219, -23])!)
+            public static let uuid                                      = "f000aa51-0451-4000-b000-000000000000"
+            public static let name                                      = "Gyroscope Data"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Data(rawValue:[-24, -219, -23])!)
 
             // RawArrayDeserializable
             public static let size = 6
@@ -514,11 +514,11 @@ public struct TISensorTag {
             case XYZAxis    = 7
             
             // CharacteristicConfigurable
-            public static let uuid                     = "f000aa52-0451-4000-b000-000000000000"
-            public static let name                     = "Gyroscope Enabled"
-            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?   = Serde.serialize(Enabled.No.rawValue)
+            public static let uuid                                      = "f000aa52-0451-4000-b000-000000000000"
+            public static let name                                      = "Gyroscope Enabled"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Enabled.No.rawValue)
 
             // StringDeserializable
             public init?(stringValue:[String:String]) {
@@ -610,11 +610,11 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa01-0451-4000-b000-000000000000"
-            public static let name                      = "Temperature Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[-172, 3388])!)
+            public static let uuid                                      = "f000aa01-0451-4000-b000-000000000000"
+            public static let name                                      = "Temperature Data"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Data(rawValue:[-172, 3388])!)
 
             // RawArrayDeserializable
             public static let size = 4
@@ -661,11 +661,11 @@ public struct TISensorTag {
             case Yes    = 1
             
             // CharacteristicConfigurable
-            public static let uuid                     = "f000aa02-0451-4000-b000-000000000000"
-            public static let name                     = "Temperature Enabled"
-            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?   = Serde.serialize(Enabled.No.rawValue)
+            public static let uuid                                      = "f000aa02-0451-4000-b000-000000000000"
+            public static let name                                      = "Temperature Enabled"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Enabled.No.rawValue)
             
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
@@ -721,11 +721,11 @@ public struct TISensorTag {
             public let pressureRaw     : UInt16
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa41-0451-4000-b000-000000000000"
-            public static let name                      = "Baraometer Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue1:-2343, rawValue2:33995)!)
+            public static let uuid                                      = "f000aa41-0451-4000-b000-000000000000"
+            public static let name                                      = "Baraometer Data"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Data(rawValue1:-2343, rawValue2:33995)!)
 
             // RawPairDeserializable
             public var rawValue1 : Int16 {
@@ -775,11 +775,11 @@ public struct TISensorTag {
             public let c8 : Int16
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa43-0451-4000-b000-000000000000"
-            public static let name                      = "Baraometer Calibration Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Calibration(rawValue1:[45697, 25592, 48894, 36174], rawValue2:[7001, 1990, -2369, 5542])!)
+            public static let uuid                                      = "f000aa43-0451-4000-b000-000000000000"
+            public static let name                                      = "Baraometer Calibration Data"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Calibration(rawValue1:[45697, 25592, 48894, 36174], rawValue2:[7001, 1990, -2369, 5542])!)
 
             // RawArrayPairDeserializable
             public static var size1 : Int {
@@ -854,11 +854,11 @@ public struct TISensorTag {
             case Calibrate  = 2
             
             // CharacteristicConfigurable
-            public static let uuid                     = "f000aa42-0451-4000-b000-000000000000"
-            public static let name                     = "Baraometer Enabled"
-            public static let properties               = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions              = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?   = Serde.serialize(Enabled.No.rawValue)
+            public static let uuid                                      = "f000aa42-0451-4000-b000-000000000000"
+            public static let name                                      = "Baraometer Enabled"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Enabled.No.rawValue)
             
             // StringDeserializable
             public static let stringValues =  ["No", "Yes", "Calibrate"]
@@ -917,11 +917,11 @@ public struct TISensorTag {
             }
 
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa21-0451-4000-b000-000000000000"
-            public static let name                      = "Hygrometer Data"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Data(rawValue:[2600, 3500])!)
+            public static let uuid                                      = "f000aa21-0451-4000-b000-000000000000"
+            public static let name                                      = "Hygrometer Data"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Data(rawValue:[2600, 3500])!)
             
             // RawArrayDeserializable
             public static let size = 4
@@ -968,11 +968,11 @@ public struct TISensorTag {
             case Yes    = 1
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa22-0451-4000-b000-000000000000"
-            public static let name                      = "Hygrometer Enabled"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Enabled.No.rawValue)
+            public static let uuid                                      = "f000aa22-0451-4000-b000-000000000000"
+            public static let name                                      = "Hygrometer Enabled"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Enabled.No.rawValue)
             
             
             // StringDeserializable
@@ -1029,11 +1029,11 @@ public struct TISensorTag {
             var test8 : Bool
         
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa61-0451-4000-b000-000000000000"
-            public static let name                      = "Test Data"
-            public static let properties                = CBCharacteristicProperties.Read
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(0b11110000 as UInt8)
+            public static let uuid                                      = "f000aa61-0451-4000-b000-000000000000"
+            public static let name                                      = "Test Data"
+            public static let properties : CBCharacteristicProperties   = [.Read]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(0b11110000 as UInt8)
 
             private static func valuesFromRaw(rawValue:UInt8) -> [Bool] {
                 return [self.testResult(rawValue, position:0), self.testResult(rawValue, position:1),
@@ -1105,11 +1105,11 @@ public struct TISensorTag {
             case Yes    = 1
             
             // CharacteristicConfigurable
-            public static let uuid                      = "f000aa62-0451-4000-b000-000000000000"
-            public static let name                      = "Test Enabled"
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(Enabled.No.rawValue)
+            public static let uuid                                      = "f000aa62-0451-4000-b000-000000000000"
+            public static let name                                      = "Test Enabled"
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(Enabled.No.rawValue)
             
             
             // StringDeserializable
@@ -1157,11 +1157,11 @@ public struct TISensorTag {
             case ButtonTwo  = 2
             
             // CharacteristicConfigurable
-            public static let uuid                      = "ffe1"
-            public static let name                      = "Key Pressed"
-            public static let properties                = CBCharacteristicProperties.Notify
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let initialValue : NSData?    = Serde.serialize(0x01 as UInt8)
+            public static let uuid                                      = "ffe1"
+            public static let name                                      = "Key Pressed"
+            public static let properties : CBCharacteristicProperties   = [.Notify]
+            public static let permissions :CBAttributePermissions       = [.Readable, .Writeable]
+            public static let initialValue : NSData?                    = Serde.serialize(0x01 as UInt8)
             
             // StringDeserializable
             public static let stringValues = ["None", "Button One", "Button Two"]

@@ -15,7 +15,7 @@ extension Int8 : Deserializable {
     }
 
     public init?(stringValue:String) {
-        if let value = stringValue.toInt() {
+        if let value = Int(stringValue) {
             if value > 128 || value < -128 {
                  return nil
             } else {

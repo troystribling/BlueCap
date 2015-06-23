@@ -15,7 +15,7 @@ extension Int16 : Deserializable {
     }
     
     public init?(stringValue:String) {
-        if let value = stringValue.toInt() {
+        if let value = Int(stringValue) {
             if value > 32767 || value < -32768 {
                 return nil
             } else {

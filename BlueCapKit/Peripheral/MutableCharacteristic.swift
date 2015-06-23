@@ -60,7 +60,7 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
     public init() {
     }
     
-    public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<Wrapper.RequestWrapper> {
+    public func startRespondingToWriteRequests(capacity capacity:Int? = nil) -> FutureStream<Wrapper.RequestWrapper> {
         self.processWriteRequestPromise = StreamPromise<Wrapper.RequestWrapper>(capacity:capacity)
         return self.processWriteRequestPromise!.future
     }

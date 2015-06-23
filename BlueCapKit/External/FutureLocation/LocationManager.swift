@@ -100,14 +100,14 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
     }
     
     public func didFailWithError(error:NSError!) {
-        Logger.debug("error \(error.localizedDescription)")
+        Logger.debug(message: "error \(error.localizedDescription)")
         if let locationUpdatePromise = self.locationUpdatePromise {
             locationUpdatePromise.failure(error)
         }
     }
     
     public func didChangeAuthorizationStatus(status:CLAuthorizationStatus) {
-        Logger.debug("status: \(status)")
+        Logger.debug(message: "status: \(status)")
         self.authorizationStatusChangedPromise?.success(status)
         self.authorizationStatusChangedPromise = nil
     }
@@ -120,10 +120,10 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
             case .AuthorizedAlways:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .AuthorizedAlways {
-                        Logger.debug("location AuthorizedAlways succcess")
+                        Logger.debug(message: "location AuthorizedAlways succcess")
                         promise.success()
                     } else {
-                        Logger.debug("location AuthorizedAlways failed")
+                        Logger.debug(message: "location AuthorizedAlways failed")
                         promise.failure(FLError.authoizationAlwaysFailed)
                     }
                 }
@@ -132,17 +132,17 @@ public class LocationManagerImpl<Wrapper where Wrapper:LocationManagerWrappable,
             case .AuthorizedWhenInUse:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .AuthorizedWhenInUse {
-                        Logger.debug("location AuthorizedWhenInUse succcess")
+                        Logger.debug(message: "location AuthorizedWhenInUse succcess")
                         promise.success()
                     } else {
-                        Logger.debug("location AuthorizedWhenInUse failed")
+                        Logger.debug(message: "location AuthorizedWhenInUse failed")
                         promise.failure(FLError.authoizationWhenInUseFailed)
                     }
                 }
                 locationManager.requestWhenInUseAuthorization()
                 break
             default:
-                Logger.debug("location authorization invalid")
+                Logger.debug(message: "location authorization invalid")
                 break
             }
         } else {

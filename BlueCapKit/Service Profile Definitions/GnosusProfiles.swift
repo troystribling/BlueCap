@@ -24,11 +24,11 @@ public struct Gnosus {
         public struct Greeting : CharacteristicConfigurable {
 
             // BLEConfigurable
-            public static let uuid         = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
-            public static let name         = "Hello World Greeting"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-            public static let initialValue = Serde.serialize("Hello")
+            public static let uuid                                      = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+            public static let name                                      = "Hello World Greeting"
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let initialValue                              = Serde.serialize("Hello")
             
         }
         
@@ -37,11 +37,11 @@ public struct Gnosus {
             public let period : UInt16
 
             // CharacteristicConfigurable
-            public static let uuid                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
-            public static let name                      = "Update Period"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = Serde.serialize(UInt16(5000))
+            public static let uuid                                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
+            public static let name                                      = "Update Period"
+            public static let permissions : CBAttributePermissions      = [.Readable, CBAttributePermissions.Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read, CBCharacteristicProperties.Write]
+            public static let initialValue : NSData?                    = Serde.serialize(UInt16(5000))
             
             // RawDeserializable
             public var rawValue : UInt16 {
@@ -112,11 +112,11 @@ public struct Gnosus {
             }
             
             // CharacteristicConfigurable
-            public static let uuid                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
-            public static let name                      = "Lattitude and Longitude"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-            public static let initialValue : NSData?    = Serde.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
+            public static let uuid                                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
+            public static let name                                      = "Lattitude and Longitude"
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read, .Write]
+            public static let initialValue : NSData?                    = Serde.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
 
             // RawArrayDeserializable
             public static let size = 4
