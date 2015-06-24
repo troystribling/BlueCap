@@ -26,8 +26,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid = "2a24"
             public static let name = "Device Model Number"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read
+            public static let permissions  = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties   = [CBCharacteristicProperties.Read]
             public static let initialValue = Serde.serialize("Model A")
             
         }
@@ -37,8 +37,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid = "2a25"
             public static let name = "Device Serial Number"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read
+            public static let permissions  = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties   = [CBCharacteristicProperties.Read]
             public static let initialValue = Serde.serialize("AAA11")
             
         }
@@ -48,8 +48,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid = "2a26"
             public static let name = "Device Firmware Revision"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read
+            public static let permissions  = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties   = [CBCharacteristicProperties.Read]
             public static let initialValue = Serde.serialize("1.0")
 
         }
@@ -59,8 +59,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid = "2a27"
             public static let name = "Device Hardware Revision"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read
+            public static let permissions  = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties   = [CBCharacteristicProperties.Read]
             public static let initialValue = Serde.serialize("1.0")
             
         }
@@ -70,8 +70,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid = "2a28"
             public static let name = "Device Software Revision"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read
+            public static let permissions  = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties   = [CBCharacteristicProperties.Read]
             public static let initialValue = Serde.serialize("1.0")
 
         }
@@ -81,8 +81,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid = "2a29"
             public static let name = "Device Manufacturer Name"
-            public static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties   = CBCharacteristicProperties.Read
+            public static let permissions  = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties   = [CBCharacteristicProperties.Read]
             public static let initialValue = Serde.serialize("gnos.us")
             
         }
@@ -104,8 +104,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid                      = "2a19"
             public static let name                      = "Battery Level"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Notify | CBCharacteristicProperties.Read
+            public static let permissions               = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties                = [CBCharacteristicProperties.Notify, CBCharacteristicProperties.Read]
             public static let initialValue : NSData?    = Serde.serialize(UInt8(100))
 
             // RawDeserializable
@@ -124,7 +124,7 @@ public struct BLESIGGATT {
             }
             
             public init?(stringValue:[String:String]) {
-                if let valueInit = uint8ValueFromStringValue(Level.name, stringValue) {
+                if let valueInit = uint8ValueFromStringValue(Level.name, values:stringValue) {
                     self.value = valueInit
                 } else {
                     return nil
@@ -150,8 +150,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let uuid                      = "2a07"
             public static let name                      = "Tx Power Level"
-            public static let permissions               = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-            public static let properties                = CBCharacteristicProperties.Notify | CBCharacteristicProperties.Read
+            public static let permissions               = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties                = [CBCharacteristicProperties.Notify, CBCharacteristicProperties.Read]
             public static let initialValue : NSData?    = Serde.serialize(Int8(-40))
             
             // RawDeserializable
@@ -170,7 +170,7 @@ public struct BLESIGGATT {
             }
             
             public init?(stringValue:[String:String]) {
-                if let valueInit = int8ValueFromStringValue(Level.name, stringValue) {
+                if let valueInit = int8ValueFromStringValue(Level.name, values:stringValue) {
                     self.value = valueInit
                 } else {
                     return nil

@@ -26,8 +26,8 @@ public class CharacteristicProfile {
     
     public init(uuid:String,
                 name:String,
-                permissions:CBAttributePermissions=CBAttributePermissions.Readable | CBAttributePermissions.Writeable,
-                properties:CBCharacteristicProperties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write | CBCharacteristicProperties.Notify,
+                permissions:CBAttributePermissions= [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+                properties:CBCharacteristicProperties = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write, CBCharacteristicProperties.Notify],
                 initialValue:NSData? = nil) {
         self.uuid = CBUUID(string:uuid)
         self.name = name

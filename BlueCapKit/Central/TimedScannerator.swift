@@ -81,7 +81,7 @@ public class TimedScannerator : TimedScanneratorWrappable {
     }
     
     public func startScanning(capacity:Int?) -> FutureStream<Peripheral> {
-        return CentralManager.sharedInstance.startScanning(capacity:capacity)
+        return CentralManager.sharedInstance.startScanning(capacity)
     }
     
     public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int?) -> FutureStream<Peripheral> {

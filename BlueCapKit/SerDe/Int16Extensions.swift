@@ -14,18 +14,6 @@ extension Int16 : Deserializable {
         return sizeof(Int16)
     }
     
-    public init?(stringValue:String) {
-        if let value = stringValue.toInt() {
-            if value > 32767 || value < -32768 {
-                return nil
-            } else {
-                self = Int16(value)
-            }
-        } else {
-            return nil
-        }
-    }
-
     public init?(doubleValue:Double) {
         if doubleValue >= 32767.0 || doubleValue <= -32768.0 {
             return nil

@@ -14,18 +14,6 @@ extension UInt16 : Deserializable {
         return sizeof(UInt16)
     }
 
-    public init?(stringValue:String) {
-        if let value = stringValue.toInt() {
-            if value > 65535 || value < 0 {
-                return nil
-            } else {
-                self = UInt16(value)
-            }
-        } else {
-            return nil
-        }
-    }
-
     public init?(doubleValue:Double) {
         if doubleValue >= 65535.0 || doubleValue <= 0.0 {
             return nil
