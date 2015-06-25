@@ -50,8 +50,8 @@ public protocol Serializable {
 public protocol CharacteristicConfigurable {
     static var name          : String {get}
     static var uuid          : String {get}
-    static var permissions   : [CBAttributePermissions] {get}
-    static var properties    : [CBCharacteristicProperties] {get}
+    static var permissions   : CBAttributePermissions {get}
+    static var properties    : CBCharacteristicProperties {get}
     static var initialValue  : NSData? {get}
 }
 
