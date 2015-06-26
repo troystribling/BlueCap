@@ -13,7 +13,7 @@ import CoreBluetooth
 // CharacteristicImpl
 public protocol CharacteristicWrappable {
     
-    var uuid                    : CBUUID!                   {get}
+    var uuid                    : CBUUID                    {get}
     var name                    : String                    {get}
     var isNotifying             : Bool                      {get}
     var stringValues            : [String]                  {get}
@@ -267,7 +267,7 @@ public final class Characteristic : CharacteristicWrappable {
     internal var impl = CharacteristicImpl<Characteristic>()
     
     // CharacteristicWrappable
-    public var uuid : CBUUID! {
+    public var uuid : CBUUID {
         return self.cbCharacteristic.UUID
     }
     
@@ -324,7 +324,7 @@ public final class Characteristic : CharacteristicWrappable {
         return self._service
     }
     
-    public var dataValue : NSData! {
+    public var dataValue : NSData? {
         return self.cbCharacteristic.value
     }
 
@@ -426,15 +426,15 @@ public final class Characteristic : CharacteristicWrappable {
         self.impl.didDiscover(self)
     }
     
-    internal func didUpdateNotificationState(error:NSError!) {
+    internal func didUpdateNotificationState(error:NSError?) {
         self.impl.didUpdateNotificationState(self, error:error)
     }
     
-    internal func didUpdate(error:NSError!) {
+    internal func didUpdate(error:NSError?) {
         self.impl.didUpdate(self, error:error)
     }
     
-    internal func didWrite(error:NSError!) {
+    internal func didWrite(error:NSError?) {
         self.impl.didWrite(self, error:error)
     }
 }

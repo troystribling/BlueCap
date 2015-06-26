@@ -312,11 +312,10 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     }
     
     // CLLocationManagerDelegate
-    public func locationManager(_:CLLocationManager, didUpdateLocations locations:[AnyObject]) {
-        let cllocations = locations.map{$0 as! CLLocation}
-        self.locationImpl.didUpdateLocations(cllocations)
+    public func locationManager(manager: CLLocationManager, didUpdateLocations locations:[CLLocation]) {
+        self.locationImpl.didUpdateLocations(locations)
     }
-    
+
     public func locationManager(_:CLLocationManager, didFailWithError error:NSError) {
         self.locationImpl.didFailWithError(error)
     }

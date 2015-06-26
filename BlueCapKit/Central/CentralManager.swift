@@ -169,7 +169,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     public var peripherals : [Peripheral] {
-        return sorted(self.discoveredPeripherals.values.array, {(p1:Peripheral, p2:Peripheral) -> Bool in
+        return self.discoveredPeripherals.values.array.sort() {(p1:Peripheral, p2:Peripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
             case .OrderedSame:
                 return true
@@ -178,7 +178,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
             case .OrderedAscending:
                 return true
             }
-        })
+        }
     }
     
     public var state: CBCentralManagerState {
@@ -251,21 +251,21 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     // CBCentralManagerDelegate
-    public func centralManager(_:CBCentralManager!, didConnectPeripheral peripheral:CBPeripheral!) {
+    public func centralManager(_:CBCentralManager, didConnectPeripheral peripheral:CBPeripheral) {
         Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
-    public func centralManager(_:CBCentralManager!, didDisconnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
+    public func centralManager(_:CBCentralManager, didDisconnectPeripheral peripheral:CBPeripheral, error:NSError?) {
         Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didDisconnectPeripheral()
         }
     }
     
-    public func centralManager(_:CBCentralManager!, didDiscoverPeripheral peripheral:CBPeripheral!, advertisementData:[NSObject:AnyObject]!, RSSI:NSNumber!) {
+    public func centralManager(_:CBCentralManager, didDiscoverPeripheral peripheral:CBPeripheral, advertisementData:[String:AnyObject], RSSI:NSNumber) {
         if self.discoveredPeripherals[peripheral] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
             Logger.debug("peripheral name \(bcPeripheral.name)")
@@ -274,7 +274,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         }
     }
     
-    public func centralManager(_:CBCentralManager!, didFailToConnectPeripheral peripheral:CBPeripheral!, error:NSError!) {
+    public func centralManager(_:CBCentralManager, didFailToConnectPeripheral peripheral:CBPeripheral, error:NSError?) {
         Logger.debug()
         if let bcPeripheral = self.discoveredPeripherals[peripheral] {
             bcPeripheral.didFailToConnectPeripheral(error)
@@ -290,11 +290,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     // central manager state
-    public func centralManager(_:CBCentralManager!, willRestoreState dict:[NSObject:AnyObject]!!) {
+    public func centralManager(_:CBCentralManager, willRestoreState dict:[String:AnyObject]) {
         Logger.debug()
     }
     
-    public func centralManagerDidUpdateState(_:CBCentralManager!) {
+    public func centralManagerDidUpdateState(_:CBCentralManager) {
         self.impl.didUpdateState(self)
     }
     
@@ -303,7 +303,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue)
     }
     
-    internal func unpackAdvertisements(advertDictionary:[NSObject:AnyObject]!) -> [String:String] {
+    internal func unpackAdvertisements(advertDictionary:[String:AnyObject]) -> [String:String] {
         Logger.debug("number of advertisements found \(advertDictionary.count)")
         var advertisements = [String:String]()
         func addKey(key:String, andValue value:AnyObject) -> () {
@@ -314,18 +314,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
             }
             Logger.debug("advertisement key=\(key), value=\(advertisements[key])")
         }
-        if advertDictionary != nil {
-            for keyObject : NSObject in advertDictionary.keys {
-                if let key = keyObject as? String {
-                    if let value : AnyObject = advertDictionary[keyObject] {
-                        if value is NSArray {
-                            for v : AnyObject in (value as! NSArray) {
-                                addKey(key, andValue:value)
-                            }
-                        } else {
-                            addKey(key, andValue:value)
-                        }
+        for key in advertDictionary.keys {
+            if let value : AnyObject = advertDictionary[key] {
+                if value is NSArray {
+                    for valueItem : AnyObject in (value as! NSArray) {
+                        addKey(key, andValue:valueItem)
                     }
+                } else {
+                    addKey(key, andValue:value)
                 }
             }
         }

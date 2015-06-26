@@ -55,7 +55,6 @@
 		05BAEAFC1A9AA670003C0C1C /* BeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BAEAF41A9AA670003C0C1C /* BeaconManager.swift */; };
 		05BAEAFD1A9AA670003C0C1C /* BeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BAEAF51A9AA670003C0C1C /* BeaconRegion.swift */; };
 		05BAEAFE1A9AA670003C0C1C /* CircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BAEAF61A9AA670003C0C1C /* CircularRegion.swift */; };
-		05BAEAFF1A9AA670003C0C1C /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BAEAF71A9AA670003C0C1C /* CLProximityExtension.swift */; };
 		05BAEB001A9AA670003C0C1C /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BAEAF81A9AA670003C0C1C /* LocationManager.swift */; };
 		05BAEB011A9AA670003C0C1C /* Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BAEAF91A9AA670003C0C1C /* Region.swift */; };
 		05BAEB021A9AA670003C0C1C /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BAEAFA1A9AA670003C0C1C /* RegionManager.swift */; };
@@ -136,7 +135,6 @@
 		05BAEAF41A9AA670003C0C1C /* BeaconManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconManager.swift; sourceTree = "<group>"; };
 		05BAEAF51A9AA670003C0C1C /* BeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegion.swift; sourceTree = "<group>"; };
 		05BAEAF61A9AA670003C0C1C /* CircularRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircularRegion.swift; sourceTree = "<group>"; };
-		05BAEAF71A9AA670003C0C1C /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
 		05BAEAF81A9AA670003C0C1C /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		05BAEAF91A9AA670003C0C1C /* Region.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Region.swift; sourceTree = "<group>"; };
 		05BAEAFA1A9AA670003C0C1C /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
@@ -351,7 +349,6 @@
 				05BAEAF41A9AA670003C0C1C /* BeaconManager.swift */,
 				05BAEAF51A9AA670003C0C1C /* BeaconRegion.swift */,
 				05BAEAF61A9AA670003C0C1C /* CircularRegion.swift */,
-				05BAEAF71A9AA670003C0C1C /* CLProximityExtension.swift */,
 				05BAEAF81A9AA670003C0C1C /* LocationManager.swift */,
 				05BAEAF91A9AA670003C0C1C /* Region.swift */,
 				05BAEAFA1A9AA670003C0C1C /* RegionManager.swift */,
@@ -532,7 +529,6 @@
 				055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */,
 				05D3B9321A2B8D61008E794E /* Array.swift in Sources */,
 				05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */,
-				05BAEAFF1A9AA670003C0C1C /* CLProximityExtension.swift in Sources */,
 				05BAEAFE1A9AA670003C0C1C /* CircularRegion.swift in Sources */,
 				055120D319F5513700ED3B74 /* TimedScannerator.swift in Sources */,
 				055120DE19F5513700ED3B74 /* PeripheralManager.swift in Sources */,

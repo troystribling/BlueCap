@@ -33,8 +33,8 @@ public struct Nordic {
             // CharacteristicConfigurable
             public static let uuid                                      = "2f0a0004-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Device Temperature Data"
-            public static let properties : CBCharacteristicProperties   = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify]
-            public static let permissions: CBAttributePermissions       = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let initialValue : NSData?                    = Serde.serialize(Int16(100))
 
             // RawDeserializable
@@ -86,8 +86,8 @@ public struct Nordic {
             // CharacteristicConfigurable
             public static let uuid                                      = "2f0a0006-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Addresss"
-            public static let properties : CBCharacteristicProperties   = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Notify]
-            public static let permissions : CBAttributePermissions      = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
             public static let initialValue : NSData?                    = Serde.serialize(Int16(100))
 
             // RawArrayDeserializable
@@ -150,8 +150,8 @@ public struct Nordic {
             // CharacteristicConfigurable
             public static let uuid                                      = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Address Type"
-            public static let properties : CBCharacteristicProperties   = [CBCharacteristicProperties.Read]
-            public static let permissions : CBAttributePermissions      = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+            public static let properties : CBCharacteristicProperties   = [.Read]
+            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
             public static let initialValue : NSData?                    = Serde.serialize(AddressType.Public)
 
 

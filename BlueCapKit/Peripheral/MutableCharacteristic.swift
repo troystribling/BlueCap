@@ -219,7 +219,7 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     }
     
     public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest> {
-        return self.impl.startRespondingToWriteRequests(capacity:capacity)
+        return self.impl.startRespondingToWriteRequests(capacity)
     }
     
     public func stopProcessingWriteRequests() {
