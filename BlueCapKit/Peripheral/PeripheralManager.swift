@@ -22,7 +22,7 @@ public protocol PeripheralManagerWrappable {
     var state           : CBPeripheralManagerState  {get}
     var services        : [WrappedService]          {get}
     
-    func startAdvertising(advertisementData:[NSObject:AnyObject])
+    func startAdvertising(advertisementData:[String:AnyObject])
     func startAdversting(beaconRegion:WrappedBeaconRegion)
     func stopAdvertisingWrapped()
     func addWrappedService(service:WrappedService)
@@ -90,7 +90,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         PeripheralQueue.sync {
             self.afterAdvertisingStartedPromise = Promise<Void>()
             if !peripheral.isAdvertising {
-                var advertisementData : [NSObject:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+                var advertisementData : [String:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
                 if let uuids = uuids {
                     advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
                 }
@@ -225,7 +225,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         }
     }
     
-    public func didStartAdvertising(error:NSError!) {
+    public func didStartAdvertising(error:NSError?) {
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
             self.afterAdvertisingStartedPromise.failure(error)
@@ -235,7 +235,7 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
         }
     }
     
-    public func didAddService(error:NSError!) {
+    public func didAddService(error:NSError?) {
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
             self.afterSeriviceAddPromise.failure(error)
@@ -287,12 +287,12 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         return self.configuredServices.values.array
     }
     
-    public func startAdvertising(advertisementData:[NSObject:AnyObject]) {
+    public func startAdvertising(advertisementData:[String:AnyObject]) {
         self.cbPeripheralManager.startAdvertising(advertisementData)
     }
     
     public func startAdversting(region:BeaconRegion) {
-        self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower())
+        self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
     }
     
     public func stopAdvertisingWrapped() {
@@ -307,10 +307,9 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     public func removeWrappedService(service:MutableService) {
         let removeCharacteristics = Array(self.configuredCharcteristics.keys).filter{(cbCharacteristic) in
             for bcCharacteristic in service.characteristics {
-                if let uuid = cbCharacteristic.UUID {
-                    if uuid == bcCharacteristic.uuid {
-                        return true
-                    }
+                let uuid = cbCharacteristic.UUID
+                if uuid == bcCharacteristic.uuid {
+                    return true
                 }
             }
             return false
@@ -397,39 +396,39 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     }
 
     // CBPeripheralManagerDelegate
-    public func peripheralManagerDidUpdateState(_:CBPeripheralManager!) {
+    public func peripheralManagerDidUpdateState(_:CBPeripheralManager) {
         self.impl.didUpdateState(self)
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, willRestoreState dict: [NSObject : AnyObject]!) {
+    public func peripheralManager(_:CBPeripheralManager, willRestoreState dict:[String:AnyObject]) {
     }
     
-    public func peripheralManagerDidStartAdvertising(_:CBPeripheralManager!, error:NSError!) {
+    public func peripheralManagerDidStartAdvertising(_:CBPeripheralManager, error:NSError?) {
         self.impl.didStartAdvertising(error)
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, didAddService service:CBService!, error:NSError!) {
+    public func peripheralManager(_:CBPeripheralManager, didAddService service:CBService, error:NSError?) {
         if error != nil {
             self.configuredServices.removeValueForKey(service.UUID)
         }
         self.impl.didAddService(error)
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, central:CBCentral!, didSubscribeToCharacteristic characteristic:CBCharacteristic!) {
+    public func peripheralManager(_:CBPeripheralManager, central:CBCentral, didSubscribeToCharacteristic characteristic:CBCharacteristic) {
         Logger.debug()
         if let characteristic = self.configuredCharcteristics[characteristic] {
             characteristic.didSubscribeToCharacteristic()
         }
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, central:CBCentral!, didUnsubscribeFromCharacteristic characteristic:CBCharacteristic!) {
+    public func peripheralManager(_:CBPeripheralManager, central:CBCentral, didUnsubscribeFromCharacteristic characteristic:CBCharacteristic) {
         Logger.debug()
         if let characteristic = self.configuredCharcteristics[characteristic] {
             characteristic.didUnsubscribeFromCharacteristic()
         }
     }
     
-    public func peripheralManagerIsReadyToUpdateSubscribers(_:CBPeripheralManager!) {
+    public func peripheralManagerIsReadyToUpdateSubscribers(_:CBPeripheralManager) {
         Logger.debug()
         for characteristic in self.configuredCharcteristics.values {
             if characteristic.hasSubscriber {
@@ -438,7 +437,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         }
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, didReceiveReadRequest request:CBATTRequest!) {
+    public func peripheralManager(_:CBPeripheralManager, didReceiveReadRequest request:CBATTRequest) {
         Logger.debug("chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic] {
             Logger.debug("responding with data: \(characteristic.stringValue)")
@@ -450,19 +449,18 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         }
     }
     
-    public func peripheralManager(_:CBPeripheralManager!, didReceiveWriteRequests requests:[AnyObject]!) {
+    public func peripheralManager(_:CBPeripheralManager, didReceiveWriteRequests requests:[CBATTRequest]) {
         Logger.debug()
         for request in requests {
-            let cbattRequest = request as! CBATTRequest
-            if let characteristic = self.configuredCharcteristics[cbattRequest.characteristic] {
+            if let characteristic = self.configuredCharcteristics[request.characteristic] {
                 Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
-                if characteristic.didRespondToWriteRequest(cbattRequest) {
-                    characteristic.value = cbattRequest.value
+                if characteristic.didRespondToWriteRequest(request) {
+                    characteristic.value = request.value
                 } else {
-                    characteristic.respondToRequest(cbattRequest, withResult:CBATTError.WriteNotPermitted)
+                    characteristic.respondToRequest(request, withResult:CBATTError.WriteNotPermitted)
                 }
             } else {
-                Logger.debug("error writing characteristic \(cbattRequest.characteristic.UUID.UUIDString) not found")
+                Logger.debug("error writing characteristic \(request.characteristic.UUID.UUIDString) not found")
             }
         }
     }

@@ -30,7 +30,7 @@ public protocol BeaconRegionWrappable {
     var identifier     : String                         {get}
     var beaconPromise  : StreamPromise<[WrappedBeacon]> {get}
     
-    func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [NSObject:AnyObject]
+    func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [String:AnyObject]
 }
 
 public protocol BeaconWrappable {

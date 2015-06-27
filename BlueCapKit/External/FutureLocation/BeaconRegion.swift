@@ -14,13 +14,20 @@ public class BeaconRegion : Region, BeaconRegionWrappable {
     // BeaconRegionWrappable
     public let beaconPromise  : StreamPromise<[Beacon]>
     
-    public func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [NSObject:AnyObject] {
+    public func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [String:AnyObject] {
+        let power : [NSObject:AnyObject]
         if let measuredPower = measuredPower {
-            return self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as [NSObject : AnyObject]
+            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as [NSObject:AnyObject]
         } else {
-            return self.clBeaconRegion.peripheralDataWithMeasuredPower(nil) as [NSObject : AnyObject]
+            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(nil) as [NSObject:AnyObject]
         }
-    }    
+        return power.keys.reduce([String:AnyObject]()){(var result, key) in
+            if let keyPower = power[key], key = key as? String {
+                result[key] = keyPower
+            }
+            return result
+        }
+    }
     // BeaconRegionWrappable
     
     internal var _beacons       = [Beacon]()
