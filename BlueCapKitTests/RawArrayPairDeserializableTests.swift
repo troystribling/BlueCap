@@ -60,7 +60,7 @@ class RawArrayPairDeserializableTests: XCTestCase {
     
     func testFailedDeserialization() {
         let data = "020103".dataFromHexString()
-        if let value : Pair = Serde.deserialize(data) {
+        if let _ : Pair = Serde.deserialize(data) {
             XCTFail("RawPairDeserializableTests deserialization succeeded")
         }
     }
@@ -68,7 +68,6 @@ class RawArrayPairDeserializableTests: XCTestCase {
     func testSuccessfuleSerialization() {
         if let value = Pair(rawValue1:[2, -85], rawValue2:[3, 171]) {
             let data = Serde.serialize(value)
-            println("data length:\(data.length)")
             XCTAssert(data.hexStringValue() == "02ab03ab", "RawDeserializable serialization failed: \(data.hexStringValue())")
         } else {
             XCTFail("RawPairDeserializableTests RawArray creation failed")
@@ -76,7 +75,7 @@ class RawArrayPairDeserializableTests: XCTestCase {
     }
     
     func testFailedeSerialization() {
-        if let value = Pair(rawValue1:[5], rawValue2:[1]) {
+        if let _ = Pair(rawValue1:[5], rawValue2:[1]) {
             XCTFail("RawPairDeserializableTests RawArray creation succeeded")
         }
     }

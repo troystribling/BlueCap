@@ -38,7 +38,7 @@ class RawDeserializableTests: XCTestCase {
 
     func testFailedDeserialization() {
         let data = "03".dataFromHexString()
-        if let value : Testit = Serde.deserialize(data) {
+        if let _ : Testit = Serde.deserialize(data) {
             XCTFail("RawDeserializable deserialization succeeded")
         }
     }

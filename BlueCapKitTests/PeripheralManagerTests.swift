@@ -47,7 +47,7 @@ class PeripheralManagerTests: XCTestCase {
             self._state = state
         }
         
-        func startAdvertising(advertisementData:[NSObject:AnyObject]) {
+        func startAdvertising(advertisementData:[String:AnyObject]) {
             self._isAdvertising = true
         }
         
@@ -105,7 +105,7 @@ class PeripheralManagerTests: XCTestCase {
             return self.promise
         }
         
-        func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [NSObject:AnyObject] {
+        func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [String:AnyObject] {
             return [:]
         }
     }

@@ -81,7 +81,7 @@ class PeripheralMock : PeripheralWrappable {
     func disconnect() {
     }
     
-    func discoverServices(services:[CBUUID]!) {
+    func discoverServices(services:[CBUUID]?) {
     }
     
     func didDiscoverServices() {
@@ -95,24 +95,24 @@ struct ServiceMockValues {
 
 struct ServiceMock : ServiceWrappable {
     
-    let uuid  : CBUUID!
+    let uuid  : CBUUID
     let name  : String
     let state : CBPeripheralState
     
     let impl = ServiceImpl<ServiceMock>()
     
-    init(uuid:CBUUID! = CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"),
-                               name:String = "Mock",
-                               state:CBPeripheralState = .Connected) {
+    init(uuid:CBUUID = CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"),
+         name:String = "Mock",
+         state:CBPeripheralState = .Connected) {
         self.uuid = uuid
         self.name = name
         self.state = state
     }
     
-    func discoverCharacteristics(characteristics:[CBUUID]!) {
+    func discoverCharacteristics(characteristics:[CBUUID]?) {
     }
     
-    func didDiscoverCharacteristics(error:NSError!) {
+    func didDiscoverCharacteristics(error:NSError?) {
         CentralQueue.async {
             self.impl.didDiscoverCharacteristics(self, error:ServiceMockValues.error)
         }
@@ -140,7 +140,7 @@ final class CharacteristicMock : CharacteristicWrappable {
     
     let impl = CharacteristicImpl<CharacteristicMock>()
     
-    var uuid : CBUUID! {
+    var uuid : CBUUID {
         return CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6c1a")
     }
     
