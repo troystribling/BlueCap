@@ -36,7 +36,7 @@ class CentralManagerMock : CentralManagerWrappable {
         self.state = state
     }
     
-    func scanForPeripheralsWithServices(uuids:[CBUUID]!) {
+    func scanForPeripheralsWithServices(uuids:[CBUUID]?) {
     }
     
     func stopScan() {

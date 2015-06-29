@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		053139B01AC1ADC4002B4B36 /* MutableCharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139AF1AC1ADC4002B4B36 /* MutableCharacteristicTests.swift */; };
 		053139B41AC2CE23002B4B36 /* PeripheralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */; };
+		0543FEB31B40CB0D00363415 /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0543FEB21B40CB0D00363415 /* CLProximityExtension.swift */; };
 		0551208819F5506000ED3B74 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0551208719F5506000ED3B74 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
 		055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209E19F5513700ED3B74 /* CentralManager.swift */; };
@@ -85,6 +86,7 @@
 /* Begin PBXFileReference section */
 		053139AF1AC1ADC4002B4B36 /* MutableCharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableCharacteristicTests.swift; sourceTree = "<group>"; };
 		053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerTests.swift; sourceTree = "<group>"; };
+		0543FEB21B40CB0D00363415 /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0551208719F5506000ED3B74 /* BlueCapKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueCapKit.h; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 		05BAEAF21A9AA670003C0C1C /* FutureLocation */ = {
 			isa = PBXGroup;
 			children = (
+				0543FEB21B40CB0D00363415 /* CLProximityExtension.swift */,
 				05BAEAF31A9AA670003C0C1C /* Beacon.swift */,
 				05BAEAF41A9AA670003C0C1C /* BeaconManager.swift */,
 				05BAEAF51A9AA670003C0C1C /* BeaconRegion.swift */,
@@ -518,6 +521,7 @@
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
 				05D3B9341A2B8D61008E794E /* Double.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
+				0543FEB31B40CB0D00363415 /* CLProximityExtension.swift in Sources */,
 				055120DD19F5513700ED3B74 /* MutableService.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				05BAEAFD1A9AA670003C0C1C /* BeaconRegion.swift in Sources */,

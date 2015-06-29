@@ -77,7 +77,7 @@ class PeripheralsViewController : UITableViewController {
     func toggleScan(sender:AnyObject) {
         if BeaconManager.sharedInstance.isMonitoring == false {
             let central = CentralManager.sharedInstance
-            Logger.debug(message:"isScanning: \(central.isScanning)")
+            Logger.debug("isScanning: \(central.isScanning)")
             if central.isScanning {
                 if  ConfigStore.getScanTimeoutEnabled() {
                     TimedScannerator.sharedInstance.stopScanning()
@@ -126,34 +126,34 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        let future = peripheral.connect(capacity:10, timeoutRetries:ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
+        let future = peripheral.connect(10, timeoutRetries:ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
         future.onSuccess {(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
-                Logger.debug(message: "Connected")
+                Logger.debug("Connected")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
                 self.updateWhenActive()
             case .Timeout:
-                Logger.debug(message:"Timeout: '\(peripheral.name)'")
+                Logger.debug("Timeout: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 peripheral.reconnect()
                 self.updateWhenActive()
             case .Disconnect:
-                Logger.debug(message:"Disconnect")
+                Logger.debug("Disconnect")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.reconnect()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .ForceDisconnect:
-                Logger.debug(message:"ForcedDisconnect")
+                Logger.debug("ForcedDisconnect")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .Failed:
-                Logger.debug(message:"Failed")
+                Logger.debug("Failed")
                 Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
             case .GiveUp:
-                Logger.debug(message:"GiveUp: '\(peripheral.name)'")
+                Logger.debug("GiveUp: '\(peripheral.name)'")
                 peripheral.terminate()
                 self.updateWhenActive()
             }
@@ -172,7 +172,7 @@ class PeripheralsViewController : UITableViewController {
         }
         let afterTimeout = {(error:NSError) -> Void in
             if error.domain == BCError.domain && error.code == PeripheralError.DiscoveryTimeout.rawValue {
-                Logger.debug(message:"timeoutScan: timing out")
+                Logger.debug("timeoutScan: timing out")
                 TimedScannerator.sharedInstance.stopScanning()
                 self.setScanButton()
             }
@@ -186,7 +186,7 @@ class PeripheralsViewController : UITableViewController {
                 future = TimedScannerator.sharedInstance.startScanning(Double(ConfigStore.getScanTimeout()), capacity:10)
                 
             } else {
-                future = CentralManager.sharedInstance.startScanning(capacity:10)
+                future = CentralManager.sharedInstance.startScanning(10)
             }
             future.onSuccess(afterPeripheralDiscovered)
             future.onFailure(afterTimeout)
@@ -205,7 +205,7 @@ class PeripheralsViewController : UITableViewController {
                 future.onFailure(afterTimeout)
             }
         default:
-            Logger.debug(message:"Scan Mode :'\(scanMode)' invalid")
+            Logger.debug("Scan Mode :'\(scanMode)' invalid")
         }
     }
         

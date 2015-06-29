@@ -95,10 +95,8 @@ class ConfigStore {
         if let storedServices = NSUserDefaults.standardUserDefaults().dictionaryForKey("services") {
             var services = [String:CBUUID]()
             for (name, uuid) in storedServices {
-                if let name = name as? String {
-                    if let uuid = uuid as? String {
-                        services[name] = CBUUID(string: uuid)
-                    }
+                if let uuid = uuid as? String {
+                    services[name] = CBUUID(string: uuid)
                 }
             }
             return services

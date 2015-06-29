@@ -73,7 +73,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAddAdverstisedServiceCell, forIndexPath:indexPath) as! NameUUIDCell
-        if let peripheral = self.peripheral {
+        if let _ = self.peripheral {
             let service = self.services[indexPath.row]
             cell.nameLabel.text = service.name
             cell.uuidLabel.text = service.uuid.UUIDString

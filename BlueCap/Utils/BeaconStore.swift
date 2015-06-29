@@ -15,10 +15,8 @@ class BeaconStore {
         if let storedBeacons = NSUserDefaults.standardUserDefaults().dictionaryForKey("beacons") {
             var beacons = [String:NSUUID]()
             for (name, uuid) in storedBeacons {
-                if let name = name as? String {
-                    if let uuid = uuid as? String {
-                        beacons[name] = NSUUID(UUIDString:uuid)
-                    }
+                if let uuid = uuid as? String {
+                    beacons[name] = NSUUID(UUIDString:uuid)
                 }
             }
             return beacons

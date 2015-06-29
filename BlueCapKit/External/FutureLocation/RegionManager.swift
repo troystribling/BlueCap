@@ -105,7 +105,7 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
         Logger.debug("region identifier \(region.identifier)")
     }
     
-    public func didFailMonitoringForRegion(region:Wrapper.WrappedRegion, error:NSError!) {
+    public func didFailMonitoringForRegion(region:Wrapper.WrappedRegion, error:NSError) {
         Logger.debug("region identifier \(region.identifier)")
         region.regionPromise.failure(error)
     }
@@ -199,35 +199,35 @@ public class RegionManager : LocationManager, RegionManagerWrappable {
     }
 
     // CLLocationManagerDelegate
-    public func locationManager(_:CLLocationManager!, didEnterRegion region:CLRegion!) {
+    public func locationManager(_:CLLocationManager, didEnterRegion region:CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
            self.regionImpl.didEnterRegion(bcregion)
         }
     }
     
-    public func locationManager(_:CLLocationManager!, didExitRegion region:CLRegion!) {
+    public func locationManager(_:CLLocationManager, didExitRegion region:CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
             self.regionImpl.didExitRegion(bcregion)
         }
     }
     
-    public func locationManager(_:CLLocationManager!, didDetermineState state:CLRegionState, forRegion region:CLRegion!) {
+    public func locationManager(_:CLLocationManager, didDetermineState state:CLRegionState, forRegion region:CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
             self.regionImpl.didDetermineState(state, forRegion:bcregion)
         }
     }
     
-    public func locationManager(_:CLLocationManager!, monitoringDidFailForRegion region:CLRegion!, withError error:NSError!) {
-        Logger.debug("region identifier \(region.identifier)")
-        if let bcregion = self.configuredRegions[region] {
+    public func locationManager(_:CLLocationManager, monitoringDidFailForRegion region:CLRegion?, withError error:NSError) {
+        if let region = region, bcregion = self.configuredRegions[region] {
+            Logger.debug("region identifier \(region.identifier)")
             self.regionImpl.didFailMonitoringForRegion(bcregion, error:error)
         }
     }
     
-    public func locationManager(_:CLLocationManager!, didStartMonitoringForRegion region:CLRegion!) {
+    public func locationManager(_:CLLocationManager, didStartMonitoringForRegion region:CLRegion) {
         Logger.debug("region identiufier \(region.identifier)")
         if let bcregion = self.configuredRegions[region] {
             self.regionImpl.didStartMonitoringForRegion(bcregion)

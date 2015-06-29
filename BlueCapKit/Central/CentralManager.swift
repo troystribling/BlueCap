@@ -20,7 +20,7 @@ public protocol CentralManagerWrappable {
     var peripherals : [WrappedPeripheral]   {get}
     var state: CBCentralManagerState        {get}
     
-    func scanForPeripheralsWithServices(uuids:[CBUUID]!)
+    func scanForPeripheralsWithServices(uuids:[CBUUID]?)
     func stopScan()
 }
 
@@ -185,7 +185,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         return self.cbCentralManager.state
     }
     
-    public func scanForPeripheralsWithServices(uuids:[CBUUID]!) {
+    public func scanForPeripheralsWithServices(uuids:[CBUUID]?) {
         self.cbCentralManager.scanForPeripheralsWithServices(uuids,options:nil)
     }
     

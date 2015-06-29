@@ -38,7 +38,7 @@ class Accelerometer {
     }
 
     func startAcceleromterUpdates() -> FutureStream<CMAcceleration> {
-        self.motionManager.startAccelerometerUpdatesToQueue(self.queue) {(data:CMAccelerometerData!, error:NSError!) in
+        self.motionManager.startAccelerometerUpdatesToQueue(self.queue) {(data:CMAccelerometerData?, error:NSError?) in
             if let error = error {
                 self.accelerationDataPromise.failure(error)
             } else {

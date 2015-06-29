@@ -15,7 +15,7 @@ public protocol LocationManagerWrappable {
     
     typealias WrappedCLLocation
     
-    var location : WrappedCLLocation! {get}
+    var location : WrappedCLLocation? {get}
     
     func requestWhenInUseAuthorization()
     func requestAlwaysAuthorization()
@@ -174,12 +174,11 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     public let locationImpl = LocationManagerImpl<LocationManager>()
 
     // LocationManagerImpl
-
     public var isUpdating : Bool {
         return self.locationImpl.isUpdating
     }
 
-    public var location : CLLocation! {
+    public var location : CLLocation? {
         return self.clLocationManager.location
     }
     
@@ -227,7 +226,6 @@ public class LocationManager : NSObject,  CLLocationManagerDelegate, LocationMan
     public func wrappedStopMonitoringSignificantLocationChanges() {
         self.clLocationManager.stopMonitoringSignificantLocationChanges()
     }
-
     // LocationManagerImpl
 
     internal var clLocationManager : CLLocationManager!

@@ -46,14 +46,10 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     }
     
     func updatePripheralStore() {
-        if let peripheral = self.peripheral {
+        if self.peripheral != nil {
             let manager = PeripheralManager.sharedInstance
-            let serviceUUIDs = manager.services.reduce([String]()){(uuids, service) in
-                if let uuid = service.uuid.UUIDString {
-                    return uuids + [uuid]
-                } else {
-                    return uuids
-                }
+            manager.services.reduce([String]()){(uuids, service) in
+                return uuids + [service.uuid.UUIDString]
             }
         }
     }

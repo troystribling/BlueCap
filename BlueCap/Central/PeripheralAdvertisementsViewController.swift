@@ -57,7 +57,6 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        println("Count:\(self.names.count)")
         return self.names.count
     }
     
