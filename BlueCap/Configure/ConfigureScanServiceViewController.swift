@@ -33,28 +33,24 @@ class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate 
     // UITextFieldDelegate
     func textFieldShouldReturn(textField:UITextField) -> Bool {
         textField.resignFirstResponder()
-        let enteredUUID = self.uuidTextField.text
-        let enteredName = self.nameTextField.text
-        if enteredName != nil && enteredUUID != nil  {
-            if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
-                if let nsuuid = NSUUID(UUIDString:enteredUUID) {
-                    let uuid = CBUUID(NSUUID:nsuuid)
-                    if let serviceName = self.serviceName {
-                        // updating
-                        ConfigStore.addScannedService(enteredName!, uuid:uuid)
-                        if serviceName != enteredName! {
-                            ConfigStore.removeScannedService(self.serviceName!)
-                        }
-                    } else {
-                        // new region
-                        ConfigStore.addScannedService(enteredName!, uuid:uuid)
+        if let enteredUUID = self.uuidTextField.text, enteredName = self.nameTextField.text where !enteredName.isEmpty && !enteredUUID.isEmpty {
+            if let nsuuid = NSUUID(UUIDString:enteredUUID) {
+                let uuid = CBUUID(NSUUID:nsuuid)
+                if let serviceName = self.serviceName {
+                    // updating
+                    ConfigStore.addScannedService(enteredName, uuid:uuid)
+                    if serviceName != enteredName {
+                        ConfigStore.removeScannedService(self.serviceName!)
                     }
-                    self.navigationController?.popViewControllerAnimated(true)
-                    return true
                 } else {
-                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
-                    return false
+                    // new region
+                    ConfigStore.addScannedService(enteredName, uuid:uuid)
                 }
+                self.navigationController?.popViewControllerAnimated(true)
+                return true
+            } else {
+                self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                return false
             }
         }
         return true

@@ -31,7 +31,7 @@ class ConfigurePeripheralReconnectionsViewController: UIViewController {
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let maximumReconnections = self.maximumReconnectionsTextField.text, maximumReconnectionsInt = maximumReconnections.toInt()
+        if let maximumReconnections = self.maximumReconnectionsTextField.text, maximumReconnectionsInt = Int(maximumReconnections)
             where !maximumReconnections.isEmpty && maximumReconnectionsInt > 0 {
             ConfigStore.setMaximumReconnections(UInt(maximumReconnectionsInt))
             self.navigationController?.popToRootViewControllerAnimated(true)

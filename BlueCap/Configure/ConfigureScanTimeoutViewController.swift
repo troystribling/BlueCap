@@ -34,7 +34,7 @@ class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if let timeout = self.timeoutTextField.text {
             if !timeout.isEmpty {
-                if let timeoutInt = timeout.toInt() {
+                if let timeoutInt = Int(timeout) {
                     ConfigStore.setScanTimeout(timeoutInt)
                     self.navigationController?.popToRootViewControllerAnimated(true)
                 }

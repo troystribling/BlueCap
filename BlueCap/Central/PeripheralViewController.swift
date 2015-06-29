@@ -36,11 +36,6 @@ class PeripheralViewController : UITableViewController {
         self.setStateLabel()
         self.progressView.show()
         self.navigationItem.title = peripheral.name
-        if let identifier = peripheral.identifier {
-            self.uuidLabel.text = identifier.UUIDString
-        } else {
-            self.uuidLabel.text = "Unknown"
-        }
         self.peripehealConnected = (peripheral.state == .Connected)
         self.rssiLabel.text = "\(self.peripheral.rssi)"
         let future = self.peripheral.discoverAllPeripheralServices()

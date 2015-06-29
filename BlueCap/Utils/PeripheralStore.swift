@@ -17,16 +17,13 @@ class PeripheralStore {
         if let storedPeripherals = NSUserDefaults.standardUserDefaults().dictionaryForKey(key) {
             var peripherals = [String:[CBUUID]]()
             for (name, services) in storedPeripherals {
-                    if let services = services as? [String] {
-                        let uuids = services.reduce([CBUUID]()){(uuids, uuidString) in
-                            if let uuid = CBUUID(string:uuidString) {
-                                return uuids + [uuid]
-                            } else {
-                                return uuids
-                            }
-                        }
-                        peripherals[name] = uuids
+                if let services = services as? [String] {
+                    let uuids = services.reduce([CBUUID]()){(uuids, uuidString) in
+                        let uuid = CBUUID(string:uuidString)
+                            return uuids + [uuid]
                     }
+                    peripherals[name] = uuids
+                }
             }
             return peripherals
         } else {
@@ -38,11 +35,7 @@ class PeripheralStore {
         var storedPeripherals = [String:[String]]()
         for (name, uuids) in peripheralServices {
             storedPeripherals[name] = uuids.reduce([String]()) {(storedUUIDs, uuid) in
-                if let storedUUID = uuid.UUIDString {
-                    return storedUUIDs + [storedUUID]
-                } else {
-                    return storedUUIDs
-                }
+                return storedUUIDs + [uuid.UUIDString]
             }
         }
         let userDefaults = NSUserDefaults.standardUserDefaults()

@@ -94,7 +94,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                     write.onFailure(afterWriteFailed)
                 }
             } else {
-                Logger.debug(message:"VALUE: \(newValue.dataFromHexString())")
+                Logger.debug("VALUE: \(newValue.dataFromHexString())")
                 let write = characteristic.writeData(newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 write.onSuccess(afterWriteSuceses)
                 write.onFailure(afterWriteFailed)

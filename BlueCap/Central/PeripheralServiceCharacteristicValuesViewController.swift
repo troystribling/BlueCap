@@ -76,7 +76,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     @IBAction func updateValues() {
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
-                let future = characteristic.recieveNotificationUpdates(capacity:10)
+                let future = characteristic.recieveNotificationUpdates(10)
                 future.onSuccess {_ in
                     self.updateWhenActive()
                 }
@@ -85,7 +85,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 }
             } else if characteristic.propertyEnabled(.Read) {
                 self.progressView.show()
-                let future = characteristic.read(timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                let future = characteristic.read(Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 future.onSuccess {_ in
                     self.updateWhenActive()
                     self.progressView.remove()

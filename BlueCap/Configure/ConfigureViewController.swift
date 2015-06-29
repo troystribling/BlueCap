@@ -79,7 +79,7 @@ class ConfigureViewController : UITableViewController {
     }
     
     @IBAction func toggelNotification(sender:AnyObject) {
-        Notify.setEnable(enabled:self.notifySwitch.on)
+        Notify.setEnable(self.notifySwitch.on)
     }
  
     func configUI() {

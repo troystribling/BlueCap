@@ -33,7 +33,7 @@ class ConfigurePeripheralConnectionTimeoutViewController: UIViewController {
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let timeout = self.peripheralConnectionTimeoutTextField.text {
             if !timeout.isEmpty {
-                if let timeoutInt = timeout.toInt() {
+                if let timeoutInt = Int(timeout) {
                     ConfigStore.setPeripheralConnectionTimeout(timeoutInt)
                     self.navigationController?.popToRootViewControllerAnimated(true)
                 }
