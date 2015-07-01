@@ -52,32 +52,23 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func addBeacon(textField:UITextField) -> Bool {
-        let enteredUUID = self.uuidTextField.text
-        let enteredName = self.nameTextField.text
-        let enteredMajor = self.majorTextField.text
-        let enteredMinor = self.minorTextField.text
         if let enteredName = self.nameTextField.text, enteredMajor = self.majorTextField.text, enteredMinor = self.minorTextField.text
-            where !enteredName.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty {
-            if let minor = enteredMinor.toInt(),  major = enteredMajor.toInt() {
-                if minor < 65536 && major < 65536 {
-                    if let enteredUUID = self.uuidTextField.text where !enteredUUID.isEmpty {
-                        if let uuid = NSUUID(UUIDString:enteredUUID), minor = enteredMinor.toInt(),  major = enteredMajor.toInt() {
-                            BeaconStore.setBeaconUUID(uuid)
-                        } else {
-                            self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
-                            self.startAdvertisingSwitch.on = false
-                            return false
-                        }
+        where !enteredName.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty {
+            if let minor = Int(enteredMinor),  major = Int(enteredMajor) where minor < 65536 && major < 65536 {
+                if let enteredUUID = self.uuidTextField.text where !enteredUUID.isEmpty {
+                    if let uuid = NSUUID(UUIDString:enteredUUID), minor = Int(enteredMinor),  major = Int(enteredMajor) {
+                        BeaconStore.setBeaconUUID(uuid)
+                        BeaconStore.setBeaconConfig([UInt16(minor), UInt16(major)])
+                        BeaconStore.setBeaconName(enteredName)
+                        textField.resignFirstResponder()
+                        self.setUI()
+                    } else {
+                        self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                        self.startAdvertisingSwitch.on = false
+                        return false
                     }
-                    BeaconStore.setBeaconConfig([UInt16(minor), UInt16(major)])
-                    BeaconStore.setBeaconName(enteredName)
-                    textField.resignFirstResponder()
-                    self.setUI()
-                    return true
-                } else {
-                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor must be less than 65536"), animated:true, completion:nil)
-                    return false
                 }
+                return true
             } else {
                 self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor not convertable to a number"), animated:true, completion:nil)
                 return false

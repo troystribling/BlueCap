@@ -52,13 +52,15 @@ class BeaconsViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func sortBeacons(b1:Beacon, b2:Beacon) -> Bool {
-        if b1.major > b2.major {
-            return true
-        } else if b1.major == b2.major && b1.minor > b2.minor {
-            return true
-        } else {
-            return false
+    func sortBeacons(beacons:[Beacon]) -> [Beacon] {
+        return beacons.sort(){(b1:Beacon, b2:Beacon) -> Bool in
+            if b1.major > b2.major {
+                return true
+            } else if b1.major == b2.major && b1.minor > b2.minor {
+                return true
+            } else {
+                return false
+            }
         }
     }
     
@@ -87,7 +89,7 @@ class BeaconsViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconCell, forIndexPath: indexPath) as! BeaconCell
         if let beaconRegion = self.beaconRegion {
-            let beacon = sorted(beaconRegion.beacons, self.sortBeacons)[indexPath.row]
+            let beacon = self.sortBeacons(beaconRegion.beacons)[indexPath.row]
             cell.proximityUUIDLabel.text = beacon.proximityUUID.UUIDString
             cell.majorLabel.text = "\(beacon.major)"
             cell.minorLabel.text = "\(beacon.minor)"

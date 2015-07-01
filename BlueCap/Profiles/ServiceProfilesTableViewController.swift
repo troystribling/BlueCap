@@ -37,7 +37,7 @@ class ServiceProfilesTableViewController : UITableViewController {
     
     func sortServiceProfiles() {
         for profile in ProfileManager.sharedInstance.services {
-            if !contains(self.excludedServices, profile.uuid) {
+            if !self.excludedServices.contains(profile.uuid) {
                 if let profiles = self.serviceProfiles[profile.tag] {
                     self.serviceProfiles[profile.tag] = profiles + [profile]
                 } else {

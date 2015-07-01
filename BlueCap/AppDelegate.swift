@@ -39,8 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GnosusProfiles.create()
         NordicProfiles.create()
         application.registerUserNotificationSettings(
-            UIUserNotificationSettings(forTypes:UIUserNotificationType.Sound|UIUserNotificationType.Alert|UIUserNotificationType.Badge,
-                categories:nil))
+            UIUserNotificationSettings(forTypes:[UIUserNotificationType.Sound, UIUserNotificationType.Alert, UIUserNotificationType.Badge], categories:nil))
         return true
     }
 

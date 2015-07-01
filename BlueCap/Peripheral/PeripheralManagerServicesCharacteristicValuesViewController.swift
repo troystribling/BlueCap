@@ -38,7 +38,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         }
         let future = self.characteristic.startRespondingToWriteRequests(10)
         future.onSuccess {(request) in
-            if request.value.length > 0 {
+            if let value = request.value where value.length > 0 {
                 self.characteristic.value = request.value
                 self.characteristic.respondToRequest(request, withResult:CBATTError.Success)
                 self.updateWhenActive()

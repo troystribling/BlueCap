@@ -79,7 +79,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
     
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
-        if let peripheral = self.peripheral {
+        if let _ = self.peripheral {
             if let identifier = identifier {
                 if identifier != MainStoryboard.peripheralManagerServicesSegue {
                     return !PeripheralManager.sharedInstance.isAdvertising
@@ -139,7 +139,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 PeripheralStore.setBeaconEnabled(peripheral, enabled:false)
             } else {
                 if let name = self.advertisedBeaconLabel.text {
-                    if let uuid = PeripheralStore.getBeacon(name) {
+                    if PeripheralStore.getBeacon(name) != nil {
                         PeripheralStore.setBeaconEnabled(peripheral, enabled:true)
                     } else {
                         self.presentViewController(UIAlertController.alertWithMessage("iBeacon is invalid"), animated:true, completion:nil)
@@ -154,7 +154,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if !PeripheralManager.sharedInstance.isAdvertising {
             let future = PeripheralManager.sharedInstance.removeAllServices()
             future.onSuccess {
-                if let peripheral = self.peripheral {
+                if self.peripheral != nil {
                     self.loadPeripheralServicesFromConfig()
                 } else {
                     self.setUIState()

@@ -85,43 +85,27 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     }
     
     func addBeacon() -> Bool {
-        let enteredUUID = self.uuidTextField.text
-        let enteredName = self.nameTextField.text
-        let enteredMajor = self.majorTextField.text
-        let enteredMinor = self.minorTextField.text
-        if enteredName != nil && enteredUUID != nil && enteredMinor != nil && enteredMinor != nil  {
-            if !enteredName!.isEmpty && !enteredUUID!.isEmpty && !enteredMinor!.isEmpty && !enteredMajor!.isEmpty {
-                if let uuid = NSUUID(UUIDString:enteredUUID) {
-                    if let minor = enteredMinor!.toInt() {
-                        if let major = enteredMajor!.toInt() {
-                            if minor < 65536 && major < 65536 {
-                                PeripheralStore.addBeaconConfig(enteredName!, config:[UInt16(minor), UInt16(major)])
-                            } else {
-                                self.presentViewController(UIAlertController.alertOnErrorWithMessage("major and minor must be less than 65536"), animated:true, completion:nil)
-                                return false
-                            }
-                        } else {
-                            self.presentViewController(UIAlertController.alertOnErrorWithMessage("major is not convertable to a num ber"), animated:true, completion:nil)
-                            return false
-                        }
-                    } else {
-                        self.presentViewController(UIAlertController.alertOnErrorWithMessage("minor is not convertable to a num ber"), animated:true, completion:nil)
-                        return false
-                    }
-                    PeripheralStore.addBeacon(enteredName!, uuid:uuid)
+        if let enteredUUID = self.uuidTextField.text, enteredName = self.nameTextField.text, enteredMajor = self.majorTextField.text, enteredMinor = self.minorTextField.text
+        where !enteredName.isEmpty && !enteredUUID.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty {
+            if let uuid = NSUUID(UUIDString:enteredUUID) {
+                if let minor = Int(enteredMinor), major = Int(enteredMajor) where minor < 65536 && major < 65536 {
+                    PeripheralStore.addBeaconConfig(enteredName, config:[UInt16(minor), UInt16(major)])
+                    PeripheralStore.addBeacon(enteredName, uuid:uuid)
                     if let beaconName = self.beaconName {
-                        if self.beaconName != enteredName! {
+                        if self.beaconName != enteredName {
                             PeripheralStore.removeBeacon(beaconName)
                             PeripheralStore.removeBeaconConfig(beaconName)
                         }
                     }
                     self.navigationController?.popViewControllerAnimated(true)
                     return true
+
                 } else {
-                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("major or minor not convertable to a number"), animated:true, completion:nil)
                     return false
                 }
             } else {
+                self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
                 return false
             }
         } else {

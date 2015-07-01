@@ -54,24 +54,18 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()
-        let enteredUUID = self.uuidTextField.text
-        let enteredName = self.nameTextField.text
-        if enteredName != nil && enteredUUID != nil  {
-            if !enteredName!.isEmpty && !enteredUUID!.isEmpty {
-                if let uuid = NSUUID(UUIDString:enteredUUID) {
-                    BeaconStore.addBeacon(enteredName!, uuid:uuid)
-                    if let regionName = self.regionName {
-                        if regionName != enteredName! {
-                            BeaconStore.removeBeacon(regionName)
-                        }
+        if let enteredUUID = self.uuidTextField.text, enteredName = self.nameTextField.text where !enteredName.isEmpty && !enteredUUID.isEmpty {
+            if let uuid = NSUUID(UUIDString:enteredUUID) {
+                BeaconStore.addBeacon(enteredName, uuid:uuid)
+                if let regionName = self.regionName {
+                    if regionName != enteredName {
+                        BeaconStore.removeBeacon(regionName)
                     }
-                    self.navigationController?.popViewControllerAnimated(true)
-                    return true
-                } else {
-                    self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
-                    return false
                 }
+                self.navigationController?.popViewControllerAnimated(true)
+                return true
             } else {
+                self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
                 return false
             }
         } else {

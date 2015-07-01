@@ -62,6 +62,7 @@ public class BeaconManagerImpl<Wrapper where
     public func startRangingBeaconsInRegion(manager:Wrapper, authorization:CLAuthorizationStatus, beaconRegion:Wrapper.WrappedBeaconRegion) -> FutureStream<[Wrapper.WrappedBeaconRegion.WrappedBeacon]> {
         let authoriztaionFuture = manager.authorize(authorization)
         authoriztaionFuture.onSuccess {status in
+            Logger.debug("authorization status: \(status)")
             self.regionRangingStatus[beaconRegion.identifier] = true
             manager.wrappedStartRangingBeaconsInRegion(beaconRegion)
         }

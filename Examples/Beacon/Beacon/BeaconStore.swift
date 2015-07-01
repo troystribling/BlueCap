@@ -61,7 +61,7 @@ class BeaconStore {
     class func setBeaconConfig(config:[UInt16]) {
         if config.count == 2 {
             let userDefaults = NSUserDefaults.standardUserDefaults()
-            var storeConfigs = [NSNumber(unsignedShort:config[0]), NSNumber(unsignedShort:config[1])]
+            let storeConfigs = [NSNumber(unsignedShort:config[0]), NSNumber(unsignedShort:config[1])]
             userDefaults.setObject(storeConfigs, forKey:"beaconConfig")
         }
     }
