@@ -163,7 +163,7 @@ class ViewController: UITableViewController {
         let accelerometerUpdatePeriodFuture = self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(2)
         accelerometerUpdatePeriodFuture.onSuccess {request in
             if let value = request.value where value.length > 0 && value.length <= 8 {
-                self.accelerometerUpdatePeriodCharacteristic.value = request.value
+                self.accelerometerUpdatePeriodCharacteristic.value = value
                 self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
                 self.updatePeriod()
             } else {

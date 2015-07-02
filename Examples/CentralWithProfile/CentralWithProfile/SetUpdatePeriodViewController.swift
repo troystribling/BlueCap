@@ -40,7 +40,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField:UITextField) -> Bool {
-        if let enteredPeriod = self.updatePeriodTextField.text, isRaw = self.isRaw, value = UInt16(stringValue:enteredPeriod) where !enteredPeriod.isEmpty {
+        if let enteredPeriod = self.updatePeriodTextField.text, isRaw = self.isRaw, value = UInt16(enteredPeriod) where !enteredPeriod.isEmpty {
             let rawValue : String
             if  isRaw {
                 rawValue = enteredPeriod
