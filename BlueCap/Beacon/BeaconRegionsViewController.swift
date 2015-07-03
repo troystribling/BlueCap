@@ -94,7 +94,7 @@ class BeaconRegionsViewController: UITableViewController {
     func startMonitoring() {
         for (name, uuid) in BeaconStore.getBeacons() {
             let beacon = BeaconRegion(proximityUUID:uuid, identifier:name)
-            let regionFuture = BeaconManager.sharedInstance.startMonitoringForRegion(beacon)
+            let regionFuture = BeaconManager.sharedInstance.startMonitoringForRegion(beacon, authorization:.AuthorizedAlways)
             let beaconFuture = regionFuture.flatmap {status -> FutureStream<[Beacon]> in
                 switch status {
                 case .Inside:
