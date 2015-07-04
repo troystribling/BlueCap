@@ -55,7 +55,7 @@ class RawArrayDeserializableTests: XCTestCase {
     
     func testFailedDeserialization() {
         let data = "02ab0c".dataFromHexString()
-        if let value : RawArray = Serde.deserialize(data) {
+        if let _ : RawArray = Serde.deserialize(data) {
             XCTFail("RawArrayDeserializable deserialization succeeded")
         }
     }
