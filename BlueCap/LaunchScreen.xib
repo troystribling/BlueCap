@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
@@ -11,25 +11,37 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="  Copyright (c) 2015 Troy Stribling. The MIT License (MIT)." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="8ie-xW-0ye">
-                    <rect key="frame" x="20" y="440" width="441" height="21"/>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Copyright (c) 2015 Troy Stribling. The MIT License (MIT)." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="8ie-xW-0ye">
+                    <rect key="frame" x="20" y="439.5" width="441" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="BlueCap" translatesAutoresizingMaskIntoConstraints="NO" id="KQD-f5-tw0">
-                    <rect key="frame" x="50" y="50" width="380" height="380"/>
-                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZMo-5S-Vub">
+                    <rect key="frame" x="40" y="20" width="400" height="420"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BlueCap" translatesAutoresizingMaskIntoConstraints="NO" id="Sdm-XM-HWP">
+                            <rect key="frame" x="8" y="8" width="384" height="404"/>
+                        </imageView>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="Sdm-XM-HWP" secondAttribute="trailing" constant="8" id="4bd-bS-jQE"/>
+                        <constraint firstAttribute="bottom" secondItem="Sdm-XM-HWP" secondAttribute="bottom" constant="8" id="PUd-d3-Ee7"/>
+                        <constraint firstItem="Sdm-XM-HWP" firstAttribute="leading" secondItem="ZMo-5S-Vub" secondAttribute="leading" constant="8" id="YeH-3j-YLO"/>
+                        <constraint firstItem="Sdm-XM-HWP" firstAttribute="top" secondItem="ZMo-5S-Vub" secondAttribute="top" constant="8" id="aVN-i5-qer"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="ZMo-5S-Vub" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="4r4-CW-PhW"/>
                 <constraint firstAttribute="bottom" secondItem="8ie-xW-0ye" secondAttribute="bottom" priority="500" constant="20" id="Kzo-t9-V3l"/>
+                <constraint firstAttribute="bottom" secondItem="ZMo-5S-Vub" secondAttribute="bottom" constant="40" id="M1k-Se-Bwb"/>
                 <constraint firstItem="8ie-xW-0ye" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="MfP-vx-nX0"/>
-                <constraint firstItem="KQD-f5-tw0" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="50" id="Qn5-dM-Xu9"/>
-                <constraint firstItem="KQD-f5-tw0" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="50" id="cz6-ag-6rw"/>
+                <constraint firstItem="ZMo-5S-Vub" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="40" id="dNJ-09-wFh"/>
                 <constraint firstAttribute="trailing" secondItem="8ie-xW-0ye" secondAttribute="trailing" constant="19" id="gul-Ge-sh6"/>
-                <constraint firstItem="8ie-xW-0ye" firstAttribute="top" secondItem="KQD-f5-tw0" secondAttribute="bottom" constant="10" id="kt5-WI-aRy"/>
-                <constraint firstAttribute="trailing" secondItem="KQD-f5-tw0" secondAttribute="trailing" constant="50" id="ltH-Bo-8Yv"/>
+                <constraint firstAttribute="trailing" secondItem="ZMo-5S-Vub" secondAttribute="trailing" constant="40" id="iWT-aw-J3W"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
