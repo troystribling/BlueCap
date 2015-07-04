@@ -8,6 +8,7 @@
 
 import UIKit
 import XCTest
+import CoreBluetooth
 import BlueCapKit
 
 class RawArrayDeserializableTests: XCTestCase {
