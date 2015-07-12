@@ -38,7 +38,14 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
     internal var regionMonitorStatus = [String:Bool]()
     
     public var isMonitoring : Bool {
-        return self.regionMonitorStatus.values.array.any{$0}
+        var status = false
+        for monitoringStatus in self.regionMonitorStatus.values.array {
+            if monitoringStatus {
+                status = true
+                break
+            }
+        }
+        return status
     }
     
     public init() {

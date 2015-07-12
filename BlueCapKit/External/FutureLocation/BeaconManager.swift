@@ -44,7 +44,14 @@ public class BeaconManagerImpl<Wrapper where
     private var regionRangingStatus = [String:Bool]()
 
     public var isRanging : Bool {
-        return self.regionRangingStatus.values.array.any{$0}
+        var status = false
+        for rangingStatus in self.regionRangingStatus.values.array {
+            if rangingStatus {
+                status = true
+                break
+            }
+        }
+        return status
     }
     
     public init() {

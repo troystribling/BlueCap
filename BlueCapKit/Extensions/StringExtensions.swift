@@ -17,10 +17,9 @@ public extension String {
     public func dataFromHexString() -> NSData {
         var bytes = [UInt8]()
         for i in 0..<(self.characters.count/2) {
-            if let stringBytes = self[2*i..<2*i+2] {
-                let byte = strtol((stringBytes as NSString).UTF8String, nil, 16)
-                bytes.append(UInt8(byte))
-            }
+            let stringBytes = self.substringWithRange(Range(start:advance(self.startIndex, 2*i), end:advance(self.startIndex, 2*i+2)))
+            let byte = strtol((stringBytes as NSString).UTF8String, nil, 16)
+            bytes.append(UInt8(byte))
         }
         return NSData(bytes:bytes, length:bytes.count)
     }

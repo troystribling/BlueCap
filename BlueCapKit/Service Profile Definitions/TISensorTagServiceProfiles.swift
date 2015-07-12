@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import BlueCapKit
 
 public struct TISensorTag {
 

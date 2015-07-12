@@ -131,7 +131,7 @@ internal extension Array {
         - parameter item: The item to search for
         - returns: Matched item or nil
     */
-    func find <U: Equatable> (item: U) -> T? {
+    func find <U: Equatable> (item: U) -> Element? {
         if let index: Int = indexOf(item) {
             return self[index]
         }
