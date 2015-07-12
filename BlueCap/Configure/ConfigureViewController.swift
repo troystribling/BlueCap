@@ -29,7 +29,7 @@ class ConfigureViewController : UITableViewController {
         static let configureScanTimeoutSegue    = "ConfigureScanTimeout"
     }
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

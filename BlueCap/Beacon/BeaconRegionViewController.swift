@@ -15,7 +15,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var uuidTextField : UITextField!
     var regionName              : String?
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
 

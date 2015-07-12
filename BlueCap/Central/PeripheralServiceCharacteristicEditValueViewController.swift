@@ -18,7 +18,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     
     var progressView                = ProgressView()
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
 

@@ -19,7 +19,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     var peripheral                      : String?
     var peripheralManagerViewController : PeripheralManagerViewController?
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

@@ -18,7 +18,7 @@ class ConfigureScanServicesViewController : UITableViewController {
         static let configureEditScanServiceSegue        = "ConfigureEditScanService"
     }
 
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

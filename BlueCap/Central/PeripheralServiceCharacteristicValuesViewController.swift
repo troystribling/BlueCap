@@ -24,7 +24,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         static let peripheralServiceCharacteristicEditValueSeque            = "PeripheralServiceCharacteristicEditValue"
     }
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         self.progressView = ProgressView()
         super.init(coder:aDecoder)
     }

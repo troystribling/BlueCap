@@ -22,7 +22,7 @@ class BeaconRegionsViewController: UITableViewController {
         static let beaconRegionEditSegue    = "BeaconRegionEdit"
     }
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleMonitoring:")
         self.startScanBarButtonItem = UIBarButtonItem(title:"Scan", style:UIBarButtonItemStyle.Plain, target:self, action:"toggleMonitoring:")

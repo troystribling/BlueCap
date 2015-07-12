@@ -12,7 +12,7 @@ class ConfigurePeripheralReconnectionsViewController: UIViewController {
 
     @IBOutlet var maximumReconnectionsTextField    : UITextField!
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     
