@@ -54,7 +54,7 @@ class ViewController: UITableViewController {
     var accelerometerEnabledCharacteristic          : Characteristic?
     var accelerometerUpdatePeriodCharacteristic     : Characteristic?
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

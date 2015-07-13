@@ -44,7 +44,7 @@ class ViewController: UITableViewController {
                                                     permissions:[.Readable, .Writeable],
                                                     value:Serde.serialize(UInt8(100)))
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         self.accelerometerService.characteristics =
             [self.accelerometerDataCharacteristic, self.accelerometerEnabledCharacteristic, self.accelerometerUpdatePeriodCharacteristic]
         super.init(coder:aDecoder)

@@ -15,7 +15,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
     var characteristic : Characteristic?
     var isRaw : Bool?
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     

@@ -35,7 +35,7 @@ class ViewController: UITableViewController {
     let accelerometerEnabledCharacteristic      = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
     let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
         self.accelerometerService.characteristics = [self.accelerometerDataCharacteristic, self.accelerometerEnabledCharacteristic, self.accelerometerUpdatePeriodCharacteristic]
         self.respondToWriteRequests()

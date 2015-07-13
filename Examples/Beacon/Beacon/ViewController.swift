@@ -20,7 +20,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var startAdvertisingSwitch    : UISwitch!
     @IBOutlet var startAdvertisingLabel     : UILabel!
     
-    required init(coder aDecoder:NSCoder) {
+    required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     
