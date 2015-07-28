@@ -67,6 +67,7 @@ public enum CentralExampleError : Int {
 public struct CentralError {
     public static let domain = "Central Example"
     public static let peripheralNotConnected = NSError(domain:domain, code:CentralExampleError.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
+}
     
 let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid)!
                                 
