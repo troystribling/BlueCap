@@ -204,7 +204,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         }
         return Static.instance
     }
-    
+
+//    public class func sharedInstance(options:[String:AnyObject]) -> CentralManager {
+//        struct Static {
+//            static let instance = CentralManager(options:options)
+//        }
+//        return Static.instance
+//    }
+
     public var isScanning : Bool {
         return self.impl.isScanning
     }
@@ -231,9 +238,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         self.impl.disconnectAllPeripherals(self)
     }
     
-    public func connectPeripheral(peripheral:Peripheral) {
+    public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]?=nil) {
         Logger.debug()
-        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:nil)
+        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:options)
     }
     
     internal func cancelPeripheralConnection(peripheral:Peripheral) {
@@ -302,7 +309,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue)
     }
-    
+
+    private init(options:[String:AnyObject]?) {
+        super.init()
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue, options:options)
+    }
+
     internal func unpackAdvertisements(advertDictionary:[String:AnyObject]) -> [String:String] {
         Logger.debug("number of advertisements found \(advertDictionary.count)")
         var advertisements = [String:String]()

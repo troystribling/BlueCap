@@ -340,7 +340,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         }
         return Static.instance
     }
-    
+
+//    public class func sharedInstance(options:[String:AnyObject]) -> PeripheralManager {
+//        struct Static {
+//            static let instance = PeripheralManager(options:options)
+//        }
+//        return Static.instance
+//    }
+
     public func service(uuid:CBUUID) -> MutableService? {
         return self.configuredServices[uuid]
     }
@@ -469,7 +476,12 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:PeripheralQueue.queue)
     }
-    
+
+    private init(options:[String:AnyObject]) {
+        super.init()
+        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:PeripheralQueue.queue, options:options)
+    }
+
     private func addConfiguredCharacteristics(characteristics:[MutableCharacteristic]) {
         for characteristic in characteristics {
             self.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
