@@ -223,7 +223,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.ReadTimeout.rawValue, "Error code invalid")
         }
-        waitForExpectationsWithTimeout(20) {error in
+        waitForExpectationsWithTimeout(120) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
