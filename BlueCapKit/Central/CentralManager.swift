@@ -157,6 +157,8 @@ public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
 
 public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManagerWrappable {
     
+    private static var instance : CentralManager!
+    
     internal let impl = CentralManagerImpl<CentralManager>()
 
     // CentralManagerWrappable
@@ -199,18 +201,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     internal var discoveredPeripherals   = [CBPeripheral: Peripheral]()
     
     public class var sharedInstance : CentralManager {
-        struct Static {
-            static let instance = CentralManager()
-        }
-        return Static.instance
+        self.instance = self.instance ?? CentralManager()
+        return self.instance
     }
 
-//    public class func sharedInstance(options:[String:AnyObject]) -> CentralManager {
-//        struct Static {
-//            static let instance = CentralManager(options:options)
-//        }
-//        return Static.instance
-//    }
+    public class func sharedInstance(options:[String:AnyObject]) -> CentralManager {
+        self.instance = self.instance ?? CentralManager(options:options)
+        return self.instance
+    }
 
     public var isScanning : Bool {
         return self.impl.isScanning

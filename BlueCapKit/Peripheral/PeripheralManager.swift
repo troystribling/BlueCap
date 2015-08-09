@@ -264,6 +264,8 @@ public class PeripheralManagerImpl<Wrapper where Wrapper:PeripheralManagerWrappa
 ///////////////////////////////////////////
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, PeripheralManagerWrappable {
     
+    private static var instance : PeripheralManager!
+    
     private var impl = PeripheralManagerImpl<PeripheralManager>()
     
     // PeripheralManagerImpl
@@ -335,18 +337,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     internal var configuredCharcteristics   : [CBCharacteristic:MutableCharacteristic]   = [:]
 
     public class var sharedInstance : PeripheralManager {
-        struct Static {
-            static let instance = PeripheralManager()
-        }
-        return Static.instance
+        self.instance = self.instance ?? PeripheralManager()
+        return self.instance
     }
 
-//    public class func sharedInstance(options:[String:AnyObject]) -> PeripheralManager {
-//        struct Static {
-//            static let instance = PeripheralManager(options:options)
-//        }
-//        return Static.instance
-//    }
+    public class func sharedInstance(options:[String:AnyObject]) -> PeripheralManager {
+        self.instance = self.instance ?? PeripheralManager(options:options)
+        return self.instance
+    }
 
     public func service(uuid:CBUUID) -> MutableService? {
         return self.configuredServices[uuid]
