@@ -9,6 +9,7 @@
 import UIKit
 import XCTest
 import CoreBluetooth
+import CoreLocation
 import BlueCapKit
 
 class PeripheralTests: XCTestCase {

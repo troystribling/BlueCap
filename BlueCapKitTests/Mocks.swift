@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreBluetooth
+import CoreLocation
 import BlueCapKit
 
 struct TestFailure {
