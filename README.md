@@ -17,7 +17,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 # Requirements
 
 - iOS 8.0+
-- Xcode 6.3+
+- Xcode 7.0+
 
 # Installation
 
@@ -60,6 +60,15 @@ Communication in BLE uses the Client-Server model. The Client is  called a Centr
 A simple Central implementation that scans for Peripherals advertising a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217), connects on peripheral discovery and then discovers the service characteristics is listed below,
 
 ```swift
+public enum CentralExampleError : Int {
+    case PeripheralNotConnected = 1
+}
+
+public struct CentralError {
+    public static let domain = "Central Example"
+    public static let peripheralNotConnected = NSError(domain:domain, code:CentralExampleError.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
+}
+    
 let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid)!
                                 
 // on power, start scanning. when peripheral is discovered connect and stop scanning
@@ -95,7 +104,7 @@ let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap {(peripheral, c
 		return peripheral.discoverPeripheralServices([serviceUUID])
 	} else {
 		let promise = Promise<Peripheral>()
-		promise.failure(CenteralError.peripheralNotConnected)
+		promise.failure(CentralError.peripheralNotConnected)
 		return promise.future
 	}
 }
