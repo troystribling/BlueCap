@@ -1,6 +1,7 @@
 *.xcuserstate
 *.xcscheme
 *.xcbkptlist
++xcuserdata
 BlueCap.xcodeproj/xcuserdata/*
 BlueCap.xcodeproj/project.xcworkspace/xcuserdata/*
 BlueCap.xcodeproj/project.xcworkspace/xcshareddata/*
