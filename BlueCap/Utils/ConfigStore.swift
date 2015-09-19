@@ -106,11 +106,11 @@ class ConfigStore {
     }
     
     class func getScannedServiceNames() -> [String] {
-        return self.getScannedServices().keys.array
+        return Array(self.getScannedServices().keys)
     }
     
     class func getScannedServiceUUIDs() -> [CBUUID] {
-        return self.getScannedServices().values.array
+        return Array(self.getScannedServices().values)
     }
     
     class func getScannedServiceUUID(name:String) -> CBUUID? {

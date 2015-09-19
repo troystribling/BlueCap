@@ -69,8 +69,8 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileValueCell, forIndexPath: indexPath) as! CharacteristicValueCell
         if let values = self.values {
-            let characteristicValueNames = values.keys.array
-            let characteristicValues = values.values.array
+            let characteristicValueNames = Array(values.keys)
+            let characteristicValues = Array(values.values)
             cell.valueNameLabel.text = characteristicValueNames[indexPath.row]
             cell.valueLable.text = characteristicValues[indexPath.row]
         }

@@ -199,8 +199,8 @@ public enum Try<T> {
     
     public func recover(recovery:NSError -> T) -> Try<T> {
         switch self {
-        case .Success(let box):
-            return Try(box)
+        case .Success(let value):
+            return Try(value)
         case .Failure(let error):
             return Try<T>(recovery(error))
         }

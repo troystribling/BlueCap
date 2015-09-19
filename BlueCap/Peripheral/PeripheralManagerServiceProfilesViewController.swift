@@ -45,15 +45,6 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func updatePripheralStore() {
-        if self.peripheral != nil {
-            let manager = PeripheralManager.sharedInstance
-            manager.services.reduce([String]()){(uuids, service) in
-                return uuids + [service.uuid.UUIDString]
-            }
-        }
-    }
-    
     func didResignActive() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
@@ -67,7 +58,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        let tags = self.serviceProfiles.keys.array
+        let tags = Array(self.serviceProfiles.keys)
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let serviceProfile = profiles[indexPath.row]
             let service = MutableService(profile:serviceProfile)

@@ -34,7 +34,7 @@ class BeaconStore {
     }
 
     class func getBeaconNames() -> [String] {
-        return self.getBeacons().keys.array
+        return Array(self.getBeacons().keys)
     }
     
     class func addBeacon(name:String, uuid:NSUUID) {

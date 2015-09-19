@@ -67,7 +67,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             viewController.characteristic = self.characteristic
             if let stringValues = self.characteristic?.stringValue {
                 let selectedIndex = sender as! NSIndexPath
-                let names = stringValues.keys.array
+                let names = Array(stringValues.keys)
                 viewController.valueName = names[selectedIndex.row]
             }
         }
@@ -139,8 +139,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath:indexPath) as! CharacteristicValueCell
         if let characteristic = self.characteristic {
             if let stringValues = characteristic.stringValue {
-                let names = stringValues.keys.array
-                let values = stringValues.values.array
+                let names = Array(stringValues.keys)
+                let values = Array(stringValues.values)
                 cell.valueNameLabel.text = names[indexPath.row]
                 cell.valueLable.text = values[indexPath.row]
             }
