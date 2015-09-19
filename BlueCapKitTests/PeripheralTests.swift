@@ -382,7 +382,7 @@ class PeripheralTests: XCTestCase {
         let mock = PeripheralMock(state:.Disconnected)
         let timeoutExpectation = expectationWithDescription("onFailure fulfilled for Timeout")
         let onConnectionExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = mock.impl.connect(mock, connectionTimeout:5.0, timeoutRetries:2)
+        let future = mock.impl.connect(mock, connectionTimeout:45.0, timeoutRetries:2)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
