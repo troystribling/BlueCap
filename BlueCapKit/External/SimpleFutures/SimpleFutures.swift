@@ -12,7 +12,7 @@ import Foundation
 // Optional
 extension Optional {
     
-    func flatmap<M>(mapping:T -> M?) -> M? {
+    func flatmap<M>(mapping:Wrapped -> M?) -> M? {
         switch self {
         case .Some(let value):
             return mapping(value)
@@ -21,7 +21,7 @@ extension Optional {
         }
     }
     
-    func filter(predicate:T -> Bool) -> T? {
+    func filter(predicate:Wrapped -> Bool) -> Wrapped? {
         switch self {
         case .Some(let value):
             return predicate(value) ? Optional(value) : nil
@@ -30,7 +30,7 @@ extension Optional {
         }
     }
     
-    func foreach(apply:T -> Void) {
+    func foreach(apply:Wrapped -> Void) {
         switch self {
         case .Some(let value):
             apply(value)

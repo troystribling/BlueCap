@@ -171,7 +171,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     public var peripherals : [Peripheral] {
-        return self.discoveredPeripherals.values.array.sort() {(p1:Peripheral, p2:Peripheral) -> Bool in
+        return Array(self.discoveredPeripherals.values).sort() {(p1:Peripheral, p2:Peripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
             case .OrderedSame:
                 return true

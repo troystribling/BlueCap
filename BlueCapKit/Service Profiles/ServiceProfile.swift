@@ -18,7 +18,7 @@ public class ServiceProfile {
     public let tag  : String
     
     public var characteristics : [CharacteristicProfile] {
-        return self.characteristicProfiles.values.array
+        return Array(self.characteristicProfiles.values)
     }
     
     public var characteristic : [CBUUID:CharacteristicProfile] {

@@ -39,7 +39,7 @@ public class RegionManagerImpl<Wrapper where Wrapper:RegionManagerWrappable,
     
     public var isMonitoring : Bool {
         var status = false
-        for monitoringStatus in self.regionMonitorStatus.values.array {
+        for monitoringStatus in Array(self.regionMonitorStatus.values) {
             if monitoringStatus {
                 status = true
                 break
@@ -132,11 +132,11 @@ public class RegionManager : LocationManager, RegionManagerWrappable {
 
     // RegionManagerWrappable
     public var regions : [Region] {
-        return self.configuredRegions.values.array
+        return Array(self.configuredRegions.values)
     }
 
     public func region(identifier:String) -> Region? {
-        let regions = self.configuredRegions.keys.array.filter{$0.identifier == identifier}
+        let regions = Array(self.configuredRegions.keys).filter{$0.identifier == identifier}
         if let region = regions.first {
             return self.configuredRegions[region]
         } else {

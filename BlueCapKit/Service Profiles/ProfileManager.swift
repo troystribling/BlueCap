@@ -20,7 +20,7 @@ public class ProfileManager {
     
     // PUBLIC
     public var services : [ServiceProfile] {
-        return self.serviceProfiles.values.array
+        return Array(self.serviceProfiles.values)
     }
     
     public var service : [CBUUID:ServiceProfile] {

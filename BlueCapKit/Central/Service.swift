@@ -121,7 +121,7 @@ public final class Service : ServiceWrappable {
     internal var discoveredCharacteristics  = [CBUUID:Characteristic]()
     
     public var characteristics : [Characteristic] {
-        return self.discoveredCharacteristics.values.array
+        return Array(self.discoveredCharacteristics.values)
     }
     
     public var peripheral : Peripheral {

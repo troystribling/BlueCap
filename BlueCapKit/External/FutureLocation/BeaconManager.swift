@@ -45,7 +45,7 @@ public class BeaconManagerImpl<Wrapper where
 
     public var isRanging : Bool {
         var status = false
-        for rangingStatus in self.regionRangingStatus.values.array {
+        for rangingStatus in Array(self.regionRangingStatus.values) {
             if rangingStatus {
                 status = true
                 break
@@ -125,7 +125,7 @@ public class BeaconManager : RegionManager, BeaconManagerWrappable {
     
     // BeaconManagerWrappable
     public var beaconRegions : [BeaconRegion] {
-        return self.configuredBeaconRegions.values.array
+        return Array(self.configuredBeaconRegions.values)
     }
     
     public func wrappedStartRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
@@ -161,7 +161,7 @@ public class BeaconManager : RegionManager, BeaconManagerWrappable {
     }
     
     public func beaconRegion(identifier:String) -> BeaconRegion? {
-        let regions = self.configuredBeaconRegions.keys.array.filter{$0.identifier == identifier}
+        let regions = Array(self.configuredBeaconRegions.keys).filter{$0.identifier == identifier}
         if let region = regions.first {
             return self.configuredBeaconRegions[region]
         } else {

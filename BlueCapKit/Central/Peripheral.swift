@@ -313,7 +313,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     }
     
     public var services : [Service] {
-        return self.discoveredServices.values.array
+        return Array(self.discoveredServices.values)
     }
     
     public func connect() {

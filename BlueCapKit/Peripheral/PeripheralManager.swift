@@ -286,7 +286,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate, Peripher
     }
     
     public var services : [MutableService] {
-        return self.configuredServices.values.array
+        return Array(self.configuredServices.values)
     }
     
     public func startAdvertising(advertisementData:[String:AnyObject]) {
