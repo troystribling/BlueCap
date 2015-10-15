@@ -135,7 +135,7 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
     public func writeData(characteristic:Wrapper, value:NSData, timeout:Double = 10.0) -> Future<Wrapper> {
         self.writePromise = Promise<Wrapper>()
-        if characteristic.propertyEnabled(.Write) {
+        if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
             Logger.debug("write characteristic value=\(value.hexStringValue()), uuid=\(characteristic.uuid.UUIDString)")
             characteristic.writeValue(value)
             self.writing = true
