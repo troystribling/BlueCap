@@ -133,14 +133,14 @@ public final class Service : ServiceWrappable {
         return self.impl.discoverIfConnected(self, characteristics:characteristics)
     }
     
+    public func characteristic(uuid:CBUUID) -> Characteristic? {
+        return self.discoveredCharacteristics[uuid]
+    }
+
     internal init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
         self._peripheral = peripheral
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
     }
-    
-    public func characteristic(uuid:CBUUID) -> Characteristic? {
-        return self.discoveredCharacteristics[uuid]
-    }
-    
+
 }

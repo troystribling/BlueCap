@@ -272,7 +272,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     
     public func centralManager(_:CBCentralManager, didDiscoverPeripheral peripheral:CBPeripheral, advertisementData:[String:AnyObject], RSSI:NSNumber) {
         if self.discoveredPeripherals[peripheral] == nil {
-            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:self.unpackAdvertisements(advertisementData), rssi:RSSI.integerValue)
+            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:advertisementData, rssi:RSSI.integerValue)
             Logger.debug("peripheral name \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
             self.impl.didDiscoverPeripheral(bcPeripheral)
@@ -311,31 +311,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     private init(options:[String:AnyObject]?) {
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue, options:options)
-    }
-
-    internal func unpackAdvertisements(advertDictionary:[String:AnyObject]) -> [String:String] {
-        Logger.debug("number of advertisements found \(advertDictionary.count)")
-        var advertisements = [String:String]()
-        func addKey(key:String, andValue value:AnyObject) -> () {
-            if value is NSString {
-                advertisements[key] = (value as? String)
-            } else {
-                advertisements[key] = value.stringValue
-            }
-            Logger.debug("advertisement key=\(key), value=\(advertisements[key])")
-        }
-        for key in advertDictionary.keys {
-            if let value : AnyObject = advertDictionary[key] {
-                if value is NSArray {
-                    for valueItem : AnyObject in (value as! NSArray) {
-                        addKey(key, andValue:valueItem)
-                    }
-                } else {
-                    addKey(key, andValue:value)
-                }
-            }
-        }
-        return advertisements
     }
     
 }

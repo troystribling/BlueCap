@@ -62,7 +62,6 @@
 		05D9D51419B0E36B001DBEBC /* ConfigureScanModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */; };
 		05D9D51619B0E464001DBEBC /* ConfigureScanServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */; };
 		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
-		05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */; };
 		05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */; };
 		05F2A8DA199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */; };
 		05F2A8DB199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */; };
@@ -183,7 +182,6 @@
 		05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanModeViewController.swift; sourceTree = "<group>"; };
 		05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanServicesViewController.swift; sourceTree = "<group>"; };
 		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
-		05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementCell.swift; sourceTree = "<group>"; };
 		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; };
 		05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfilesViewController.swift; sourceTree = "<group>"; };
 		05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileValuesViewController.swift; sourceTree = "<group>"; };
@@ -231,7 +229,6 @@
 			children = (
 				057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */,
 				05B6F0771957ACF300D798CB /* NameUUIDCell.swift */,
-				05E6870419530134009B38DA /* PeripheralAdvertisementCell.swift */,
 				05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */,
 				054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */,
 				05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */,
@@ -515,7 +512,6 @@
 				056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */,
 				05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */,
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
-				05E6870519530134009B38DA /* PeripheralAdvertisementCell.swift in Sources */,
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
 				0530B62919D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift in Sources */,
 				056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */,

@@ -351,7 +351,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     
     internal let cbPeripheral   : CBPeripheral
     
-    public let advertisements   : [String: String]
+    public let advertisements   : [String: AnyObject]
     public let rssi             : Int
     
     public var discoveredAt : NSDate {
@@ -370,18 +370,76 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         return self.cbPeripheral.identifier
     }
     
-    internal init(cbPeripheral:CBPeripheral, advertisements:[String:String], rssi:Int) {
-        self.cbPeripheral = cbPeripheral
-        self.advertisements = advertisements
-        self.rssi = rssi
-        super.init()
-        self.cbPeripheral.delegate = self
+    // advertisements
+    public var advertisedLocalName : String? {
+        if let localname = self.advertisements[CBAdvertisementDataLocalNameKey] {
+            return localname as? String
+        } else {
+            return nil
+        }
     }
     
+    public var advertisedManufactuereData : NSData? {
+        if let mfgData = self.advertisements[CBAdvertisementDataManufacturerDataKey] {
+            return mfgData as? NSData
+        } else {
+            return nil;
+        }
+    }
+    
+    public var advertisedTxPower : NSNumber? {
+        if let txPower = self.advertisements[CBAdvertisementDataTxPowerLevelKey] {
+            return txPower as? NSNumber
+        } else {
+            return nil
+        }
+    }
+    
+    public var advertisedIsConnectable : NSNumber? {
+        if let isConnectable = self.advertisements[CBAdvertisementDataTxPowerLevelKey] {
+            return isConnectable as? NSNumber
+        } else {
+            return nil
+        }
+    }
+    
+    public var advertisedServiceUUIDs : [CBUUID]? {
+        if let serviceUUIDs = self.advertisements[CBAdvertisementDataServiceUUIDsKey] {
+            return serviceUUIDs as? [CBUUID]
+        } else {
+            return nil
+        }
+    }
+
+    public var advertisedServiceData : [CBUUID:NSData]? {
+        if let serviceData = self.advertisements[CBAdvertisementDataServiceDataKey] {
+            return serviceData as? [CBUUID:NSData]
+        } else {
+            return nil
+        }
+    }
+
+    public var advertisedOverflowServiceUUIDs : [CBUUID]? {
+        if let serviceUUIDs = self.advertisements[CBAdvertisementDataOverflowServiceUUIDsKey] {
+            return serviceUUIDs as? [CBUUID]
+        } else {
+            return nil
+        }
+    }
+
+    public var advertisedSolicitedServiceUUIDs : [CBUUID]? {
+        if let serviceUUIDs = self.advertisements[CBAdvertisementDataSolicitedServiceUUIDsKey] {
+            return serviceUUIDs as? [CBUUID]
+        } else {
+            return nil
+        }
+    }
+
+    // peripheral services
     public func service(uuid:CBUUID) -> Service? {
         return self.discoveredServices[uuid]
     }
-
+    
     // rssi
     func readRSSI() -> Future<Int> {
         self.cbPeripheral.readRSSI()
@@ -496,7 +554,14 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
         Logger.debug()
     }
     
-    // utils
+    internal init(cbPeripheral:CBPeripheral, advertisements:[String:AnyObject], rssi:Int) {
+        self.cbPeripheral = cbPeripheral
+        self.advertisements = advertisements
+        self.rssi = rssi
+        super.init()
+        self.cbPeripheral.delegate = self
+    }    
+
     private func clearAll() {
         self.discoveredServices.removeAll()
         self.discoveredCharacteristics.removeAll()
