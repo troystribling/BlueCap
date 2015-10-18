@@ -14,6 +14,10 @@
 		0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */; };
 		053B0CC219BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053B0CC119BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift */; };
 		0543FEBE1B42E22D00363415 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0543FEBD1B42E22D00363415 /* LaunchScreen.xib */; };
+		054C7C9D1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7C9C1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		054C7C9F1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7C9E1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		054C7CA11BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7CA01BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		054C7CA31BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7CA21BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
 		0551210519F5554C00ED3B74 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120FF19F553DB00ED3B74 /* BlueCapKit.framework */; };
 		0551210619F5554C00ED3B74 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 055120FF19F553DB00ED3B74 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -130,6 +134,10 @@
 		0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconViewController.swift; sourceTree = "<group>"; };
 		053B0CC119BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanTimeoutViewController.swift; sourceTree = "<group>"; };
 		0543FEBD1B42E22D00363415 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		054C7C9C1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsServicesViewController.swift; sourceTree = "<group>"; };
+		054C7C9E1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsServiceDataViewController.swift; sourceTree = "<group>"; };
+		054C7CA01BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsOverflowServicesViewController.swift; sourceTree = "<group>"; };
+		054C7CA21BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralAdvertisementsSolicitedServicesViewController.swift; sourceTree = "<group>"; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
 		055120F919F553DB00ED3B74 /* BlueCapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = BlueCapKit.xcodeproj; sourceTree = "<group>"; };
 		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -229,6 +237,10 @@
 			children = (
 				057E6ABC1968BA3C009938F4 /* CharacteristicValueCell.swift */,
 				05B6F0771957ACF300D798CB /* NameUUIDCell.swift */,
+				054C7CA01BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift */,
+				054C7C9E1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift */,
+				054C7C9C1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift */,
+				054C7CA21BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift */,
 				05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */,
 				054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */,
 				05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */,
@@ -512,6 +524,7 @@
 				056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */,
 				05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */,
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
+				054C7C9D1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift in Sources */,
 				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
 				0530B62919D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift in Sources */,
 				056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */,
@@ -535,10 +548,12 @@
 				05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */,
 				053B0CC219BF2717006C7D1F /* ConfigureScanTimeoutViewController.swift in Sources */,
 				05D9D51419B0E36B001DBEBC /* ConfigureScanModeViewController.swift in Sources */,
+				054C7CA31BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift in Sources */,
 				05F2A8DA199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift in Sources */,
 				05B48B5219C8527100800327 /* BeaconRegionsViewController.swift in Sources */,
 				05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */,
 				05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */,
+				054C7CA11BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift in Sources */,
 				05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */,
 				05CA6C1519FA6C2C00088A39 /* ConfigureCharacteristicReadWriteTimeoutViewController.swift in Sources */,
 				057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */,
@@ -558,6 +573,7 @@
 				05840F65194206F100C744E6 /* AppDelegate.swift in Sources */,
 				05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */,
 				05B48B5619C9B69400800327 /* BeaconRegionCell.swift in Sources */,
+				054C7C9F1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift in Sources */,
 				05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */,
 				0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */,
 				05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */,
@@ -680,6 +696,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = BlueCap/Info.plist;
@@ -689,6 +706,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -698,6 +716,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
