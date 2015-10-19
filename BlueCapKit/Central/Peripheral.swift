@@ -396,7 +396,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate, PeripheralWrappable {
     }
     
     public var advertisedIsConnectable : NSNumber? {
-        if let isConnectable = self.advertisements[CBAdvertisementDataTxPowerLevelKey] {
+        if let isConnectable = self.advertisements[CBAdvertisementDataIsConnectable] {
             return isConnectable as? NSNumber
         } else {
             return nil

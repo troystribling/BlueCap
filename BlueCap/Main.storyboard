@@ -2535,7 +2535,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="jIX-sb-9l0" kind="show" id="m3H-nv-7Bl"/>
+                                            <segue destination="jIX-sb-9l0" kind="show" identifier="PeripheralAdvertisemensServices" id="m3H-nv-7Bl"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="owr-1f-2aG" detailTextLabel="xwO-1Q-xAQ" rowHeight="50" style="IBUITableViewCellStyleValue1" id="ulY-Da-358">
@@ -2566,7 +2566,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="ovC-Bo-9SD" kind="show" id="5ca-r2-Qtl"/>
+                                            <segue destination="ovC-Bo-9SD" kind="show" identifier="PeripheralAdvertisemensServicesData" id="5ca-r2-Qtl"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="6PY-Xh-zyk" detailTextLabel="CRe-dM-Vu8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="J7y-sb-vIf">
@@ -2597,7 +2597,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="W5T-G8-W89" kind="show" id="muP-rP-Bee"/>
+                                            <segue destination="W5T-G8-W89" kind="show" identifier="PeripheralAdvertisemensOverflowServices" id="muP-rP-Bee"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="sXA-yx-NkO" detailTextLabel="EsL-pE-G1s" rowHeight="50" style="IBUITableViewCellStyleValue1" id="t9Z-ZQ-2Dd">
@@ -2628,7 +2628,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="Kxp-ec-Yev" kind="show" id="wgv-ZV-XCb"/>
+                                            <segue destination="Kxp-ec-Yev" kind="show" identifier="PeripheralAdvertisemensSolicitedServices" id="wgv-ZV-XCb"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -2649,9 +2649,9 @@
                         <outlet property="manufacturerDataValueLabel" destination="XRP-Ww-if3" id="PTB-Jb-W16"/>
                         <outlet property="overflowServicesCountLabel" destination="CRe-dM-Vu8" id="aKn-Fr-h0s"/>
                         <outlet property="overflowServicesLabel" destination="6PY-Xh-zyk" id="a3k-GS-zJq"/>
-                        <outlet property="serviceDataCountLabel" destination="xwO-1Q-xAQ" id="GEl-eG-nCS"/>
-                        <outlet property="serviceDataLabel" destination="owr-1f-2aG" id="vql-cG-ByA"/>
                         <outlet property="servicesCountLabel" destination="L9K-VQ-HmK" id="sXE-nI-rqR"/>
+                        <outlet property="servicesDataCountLabel" destination="xwO-1Q-xAQ" id="Keg-TX-zgQ"/>
+                        <outlet property="servicesDataLabel" destination="owr-1f-2aG" id="8HG-S2-3gD"/>
                         <outlet property="servicesLabel" destination="l3F-Tp-Q1X" id="iIU-rc-aKl"/>
                         <outlet property="solicitedServicesCountLabel" destination="EsL-pE-G1s" id="DeH-lG-d8d"/>
                         <outlet property="solicitedServicesLabel" destination="sXA-yx-NkO" id="IX6-YZ-iHT"/>

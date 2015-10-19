@@ -24,15 +24,19 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     
     @IBOutlet var servicesLabel                 : UILabel!
     @IBOutlet var servicesCountLabel            : UILabel!
-    @IBOutlet var serviceDataLabel              : UILabel!
-    @IBOutlet var serviceDataCountLabel         : UILabel!
+    @IBOutlet var servicesDataLabel             : UILabel!
+    @IBOutlet var servicesDataCountLabel        : UILabel!
     @IBOutlet var overflowServicesLabel         : UILabel!
     @IBOutlet var overflowServicesCountLabel    : UILabel!
     @IBOutlet var solicitedServicesLabel        : UILabel!
     @IBOutlet var solicitedServicesCountLabel   : UILabel!
     
     struct MainStoryboard {
-        static let peripheralAdvertisementCell = "PeripheralAdvertisementCell"
+        static let peripheralAdvertisementCell                      = "PeripheralAdvertisementCell"
+        static let peripheralAdvertisemensServicesSegue             = "PeripheralAdvertisemensServices"
+        static let peripheralAdvertisemensServicesDataSegue         = "PeripheralAdvertisemensServicesData"
+        static let peripheralAdvertisemensOverflowServicesSegue     = "PeripheralAdvertisemensOverflowServices"
+        static let peripheralAdvertisemensSolicitedServicesSegue    = "PeripheralAdvertisemensSolicitedServices"
     }
     
     required init?(coder aDecoder:NSCoder)  {
@@ -57,6 +61,22 @@ class PeripheralAdvertisementsViewController : UITableViewController {
             if let mfgData = peripheral.advertisedManufactuereData {
                 self.manufacturerDataValueLabel.text = mfgData.hexStringValue()
                 self.manufacturerDataLabel.textColor = UIColor.blackColor()
+            }
+            if let services = peripheral.advertisedServiceUUIDs {
+                self.servicesLabel.textColor = UIColor.blackColor()
+                self.servicesCountLabel.text = "\(services.count)"
+            }
+            if let servicesData = peripheral.advertisedServiceData {
+                self.servicesDataLabel.textColor = UIColor.blackColor()
+                self.servicesDataCountLabel.text = "\(servicesData.count)"
+            }
+            if let overflowServices = peripheral.advertisedOverflowServiceUUIDs {
+                self.overflowServicesLabel.textColor = UIColor.blackColor()
+                self.overflowServicesCountLabel.text = "\(overflowServices.count)"
+            }
+            if let solicitedServices = peripheral.advertisedSolicitedServiceUUIDs {
+                self.solicitedServicesLabel.textColor = UIColor.blackColor()
+                self.solicitedServicesCountLabel.text = "\(solicitedServices.count)"
             }
         }
     }
