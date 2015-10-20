@@ -33,10 +33,10 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     
     struct MainStoryboard {
         static let peripheralAdvertisementCell                      = "PeripheralAdvertisementCell"
-        static let peripheralAdvertisemensServicesSegue             = "PeripheralAdvertisemensServices"
-        static let peripheralAdvertisemensServicesDataSegue         = "PeripheralAdvertisemensServicesData"
-        static let peripheralAdvertisemensOverflowServicesSegue     = "PeripheralAdvertisemensOverflowServices"
-        static let peripheralAdvertisemensSolicitedServicesSegue    = "PeripheralAdvertisemensSolicitedServices"
+        static let peripheralAdvertisementsServicesSegue            = "PeripheralAdvertisementsServices"
+        static let peripheralAdvertisementsServicesDataSegue        = "PeripheralAdvertisementsServicesData"
+        static let peripheralAdvertisementsOverflowServicesSegue    = "PeripheralAdvertisementsOverflowServices"
+        static let peripheralAdvertisementsSolicitedServicesSegue   = "PeripheralAdvertisement   ssSolicitedServices"
     }
     
     required init?(coder aDecoder:NSCoder)  {
@@ -99,6 +99,22 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     
     func didBecomeActive() {
         Logger.debug()
+    }
+    
+    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
+        if segue.identifier == MainStoryboard.peripheralAdvertisementsServicesSegue {
+            let controller = segue.destinationViewController as! PeripheralAdvertisementsServicesViewController
+            controller.peripheral = self.peripheral
+        } else if segue.identifier == MainStoryboard.peripheralAdvertisementsServicesDataSegue {
+            let controller = segue.destinationViewController as! PeripheralAdvertisementsServiceDataViewController
+            controller.peripheral = self.peripheral
+        } else if segue.identifier == MainStoryboard.peripheralAdvertisementsOverflowServicesSegue {
+            let controller = segue.destinationViewController as! PeripheralAdvertisementsOverflowServicesViewController
+            controller.peripheral = self.peripheral
+        } else if segue.identifier == MainStoryboard.peripheralAdvertisementsSolicitedServicesSegue {
+            let controller = segue.destinationViewController as! PeripheralAdvertisementsSolicitedServicesViewController
+            controller.peripheral = self.peripheral
+        }
     }
 
 }

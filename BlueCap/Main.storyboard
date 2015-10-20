@@ -211,6 +211,9 @@
             <string>Thonburi</string>
             <string>Thonburi</string>
             <string>Thonburi</string>
+            <string>Thonburi</string>
+            <string>Thonburi</string>
+            <string>Thonburi</string>
         </mutableArray>
     </customFonts>
     <scenes>
@@ -2535,7 +2538,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="jIX-sb-9l0" kind="show" identifier="PeripheralAdvertisemensServices" id="m3H-nv-7Bl"/>
+                                            <segue destination="jIX-sb-9l0" kind="show" identifier="PeripheralAdvertisementsServices" id="m3H-nv-7Bl"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="owr-1f-2aG" detailTextLabel="xwO-1Q-xAQ" rowHeight="50" style="IBUITableViewCellStyleValue1" id="ulY-Da-358">
@@ -2566,7 +2569,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="ovC-Bo-9SD" kind="show" identifier="PeripheralAdvertisemensServicesData" id="5ca-r2-Qtl"/>
+                                            <segue destination="ovC-Bo-9SD" kind="show" identifier="PeripheralAdvertisementsServicesData" id="5ca-r2-Qtl"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="6PY-Xh-zyk" detailTextLabel="CRe-dM-Vu8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="J7y-sb-vIf">
@@ -2597,7 +2600,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="W5T-G8-W89" kind="show" identifier="PeripheralAdvertisemensOverflowServices" id="muP-rP-Bee"/>
+                                            <segue destination="W5T-G8-W89" kind="show" identifier="PeripheralAdvertisementsOverflowServices" id="muP-rP-Bee"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="sXA-yx-NkO" detailTextLabel="EsL-pE-G1s" rowHeight="50" style="IBUITableViewCellStyleValue1" id="t9Z-ZQ-2Dd">
@@ -2628,7 +2631,7 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                         <connections>
-                                            <segue destination="Kxp-ec-Yev" kind="show" identifier="PeripheralAdvertisemensSolicitedServices" id="wgv-ZV-XCb"/>
+                                            <segue destination="Kxp-ec-Yev" kind="show" identifier="PeripheralAdvertisementsSolicitedServices" id="wgv-ZV-XCb"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -2666,25 +2669,25 @@
         <!--Advertised Services-->
         <scene sceneID="FI1-E7-6yK">
             <objects>
-                <tableViewController id="jIX-sb-9l0" sceneMemberID="viewController">
+                <tableViewController id="jIX-sb-9l0" customClass="PeripheralAdvertisementsServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="0Hb-J2-pGy">
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisemensServiceCell" textLabel="osF-bN-3NG" style="IBUITableViewCellStyleDefault" id="hwb-Dc-2Ze">
-                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsServiceCell" textLabel="osF-bN-3NG" rowHeight="50" style="IBUITableViewCellStyleDefault" id="hwb-Dc-2Ze">
+                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hwb-Dc-2Ze" id="MSH-mY-Jzp">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="osF-bN-3NG">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="osF-bN-3NG">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
-                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -2708,19 +2711,29 @@
         <!--Advertised Service Data-->
         <scene sceneID="Hxg-bn-p4b">
             <objects>
-                <tableViewController id="ovC-Bo-9SD" sceneMemberID="viewController">
+                <tableViewController id="ovC-Bo-9SD" customClass="PeripheralAdvertisementsServiceDataViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="A4S-gl-5BW">
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsServiceDataCell" id="M5i-Ox-5vc" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsServiceDataCell" textLabel="VC8-7E-b32" rowHeight="50" style="IBUITableViewCellStyleDefault" id="M5i-Ox-5vc" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="M5i-Ox-5vc" id="rMo-N2-bl6">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="VC8-7E-b32">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <animations/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                     <animations/>
                                 </tableViewCellContentView>
                                 <animations/>
@@ -2740,19 +2753,29 @@
         <!--Overflow Services-->
         <scene sceneID="iZW-mM-3sw">
             <objects>
-                <tableViewController id="W5T-G8-W89" sceneMemberID="viewController">
+                <tableViewController id="W5T-G8-W89" customClass="PeripheralAdvertisementsOverflowServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Feh-Rt-l2F">
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsOverflowServiceCell" id="gyj-My-dNf">
-                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsOverflowServiceCell" textLabel="fLc-6k-Jc5" rowHeight="50" style="IBUITableViewCellStyleDefault" id="gyj-My-dNf">
+                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gyj-My-dNf" id="O21-1x-oGi">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="fLc-6k-Jc5">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <animations/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                     <animations/>
                                 </tableViewCellContentView>
                                 <animations/>
@@ -2833,19 +2856,29 @@
         <!--Solicited Services-->
         <scene sceneID="ncw-SM-dM5">
             <objects>
-                <tableViewController id="Kxp-ec-Yev" sceneMemberID="viewController">
+                <tableViewController id="Kxp-ec-Yev" customClass="PeripheralAdvertisementsSolicitedServicesViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="T6j-Qh-87t">
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsSolicitedServiceCell" id="wTW-aC-4rs">
-                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsSolicitedServiceCell" textLabel="vms-pf-6vb" rowHeight="50" style="IBUITableViewCellStyleDefault" id="wTW-aC-4rs">
+                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wTW-aC-4rs" id="uRp-9Z-9nG">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="vms-pf-6vb">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <animations/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                     <animations/>
                                 </tableViewCellContentView>
                                 <animations/>
