@@ -197,8 +197,9 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
   * [PowerOn/PowerOff](#central_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
   * [Service Scanning](#central_service_scanning): Scan for services.
   * [Service Scanning with Timeout](#central_service_scan_timeout): Scan for services with timeout.
-  * [Peripheral Connection](#central_peripheral_connection): Connect to Peripherals.
-  * [Service and Characteristic Discovery](#central_characteristic_discovery): Discover Peripheral Services and Characteristics.
+  * [Peripheral Advertisements](#central_peripheral_advertisements): Access Advertisements of discovered Peripherals.
+  * [Peripheral Connection](#central_peripheral_connection): Connect to discovered Peripherals.
+  * [Service and Characteristic Discovery](#central_characteristic_discovery): Discover Services and Characteristics of connected Peripherals.
   * [Characteristic Write](#central_characteristic_write): Write a characteristic value to a connected Peripheral.
   * [Characteristic Read](#central_characteristic_read): Read a characteristic value from a connected Peripheral.
   * [Characteristic Update Notifications](#central_characteristic_update): Subscribe to characteristic value updates on a connected Peripheral.
@@ -1167,6 +1168,37 @@ and in an application,
 
 ```swift
 TimedScannerator.sharedInstance.stopScanning()
+```
+
+### <a name="central_peripheral_advertisements">Peripheral Advertisements</a>
+
+Peripheral advertisements are can be obtained using the following Peripheral properties,
+
+```swift
+
+// Local peripheral name with key CBAdvertisementDataLocalNameKey
+public var advertisedLocalName : String? 
+
+// Manufacture data with key CBAdvertisementDataManufacturerDataKey    
+public var advertisedManufactuereData : NSData? 
+
+// Tx power with with key CBAdvertisementDataTxPowerLevelKey
+public var advertisedTxPower : NSNumber? 
+
+// Is connectable with key CBAdvertisementDataIsConnectable
+public var advertisedIsConnectable : NSNumber? 
+    
+// Advertised service UUIDs with key CBAdvertisementDataServiceUUIDsKey
+public var advertisedServiceUUIDs : [CBUUID]? 
+
+// Advertised service data with key CBAdvertisementDataServiceDataKey
+public var advertisedServiceData : [CBUUID:NSData]? 
+
+// Advertised overflow services with key CBAdvertisementDataOverflowServiceUUIDsKey
+public var advertisedOverflowServiceUUIDs : [CBUUID]? 
+
+// Advertised solicited services with key CBAdvertisementDataSolicitedServiceUUIDsKey
+public var advertisedSolicitedServiceUUIDs : [CBUUID]? 
 ```
 
 ### <a name="central_peripheral_connection">Peripheral Connection</a>

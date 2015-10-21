@@ -214,6 +214,7 @@
             <string>Thonburi</string>
             <string>Thonburi</string>
             <string>Thonburi</string>
+            <string>Thonburi</string>
         </mutableArray>
     </customFonts>
     <scenes>
@@ -2676,15 +2677,15 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsServiceCell" textLabel="osF-bN-3NG" rowHeight="50" style="IBUITableViewCellStyleDefault" id="hwb-Dc-2Ze">
-                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsServiceCell" textLabel="osF-bN-3NG" rowHeight="60" style="IBUITableViewCellStyleDefault" id="hwb-Dc-2Ze">
+                                <rect key="frame" x="0.0" y="28" width="600" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hwb-Dc-2Ze" id="MSH-mY-Jzp">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="59.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="osF-bN-3NG">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="osF-bN-3NG">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
@@ -2718,16 +2719,22 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsServiceDataCell" textLabel="VC8-7E-b32" rowHeight="50" style="IBUITableViewCellStyleDefault" id="M5i-Ox-5vc" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsServiceDataCell" rowHeight="80" id="M5i-Ox-5vc" customClass="NameUUIDCell" customModule="BlueCap" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="600" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="M5i-Ox-5vc" id="rMo-N2-bl6">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="79.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="VC8-7E-b32">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1iD-Oc-4hL">
+                                            <rect key="frame" x="20" y="17" width="286.5" height="17.5"/>
+                                            <animations/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="13"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="abc123" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h4s-HC-VdW">
+                                            <rect key="frame" x="20" y="36" width="74.5" height="26.5"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -2735,8 +2742,18 @@
                                         </label>
                                     </subviews>
                                     <animations/>
+                                    <constraints>
+                                        <constraint firstItem="1iD-Oc-4hL" firstAttribute="leading" secondItem="rMo-N2-bl6" secondAttribute="leading" constant="20" id="Iq4-zv-Ws4"/>
+                                        <constraint firstItem="1iD-Oc-4hL" firstAttribute="top" secondItem="rMo-N2-bl6" secondAttribute="top" constant="17" id="OFu-7Z-WOn"/>
+                                        <constraint firstItem="h4s-HC-VdW" firstAttribute="leading" secondItem="1iD-Oc-4hL" secondAttribute="leading" id="drV-N8-UvQ"/>
+                                        <constraint firstItem="h4s-HC-VdW" firstAttribute="top" secondItem="1iD-Oc-4hL" secondAttribute="bottom" constant="1.5" id="tYo-Dt-BVJ"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                                 <animations/>
+                                <connections>
+                                    <outlet property="nameLabel" destination="h4s-HC-VdW" id="OzQ-Sj-8xy"/>
+                                    <outlet property="uuidLabel" destination="1iD-Oc-4hL" id="5UN-TU-c0m"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -2760,15 +2777,15 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsOverflowServiceCell" textLabel="fLc-6k-Jc5" rowHeight="50" style="IBUITableViewCellStyleDefault" id="gyj-My-dNf">
-                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsOverflowServiceCell" textLabel="fLc-6k-Jc5" rowHeight="60" style="IBUITableViewCellStyleDefault" id="gyj-My-dNf">
+                                <rect key="frame" x="0.0" y="28" width="600" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gyj-My-dNf" id="O21-1x-oGi">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="59.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="fLc-6k-Jc5">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="fLc-6k-Jc5">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
@@ -2863,15 +2880,15 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsSolicitedServiceCell" textLabel="vms-pf-6vb" rowHeight="50" style="IBUITableViewCellStyleDefault" id="wTW-aC-4rs">
-                                <rect key="frame" x="0.0" y="28" width="600" height="50"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PeripheralAdvertisementsSolicitedServiceCell" textLabel="vms-pf-6vb" rowHeight="60" style="IBUITableViewCellStyleDefault" id="wTW-aC-4rs">
+                                <rect key="frame" x="0.0" y="28" width="600" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wTW-aC-4rs" id="uRp-9Z-9nG">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="59.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="vms-pf-6vb">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="vms-pf-6vb">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
