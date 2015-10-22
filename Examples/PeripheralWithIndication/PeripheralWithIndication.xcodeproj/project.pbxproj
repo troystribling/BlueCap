@@ -1,0 +1,619 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		054CF8291BD8852800BF534C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF8281BD8852800BF534C /* AppDelegate.swift */; };
+		054CF82B1BD8852800BF534C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF82A1BD8852800BF534C /* ViewController.swift */; };
+		054CF82E1BD8852800BF534C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 054CF82C1BD8852800BF534C /* Main.storyboard */; };
+		054CF8301BD8852800BF534C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 054CF82F1BD8852800BF534C /* Assets.xcassets */; };
+		054CF8331BD8852800BF534C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 054CF8311BD8852800BF534C /* LaunchScreen.storyboard */; };
+		054CF83E1BD8852800BF534C /* PeripheralWithIndicationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF83D1BD8852800BF534C /* PeripheralWithIndicationTests.swift */; };
+		054CF8491BD8852800BF534C /* PeripheralWithIndicationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF8481BD8852800BF534C /* PeripheralWithIndicationUITests.swift */; };
+		054CF8571BD8854500BF534C /* Accelerometer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF8561BD8854500BF534C /* Accelerometer.swift */; settings = {ASSET_TAGS = (); }; };
+		054CF8591BD886A300BF534C /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF8581BD886A300BF534C /* UIAlertControllerExtensions.swift */; settings = {ASSET_TAGS = (); }; };
+		054CF8631BD886FB00BF534C /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 054CF8601BD886E900BF534C /* BlueCapKit.framework */; };
+		054CF8651BD8870800BF534C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 054CF8641BD8870800BF534C /* CoreBluetooth.framework */; };
+		054CF8671BD8871700BF534C /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 054CF8661BD8871700BF534C /* CoreMotion.framework */; };
+		054CF86B1BD8892300BF534C /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 054CF8601BD886E900BF534C /* BlueCapKit.framework */; };
+		054CF86C1BD8892300BF534C /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 054CF8601BD886E900BF534C /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		054CF83A1BD8852800BF534C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 054CF81D1BD8852800BF534C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 054CF8241BD8852800BF534C;
+			remoteInfo = PeripheralWithIndication;
+		};
+		054CF8451BD8852800BF534C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 054CF81D1BD8852800BF534C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 054CF8241BD8852800BF534C;
+			remoteInfo = PeripheralWithIndication;
+		};
+		054CF85F1BD886E900BF534C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 054CF85A1BD886E900BF534C /* BlueCapKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0551208219F5506000ED3B74;
+			remoteInfo = BlueCapKit;
+		};
+		054CF8611BD886E900BF534C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 054CF85A1BD886E900BF534C /* BlueCapKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0551208D19F5506000ED3B74;
+			remoteInfo = BlueCapKitTests;
+		};
+		054CF8681BD8871F00BF534C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 054CF85A1BD886E900BF534C /* BlueCapKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0551208119F5506000ED3B74;
+			remoteInfo = BlueCapKit;
+		};
+		054CF86D1BD8892300BF534C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 054CF85A1BD886E900BF534C /* BlueCapKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0551208119F5506000ED3B74;
+			remoteInfo = BlueCapKit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		054CF86F1BD8892300BF534C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				054CF86C1BD8892300BF534C /* BlueCapKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		054CF8251BD8852800BF534C /* PeripheralWithIndication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PeripheralWithIndication.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		054CF8281BD8852800BF534C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		054CF82A1BD8852800BF534C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		054CF82D1BD8852800BF534C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		054CF82F1BD8852800BF534C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		054CF8321BD8852800BF534C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		054CF8341BD8852800BF534C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		054CF8391BD8852800BF534C /* PeripheralWithIndicationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeripheralWithIndicationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		054CF83D1BD8852800BF534C /* PeripheralWithIndicationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeripheralWithIndicationTests.swift; sourceTree = "<group>"; };
+		054CF83F1BD8852800BF534C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		054CF8441BD8852800BF534C /* PeripheralWithIndicationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeripheralWithIndicationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		054CF8481BD8852800BF534C /* PeripheralWithIndicationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeripheralWithIndicationUITests.swift; sourceTree = "<group>"; };
+		054CF84A1BD8852800BF534C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		054CF8561BD8854500BF534C /* Accelerometer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Accelerometer.swift; sourceTree = "<group>"; };
+		054CF8581BD886A300BF534C /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
+		054CF85A1BD886E900BF534C /* BlueCapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BlueCapKit.xcodeproj; path = ../../BlueCapKit.xcodeproj; sourceTree = "<group>"; };
+		054CF8641BD8870800BF534C /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		054CF8661BD8871700BF534C /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		054CF8221BD8852800BF534C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054CF86B1BD8892300BF534C /* BlueCapKit.framework in Frameworks */,
+				054CF8671BD8871700BF534C /* CoreMotion.framework in Frameworks */,
+				054CF8651BD8870800BF534C /* CoreBluetooth.framework in Frameworks */,
+				054CF8631BD886FB00BF534C /* BlueCapKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		054CF8361BD8852800BF534C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		054CF8411BD8852800BF534C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		054CF81C1BD8852800BF534C = {
+			isa = PBXGroup;
+			children = (
+				054CF8661BD8871700BF534C /* CoreMotion.framework */,
+				054CF8641BD8870800BF534C /* CoreBluetooth.framework */,
+				054CF85A1BD886E900BF534C /* BlueCapKit.xcodeproj */,
+				054CF8271BD8852800BF534C /* PeripheralWithIndication */,
+				054CF83C1BD8852800BF534C /* PeripheralWithIndicationTests */,
+				054CF8471BD8852800BF534C /* PeripheralWithIndicationUITests */,
+				054CF8261BD8852800BF534C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		054CF8261BD8852800BF534C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				054CF8251BD8852800BF534C /* PeripheralWithIndication.app */,
+				054CF8391BD8852800BF534C /* PeripheralWithIndicationTests.xctest */,
+				054CF8441BD8852800BF534C /* PeripheralWithIndicationUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		054CF8271BD8852800BF534C /* PeripheralWithIndication */ = {
+			isa = PBXGroup;
+			children = (
+				054CF8581BD886A300BF534C /* UIAlertControllerExtensions.swift */,
+				054CF8281BD8852800BF534C /* AppDelegate.swift */,
+				054CF82A1BD8852800BF534C /* ViewController.swift */,
+				054CF82C1BD8852800BF534C /* Main.storyboard */,
+				054CF82F1BD8852800BF534C /* Assets.xcassets */,
+				054CF8311BD8852800BF534C /* LaunchScreen.storyboard */,
+				054CF8341BD8852800BF534C /* Info.plist */,
+				054CF8561BD8854500BF534C /* Accelerometer.swift */,
+			);
+			path = PeripheralWithIndication;
+			sourceTree = "<group>";
+		};
+		054CF83C1BD8852800BF534C /* PeripheralWithIndicationTests */ = {
+			isa = PBXGroup;
+			children = (
+				054CF83D1BD8852800BF534C /* PeripheralWithIndicationTests.swift */,
+				054CF83F1BD8852800BF534C /* Info.plist */,
+			);
+			path = PeripheralWithIndicationTests;
+			sourceTree = "<group>";
+		};
+		054CF8471BD8852800BF534C /* PeripheralWithIndicationUITests */ = {
+			isa = PBXGroup;
+			children = (
+				054CF8481BD8852800BF534C /* PeripheralWithIndicationUITests.swift */,
+				054CF84A1BD8852800BF534C /* Info.plist */,
+			);
+			path = PeripheralWithIndicationUITests;
+			sourceTree = "<group>";
+		};
+		054CF85B1BD886E900BF534C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				054CF8601BD886E900BF534C /* BlueCapKit.framework */,
+				054CF8621BD886E900BF534C /* BlueCapKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		054CF8241BD8852800BF534C /* PeripheralWithIndication */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 054CF84D1BD8852800BF534C /* Build configuration list for PBXNativeTarget "PeripheralWithIndication" */;
+			buildPhases = (
+				054CF8211BD8852800BF534C /* Sources */,
+				054CF8221BD8852800BF534C /* Frameworks */,
+				054CF8231BD8852800BF534C /* Resources */,
+				054CF86F1BD8892300BF534C /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				054CF8691BD8871F00BF534C /* PBXTargetDependency */,
+				054CF86E1BD8892300BF534C /* PBXTargetDependency */,
+			);
+			name = PeripheralWithIndication;
+			productName = PeripheralWithIndication;
+			productReference = 054CF8251BD8852800BF534C /* PeripheralWithIndication.app */;
+			productType = "com.apple.product-type.application";
+		};
+		054CF8381BD8852800BF534C /* PeripheralWithIndicationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 054CF8501BD8852800BF534C /* Build configuration list for PBXNativeTarget "PeripheralWithIndicationTests" */;
+			buildPhases = (
+				054CF8351BD8852800BF534C /* Sources */,
+				054CF8361BD8852800BF534C /* Frameworks */,
+				054CF8371BD8852800BF534C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				054CF83B1BD8852800BF534C /* PBXTargetDependency */,
+			);
+			name = PeripheralWithIndicationTests;
+			productName = PeripheralWithIndicationTests;
+			productReference = 054CF8391BD8852800BF534C /* PeripheralWithIndicationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		054CF8431BD8852800BF534C /* PeripheralWithIndicationUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 054CF8531BD8852800BF534C /* Build configuration list for PBXNativeTarget "PeripheralWithIndicationUITests" */;
+			buildPhases = (
+				054CF8401BD8852800BF534C /* Sources */,
+				054CF8411BD8852800BF534C /* Frameworks */,
+				054CF8421BD8852800BF534C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				054CF8461BD8852800BF534C /* PBXTargetDependency */,
+			);
+			name = PeripheralWithIndicationUITests;
+			productName = PeripheralWithIndicationUITests;
+			productReference = 054CF8441BD8852800BF534C /* PeripheralWithIndicationUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		054CF81D1BD8852800BF534C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = "Troy Stribling";
+				TargetAttributes = {
+					054CF8241BD8852800BF534C = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
+					054CF8381BD8852800BF534C = {
+						CreatedOnToolsVersion = 7.0.1;
+						TestTargetID = 054CF8241BD8852800BF534C;
+					};
+					054CF8431BD8852800BF534C = {
+						CreatedOnToolsVersion = 7.0.1;
+						TestTargetID = 054CF8241BD8852800BF534C;
+					};
+				};
+			};
+			buildConfigurationList = 054CF8201BD8852800BF534C /* Build configuration list for PBXProject "PeripheralWithIndication" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 054CF81C1BD8852800BF534C;
+			productRefGroup = 054CF8261BD8852800BF534C /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 054CF85B1BD886E900BF534C /* Products */;
+					ProjectRef = 054CF85A1BD886E900BF534C /* BlueCapKit.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				054CF8241BD8852800BF534C /* PeripheralWithIndication */,
+				054CF8381BD8852800BF534C /* PeripheralWithIndicationTests */,
+				054CF8431BD8852800BF534C /* PeripheralWithIndicationUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		054CF8601BD886E900BF534C /* BlueCapKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BlueCapKit.framework;
+			remoteRef = 054CF85F1BD886E900BF534C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		054CF8621BD886E900BF534C /* BlueCapKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = BlueCapKitTests.xctest;
+			remoteRef = 054CF8611BD886E900BF534C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		054CF8231BD8852800BF534C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054CF8331BD8852800BF534C /* LaunchScreen.storyboard in Resources */,
+				054CF8301BD8852800BF534C /* Assets.xcassets in Resources */,
+				054CF82E1BD8852800BF534C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		054CF8371BD8852800BF534C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		054CF8421BD8852800BF534C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		054CF8211BD8852800BF534C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054CF8571BD8854500BF534C /* Accelerometer.swift in Sources */,
+				054CF82B1BD8852800BF534C /* ViewController.swift in Sources */,
+				054CF8591BD886A300BF534C /* UIAlertControllerExtensions.swift in Sources */,
+				054CF8291BD8852800BF534C /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		054CF8351BD8852800BF534C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054CF83E1BD8852800BF534C /* PeripheralWithIndicationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		054CF8401BD8852800BF534C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054CF8491BD8852800BF534C /* PeripheralWithIndicationUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		054CF83B1BD8852800BF534C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 054CF8241BD8852800BF534C /* PeripheralWithIndication */;
+			targetProxy = 054CF83A1BD8852800BF534C /* PBXContainerItemProxy */;
+		};
+		054CF8461BD8852800BF534C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 054CF8241BD8852800BF534C /* PeripheralWithIndication */;
+			targetProxy = 054CF8451BD8852800BF534C /* PBXContainerItemProxy */;
+		};
+		054CF8691BD8871F00BF534C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BlueCapKit;
+			targetProxy = 054CF8681BD8871F00BF534C /* PBXContainerItemProxy */;
+		};
+		054CF86E1BD8892300BF534C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BlueCapKit;
+			targetProxy = 054CF86D1BD8892300BF534C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		054CF82C1BD8852800BF534C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				054CF82D1BD8852800BF534C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		054CF8311BD8852800BF534C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				054CF8321BD8852800BF534C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		054CF84B1BD8852800BF534C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		054CF84C1BD8852800BF534C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		054CF84E1BD8852800BF534C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = PeripheralWithIndication/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.PeripheralWithIndication;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		054CF84F1BD8852800BF534C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = PeripheralWithIndication/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.PeripheralWithIndication;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		054CF8511BD8852800BF534C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = PeripheralWithIndicationTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.PeripheralWithIndicationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PeripheralWithIndication.app/PeripheralWithIndication";
+			};
+			name = Debug;
+		};
+		054CF8521BD8852800BF534C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = PeripheralWithIndicationTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.PeripheralWithIndicationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PeripheralWithIndication.app/PeripheralWithIndication";
+			};
+			name = Release;
+		};
+		054CF8541BD8852800BF534C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = PeripheralWithIndicationUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.PeripheralWithIndicationUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = PeripheralWithIndication;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		054CF8551BD8852800BF534C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = PeripheralWithIndicationUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.PeripheralWithIndicationUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = PeripheralWithIndication;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		054CF8201BD8852800BF534C /* Build configuration list for PBXProject "PeripheralWithIndication" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				054CF84B1BD8852800BF534C /* Debug */,
+				054CF84C1BD8852800BF534C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		054CF84D1BD8852800BF534C /* Build configuration list for PBXNativeTarget "PeripheralWithIndication" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				054CF84E1BD8852800BF534C /* Debug */,
+				054CF84F1BD8852800BF534C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		054CF8501BD8852800BF534C /* Build configuration list for PBXNativeTarget "PeripheralWithIndicationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				054CF8511BD8852800BF534C /* Debug */,
+				054CF8521BD8852800BF534C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		054CF8531BD8852800BF534C /* Build configuration list for PBXNativeTarget "PeripheralWithIndicationUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				054CF8541BD8852800BF534C /* Debug */,
+				054CF8551BD8852800BF534C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 054CF81D1BD8852800BF534C /* Project object */;
+}
