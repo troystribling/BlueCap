@@ -75,7 +75,11 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
     
     public func updateValueWithData(characteristic:Wrapper, value:NSData) -> Bool  {
         characteristic.value = value
-        if self._isUpdating && characteristic.propertyEnabled(.Notify) {
+        if self._isUpdating &&
+                (characteristic.propertyEnabled(.Notify)                    ||
+                 characteristic.propertyEnabled(.Indicate)                  ||
+                 characteristic.propertyEnabled(.NotifyEncryptionRequired)  ||
+                 characteristic.propertyEnabled(.IndicateEncryptionRequired)) {
             self._isUpdating = characteristic.updateValueWithData(value)
         }
         return self._isUpdating

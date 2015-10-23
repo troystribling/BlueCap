@@ -131,7 +131,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         } else {
             self.valuesLabel.textColor = UIColor.blackColor()
         }
-        if self.characteristic.propertyEnabled(.Notify)  && self.peripheralViewController.peripehealConnected {
+        if self.peripheralViewController.peripehealConnected &&
+            (characteristic.propertyEnabled(.Notify)                     ||
+             characteristic.propertyEnabled(.Indicate)                   ||
+             characteristic.propertyEnabled(.NotifyEncryptionRequired)   ||
+             characteristic.propertyEnabled(.IndicateEncryptionRequired)) {
             self.notifyLabel.textColor = UIColor.blackColor()
             self.notifySwitch.enabled = true
             self.notifySwitch.on = self.characteristic.isNotifying

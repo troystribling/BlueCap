@@ -191,7 +191,9 @@ class ViewController: UITableViewController {
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
             if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) {
-                self.accelerometerDataCharacteristic.updateValue(data)
+                if !self.accelerometerDataCharacteristic.updateValue(data) {
+//                    self.presentViewController(UIAlertController.alertWithMessage("Accerometer indication update failed"), animated:true, completion:nil)
+                }
             }
         }
     }

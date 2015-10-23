@@ -96,7 +96,10 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
     public func startNotifying(characteristic:Wrapper) -> Future<Wrapper> {
         self.notificationStateChangedPromise = Promise<Wrapper>()
-        if characteristic.propertyEnabled(.Notify) {
+        if characteristic.propertyEnabled(.Notify)                     ||
+           characteristic.propertyEnabled(.Indicate)                   ||
+           characteristic.propertyEnabled(.NotifyEncryptionRequired)   ||
+           characteristic.propertyEnabled(.IndicateEncryptionRequired) {
             characteristic.setNotifyValue(true)
         }
         return self.notificationStateChangedPromise.future
@@ -104,7 +107,10 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
     
     public func stopNotifying(characteristic:Wrapper) -> Future<Wrapper> {
         self.notificationStateChangedPromise = Promise<Wrapper>()
-        if characteristic.propertyEnabled(.Notify) {
+        if characteristic.propertyEnabled(.Notify)                     ||
+           characteristic.propertyEnabled(.Indicate)                   ||
+           characteristic.propertyEnabled(.NotifyEncryptionRequired)   ||
+           characteristic.propertyEnabled(.IndicateEncryptionRequired) {
             characteristic.setNotifyValue(false)
         }
         return self.notificationStateChangedPromise.future
