@@ -135,7 +135,7 @@ class BeaconRegionsViewController: UITableViewController {
                 self.setScanButton()
                 BeaconManager.sharedInstance.stopRangingBeaconsInRegion(beacon)
                 self.updateWhenActive()
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Region Monitoring Error", error:error), animated:true, completion:nil)
             }
             self.beaconRegions[name] = beacon
         }

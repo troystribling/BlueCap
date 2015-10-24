@@ -65,7 +65,7 @@ public class MutableCharacteristicImpl<Wrapper where Wrapper:MutableCharacterist
         return self.processWriteRequestPromise!.future
     }
     
-    public func stopProcessingWriteRequests() {
+    public func stopRespondingToWriteRequests() {
         self.processWriteRequestPromise = nil
     }
     
@@ -226,8 +226,8 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
         return self.impl.startRespondingToWriteRequests(capacity)
     }
     
-    public func stopProcessingWriteRequests() {
-        self.impl.stopProcessingWriteRequests()
+    public func stopRespondingToWriteRequests() {
+        self.impl.stopRespondingToWriteRequests()
     }
     
     public func didRespondToWriteRequest(request:CBATTRequest) -> Bool  {

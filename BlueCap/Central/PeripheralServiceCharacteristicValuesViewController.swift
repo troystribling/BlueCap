@@ -81,7 +81,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                     self.updateWhenActive()
                 }
                 future.onFailure{(error) in
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertOnError("Characteristic Notification Error", error:error), animated:true, completion:nil)
                 }
             } else if characteristic.propertyEnabled(.Read) {
                 self.progressView.show()
@@ -92,7 +92,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 }
                 future.onFailure {(error) in
                     self.progressView.remove()
-                    self.presentViewController(UIAlertController.alertOnError(error) {(action) in
+                    self.presentViewController(UIAlertController.alertOnError("Charcteristic Read Error", error:error) {(action) in
                         self.navigationController?.popViewControllerAnimated(true)
                         return
                     }, animated:true, completion:nil)

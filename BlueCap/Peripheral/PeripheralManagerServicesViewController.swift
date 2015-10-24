@@ -113,7 +113,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
                     self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
                 }
                 future.onFailure {error in
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertOnError("Remove Service Error", error:error), animated:true, completion:nil)
                 }
             }
         }

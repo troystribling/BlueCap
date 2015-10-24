@@ -163,7 +163,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testStopRespondingToWriteRequests() {
         let mock = MutableCharacteristicMock()
         let future = mock.impl.startRespondingToWriteRequests()
-        mock.impl.stopProcessingWriteRequests()
+        mock.impl.stopRespondingToWriteRequests()
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }

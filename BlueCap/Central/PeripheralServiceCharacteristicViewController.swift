@@ -110,7 +110,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             future.onFailure {(error) in
                 self.notifySwitch.on = false
                 self.setUI()
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Stop Notifications Error", error:error), animated:true, completion:nil)
             }
         } else {
             let future = self.characteristic.startNotifying()
@@ -120,7 +120,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             future.onFailure {(error) in
                 self.notifySwitch.on = false
                 self.setUI()
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Start Notifications Error", error:error), animated:true, completion:nil)
             }
         }
     }

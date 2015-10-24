@@ -87,7 +87,7 @@ class ViewController: UITableViewController {
             manager.stopAdvertising().onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated:true, completion:nil)
             }
-            self.accelerometerUpdatePeriodCharacteristic.stopProcessingWriteRequests()
+            self.accelerometerUpdatePeriodCharacteristic.stopRespondingToWriteRequests()
         } else {
             self.startAdvertising()
         }
@@ -176,7 +176,7 @@ class ViewController: UITableViewController {
         self.xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
         self.yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
         self.zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
-        if let xRaw = Int8(doubleValue:(-64.0*data.x)), yRaw = Int8(doubleValue:(-64.0*data.y)), zRaw = Int8(doubleValue:(64.0*data.z)) {
+        if let xRaw = Int8(doubleValue:(-64.0*data.x)), yRaw = Int8(doubleValue:(-64.0*data.y)), zRaw = Int8(doubleValue:(64.0*data.z)) where self.accelerometerDataCharacteristic.hasSubscriber {
             self.xRawAccelerationLabel.text = "\(xRaw)"
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"

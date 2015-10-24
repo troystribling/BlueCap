@@ -54,7 +54,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        self.characteristic.stopProcessingWriteRequests()
+        self.characteristic.stopRespondingToWriteRequests()
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {

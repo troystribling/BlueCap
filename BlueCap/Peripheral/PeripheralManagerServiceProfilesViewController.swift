@@ -73,7 +73,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
                 self.progressView.remove()
             }
             future.onFailure {(error) in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Add Service Error", error:error), animated:true, completion:nil)
                 self.navigationController?.popViewControllerAnimated(true)
                 self.progressView.remove()
             }

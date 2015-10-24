@@ -104,7 +104,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
                     return
                 }
                 write.onFailure {error in
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertOnError("Charactertistic Write Error", error:error), animated:true, completion:nil)
                     self.progressView.remove()
                     self.navigationController?.popViewControllerAnimated(true)
                     return

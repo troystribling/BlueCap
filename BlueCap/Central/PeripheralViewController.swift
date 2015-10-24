@@ -49,7 +49,7 @@ class PeripheralViewController : UITableViewController {
             self.serviceLabel.textColor = UIColor.lightGrayColor()
             if self.peripehealConnected {
                 self.peripehealConnected = false
-                self.presentViewController(UIAlertController.alertOnError(error, handler:{(action) in
+                self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error:error, handler:{(action) in
                     self.setStateLabel()
                 }), animated: true, completion:nil)
             }

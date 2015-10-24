@@ -159,7 +159,7 @@ class PeripheralsViewController : UITableViewController {
             }
         }
         future.onFailure {error in
-            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            self.presentViewController(UIAlertController.alertOnError("Connection Error", error:error), animated:true, completion:nil)
         }
     }
     

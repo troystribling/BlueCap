@@ -107,7 +107,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 }
                 let afterAdvertisingStartFailed:(error:NSError)->() = {(error) in
                     self.setUIState()
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertOnError("Peripheral Advertise Error", error:error), animated:true, completion:nil)
                 }
                 let advertisedServices = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
                 if PeripheralStore.getBeaconEnabled(peripheral) {
@@ -161,7 +161,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 }
             }
             future.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Remove Services Error", error:error), animated:true, completion:nil)
             }
         }
     }
@@ -185,7 +185,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             }
             future.onFailure {(error) in
                 self.setUIState()
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Add Services Error", error:error), animated:true, completion:nil)
             }
         }
     }

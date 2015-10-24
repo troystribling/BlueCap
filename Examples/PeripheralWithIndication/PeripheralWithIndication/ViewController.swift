@@ -97,7 +97,7 @@ class ViewController: UITableViewController {
             manager.stopAdvertising().onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated:true, completion:nil)
             }
-            self.accelerometerUpdatePeriodCharacteristic.stopProcessingWriteRequests()
+            self.accelerometerUpdatePeriodCharacteristic.stopRespondingToWriteRequests()
         } else {
             self.startAdvertising()
         }
@@ -190,10 +190,9 @@ class ViewController: UITableViewController {
             self.xRawAccelerationLabel.text = "\(xRaw)"
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
-            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) {
-                if !self.accelerometerDataCharacteristic.updateValue(data) {
-//                    self.presentViewController(UIAlertController.alertWithMessage("Accerometer indication update failed"), animated:true, completion:nil)
-                }
+            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw])
+                where self.accelerometerDataCharacteristic.hasSubscriber && !self.accelerometerDataCharacteristic.updateValue(data){
+                self.presentViewController(UIAlertController.alertWithMessage("Accerometer indication update failed"), animated:true, completion:nil)
             }
         }
     }
