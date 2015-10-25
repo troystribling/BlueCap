@@ -17,15 +17,14 @@ public protocol TimedScanneratorWrappable {
     
     var peripherals : [WrappedPeripheral] {get}
     
-    func startScanning(capacity:Int?) -> FutureStream<WrappedPeripheral>
+    func startScanning(capacity:Int?) -> FutureStream<Peripheral>
     func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int?) -> FutureStream<WrappedPeripheral>
     func wrappedStopScanning()
     func timeout()
     
 }
 
-public class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappable,
-                                                Wrapper.WrappedPeripheral:PeripheralWrappable> {
+public class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappable> {
     
     internal var timeoutSeconds = 10.0
     
@@ -38,7 +37,7 @@ public class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappabl
     public init() {
     }
     
-    public func startScanning(scanner:Wrapper, timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
+    public func startScanning(scanner:Wrapper, timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Peripheral> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan(scanner)
@@ -93,7 +92,7 @@ public class TimedScannerator : TimedScanneratorWrappable {
     }
     
     public func timeout() {
-        CentralManager.sharedInstance.impl.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
+        CentralManager.sharedInstance.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
     }
     // TimedScanneratorWrappable
     

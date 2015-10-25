@@ -126,7 +126,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral:Peripheral) {
-        let future = peripheral.connect(10, timeoutRetries:ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
+        let future = peripheral.connect(10, timeoutRetries:ConfigStore.getMaximumReconnections(), disconnectRetries:ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
         future.onSuccess {(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -159,7 +159,7 @@ class PeripheralsViewController : UITableViewController {
             }
         }
         future.onFailure {error in
-            self.presentViewController(UIAlertController.alertOnError("Connection Error", error:error), animated:true, completion:nil)
+            self.updateWhenActive()
         }
     }
     

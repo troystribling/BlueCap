@@ -9,21 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-///////////////////////////////////////////
-// CentralManagerImpl
-public protocol CentralManagerWrappable {
-    
-    typealias WrappedPeripheral
-    
-    var poweredOn   : Bool                  {get}
-    var poweredOff  : Bool                  {get}
-    var peripherals : [WrappedPeripheral]   {get}
-    var state: CBCentralManagerState        {get}
-    
-    func scanForPeripheralsWithServices(uuids:[CBUUID]?)
-    func stopScan()
-}
-
 public struct CentralQueue {
     
     private static let queue = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
@@ -43,125 +28,16 @@ public struct CentralQueue {
     
 }
 
-public class CentralManagerImpl<Wrapper where Wrapper:CentralManagerWrappable,
-                                                    Wrapper.WrappedPeripheral:PeripheralWrappable> {
+public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     private var afterPowerOnPromise                 = Promise<Void>()
     private var afterPowerOffPromise                = Promise<Void>()
-    internal var afterPeripheralDiscoveredPromise   = StreamPromise<Wrapper.WrappedPeripheral>()
-
-    private var _isScanning      = false
+    internal var afterPeripheralDiscoveredPromise   = StreamPromise<Peripheral>()
     
-    public var isScanning : Bool {
-        return self._isScanning
-    }
+    private var _isScanning         = false
+    private var cbCentralManager    : CBCentralManager! = nil
+    private static var instance     : CentralManager!
     
-    public init() {
-    }
-
-    public func startScanning(central:Wrapper, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
-        return self.startScanningForServiceUUIDs(central, uuids:nil, capacity:capacity)
-    }
-    
-    public func startScanningForServiceUUIDs(central:Wrapper, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Wrapper.WrappedPeripheral> {
-        if !self._isScanning {
-            Logger.debug("UUIDs \(uuids)")
-            self._isScanning = true
-            if let capacity = capacity {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<Wrapper.WrappedPeripheral>(capacity:capacity)
-            } else {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<Wrapper.WrappedPeripheral>()
-            }
-            central.scanForPeripheralsWithServices(uuids)
-        }
-        return self.afterPeripheralDiscoveredPromise.future
-    }
-    
-    public func stopScanning(central:Wrapper) {
-        if self._isScanning {
-            Logger.debug()
-            self._isScanning = false
-            central.stopScan()
-        }
-    }
-    
-    // connection
-    public func disconnectAllPeripherals(central:Wrapper) {
-        Logger.debug()
-        for peripheral in central.peripherals {
-            peripheral.disconnect()
-        }
-    }
-    
-    
-    // power up
-    public func powerOn(central:Wrapper) -> Future<Void> {
-        Logger.debug()
-        CentralQueue.sync {
-            self.afterPowerOnPromise = Promise<Void>()
-            if central.poweredOn {
-                self.afterPowerOnPromise.success()
-            }
-        }
-        return self.afterPowerOnPromise.future
-    }
-    
-    public func powerOff(central:Wrapper) -> Future<Void> {
-        Logger.debug()
-        CentralQueue.sync {
-            self.afterPowerOffPromise = Promise<Void>()
-            if central.poweredOff {
-                self.afterPowerOffPromise.success()
-            }
-        }
-        return self.afterPowerOffPromise.future
-    }
-    
-    public func didDiscoverPeripheral(peripheral:Wrapper.WrappedPeripheral) {
-        self.afterPeripheralDiscoveredPromise.success(peripheral)
-    }
-    
-    // central manager state
-    public func didUpdateState(central:Wrapper) {
-        switch(central.state) {
-        case .Unauthorized:
-            Logger.debug("Unauthorized")
-            break
-        case .Unknown:
-            Logger.debug("Unknown")
-            break
-        case .Unsupported:
-            Logger.debug("Unsupported")
-            break
-        case .Resetting:
-            Logger.debug("Resetting")
-            break
-        case .PoweredOff:
-            Logger.debug("PoweredOff")
-            if !self.afterPowerOffPromise.completed {
-                self.afterPowerOffPromise.success()
-            }
-            break
-        case .PoweredOn:
-            Logger.debug("PoweredOn")
-            if !self.afterPowerOnPromise.completed {
-                self.afterPowerOnPromise.success()
-            }
-            break
-        }
-    }
-    
-}
-// CentralManagerImpl
-///////////////////////////////////////////
-
-public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManagerWrappable {
-    
-    private static var instance : CentralManager!
-    
-    internal let impl = CentralManagerImpl<CentralManager>()
-
-    // CentralManagerWrappable
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
@@ -187,17 +63,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
         return self.cbCentralManager.state
     }
     
-    public func scanForPeripheralsWithServices(uuids:[CBUUID]?) {
-        self.cbCentralManager.scanForPeripheralsWithServices(uuids,options:nil)
-    }
-    
-    public func stopScan() {
-        self.cbCentralManager.stopScan()
-    }
-    // CentralManagerWrappable
-    
-    private var cbCentralManager : CBCentralManager! = nil
-    
     internal var discoveredPeripherals   = [CBPeripheral: Peripheral]()
     
     public class var sharedInstance : CentralManager {
@@ -211,20 +76,33 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
 
     public var isScanning : Bool {
-        return self.impl.isScanning
+        return self._isScanning
     }
 
     // scanning
-    public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral> {
-        return self.impl.startScanning(self, capacity:capacity)
+    public func startScanning(capacity:Int? = nil, options:[String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+        return self.startScanningForServiceUUIDs(nil, capacity:capacity)
     }
     
-    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral> {
-        return self.impl.startScanningForServiceUUIDs(self, uuids:uuids, capacity:capacity)
+    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil, options:[String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+        if !self._isScanning {
+            Logger.debug("UUIDs \(uuids)")
+            self._isScanning = true
+            if let capacity = capacity {
+                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity:capacity)
+            } else {
+                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
+            }
+            self.cbCentralManager.scanForPeripheralsWithServices(uuids, options:options)
+        }
+        return self.afterPeripheralDiscoveredPromise.future
     }
     
     public func stopScanning() {
-        self.impl.stopScanning(self)
+        if self._isScanning {
+            self._isScanning = false
+            self.cbCentralManager.stopScan()
+        }
     }
     
     public func removeAllPeripherals() {
@@ -233,26 +111,38 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     
     // connection
     public func disconnectAllPeripherals() {
-        self.impl.disconnectAllPeripherals(self)
+        for peripheral in self.discoveredPeripherals.values {
+            peripheral.disconnect()
+        }
     }
     
     public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]?=nil) {
-        Logger.debug()
         self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:options)
     }
     
     internal func cancelPeripheralConnection(peripheral:Peripheral) {
-        Logger.debug()
         self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
     
     // power up
     public func powerOn() -> Future<Void> {
-        return self.impl.powerOn(self)
+        CentralQueue.sync {
+            self.afterPowerOnPromise = Promise<Void>()
+            if self.poweredOn {
+                self.afterPowerOnPromise.success()
+            }
+        }
+        return self.afterPowerOnPromise.future
     }
     
     public func powerOff() -> Future<Void> {
-        return self.impl.powerOff(self)
+        CentralQueue.sync {
+            self.afterPowerOffPromise = Promise<Void>()
+            if self.poweredOff {
+                self.afterPowerOffPromise.success()
+            }
+        }
+        return self.afterPowerOffPromise.future
     }
     
     // CBCentralManagerDelegate
@@ -272,10 +162,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     
     public func centralManager(_:CBCentralManager, didDiscoverPeripheral peripheral:CBPeripheral, advertisementData:[String:AnyObject], RSSI:NSNumber) {
         if self.discoveredPeripherals[peripheral] == nil {
-            let bcPeripheral = Peripheral(cbPeripheral:peripheral, advertisements:advertisementData, rssi:RSSI.integerValue)
+            let bcPeripheral = Peripheral(cbPeripheral:peripheral, central:self, advertisements:advertisementData, rssi:RSSI.integerValue)
             Logger.debug("peripheral name \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral] = bcPeripheral
-            self.impl.didDiscoverPeripheral(bcPeripheral)
+            self.afterPeripheralDiscoveredPromise.success(bcPeripheral)
         }
     }
     
@@ -300,7 +190,32 @@ public class CentralManager : NSObject, CBCentralManagerDelegate, CentralManager
     }
     
     public func centralManagerDidUpdateState(_:CBCentralManager) {
-        self.impl.didUpdateState(self)
+        switch(self.cbCentralManager.state) {
+        case .Unauthorized:
+            Logger.debug("Unauthorized")
+            break
+        case .Unknown:
+            Logger.debug("Unknown")
+            break
+        case .Unsupported:
+            Logger.debug("Unsupported")
+            break
+        case .Resetting:
+            Logger.debug("Resetting")
+            break
+        case .PoweredOff:
+            Logger.debug("PoweredOff")
+            if !self.afterPowerOffPromise.completed {
+                self.afterPowerOffPromise.success()
+            }
+            break
+        case .PoweredOn:
+            Logger.debug("PoweredOn")
+            if !self.afterPowerOnPromise.completed {
+                self.afterPowerOnPromise.success()
+            }
+            break
+        }
     }
     
     private override init() {
