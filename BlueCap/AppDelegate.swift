@@ -31,7 +31,8 @@ struct BCAppError {
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
                             
-    var window: UIWindow?
+    var window : UIWindow?
+    var central : CentralManager?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
         TISensorTagServiceProfiles.create()

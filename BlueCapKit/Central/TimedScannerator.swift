@@ -73,26 +73,27 @@ public class TimedScanneratorImpl<Wrapper where Wrapper:TimedScanneratorWrappabl
 public class TimedScannerator : TimedScanneratorWrappable {
     
     private let impl = TimedScanneratorImpl<TimedScannerator>()
+    private let central : CentralManager
 
     // TimedScanneratorWrappable
     public var peripherals : [Peripheral] {
-        return CentralManager.sharedInstance.peripherals
+        return self.central.peripherals
     }
     
     public func startScanning(capacity:Int?) -> FutureStream<Peripheral> {
-        return CentralManager.sharedInstance.startScanning(capacity)
+        return self.central.startScanning(capacity)
     }
     
     public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int?) -> FutureStream<Peripheral> {
-        return CentralManager.sharedInstance.startScanningForServiceUUIDs(uuids, capacity:capacity)
+        return self.central.startScanningForServiceUUIDs(uuids, capacity:capacity)
     }
     
     public func wrappedStopScanning() {
-        CentralManager.sharedInstance.stopScanning()
+        self.central.stopScanning()
     }
     
     public func timeout() {
-        CentralManager.sharedInstance.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
+        self.central.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
     }
     // TimedScanneratorWrappable
     
@@ -100,14 +101,8 @@ public class TimedScannerator : TimedScanneratorWrappable {
         return self.impl.isScanning
     }
 
-    public class var sharedInstance : TimedScannerator {
-        struct Static {
-            static let instance = TimedScannerator()
-        }
-        return Static.instance
-    }
-
-    public init() {
+    public init(central:CentralManager) {
+        self.central = central
     }
     
     public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Peripheral> {

@@ -17,12 +17,14 @@ public enum ConnectionEvent {
     case Connect, Timeout, Disconnect, ForceDisconnect, Failed, GiveUp
 }
 
-public protocol CBPeripheralWrappable {   
-    var name : String {get}
+public protocol CBPeripheralWrappable {
+    var name : String? {get}
     var state : CBPeripheralState {get}
     var identifier : NSUUID {get}
-    var delegate : CBPeripheralDelegate {get set}
+    var delegate : CBPeripheralDelegate? {get set}
 }
+
+extension CBPeripheral : CBPeripheralWrappable {}
 
 public struct PeripheralAdvertisements {
     
@@ -190,7 +192,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     public func disconnect() {
         if let central = self.central {
-            central.discoveredPeripherals.removeValueForKey(self.cbPeripheral)
+            central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
             self.forcedDisconnect = true
             if self.state == .Connected {
                 Logger.debug("disconnect peripheral \(self.name)")

@@ -47,7 +47,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private var cbCentralManager : CBCentralManagerWrappable!   = nil
 
     internal var afterPeripheralDiscoveredPromise               = StreamPromise<Peripheral>()
-    internal var discoveredPeripherals                          = [CBPeripheral: Peripheral]()
+    internal var discoveredPeripherals                          = [NSUUID: Peripheral]()
 
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
@@ -167,30 +167,30 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // CBCentralManagerDelegate
     public func centralManager(_:CBCentralManager, didConnectPeripheral peripheral:CBPeripheral) {
         Logger.debug("peripheral name \(peripheral.name)")
-        if let bcPeripheral = self.discoveredPeripherals[peripheral] {
+        if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     public func centralManager(_:CBCentralManager, didDisconnectPeripheral peripheral:CBPeripheral, error:NSError?) {
         Logger.debug("peripheral name \(peripheral.name)")
-        if let bcPeripheral = self.discoveredPeripherals[peripheral] {
+        if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral()
         }
     }
     
     public func centralManager(_:CBCentralManager, didDiscoverPeripheral peripheral:CBPeripheral, advertisementData:[String:AnyObject], RSSI:NSNumber) {
-        if self.discoveredPeripherals[peripheral] == nil {
+        if self.discoveredPeripherals[peripheral.identifier] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, central:self, advertisements:advertisementData, rssi:RSSI.integerValue)
             Logger.debug("peripheral name \(bcPeripheral.name)")
-            self.discoveredPeripherals[peripheral] = bcPeripheral
+            self.discoveredPeripherals[peripheral.identifier] = bcPeripheral
             self.afterPeripheralDiscoveredPromise.success(bcPeripheral)
         }
     }
     
     public func centralManager(_:CBCentralManager, didFailToConnectPeripheral peripheral:CBPeripheral, error:NSError?) {
         Logger.debug()
-        if let bcPeripheral = self.discoveredPeripherals[peripheral] {
+        if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didFailToConnectPeripheral(error)
         }
     }
