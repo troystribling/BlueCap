@@ -17,6 +17,82 @@ public enum ConnectionEvent {
     case Connect, Timeout, Disconnect, ForceDisconnect, Failed, GiveUp
 }
 
+public protocol CBPeripheralWrappable {   
+    var name : String {get}
+    var state : CBPeripheralState {get}
+    var identifier : NSUUID {get}
+    var delegate : CBPeripheralDelegate {get set}
+}
+
+public struct PeripheralAdvertisements {
+    
+    let advertisements : [String: AnyObject]
+    
+    public var localName : String? {
+        if let localname = self.advertisements[CBAdvertisementDataLocalNameKey] {
+            return localname as? String
+        } else {
+            return nil
+        }
+    }
+    
+    public var manufactuereData : NSData? {
+        if let mfgData = self.advertisements[CBAdvertisementDataManufacturerDataKey] {
+            return mfgData as? NSData
+        } else {
+            return nil;
+        }
+    }
+    
+    public var txPower : NSNumber? {
+        if let txPower = self.advertisements[CBAdvertisementDataTxPowerLevelKey] {
+            return txPower as? NSNumber
+        } else {
+            return nil
+        }
+    }
+    
+    public var isConnectable : NSNumber? {
+        if let isConnectable = self.advertisements[CBAdvertisementDataIsConnectable] {
+            return isConnectable as? NSNumber
+        } else {
+            return nil
+        }
+    }
+    
+    public var serviceUUIDs : [CBUUID]? {
+        if let serviceUUIDs = self.advertisements[CBAdvertisementDataServiceUUIDsKey] {
+            return serviceUUIDs as? [CBUUID]
+        } else {
+            return nil
+        }
+    }
+    
+    public var serviceData : [CBUUID:NSData]? {
+        if let serviceData = self.advertisements[CBAdvertisementDataServiceDataKey] {
+            return serviceData as? [CBUUID:NSData]
+        } else {
+            return nil
+        }
+    }
+    
+    public var overflowServiceUUIDs : [CBUUID]? {
+        if let serviceUUIDs = self.advertisements[CBAdvertisementDataOverflowServiceUUIDsKey] {
+            return serviceUUIDs as? [CBUUID]
+        } else {
+            return nil
+        }
+    }
+    
+    public var solicitedServiceUUIDs : [CBUUID]? {
+        if let serviceUUIDs = self.advertisements[CBAdvertisementDataSolicitedServiceUUIDsKey] {
+            return serviceUUIDs as? [CBUUID]
+        } else {
+            return nil
+        }
+    }    
+}
+
 public class Peripheral : NSObject, CBPeripheralDelegate {
     
     private var servicesDiscoveredPromise   = Promise<Peripheral>()
@@ -41,9 +117,9 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal var timeoutRetries : UInt?
     internal var disconnectRetries : UInt?
     internal let cbPeripheral : CBPeripheral
-    internal let central : CentralManager
+    internal weak var central : CentralManager?
     
-    public let advertisements : [String: AnyObject]
+    public let advertisements : PeripheralAdvertisements
     public let rssi : Int
 
     public var discoveredAt : NSDate {
@@ -78,73 +154,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         return self.cbPeripheral.identifier
     }
     
-    // advertisements
-    public var advertisedLocalName : String? {
-        if let localname = self.advertisements[CBAdvertisementDataLocalNameKey] {
-            return localname as? String
-        } else {
-            return nil
-        }
-    }
-    
-    public var advertisedManufactuereData : NSData? {
-        if let mfgData = self.advertisements[CBAdvertisementDataManufacturerDataKey] {
-            return mfgData as? NSData
-        } else {
-            return nil;
-        }
-    }
-    
-    public var advertisedTxPower : NSNumber? {
-        if let txPower = self.advertisements[CBAdvertisementDataTxPowerLevelKey] {
-            return txPower as? NSNumber
-        } else {
-            return nil
-        }
-    }
-    
-    public var advertisedIsConnectable : NSNumber? {
-        if let isConnectable = self.advertisements[CBAdvertisementDataIsConnectable] {
-            return isConnectable as? NSNumber
-        } else {
-            return nil
-        }
-    }
-    
-    public var advertisedServiceUUIDs : [CBUUID]? {
-        if let serviceUUIDs = self.advertisements[CBAdvertisementDataServiceUUIDsKey] {
-            return serviceUUIDs as? [CBUUID]
-        } else {
-            return nil
-        }
-    }
-    
-    public var advertisedServiceData : [CBUUID:NSData]? {
-        if let serviceData = self.advertisements[CBAdvertisementDataServiceDataKey] {
-            return serviceData as? [CBUUID:NSData]
-        } else {
-            return nil
-        }
-    }
-    
-    public var advertisedOverflowServiceUUIDs : [CBUUID]? {
-        if let serviceUUIDs = self.advertisements[CBAdvertisementDataOverflowServiceUUIDsKey] {
-            return serviceUUIDs as? [CBUUID]
-        } else {
-            return nil
-        }
-    }
-    
-    public var advertisedSolicitedServiceUUIDs : [CBUUID]? {
-        if let serviceUUIDs = self.advertisements[CBAdvertisementDataSolicitedServiceUUIDsKey] {
-            return serviceUUIDs as? [CBUUID]
-        } else {
-            return nil
-        }
-    }
-    
-    // PeripheralWrappable
-    
     // peripheral services
     public func service(uuid:CBUUID) -> Service? {
         return self.discoveredServices[uuid]
@@ -160,9 +169,9 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     // connect
     public func reconnect() {
-        if self.state == .Disconnected {
+        if let central = self.central where self.state == .Disconnected {
             Logger.debug("reconnect peripheral \(self.name)")
-            self.central.connectPeripheral(self)
+            central.connectPeripheral(self)
             self.forcedDisconnect = false
             ++self.connectionSequence
             self.timeoutConnection(self.connectionSequence)
@@ -180,13 +189,15 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public func disconnect() {
-        self.central.discoveredPeripherals.removeValueForKey(self.cbPeripheral)
-        self.forcedDisconnect = true
-        if self.state == .Connected {
-            Logger.debug("disconnect peripheral \(self.name)")
-            self.central.cancelPeripheralConnection(self)
-        } else {
-            self.didDisconnectPeripheral()
+        if let central = self.central {
+            central.discoveredPeripherals.removeValueForKey(self.cbPeripheral)
+            self.forcedDisconnect = true
+            if self.state == .Connected {
+                Logger.debug("disconnect peripheral \(self.name)")
+                central.cancelPeripheralConnection(self)
+            } else {
+                self.didDisconnectPeripheral()
+            }
         }
     }
     
@@ -329,7 +340,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     internal init(cbPeripheral:CBPeripheral, central:CentralManager, advertisements:[String:AnyObject], rssi:Int) {
         self.cbPeripheral = cbPeripheral
-        self.advertisements = advertisements
+        self.advertisements = PeripheralAdvertisements(advertisements:advertisements)
         self.central = central
         self.rssi = rssi
         super.init()
@@ -450,14 +461,16 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
 
     private func timeoutConnection(sequence:Int) {
-        Logger.debug("sequence \(sequence), timeout:\(self.connectionTimeout)")
-        CentralQueue.delay(self.connectionTimeout) {
-            if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
-                Logger.debug("timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
-                self.currentError = .Timeout
-                self.central.cancelPeripheralConnection(self)
-            } else {
-                Logger.debug()
+        if let central = self.central {
+            Logger.debug("sequence \(sequence), timeout:\(self.connectionTimeout)")
+            CentralQueue.delay(self.connectionTimeout) {
+                if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
+                    Logger.debug("timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
+                    self.currentError = .Timeout
+                    central.cancelPeripheralConnection(self)
+                } else {
+                    Logger.debug()
+                }
             }
         }
     }

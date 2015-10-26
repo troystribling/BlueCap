@@ -28,16 +28,27 @@ public struct CentralQueue {
     
 }
 
+public protocol CBCentralManagerWrappable {
+    var state : CBCentralManagerState {get}
+    func scanForPeripheralsWithServices(uuids:[CBUUID]?, options:[String:AnyObject]?)
+    func stopScan()
+    func connectPeripheral(peripheral:CBPeripheral, options:[String:AnyObject]?)
+    func cancelPeripheralConnection(peripheral:CBPeripheral)
+}
+
+extension CBCentralManager : CBCentralManagerWrappable {}
+
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
-    private var afterPowerOnPromise                 = Promise<Void>()
-    private var afterPowerOffPromise                = Promise<Void>()
-    internal var afterPeripheralDiscoveredPromise   = StreamPromise<Peripheral>()
+    private var afterPowerOnPromise                             = Promise<Void>()
+    private var afterPowerOffPromise                            = Promise<Void>()
     
-    private var _isScanning         = false
-    private var cbCentralManager    : CBCentralManager! = nil
-    private static var instance     : CentralManager!
-    
+    private var _isScanning                                     = false
+    private var cbCentralManager : CBCentralManagerWrappable!   = nil
+
+    internal var afterPeripheralDiscoveredPromise               = StreamPromise<Peripheral>()
+    internal var discoveredPeripherals                          = [CBPeripheral: Peripheral]()
+
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
@@ -63,20 +74,28 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return self.cbCentralManager.state
     }
     
-    internal var discoveredPeripherals   = [CBPeripheral: Peripheral]()
-    
-    public class var sharedInstance : CentralManager {
-        self.instance = self.instance ?? CentralManager()
-        return self.instance
-    }
-
-    public class func sharedInstance(options:[String:AnyObject]) -> CentralManager {
-        self.instance = self.instance ?? CentralManager(options:options)
-        return self.instance
-    }
-
     public var isScanning : Bool {
         return self._isScanning
+    }
+
+    public override init() {
+        super.init()
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue)
+    }
+    
+    public init(options:[String:AnyObject]?) {
+        super.init()
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue, options:options)
+    }
+
+    public init(centralManager:CBCentralManagerWrappable) {
+        super.init()
+        self.cbCentralManager = centralManager
+    }
+    
+    public init(centralManager:CBCentralManagerWrappable, options:[String:AnyObject]?) {
+        super.init()
+        self.cbCentralManager = centralManager
     }
 
     // scanning
@@ -84,7 +103,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return self.startScanningForServiceUUIDs(nil, capacity:capacity)
     }
     
-    public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil, options:[String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+    public func startScanningForServiceUUIDs(uuids:[CBUUID]?, capacity:Int? = nil, options:[String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         if !self._isScanning {
             Logger.debug("UUIDs \(uuids)")
             self._isScanning = true
@@ -116,7 +135,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]?=nil) {
+    public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
         self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:options)
     }
     
@@ -216,16 +235,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             }
             break
         }
-    }
-    
-    private override init() {
-        super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue)
-    }
-
-    private init(options:[String:AnyObject]?) {
-        super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue, options:options)
     }
     
 }
