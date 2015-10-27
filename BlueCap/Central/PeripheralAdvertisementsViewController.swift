@@ -46,35 +46,35 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let peripheral = self.peripheral {
-            if let localName = peripheral.advertisedLocalName {
+            if let localName = peripheral.advertisements.localName {
                 self.localNameValueLabel.text = localName
                 self.localNameLabel.textColor = UIColor.blackColor()
             }
-            if let txPower = peripheral.advertisedTxPower {
+            if let txPower = peripheral.advertisements.txPower {
                 self.txPowerValueLabel.text = txPower.stringValue
                 self.txPowerLabel.textColor = UIColor.blackColor()
             }
-            if let isConnectable = peripheral.advertisedIsConnectable {
+            if let isConnectable = peripheral.advertisements.isConnectable {
                 self.isConnectableValueLabel.text = isConnectable.stringValue
                 self.isConnectableLabel.textColor = UIColor.blackColor()
             }
-            if let mfgData = peripheral.advertisedManufactuereData {
+            if let mfgData = peripheral.advertisements.manufactuereData {
                 self.manufacturerDataValueLabel.text = mfgData.hexStringValue()
                 self.manufacturerDataLabel.textColor = UIColor.blackColor()
             }
-            if let services = peripheral.advertisedServiceUUIDs {
+            if let services = peripheral.advertisements.serviceUUIDs {
                 self.servicesLabel.textColor = UIColor.blackColor()
                 self.servicesCountLabel.text = "\(services.count)"
             }
-            if let servicesData = peripheral.advertisedServiceData {
+            if let servicesData = peripheral.advertisements.serviceData {
                 self.servicesDataLabel.textColor = UIColor.blackColor()
                 self.servicesDataCountLabel.text = "\(servicesData.count)"
             }
-            if let overflowServices = peripheral.advertisedOverflowServiceUUIDs {
+            if let overflowServices = peripheral.advertisements.overflowServiceUUIDs {
                 self.overflowServicesLabel.textColor = UIColor.blackColor()
                 self.overflowServicesCountLabel.text = "\(overflowServices.count)"
             }
-            if let solicitedServices = peripheral.advertisedSolicitedServiceUUIDs {
+            if let solicitedServices = peripheral.advertisements.solicitedServiceUUIDs {
                 self.solicitedServicesLabel.textColor = UIColor.blackColor()
                 self.solicitedServicesCountLabel.text = "\(solicitedServices.count)"
             }
@@ -115,6 +115,21 @@ class PeripheralAdvertisementsViewController : UITableViewController {
             let controller = segue.destinationViewController as! PeripheralAdvertisementsSolicitedServicesViewController
             controller.peripheral = self.peripheral
         }
+    }
+    
+    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+        if let advertisements = self.peripheral?.advertisements {
+            if identifier == MainStoryboard.peripheralAdvertisementsServicesSegue {
+                return advertisements.serviceUUIDs != nil
+            } else if identifier == MainStoryboard.peripheralAdvertisementsServicesDataSegue {
+                return advertisements.serviceData != nil
+            } else if identifier == MainStoryboard.peripheralAdvertisementsOverflowServicesSegue {
+                return advertisements.overflowServiceUUIDs != nil
+            } else if identifier == MainStoryboard.peripheralAdvertisementsSolicitedServicesSegue {
+                return advertisements.solicitedServiceUUIDs != nil
+            }
+        }
+        return false
     }
 
 }

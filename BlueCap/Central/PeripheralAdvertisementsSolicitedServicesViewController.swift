@@ -51,7 +51,7 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let services = self.peripheral?.advertisedSolicitedServiceUUIDs {
+        if let services = self.peripheral?.advertisements.solicitedServiceUUIDs {
             return services.count
         } else {
             return 0;
@@ -60,7 +60,7 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementsSolicitedServiceCell, forIndexPath:indexPath)
-        if let services = self.peripheral?.advertisedSolicitedServiceUUIDs {
+        if let services = self.peripheral?.advertisements.solicitedServiceUUIDs {
             let service = services[indexPath.row]
             cell.textLabel?.text = service.UUIDString
         }

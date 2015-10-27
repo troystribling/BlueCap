@@ -32,8 +32,8 @@ public protocol CBCentralManagerWrappable {
     var state : CBCentralManagerState {get}
     func scanForPeripheralsWithServices(uuids:[CBUUID]?, options:[String:AnyObject]?)
     func stopScan()
-    func connectPeripheral(peripheral:CBPeripheral, options:[String:AnyObject]?)
-    func cancelPeripheralConnection(peripheral:CBPeripheral)
+    func connectPeripheral(peripheral:CBPeripheralWrappable, options:[String:AnyObject]?)
+    func cancelPeripheralConnection(peripheral:CBPeripheralWrappable)
 }
 
 extension CBCentralManager : CBCentralManagerWrappable {}
@@ -135,11 +135,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
+    public func connectPeripheral(peripheral:CBPeripheralWrappable, options:[String:AnyObject]? = nil) {
         self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options:options)
     }
     
-    internal func cancelPeripheralConnection(peripheral:Peripheral) {
+    internal func cancelPeripheralConnection(peripheral:CBPeripheralWrappable) {
         self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
     
@@ -166,20 +166,32 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // CBCentralManagerDelegate
     public func centralManager(_:CBCentralManager, didConnectPeripheral peripheral:CBPeripheral) {
+        self.didConnectPeripheral(peripheral)
+    }
+
+    public func didConnectPeripheral(peripheral:CBPeripheralWrappable) {
         Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
-    
+
     public func centralManager(_:CBCentralManager, didDisconnectPeripheral peripheral:CBPeripheral, error:NSError?) {
+        self.didDisconnectPeripheral(peripheral, error:error)
+    }
+
+    public func didDisconnectPeripheral(peripheral:CBPeripheralWrappable, error:NSError?) {
         Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral()
         }
     }
-    
+
     public func centralManager(_:CBCentralManager, didDiscoverPeripheral peripheral:CBPeripheral, advertisementData:[String:AnyObject], RSSI:NSNumber) {
+        self.didDiscoverPeripheral(peripheral, advertisementData:advertisementData, RSSI:RSSI)
+    }
+
+    public func didDiscoverPeripheral(peripheral:CBPeripheralWrappable, advertisementData:[String:AnyObject], RSSI:NSNumber) {
         if self.discoveredPeripherals[peripheral.identifier] == nil {
             let bcPeripheral = Peripheral(cbPeripheral:peripheral, central:self, advertisements:advertisementData, rssi:RSSI.integerValue)
             Logger.debug("peripheral name \(bcPeripheral.name)")
@@ -187,7 +199,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             self.afterPeripheralDiscoveredPromise.success(bcPeripheral)
         }
     }
-    
+
     public func centralManager(_:CBCentralManager, didFailToConnectPeripheral peripheral:CBPeripheral, error:NSError?) {
         Logger.debug()
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {

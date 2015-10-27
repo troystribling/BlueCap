@@ -32,8 +32,19 @@ struct BCAppError {
 class AppDelegate: UIResponder, UIApplicationDelegate {
                             
     var window : UIWindow?
-    var central : CentralManager?
+    var centralManager : CentralManager!
+    var timedScannerator : TimedScannerator!
 
+    class func sharedApplication() -> AppDelegate {
+        return UIApplication.sharedApplication().delegate as! AppDelegate
+    }
+    
+    override init() {
+        self.centralManager = CentralManager()
+        self.timedScannerator = TimedScannerator(centralManager:self.centralManager)
+        super.init()
+    }
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
         TISensorTagServiceProfiles.create()
         BLESIGGATTProfiles.create()
@@ -50,11 +61,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         NSUserDefaults.standardUserDefaults().synchronize()
         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didResignActive, object:nil)
-        let central = CentralManager.sharedInstance
-        if central.isScanning {
-            central.stopScanning()
-            central.disconnectAllPeripherals()
-            central.removeAllPeripherals()
+        if self.centralManager.isScanning {
+            self.centralManager.stopScanning()
+            self.centralManager.disconnectAllPeripherals()
+            self.centralManager.removeAllPeripherals()
         }
     }
 

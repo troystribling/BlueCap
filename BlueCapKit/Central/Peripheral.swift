@@ -18,10 +18,13 @@ public enum ConnectionEvent {
 }
 
 public protocol CBPeripheralWrappable {
-    var name : String? {get}
-    var state : CBPeripheralState {get}
-    var identifier : NSUUID {get}
-    var delegate : CBPeripheralDelegate? {get set}
+    var name : String?                      {get}
+    var state : CBPeripheralState           {get}
+    var identifier : NSUUID                 {get}
+    var delegate : CBPeripheralDelegate?    {get set}
+    var services : [CBService]?             {get}
+    
+    func discoverServices(services:[CBUUID]?)
 }
 
 extension CBPeripheral : CBPeripheralWrappable {}
@@ -118,7 +121,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal var connectionTimeout          = 10.0
     internal var timeoutRetries : UInt?
     internal var disconnectRetries : UInt?
-    internal let cbPeripheral : CBPeripheral
+    internal let cbPeripheral : CBPeripheralWrappable
     internal weak var central : CentralManager?
     
     public let advertisements : PeripheralAdvertisements
@@ -340,7 +343,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug()
     }
     
-    internal init(cbPeripheral:CBPeripheral, central:CentralManager, advertisements:[String:AnyObject], rssi:Int) {
+    internal init(cbPeripheral:CBPeripheralWrappable, central:CentralManager, advertisements:[String:AnyObject], rssi:Int) {
         self.cbPeripheral = cbPeripheral
         self.advertisements = PeripheralAdvertisements(advertisements:advertisements)
         self.central = central
