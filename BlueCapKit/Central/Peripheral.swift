@@ -25,6 +25,10 @@ public protocol CBPeripheralWrappable {
     var services : [CBService]?             {get}
     
     func discoverServices(services:[CBUUID]?)
+    func discoverCharacteristics(characteristics:[CBUUID]?, forService:CBService)
+    func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic)
+    func readValueForCharacteristic(characteristic:CBCharacteristic)
+    func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType)
 }
 
 extension CBPeripheral : CBPeripheralWrappable {}
@@ -117,12 +121,12 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     private var discoveredServices          = [CBUUID:Service]()
     private var discoveredCharacteristics   = [CBCharacteristic:Characteristic]()
-    
+
     internal var connectionTimeout          = 10.0
     internal var timeoutRetries : UInt?
     internal var disconnectRetries : UInt?
+    internal weak var centralManager : CentralManager?
     internal let cbPeripheral : CBPeripheralWrappable
-    internal weak var central : CentralManager?
     
     public let advertisements : PeripheralAdvertisements
     public let rssi : Int
@@ -159,12 +163,19 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         return self.cbPeripheral.identifier
     }
     
-    // peripheral services
+    public init(cbPeripheral:CBPeripheralWrappable, centralManager:CentralManager, advertisements:[String:AnyObject], rssi:Int) {
+        self.cbPeripheral = cbPeripheral
+        self.advertisements = PeripheralAdvertisements(advertisements:advertisements)
+        self.centralManager = centralManager
+        self.rssi = rssi
+        super.init()
+        self.cbPeripheral.delegate = self
+    }
+
     public func service(uuid:CBUUID) -> Service? {
         return self.discoveredServices[uuid]
     }
     
-    // rssi
     func readRSSI() -> Future<Int> {
         CentralQueue.sync {
             self.readRSSIPromise = Promise<Int>()
@@ -172,9 +183,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         return self.readRSSIPromise.future
     }
     
-    // connect
     public func reconnect() {
-        if let central = self.central where self.state == .Disconnected {
+        if let central = self.centralManager where self.state == .Disconnected {
             Logger.debug("reconnect peripheral \(self.name)")
             central.connectPeripheral(self)
             self.forcedDisconnect = false
@@ -194,7 +204,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public func disconnect() {
-        if let central = self.central {
+        if let central = self.centralManager {
             central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
             self.forcedDisconnect = true
             if self.state == .Connected {
@@ -343,15 +353,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug()
     }
     
-    internal init(cbPeripheral:CBPeripheralWrappable, central:CentralManager, advertisements:[String:AnyObject], rssi:Int) {
-        self.cbPeripheral = cbPeripheral
-        self.advertisements = PeripheralAdvertisements(advertisements:advertisements)
-        self.central = central
-        self.rssi = rssi
-        super.init()
-        self.cbPeripheral.delegate = self
-    }    
-    
     internal func didDiscoverServices() {
         if let cbServices = self.cbPeripheral.services {
             for cbService : AnyObject in cbServices {
@@ -440,6 +441,24 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
+    internal func setNotifyValue(state:Bool, forCharacteristic characteristic:Characteristic) {
+        self.cbPeripheral.setNotifyValue(state, forCharacteristic:characteristic.cbCharacteristic)
+    }
+    
+    internal func readValueForCharacteristic(characteristic:Characteristic) {
+        self.cbPeripheral.readValueForCharacteristic(characteristic.cbCharacteristic)
+    }
+    
+    internal func writeValue(value:NSData, forChracteristic characteristic:Characteristic) {
+        self.cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type:.WithResponse)
+    }
+    
+    internal func discoverCharacteristics(characteristics:[CBUUID]?, forService service:Service) {
+        if let cbService = service.cbService as? CBService {
+            self.cbPeripheral.discoverCharacteristics(characteristics, forService:cbService)
+        }
+    }
+
     private func discoverIfConnected(services:[CBUUID]?) {
         if self.state == .Connected {
             self.cbPeripheral.discoverServices(services)
@@ -466,13 +485,13 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
 
     private func timeoutConnection(sequence:Int) {
-        if let central = self.central {
+        if let centralManager = self.centralManager {
             Logger.debug("sequence \(sequence), timeout:\(self.connectionTimeout)")
             CentralQueue.delay(self.connectionTimeout) {
                 if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                     Logger.debug("timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                     self.currentError = .Timeout
-                    central.cancelPeripheralConnection(self)
+                    centralManager.cancelPeripheralConnection(self)
                 } else {
                     Logger.debug()
                 }

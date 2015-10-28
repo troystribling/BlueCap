@@ -9,18 +9,10 @@
 import Foundation
 import CoreBluetooth
 
-///////////////////////////////////////////
-// CharacteristicImpl
-public protocol CharacteristicWrappable {
+public protocol CBCharacteristicWrappable {
     
-    var uuid                    : CBUUID                    {get}
-    var name                    : String                    {get}
-    var isNotifying             : Bool                      {get}
-    var stringValues            : [String]                  {get}
-    var afterDiscoveredPromise  : StreamPromise<Self>?  {get}
-    
-    func stringValue(data:NSData?) -> [String:String]?
-    func dataFromStringValue(stringValue:[String:String]) -> NSData?
+    var uuid                    : CBUUID    {get}
+    var isNotifying             : Bool      {get}
     
     func setNotifyValue(state:Bool)
     func propertyEnabled(property:CBCharacteristicProperties) -> Bool
@@ -268,10 +260,21 @@ public final class CharacteristicImpl<Wrapper:CharacteristicWrappable> {
 // CharacteristicImpl
 ///////////////////////////////////////////
 
-public final class Characteristic : CharacteristicWrappable {
+public class Characteristic {
 
-    internal var impl = CharacteristicImpl<Characteristic>()
+    private var notificationStateChangedPromise     = Promise<Characteristic>()
+    private var readPromise                         = Promise<Characteristic>()
+    private var writePromise                        = Promise<Characteristic>()
+    private var notificationUpdatePromise : StreamPromise<Characteristic>?
+    private var peripheral : Peripheral
     
+    private var reading                             = false
+    private var writing                             = false
+    
+    private var readSequence                        = 0
+    private var writeSequence                       = 0
+    private let defaultTimeout                      = 10.0
+
     // CharacteristicWrappable
     public var uuid : CBUUID {
         return self.cbCharacteristic.UUID
@@ -289,7 +292,7 @@ public final class Characteristic : CharacteristicWrappable {
         return self.profile.stringValues
     }
     
-    public var afterDiscoveredPromise  : StreamPromise<Characteristic>? {
+    public var afterDiscoveredPromise : StreamPromise<Characteristic>? {
         return self.profile.afterDiscoveredPromise
     }
     
@@ -306,7 +309,7 @@ public final class Characteristic : CharacteristicWrappable {
     }
     
     public func setNotifyValue(state:Bool) {
-        self.service.peripheral.cbPeripheral.setNotifyValue(state, forCharacteristic:self.cbCharacteristic)
+        self.peripheral.setNotifyValue(state, forCharacteristic:self)
     }
     
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
@@ -343,23 +346,43 @@ public final class Characteristic : CharacteristicWrappable {
     }
     
     public func value<T:Deserializable>() -> T? {
-        return self.impl.value(self.dataValue)
+        if let data = self.dataValue {
+            return T.deserialize(data)
+        } else {
+            return nil
+        }
     }
 
     public func value<T:RawDeserializable where T.RawType:Deserializable>() -> T? {
-        return self.impl.value(self.dataValue)
+        if let data = self.dataValue {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
     }
 
     public func value<T:RawArrayDeserializable where T.RawType:Deserializable>() -> T? {
-        return self.impl.value(self.dataValue)
+        if let data = self.dataValue {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
     }
 
     public func value<T:RawPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>() -> T? {
-        return self.impl.value(self.dataValue)
+        if let data = self.dataValue {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
     }
 
     public func value<T:RawArrayPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>() -> T? { 
-        return self.impl.value(self.dataValue)
+        if let data = self.dataValue {
+            return Serde.deserialize(data)
+        } else {
+            return nil
+        }
     }
 
     public func startNotifying() -> Future<Characteristic> {
@@ -442,5 +465,9 @@ public final class Characteristic : CharacteristicWrappable {
     
     internal func didWrite(error:NSError?) {
         self.impl.didWrite(self, error:error)
+    }
+    
+    private func notifyEnabled() -> Bool {
+        return self.propertyEnabled(.Notify) || self.propertyEnabled(.Indicate) || self.propertyEnabled(.NotifyEncryptionRequired) || self .propertyEnabled(.IndicateEncryptionRequired)
     }
 }
