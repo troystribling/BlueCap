@@ -14,6 +14,7 @@ public enum CharacteristicError : Int {
     case NotSerializable    = 3
     case ReadNotSupported   = 4
     case WriteNotSupported  = 5
+    case NotifyNotSupported = 6
 }
 
 public enum PeripheralError : Int {
@@ -40,6 +41,7 @@ public struct BCError {
     public static let characteristicNotSerilaizable = NSError(domain:domain, code:CharacteristicError.NotSerializable.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic not serializable"])
     public static let characteristicReadNotSupported = NSError(domain:domain, code:CharacteristicError.ReadNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic read not supported"])
     public static let characteristicWriteNotSupported = NSError(domain:domain, code:CharacteristicError.WriteNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic write not supported"])
+    public static let characteristicNotifyNotSupported = NSError(domain:domain, code:CharacteristicError.NotifyNotSupported.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic notify not supported"])
 
     public static let peripheralDisconnected = NSError(domain:domain, code:PeripheralError.Disconnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
     public static let peripheralDiscoveryTimeout = NSError(domain:domain, code:PeripheralError.DiscoveryTimeout.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])

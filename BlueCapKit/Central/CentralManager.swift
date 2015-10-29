@@ -44,7 +44,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private var afterPowerOffPromise                            = Promise<Void>()
     
     private var _isScanning                                     = false
-    private var cbCentralManager : CBCentralManagerWrappable!   = nil
+    private var cbCentralManager : CBCentralManagerWrappable!
 
     internal var afterPeripheralDiscoveredPromise               = StreamPromise<Peripheral>()
     internal var discoveredPeripherals                          = [NSUUID: Peripheral]()
