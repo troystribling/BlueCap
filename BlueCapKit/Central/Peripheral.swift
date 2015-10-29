@@ -177,7 +177,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     func readRSSI() -> Future<Int> {
-        CentralQueue.sync {
+        Cen.sync {
             self.readRSSIPromise = Promise<Int>()
         }
         return self.readRSSIPromise.future

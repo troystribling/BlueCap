@@ -27,21 +27,21 @@ struct BCAppError {
     static let outOfRegion = NSError(domain:domain, code:AppError.outOfRegion.rawValue, userInfo:[NSLocalizedDescriptionKey:"Out of region"])
 }
 
+struct Static {
+    static let instance = CentralManager()
+}
+
 @UIApplicationMain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
                             
     var window : UIWindow?
-    var centralManager : CentralManager!
-    var timedScannerator : TimedScannerator!
 
     class func sharedApplication() -> AppDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
     }
     
     override init() {
-        self.centralManager = CentralManager()
-        self.timedScannerator = TimedScannerator(centralManager:self.centralManager)
         super.init()
     }
     
@@ -61,10 +61,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         NSUserDefaults.standardUserDefaults().synchronize()
         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didResignActive, object:nil)
-        if self.centralManager.isScanning {
-            self.centralManager.stopScanning()
-            self.centralManager.disconnectAllPeripherals()
-            self.centralManager.removeAllPeripherals()
+        if CentralManager.sharedInstance.isScanning {
+            CentralManager.sharedInstance.stopScanning()
+            CentralManager.sharedInstance.disconnectAllPeripherals()
+            CentralManager.sharedInstance.removeAllPeripherals()
         }
     }
 

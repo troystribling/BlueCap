@@ -15,8 +15,6 @@ class BeaconRegionsViewController: UITableViewController {
     var startScanBarButtonItem  : UIBarButtonItem!
     var beaconRegions           = [String:BeaconRegion]()
 
-    var centralManager : CentralManager
-
     struct MainStoryBoard {
         static let beaconRegionCell         = "BeaconRegionCell"
         static let beaconsSegue             = "Beacons"
@@ -25,7 +23,6 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     required init?(coder aDecoder:NSCoder) {
-        self.centralManager = AppDelegate.sharedApplication().centralManager
         super.init(coder:aDecoder)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleMonitoring:")
         self.startScanBarButtonItem = UIBarButtonItem(title:"Scan", style:UIBarButtonItemStyle.Plain, target:self, action:"toggleMonitoring:")
@@ -70,7 +67,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func toggleMonitoring(sender:AnyObject) {
-        if self.centralManager.isScanning == false {
+        if CentralManager.sharedInstance.isScanning == false {
             let beaconManager = BeaconManager.sharedInstance
             if beaconManager.isRanging {
                 beaconManager.stopRangingAllBeacons()
@@ -191,7 +188,7 @@ class BeaconRegionsViewController: UITableViewController {
                     cell.statusLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
                 }
             }
-        } else if self.centralManager.isScanning {
+        } else if CentralManager.sharedInstance.isScanning {
             cell.statusLabel.text = "Monitoring"
         } else {
             cell.statusLabel.text = "Idle"

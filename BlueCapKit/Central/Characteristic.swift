@@ -312,7 +312,7 @@ public class Characteristic {
     
     private func timeoutRead(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
-        CentralQueue.delay(timeout) {
+        self.centralManager.centralQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")

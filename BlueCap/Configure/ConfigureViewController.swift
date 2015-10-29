@@ -83,7 +83,7 @@ class ConfigureViewController : UITableViewController {
     }
  
     func configUI() {
-        if  AppDelegate.sharedApplication().centralManager.isScanning {
+        if  CentralManager.sharedInstance.isScanning {
             self.scanTimeoutSwitch.enabled = false
             self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
         } else {

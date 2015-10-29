@@ -9,19 +9,19 @@
 import Foundation
 import CoreBluetooth
 
-public struct CentralQueue {
+public struct BlueCapQueue {
     
-    private static let queue = dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL)
+    private let queue : dispatch_queue_t
     
-    public static func sync(request:()->()) {
+    public func sync(request:()->()) {
         dispatch_sync(self.queue, request)
     }
     
-    public static func async(request:()->()) {
+    public func async(request:()->()) {
         dispatch_async(self.queue, request)
     }
     
-    public static func delay(delay:Double, request:()->()) {
+    public func delay(delay:Double, request:()->()) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, self.queue, request)
     }
@@ -40,6 +40,8 @@ extension CBCentralManager : CBCentralManagerWrappable {}
 
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
+    private static var instance : CentralManager!
+    
     private var afterPowerOnPromise                             = Promise<Void>()
     private var afterPowerOffPromise                            = Promise<Void>()
     
@@ -48,6 +50,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     internal var afterPeripheralDiscoveredPromise               = StreamPromise<Peripheral>()
     internal var discoveredPeripherals                          = [NSUUID: Peripheral]()
+
+    public let centralQueue : BlueCapQueue
 
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
@@ -78,26 +82,34 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return self._isScanning
     }
 
+    public class var sharedInstance : CentralManager {
+        self.instance = self.instance ?? CentralManager()
+        return self.instance
+    }
+    
+    public class func sharedInstance(options:[String:AnyObject]) -> CentralManager {
+        self.instance = self.instance ?? CentralManager(options:options)
+        return self.instance
+    }
+
     public override init() {
+        self.centralQueue = BlueCapQueue(queue:dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
         super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue)
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue)
     }
     
     public init(options:[String:AnyObject]?) {
+        self.centralQueue = BlueCapQueue(queue:dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
         super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:CentralQueue.queue, options:options)
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue, options:options)
     }
 
     public init(centralManager:CBCentralManagerWrappable) {
+        self.centralQueue = BlueCapQueue(queue:dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbCentralManager = centralManager
     }
     
-    public init(centralManager:CBCentralManagerWrappable, options:[String:AnyObject]?) {
-        super.init()
-        self.cbCentralManager = centralManager
-    }
-
     internal func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
         if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
             self.cbCentralManager.connectPeripheral(cbPeripheral, options:options)
@@ -149,7 +161,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     // power up
     public func powerOn() -> Future<Void> {
-        CentralQueue.sync {
+        self.centralQueue.sync {
             self.afterPowerOnPromise = Promise<Void>()
             if self.poweredOn {
                 self.afterPowerOnPromise.success()
@@ -159,7 +171,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func powerOff() -> Future<Void> {
-        CentralQueue.sync {
+        self.centralQueue.sync {
             self.afterPowerOffPromise = Promise<Void>()
             if self.poweredOff {
                 self.afterPowerOffPromise.success()

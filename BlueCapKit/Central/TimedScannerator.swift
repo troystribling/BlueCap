@@ -11,13 +11,13 @@ import CoreBluetooth
 
 public class TimedScannerator {
     
-    private let central : CentralManager
+    private let centralManager : CentralManager
 
     internal var timeoutSeconds     = 10.0
     internal var _isScanning        = false
 
     public var peripherals : [Peripheral] {
-        return self.central.peripherals
+        return self.centralManager.peripherals
     }
     
     public var isScanning : Bool {
@@ -25,14 +25,14 @@ public class TimedScannerator {
     }
 
     public init(centralManager:CentralManager) {
-        self.central = centralManager
+        self.centralManager = centralManager
     }
     
     public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Peripheral> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
-        return self.central.startScanning(capacity)
+        return self.centralManager.startScanning(capacity)
 
     }
     
@@ -40,19 +40,19 @@ public class TimedScannerator {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
-        return self.central.startScanningForServiceUUIDs(uuids, capacity:capacity)
+        return self.centralManager.startScanningForServiceUUIDs(uuids, capacity:capacity)
     }
     
     public func stopScanning() {
         self._isScanning = false
-        self.central.stopScanning()
+        self.centralManager.stopScanning()
     }
 
     internal func timeoutScan() {
         Logger.debug("timeout in \(self.timeoutSeconds)s")
-        CentralQueue.delay(self.timeoutSeconds) {
+        self.centralManager.centralQueue.delay(self.timeoutSeconds) {
             if self.peripherals.count == 0 {
-                self.central.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
+                self.centralManager.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
             }
         }
     }
