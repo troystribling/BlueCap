@@ -11,13 +11,10 @@ import CoreBluetooth
 
 public protocol CBCharacteristicWrappable {
     
-    var uuid                    : CBUUID    {get}
-    var isNotifying             : Bool      {get}
-    
-    func setNotifyValue(state:Bool)
-    func propertyEnabled(property:CBCharacteristicProperties) -> Bool
-    func readValueForCharacteristic()
-    func writeValue(value:NSData)
+    var uuid : CBUUID                           {get}
+    var isNotifying : Bool                      {get}
+    var value : NSData                          {get}
+    var properties : CBCharacteristicProperties {get}
     
 }
 
@@ -27,7 +24,7 @@ public class Characteristic {
     private var readPromise                         = Promise<Characteristic>()
     private var writePromise                        = Promise<Characteristic>()
     private var notificationUpdatePromise : StreamPromise<Characteristic>?
-    private var _service : Service
+    private weak var _service : Service?
     private let profile : CharacteristicProfile
     
     private var reading                             = false
@@ -70,7 +67,7 @@ public class Characteristic {
         return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse)
     }
     
-    public var service : Service {
+    public var service : Service? {
         return self._service
     }
     
@@ -312,7 +309,7 @@ public class Characteristic {
     
     private func timeoutRead(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
-        self.centralManager.centralQueue.delay(timeout) {
+        self.service?.peripheral?.centralManager?.centralQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
                 self.reading = false
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
@@ -325,7 +322,7 @@ public class Characteristic {
     
     private func timeoutWrite(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
-        CentralQueue.delay(timeout) {
+        self.service?.peripheral?.centralManager?.centralQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
@@ -337,15 +334,15 @@ public class Characteristic {
     }
     
     private func setNotifyValue(state:Bool) {
-        self.service.peripheral.setNotifyValue(state, forCharacteristic:self)
+        self.service?.peripheral?.setNotifyValue(state, forCharacteristic:self)
     }
     
     private func readValueForCharacteristic() {
-        self.service.peripheral.cbPeripheral.readValueForCharacteristic(self.cbCharacteristic)
+        self.service?.peripheral?.readValueForCharacteristic(self)
     }
     
     private func writeValue(value:NSData) {
-        self.service.peripheral.cbPeripheral.writeValue(value, forCharacteristic:self.cbCharacteristic, type:.WithResponse)
+        self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:.WithResponse)
     }
     
 

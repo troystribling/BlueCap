@@ -27,10 +27,6 @@ struct BCAppError {
     static let outOfRegion = NSError(domain:domain, code:AppError.outOfRegion.rawValue, userInfo:[NSLocalizedDescriptionKey:"Out of region"])
 }
 
-struct Static {
-    static let instance = CentralManager()
-}
-
 @UIApplicationMain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {

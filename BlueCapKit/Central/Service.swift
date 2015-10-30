@@ -22,8 +22,9 @@ public final class Service {
     private var characteristicsDiscoveredPromise    = Promise<Service>()
 
     internal var discoveredCharacteristics          = [CBUUID:Characteristic]()
-    internal let _peripheral : Peripheral
+
     internal let cbService : CBServiceWrappable
+    private weak var _peripheral : Peripheral?
     
     
     public var name : String {
@@ -42,7 +43,7 @@ public final class Service {
         return Array(self.discoveredCharacteristics.values)
     }
     
-    public var peripheral : Peripheral {
+    public var peripheral : Peripheral? {
         return self._peripheral
     }
     
@@ -92,8 +93,8 @@ public final class Service {
 
     private func discoverIfConnected(characteristics:[CBUUID]?) -> Future<Service> {
         self.characteristicsDiscoveredPromise = Promise<Service>()
-        if self.peripheral.state == .Connected {
-            self.peripheral.discoverCharacteristics(characteristics, forService:self)
+        if self.peripheral?.state == .Connected {
+            self.peripheral?.discoverCharacteristics(characteristics, forService:self)
         } else {
             self.characteristicsDiscoveredPromise.failure(BCError.peripheralDisconnected)
         }

@@ -9,25 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-public struct BlueCapQueue {
-    
-    private let queue : dispatch_queue_t
-    
-    public func sync(request:()->()) {
-        dispatch_sync(self.queue, request)
-    }
-    
-    public func async(request:()->()) {
-        dispatch_async(self.queue, request)
-    }
-    
-    public func delay(delay:Double, request:()->()) {
-        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
-        dispatch_after(popTime, self.queue, request)
-    }
-    
-}
-
 public protocol CBCentralManagerWrappable {
     var state : CBCentralManagerState {get}
     func scanForPeripheralsWithServices(uuids:[CBUUID]?, options:[String:AnyObject]?)
@@ -51,7 +32,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     internal var afterPeripheralDiscoveredPromise               = StreamPromise<Peripheral>()
     internal var discoveredPeripherals                          = [NSUUID: Peripheral]()
 
-    public let centralQueue : BlueCapQueue
+    public let centralQueue : Queue
 
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
@@ -92,20 +73,26 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return self.instance
     }
 
-    public override init() {
-        self.centralQueue = BlueCapQueue(queue:dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
+    private override init() {
+        self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue)
     }
     
-    public init(options:[String:AnyObject]?) {
-        self.centralQueue = BlueCapQueue(queue:dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
+    private init(options:[String:AnyObject]?) {
+        self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
+        super.init()
+        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue, options:options)
+    }
+
+    private init(queue:dispatch_queue_t, options:[String:AnyObject]?=nil) {
+        self.centralQueue = Queue(queue)
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue, options:options)
     }
 
     public init(centralManager:CBCentralManagerWrappable) {
-        self.centralQueue = BlueCapQueue(queue:dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
+        self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbCentralManager = centralManager
     }

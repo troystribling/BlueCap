@@ -177,7 +177,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     func readRSSI() -> Future<Int> {
-        Cen.sync {
+        self.centralManager?.centralQueue.sync {
             self.readRSSIPromise = Promise<Int>()
         }
         return self.readRSSIPromise.future
@@ -223,7 +223,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // service discovery
     public func discoverServices(services:[CBUUID]?) -> Future<Peripheral> {
         Logger.debug(" \(self.name)")
-        CentralQueue.sync {
+        self.centralManager?.centralQueue.sync {
             self.servicesDiscoveredPromise = Promise<Peripheral>()
             self.discoverIfConnected(services)
         }
@@ -449,8 +449,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self.cbPeripheral.readValueForCharacteristic(characteristic.cbCharacteristic)
     }
     
-    internal func writeValue(value:NSData, forChracteristic characteristic:Characteristic) {
-        self.cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type:.WithResponse)
+    internal func writeValue(value:NSData, forCharacteristic characteristic:Characteristic, type:CBCharacteristicWriteType = .WithResponse) {
+        self.cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type:type)
     }
     
     internal func discoverCharacteristics(characteristics:[CBUUID]?, forService service:Service) {
@@ -487,7 +487,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private func timeoutConnection(sequence:Int) {
         if let centralManager = self.centralManager {
             Logger.debug("sequence \(sequence), timeout:\(self.connectionTimeout)")
-            CentralQueue.delay(self.connectionTimeout) {
+            self.centralManager?.centralQueue.delay(self.connectionTimeout) {
                 if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                     Logger.debug("timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                     self.currentError = .Timeout
