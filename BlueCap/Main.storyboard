@@ -2486,8 +2486,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Manufactuere Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cGd-Gm-ihp">
-                                                    <rect key="frame" x="15" y="10" width="165" height="24"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Manufacturer Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cGd-Gm-ihp">
+                                                    <rect key="frame" x="15" y="10" width="161.5" height="24"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="18"/>
