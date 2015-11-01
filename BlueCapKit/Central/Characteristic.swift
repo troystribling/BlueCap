@@ -11,12 +11,14 @@ import CoreBluetooth
 
 public protocol CBCharacteristicWrappable {
     
-    var uuid : CBUUID                           {get}
+    var UUID : CBUUID                           {get}
     var isNotifying : Bool                      {get}
-    var value : NSData                          {get}
+    var value : NSData?                         {get}
     var properties : CBCharacteristicProperties {get}
     
 }
+
+extension CBCharacteristic : CBCharacteristicWrappable {}
 
 public class Characteristic {
 
@@ -34,7 +36,7 @@ public class Characteristic {
     private var writeSequence                       = 0
     private let defaultTimeout                      = 10.0
 
-    internal let cbCharacteristic : CBCharacteristic
+    internal let cbCharacteristic : CBCharacteristicWrappable
     
     public var uuid : CBUUID {
         return self.cbCharacteristic.UUID
@@ -234,7 +236,7 @@ public class Characteristic {
         return self.writeData(Serde.serialize(value), timeout:timeout)
     }
 
-    internal init(cbCharacteristic:CBCharacteristic, service:Service) {
+    internal init(cbCharacteristic:CBCharacteristicWrappable, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
