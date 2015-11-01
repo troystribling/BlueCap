@@ -344,7 +344,7 @@ public class Characteristic {
     }
     
     private func writeValue(value:NSData, type:CBCharacteristicWriteType = .WithResponse) {
-        self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:.WithResponse)
+        self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:type)
     }
     
 
