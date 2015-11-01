@@ -321,12 +321,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     internal func didDiscoverServices() {
         if let cbServices = self.cbPeripheral.services {
-            for cbService : AnyObject in cbServices {
-                if let cbService = cbService as? CBService {
-                    let bcService = Service(cbService:cbService, peripheral:self)
-                    self.discoveredServices[bcService.uuid] = bcService
-                    Logger.debug("uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
-                }
+            for cbService in cbServices {
+                let bcService = Service(cbService:cbService, peripheral:self)
+                self.discoveredServices[bcService.uuid] = bcService
+                Logger.debug("uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
             }
         }
     }
@@ -458,7 +456,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             if error == nil {
                 for characteristic : AnyObject in cbCharacteristics {
                     if let cbCharacteristic = characteristic as? CBCharacteristic {
-                        self.discoveredCharacteristics[cbCharacteristic] = bcService.discoveredCharacteristics[characteristic.UUID]
+                        self.discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[characteristic.UUID]
                     }
                 }
             }
