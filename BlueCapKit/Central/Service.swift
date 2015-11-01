@@ -47,19 +47,6 @@ public final class Service {
         return self._peripheral
     }
     
-    public func createCharacteristics() {
-        self.discoveredCharacteristics.removeAll()
-        if let cbChracteristics = self.cbService.characteristics {
-            for cbCharacteristic in cbChracteristics {
-                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
-                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-                bcCharacteristic.didDiscover()
-                Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-            }
-        }
-        
-    }
-    
     public func discoverAllCharacteristics() -> Future<Service> {
         Logger.debug("uuid=\(self.uuid.UUIDString), name=\(self.name)")
         return self.discoverIfConnected(nil)
@@ -89,6 +76,19 @@ public final class Service {
         self.cbService = cbService
         self._peripheral = peripheral
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
+    }
+
+    private func createCharacteristics() {
+        self.discoveredCharacteristics.removeAll()
+        if let cbChracteristics = self.cbService.characteristics {
+            for cbCharacteristic in cbChracteristics {
+                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
+                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+                bcCharacteristic.didDiscover()
+                Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            }
+        }
+        
     }
 
     private func discoverIfConnected(characteristics:[CBUUID]?) -> Future<Service> {

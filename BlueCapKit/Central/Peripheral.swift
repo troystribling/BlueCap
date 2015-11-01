@@ -282,7 +282,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     // services
     public func peripheral(peripheral:CBPeripheral, didDiscoverServices error:NSError?) {
-        self.didDiscoverServices()
+        self.didDiscoverServices(error)
     }
     
     public func peripheral(_:CBPeripheral, didDiscoverIncludedServicesForService service:CBService, error:NSError?) {
@@ -319,16 +319,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug()
     }
     
-    internal func didDiscoverServices() {
-        if let cbServices = self.cbPeripheral.services {
-            for cbService in cbServices {
-                let bcService = Service(cbService:cbService, peripheral:self)
-                self.discoveredServices[bcService.uuid] = bcService
-                Logger.debug("uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
-            }
-        }
-    }
-
     internal func didDisconnectPeripheral() {
         Logger.debug()
         self._disconnectedAt = NSDate()
@@ -444,8 +434,18 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         if let error = error {
             self.servicesDiscoveredPromise.failure(error)
         } else {
-            self.didDiscoverServices()
+            self.createServices()
             self.servicesDiscoveredPromise.success(self)
+        }
+    }
+    
+    private func createServices() {
+        if let cbServices = self.cbPeripheral.services {
+            for cbService in cbServices {
+                let bcService = Service(cbService:cbService, peripheral:self)
+                self.discoveredServices[bcService.uuid] = bcService
+                Logger.debug("uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+            }
         }
     }
 
