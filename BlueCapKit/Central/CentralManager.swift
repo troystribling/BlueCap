@@ -85,7 +85,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue, options:options)
     }
 
-    private init(queue:dispatch_queue_t, options:[String:AnyObject]?=nil) {
+    public init(queue:dispatch_queue_t, options:[String:AnyObject]?=nil) {
         self.centralQueue = Queue(queue)
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue, options:options)

@@ -179,11 +179,11 @@ public class MutableCharacteristic : MutableCharacteristicWrappable {
     }
     
     public func updateValueWithData(value:NSData) -> Bool  {
-        return PeripheralManager.sharedInstance.cbPeripheralManager.updateValue(value, forCharacteristic:self.cbMutableChracteristic, onSubscribedCentrals:nil)
+        return PeripheralManager.sharedInstance.updateValue(value, forCharacteristic:self)
     }
     
     public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
-        PeripheralManager.sharedInstance.cbPeripheralManager.respondToRequest(request, withResult:result)
+        PeripheralManager.sharedInstance.respondToRequest(request, withResult:result)
     }
     // MutableCharacteristicWrappable
 
