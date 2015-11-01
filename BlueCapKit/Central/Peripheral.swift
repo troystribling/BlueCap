@@ -454,10 +454,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         if let bcService = self.discoveredServices[service.UUID], cbCharacteristics = service.characteristics {
             bcService.didDiscoverCharacteristics(error)
             if error == nil {
-                for characteristic : AnyObject in cbCharacteristics {
-                    if let cbCharacteristic = characteristic as? CBCharacteristic {
-                        self.discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[characteristic.UUID]
-                    }
+                for cbCharacteristic in cbCharacteristics {
+                    self.discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[cbCharacteristic.UUID]
                 }
             }
         }

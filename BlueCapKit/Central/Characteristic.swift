@@ -192,11 +192,11 @@ public class Characteristic {
         return self.readPromise.future
     }
 
-    public func writeData(value:NSData, timeout:Double = 10.0) -> Future<Characteristic> {
+    public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         self.writePromise = Promise<Characteristic>()
         if self.canWrite {
             Logger.debug("write characteristic value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-            self.writeValue(value)
+            self.writeValue(value, type:type)
             self.writing = true
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence, timeout:timeout)
@@ -206,9 +206,9 @@ public class Characteristic {
         return self.writePromise.future
     }
 
-    public func writeString(stringValue:[String:String], timeout:Double = 10.0) -> Future<Characteristic> {
+    public func writeString(stringValue:[String:String], timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         if let value = self.dataFromStringValue(stringValue) {
-            return self.writeData(value)
+            return self.writeData(value, timeout:timeout, type:type)
         } else {
             self.writePromise = Promise<Characteristic>()
             self.writePromise.failure(BCError.characteristicNotSerilaizable)
@@ -216,24 +216,24 @@ public class Characteristic {
         }
     }
 
-    public func write<T:Deserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
-        return self.writeData(Serde.serialize(value), timeout:timeout)
+    public func write<T:Deserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+        return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
     
-    public func write<T:RawDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
-        return self.writeData(Serde.serialize(value), timeout:timeout)
+    public func write<T:RawDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+        return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
-    public func write<T:RawArrayDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
-        return self.writeData(Serde.serialize(value), timeout:timeout)
+    public func write<T:RawArrayDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+        return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
-    public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
-        return self.writeData(Serde.serialize(value), timeout:timeout)
+    public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+        return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
     
-    public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic> {
-        return self.writeData(Serde.serialize(value), timeout:timeout)
+    public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+        return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
     internal init(cbCharacteristic:CBCharacteristicWrappable, service:Service) {
@@ -343,7 +343,7 @@ public class Characteristic {
         self.service?.peripheral?.readValueForCharacteristic(self)
     }
     
-    private func writeValue(value:NSData) {
+    private func writeValue(value:NSData, type:CBCharacteristicWriteType = .WithResponse) {
         self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:.WithResponse)
     }
     
