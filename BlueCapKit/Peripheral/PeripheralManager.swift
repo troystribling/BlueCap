@@ -15,15 +15,17 @@ public protocol CBPeripheralManagerWrappable {
     
     var isAdvertising   : Bool                      {get}
     var state           : CBPeripheralManagerState  {get}
-    var services        : [CBMutableService]        {get}
     
-    func startAdvertising(advertisementData:[String:AnyObject])
+    func startAdvertising(advertisementData:[String:AnyObject]?)
     func stopAdvertising()
     func addService(service:CBMutableService)
     func removeService(service:CBMutableService)
     func removeAllServices()
     func respondToRequest(request:CBATTRequest, withResult result:CBATTError)
+    func updateValue(value:NSData, forCharacteristic characteristic:CBMutableCharacteristic, onSubscribedCentrals centrals:[CBCentral]?) -> Bool
 }
+
+extension CBPeripheralManager : CBPeripheralManagerWrappable {}
 
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
@@ -41,7 +43,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
 
     internal var configuredServices  : [CBUUID:MutableService]                          = [:]
     internal var configuredCharcteristics : [CBCharacteristic:MutableCharacteristic]    = [:]
-    private var cbPeripheralManager : CBPeripheralManager!
+    private var cbPeripheralManager : CBPeripheralManagerWrappable!
 
     public let peripheralQueue : Queue
     
@@ -98,11 +100,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
     }
 
-//    public init(peripheralManager:CBPeripheralManagerWrappable) {
-//        self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
-//        super.init()
-//        self.cbPeripheralManager = peripheralManager
-//    }
+    public init(peripheralManager:CBPeripheralManagerWrappable) {
+        self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
+        super.init()
+        self.cbPeripheralManager = peripheralManager
+    }
 
     public func service(uuid:CBUUID) -> MutableService? {
         return self.configuredServices[uuid]
