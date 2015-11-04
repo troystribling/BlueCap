@@ -24,7 +24,7 @@ class PeripheralsViewController : UITableViewController {
     
     required init?(coder aDecoder:NSCoder) {
         self.centralManager = CentralManager.sharedInstance
-        self.timedScannerator = TimedScannerator(centralManager: self.centralManager)
+        self.timedScannerator = TimedScannerator(centralManager:self.centralManager)
         super.init(coder:aDecoder)
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleScan:")

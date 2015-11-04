@@ -15,80 +15,71 @@ struct TestFailure {
     static let error = NSError(domain:"BlueCapKit Tests", code:100, userInfo:[NSLocalizedDescriptionKey:"Testing"])
 }
 
-class CentralManagerMock : CentralManagerWrappable {
+class CBCentralManagerMock : CBCentralManagerWrappable {
     
-    let impl = CentralManagerImpl<CentralManagerMock>()
-    
-    var state : CBCentralManagerState
-    
-    var poweredOn : Bool {
-        return self.state == CBCentralManagerState.PoweredOn
-    }
-    
-    var poweredOff : Bool {
-        return self.state == CBCentralManagerState.PoweredOff
-    }
-    
-    var peripherals : [PeripheralMock] {
-        return []
-    }
+    let state : CBCentralManagerState
     
     init(state:CBCentralManagerState = .PoweredOn) {
         self.state = state
     }
     
-    func scanForPeripheralsWithServices(uuids:[CBUUID]?) {
+    func scanForPeripheralsWithServices(uuids:[CBUUID]?, options:[String:AnyObject]?) {
+        
     }
     
     func stopScan() {
     }
     
+    func connectPeripheral(peripheral:CBPeripheral, options:[String:AnyObject]?) {
+        
+    }
+    
+    func cancelPeripheralConnection(peripheral:CBPeripheral) {
+        
+    }
+    
 }
 
-//class PeripheralMock : PeripheralWrappable {
-//    
-//    let impl = PeripheralImpl<PeripheralMock>()
-//    
-//    let state :CBPeripheralState
-//    let name : String
-//    
-//    let services : [ServiceMock]
-//    
-//    init(name:String = "Mock Peripheral", state:CBPeripheralState = .Disconnected,
-//        services:[ServiceMock]=[ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"), name:"Service Mock-1"),
-//                                ServiceMock(uuid:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6aaa"), name:"Service Mock-2")]) {
-//        self.state = state
-//        self.name = name
-//        self.services = services
-//    }
-//    
-//    func connect() {
-//    }
-//    
-//    func reconnect() {
-//    }
-//    
-//    func terminate() {
-//    }
-//    
-//    func cancel() {
-//        if self.state == .Disconnected {
-//            CentralQueue.async {
-//                self.impl.didDisconnectPeripheral(self)
-//            }
-//        }
-//    }
-//    
-//    func disconnect() {
-//    }
-//    
-//    func discoverServices(services:[CBUUID]?) {
-//    }
-//    
-//    func didDiscoverServices() {
-//    }
-//    
-//}
+class CBCentralManagerUT : CentralManager {
+    
+}
+
+class CBPeripheralMock : CBPeripheralWrappable {
+   
+    var delegate : CBPeripheralDelegate?
+    let state : CBPeripheralState = .Connected
+    let identifier = NSUUID()
+    
+    var name : String? {
+        return nil
+    }
+
+    var services : [CBService]? {
+        return nil
+    }
+    
+    func discoverServices(services:[CBUUID]?) {
+        
+    }
+    
+    func discoverCharacteristics(characteristics:[CBUUID]?, forService:CBService) {
+        
+    }
+    
+    func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic) {
+        
+    }
+    
+    func readValueForCharacteristic(characteristic:CBCharacteristic) {
+        
+    }
+    
+    func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
+        
+    }
+
+}
+
 //
 //struct ServiceMockValues {
 //    static var error : NSError? = nil
