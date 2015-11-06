@@ -20,10 +20,11 @@ public class MutableService : NSObject {
         return self.profile.name
     }
 
-    private let profile             : ServiceProfile
-    private var _characteristics    : [MutableCharacteristic] = []
+    private var _characteristics : [MutableCharacteristic] = []
+    private let profile : ServiceProfile
 
-    internal let cbMutableService   : CBMutableService
+    internal let cbMutableService : CBMutableService
+    internal weak var peripheralManager : PeripheralManager?
 
     public var characteristics : [MutableCharacteristic] {
         get {
@@ -32,20 +33,22 @@ public class MutableService : NSObject {
         set {
             self._characteristics = newValue
             let cbCharacteristics = self._characteristics.reduce([CBMutableCharacteristic]()) {(cbCharacteristics, characteristic) in
+                characteristic.service = self
                 return cbCharacteristics + [characteristic.cbMutableChracteristic]
             }
             self.cbMutableService.characteristics = cbCharacteristics
         }
     }
     
-    public init(profile:ServiceProfile) {
+    public init(profile:ServiceProfile, peripheralManager:PeripheralManager) {
         self.profile = profile
+        self.peripheralManager = peripheralManager
         self.cbMutableService = CBMutableService(type:self.profile.uuid, primary:true)
         super.init()
     }
     
-    public convenience init(uuid:String) {
-        self.init(profile:ServiceProfile(uuid:uuid))
+    public convenience init(uuid:String, peripheralManager:PeripheralManager) {
+        self.init(profile:ServiceProfile(uuid:uuid), peripheralManager:peripheralManager)
     }
 
     public func characteristicsFromProfiles(profiles:[CharacteristicProfile]) {

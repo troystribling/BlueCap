@@ -29,8 +29,6 @@ extension CBPeripheralManager : CBPeripheralManagerWrappable {}
 
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
-    private static var instance : PeripheralManager!
-
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Double                  = 0.25
 
     private var _name : String?
@@ -73,13 +71,25 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public class var sharedInstance : PeripheralManager {
-        self.instance = self.instance ?? PeripheralManager()
-        return self.instance
+        struct StaticInstance {
+            static var onceToken : dispatch_once_t      = 0
+            static var instance : PeripheralManager?    = nil
+        }
+        dispatch_once(&StaticInstance.onceToken) {
+            StaticInstance.instance = PeripheralManager()
+        }
+        return StaticInstance.instance!
     }
     
     public class func sharedInstance(options:[String:AnyObject]) -> PeripheralManager {
-        self.instance = self.instance ?? PeripheralManager(options:options)
-        return self.instance
+        struct StaticInstance {
+            static var onceToken : dispatch_once_t      = 0
+            static var instance : PeripheralManager?   = nil
+        }
+        dispatch_once(&StaticInstance.onceToken) {
+            StaticInstance.instance = PeripheralManager(options:options)
+        }
+        return StaticInstance.instance!
     }
     
     private override init() {

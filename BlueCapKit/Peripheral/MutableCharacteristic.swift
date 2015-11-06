@@ -17,6 +17,7 @@ public class MutableCharacteristic {
 
     internal let cbMutableChracteristic : CBMutableCharacteristic!
     internal var processWriteRequestPromise : StreamPromise<CBATTRequest>?
+    internal weak var service : MutableService?
     
     // MutableCharacteristicWrappable
     
@@ -95,7 +96,7 @@ public class MutableCharacteristic {
     }
     
     public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
-        PeripheralManager.sharedInstance.respondToRequest(request, withResult:result)
+        self.service?.peripheralManager?.respondToRequest(request, withResult:result)
     }
     
     public class func withProfiles(profiles:[CharacteristicProfile]) -> [MutableCharacteristic] {
@@ -146,7 +147,7 @@ public class MutableCharacteristic {
     }
     
     public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
-        PeripheralManager.sharedInstance.respondToRequest(request, withResult:result)
+        self.service?.peripheralManager?.respondToRequest(request, withResult:result)
     }
     
     public func updateValue<T:Deserializable>(value:T) -> Bool {

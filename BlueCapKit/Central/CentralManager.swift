@@ -21,8 +21,6 @@ extension CBCentralManager : CBCentralManagerWrappable {}
 
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
-    private static var instance : CentralManager!
-    
     private var afterPowerOnPromise                             = Promise<Void>()
     private var afterPowerOffPromise                            = Promise<Void>()
     
@@ -64,13 +62,25 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public class var sharedInstance : CentralManager {
-        self.instance = self.instance ?? CentralManager()
-        return self.instance
+        struct StaticInstance {
+            static var onceToken : dispatch_once_t  = 0
+            static var instance : CentralManager?   = nil
+        }
+        dispatch_once(&StaticInstance.onceToken) {
+            StaticInstance.instance = CentralManager()
+        }
+        return StaticInstance.instance!
     }
     
     public class func sharedInstance(options:[String:AnyObject]) -> CentralManager {
-        self.instance = self.instance ?? CentralManager(options:options)
-        return self.instance
+        struct StaticInstance {
+            static var onceToken : dispatch_once_t  = 0
+            static var instance : CentralManager?   = nil
+        }
+        dispatch_once(&StaticInstance.onceToken) {
+            StaticInstance.instance = CentralManager(options:options)
+        }
+        return StaticInstance.instance!
     }
 
     private override init() {

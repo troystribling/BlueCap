@@ -60,11 +60,12 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         let tags = Array(self.serviceProfiles.keys)
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
+            let perpheralManager = PeripheralManager.sharedInstance
             let serviceProfile = profiles[indexPath.row]
-            let service = MutableService(profile:serviceProfile)
+            let service = MutableService(profile:serviceProfile, peripheralManager:perpheralManager)
             service.characteristicsFromProfiles(serviceProfile.characteristics)
             self.progressView.show()
-            let future = PeripheralManager.sharedInstance.addService(service)
+            let future = perpheralManager.addService(service)
             future.onSuccess {
                 if let peripheral = self.peripheral {
                     PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
