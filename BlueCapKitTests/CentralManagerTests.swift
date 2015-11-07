@@ -23,9 +23,10 @@ class CentralManagerTests: XCTestCase {
     }
 
     func testPowerOnWhenPoweredOn() {
-        let mock = CentralManagerMock(state:.PoweredOn)
+        let mock = CBCentralManagerMock(state:.PoweredOn)
+        let centralManager = CentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = mock.impl.powerOn(mock)
+        let future = centralManager.powerOn()
         future.onSuccess {
             expectation.fulfill()
         }
@@ -37,69 +38,82 @@ class CentralManagerTests: XCTestCase {
         }
     }
 
-//    func testPowerOnWhenPoweredOff() {
-//        let mock = CentralManagerMock(state:.PoweredOff)
-//        let expectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.powerOn(mock)
-//        future.onSuccess {
-//            expectation.fulfill()
-//        }
-//        future.onFailure{error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        mock.state = .PoweredOn
-//        mock.impl.didUpdateState(mock)
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//
-//    func testPowerOffWhenPoweredOn() {
-//        let mock = CentralManagerMock(state:.PoweredOn)
-//        let expectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.powerOff(mock)
-//        future.onSuccess {
-//            expectation.fulfill()
-//        }
-//        future.onFailure{error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        mock.state = .PoweredOff
-//        mock.impl.didUpdateState(mock)
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//
-//    func testPowerOffWhenPoweredOff() {
-//        let mock = CentralManagerMock(state:.PoweredOff)
-//        let expectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.powerOff(mock)
-//        future.onSuccess {
-//            expectation.fulfill()
-//        }
-//        future.onFailure{error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//
-//    func testServiceScanning() {
-//        let mock = CentralManagerMock(state:.PoweredOff)
-//        let expectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.startScanning(mock)
-//        future.onSuccess {_ in
-//            expectation.fulfill()
-//        }
-//        future.onFailure{error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        mock.impl.didDiscoverPeripheral(PeripheralMock(name:"Mock"))
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
+    func testPowerOnWhenPoweredOff() {
+        let mock = CBCentralManagerMock(state:.PoweredOn)
+        let centralManager = CentralManager(centralManager: mock)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = centralManager.powerOn()
+        future.onSuccess {
+            expectation.fulfill()
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        mock.state = .PoweredOn
+        centralManager.didUpdateState()
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testPowerOffWhenPoweredOn() {
+        let mock = CBCentralManagerMock(state:.PoweredOn)
+        let centralManager = CentralManager(centralManager: mock)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = centralManager.powerOff()
+        future.onSuccess {
+            expectation.fulfill()
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        mock.state = .PoweredOff
+        centralManager.didUpdateState()
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testPowerOffWhenPoweredOff() {
+        let mock = CBCentralManagerMock(state:.PoweredOff)
+        let centralManager = CentralManager(centralManager:mock)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = centralManager.powerOff()
+        future.onSuccess {
+            expectation.fulfill()
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testPeripheralDiscoverWhenPoweredOn() {
+        let centralMock = CBCentralManagerMock(state:.PoweredOn)
+        let centralManager = CentralManager(centralManager:centralMock)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = centralManager.startScanning()
+        future.onSuccess {_ in
+            expectation.fulfill()
+        }
+        future.onFailure{error in
+            XCTAssert(false, "onFailure called")
+        }
+        let peripheralMock = CBPeripheralMock()
+        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData:peripheralAdvertisements, RSSI:NSNumber(integer: -45))
+        XCTAssert(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices not called")
+        if let peripheral = centralManager.peripherals.first where centralManager.peripherals.count == 1 {
+            XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
+            XCTAssert(peripheral.name == peripheralMock.name, "Peripheral name is invalid")
+            
+        } else {
+            XCTAssert(false, "Discovered peripheral missing")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
     
 }

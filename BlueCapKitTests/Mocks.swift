@@ -15,23 +15,28 @@ struct TestFailure {
     static let error = NSError(domain:"BlueCapKit Tests", code:100, userInfo:[NSLocalizedDescriptionKey:"Testing"])
 }
 
+let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral",
+                                CBAdvertisementDataTxPowerLevelKey:NSNumber(integer:-45)]
+
 class CBCentralManagerMock : CBCentralManagerWrappable {
     
-    let state : CBCentralManagerState
+    var state : CBCentralManagerState
+    var scanForPeripheralsWithServicesCalled = false
+    var stopScanCalled = false
     
     init(state:CBCentralManagerState = .PoweredOn) {
         self.state = state
     }
     
     func scanForPeripheralsWithServices(uuids:[CBUUID]?, options:[String:AnyObject]?) {
-        
+        self.scanForPeripheralsWithServicesCalled = true
     }
     
     func stopScan() {
+        self.stopScanCalled = true
     }
     
     func connectPeripheral(peripheral:CBPeripheral, options:[String:AnyObject]?) {
-        
     }
     
     func cancelPeripheralConnection(peripheral:CBPeripheral) {
@@ -40,18 +45,31 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
     
 }
 
-class CBCentralManagerUT : CentralManager {
-    
-}
-
 class CBPeripheralMock : CBPeripheralWrappable {
    
-    var delegate : CBPeripheralDelegate?
-    let state : CBPeripheralState = .Connected
+    var _delegate : CBPeripheralDelegate? = nil
+    var state : CBPeripheralState
+    
+    var setDelegateCalled = false
+    
     let identifier = NSUUID()
+
+    init(state:CBPeripheralState = .Disconnected) {
+        self.state = state
+    }
+    
+    var delegate : CBPeripheralDelegate? {
+        get {
+            return self._delegate
+        }
+        set {
+            self._delegate = newValue
+            self.setDelegateCalled = self._delegate == nil ? false : true
+        }
+    }
     
     var name : String? {
-        return nil
+        return "Test Peripheral"
     }
 
     var services : [CBService]? {

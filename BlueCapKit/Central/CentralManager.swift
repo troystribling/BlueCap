@@ -116,7 +116,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             } else {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
             }
-            self.cbCentralManager.scanForPeripheralsWithServices(uuids, options:options)
+            if self.poweredOn {
+                self.cbCentralManager.scanForPeripheralsWithServices(uuids, options:options)
+            } else {
+                self.afterPeripheralDiscoveredPromise.failure(BCError.centralIsPoweredOff)
+            }
         }
         return self.afterPeripheralDiscoveredPromise.future
     }

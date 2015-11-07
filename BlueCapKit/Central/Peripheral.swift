@@ -184,9 +184,9 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     public func reconnect() {
-        if let central = self.centralManager where self.state == .Disconnected {
+        if let centralManager = self.centralManager where self.state == .Disconnected {
             Logger.debug("reconnect peripheral \(self.name)")
-            central.connectPeripheral(self)
+            centralManager.connectPeripheral(self)
             self.forcedDisconnect = false
             ++self.connectionSequence
             self.timeoutConnection(self.connectionSequence)
