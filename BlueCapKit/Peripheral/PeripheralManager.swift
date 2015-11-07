@@ -81,27 +81,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return StaticInstance.instance!
     }
     
-    public class func sharedInstance(options:[String:AnyObject]) -> PeripheralManager {
-        struct StaticInstance {
-            static var onceToken : dispatch_once_t      = 0
-            static var instance : PeripheralManager?   = nil
-        }
-        dispatch_once(&StaticInstance.onceToken) {
-            StaticInstance.instance = PeripheralManager(options:options)
-        }
-        return StaticInstance.instance!
-    }
-    
     private override init() {
         self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
-    }
-    
-    private init(options:[String:AnyObject]) {
-        self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
-        super.init()
-        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
     }
 
     public init(queue:dispatch_queue_t, options:[String:AnyObject]?=nil) {

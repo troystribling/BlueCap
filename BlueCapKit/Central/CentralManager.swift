@@ -72,29 +72,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return StaticInstance.instance!
     }
     
-    public class func sharedInstance(options:[String:AnyObject]) -> CentralManager {
-        struct StaticInstance {
-            static var onceToken : dispatch_once_t  = 0
-            static var instance : CentralManager?   = nil
-        }
-        dispatch_once(&StaticInstance.onceToken) {
-            StaticInstance.instance = CentralManager(options:options)
-        }
-        return StaticInstance.instance!
-    }
-
     private override init() {
         self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue)
     }
     
-    private init(options:[String:AnyObject]?) {
-        self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
-        super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue, options:options)
-    }
-
     public init(queue:dispatch_queue_t, options:[String:AnyObject]?=nil) {
         self.centralQueue = Queue(queue)
         super.init()
