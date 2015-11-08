@@ -254,13 +254,6 @@ public class Characteristic {
         }
     }
     
-    internal func didDiscover() {
-        Logger.debug("uuid=\(self.uuid.UUIDString), name=\(self.name)")
-        if let afterDiscoveredPromise = self.afterDiscoveredPromise {
-            afterDiscoveredPromise.success(self)
-        }
-    }
-    
     internal func didUpdateNotificationState(error:NSError?) {
         if let error = error {
             Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")

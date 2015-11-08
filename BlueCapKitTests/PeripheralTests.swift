@@ -22,23 +22,23 @@ class PeripheralTests: XCTestCase {
         super.tearDown()
     }
     
-//    func testDiscoverServicesSuccess() {
-//        let mock = PeripheralMock(state:.Connected)
-//        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.discoverServices(mock, services:nil)
-//        future.onSuccess {_ in
-//            onSuccessExpectation.fulfill()
-//        }
-//        future.onFailure {error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        CentralQueue.sync {
-//            mock.impl.didDiscoverServices(mock, error:nil)
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
+    func testDiscoverServicesSuccess() {
+        let mock = CBPeripheralMock(state:.Connected)
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = mock.impl.discoverServices(mock, services:nil)
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        CentralQueue.sync {
+            mock.impl.didDiscoverServices(mock, error:nil)
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 //
 //    func testDiscoverServicesFailure() {
 //        let mock = PeripheralMock(state:.Connected)

@@ -61,33 +61,31 @@ public final class Service {
         return self.discoveredCharacteristics[uuid]
     }
 
-    public func didDiscoverCharacteristics(error:NSError?) {
+    public func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
         if let error = error {
             Logger.debug("discover failed")
             self.characteristicsDiscoveredPromise.failure(error)
         } else {
-            self.createCharacteristics()
+            self.discoveredCharacteristics.removeAll()
+            for cbCharacteristic in discoveredCharacteristics {
+                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
+                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+                Logger.debug("uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                bcCharacteristic.afterDiscoveredPromise?.success(bcCharacteristic)
+                Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            }
             Logger.debug("discover success")
             self.characteristicsDiscoveredPromise.success(self)
         }
     }
     
-    internal init(cbService:CBService, peripheral:Peripheral) {
+    internal init(cbService:CBServiceWrappable, peripheral:Peripheral) {
         self.cbService = cbService
         self._peripheral = peripheral
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
     }
 
     private func createCharacteristics() {
-        self.discoveredCharacteristics.removeAll()
-        if let cbChracteristics = self.cbService.characteristics {
-            for cbCharacteristic in cbChracteristics {
-                let bcCharacteristic = Characteristic(cbCharacteristic:cbCharacteristic, service:self)
-                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-                bcCharacteristic.didDiscover()
-                Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
-            }
-        }
         
     }
 

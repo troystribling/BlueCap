@@ -107,10 +107,28 @@ class CentralManagerTests: XCTestCase {
         if let peripheral = centralManager.peripherals.first where centralManager.peripherals.count == 1 {
             XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
             XCTAssert(peripheral.name == peripheralMock.name, "Peripheral name is invalid")
-            
+            XCTAssert(peripheral.identifier == peripheralMock.identifier, "Peripheral identifier is invalid")
         } else {
             XCTAssert(false, "Discovered peripheral missing")
         }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+    
+    func testPeripheralDiscoveredWhenPoweredOff() {
+        let centralMock = CBCentralManagerMock(state:.PoweredOff)
+        let centralManager = CentralManager(centralManager:centralMock)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = centralManager.startScanning()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure{error in
+            expectation.fulfill()
+            XCTAssert(error.code == BCError.centralIsPoweredOff.code, "Error code invalid")
+        }
+        XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices is called")
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
