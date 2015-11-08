@@ -158,7 +158,7 @@ public class Characteristic {
     public func stopNotifying() -> Future<Characteristic> {
         self.notificationStateChangedPromise = Promise<Characteristic>()
         if self.canNotify {
-            self.setNotifyValue(true)
+            self.setNotifyValue(false)
         } else {
             self.notificationStateChangedPromise.failure(BCError.characteristicNotifyNotSupported)
         }
