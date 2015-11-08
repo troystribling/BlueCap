@@ -47,12 +47,20 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
 
 class CBPeripheralMock : CBPeripheralWrappable {
    
-    var _delegate : CBPeripheralDelegate? = nil
     var state : CBPeripheralState
+    var writeValueData : NSData?
+    var setNotifyState : Bool?
+
+    var _delegate : CBPeripheralDelegate?   = nil
     
-    var setDelegateCalled = false
+    var setDelegateCalled                   = false
+    var discoverServicesCalled              = false
+    var discoverCharacteristicsCalled       = false
+    var setNotifyValueCalled                = false
+    var readValueForCharacteristicCalled    = false
+    var writeValueCalled                    = false
     
-    let identifier = NSUUID()
+    let identifier                          = NSUUID()
 
     init(state:CBPeripheralState = .Disconnected) {
         self.state = state
@@ -77,68 +85,43 @@ class CBPeripheralMock : CBPeripheralWrappable {
     }
     
     func discoverServices(services:[CBUUID]?) {
-        
+        self.discoverServicesCalled = true
     }
     
     func discoverCharacteristics(characteristics:[CBUUID]?, forService:CBService) {
-        
+        self.discoverCharacteristicsCalled = true
     }
     
     func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic) {
-        
+        self.setNotifyValueCalled = true
+        self.setNotifyState = state
     }
     
     func readValueForCharacteristic(characteristic:CBCharacteristic) {
-        
+        self.readValueForCharacteristicCalled = true
     }
     
     func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
-        
+        self.writeValueCalled = true
+        self.writeValueData = data
     }
 
 }
 
-//
-//struct ServiceMockValues {
-//    static var error : NSError? = nil
-//}
-//
-//struct ServiceMock : ServiceWrappable {
-//    
-//    let uuid  : CBUUID
-//    let name  : String
-//    let state : CBPeripheralState
-//    
-//    let impl = ServiceImpl<ServiceMock>()
-//    
-//    init(uuid:CBUUID = CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"),
-//         name:String = "Mock",
-//         state:CBPeripheralState = .Connected) {
-//        self.uuid = uuid
-//        self.name = name
-//        self.state = state
-//    }
-//    
-//    func discoverCharacteristics(characteristics:[CBUUID]?) {
-//    }
-//    
-//    func didDiscoverCharacteristics(error:NSError?) {
-//        CentralQueue.async {
-//            self.impl.didDiscoverCharacteristics(self, error:ServiceMockValues.error)
-//        }
-//    }
-//    
-//    func createCharacteristics() {
-//    }
-//    
-//    func discoverAllCharacteristics() -> Future<ServiceMock> {
-//        let future = self.impl.discoverIfConnected(self, characteristics:nil)
-//        self.didDiscoverCharacteristics(ServiceMockValues.error)
-//        return future
-//    }
-//    
-//}
-//
+struct CBServiceMock : CBServiceWrappable {
+    
+    let UUID : CBUUID
+    
+    var characteristics : [CBCharacteristic]? {
+        return nil
+    }
+    
+    init(UUID:CBUUID = CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
+        self.UUID = UUID
+    }
+    
+}
+
 //final class CharacteristicMock : CharacteristicWrappable {
 //    
 //    var _isNotifying             = false
