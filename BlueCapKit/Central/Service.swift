@@ -61,7 +61,7 @@ public final class Service {
         return self.discoveredCharacteristics[uuid]
     }
 
-    public func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
+    internal func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
         if let error = error {
             Logger.debug("discover failed")
             self.characteristicsDiscoveredPromise.failure(error)

@@ -111,11 +111,14 @@ class PeripheralTests: XCTestCase {
 //            XCTAssert(false, "onFailure called")
 //        }
 //        peripheral.didDiscoverServices(self.services, error:nil)
+//        let discoveredServices = peripheral.services
+//        peripheral.didDiscoverCharacteristicsForService([self.charateristics[0], self.charateristics[1]], service:discoveredServices[0], error:nil)
+//        peripheral.didDiscoverCharacteristicsForService([self.charateristics[2]], service:discoveredServices[1], error:nil)
 //        waitForExpectationsWithTimeout(20) {error in
 //            XCTAssertNil(error, "\(error)")
 //        }
 //    }
-//    
+//
 //    func testDiscoverPeripheralServicesPeripheralFailure() {
 //        let mock = PeripheralMock(state:.Connected)
 //        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
