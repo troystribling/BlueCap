@@ -30,7 +30,7 @@ class ViewController: UITableViewController {
     
     let accelerometer                           = Accelerometer()
     
-    let accelerometerService                    = MutableService(uuid:TISensorTag.AccelerometerService.uuid)
+    let accelerometerService                    = MutableService(uuid:TISensorTag.AccelerometerService.uuid, peripheralManager:PeripheralManager.sharedInstance)
     let accelerometerDataCharacteristic         = MutableCharacteristic(uuid:TISensorTag.AccelerometerService.Data.uuid,
                                                     properties:[.Read, .Notify],
                                                     permissions:[.Readable, .Writeable],
