@@ -60,6 +60,9 @@ class CBPeripheralMock : CBPeripheralWrappable {
     var readValueForCharacteristicCalled    = false
     var writeValueCalled                    = false
     
+    var discoverServicesCalledCount         = 0
+    var discoverCharacteristicsCalledCount  = 0
+    
     let identifier                          = NSUUID()
 
     init(state:CBPeripheralState = .Disconnected) {
@@ -86,10 +89,12 @@ class CBPeripheralMock : CBPeripheralWrappable {
     
     func discoverServices(services:[CBUUID]?) {
         self.discoverServicesCalled = true
+        self.discoverServicesCalledCount++
     }
     
     func discoverCharacteristics(characteristics:[CBUUID]?, forService:CBService) {
         self.discoverCharacteristicsCalled = true
+        self.discoverCharacteristicsCalledCount++
     }
     
     func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic) {
@@ -108,7 +113,7 @@ class CBPeripheralMock : CBPeripheralWrappable {
 
 }
 
-struct CBServiceMock : CBServiceWrappable {
+class CBServiceMock : CBServiceWrappable {
     
     let UUID : CBUUID
     
@@ -122,64 +127,22 @@ struct CBServiceMock : CBServiceWrappable {
     
 }
 
-//final class CharacteristicMock : CharacteristicWrappable {
-//    
-//    var _isNotifying             = false
-//    var _stringValues            = [String]()
-//    var _propertyEnabled         = true
-//    var _stringValue             = ["Mock":"1"]
-//    var _dataFromStringValue     = "01".dataFromHexString()
-//    var _afterDiscoveredPromise  = StreamPromise<CharacteristicMock>()
-//    
-//    let impl = CharacteristicImpl<CharacteristicMock>()
-//    
-//    var uuid : CBUUID {
-//        return CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6c1a")
-//    }
-//    
-//    init (propertyEnabled:Bool = true) {
-//        self._propertyEnabled = propertyEnabled
-//    }
-//    
-//    var name : String {
-//        return "Mock"
-//    }
-//    
-//    var isNotifying : Bool {
-//        return self._isNotifying
-//    }
-//    
-//    var stringValues : [String] {
-//        return self._stringValues
-//    }
-//    
-//    var afterDiscoveredPromise  : StreamPromise<CharacteristicMock>? {
-//        return self._afterDiscoveredPromise
-//    }
-//    
-//    func stringValue(data:NSData?) -> [String:String]? {
-//        return self._stringValue
-//    }
-//    
-//    func dataFromStringValue(stringValue:[String:String]) -> NSData? {
-//        return self._dataFromStringValue
-//    }
-//    
-//    func setNotifyValue(state:Bool) {
-//        self._isNotifying = state
-//    }
-//    
-//    func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
-//        return self._propertyEnabled
-//    }
-//    
-//    func readValueForCharacteristic() {
-//    }
-//    
-//    func writeValue(value:NSData) {
-//    }
-//}
-//
+class CBCharacteristicMock : CBCharacteristicWrappable {
+    
+    let UUID : CBUUID
+    let properties : CBCharacteristicProperties
+
+    var isNotifying : Bool
+    var value : NSData?
+
+    init (properties:CBCharacteristicProperties, UUID:CBUUID, isNotifying:Bool) {
+        self.properties = properties
+        self.UUID = UUID
+        self.isNotifying = isNotifying
+    }
+    
+}
+
 //class TimedScanneratorMock : TimedScanneratorWrappable {
 //    
 //    let impl = TimedScanneratorImpl<TimedScanneratorMock>()

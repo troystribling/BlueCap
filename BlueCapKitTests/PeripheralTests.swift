@@ -16,12 +16,15 @@ class PeripheralTests: XCTestCase {
 
     var centralManager : CentralManager!
     var services = [CBServiceWrappable]()
+    var charateristics = [CBCharacteristicWrappable]()
     
     override func setUp() {
         self.centralManager = CentralManager(centralManager:CBCentralManagerMock(state:.PoweredOn))
         self.services.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")))
         self.services.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff")))
-
+        self.charateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), isNotifying:false))
+        self.charateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), isNotifying:false))
+        self.charateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), isNotifying:false))
         super.setUp()
     }
     
@@ -38,6 +41,7 @@ class PeripheralTests: XCTestCase {
             onSuccessExpectation.fulfill()
             let discoveredServices = peripheral.services
             XCTAssert(discoveredServices.count == 2, "Peripheral service count invalid")
+            XCTAssert(mockPeripheral.discoverServicesCalledCount == 1, "CBPeripheral#discoverServices called more than once")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
@@ -62,6 +66,7 @@ class PeripheralTests: XCTestCase {
             onFailureExpectation.fulfill()
             XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
+            XCTAssert(mockPeripheral.discoverServicesCalledCount == 1, "CBPeripheral#discoverServices called more than once")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
         peripheral.didDiscoverServices([], error:TestFailure.error)
@@ -82,6 +87,7 @@ class PeripheralTests: XCTestCase {
             onFailureExpectation.fulfill()
             XCTAssert(error.code == BCError.peripheralDisconnected.code, "Error code invalid")
             XCTAssertFalse(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices called")
+            XCTAssert(mockPeripheral.discoverServicesCalledCount == 0, "CBPeripheral#discoverServices called more than once")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
         waitForExpectationsWithTimeout(2) {error in
@@ -96,13 +102,15 @@ class PeripheralTests: XCTestCase {
 //        let future = peripheral.discoverAllPeripheralServices()
 //        future.onSuccess {_ in
 //            onSuccessExpectation.fulfill()
+//            let discoveredServices = peripheral.services
+//            XCTAssert(discoveredServices.count == 2, "Peripheral service count invalid")
+//            XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
+//            XCTAssert(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
 //        }
 //        future.onFailure {error in
 //            XCTAssert(false, "onFailure called")
 //        }
-//        CentralQueue.sync {
-//            mock.impl.didDiscoverServices(mock, error:nil)
-//        }
+//        peripheral.didDiscoverServices(self.services, error:nil)
 //        waitForExpectationsWithTimeout(20) {error in
 //            XCTAssertNil(error, "\(error)")
 //        }
