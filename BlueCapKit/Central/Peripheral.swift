@@ -245,7 +245,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         let servicesDiscoveredFuture = self.discoverServices(services)
         servicesDiscoveredFuture.onSuccess {_ in
             if self.services.count > 1 {
-                self.discoverService(self.services[0],tail:Array(self.services[1..<self.services.count]), promise:peripheralDiscoveredPromise)
+                self.discoverService(self.services[0], tail:Array(self.services[1..<self.services.count]), promise:peripheralDiscoveredPromise)
             } else {
                 if self.services.count > 0 {
                     let discoveryFuture = self.services[0].discoverAllCharacteristics()
@@ -400,13 +400,13 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
 
-    internal func didConnectPeripheral() {
+    public func didConnectPeripheral() {
         Logger.debug()
         self._connectedAt = NSDate()
         self.connectionPromise?.success((self, ConnectionEvent.Connect))
     }
     
-    internal func didFailToConnectPeripheral(error:NSError?) {
+    public func didFailToConnectPeripheral(error:NSError?) {
         if let error = error {
             Logger.debug("connection failed for \(self.name) with error:'\(error.localizedDescription)'")
             self.currentError = .Unknown

@@ -85,10 +85,6 @@ public final class Service {
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
     }
 
-    private func createCharacteristics() {
-        
-    }
-
     private func discoverIfConnected(characteristics:[CBUUID]?) -> Future<Service> {
         self.characteristicsDiscoveredPromise = Promise<Service>()
         if self.peripheral?.state == .Connected {
