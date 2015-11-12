@@ -90,13 +90,13 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.cbCentralManager = centralManager
     }
     
-    internal func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
+    public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
         if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
             self.cbCentralManager.connectPeripheral(cbPeripheral, options:options)
         }
     }
     
-    internal func cancelPeripheralConnection(peripheral:Peripheral) {
+    public func cancelPeripheralConnection(peripheral:Peripheral) {
         if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
             self.cbCentralManager.cancelPeripheralConnection(cbPeripheral)
         }
