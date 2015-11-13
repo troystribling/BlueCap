@@ -23,7 +23,6 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
     var state : CBCentralManagerState
     var scanForPeripheralsWithServicesCalled = false
     var stopScanCalled = false
-    var peripheral : Peripheral?
     
     init(state:CBCentralManagerState = .PoweredOn) {
         self.state = state
@@ -45,15 +44,16 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
     
 }
 
-//public class CentralManagerUT : CentralManager {
-//    
-//    public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
-//    }
-//    
-//    public override func cancelPeripheralConnection(peripheral:Peripheral) {
-//    }
-//
-//}
+public class CentralManagerUT : CentralManager {
+    
+    public override func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
+    }
+    
+    public override func cancelPeripheralConnection(peripheral:Peripheral) {
+        peripheral.didDisconnectPeripheral()
+    }
+
+}
 
 class CBPeripheralMock : CBPeripheralWrappable {
    
