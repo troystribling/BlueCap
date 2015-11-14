@@ -185,7 +185,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onConnectionExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:100.0)
+        let future = peripheral.connect(connectionTimeout:1.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -215,7 +215,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:100.0)
+        let future = peripheral.connect(connectionTimeout:1.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -276,7 +276,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:100.0)
+        let future = peripheral.connect(connectionTimeout:1.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -337,7 +337,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:100.0)
+        let future = peripheral.connect(connectionTimeout:1.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -363,48 +363,17 @@ class PeripheralTests: XCTestCase {
         }
     }
     
-    func testTimeout() {
-        let mockPeripheral = CBPeripheralMock(state:.Disconnected)
-        let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
-        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:1.0)
-        future.onSuccess{(peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .Connect:
-                XCTAssert(false, "onSuccess Connect invalid")
-            case .Timeout:
-                onFailureExpectation.fulfill()
-            case .Disconnect:
-                XCTAssert(false, "onSuccess Disconnect invalid")
-            case .ForceDisconnect:
-                XCTAssert(false, "onSuccess ForceDisconnect invalid")
-            case .Failed:
-                XCTAssert(false, "onSuccess Failed invalid")
-            case .GiveUp:
-                XCTAssert(false, "onSuccess GiveUp invalid")
-            }
-        }
-        future.onFailure {error in
-            XCTAssert(false, "onFailure called")
-        }
-        waitForExpectationsWithTimeout(20) {error in
-            XCTAssertNil(error, "\(error)")
-        }
-    }
-    
-//    func testGiveUp() {
+//    func testTimeout() {
 //        let mockPeripheral = CBPeripheralMock(state:.Disconnected)
 //        let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
-//        let timeoutExpectation = expectationWithDescription("onFailure fulfilled for Timeout")
-//        let giveUpExpectation = expectationWithDescription("onFailure fulfilled for GiveUp")
-//        let future = peripheral.connect(connectionTimeout:1.0, timeoutRetries:1)
+//        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+//        let future = peripheral.connect(connectionTimeout:1.0)
 //        future.onSuccess{(peripheral, connectionEvent) in
 //            switch connectionEvent {
 //            case .Connect:
 //                XCTAssert(false, "onSuccess Connect invalid")
 //            case .Timeout:
-//                timeoutExpectation.fulfill()
-//                peripheral.reconnect()
+//                onFailureExpectation.fulfill()
 //            case .Disconnect:
 //                XCTAssert(false, "onSuccess Disconnect invalid")
 //            case .ForceDisconnect:
@@ -412,7 +381,7 @@ class PeripheralTests: XCTestCase {
 //            case .Failed:
 //                XCTAssert(false, "onSuccess Failed invalid")
 //            case .GiveUp:
-//                giveUpExpectation.fulfill()
+//                XCTAssert(false, "onSuccess GiveUp invalid")
 //            }
 //        }
 //        future.onFailure {error in
@@ -422,13 +391,44 @@ class PeripheralTests: XCTestCase {
 //            XCTAssertNil(error, "\(error)")
 //        }
 //    }
+    
+    func testGiveUp() {
+        let mockPeripheral = CBPeripheralMock(state:.Disconnected)
+        let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let timeoutExpectation = expectationWithDescription("onFailure fulfilled for Timeout")
+        let giveUpExpectation = expectationWithDescription("onFailure fulfilled for GiveUp")
+        let future = peripheral.connect(connectionTimeout:5.0, timeoutRetries:1)
+        future.onSuccess{(peripheral, connectionEvent) in
+            switch connectionEvent {
+            case .Connect:
+                XCTAssert(false, "onSuccess Connect invalid")
+            case .Timeout:
+                timeoutExpectation.fulfill()
+                peripheral.reconnect()
+            case .Disconnect:
+                XCTAssert(false, "onSuccess Disconnect invalid")
+            case .ForceDisconnect:
+                XCTAssert(false, "onSuccess ForceDisconnect invalid")
+            case .Failed:
+                XCTAssert(false, "onSuccess Failed invalid")
+            case .GiveUp:
+                giveUpExpectation.fulfill()
+            }
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        waitForExpectationsWithTimeout(20) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 
     func testReconectOnTimeout() {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let timeoutExpectation = expectationWithDescription("onFailure fulfilled for Timeout")
         let onConnectionExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:45.0, timeoutRetries:2)
+        let future = peripheral.connect(connectionTimeout:1.0, timeoutRetries:2)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -460,7 +460,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let disconnectExpectation = expectationWithDescription("onFailure fulfilled for Disconnect")
         let onConnectionExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:100.0)
+        let future = peripheral.connect(connectionTimeout:1.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:

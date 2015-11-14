@@ -104,8 +104,9 @@ public struct PeripheralAdvertisements {
 
 public class Peripheral : NSObject, CBPeripheralDelegate {
     
-    private var servicesDiscoveredPromise   = Promise<Peripheral>()
-    private var readRSSIPromise             = Promise<Int>()
+    private var servicesDiscoveredPromise : Promise<Peripheral>
+    private var readRSSIPromise : Promise<Int>
+
     private var connectionPromise : StreamPromise<(Peripheral, ConnectionEvent)>?
 
     private var timeoutCount : UInt         = 0
@@ -114,6 +115,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var connectionSequence          = 0
     private var currentError                = PeripheralConnectionError.None
     private var forcedDisconnect            = false
+
+    private let futureQueue : Queue
     
     private let _discoveredAt               = NSDate()
     private var _connectedAt : NSDate?
@@ -168,6 +171,9 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self.advertisements = PeripheralAdvertisements(advertisements:advertisements)
         self.centralManager = centralManager
         self.rssi = rssi
+        self.futureQueue = Queue("us.gnos.peripheral-\(cbPeripheral.identifier)")
+        self.servicesDiscoveredPromise = Promise<Peripheral>(queue:self.futureQueue)
+        self.readRSSIPromise = Promise<Int>(queue:self.futureQueue)
         super.init()
         self.cbPeripheral.delegate = self
     }
@@ -194,7 +200,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
      
     public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectRetries:UInt? = nil, connectionTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)> {
-        self.connectionPromise = StreamPromise<(Peripheral, ConnectionEvent)>(capacity:capacity)
+        self.connectionPromise = StreamPromise<(Peripheral, ConnectionEvent)>(queue:self.futureQueue, capacity:capacity)
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         self.connectionTimeout = connectionTimeout

@@ -442,15 +442,20 @@ public struct SimpleFuturesException {
 // Promise
 public class Promise<T> {
     
-    public let future = Future<T>()
+    public let future : Future<T>
     
     public var completed : Bool {
         return self.future.completed
     }
     
     public init() {
+        self.future = Future<T>()
     }
-    
+
+    public init(queue:Queue) {
+        self.future = Future<T>(queue:queue)
+    }
+
     public func completeWith(future:Future<T>) {
         self.completeWith(self.future.defaultExecutionContext, future:future)
     }
@@ -466,11 +471,17 @@ public class Promise<T> {
     public func success(value:T) {
         self.future.success(value)
     }
-    
+
+    public func success(executionContext:ExecutionContext, value:T) {
+    }
+
     public func failure(error:NSError)  {
         self.future.failure(error)
     }
-    
+
+    public func failure(executionContext:ExecutionContext, error:NSError)  {
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -481,15 +492,22 @@ public class Future<T> {
     
     internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
     typealias OnComplete                                    = Try<T> -> Void
+
     private var saveCompletes                               = [OnComplete]()
+    private let futureQueue : Queue
     
     public var completed : Bool {
         return self.result != nil
     }
     
     public init() {
+        self.futureQueue = Queue.simpleFutures
     }
     
+    public init(queue:Queue) {
+        self.futureQueue = queue
+    }
+
     // should be future mixin
     internal func complete(result:Try<T>) {
         Queue.simpleFutures.sync {
@@ -879,6 +897,10 @@ public class StreamPromise<T> {
         self.future = FutureStream<T>(capacity:capacity)
     }
     
+    public init(queue:Queue, capacity:Int?=nil) {
+        self.future = FutureStream<T>(queue:queue, capacity:capacity)
+    }
+    
     public func complete(result:Try<T>) {
         self.future.complete(result)
     }
@@ -915,8 +937,10 @@ public class FutureStream<T> {
     
     private var futures         = [Future<T>]()
     private typealias InFuture  = Future<T> -> Void
+
     private var saveCompletes   = [InFuture]()
-    private var capacity        : Int?
+    private var capacity : Int?
+    private let futureQueue : Queue
     
     internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
     
@@ -926,8 +950,14 @@ public class FutureStream<T> {
     
     public init(capacity:Int?=nil) {
         self.capacity = capacity
+        self.futureQueue = Queue.simpleFutureStreams
     }
-    
+
+    public init(queue:Queue, capacity:Int?=nil) {
+        self.capacity = capacity
+        self.futureQueue = queue
+    }
+
     // should be future mixin
     internal func complete(result:Try<T>) {
         let future = Future<T>()
