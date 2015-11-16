@@ -185,7 +185,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onConnectionExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:1.0)
+        let future = peripheral.connect(connectionTimeout:5.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -215,7 +215,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:1.0)
+        let future = peripheral.connect(connectionTimeout:20.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -245,7 +245,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = peripheral.connect()
+        let future = peripheral.connect(connectionTimeout:20.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -276,7 +276,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let future = peripheral.connect(connectionTimeout:1.0)
+        let future = peripheral.connect(connectionTimeout:20.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -363,41 +363,41 @@ class PeripheralTests: XCTestCase {
         }
     }
     
-//    func testTimeout() {
-//        let mockPeripheral = CBPeripheralMock(state:.Disconnected)
-//        let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
-//        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-//        let future = peripheral.connect(connectionTimeout:1.0)
-//        future.onSuccess{(peripheral, connectionEvent) in
-//            switch connectionEvent {
-//            case .Connect:
-//                XCTAssert(false, "onSuccess Connect invalid")
-//            case .Timeout:
-//                onFailureExpectation.fulfill()
-//            case .Disconnect:
-//                XCTAssert(false, "onSuccess Disconnect invalid")
-//            case .ForceDisconnect:
-//                XCTAssert(false, "onSuccess ForceDisconnect invalid")
-//            case .Failed:
-//                XCTAssert(false, "onSuccess Failed invalid")
-//            case .GiveUp:
-//                XCTAssert(false, "onSuccess GiveUp invalid")
-//            }
-//        }
-//        future.onFailure {error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        waitForExpectationsWithTimeout(20) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
+    func testTimeout() {
+        let mockPeripheral = CBPeripheralMock(state:.Disconnected)
+        let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = peripheral.connect(connectionTimeout:1.0)
+        future.onSuccess{(peripheral, connectionEvent) in
+            switch connectionEvent {
+            case .Connect:
+                XCTAssert(false, "onSuccess Connect invalid")
+            case .Timeout:
+                onFailureExpectation.fulfill()
+            case .Disconnect:
+                XCTAssert(false, "onSuccess Disconnect invalid")
+            case .ForceDisconnect:
+                XCTAssert(false, "onSuccess ForceDisconnect invalid")
+            case .Failed:
+                XCTAssert(false, "onSuccess Failed invalid")
+            case .GiveUp:
+                XCTAssert(false, "onSuccess GiveUp invalid")
+            }
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        waitForExpectationsWithTimeout(120) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
     
     func testGiveUp() {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let timeoutExpectation = expectationWithDescription("onFailure fulfilled for Timeout")
         let giveUpExpectation = expectationWithDescription("onFailure fulfilled for GiveUp")
-        let future = peripheral.connect(connectionTimeout:5.0, timeoutRetries:1)
+        let future = peripheral.connect(connectionTimeout:1.0, timeoutRetries:1)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -418,7 +418,7 @@ class PeripheralTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        waitForExpectationsWithTimeout(20) {error in
+        waitForExpectationsWithTimeout(120) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
