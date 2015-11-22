@@ -273,6 +273,23 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
         return peripheralDiscoveredPromise.future
     }
+    
+    public func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
+        let discoveryFuture = head.discoverAllCharacteristics()
+        Logger.debug("service name \(head.name) count \(tail.count + 1)")
+        if tail.count > 0 {
+            discoveryFuture.onSuccess {_ in
+                self.discoverService(tail[0], tail:Array(tail[1..<tail.count]), promise:promise)
+            }
+        } else {
+            discoveryFuture.onSuccess {_ in
+                promise.success(self)
+            }
+        }
+        discoveryFuture.onFailure {error in
+            promise.failure(error)
+        }
+    }
 
     // CBPeripheralDelegate
     // peripheral
@@ -501,23 +518,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
             self.cbPeripheral.discoverServices(services)
         } else {
             self.servicesDiscoveredPromise.failure(BCError.peripheralDisconnected)
-        }
-    }
-
-    private func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
-        let discoveryFuture = head.discoverAllCharacteristics()
-        Logger.debug("service name \(head.name) count \(tail.count + 1)")
-        if tail.count > 0 {
-            discoveryFuture.onSuccess {_ in
-                self.discoverService(tail[0], tail:Array(tail[1..<tail.count]), promise:promise)
-            }
-        } else {
-            discoveryFuture.onSuccess {_ in
-                promise.success(self)
-            }
-        }
-        discoveryFuture.onFailure {error in
-            promise.failure(error)
         }
     }
 

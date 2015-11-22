@@ -44,12 +44,12 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
     
 }
 
-public class CentralManagerUT : CentralManager {
+class CentralManagerUT : CentralManager {
     
-    public override func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
+    override func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
     }
     
-    public override func cancelPeripheralConnection(peripheral:Peripheral) {
+    override func cancelPeripheralConnection(peripheral:Peripheral) {
         peripheral.didDisconnectPeripheral()
     }
 
@@ -121,6 +121,22 @@ class CBPeripheralMock : CBPeripheralWrappable {
         self.writeValueData = data
     }
 
+}
+
+class PeripheralSuccessUT : Peripheral {
+    
+    override func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
+        promise.success(self)
+    }
+
+}
+
+class PeripheralFailureUT : Peripheral {
+    
+    override func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
+        promise.failure(TestFailure.error)
+    }
+    
 }
 
 class CBServiceMock : CBServiceWrappable {
