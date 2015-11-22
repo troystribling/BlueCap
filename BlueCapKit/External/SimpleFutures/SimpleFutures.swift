@@ -510,7 +510,7 @@ public class Future<T> {
 
     // should be future mixin
     internal func complete(result:Try<T>) {
-        Queue.simpleFutures.sync {
+        self.futureQueue.sync {
             if self.result != nil {
                 SimpleFuturesException.futureCompleted.raise()
             }
@@ -523,7 +523,7 @@ public class Future<T> {
     }
     
     public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) -> Void {
-        Queue.simpleFutures.sync {
+        self.futureQueue.sync {
             let savedCompletion : OnComplete = {result in
                 executionContext.execute {
                     complete(result)
@@ -962,7 +962,7 @@ public class FutureStream<T> {
     internal func complete(result:Try<T>) {
         let future = Future<T>()
         future.complete(result)
-        Queue.simpleFutureStreams.sync {
+        self.futureQueue.sync {
             self.addFuture(future)
             for complete in self.saveCompletes {
                 complete(future)
@@ -971,7 +971,7 @@ public class FutureStream<T> {
     }
     
     public func onComplete(executionContext:ExecutionContext, complete:Try<T> -> Void) {
-        Queue.simpleFutureStreams.sync {
+        self.futureQueue.sync {
             let futureComplete : InFuture = {future in
                 future.onComplete(executionContext, complete:complete)
             }

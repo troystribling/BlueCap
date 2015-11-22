@@ -117,6 +117,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var forcedDisconnect            = false
 
     private let futureQueue : Queue
+    private let timeoutQueue : Queue
     
     private let _discoveredAt               = NSDate()
     private var _connectedAt : NSDate?
@@ -171,7 +172,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self.advertisements = PeripheralAdvertisements(advertisements:advertisements)
         self.centralManager = centralManager
         self.rssi = rssi
-        self.futureQueue = Queue("us.gnos.peripheral-\(cbPeripheral.identifier)")
+        self.futureQueue = Queue("us.gnos.peripheral-future-\(cbPeripheral.identifier.UUIDString)")
+        self.timeoutQueue = Queue("us.gnos.peripheral-timeout-\(cbPeripheral.identifier.UUIDString)")
         self.servicesDiscoveredPromise = Promise<Peripheral>(queue:self.futureQueue)
         self.readRSSIPromise = Promise<Int>(queue:self.futureQueue)
         super.init()
@@ -522,7 +524,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private func timeoutConnection(sequence:Int) {
         if let centralManager = self.centralManager {
             Logger.debug("sequence \(sequence), timeout:\(self.connectionTimeout)")
-            self.centralManager?.centralQueue.delay(self.connectionTimeout) {
+            self.timeoutQueue.delay(self.connectionTimeout) {
                 if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                     Logger.debug("timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                     self.currentError = .Timeout
