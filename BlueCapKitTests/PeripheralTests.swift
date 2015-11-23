@@ -177,7 +177,7 @@ class PeripheralTests: XCTestCase {
 
     func testDiscoverServiceSuccess() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
-        let peripheral = PeripheralSuccessUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let bcServices = self.services.map(){Service(cbService:$0, peripheral:peripheral)}
         let promise = Promise<Peripheral>()
@@ -188,6 +188,8 @@ class PeripheralTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         peripheral.discoverService(bcServices[0], tail:[bcServices[1]], promise:promise)
+        bcServices[0].didDiscoverCharacteristics([self.charateristics[0]], error:nil)
+        bcServices[1].didDiscoverCharacteristics([self.charateristics[1], self.charateristics[2]], error:nil)
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }

@@ -488,11 +488,11 @@ public class Promise<T> {
 // Future
 public class Future<T> {
     
-    private var result:Try<T>?
-    
     internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
-    typealias OnComplete                                    = Try<T> -> Void
 
+    private var result:Try<T>?
+
+    typealias OnComplete                                    = Try<T> -> Void
     private var saveCompletes                               = [OnComplete]()
     private let futureQueue : Queue
     

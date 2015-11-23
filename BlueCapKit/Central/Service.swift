@@ -67,7 +67,7 @@ public final class Service {
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
     }
     
-    internal func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
+    public func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
         if let error = error {
             Logger.debug("discover failed")
             self.characteristicsDiscoveredPromise.failure(error)
