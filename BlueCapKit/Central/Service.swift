@@ -61,6 +61,12 @@ public final class Service {
         return self.discoveredCharacteristics[uuid]
     }
 
+    public init(cbService:CBServiceWrappable, peripheral:Peripheral) {
+        self.cbService = cbService
+        self._peripheral = peripheral
+        self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
+    }
+    
     internal func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
         if let error = error {
             Logger.debug("discover failed")
@@ -79,12 +85,6 @@ public final class Service {
         }
     }
     
-    internal init(cbService:CBServiceWrappable, peripheral:Peripheral) {
-        self.cbService = cbService
-        self._peripheral = peripheral
-        self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
-    }
-
     private func discoverIfConnected(characteristics:[CBUUID]?) -> Future<Service> {
         self.characteristicsDiscoveredPromise = Promise<Service>()
         if self.peripheral?.state == .Connected {

@@ -175,6 +175,28 @@ class PeripheralTests: XCTestCase {
         }
     }
 
+    func testDiscoverServiceSuccess() {
+        let mockPeripheral = CBPeripheralMock(state:.Connected)
+        let peripheral = PeripheralSuccessUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let bcServices = self.services.map(){Service(cbService:$0, peripheral:peripheral)}
+        let promise = Promise<Peripheral>()
+        promise.future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        promise.future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        peripheral.discoverService(bcServices[0], tail:[bcServices[1]], promise:promise)
+        waitForExpectationsWithTimeout(20) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+    
+    func testSiscoverServiceFailure() {
+        
+    }
+    
     func testConnect() {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
