@@ -16,7 +16,7 @@ public protocol CBServiceWrappable {
 
 extension CBService : CBServiceWrappable {}
 
-public final class Service {
+public class Service {
 
     private let profile : ServiceProfile?
     private var characteristicsDiscoveredPromise    = Promise<Service>()

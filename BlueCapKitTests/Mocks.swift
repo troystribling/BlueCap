@@ -153,6 +153,22 @@ class CBServiceMock : CBServiceWrappable {
     
 }
 
+class ServiceSuccessUT : Service {
+    
+    let mockCharacteristics : [CBCharacteristicWrappable]
+     private var characteristicsDiscoveredPromise  = Promise<Service>()
+
+    init(cbService:CBServiceWrappable, peripheral:Peripheral, mockCharacteristics:[CBCharacteristicWrappable]) {
+        self.mockCharacteristics = mockCharacteristics
+        super.init(cbService:cbService, peripheral:peripheral)
+    }
+    
+    override func discoverAllCharacteristics() -> Future<Service> {
+        self.didDiscoverCharacteristics(self.mockCharacteristics, error:nil)
+        return self.characteristicsDiscoveredPromise.future
+    }
+}
+
 class CBCharacteristicMock : CBCharacteristicWrappable {
     
     let UUID : CBUUID
