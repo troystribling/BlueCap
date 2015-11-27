@@ -19,13 +19,16 @@ extension CBService : CBServiceWrappable {}
 public class Service {
 
     private let profile : ServiceProfile?
-    private var characteristicsDiscoveredPromise    = Promise<Service>()
 
     internal var discoveredCharacteristics          = [CBUUID:Characteristic]()
+    private var _characteristicsDiscoveredPromise   = Promise<Service>()
 
     internal let cbService : CBServiceWrappable
     private weak var _peripheral : Peripheral?
     
+    public var characteristicsDiscoveredPromise : Promise<Service> {
+        return self._characteristicsDiscoveredPromise
+    }
     
     public var name : String {
         if let profile = self.profile {
@@ -86,7 +89,7 @@ public class Service {
     }
     
     private func discoverIfConnected(characteristics:[CBUUID]?) -> Future<Service> {
-        self.characteristicsDiscoveredPromise = Promise<Service>()
+        self._characteristicsDiscoveredPromise = Promise<Service>()
         if self.peripheral?.state == .Connected {
             self.peripheral?.discoverCharacteristics(characteristics, forService:self)
         } else {

@@ -100,7 +100,7 @@ class PeripheralTests: XCTestCase {
 
     func testDiscoverPeripheralServicesSuccess() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
-        let peripheral = PeripheralSuccessUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45, error:nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
         future.onSuccess {_ in
@@ -120,7 +120,7 @@ class PeripheralTests: XCTestCase {
 
     func testDiscoverPeripheralServicesPeripheralFailure() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
-        let peripheral = PeripheralSuccessUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45, error:TestFailure.error)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
         future.onSuccess {_ in
@@ -139,7 +139,7 @@ class PeripheralTests: XCTestCase {
 
     func testDiscoverPeripheralServicesServiceFailure() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
-        let peripheral = PeripheralFailureUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45, error:nil)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
         future.onSuccess {_ in
@@ -179,7 +179,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let bcServices = self.services.map(){Service(cbService:$0, peripheral:peripheral)}
+        let bcServices = [ServiceUT(cbService:self.services[0], peripheral:peripheral, mockCharacteristics:[self.charateristics[0]], error:nil), ServiceUT(cbService:self.services[1], peripheral:peripheral, mockCharacteristics:[self.charateristics[1], self.charateristics[2]], error:nil)]
         let promise = Promise<Peripheral>()
         promise.future.onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -188,15 +188,27 @@ class PeripheralTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         peripheral.discoverService(bcServices[0], tail:[bcServices[1]], promise:promise)
-        bcServices[0].didDiscoverCharacteristics([self.charateristics[0]], error:nil)
-        bcServices[1].didDiscoverCharacteristics([self.charateristics[1], self.charateristics[2]], error:nil)
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
     
-    func testSiscoverServiceFailure() {
-        
+    func testDiscoverServiceFailure() {
+        let mockPeripheral = CBPeripheralMock(state:.Connected)
+        let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let bcServices = [ServiceUT(cbService:self.services[0], peripheral:peripheral, mockCharacteristics:[self.charateristics[0]], error:TestFailure.error), ServiceUT(cbService:self.services[1], peripheral:peripheral, mockCharacteristics:[self.charateristics[1], self.charateristics[2]], error:nil)]
+        let promise = Promise<Peripheral>()
+        promise.future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        promise.future.onFailure {error in
+            onFailureExpectation.fulfill()
+        }
+        peripheral.discoverService(bcServices[0], tail:[bcServices[1]], promise:promise)
+        waitForExpectationsWithTimeout(20) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
     
     func testConnect() {

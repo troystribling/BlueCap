@@ -123,20 +123,24 @@ class CBPeripheralMock : CBPeripheralWrappable {
 
 }
 
-class PeripheralSuccessUT : Peripheral {
+class PeripheralUT : Peripheral {
     
-    override func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
-        promise.success(self)
-    }
-
-}
-
-class PeripheralFailureUT : Peripheral {
+    let error:NSError?
     
-    override func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
-        promise.failure(TestFailure.error)
+    init(cbPeripheral:CBPeripheralWrappable, centralManager:CentralManager, advertisements:[String:AnyObject], rssi:Int, error:NSError?) {
+        self.error = error
+        super.init(cbPeripheral:cbPeripheral, centralManager:centralManager, advertisements:advertisements, rssi:rssi)
     }
     
+    override func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
+        if let error = self.error {
+            promise.failure(error)
+        } else {
+            promise.success(self)
+            
+        }
+    }
+
 }
 
 class CBServiceMock : CBServiceWrappable {
@@ -153,18 +157,20 @@ class CBServiceMock : CBServiceWrappable {
     
 }
 
-class ServiceSuccessUT : Service {
+class ServiceUT : Service {
+    
+    let error : NSError?
     
     let mockCharacteristics : [CBCharacteristicWrappable]
-     private var characteristicsDiscoveredPromise  = Promise<Service>()
-
-    init(cbService:CBServiceWrappable, peripheral:Peripheral, mockCharacteristics:[CBCharacteristicWrappable]) {
+    
+    init(cbService:CBServiceWrappable, peripheral:Peripheral, mockCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
         self.mockCharacteristics = mockCharacteristics
+        self.error = error
         super.init(cbService:cbService, peripheral:peripheral)
     }
     
     override func discoverAllCharacteristics() -> Future<Service> {
-        self.didDiscoverCharacteristics(self.mockCharacteristics, error:nil)
+        self.didDiscoverCharacteristics(self.mockCharacteristics, error:self.error)
         return self.characteristicsDiscoveredPromise.future
     }
 }
