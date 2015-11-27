@@ -15,19 +15,16 @@ import BlueCapKit
 class PeripheralTests: XCTestCase {
 
     var centralManager : CentralManager!
-    var centralManagerMock : CBCentralManagerMock!
-    
-    var services = [CBServiceWrappable]()
-    var charateristics = [CBCharacteristicWrappable]()
+    var mockServices = [CBServiceWrappable]()
+    var mockCharateristics = [CBCharacteristicWrappable]()
     
     override func setUp() {
-        self.centralManagerMock = CBCentralManagerMock(state:.PoweredOn)
-        self.centralManager = CentralManagerUT(centralManager:self.centralManagerMock)
-        self.services.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")))
-        self.services.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff")))
-        self.charateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), isNotifying:false))
-        self.charateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), isNotifying:false))
-        self.charateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), isNotifying:false))
+        self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
+        self.mockServices.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")))
+        self.mockServices.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff")))
+        self.mockCharateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), isNotifying:false))
+        self.mockCharateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), isNotifying:false))
+        self.mockCharateristics.append(CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), isNotifying:false))
         super.setUp()
     }
     
@@ -51,7 +48,7 @@ class PeripheralTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        peripheral.didDiscoverServices(self.services, error:nil)
+        peripheral.didDiscoverServices(self.mockServices, error:nil)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -112,7 +109,7 @@ class PeripheralTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        peripheral.didDiscoverServices(self.services, error:nil)
+        peripheral.didDiscoverServices(self.mockServices, error:nil)
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -131,7 +128,7 @@ class PeripheralTests: XCTestCase {
             XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
         }
-        peripheral.didDiscoverServices(self.services, error:TestFailure.error)
+        peripheral.didDiscoverServices(self.mockServices, error:TestFailure.error)
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -139,7 +136,7 @@ class PeripheralTests: XCTestCase {
 
     func testDiscoverPeripheralServicesServiceFailure() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
-        let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45, error:nil)
+        let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45, error:TestFailure.error)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
         future.onSuccess {_ in
@@ -150,7 +147,7 @@ class PeripheralTests: XCTestCase {
             XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
         }
-        peripheral.didDiscoverServices(self.services, error:nil)
+        peripheral.didDiscoverServices(self.mockServices, error:nil)
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -179,7 +176,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let bcServices = [ServiceUT(cbService:self.services[0], peripheral:peripheral, mockCharacteristics:[self.charateristics[0]], error:nil), ServiceUT(cbService:self.services[1], peripheral:peripheral, mockCharacteristics:[self.charateristics[1], self.charateristics[2]], error:nil)]
+        let bcServices = [ServiceUT(cbService:self.mockServices[0], peripheral:peripheral, mockCharacteristics:[self.mockCharateristics[0]], error:nil), ServiceUT(cbService:self.mockServices[1], peripheral:peripheral, mockCharacteristics:[self.mockCharateristics[1], self.mockCharateristics[2]], error:nil)]
         let promise = Promise<Peripheral>()
         promise.future.onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -197,7 +194,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        let bcServices = [ServiceUT(cbService:self.services[0], peripheral:peripheral, mockCharacteristics:[self.charateristics[0]], error:TestFailure.error), ServiceUT(cbService:self.services[1], peripheral:peripheral, mockCharacteristics:[self.charateristics[1], self.charateristics[2]], error:nil)]
+        let bcServices = [ServiceUT(cbService:self.mockServices[0], peripheral:peripheral, mockCharacteristics:[self.mockCharateristics[0]], error:TestFailure.error), ServiceUT(cbService:self.mockServices[1], peripheral:peripheral, mockCharacteristics:[self.mockCharateristics[1], self.mockCharateristics[2]], error:nil)]
         let promise = Promise<Peripheral>()
         promise.future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
