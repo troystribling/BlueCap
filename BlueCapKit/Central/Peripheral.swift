@@ -179,7 +179,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         super.init()
         self.cbPeripheral.delegate = self
     }
-
+    
     public func service(uuid:CBUUID) -> Service? {
         return self.discoveredServices[uuid]
     }
@@ -322,13 +322,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     
     // characteristics
     public func peripheral(_:CBPeripheral, didDiscoverCharacteristicsForService service:CBService, error:NSError?) {
-        if let bcService = self.discoveredServices[service.UUID], cbCharacteristics = service.characteristics {
-            var discoveredCharacteristics = [CBCharacteristicWrappable]()
-            for characteristic in cbCharacteristics {
-                discoveredCharacteristics.append(characteristic)
-            }
-            self.didDiscoverCharacteristicsForService(discoveredCharacteristics, service:bcService, error:error)
+        guard let characteristics = service.characteristics else {
+            return
         }
+        self.didDiscoverCharacteristicsForService(service, characteristics:characteristics.map{$0 as CBCharacteristicWrappable}, error:error)
     }
 
     public func peripheral(_:CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic, error:NSError?) {
@@ -355,6 +352,18 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug()
     }
     
+    public func didDiscoverCharacteristicsForService(service:CBServiceWrappable, characteristics:[CBCharacteristicWrappable], error:NSError?) {
+        Logger.debug("peripheral name \(self.name)")
+        if let bcService = self.discoveredServices[service.UUID] {
+            bcService.didDiscoverCharacteristics(characteristics, error:error)
+            if error == nil {
+                for cbCharacteristic in characteristics {
+                    self.discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[cbCharacteristic.UUID]
+                }
+            }
+        }
+    }
+    
     public func didDiscoverServices(discoveredServices:[CBServiceWrappable], error:NSError?) {
         Logger.debug("peripheral name \(self.name)")
         self.clearAll()
@@ -367,16 +376,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 Logger.debug("uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
             }
             self.servicesDiscoveredPromise.success(self)
-        }
-    }
-    
-    public func didDiscoverCharacteristicsForService(discoveredCharacteristics:[CBCharacteristicWrappable], service:Service, error:NSError?) {
-        Logger.debug("peripheral name \(self.name)")
-        service.didDiscoverCharacteristics(discoveredCharacteristics, error:error)
-        if error == nil {
-            for cbCharacteristic in discoveredCharacteristics {
-                self.discoveredCharacteristics[cbCharacteristic.UUID] = service.discoveredCharacteristics[cbCharacteristic.UUID]
-            }
         }
     }
     
@@ -396,7 +395,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didWriteValueForCharacteristic(characteristic:CBCharacteristic, error: NSError?) {
+    public func didWriteValueForCharacteristic(characteristic:CBCharacteristicWrappable, error: NSError?) {
         Logger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")

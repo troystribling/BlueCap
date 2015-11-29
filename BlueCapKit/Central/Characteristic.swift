@@ -27,10 +27,12 @@ public class Characteristic {
     private var writePromise                        = Promise<Characteristic>()
     private var notificationUpdatePromise : StreamPromise<Characteristic>?
     private weak var _service : Service?
-    private let profile : CharacteristicProfile
     
-    private var reading                             = false
-    private var writing                             = false
+    private let profile : CharacteristicProfile
+    private let ioQueue : Queue
+
+    private var _reading                            = false
+    private var _writing                            = false
     
     private var readSequence                        = 0
     private var writeSequence                       = 0
@@ -87,6 +89,25 @@ public class Characteristic {
     
     public var properties : CBCharacteristicProperties {
         return self.cbCharacteristic.properties
+    }
+    
+    public init(cbCharacteristic:CBCharacteristicWrappable, service:Service) {
+        self.cbCharacteristic = cbCharacteristic
+        self._service = service
+        self.ioQueue = Queue("us.gnos.peripheral-timeout-\(cbCharacteristic.UUID.UUIDString)")
+        if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
+            Logger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
+            if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
+                Logger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
+                self.profile = characteristicProfile
+            } else {
+                Logger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+                self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
+            }
+        } else {
+            Logger.debug("no service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+            self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
+        }
     }
     
     public func stringValue(data:NSData?) -> [String:String]? {
@@ -236,24 +257,6 @@ public class Characteristic {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
-    internal init(cbCharacteristic:CBCharacteristicWrappable, service:Service) {
-        self.cbCharacteristic = cbCharacteristic
-        self._service = service
-        if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
-            Logger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
-            if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
-                Logger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
-                self.profile = characteristicProfile
-            } else {
-                Logger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
-                self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
-            }
-        } else {
-            Logger.debug("no service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
-            self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
-        }
-    }
-    
     internal func didUpdateNotificationState(error:NSError?) {
         if let error = error {
             Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
@@ -301,12 +304,34 @@ public class Characteristic {
             }
         }
     }
+
+    private var writing : Bool {
+        get {
+            return self._writing
+        }
+        set {
+            self.ioQueue.sync() {
+                self._writing = newValue
+            }
+        }
+    }
+
+    private var reading : Bool {
+        get {
+            return self._reading
+        }
+        set {
+            self.ioQueue.sync() {
+                self._reading
+            }
+        }
+    }
     
     private func timeoutRead(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
-        self.service?.peripheral?.centralManager?.centralQueue.delay(timeout) {
-            if sequence == self.readSequence && self.reading {
-                self.reading = false
+        self.ioQueue.delay(timeout) {
+            if sequence == self.readSequence && self._reading {
+                self._reading = false
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 self.readPromise.failure(BCError.characteristicReadTimeout)
             } else {
@@ -317,9 +342,9 @@ public class Characteristic {
     
     private func timeoutWrite(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
-        self.service?.peripheral?.centralManager?.centralQueue.delay(timeout) {
-            if sequence == self.writeSequence && self.writing {
-                self.writing = false
+        self.ioQueue.delay(timeout) {
+            if sequence == self.writeSequence && self._writing {
+                self._writing = false
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 self.writePromise.failure(BCError.characteristicWriteTimeout)
             } else {
@@ -340,5 +365,4 @@ public class Characteristic {
         self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:type)
     }
     
-
 }

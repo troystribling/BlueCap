@@ -22,6 +22,7 @@ class CharacteristicTests: XCTestCase {
         GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
         self.peripheral = Peripheral(cbPeripheral:CBPeripheralMock(state:.Connected), centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        self.peripheral.didDiscoverServices([self.mockService], error:nil)
         super.setUp()
     }
     
@@ -47,24 +48,25 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
-//    func testWriteDataSuccess() {
-//        let mock = CharacteristicMock()
-//        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.writeData(mock, value:"aa".dataFromHexString())
-//        future.onSuccess {_ in
-//            onSuccessExpectation.fulfill()
-//        }
-//        future.onFailure {error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        CentralQueue.async {
-//            mock.impl.didWrite(mock, error:nil)
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//
+    func testWriteDataSuccess() {
+        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
+        let service = self.peripheral.services.first!
+        let characteristic = service.characteristics.first!
+        let future = characteristic.writeData("aa".dataFromHexString())
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
 //    func testWriteDataFailed() {
 //        let mock = CharacteristicMock()
 //        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")

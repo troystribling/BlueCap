@@ -41,10 +41,11 @@ public class CharacteristicProfile {
     }
     
     public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic> {
-        if self.afterDiscoveredPromise == nil {
+        guard let afterDiscoveredPromise = self.afterDiscoveredPromise else {
             self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity:capacity)
+            return self.afterDiscoveredPromise.future
         }
-        return self.afterDiscoveredPromise.future
+        return afterDiscoveredPromise.future
     }
 
     public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {

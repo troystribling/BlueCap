@@ -49,6 +49,12 @@ public class Service {
     public var peripheral : Peripheral? {
         return self._peripheral
     }
+
+    public init(cbService:CBServiceWrappable, peripheral:Peripheral) {
+        self.cbService = cbService
+        self._peripheral = peripheral
+        self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
+    }
     
     public func discoverAllCharacteristics() -> Future<Service> {
         Logger.debug("uuid=\(self.uuid.UUIDString), name=\(self.name)")
@@ -64,12 +70,6 @@ public class Service {
         return self.discoveredCharacteristics[uuid]
     }
 
-    public init(cbService:CBServiceWrappable, peripheral:Peripheral) {
-        self.cbService = cbService
-        self._peripheral = peripheral
-        self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
-    }
-    
     public func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
         if let error = error {
             Logger.debug("discover failed")
