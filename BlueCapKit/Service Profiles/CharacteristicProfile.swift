@@ -41,10 +41,8 @@ public class CharacteristicProfile {
     }
     
     public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic> {
-        if let capacity = capacity {
+        if self.afterDiscoveredPromise == nil {
             self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity:capacity)
-        } else {
-            self.afterDiscoveredPromise = StreamPromise<Characteristic>()
         }
         return self.afterDiscoveredPromise.future
     }

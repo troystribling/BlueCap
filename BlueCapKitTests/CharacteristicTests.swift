@@ -14,7 +14,14 @@ import BlueCapKit
 
 class CharacteristicTests: XCTestCase {
     
+    var centralManager : CentralManager!
+    var peripheral : Peripheral!
+    let mockService = CBServiceMock(UUID:CBUUID(string:Gnosus.HelloWorldService.uuid))
+
     override func setUp() {
+        GnosusProfiles.create()
+        self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
+        self.peripheral = Peripheral(cbPeripheral:CBPeripheralMock(state:.Connected), centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         super.setUp()
     }
     
@@ -22,24 +29,24 @@ class CharacteristicTests: XCTestCase {
         super.tearDown()
     }
     
-//    func testDiscovered() {
-//        let mock = CharacteristicMock()
-//        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.afterDiscoveredPromise?.future
-//        future!.onSuccess {_ in
-//            onSuccessExpectation.fulfill()
-//        }
-//        future!.onFailure {error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        CentralQueue.async {
-//            mock.impl.didDiscover(mock)
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//    
+    func testAfterDiscovered() {
+        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
+        let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:[mockCharacteristic], error:nil)
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let serviceProfile = ProfileManager.sharedInstance.service[CBUUID(string:Gnosus.HelloWorldService.uuid)]
+        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid)]
+        characteristicProfile?.afterDiscovered(nil).onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        characteristicProfile?.afterDiscovered(nil).onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        service.didDiscoverCharacteristics([mockCharacteristic], error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+    
 //    func testWriteDataSuccess() {
 //        let mock = CharacteristicMock()
 //        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")

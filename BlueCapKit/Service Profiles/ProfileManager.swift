@@ -28,10 +28,14 @@ public class ProfileManager {
     }
 
     public class var sharedInstance : ProfileManager {
-        struct Static {
-            static let instance = ProfileManager()
+        struct StaticInstance {
+            static var onceToken : dispatch_once_t  = 0
+            static var instance : ProfileManager?   = nil
         }
-        return Static.instance
+        dispatch_once(&StaticInstance.onceToken) {
+            StaticInstance.instance = ProfileManager()
+        }
+        return StaticInstance.instance!
     }
     
     public func addService(serviceProfile:ServiceProfile) -> ServiceProfile {
