@@ -22,14 +22,15 @@ extension CBCharacteristic : CBCharacteristicWrappable {}
 
 public class Characteristic {
 
-    private var notificationStateChangedPromise     = Promise<Characteristic>()
-    private var readPromise                         = Promise<Characteristic>()
-    private var writePromise                        = Promise<Characteristic>()
+    private var notificationStateChangedPromise : Promise<Characteristic>
+    private var readPromise : Promise<Characteristic>
+    private var writePromise : Promise<Characteristic>
     private var notificationUpdatePromise : StreamPromise<Characteristic>?
     private weak var _service : Service?
     
     private let profile : CharacteristicProfile
     private let ioQueue : Queue
+    private let futureQueue : Queue
 
     private var _reading                            = false
     private var _writing                            = false
@@ -94,7 +95,11 @@ public class Characteristic {
     public init(cbCharacteristic:CBCharacteristicWrappable, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
-        self.ioQueue = Queue("us.gnos.peripheral-timeout-\(cbCharacteristic.UUID.UUIDString)")
+        self.futureQueue = Queue("us.gnos.characteristic-future-\(cbCharacteristic.UUID.UUIDString)")
+        self.ioQueue = Queue("us.gnos.characteristic-timeout-\(cbCharacteristic.UUID.UUIDString)")
+        self.writePromise = Promise<Characteristic>(queue:self.futureQueue)
+        self.readPromise = Promise<Characteristic>(queue:self.futureQueue)
+        self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
             Logger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
@@ -167,7 +172,7 @@ public class Characteristic {
     }
 
     public func startNotifying() -> Future<Characteristic> {
-        self.notificationStateChangedPromise = Promise<Characteristic>()
+        self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canNotify {
             self.setNotifyValue(true)
         } else {
@@ -177,7 +182,7 @@ public class Characteristic {
     }
 
     public func stopNotifying() -> Future<Characteristic> {
-        self.notificationStateChangedPromise = Promise<Characteristic>()
+        self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canNotify {
             self.setNotifyValue(false)
         } else {
@@ -188,7 +193,7 @@ public class Characteristic {
 
     public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic> {
         if self.canNotify {
-            self.notificationUpdatePromise = StreamPromise<Characteristic>(capacity:capacity)
+            self.notificationUpdatePromise = StreamPromise<Characteristic>(queue:self.futureQueue, capacity:capacity)
         } else {
             self.notificationStateChangedPromise.failure(BCError.characteristicNotifyNotSupported)
         }
