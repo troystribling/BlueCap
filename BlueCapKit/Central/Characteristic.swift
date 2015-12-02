@@ -205,7 +205,7 @@ public class Characteristic {
     }
     
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
-        self.readPromise = Promise<Characteristic>()
+        self.readPromise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canRead {
             Logger.debug("read characteristic \(self.uuid.UUIDString)")
             self.readValueForCharacteristic()
@@ -219,7 +219,7 @@ public class Characteristic {
     }
 
     public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
-        self.writePromise = Promise<Characteristic>()
+        self.writePromise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canWrite {
             Logger.debug("write characteristic value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
             self.writeValue(value, type:type)
@@ -327,7 +327,7 @@ public class Characteristic {
         }
         set {
             self.ioQueue.sync() {
-                self._reading
+                self._reading = newValue
             }
         }
     }
