@@ -17,12 +17,13 @@ class CharacteristicTests: XCTestCase {
     var centralManager : CentralManager!
     var peripheral : Peripheral!
     var service : Service!
+    let mockPerpheral = CBPeripheralMock(state:.Connected)
     let mockService = CBServiceMock(UUID:CBUUID(string:Gnosus.HelloWorldService.uuid))
 
     override func setUp() {
         GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
-        self.peripheral = Peripheral(cbPeripheral:CBPeripheralMock(state:.Connected), centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        self.peripheral = Peripheral(cbPeripheral:self.mockPerpheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)
         self.service = self.peripheral.services.first!
         super.setUp()
@@ -159,10 +160,22 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
-    func testWriteWithoutResponseSuccess() {
-    }
-    
-    func testWriteWithoutResponseFailure() {
+    func testWriteDataWithoutResponseSuccess() {
+        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
+        let characteristic = self.service.characteristics.first!
+        let future = characteristic.writeData("aa".dataFromHexString(), type:.WithoutResponse)
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
     
     func testWriteDeserializableSuccess() {

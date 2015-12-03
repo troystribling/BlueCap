@@ -63,12 +63,13 @@ class CBPeripheralMock : CBPeripheralWrappable {
 
     var _delegate : CBPeripheralDelegate?   = nil
     
-    var setDelegateCalled                   = false
-    var discoverServicesCalled              = false
-    var discoverCharacteristicsCalled       = false
-    var setNotifyValueCalled                = false
-    var readValueForCharacteristicCalled    = false
-    var writeValueCalled                    = false
+    var setDelegateCalled                       = false
+    var discoverServicesCalled                  = false
+    var discoverCharacteristicsCalled           = false
+    var setNotifyValueCalled                    = false
+    var readValueForCharacteristicCalled        = false
+    var writeValueCalled                        = false
+    var writeType : CBCharacteristicWriteType?  = nil
     
     var discoverServicesCalledCount         = 0
     var discoverCharacteristicsCalledCount  = 0
@@ -119,6 +120,7 @@ class CBPeripheralMock : CBPeripheralWrappable {
     func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
         self.writeValueCalled = true
         self.writeValueData = data
+        self.writeType = type
     }
 
 }
