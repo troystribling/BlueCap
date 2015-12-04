@@ -32,12 +32,12 @@ public class Characteristic {
     private let ioQueue : Queue
     private let futureQueue : Queue
 
-    private var _reading                            = false
-    private var _writing                            = false
+    private var _reading        = false
+    private var _writing        = false
     
-    private var readSequence                        = 0
-    private var writeSequence                       = 0
-    private let defaultTimeout                      = 10.0
+    private var readSequence    = 0
+    private var writeSequence   = 0
+    private let defaultTimeout  = 10.0
 
     internal let cbCharacteristic : CBCharacteristicWrappable
     

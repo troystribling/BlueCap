@@ -33,6 +33,12 @@ class CharacteristicTests: XCTestCase {
         super.tearDown()
     }
     
+    func createCharacteristic(properties:CBCharacteristicProperties, isNotifying:Bool) -> (Characteristic, CBCharacteristicMock) {
+        let mockCharacteristic = CBCharacteristicMock(properties:properties, UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:isNotifying)
+        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
+        return (self.service.characteristics.first!, mockCharacteristic)
+    }
+    
     func testAfterDiscovered() {
         let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:[mockCharacteristic], error:nil)
@@ -52,10 +58,8 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testWriteDataSuccess() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.writeData("aa".dataFromHexString())
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -70,10 +74,8 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteDataFailed() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.writeData("aa".dataFromHexString())
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
@@ -89,10 +91,8 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteDataTimeOut() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.writeData("aa".dataFromHexString(), timeout:2.0)
         future.onSuccess {_ in
             XCTAssert(false, "onFailure called")
@@ -107,10 +107,8 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteDataNotWriteable() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, _) = self.createCharacteristic([.Read], isNotifying:false)
         let future = characteristic.writeData("aa".dataFromHexString())
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
@@ -125,10 +123,8 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteStringSuccess() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.writeString(["Hello World Greeting":"Good bye"])
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -143,10 +139,8 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testWriteStringNotSerializable() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.writeString(["bad name":"Invalid"])
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
@@ -161,10 +155,8 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testWriteDataWithoutResponseSuccess() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.writeData("aa".dataFromHexString(), type:.WithoutResponse)
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -178,41 +170,9 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
-    func testWriteDeserializableSuccess() {
-    }
-
-    func testWriteDeserializableFailure() {
-    }
-
-    func testWriteRawDeserializableSuccess() {
-    }
-    
-    func testWriteRawDeserializableFailure() {
-    }
-
-    func testWriteRawArrayDeserializableSuccess() {
-    }
-    
-    func testWriteRawArrayDeserializableFailure() {
-    }
-
-    func testWriteRawPairDeserializableSuccess() {
-    }
-    
-    func testWriteRawPairDeserializableFailure() {
-    }
-
-    func testWriteRawArrayPairDeserializableSuccess() {
-    }
-    
-    func testWriteRawArrayPairDeserializableFailure() {
-    }
-
     func testReadSuccess() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.read()
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -227,10 +187,8 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReadFailure() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.read()
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
@@ -245,10 +203,8 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReadTimeout() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.read(2.0)
         future.onSuccess {_ in
             XCTAssert(false, "onFailure called")
@@ -263,10 +219,8 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testReadNotReadable() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, _) = self.createCharacteristic([.Write], isNotifying:false)
         let future = characteristic.read()
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
@@ -280,11 +234,9 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
-    func testStartNotifyingSucceess() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Notify], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
+    func testStartNotifyingSuccess() {
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
-        let characteristic = self.service.characteristics.first!
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying:false)
         let future = characteristic.startNotifying()
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -298,24 +250,71 @@ class CharacteristicTests: XCTestCase {
         }
     }
 
-//    func testStartNotifyingFailure() {
-//        let mock = CharacteristicMock()
-//        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-//        let future = mock.impl.startNotifying(mock)
-//        future.onSuccess {_ in
-//            XCTAssert(false, "onSuccess called")
-//        }
-//        future.onFailure {error in
-//            onFailureExpectation.fulfill()
-//        }
-//        CentralQueue.async {
-//            mock.impl.didUpdateNotificationState(mock, error:TestFailure.error)
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//    
+    func testStartNotifyingFailure() {
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying:false)
+        let future = characteristic.startNotifying()
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            onFailureExpectation.fulfill()
+            XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
+        }
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testStartIndicateSuccess() {
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Indicate], isNotifying:false)
+        let future = characteristic.startNotifying()
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testStartNotifyEncryptionRequiredSuccess() {
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.NotifyEncryptionRequired], isNotifying:false)
+        let future = characteristic.startNotifying()
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testStartIndicateEncryptionRequiredSuccess() {
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying:false)
+        let future = characteristic.startNotifying()
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
 //    func testReceiveNotificationUpdateSuccess() {
 //        let mock = CharacteristicMock()
 //        let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
