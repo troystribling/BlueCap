@@ -13,8 +13,12 @@ import CoreLocation
 import BlueCapKit
 
 class TimedScanneratorTests: XCTestCase {
+    
+    var centralManager : CentralManager!
+    let mockPerpheral = CBPeripheralMock(state:.Connected)
 
     override func setUp() {
+        self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
         super.setUp()
     }
     
@@ -22,36 +26,36 @@ class TimedScanneratorTests: XCTestCase {
         super.tearDown()
     }
 
-//    func testScanSuccessful() {
-//        let mock = TimedScanneratorMock()
-//        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.startScanning(mock, timeoutSeconds:2)
-//        future.onSuccess {_ in
-//            onSuccessExpectation.fulfill()
-//        }
-//        future.onFailure {error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        mock.didDiscoverPeripheral(PeripheralMock())
-//        waitForExpectationsWithTimeout(5) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//    
-//    func testScanTimeout() {
-//        let mock = TimedScanneratorMock()
-//        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
-//        let future = mock.impl.startScanning(mock, timeoutSeconds:1)
-//        future.onSuccess {_ in
-//            XCTAssert(false, "onSuccess called")
-//        }
-//        future.onFailure {error in
-//            XCTAssert(PeripheralError.DiscoveryTimeout.rawValue == error.code, "onFailure error invalid \(error.code)")
-//            onFailureExpectation.fulfill()
-//        }
-//        waitForExpectationsWithTimeout(10) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
+    func testScanSuccessful() {
+        let scannerator = TimedScannerator(centralManager:self.centralManager)
+        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = scannerator.startScanning(2)
+        future.onSuccess {_ in
+            onSuccessExpectation.fulfill()
+        }
+        future.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.centralManager.didDiscoverPeripheral(self.mockPerpheral, advertisementData:peripheralAdvertisements, RSSI:NSNumber(integer: -45))
+        waitForExpectationsWithTimeout(5) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+    
+    func testScanTimeout() {
+        let scannerator = TimedScannerator(centralManager:self.centralManager)
+        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = scannerator.startScanning(1)
+        future.onSuccess {_ in
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            XCTAssert(PeripheralError.DiscoveryTimeout.rawValue == error.code, "onFailure error invalid \(error.code)")
+            onFailureExpectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(10) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 
 }
