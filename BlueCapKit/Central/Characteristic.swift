@@ -262,7 +262,7 @@ public class Characteristic {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
-    internal func didUpdateNotificationState(error:NSError?) {
+    public func didUpdateNotificationState(error:NSError?) {
         if let error = error {
             Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
             self.notificationStateChangedPromise.failure(error)
@@ -272,7 +272,7 @@ public class Characteristic {
         }
     }
     
-    internal func didUpdate(error:NSError?) {
+    public func didUpdate(error:NSError?) {
         self.reading = false
         if let error = error {
             Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
