@@ -170,6 +170,31 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
+    func testMultipleWritesSuccess() {
+        let onSuccessExpectation1 = expectationWithDescription("onSuccess fulfilled for future 1")
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
+        let future1 = characteristic.writeData("aa".dataFromHexString())
+        future1.onSuccess {_ in
+            onSuccessExpectation1.fulfill()
+        }
+        future1.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        let onSuccessExpectation2 = expectationWithDescription("onSuccess fulfilled for future 2")
+        let future2 = characteristic.writeData("bb".dataFromHexString())
+        future2.onSuccess {_ in
+            onSuccessExpectation2.fulfill()
+        }
+        future2.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        waitForExpectationsWithTimeout(10) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
     func testReadSuccess() {
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
@@ -444,5 +469,5 @@ class CharacteristicTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-
+    
 }

@@ -24,7 +24,7 @@ public class Characteristic {
 
     private var notificationStateChangedPromise : Promise<Characteristic>
     private var readPromise : Promise<Characteristic>
-    private var writePromise : Promise<Characteristic>
+    private var writePromises = [Promise<Characteristic>]()
     private var notificationUpdatePromise : StreamPromise<Characteristic>?
     private weak var _service : Service?
     
@@ -33,7 +33,7 @@ public class Characteristic {
     private let futureQueue : Queue
 
     private var _reading        = false
-    private var _writing        = false
+    private var writing         = false
     
     private var readSequence    = 0
     private var writeSequence   = 0
@@ -97,7 +97,6 @@ public class Characteristic {
         self._service = service
         self.futureQueue = Queue("us.gnos.characteristic-future-\(cbCharacteristic.UUID.UUIDString)")
         self.ioQueue = Queue("us.gnos.characteristic-timeout-\(cbCharacteristic.UUID.UUIDString)")
-        self.writePromise = Promise<Characteristic>(queue:self.futureQueue)
         self.readPromise = Promise<Characteristic>(queue:self.futureQueue)
         self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
@@ -219,26 +218,29 @@ public class Characteristic {
     }
 
     public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
-        self.writePromise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canWrite {
-            Logger.debug("write characteristic value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-            self.writeValue(value, type:type)
-            self.writing = true
-            ++self.writeSequence
-            self.timeoutWrite(self.writeSequence, timeout:timeout)
+            self.ioQueue.async() {
+                Logger.debug("write characteristic value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
+                self.writePromises.append(promise)
+                self.writeValue(value, type:type)
+                self.writing = true
+                ++self.writeSequence
+                self.timeoutWrite(self.writeSequence, timeout:timeout)
+            }
         } else {
-            self.writePromise.failure(BCError.characteristicWriteNotSupported)
+            promise.failure(BCError.characteristicWriteNotSupported)
         }
-        return self.writePromise.future
+        return promise.future
     }
 
     public func writeString(stringValue:[String:String], timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         if let value = self.dataFromStringValue(stringValue) {
             return self.writeData(value, timeout:timeout, type:type)
         } else {
-            self.writePromise = Promise<Characteristic>()
-            self.writePromise.failure(BCError.characteristicNotSerilaizable)
-            return self.writePromise.future
+            let promise = Promise<Characteristic>(queue:self.futureQueue)
+            promise.failure(BCError.characteristicNotSerilaizable)
+            return promise.future
         }
     }
 
@@ -310,17 +312,6 @@ public class Characteristic {
         }
     }
 
-    private var writing : Bool {
-        get {
-            return self._writing
-        }
-        set {
-            self.ioQueue.sync() {
-                self._writing = newValue
-            }
-        }
-    }
-
     private var reading : Bool {
         get {
             return self._reading
@@ -348,8 +339,8 @@ public class Characteristic {
     private func timeoutWrite(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
         self.ioQueue.delay(timeout) {
-            if sequence == self.writeSequence && self._writing {
-                self._writing = false
+            if sequence == self.writeSequence && self.writing {
+                self.writing = false
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 self.writePromise.failure(BCError.characteristicWriteTimeout)
             } else {
