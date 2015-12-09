@@ -18,6 +18,12 @@ public protocol CBCharacteristicWrappable {
     
 }
 
+struct WriteParameters {
+    let value : NSData
+    let timeout : Double
+    let type : CBCharacteristicWriteType
+}
+
 extension CBCharacteristic : CBCharacteristicWrappable {}
 
 public class Characteristic {
@@ -26,6 +32,9 @@ public class Characteristic {
     private var readPromise : Promise<Characteristic>
     private var writePromises = [Promise<Characteristic>]()
     private var notificationUpdatePromise : StreamPromise<Characteristic>?
+    
+    private var writeParameters = [WriteParameters]()
+    
     private weak var _service : Service?
     
     private let profile : CharacteristicProfile
@@ -221,12 +230,9 @@ public class Characteristic {
         let promise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canWrite {
             self.ioQueue.async() {
-                Logger.debug("write characteristic value=\(value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
                 self.writePromises.append(promise)
-                self.writeValue(value, type:type)
-                self.writing = true
-                ++self.writeSequence
-                self.timeoutWrite(self.writeSequence, timeout:timeout)
+                self.writeParameters.append(WriteParameters(value:value, timeout:timeout, type:type))
+                self.writeNext()
             }
         } else {
             promise.failure(BCError.characteristicWriteNotSupported)
@@ -298,16 +304,18 @@ public class Characteristic {
     }
     
     internal func didWrite(error:NSError?) {
-        self.writing = false
-        if let error = error {
-            Logger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if !self.writePromise.completed {
-                self.writePromise.failure(error)
-            }
-        } else {
-            Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if !self.writePromise.completed {
-                self.writePromise.success(self)
+        self.ioQueue.async() {
+            self.writing = false
+            if let error = error {
+                Logger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                if !self.writePromise.completed {
+                    self.writePromise.failure(error)
+                }
+            } else {
+                Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                if !self.writePromise.completed {
+                    self.writePromise.success(self)
+                }
             }
         }
     }
@@ -361,4 +369,15 @@ public class Characteristic {
         self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:type)
     }
     
+    public func writeNext() {
+        if self.writing == false && self.writeParameters.count > 0 {
+            let parameters = self.writeParameters[0]
+            self.writeParameters.removeAtIndex(0)
+            Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
+            self.writeValue(parameters.value, type:parameters.type)
+            self.writing = true
+            ++self.writeSequence
+            self.timeoutWrite(self.writeSequence, timeout:parameters.timeout)
+        }
+    }
 }
