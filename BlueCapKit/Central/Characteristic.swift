@@ -306,15 +306,17 @@ public class Characteristic {
     internal func didWrite(error:NSError?) {
         self.ioQueue.async() {
             self.writing = false
+            let promise = self.writePromises[0]
+            self.writePromises.removeAtIndex(0)
             if let error = error {
                 Logger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-                if !self.writePromise.completed {
-                    self.writePromise.failure(error)
+                if !promise.completed {
+                    promise.failure(error)
                 }
             } else {
                 Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-                if !self.writePromise.completed {
-                    self.writePromise.success(self)
+                if !promise.completed {
+                    promise.success(self)
                 }
             }
         }
@@ -350,7 +352,7 @@ public class Characteristic {
             if sequence == self.writeSequence && self.writing {
                 self.writing = false
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                self.writePromise.failure(BCError.characteristicWriteTimeout)
+                self.didWrite(BCError.characteristicWriteTimeout)
             } else {
                 Logger.debug("timeout expired")
             }

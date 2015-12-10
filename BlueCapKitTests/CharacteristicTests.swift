@@ -171,8 +171,8 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testMultipleWritesSuccess() {
-        let onSuccessExpectation1 = expectationWithDescription("onSuccess fulfilled for future 1")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
+        let onSuccessExpectation1 = expectationWithDescription("onSuccess fulfilled for future 1")
         let future1 = characteristic.writeData("aa".dataFromHexString())
         future1.onSuccess {_ in
             onSuccessExpectation1.fulfill()
@@ -254,6 +254,31 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.ReadNotSupported.rawValue, "Error code invalid")
         }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+    
+    func testMultipleReadSuccess() {
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
+        let onSuccessExpectation1 = expectationWithDescription("onSuccess fulfilled for future 1")
+        let future1 = characteristic.read()
+        future1.onSuccess {_ in
+            onSuccessExpectation1.fulfill()
+        }
+        future1.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        let onSuccessExpectation2 = expectationWithDescription("onSuccess fulfilled for future 2")
+        let future2 = characteristic.read()
+        future2.onSuccess {_ in
+            onSuccessExpectation2.fulfill()
+        }
+        future2.onFailure {error in
+            XCTAssert(false, "onFailure called")
+        }
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
