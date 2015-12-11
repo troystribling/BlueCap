@@ -24,16 +24,21 @@ struct WriteParameters {
     let type : CBCharacteristicWriteType
 }
 
+struct ReadParameters {
+    let timeout : Double
+}
+
 extension CBCharacteristic : CBCharacteristicWrappable {}
 
 public class Characteristic {
 
     private var notificationStateChangedPromise : Promise<Characteristic>
-    private var readPromise : Promise<Characteristic>
+    private var readPromises = [Promise<Characteristic>]()
     private var writePromises = [Promise<Characteristic>]()
     private var notificationUpdatePromise : StreamPromise<Characteristic>?
     
     private var writeParameters = [WriteParameters]()
+    private var readParameters = [ReadParameters]()
     
     private weak var _service : Service?
     
@@ -106,7 +111,6 @@ public class Characteristic {
         self._service = service
         self.futureQueue = Queue("us.gnos.characteristic-future-\(cbCharacteristic.UUID.UUIDString)")
         self.ioQueue = Queue("us.gnos.characteristic-timeout-\(cbCharacteristic.UUID.UUIDString)")
-        self.readPromise = Promise<Characteristic>(queue:self.futureQueue)
         self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
             Logger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
@@ -213,17 +217,15 @@ public class Characteristic {
     }
     
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
-        self.readPromise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canRead {
-            Logger.debug("read characteristic \(self.uuid.UUIDString)")
-            self.readValueForCharacteristic()
-            self.reading = true
-            ++self.readSequence
-            self.timeoutRead(self.readSequence, timeout:timeout)
+            self.readPromises.append(promise)
+            self.readParameters.append(ReadParameters(timeout:timeout))
+            self.readNext()
         } else {
-            self.readPromise.failure(BCError.characteristicReadNotSupported)
+            promise.failure(BCError.characteristicReadNotSupported)
         }
-        return self.readPromise.future
+        return promise.future
     }
 
     public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
@@ -282,25 +284,49 @@ public class Characteristic {
     
     public func didUpdate(error:NSError?) {
         self.reading = false
-        if let error = error {
-            Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if self.isNotifying {
+        if self.isNotifying {
+            if let error = error {
                 if let notificationUpdatePromise = self.notificationUpdatePromise {
                     notificationUpdatePromise.failure(error)
                 }
             } else {
-                self.readPromise.failure(error)
-            }
-        } else {
-            Logger.debug("success uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            if self.isNotifying {
                 if let notificationUpdatePromise = self.notificationUpdatePromise {
                     notificationUpdatePromise.success(self)
                 }
+            }
+        } else {
+            if let error = error {
+                if !self.readPromise.completed {
+                    self.readPromise.failure(error)
+                }
             } else {
-                self.readPromise.success(self)
+                if !self.readPromise.completed {
+                    self.readPromise.success(self)
             }
         }
+//        if let error = error {
+//            Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
+//            if self.isNotifying {
+//                if let notificationUpdatePromise = self.notificationUpdatePromise {
+//                    notificationUpdatePromise.failure(error)
+//                }
+//            } else {
+//                if !self.readPromise.completed {
+//                    self.readPromise.failure(error)
+//                }
+//            }
+//        } else {
+//            Logger.debug("success uuid=\(self.uuid.UUIDString), name=\(self.name)")
+//            if self.isNotifying {
+//                if let notificationUpdatePromise = self.notificationUpdatePromise {
+//                    notificationUpdatePromise.success(self)
+//                }
+//            } else {
+//                if !self.readPromise.completed {
+//                    self.readPromise.success(self)
+//                }
+//            }
+//        }
     }
     
     internal func didWrite(error:NSError?) {
@@ -337,9 +363,8 @@ public class Characteristic {
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
         self.ioQueue.delay(timeout) {
             if sequence == self.readSequence && self._reading {
-                self._reading = false
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
-                self.readPromise.failure(BCError.characteristicReadTimeout)
+                self.didUpdate(BCError.characteristicReadTimeout)
             } else {
                 Logger.debug("timeout expired")
             }
@@ -350,7 +375,6 @@ public class Characteristic {
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
         self.ioQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
-                self.writing = false
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 self.didWrite(BCError.characteristicWriteTimeout)
             } else {
@@ -371,7 +395,7 @@ public class Characteristic {
         self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:type)
     }
     
-    public func writeNext() {
+    private func writeNext() {
         if self.writing == false && self.writeParameters.count > 0 {
             let parameters = self.writeParameters[0]
             self.writeParameters.removeAtIndex(0)
@@ -380,6 +404,18 @@ public class Characteristic {
             self.writing = true
             ++self.writeSequence
             self.timeoutWrite(self.writeSequence, timeout:parameters.timeout)
+        }
+    }
+    
+    private func readNext() {
+        if self.reading == false && self.readParameters.count > 0 {
+            Logger.debug("read characteristic \(self.uuid.UUIDString)")
+            let parameters = self.readParameters[0]
+            self.readParameters.removeAtIndex(0)
+            self.readValueForCharacteristic()
+            self.reading = true
+            ++self.readSequence
+            self.timeoutRead(self.readSequence, timeout:parameters.timeout)
         }
     }
 }
