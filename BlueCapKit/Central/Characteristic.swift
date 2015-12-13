@@ -46,7 +46,7 @@ public class Characteristic {
     private let ioQueue : Queue
     private let futureQueue : Queue
 
-    private var _reading        = false
+    private var reading         = false
     private var writing         = false
     
     private var readSequence    = 0
@@ -184,23 +184,29 @@ public class Characteristic {
     }
 
     public func startNotifying() -> Future<Characteristic> {
-        self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canNotify {
-            self.setNotifyValue(true)
+            self.ioQueue.async() {
+                self.notificationStateChangedPromise = promise
+                self.setNotifyValue(true)
+            }
         } else {
-            self.notificationStateChangedPromise.failure(BCError.characteristicNotifyNotSupported)
+            promise.failure(BCError.characteristicNotifyNotSupported)
         }
-        return self.notificationStateChangedPromise.future
+        return promise.future
     }
 
     public func stopNotifying() -> Future<Characteristic> {
-        self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canNotify {
-            self.setNotifyValue(false)
+            self.ioQueue.async() {
+                self.notificationStateChangedPromise = promise
+                self.setNotifyValue(false)
+            }
         } else {
-            self.notificationStateChangedPromise.failure(BCError.characteristicNotifyNotSupported)
+            promise.failure(BCError.characteristicNotifyNotSupported)
         }
-        return self.notificationStateChangedPromise.future
+        return promise.future
     }
 
     public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic> {
@@ -213,15 +219,19 @@ public class Characteristic {
     }
     
     public func stopNotificationUpdates() {
-        self.notificationUpdatePromise = nil
+        self.ioQueue.async() {
+            self.notificationUpdatePromise = nil
+        }
     }
     
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
         let promise = Promise<Characteristic>(queue:self.futureQueue)
         if self.canRead {
-            self.readPromises.append(promise)
-            self.readParameters.append(ReadParameters(timeout:timeout))
-            self.readNext()
+            self.ioQueue.async() {
+                self.readPromises.append(promise)
+                self.readParameters.append(ReadParameters(timeout:timeout))
+                self.readNext()
+            }
         } else {
             promise.failure(BCError.characteristicReadNotSupported)
         }
@@ -283,78 +293,60 @@ public class Characteristic {
     }
     
     public func didUpdate(error:NSError?) {
-        self.reading = false
-        if self.isNotifying {
-            if let error = error {
-                if let notificationUpdatePromise = self.notificationUpdatePromise {
-                    notificationUpdatePromise.failure(error)
-                }
+        self.ioQueue.async() {
+            if self.isNotifying {
+                self.didNotify(error)
             } else {
-                if let notificationUpdatePromise = self.notificationUpdatePromise {
-                    notificationUpdatePromise.success(self)
-                }
-            }
-        } else {
-            if let error = error {
-                if !self.readPromise.completed {
-                    self.readPromise.failure(error)
-                }
-            } else {
-                if !self.readPromise.completed {
-                    self.readPromise.success(self)
+                self.didRead(error)
             }
         }
-//        if let error = error {
-//            Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
-//            if self.isNotifying {
-//                if let notificationUpdatePromise = self.notificationUpdatePromise {
-//                    notificationUpdatePromise.failure(error)
-//                }
-//            } else {
-//                if !self.readPromise.completed {
-//                    self.readPromise.failure(error)
-//                }
-//            }
-//        } else {
-//            Logger.debug("success uuid=\(self.uuid.UUIDString), name=\(self.name)")
-//            if self.isNotifying {
-//                if let notificationUpdatePromise = self.notificationUpdatePromise {
-//                    notificationUpdatePromise.success(self)
-//                }
-//            } else {
-//                if !self.readPromise.completed {
-//                    self.readPromise.success(self)
-//                }
-//            }
-//        }
     }
     
     internal func didWrite(error:NSError?) {
         self.ioQueue.async() {
+            if let promise = self.writePromises.first {
+                self.writePromises.removeAtIndex(0)
+                if let error = error {
+                    Logger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                    if !promise.completed {
+                        promise.failure(error)
+                    }
+                } else {
+                    Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                    if !promise.completed {
+                        promise.success(self)
+                    }
+                }
+            }
             self.writing = false
-            let promise = self.writePromises[0]
-            self.writePromises.removeAtIndex(0)
+        }
+    }
+
+    private func didRead(error:NSError?) {
+        if let promise = self.readPromises.first {
+            self.readPromises.removeAtIndex(0)
             if let error = error {
-                Logger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
                 if !promise.completed {
                     promise.failure(error)
                 }
             } else {
-                Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
                 if !promise.completed {
                     promise.success(self)
                 }
             }
         }
+        self.reading = false
     }
 
-    private var reading : Bool {
-        get {
-            return self._reading
-        }
-        set {
-            self.ioQueue.sync() {
-                self._reading = newValue
+
+    private func didNotify(error:NSError?) {
+        if let error = error {
+            if let notificationUpdatePromise = self.notificationUpdatePromise {
+                notificationUpdatePromise.failure(error)
+            }
+        } else {
+            if let notificationUpdatePromise = self.notificationUpdatePromise {
+                notificationUpdatePromise.success(self)
             }
         }
     }
@@ -362,7 +354,7 @@ public class Characteristic {
     private func timeoutRead(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
         self.ioQueue.delay(timeout) {
-            if sequence == self.readSequence && self._reading {
+            if sequence == self.readSequence && self.reading {
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 self.didUpdate(BCError.characteristicReadTimeout)
             } else {

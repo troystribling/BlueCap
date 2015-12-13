@@ -366,7 +366,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testReceiveNotificationUpdateSuccess() {
-        let (characteristic, _) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying:true)
+        let (characteristic, _) = self.createCharacteristic([.Notify], isNotifying:true)
         let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
         let updateOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
 
@@ -396,7 +396,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testReceiveNotificationUpdateFailure() {
-        let (characteristic, _) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying:true)
+        let (characteristic, _) = self.createCharacteristic([.Notify], isNotifying:true)
         let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
         let updateOnFailureExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
         
@@ -426,7 +426,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotifyingSuccess() {
-        let (characteristic, _) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying:true)
+        let (characteristic, _) = self.createCharacteristic([.Notify], isNotifying:true)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = characteristic.stopNotifying()
         future.onSuccess {_ in
@@ -442,7 +442,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotifyingFailure() {
-        let (characteristic, _) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying:true)
+        let (characteristic, _) = self.createCharacteristic([.Notify], isNotifying:true)
         let onFailureExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = characteristic.stopNotifying()
         future.onSuccess {_ in
@@ -458,7 +458,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotificationUpdates() {
-        let (characteristic, _) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying:true)
+        let (characteristic, _) = self.createCharacteristic([.Notify], isNotifying:true)
         let startNotifyingOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future start notifying")
         let updateOnSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future on update")
 
@@ -490,7 +490,7 @@ class CharacteristicTests: XCTestCase {
         updateFuture.onFailure {error in
             XCTAssert(false, "update onFailure called")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(30) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
