@@ -306,14 +306,10 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     // services
-    public func peripheral(peripheral:CBPeripheral, didDiscoverServices error:NSError?) {
-        var discoveredServices = [CBServiceWrappable]()
-        if let cbServices = self.cbPeripheral.services {
-            for service in cbServices {
-                discoveredServices.append(service)
-            }
+    public func peripheral(_:CBPeripheral, didDiscoverServices error:NSError?) {
+        if let services = self.cbPeripheral.services {
+            self.didDiscoverServices(services, error:error)
         }
-        self.didDiscoverServices(discoveredServices, error:error)
     }
     
     public func peripheral(_:CBPeripheral, didDiscoverIncludedServicesForService service:CBService, error:NSError?) {
@@ -325,7 +321,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         guard let characteristics = service.characteristics else {
             return
         }
-        self.didDiscoverCharacteristicsForService(service, characteristics:characteristics.map{$0 as CBCharacteristicWrappable}, error:error)
+        self.didDiscoverCharacteristicsForService(service, characteristics:characteristics, error:error)
     }
 
     public func peripheral(_:CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic:CBCharacteristic, error:NSError?) {
@@ -352,7 +348,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         Logger.debug()
     }
     
-    public func didDiscoverCharacteristicsForService(service:CBServiceWrappable, characteristics:[CBCharacteristicWrappable], error:NSError?) {
+    public func didDiscoverCharacteristicsForService(service:CBService, characteristics:[CBCharacteristic], error:NSError?) {
         Logger.debug("peripheral name \(self.name)")
         if let bcService = self.discoveredServices[service.UUID] {
             bcService.didDiscoverCharacteristics(characteristics, error:error)
@@ -364,7 +360,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didDiscoverServices(discoveredServices:[CBServiceWrappable], error:NSError?) {
+    public func didDiscoverServices(discoveredServices:[CBService], error:NSError?) {
         Logger.debug("peripheral name \(self.name)")
         self.clearAll()
         if let error = error {
@@ -379,7 +375,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didUpdateNotificationStateForCharacteristic(characteristic:CBCharacteristicWrappable, error:NSError?) {
+    public func didUpdateNotificationStateForCharacteristic(characteristic:CBCharacteristic, error:NSError?) {
         Logger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
@@ -387,7 +383,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didUpdateValueForCharacteristic(characteristic:CBCharacteristicWrappable, error:NSError?) {
+    public func didUpdateValueForCharacteristic(characteristic:CBCharacteristic, error:NSError?) {
         Logger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
@@ -395,7 +391,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didWriteValueForCharacteristic(characteristic:CBCharacteristicWrappable, error: NSError?) {
+    public func didWriteValueForCharacteristic(characteristic:CBCharacteristic, error: NSError?) {
         Logger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             Logger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
@@ -480,27 +476,19 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
     
     internal func setNotifyValue(state:Bool, forCharacteristic characteristic:Characteristic) {
-        if let cbCharacteristic = characteristic.cbCharacteristic as? CBCharacteristic {
-            self.cbPeripheral.setNotifyValue(state, forCharacteristic:cbCharacteristic)
-        }
+        self.cbPeripheral.setNotifyValue(state, forCharacteristic:characteristic.cbCharacteristic)
     }
     
     internal func readValueForCharacteristic(characteristic:Characteristic) {
-        if let cbCharacteristic = characteristic.cbCharacteristic as? CBCharacteristic {
-            self.cbPeripheral.readValueForCharacteristic(cbCharacteristic)
-        }
+        self.cbPeripheral.readValueForCharacteristic(characteristic.cbCharacteristic)
     }
     
     internal func writeValue(value:NSData, forCharacteristic characteristic:Characteristic, type:CBCharacteristicWriteType = .WithResponse) {
-        if let cbCharacteristic = characteristic.cbCharacteristic as? CBCharacteristic {
-            self.cbPeripheral.writeValue(value, forCharacteristic:cbCharacteristic, type:type)
-        }
+            self.cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type:type)
     }
     
     internal func discoverCharacteristics(characteristics:[CBUUID]?, forService service:Service) {
-        if let cbService = service.cbService as? CBService {
-            self.cbPeripheral.discoverCharacteristics(characteristics, forService:cbService)
-        }
+        self.cbPeripheral.discoverCharacteristics(characteristics, forService:service.cbService)
     }
     
     private func didReadRSSI(RSSI:NSNumber, error:NSError?) {

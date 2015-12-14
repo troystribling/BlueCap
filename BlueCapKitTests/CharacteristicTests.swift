@@ -34,13 +34,13 @@ class CharacteristicTests: XCTestCase {
     }
     
     func createCharacteristic(properties:CBCharacteristicProperties, isNotifying:Bool) -> (Characteristic, CBCharacteristicMock) {
-        let mockCharacteristic = CBCharacteristicMock(properties:properties, UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:isNotifying)
+        let mockCharacteristic = CBCharacteristicMock(UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), properties:properties, permissions:[.Readable, .Writeable], isNotifying:isNotifying)
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
         return (self.service.characteristics.first!, mockCharacteristic)
     }
     
     func testAfterDiscovered() {
-        let mockCharacteristic = CBCharacteristicMock(properties:[.Read, .Write], UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), isNotifying:false)
+        let mockCharacteristic = CBCharacteristicMock(UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), properties:[.Read, .Write], permissions:[.Readable, .Writeable], isNotifying:false)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:[mockCharacteristic], error:nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let serviceProfile = ProfileManager.sharedInstance.service[CBUUID(string:Gnosus.HelloWorldService.uuid)]
@@ -475,7 +475,7 @@ class CharacteristicTests: XCTestCase {
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<Characteristic> in
             let future = characteristic.recieveNotificationUpdates()
             characteristic.didUpdate(nil)
-            characteristic.stopNotificationUpdates()
+                characteristic.stopNotificationUpdates()
             characteristic.didUpdate(nil)
             return future
         }

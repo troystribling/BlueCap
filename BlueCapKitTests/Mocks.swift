@@ -46,24 +46,32 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
 
 class CentralManagerUT : CentralManager {
     
+    var connectPeripheralCalled     = false
+    var cancelPeripheralConnection  = false
+    
     override func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
+        self.connectPeripheralCalled = true
     }
     
     override func cancelPeripheralConnection(peripheral:Peripheral) {
         peripheral.didDisconnectPeripheral()
     }
-
+    
 }
 
 class CBPeripheralMock : CBPeripheralWrappable {
    
     var state : CBPeripheralState
-
-    var _delegate : CBPeripheralDelegate?   = nil
+    var _delegate : CBPeripheralDelegate? = nil
     
     var setDelegateCalled                       = false
     var discoverServicesCalled                  = false
     var discoverCharacteristicsCalled           = false
+    var setNotifyValueCalled                    = false
+    var readValueForCharacteristicCalled        = false
+    var writeValueCalled                        = false
+    
+    var writtenData : NSData?
     
     var discoverServicesCalledCount         = 0
     var discoverCharacteristicsCalledCount  = 0
@@ -80,7 +88,7 @@ class CBPeripheralMock : CBPeripheralWrappable {
         }
         set {
             self._delegate = newValue
-            self.setDelegateCalled = self._delegate == nil ? false : true
+            self.setDelegateCalled = true
         }
     }
     
@@ -103,12 +111,16 @@ class CBPeripheralMock : CBPeripheralWrappable {
     }
     
     func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic) {
+        self.setNotifyValueCalled = true
     }
     
     func readValueForCharacteristic(characteristic:CBCharacteristic) {
+        self.readValueForCharacteristicCalled = true
     }
     
     func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
+        self.writeValueCalled = false
+        self.writtenData = data
     }
 
 }
@@ -133,16 +145,10 @@ class PeripheralUT : Peripheral {
 
 }
 
-class CBServiceMock : CBServiceWrappable {
-    
-    let UUID : CBUUID
-    
-    var characteristics : [CBCharacteristic]? {
-        return nil
-    }
+class CBServiceMock : CBMutableService {
     
     init(UUID:CBUUID = CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
-        self.UUID = UUID
+        super.init(type: UUID, primary:true)
     }
     
 }
@@ -150,33 +156,37 @@ class CBServiceMock : CBServiceWrappable {
 class ServiceUT : Service {
     
     let error : NSError?
+    let mockCharacteristics : [CBCharacteristic]
     
-    let mockCharacteristics : [CBCharacteristicWrappable]
-    
-    init(cbService:CBServiceWrappable, peripheral:Peripheral, mockCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
-        self.mockCharacteristics = mockCharacteristics
+    init(cbService:CBServiceMock, peripheral:Peripheral, mockCharacteristics:[CBCharacteristic], error:NSError?) {
         self.error = error
+        self.mockCharacteristics = mockCharacteristics
+        cbService.characteristics = mockCharacteristics
         super.init(cbService:cbService, peripheral:peripheral)
     }
     
     override func discoverAllCharacteristics() -> Future<Service> {
-        self.didDiscoverCharacteristics(self.mockCharacteristics, error:self.error)
+        self.didDiscoverCharacteristics(self.self.mockCharacteristics, error:self.error)
         return self.characteristicsDiscoveredPromise.future
     }
 }
 
-class CBCharacteristicMock : CBCharacteristicWrappable {
+class CBCharacteristicMock : CBMutableCharacteristic {
     
-    let UUID : CBUUID
-    let properties : CBCharacteristicProperties
+    var _isNotifying = false
+    
+    override var isNotifying : Bool {
+        get {
+            return self._isNotifying
+        }
+        set {
+            self._isNotifying = newValue
+        }
+    }
 
-    var isNotifying : Bool
-    var value : NSData?
-
-    init (properties:CBCharacteristicProperties, UUID:CBUUID, isNotifying:Bool) {
-        self.properties = properties
-        self.UUID = UUID
-        self.isNotifying = isNotifying
+    init (UUID:CBUUID, properties:CBCharacteristicProperties, permissions:CBAttributePermissions, isNotifying:Bool) {
+        super.init(type:UUID, properties:properties, value:nil, permissions:permissions)
+        self._isNotifying = isNotifying
     }
     
 }

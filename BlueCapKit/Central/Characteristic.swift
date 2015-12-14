@@ -9,15 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-public protocol CBCharacteristicWrappable {
-    
-    var UUID : CBUUID                           {get}
-    var isNotifying : Bool                      {get}
-    var value : NSData?                         {get}
-    var properties : CBCharacteristicProperties {get}
-    
-}
-
 struct WriteParameters {
     let value : NSData
     let timeout : Double
@@ -27,8 +18,6 @@ struct WriteParameters {
 struct ReadParameters {
     let timeout : Double
 }
-
-extension CBCharacteristic : CBCharacteristicWrappable {}
 
 public class Characteristic {
 
@@ -53,7 +42,7 @@ public class Characteristic {
     private var writeSequence   = 0
     private let defaultTimeout  = 10.0
 
-    internal let cbCharacteristic : CBCharacteristicWrappable
+    internal let cbCharacteristic : CBCharacteristic
     
     public var uuid : CBUUID {
         return self.cbCharacteristic.UUID
@@ -106,7 +95,7 @@ public class Characteristic {
         return self.cbCharacteristic.properties
     }
     
-    public init(cbCharacteristic:CBCharacteristicWrappable, service:Service) {
+    public init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         self.futureQueue = Queue("us.gnos.characteristic-future-\(cbCharacteristic.UUID.UUIDString)")
@@ -210,12 +199,13 @@ public class Characteristic {
     }
 
     public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic> {
+        let promise = StreamPromise<Characteristic>(queue:self.futureQueue, capacity:capacity)
         if self.canNotify {
-            self.notificationUpdatePromise = StreamPromise<Characteristic>(queue:self.futureQueue, capacity:capacity)
+            self.ioQueue.async() {self.notificationUpdatePromise = promise}
         } else {
-            self.notificationStateChangedPromise.failure(BCError.characteristicNotifyNotSupported)
+            promise.failure(BCError.characteristicNotifyNotSupported)
         }
-        return self.notificationUpdatePromise!.future
+        return promise.future
     }
     
     public func stopNotificationUpdates() {
@@ -283,12 +273,14 @@ public class Characteristic {
     }
 
     public func didUpdateNotificationState(error:NSError?) {
-        if let error = error {
-            Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            self.notificationStateChangedPromise.failure(error)
-        } else {
-            Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
-            self.notificationStateChangedPromise.success(self)
+        self.ioQueue.async() {
+            if let error = error {
+                Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                self.notificationStateChangedPromise.failure(error)
+            } else {
+                Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                self.notificationStateChangedPromise.success(self)
+            }
         }
     }
     
@@ -317,6 +309,7 @@ public class Characteristic {
                         promise.success(self)
                     }
                 }
+                self.writeNext()
             }
             self.writing = false
         }
@@ -334,6 +327,7 @@ public class Characteristic {
                     promise.success(self)
                 }
             }
+            self.readNext()
         }
         self.reading = false
     }

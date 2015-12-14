@@ -9,13 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-public protocol CBServiceWrappable {
-    var UUID : CBUUID                           {get}
-    var characteristics : [CBCharacteristic]?   {get}
-}
-
-extension CBService : CBServiceWrappable {}
-
 public class Service {
 
     private let profile : ServiceProfile?
@@ -23,7 +16,7 @@ public class Service {
     internal var discoveredCharacteristics          = [CBUUID:Characteristic]()
     private var _characteristicsDiscoveredPromise   = Promise<Service>()
 
-    internal let cbService : CBServiceWrappable
+    internal let cbService : CBService
     private weak var _peripheral : Peripheral?
     
     public var characteristicsDiscoveredPromise : Promise<Service> {
@@ -50,7 +43,7 @@ public class Service {
         return self._peripheral
     }
 
-    public init(cbService:CBServiceWrappable, peripheral:Peripheral) {
+    public init(cbService:CBService, peripheral:Peripheral) {
         self.cbService = cbService
         self._peripheral = peripheral
         self.profile = ProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
@@ -70,7 +63,7 @@ public class Service {
         return self.discoveredCharacteristics[uuid]
     }
 
-    public func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristicWrappable], error:NSError?) {
+    public func didDiscoverCharacteristics(discoveredCharacteristics:[CBCharacteristic], error:NSError?) {
         if let error = error {
             Logger.debug("discover failed")
             self.characteristicsDiscoveredPromise.failure(error)
