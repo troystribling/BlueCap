@@ -358,7 +358,7 @@ class PeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssert(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssertFalse(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -390,7 +390,7 @@ class PeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssert(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssertFalse(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")

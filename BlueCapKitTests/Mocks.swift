@@ -55,6 +55,7 @@ class CentralManagerUT : CentralManager {
     
     override func cancelPeripheralConnection(peripheral:Peripheral) {
         peripheral.didDisconnectPeripheral()
+        self.cancelPeripheralConnection = true
     }
     
 }
@@ -75,6 +76,10 @@ class CBPeripheralMock : CBPeripheralWrappable {
     
     var discoverServicesCalledCount         = 0
     var discoverCharacteristicsCalledCount  = 0
+    
+    var setNotifyValueCount                 = 0
+    var readValueForCharacteristicCount     = 0
+    var writeValueCount                    = 0
     
     let identifier                          = NSUUID()
 
@@ -112,15 +117,18 @@ class CBPeripheralMock : CBPeripheralWrappable {
     
     func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic) {
         self.setNotifyValueCalled = true
+        self.setNotifyValueCount++
     }
     
     func readValueForCharacteristic(characteristic:CBCharacteristic) {
         self.readValueForCharacteristicCalled = true
+        self.readValueForCharacteristicCount++
     }
     
     func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
-        self.writeValueCalled = false
+        self.writeValueCalled = true
         self.writtenData = data
+        self.writeValueCount++
     }
 
 }

@@ -63,6 +63,13 @@ class CharacteristicTests: XCTestCase {
         let future = characteristic.writeData("aa".dataFromHexString())
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
+            XCTAssert(self.mockPerpheral.writeValueCount == 1, "writeValue called more than once")
+            if let data = self.mockPerpheral.writtenData {
+                XCTAssert(data.isEqualToData("aa".dataFromHexString()), "writeValue data is invalid")
+            } else {
+                XCTAssert(false, "writeValue no data available")
+            }
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -83,6 +90,13 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
+            XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
+            XCTAssert(self.mockPerpheral.writeValueCount == 1, "writeValue called more than once")
+            if let data = self.mockPerpheral.writtenData {
+                XCTAssert(data.isEqualToData("aa".dataFromHexString()), "writeValue data is invalid")
+            } else {
+                XCTAssert(false, "writeValue no data available")
+            }
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
         waitForExpectationsWithTimeout(2) {error in
@@ -100,6 +114,13 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.WriteTimeout.rawValue, "Error code invalid")
+            XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
+            XCTAssert(self.mockPerpheral.writeValueCount == 1, "writeValue called more than once")
+            if let data = self.mockPerpheral.writtenData {
+                XCTAssert(data.isEqualToData("aa".dataFromHexString()), "writeValue data is invalid")
+            } else {
+                XCTAssert(false, "writeValue no data available")
+            }
         }
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
@@ -116,6 +137,7 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.WriteNotSupported.rawValue, "Error code invalid")
+            XCTAssertFalse(self.mockPerpheral.writeValueCalled, "writeValue called")
         }
         waitForExpectationsWithTimeout(120) {error in
             XCTAssertNil(error, "\(error)")
@@ -128,6 +150,13 @@ class CharacteristicTests: XCTestCase {
         let future = characteristic.writeString(["Hello World Greeting":"Good bye"])
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
+            XCTAssert(self.mockPerpheral.writeValueCount == 1, "writeValue called more than once")
+            if let data = self.mockPerpheral.writtenData {
+                XCTAssert(data.isEqualToData("Good bye".dataFromHexString()), "writeValue data is invalid")
+            } else {
+                XCTAssert(false, "writeValue no data available")
+            }
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
