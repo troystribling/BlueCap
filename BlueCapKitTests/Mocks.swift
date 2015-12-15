@@ -73,13 +73,14 @@ class CBPeripheralMock : CBPeripheralWrappable {
     var writeValueCalled                        = false
     
     var writtenData : NSData?
+    var writtenType : CBCharacteristicWriteType?
     
     var discoverServicesCalledCount         = 0
     var discoverCharacteristicsCalledCount  = 0
     
     var setNotifyValueCount                 = 0
     var readValueForCharacteristicCount     = 0
-    var writeValueCount                    = 0
+    var writeValueCount                     = 0
     
     let identifier                          = NSUUID()
 
@@ -126,9 +127,10 @@ class CBPeripheralMock : CBPeripheralWrappable {
     }
     
     func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
+        self.writeValueCount++
         self.writeValueCalled = true
         self.writtenData = data
-        self.writeValueCount++
+        self.writtenType = type
     }
 
 }
