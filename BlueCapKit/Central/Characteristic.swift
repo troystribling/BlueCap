@@ -309,9 +309,9 @@ public class Characteristic {
                         promise.success(self)
                     }
                 }
-                self.writeNext()
             }
             self.writing = false
+            self.writeNext()
         }
     }
 
@@ -327,9 +327,9 @@ public class Characteristic {
                     promise.success(self)
                 }
             }
-            self.readNext()
         }
         self.reading = false
+        self.readNext()
     }
 
 

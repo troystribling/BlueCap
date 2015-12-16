@@ -259,6 +259,8 @@ class CharacteristicTests: XCTestCase {
         let future = characteristic.read()
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called once")
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -278,6 +280,8 @@ class CharacteristicTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called once")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
         waitForExpectationsWithTimeout(2) {error in
@@ -295,6 +299,8 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.ReadTimeout.rawValue, "Error code invalid")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called once")
         }
         waitForExpectationsWithTimeout(120) {error in
             XCTAssertNil(error, "\(error)")
@@ -311,6 +317,8 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.ReadNotSupported.rawValue, "Error code invalid")
+            XCTAssertFalse(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic called")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 0, "readValueForCharacteristic called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -323,6 +331,8 @@ class CharacteristicTests: XCTestCase {
         let future1 = characteristic.read()
         future1.onSuccess {_ in
             onSuccessExpectation1.fulfill()
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called once")
         }
         future1.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -331,6 +341,8 @@ class CharacteristicTests: XCTestCase {
         let future2 = characteristic.read()
         future2.onSuccess {_ in
             onSuccessExpectation2.fulfill()
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called twice")
         }
         future2.onFailure {error in
             XCTAssert(false, "onFailure called")

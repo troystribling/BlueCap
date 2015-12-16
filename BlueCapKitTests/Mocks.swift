@@ -122,8 +122,8 @@ class CBPeripheralMock : CBPeripheralWrappable {
     }
     
     func readValueForCharacteristic(characteristic:CBCharacteristic) {
-        self.readValueForCharacteristicCalled = true
         self.readValueForCharacteristicCount++
+        self.readValueForCharacteristicCalled = true
     }
     
     func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
