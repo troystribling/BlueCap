@@ -33,7 +33,6 @@ public class Characteristic {
     
     private let profile : CharacteristicProfile
     private let ioQueue : Queue
-    private let futureQueue : Queue
 
     private var reading         = false
     private var writing         = false
@@ -98,9 +97,8 @@ public class Characteristic {
     public init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
-        self.futureQueue = Queue("us.gnos.characteristic-future-\(cbCharacteristic.UUID.UUIDString)")
         self.ioQueue = Queue("us.gnos.characteristic-timeout-\(cbCharacteristic.UUID.UUIDString)")
-        self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.futureQueue)
+        self.notificationStateChangedPromise = Promise<Characteristic>(queue:self.ioQueue)
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
             Logger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
@@ -173,7 +171,7 @@ public class Characteristic {
     }
 
     public func startNotifying() -> Future<Characteristic> {
-        let promise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.ioQueue)
         if self.canNotify {
             self.ioQueue.async() {
                 self.notificationStateChangedPromise = promise
@@ -186,7 +184,7 @@ public class Characteristic {
     }
 
     public func stopNotifying() -> Future<Characteristic> {
-        let promise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.ioQueue)
         if self.canNotify {
             self.ioQueue.async() {
                 self.notificationStateChangedPromise = promise
@@ -199,7 +197,7 @@ public class Characteristic {
     }
 
     public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic> {
-        let promise = StreamPromise<Characteristic>(queue:self.futureQueue, capacity:capacity)
+        let promise = StreamPromise<Characteristic>(queue:self.ioQueue, capacity:capacity)
         if self.canNotify {
             self.ioQueue.async() {self.notificationUpdatePromise = promise}
         } else {
@@ -215,7 +213,7 @@ public class Characteristic {
     }
     
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
-        let promise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.ioQueue)
         if self.canRead {
             self.ioQueue.async() {
                 self.readPromises.append(promise)
@@ -229,7 +227,7 @@ public class Characteristic {
     }
 
     public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
-        let promise = Promise<Characteristic>(queue:self.futureQueue)
+        let promise = Promise<Characteristic>(queue:self.ioQueue)
         if self.canWrite {
             self.ioQueue.async() {
                 self.writePromises.append(promise)
@@ -246,7 +244,7 @@ public class Characteristic {
         if let value = self.dataFromStringValue(stringValue) {
             return self.writeData(value, timeout:timeout, type:type)
         } else {
-            let promise = Promise<Characteristic>(queue:self.futureQueue)
+            let promise = Promise<Characteristic>(queue:self.ioQueue)
             promise.failure(BCError.characteristicNotSerilaizable)
             return promise.future
         }
@@ -382,26 +380,30 @@ public class Characteristic {
     }
     
     private func writeNext() {
-        if self.writing == false && self.writeParameters.count > 0 {
-            let parameters = self.writeParameters[0]
-            self.writeParameters.removeAtIndex(0)
-            Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-            self.writeValue(parameters.value, type:parameters.type)
-            self.writing = true
-            ++self.writeSequence
-            self.timeoutWrite(self.writeSequence, timeout:parameters.timeout)
+        self.ioQueue.async() {
+            if self.writing == false && self.writeParameters.count > 0 {
+                let parameters = self.writeParameters[0]
+                self.writeParameters.removeAtIndex(0)
+                Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
+                self.writeValue(parameters.value, type:parameters.type)
+                self.writing = true
+                ++self.writeSequence
+                self.timeoutWrite(self.writeSequence, timeout:parameters.timeout)
+            }
         }
     }
     
     private func readNext() {
-        if self.reading == false && self.readParameters.count > 0 {
-            Logger.debug("read characteristic \(self.uuid.UUIDString)")
-            let parameters = self.readParameters[0]
-            self.readParameters.removeAtIndex(0)
-            self.readValueForCharacteristic()
-            self.reading = true
-            ++self.readSequence
-            self.timeoutRead(self.readSequence, timeout:parameters.timeout)
+        self.ioQueue.async() {
+            if self.reading == false && self.readParameters.count > 0 {
+                Logger.debug("read characteristic \(self.uuid.UUIDString)")
+                let parameters = self.readParameters[0]
+                self.readParameters.removeAtIndex(0)
+                self.readValueForCharacteristic()
+                self.reading = true
+                ++self.readSequence
+                self.timeoutRead(self.readSequence, timeout:parameters.timeout)
+            }
         }
     }
 }

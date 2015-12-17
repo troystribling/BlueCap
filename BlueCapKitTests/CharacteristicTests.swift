@@ -342,7 +342,7 @@ class CharacteristicTests: XCTestCase {
         future2.onSuccess {_ in
             onSuccessExpectation2.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called twice")
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 2, "readValueForCharacteristic not called twice")
         }
         future2.onFailure {error in
             XCTAssert(false, "onFailure called")
