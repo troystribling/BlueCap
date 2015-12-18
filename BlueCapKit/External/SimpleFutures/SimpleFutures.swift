@@ -472,14 +472,8 @@ public class Promise<T> {
         self.future.success(value)
     }
 
-    public func success(executionContext:ExecutionContext, value:T) {
-    }
-
     public func failure(error:NSError)  {
         self.future.failure(error)
-    }
-
-    public func failure(executionContext:ExecutionContext, error:NSError)  {
     }
 
 }

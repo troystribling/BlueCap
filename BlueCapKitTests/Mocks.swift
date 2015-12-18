@@ -74,6 +74,7 @@ class CBPeripheralMock : CBPeripheralWrappable {
     
     var writtenData : NSData?
     var writtenType : CBCharacteristicWriteType?
+    var notifyingState : Bool?
     
     var discoverServicesCalledCount         = 0
     var discoverCharacteristicsCalledCount  = 0
@@ -119,6 +120,7 @@ class CBPeripheralMock : CBPeripheralWrappable {
     func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic) {
         self.setNotifyValueCalled = true
         self.setNotifyValueCount++
+        self.notifyingState = state
     }
     
     func readValueForCharacteristic(characteristic:CBCharacteristic) {

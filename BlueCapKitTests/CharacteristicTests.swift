@@ -281,7 +281,7 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called once")
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
         waitForExpectationsWithTimeout(2) {error in
@@ -300,7 +300,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.ReadTimeout.rawValue, "Error code invalid")
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called once")
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
         }
         waitForExpectationsWithTimeout(120) {error in
             XCTAssertNil(error, "\(error)")
@@ -318,7 +318,7 @@ class CharacteristicTests: XCTestCase {
             onFailureExpectation.fulfill()
             XCTAssert(error.code == CharacteristicError.ReadNotSupported.rawValue, "Error code invalid")
             XCTAssertFalse(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic called")
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 0, "readValueForCharacteristic called")
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 0)
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -332,7 +332,7 @@ class CharacteristicTests: XCTestCase {
         future1.onSuccess {_ in
             onSuccessExpectation1.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 1, "readValueForCharacteristic not called once")
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
         }
         future1.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -360,6 +360,13 @@ class CharacteristicTests: XCTestCase {
         let future = characteristic.startNotifying()
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.setNotifyValueCalled, "setNotifyValue not called")
+            XCTAssert(self.mockPerpheral.setNotifyValueCount == 1, "setNotifyValue not called once")
+            if let state = self.mockPerpheral.notifyingState {
+                XCTAssert(state, "setNotifyValue state not true")
+            } else {
+                XCTAssert(false, "setNotifyValue state not set")
+            }
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -380,6 +387,13 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
+            XCTAssert(self.mockPerpheral.setNotifyValueCalled, "setNotifyValue not called")
+            XCTAssert(self.mockPerpheral.setNotifyValueCount == 1, "setNotifyValue not called once")
+            if let state = self.mockPerpheral.notifyingState {
+                XCTAssert(state, "setNotifyValue state not true")
+            } else {
+                XCTAssert(false, "setNotifyValue state not set")
+            }
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:TestFailure.error)
         waitForExpectationsWithTimeout(2) {error in
@@ -393,6 +407,13 @@ class CharacteristicTests: XCTestCase {
         let future = characteristic.startNotifying()
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.setNotifyValueCalled, "setNotifyValue not called")
+            XCTAssert(self.mockPerpheral.setNotifyValueCount == 1, "setNotifyValue not called once")
+            if let state = self.mockPerpheral.notifyingState {
+                XCTAssert(state, "setNotifyValue state not true")
+            } else {
+                XCTAssert(false, "setNotifyValue state not set")
+            }
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -409,6 +430,13 @@ class CharacteristicTests: XCTestCase {
         let future = characteristic.startNotifying()
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.setNotifyValueCalled, "setNotifyValue not called")
+            XCTAssert(self.mockPerpheral.setNotifyValueCount == 1, "setNotifyValue not called once")
+            if let state = self.mockPerpheral.notifyingState {
+                XCTAssert(state, "setNotifyValue state not true")
+            } else {
+                XCTAssert(false, "setNotifyValue state not set")
+            }
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -425,6 +453,13 @@ class CharacteristicTests: XCTestCase {
         let future = characteristic.startNotifying()
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
+            XCTAssert(self.mockPerpheral.setNotifyValueCalled, "setNotifyValue not called")
+            XCTAssert(self.mockPerpheral.setNotifyValueCount == 1, "setNotifyValue not called once")
+            if let state = self.mockPerpheral.notifyingState {
+                XCTAssert(state, "setNotifyValue state not true")
+            } else {
+                XCTAssert(false, "setNotifyValue state not set")
+            }
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
