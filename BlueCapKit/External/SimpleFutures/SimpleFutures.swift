@@ -486,8 +486,8 @@ public class Future<T> {
 
     private var result:Try<T>?
 
-    typealias OnComplete                                    = Try<T> -> Void
-    private var saveCompletes                               = [OnComplete]()
+    typealias OnComplete        = Try<T> -> Void
+    private var saveCompletes   = [OnComplete]()
     private let futureQueue : Queue
     
     public var completed : Bool {
@@ -952,7 +952,6 @@ public class FutureStream<T> {
         self.futureQueue = queue
     }
 
-    // should be future mixin
     internal func complete(result:Try<T>) {
         let future = Future<T>()
         future.complete(result)

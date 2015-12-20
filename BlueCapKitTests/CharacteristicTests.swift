@@ -329,8 +329,8 @@ class CharacteristicTests: XCTestCase {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let onSuccessExpectation1 = expectationWithDescription("onSuccess fulfilled for future 1")
         let future1 = characteristic.read()
-        future1.onSuccess {_ in
-            onSuccessExpectation1.fulfill()
+        future1.onSuccess(CharacteristicIO.context) {_ in
+            dispatch_async(dispatch_get_main_queue()) {onSuccessExpectation1.fulfill()}
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
         }
@@ -339,10 +339,10 @@ class CharacteristicTests: XCTestCase {
         }
         let onSuccessExpectation2 = expectationWithDescription("onSuccess fulfilled for future 2")
         let future2 = characteristic.read()
-        future2.onSuccess {_ in
-            onSuccessExpectation2.fulfill()
+        future2.onSuccess(CharacteristicIO.context) {_ in
+            dispatch_async(dispatch_get_main_queue()) {onSuccessExpectation2.fulfill()}
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCount == 2, "readValueForCharacteristic not called twice")
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2)
         }
         future2.onFailure {error in
             XCTAssert(false, "onFailure called")
