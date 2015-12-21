@@ -116,7 +116,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var currentError                = PeripheralConnectionError.None
     private var forcedDisconnect            = false
 
-    private let futureQueue : Queue
     private let timeoutQueue : Queue
     
     private let _discoveredAt               = NSDate()
@@ -172,10 +171,9 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
         self.advertisements = PeripheralAdvertisements(advertisements:advertisements)
         self.centralManager = centralManager
         self.rssi = rssi
-        self.futureQueue = Queue("us.gnos.peripheral-future-\(cbPeripheral.identifier.UUIDString)")
         self.timeoutQueue = Queue("us.gnos.peripheral-timeout-\(cbPeripheral.identifier.UUIDString)")
-        self.servicesDiscoveredPromise = Promise<Peripheral>(queue:self.futureQueue)
-        self.readRSSIPromise = Promise<Int>(queue:self.futureQueue)
+        self.servicesDiscoveredPromise = Promise<Peripheral>()
+        self.readRSSIPromise = Promise<Int>()
         super.init()
         self.cbPeripheral.delegate = self
     }
@@ -202,7 +200,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     }
      
     public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectRetries:UInt? = nil, connectionTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)> {
-        self.connectionPromise = StreamPromise<(Peripheral, ConnectionEvent)>(queue:self.futureQueue, capacity:capacity)
+        self.connectionPromise = StreamPromise<(Peripheral, ConnectionEvent)>(capacity:capacity)
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         self.connectionTimeout = connectionTimeout
