@@ -437,8 +437,8 @@ public class Characteristic {
             return
         }
         Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
-        self.writeValue(parameters.value, type:parameters.type)
         self.writing = true
+        self.writeValue(parameters.value, type:parameters.type)
         ++self.writeSequence
         self.timeoutWrite(self.writeSequence, timeout:parameters.timeout)
     }
@@ -452,7 +452,13 @@ public class Characteristic {
         self.reading = true
         ++self.readSequence
         self.timeoutRead(self.readSequence, timeout:parameters.timeout)
-        return future
+        if let nextPromise = self.readPromises.first {
+            return future.flatmap {(_:Characteristic) -> Future<Characteristic> in
+                return self.readNext(nextPromise.future)
+            }
+        } else {
+            return future
+        }
     }
     
     private func shiftCharacteristicArray<T>(var array:[T]) -> T? {
