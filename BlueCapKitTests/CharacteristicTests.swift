@@ -226,6 +226,7 @@ class CharacteristicTests: XCTestCase {
             } else {
                 XCTAssert(false, "writeValue no data available")
             }
+            self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         }
         future1.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -246,7 +247,6 @@ class CharacteristicTests: XCTestCase {
         future2.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         waitForExpectationsWithTimeout(10) {error in
             XCTAssertNil(error, "\(error)")
@@ -349,7 +349,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-        waitForExpectationsWithTimeout(200) {error in
+        waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
