@@ -349,7 +349,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }

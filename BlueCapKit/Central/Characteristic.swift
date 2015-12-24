@@ -447,8 +447,9 @@ public class Characteristic {
     
     private func pushReadPromise(promise:Promise<Characteristic>, parameters:ReadParameters) -> Future<Characteristic> {
         return CharacteristicIO.queue.sync() {
+            let nextPromise = self.readPromises.first
             self.readPromises.append(promise)
-            if let nextPromise = self.readPromises.first {
+            if let nextPromise = nextPromise  {
                 return nextPromise.future.flatmap {(_:Characteristic) -> Future<Characteristic> in
                     return self.readNext(promise, parameters:parameters)
                 }
@@ -460,8 +461,9 @@ public class Characteristic {
 
     private func pushWritePromise(promise:Promise<Characteristic>, parameters:WriteParameters) -> Future<Characteristic> {
         return CharacteristicIO.queue.sync() {
+            let nextPromise = self.writePromises.first
             self.writePromises.append(promise)
-            if let nextPromise = self.writePromises.first {
+            if  let nextPromise = nextPromise {
                 return nextPromise.future.flatmap {(_:Characteristic) -> Future<Characteristic> in
                     return self.writeNext(promise, parameters:parameters)
                 }
