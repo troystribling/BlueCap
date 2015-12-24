@@ -281,11 +281,7 @@ public class Characteristic {
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canRead {
-            CharacteristicIO.queue.sync() {
-                self.readPromises.append(promise)
-                self.readParameters.append(ReadParameters(timeout:timeout))
-            }
-            return self.readNext(promise.future)
+            return self.readNext(promise.future, parameters:ReadParameters(timeout:timeout))
         } else {
             promise.failure(BCError.characteristicReadNotSupported)
             return promise.future
@@ -443,9 +439,18 @@ public class Characteristic {
         self.timeoutWrite(self.writeSequence, timeout:parameters.timeout)
     }
     
-    private func readNext(future:Future<Characteristic>) -> Future<Characteristic> {
-        guard let parameters = self.shiftCharacteristicArray(self.readParameters) where self.reading == false else {
-            return future
+    private func readNext(promise:Promise<Characteristic>, parameters:ReadParameters) -> Future<Characteristic> {
+        guard self.reading == false else {
+            CharacteristicIO.queue.sync() {
+                self.readPromises.append(promise)
+            }
+            if let nextPromise = self.readPromises.first {
+                return nextPromise.future.flatmap {(_:Characteristic) -> Future<Characteristic> in
+                    return self.readNext(promise, parameters:parameters)
+                }
+            } else {
+                return promise.future
+            }
         }
         Logger.debug("read characteristic \(self.uuid.UUIDString)")
         self.readValueForCharacteristic()
@@ -457,7 +462,7 @@ public class Characteristic {
                 return self.readNext(nextPromise.future)
             }
         } else {
-            return future
+            return promise.future
         }
     }
     

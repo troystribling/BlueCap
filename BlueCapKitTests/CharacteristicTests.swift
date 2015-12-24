@@ -334,6 +334,7 @@ class CharacteristicTests: XCTestCase {
             dispatch_async(dispatch_get_main_queue()) {onSuccessExpectation1.fulfill()}
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
+            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         }
         future1.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -348,8 +349,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssert(false, "onFailure called")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(200) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
