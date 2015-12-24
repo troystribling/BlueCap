@@ -34,7 +34,6 @@ public class Characteristic {
 
     private var readPromises    = [Promise<Characteristic>]()
     private var writePromises   = [Promise<Characteristic>]()
-    private var readParameters  = [ReadParameters]()
     private var writeParameters = [WriteParameters]()
     
     private weak var _service : Service?
@@ -281,7 +280,7 @@ public class Characteristic {
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canRead {
-            return self.readNext(promise.future, parameters:ReadParameters(timeout:timeout))
+            return self.readNext(promise, parameters:ReadParameters(timeout:timeout))
         } else {
             promise.failure(BCError.characteristicReadNotSupported)
             return promise.future
@@ -354,7 +353,7 @@ public class Characteristic {
     }
     
     internal func didWrite(error:NSError?) {
-        guard let promise = self.shiftCharacteristicArray(self.writePromises) where !promise.completed else {
+        guard let promise = self.shiftCharacteristicArray(&self.writePromises) where !promise.completed else {
             return
         }
         if let error = error {
@@ -369,7 +368,7 @@ public class Characteristic {
     }
 
     private func didRead(error:NSError?) {
-        guard let promise = self.shiftCharacteristicArray(self.readPromises) where !promise.completed else {
+        guard let promise = self.shiftCharacteristicArray(&self.readPromises) where !promise.completed else {
             return
         }
         if let error = error {
@@ -429,7 +428,7 @@ public class Characteristic {
     }
     
     private func writeNext() {
-        guard let parameters = self.shiftCharacteristicArray(self.writeParameters) where self.writing == false else {
+        guard let parameters = self.shiftPromise(&self.writeParameters) where self.writing == false else {
             return
         }
         Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
@@ -441,9 +440,19 @@ public class Characteristic {
     
     private func readNext(promise:Promise<Characteristic>, parameters:ReadParameters) -> Future<Characteristic> {
         guard self.reading == false else {
-            CharacteristicIO.queue.sync() {
-                self.readPromises.append(promise)
-            }
+            return self.pushPromise(&self.readPromises, promise:promise, parameters:parameters)
+        }
+        Logger.debug("read characteristic \(self.uuid.UUIDString)")
+        self.readValueForCharacteristic()
+        self.reading = true
+        ++self.readSequence
+        self.timeoutRead(self.readSequence, timeout:parameters.timeout)
+        return self.pushPromise(&self.readPromises, promise:promise, parameters:parameters)
+    }
+    
+    private func pushPromise(inout promises:[Promise<Characteristic>], promise:Promise<Characteristic>, parameters:ReadParameters) -> Future<Characteristic> {
+        return CharacteristicIO.queue.sync() {
+            promises.append(promise)
             if let nextPromise = self.readPromises.first {
                 return nextPromise.future.flatmap {(_:Characteristic) -> Future<Characteristic> in
                     return self.readNext(promise, parameters:parameters)
@@ -452,21 +461,9 @@ public class Characteristic {
                 return promise.future
             }
         }
-        Logger.debug("read characteristic \(self.uuid.UUIDString)")
-        self.readValueForCharacteristic()
-        self.reading = true
-        ++self.readSequence
-        self.timeoutRead(self.readSequence, timeout:parameters.timeout)
-        if let nextPromise = self.readPromises.first {
-            return future.flatmap {(_:Characteristic) -> Future<Characteristic> in
-                return self.readNext(nextPromise.future)
-            }
-        } else {
-            return promise.future
-        }
     }
     
-    private func shiftCharacteristicArray<T>(var array:[T]) -> T? {
+    private func shiftPromise(inout array:[Promise<Characteristic>]) -> Promise<Characteristic>? {
         return CharacteristicIO.queue.sync {
             if let item = array.first {
                 array.removeAtIndex(0)
