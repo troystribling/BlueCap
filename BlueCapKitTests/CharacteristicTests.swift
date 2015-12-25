@@ -220,37 +220,36 @@ class CharacteristicTests: XCTestCase {
         let future1 = characteristic.writeData("aa".dataFromHexString())
         let future2 = characteristic.writeData("bb".dataFromHexString())
         let future3 = characteristic.writeData("cc".dataFromHexString())
-        future1.onSuccess {_ in
+        let context = ImmediateContext()
+        future1.onSuccess(context) {_ in
             onSuccessExpectation1.fulfill()
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 2, "writeValue not called 2 times")
+            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "writeValue not called 2 times")
             XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
             if let data = self.mockPerpheral.writtenData {
-                XCTAssertEqual(data, "bb".dataFromHexString())
+                XCTAssertEqual(data, "aa".dataFromHexString())
            } else {
                 XCTAssert(false, "writeValue no data available")
             }
-            self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         }
-        future1.onFailure {error in
+        future1.onFailure(context) {error in
             XCTAssert(false, "onFailure called")
         }
-        future2.onSuccess {_ in
+        future2.onSuccess(context) {_ in
             onSuccessExpectation2.fulfill()
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 3, "writeValue not called 3 times")
+            XCTAssertEqual(self.mockPerpheral.writeValueCount, 2, "writeValue not called 3 times")
             XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
             if let data = self.mockPerpheral.writtenData {
-                XCTAssertEqual(data, "cc".dataFromHexString())
+                XCTAssertEqual(data, "bb".dataFromHexString())
             } else {
                 XCTAssert(false, "writeValue no data available")
             }
-            self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         }
-        future2.onFailure {error in
+        future2.onFailure(context) {error in
             XCTAssert(false, "onFailure called")
         }
-        future3.onSuccess {_ in
+        future3.onSuccess(context) {_ in
             onSuccessExpectation3.fulfill()
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 3, "writeValue not called 3 times")
@@ -261,9 +260,11 @@ class CharacteristicTests: XCTestCase {
                 XCTAssert(false, "writeValue no data available")
             }
         }
-        future3.onFailure {error in
+        future3.onFailure(context) {error in
             XCTAssert(false, "onFailure called")
         }
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         waitForExpectationsWithTimeout(10) {error in
             XCTAssertNil(error, "\(error)")
@@ -349,32 +350,33 @@ class CharacteristicTests: XCTestCase {
         let future1 = characteristic.read()
         let future2 = characteristic.read()
         let future3 = characteristic.read()
-        future1.onSuccess {_ in
+        let context = ImmediateContext()
+        future1.onSuccess(context) {_ in
             onSuccessExpectation1.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2, "readValue not called 2 times")
-            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "readValue not called 2 times")
         }
-        future1.onFailure {error in
+        future1.onFailure(context) {error in
             XCTAssert(false, "onFailure called")
         }
-        future2.onSuccess {_ in
+        future2.onSuccess(context) {_ in
             onSuccessExpectation2.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3, "readValue not called 3 times")
-            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2, "readValue not called 3 times")
         }
-        future2.onFailure {error in
+        future2.onFailure(context) {error in
             XCTAssert(false, "onFailure called")
         }
-        future3.onSuccess {_ in
+        future3.onSuccess(context) {_ in
             onSuccessExpectation3.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3, "readValue not called 3 times")
         }
-        future3.onFailure {error in
+        future3.onFailure(context) {error in
             XCTAssert(false, "onFailure called")
         }
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
