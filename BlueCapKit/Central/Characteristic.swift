@@ -34,6 +34,8 @@ public class Characteristic {
 
     private var readPromises    = [Promise<Characteristic>]()
     private var writePromises   = [Promise<Characteristic>]()
+    private var readParameters  = [ReadParameters]()
+    private var writeParameters = [WriteParameters]()
     
     private weak var _service : Service?
     
@@ -279,17 +281,25 @@ public class Characteristic {
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canRead {
-            return self.readNext(promise, parameters:ReadParameters(timeout:timeout))
+            CharacteristicIO.queue.sync {
+                self.readPromises.append(promise)
+                self.readParameters.append(ReadParameters(timeout:timeout))
+            }
+            self.readNext()
         } else {
             promise.failure(BCError.characteristicReadNotSupported)
-            return promise.future
         }
+        return promise.future
     }
 
     public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canWrite {
-            self.writeNext(promise, parameters:WriteParameters(value:value, timeout:timeout, type:type))
+            CharacteristicIO.queue.sync {
+                self.writePromises.append(promise)
+                self.writeParameters.append(WriteParameters(value:value, timeout:timeout, type:type))
+            }
+            self.writeNext()
         } else {
             promise.failure(BCError.characteristicWriteNotSupported)
         }
@@ -359,6 +369,7 @@ public class Characteristic {
             promise.success(self)
         }
         self.writing = false
+        self.writeNext()
     }
 
     private func didRead(error:NSError?) {
@@ -371,6 +382,7 @@ public class Characteristic {
             promise.success(self)
         }
         self.reading = false
+        self.readNext()
     }
 
 
@@ -421,58 +433,30 @@ public class Characteristic {
         self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:type)
     }
     
-    private func writeNext(promise:Promise<Characteristic>, parameters:WriteParameters) -> Future<Characteristic> {
-        guard self.writing == false else {
-            return self.pushWritePromise(promise, parameters:parameters)
+    private func writeNext() {
+        guard let parameters = self.writeParameters.first where self.writing == false else {
+            return
         }
         Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
+        self.writeParameters.removeAtIndex(0)
         self.writing = true
         self.writeValue(parameters.value, type:parameters.type)
         ++self.writeSequence
         self.timeoutWrite(self.writeSequence, timeout:parameters.timeout)
-        return self.pushWritePromise(promise, parameters:parameters)
     }
     
-    private func readNext(promise:Promise<Characteristic>, parameters:ReadParameters) -> Future<Characteristic> {
-        guard self.reading == false else {
-            return self.pushReadPromise(promise, parameters:parameters)
+    private func readNext() {
+        guard let parameters = self.readParameters.first where self.reading == false else {
+            return
         }
         Logger.debug("read characteristic \(self.uuid.UUIDString)")
+        self.readParameters.removeAtIndex(0)
         self.readValueForCharacteristic()
         self.reading = true
         ++self.readSequence
         self.timeoutRead(self.readSequence, timeout:parameters.timeout)
-        return self.pushReadPromise(promise, parameters:parameters)
     }
     
-    private func pushReadPromise(promise:Promise<Characteristic>, parameters:ReadParameters) -> Future<Characteristic> {
-        return CharacteristicIO.queue.sync() {
-            let nextPromise = self.readPromises.first
-            self.readPromises.append(promise)
-            if let nextPromise = nextPromise  {
-                return nextPromise.future.flatmap {(_:Characteristic) -> Future<Characteristic> in
-                    return self.readNext(promise, parameters:parameters)
-                }
-            } else {
-                return promise.future
-            }
-        }
-    }
-
-    private func pushWritePromise(promise:Promise<Characteristic>, parameters:WriteParameters) -> Future<Characteristic> {
-        return CharacteristicIO.queue.sync() {
-            let nextPromise = self.writePromises.first
-            self.writePromises.append(promise)
-            if  let nextPromise = nextPromise {
-                return nextPromise.future.flatmap {(_:Characteristic) -> Future<Characteristic> in
-                    return self.writeNext(promise, parameters:parameters)
-                }
-            } else {
-                return promise.future
-            }
-        }
-    }
-
     private func shiftPromise(inout promises:[Promise<Characteristic>]) -> Promise<Characteristic>? {
         return CharacteristicIO.queue.sync {
             if let item = promises.first {
