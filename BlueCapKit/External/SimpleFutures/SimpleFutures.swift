@@ -367,7 +367,7 @@ public protocol ExecutionContext {
 // Immediate Context
 public class ImmediateContext : ExecutionContext {
     
-    public init(){}
+    public init() {}
     
     public func execute(task:Void->Void) {
         task()
