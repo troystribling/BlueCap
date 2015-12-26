@@ -273,9 +273,7 @@ public class Characteristic {
     }
     
     public func stopNotificationUpdates() {
-        CharacteristicIO.queue.sync() {
-            self.notificationUpdatePromise = nil
-        }
+        self.notificationUpdatePromise = nil
     }
     
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
@@ -336,7 +334,7 @@ public class Characteristic {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
-    public func didUpdateNotificationState(error:NSError?) {
+    internal func didUpdateNotificationState(error:NSError?) {
         guard let notificationStateChangedPromise = self.notificationStateChangedPromise else {
             return
         }
@@ -349,7 +347,7 @@ public class Characteristic {
         }
     }
     
-    public func didUpdate(error:NSError?) {
+    internal func didUpdate(error:NSError?) {
         if self.isNotifying {
             self.didNotify(error)
         } else {
