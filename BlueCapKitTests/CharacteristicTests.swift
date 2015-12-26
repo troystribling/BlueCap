@@ -515,14 +515,14 @@ class CharacteristicTests: XCTestCase {
 
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<Characteristic> in
             let future = characteristic.recieveNotificationUpdates()
-            mockCharacteristic.value = "1".dataFromHexString()
+            mockCharacteristic.value = "11".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
         updateFuture.onSuccess {characteristic in
             updateOnSuccessExpectation.fulfill()
             if let value = characteristic.dataValue {
-                XCTAssertEqual(value, "1".dataFromHexString(), "characteristic value invalid")
+                XCTAssertEqual(value, "11".dataFromHexString(), "characteristic value invalid")
             } else {
                 XCTAssert(false, "characteristic value not set")
             }
@@ -553,16 +553,22 @@ class CharacteristicTests: XCTestCase {
         
         let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<Characteristic> in
             let future = characteristic.recieveNotificationUpdates()
-            mockCharacteristic.value = "0".dataFromHexString()
+            mockCharacteristic.value = "00".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-            mockCharacteristic.value = "0".dataFromHexString()
+            mockCharacteristic.value = "01".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
         updateFuture.onSuccess(ImmediateContext()) {characteristic in
-            updateOnSuccessExpectation.fulfill()
+            if updates == 0 {
+                updateOnSuccessExpectation.fulfill()
+            }
             if let value = characteristic.dataValue {
-                XCTAssertEqual(value, "\(updates)".dataFromHexString(), "characteristic value invalid")
+                let updateData = "0\(updates)".dataFromHexString()
+                print(value.hexStringValue())
+                print(updateData.hexStringValue())
+                print("\(updates)")
+                XCTAssertEqual(value, "0\(updates)".dataFromHexString(), "characteristic value invalid")
             } else {
                 XCTAssert(false, "characteristic value not set")
             }
