@@ -513,16 +513,16 @@ class CharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
 
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<Characteristic> in
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<NSData?> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
-        updateFuture.onSuccess {characteristic in
+        updateFuture.onSuccess {data in
             updateOnSuccessExpectation.fulfill()
-            if let value = characteristic.dataValue {
-                XCTAssertEqual(value, "11".dataFromHexString(), "characteristic value invalid")
+            if let data = data {
+                XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
             } else {
                 XCTAssert(false, "characteristic value not set")
             }
@@ -551,24 +551,28 @@ class CharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
         
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<Characteristic> in
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<NSData?> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "00".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             mockCharacteristic.value = "01".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+            mockCharacteristic.value = "02".dataFromHexString()
+            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+            mockCharacteristic.value = "03".dataFromHexString()
+            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+            mockCharacteristic.value = "04".dataFromHexString()
+            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+            mockCharacteristic.value = "05".dataFromHexString()
+            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
-        updateFuture.onSuccess(ImmediateContext()) {characteristic in
+        updateFuture.onSuccess {data in
             if updates == 0 {
                 updateOnSuccessExpectation.fulfill()
             }
-            if let value = characteristic.dataValue {
-                let updateData = "0\(updates)".dataFromHexString()
-                print(value.hexStringValue())
-                print(updateData.hexStringValue())
-                print("\(updates)")
-                XCTAssertEqual(value, "0\(updates)".dataFromHexString(), "characteristic value invalid")
+            if let data = data {
+                XCTAssertEqual(data, "0\(updates)".dataFromHexString(), "characteristic value invalid")
             } else {
                 XCTAssert(false, "characteristic value not set")
             }
@@ -643,7 +647,7 @@ class CharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
 
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<Characteristic> in
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<NSData?> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "0".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
@@ -651,12 +655,12 @@ class CharacteristicTests: XCTestCase {
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
-        updateFuture.onSuccess {characteristic in
+        updateFuture.onSuccess {data in
             if updates == 0 {
                 updateOnSuccessExpectation.fulfill()
                 ++updates
-                if let value = characteristic.dataValue {
-                    XCTAssertEqual(value, "0".dataFromHexString(), "")
+                if let data = data {
+                    XCTAssertEqual(data, "0".dataFromHexString(), "")
                 } else {
                     XCTAssert(false, "characteristic value not set")
                 }

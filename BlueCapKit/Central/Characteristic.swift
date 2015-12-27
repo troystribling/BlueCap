@@ -30,7 +30,7 @@ struct CharacteristicTimeout {
 public class Characteristic {
 
     private var _notificationStateChangedPromise : Promise<Characteristic>?
-    private var _notificationUpdatePromise : StreamPromise<Characteristic>?
+    private var _notificationUpdatePromise : StreamPromise<NSData?>?
 
     private var readPromises    = [Promise<Characteristic>]()
     private var writePromises   = [Promise<Characteristic>]()
@@ -111,7 +111,7 @@ public class Characteristic {
         }
     }
 
-    private var notificationUpdatePromise : StreamPromise<Characteristic>? {
+    private var notificationUpdatePromise : StreamPromise<NSData?>? {
         get {
             return CharacteristicIO.queue.sync {
                 return self._notificationUpdatePromise
@@ -184,6 +184,12 @@ public class Characteristic {
         }
     }
     
+    public required init(original:Characteristic) {
+        self.cbCharacteristic = original.cbCharacteristic.copy() as! CBCharacteristic
+        self._service = original.service
+        self.profile = original.profile
+    }
+
     public func stringValue(data:NSData?) -> [String:String]? {
         if let data = data {
             return self.profile.stringValue(data)
@@ -262,8 +268,8 @@ public class Characteristic {
         return promise.future
     }
 
-    public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic> {
-        let promise = StreamPromise<Characteristic>(capacity:capacity)
+    public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<NSData?> {
+        let promise = StreamPromise<NSData?>(capacity:capacity)
         if self.canNotify {
             self.notificationUpdatePromise = promise
         } else {
@@ -333,7 +339,7 @@ public class Characteristic {
     public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
-
+    
     internal func didUpdateNotificationState(error:NSError?) {
         guard let notificationStateChangedPromise = self.notificationStateChangedPromise else {
             return
@@ -391,7 +397,7 @@ public class Characteristic {
         if let error = error {
             notificationUpdatePromise.failure(error)
         } else {
-            notificationUpdatePromise.success(self)
+            notificationUpdatePromise.success(self.dataValue.flatmap{$0.copy() as? NSData})
         }
     }
     
