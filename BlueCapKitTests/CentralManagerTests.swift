@@ -101,8 +101,8 @@ class CentralManagerTests: XCTestCase {
             XCTAssert(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices not called")
             if let peripheral = centralManager.peripherals.first where centralManager.peripherals.count == 1 {
                 XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
-                XCTAssert(peripheral.name == peripheralMock.name, "Peripheral name is invalid")
-                XCTAssert(peripheral.identifier == peripheralMock.identifier, "Peripheral identifier is invalid")
+                XCTAssertEqual(peripheral.name, peripheralMock.name, "Peripheral name is invalid")
+                XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier is invalid")
             } else {
                 XCTAssert(false, "Discovered peripheral missing")
             }
