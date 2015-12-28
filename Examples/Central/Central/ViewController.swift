@@ -215,10 +215,10 @@ class ViewController: UITableViewController {
             }
         }
 
-        dataSubscriptionFuture.flatmap {characteristic -> FutureStream<Characteristic> in
+        dataSubscriptionFuture.flatmap {characteristic -> FutureStream<NSData?> in
             return characteristic.recieveNotificationUpdates(10)
-        }.onSuccess {characteristic in
-            self.updateData(characteristic)
+        }.onSuccess {data in
+            self.updateData(data)
         }
             
         // handle bluetooth power off
@@ -303,12 +303,12 @@ class ViewController: UITableViewController {
         }
     }
 
-    func updateData(characteristic:Characteristic) {
-        if let data : TISensorTag.AccelerometerService.Data = characteristic.value() {
-            self.xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
-            self.yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
-            self.zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
-            let rawValue = data.rawValue
+    func updateData(data:NSData?) {
+        if let data = data, accelerometerData : TISensorTag.AccelerometerService.Data = Serde.deserialize(data) {
+            self.xAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.x) as String
+            self.yAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.y) as String
+            self.zAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.z) as String
+            let rawValue = accelerometerData.rawValue
             self.xRawAccelerationLabel.text = "\(rawValue[0])"
             self.yRawAccelerationLabel.text = "\(rawValue[1])"
             self.zRawAccelerationLabel.text = "\(rawValue[2])"
