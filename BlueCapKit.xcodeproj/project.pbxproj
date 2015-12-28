@@ -62,6 +62,7 @@
 		05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* DoubleExtensions.swift */; };
 		05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* StringExtensions.swift */; };
 		05E2D0241AF5ECF100B34637 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0231AF5ECF100B34637 /* Mocks.swift */; };
+		4ED105C01C315C420034D5D2 /* UInt32Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED105BF1C315C420034D5D2 /* UInt32Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,7 @@
 		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		05D3B9441A2BA162008E794E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		05E2D0231AF5ECF100B34637 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
+		4ED105BF1C315C420034D5D2 /* UInt32Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt32Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -265,6 +267,7 @@
 				055120B619F5513700ED3B74 /* SerDe.swift */,
 				055120B819F5513700ED3B74 /* Uint8Extensions.swift */,
 				055120B719F5513700ED3B74 /* UInt16Extensions.swift */,
+				4ED105BF1C315C420034D5D2 /* UInt32Extensions.swift */,
 			);
 			path = SerDe;
 			sourceTree = "<group>";
@@ -499,6 +502,7 @@
 				058BA8BD1B139135005CF0FE /* SimpleFutures.swift in Sources */,
 				05BAEB001A9AA670003C0C1C /* LocationManager.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
+				4ED105C01C315C420034D5D2 /* UInt32Extensions.swift in Sources */,
 				055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
 				05BAEAFB1A9AA670003C0C1C /* Beacon.swift in Sources */,
