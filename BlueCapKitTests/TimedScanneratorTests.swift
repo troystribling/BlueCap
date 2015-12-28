@@ -50,7 +50,7 @@ class TimedScanneratorTests: XCTestCase {
             XCTAssert(false, "onSuccess called")
         }
         future.onFailure {error in
-            XCTAssert(PeripheralError.DiscoveryTimeout.rawValue == error.code, "onFailure error invalid \(error.code)")
+            XCTAssertEqual(PeripheralError.DiscoveryTimeout.rawValue, error.code, "onFailure error invalid")
             onFailureExpectation.fulfill()
         }
         waitForExpectationsWithTimeout(10) {error in
