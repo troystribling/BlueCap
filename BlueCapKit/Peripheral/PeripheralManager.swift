@@ -12,7 +12,6 @@ import CoreBluetooth
 ///////////////////////////////////////////
 // PeripheralManagerImpl
 public protocol CBPeripheralManagerWrappable {
-    
     var isAdvertising   : Bool                      {get}
     var state           : CBPeripheralManagerState  {get}
     

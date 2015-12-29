@@ -203,3 +203,52 @@ class CBCharacteristicMock : CBMutableCharacteristic {
     
 }
 
+class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
+
+    var updateValueReturn       = true
+    
+    var startAdvertisingCalled  = false
+    var stopAdvertisingCalled   = false
+    var addServiceCalled        = false
+    var removeServiceCalled     = false
+    var removeAllServicesCalled = false
+    var respondToRequestCalled  = false
+    var updateValueCalled       = false
+    
+    let isAdvertising  : Bool
+    let state : CBPeripheralManagerState
+    
+    init(isAdvertising:Bool, state:CBPeripheralManagerState) {
+        self.isAdvertising = isAdvertising
+        self.state = state
+    }
+    
+    func startAdvertising(advertisementData:[String:AnyObject]?) {
+        self.startAdvertisingCalled = true
+    }
+    
+    func stopAdvertising() {
+        self.stopAdvertisingCalled = true
+    }
+    
+    func addService(service:CBMutableService) {
+        self.addServiceCalled = true
+    }
+    
+    func removeService(service:CBMutableService) {
+        self.removeServiceCalled = true
+    }
+    
+    func removeAllServices() {
+        self.removeAllServicesCalled = true
+    }
+    
+    func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
+        self.respondToRequestCalled = true
+    }
+    
+    func updateValue(value:NSData, forCharacteristic characteristic:CBMutableCharacteristic, onSubscribedCentrals centrals:[CBCentral]?) -> Bool {
+        self.updateValueCalled = true
+        return self.updateValueReturn
+    }
+}
