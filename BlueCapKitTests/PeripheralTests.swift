@@ -40,8 +40,8 @@ class PeripheralTests: XCTestCase {
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
             let discoveredServices = peripheral.services
-            XCTAssert(discoveredServices.count == 2, "Peripheral service count invalid")
-            XCTAssert(mockPeripheral.discoverServicesCalledCount == 1, "CBPeripheral#discoverServices called more than once")
+            XCTAssertEqual(discoveredServices.count, 2, "Peripheral service count invalid")
+            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1, "CBPeripheral#discoverServices called more than once")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
@@ -64,9 +64,9 @@ class PeripheralTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
+            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
+            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1, "CBPeripheral#discoverServices called more than once")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
-            XCTAssert(mockPeripheral.discoverServicesCalledCount == 1, "CBPeripheral#discoverServices called more than once")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
         peripheral.didDiscoverServices([], error:TestFailure.error)
@@ -85,9 +85,9 @@ class PeripheralTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssert(error.code == BCError.peripheralDisconnected.code, "Error code invalid")
+            XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
+            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 0, "CBPeripheral#discoverServices called more than once")
             XCTAssertFalse(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices called")
-            XCTAssert(mockPeripheral.discoverServicesCalledCount == 0, "CBPeripheral#discoverServices called more than once")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
         waitForExpectationsWithTimeout(2) {error in
@@ -103,7 +103,7 @@ class PeripheralTests: XCTestCase {
         future.onSuccess {_ in
             onSuccessExpectation.fulfill()
             let discoveredServices = peripheral.services
-            XCTAssert(discoveredServices.count == 2, "Peripheral service count invalid")
+            XCTAssertEqual(discoveredServices.count, 2, "Peripheral service count invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
         }
         future.onFailure {error in
@@ -125,7 +125,7 @@ class PeripheralTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
+            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
         }
         peripheral.didDiscoverServices(self.mockServices, error:TestFailure.error)
@@ -144,7 +144,7 @@ class PeripheralTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
+            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
         }
         peripheral.didDiscoverServices(self.mockServices, error:nil)
@@ -163,8 +163,8 @@ class PeripheralTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssert(error.domain == BCError.domain, "message domain invalid")
-            XCTAssert(error.code == PeripheralError.NoServices.rawValue, "message code invalid")
+            XCTAssertEqual(error.domain, BCError.domain, "message domain invalid")
+            XCTAssertEqual(error.code, PeripheralError.NoServices.rawValue, "message code invalid")
         }
         peripheral.didDiscoverServices([], error:nil)
         waitForExpectationsWithTimeout(20) {error in
