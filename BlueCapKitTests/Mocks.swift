@@ -215,8 +215,8 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
     var respondToRequestCalled  = false
     var updateValueCalled       = false
     
-    let isAdvertising  : Bool
-    let state : CBPeripheralManagerState
+    var isAdvertising  : Bool
+    var state : CBPeripheralManagerState
     
     init(isAdvertising:Bool, state:CBPeripheralManagerState) {
         self.isAdvertising = isAdvertising
