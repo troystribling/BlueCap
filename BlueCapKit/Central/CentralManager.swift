@@ -129,6 +129,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         if self._isScanning {
             self._isScanning = false
             self.cbCentralManager.stopScan()
+
+            // Reset the promise as it holds references to the CBPeripherals that are discovered
+            self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
         }
     }
     
