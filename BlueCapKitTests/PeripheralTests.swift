@@ -14,17 +14,19 @@ import BlueCapKit
 
 class PeripheralTests: XCTestCase {
 
-    var centralManager : CentralManagerUT!
-    var mockServices = [CBServiceMock]()
-    var mockCharateristics = [CBCharacteristicMock]()
+    var centralManager      = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
+    let mockServices        = [CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
+                               CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))]
+
+    var mockCharateristics  = [CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.Read, .Write],
+                                                    permissions:[.Readable, .Writeable], isNotifying:false),
+                               CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.Read, .Write],
+                                                    permissions:[.Readable, .Writeable], isNotifying:false),
+                               CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.Read, .Write],
+                                                    permissions:[.Readable, .Writeable], isNotifying:false)
+    ]
     
     override func setUp() {
-        self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
-        self.mockServices.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")))
-        self.mockServices.append(CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff")))
-        self.mockCharateristics.append(CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.Read, .Write], permissions:[.Readable, .Writeable], isNotifying:false))
-        self.mockCharateristics.append(CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.Read, .Write], permissions:[.Readable, .Writeable], isNotifying:false))
-        self.mockCharateristics.append(CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.Read, .Write], permissions:[.Readable, .Writeable], isNotifying:false))
         super.setUp()
     }
     

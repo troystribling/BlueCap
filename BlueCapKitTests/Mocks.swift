@@ -159,8 +159,8 @@ class PeripheralUT : Peripheral {
 
 class CBServiceMock : CBMutableService {
     
-    init(UUID:CBUUID = CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
-        super.init(type: UUID, primary:true)
+    init(UUID:CBUUID = CBUUID(string: "2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
+        super.init(type: UUID, primary: true)
     }
     
 }
@@ -214,7 +214,8 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
     var removeAllServicesCalled = false
     var respondToRequestCalled  = false
     var updateValueCalled       = false
-    
+
+    var advertisementData:[String:AnyObject]?
     var isAdvertising  : Bool
     var state : CBPeripheralManagerState
     
@@ -225,6 +226,7 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
     
     func startAdvertising(advertisementData:[String:AnyObject]?) {
         self.startAdvertisingCalled = true
+        self.advertisementData = advertisementData
     }
     
     func stopAdvertising() {
