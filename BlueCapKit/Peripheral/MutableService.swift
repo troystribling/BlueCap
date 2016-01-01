@@ -11,7 +11,13 @@ import CoreBluetooth
 
 public class MutableService : NSObject {
 
-    // MutableServiceWrappable
+    private var _characteristics : [MutableCharacteristic] = []
+    private let profile : ServiceProfile
+
+    internal weak var peripheralManager : PeripheralManager?
+
+    public let cbMutableService : CBMutableService
+
     public var uuid : CBUUID {
         return self.profile.uuid
     }
@@ -19,13 +25,7 @@ public class MutableService : NSObject {
     public var name : String {
         return self.profile.name
     }
-
-    private var _characteristics : [MutableCharacteristic] = []
-    private let profile : ServiceProfile
-
-    internal let cbMutableService : CBMutableService
-    internal weak var peripheralManager : PeripheralManager?
-
+    
     public var characteristics : [MutableCharacteristic] {
         get {
             return self._characteristics
@@ -40,7 +40,7 @@ public class MutableService : NSObject {
         }
     }
     
-    public init(profile:ServiceProfile, peripheralManager:PeripheralManager) {
+    public init(profile: ServiceProfile, peripheralManager:PeripheralManager) {
         self.profile = profile
         self.peripheralManager = peripheralManager
         self.cbMutableService = CBMutableService(type:self.profile.uuid, primary:true)

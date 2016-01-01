@@ -9,19 +9,17 @@
 import Foundation
 import CoreBluetooth
 
-///////////////////////////////////////////
-// PeripheralManagerImpl
 public protocol CBPeripheralManagerWrappable {
     var isAdvertising   : Bool                      {get}
     var state           : CBPeripheralManagerState  {get}
     
     func startAdvertising(advertisementData:[String:AnyObject]?)
     func stopAdvertising()
-    func addService(service:CBMutableService)
-    func removeService(service:CBMutableService)
+    func addService(service: CBMutableService)
+    func removeService(service: CBMutableService)
     func removeAllServices()
-    func respondToRequest(request:CBATTRequest, withResult result:CBATTError)
-    func updateValue(value:NSData, forCharacteristic characteristic:CBMutableCharacteristic, onSubscribedCentrals centrals:[CBCentral]?) -> Bool
+    func respondToRequest(request: CBATTRequest, withResult result: CBATTError)
+    func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool
 }
 
 extension CBPeripheralManager : CBPeripheralManagerWrappable {}
@@ -31,6 +29,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Double                  = 0.25
 
     private var _name : String?
+    private var cbPeripheralManager : CBPeripheralManagerWrappable!
     
     private var afterAdvertisingStartedPromise                                          = Promise<Void>()
     private var afterAdvertsingStoppedPromise                                           = Promise<Void>()
@@ -40,7 +39,6 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
 
     internal var configuredServices  : [CBUUID:MutableService]                          = [:]
     internal var configuredCharcteristics : [CBCharacteristic:MutableCharacteristic]    = [:]
-    private var cbPeripheralManager : CBPeripheralManagerWrappable!
 
     public let peripheralQueue : Queue
     
@@ -338,7 +336,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    private func addServices(promise: Promise<Void>, services: [MutableService]) {
+    public func addServices(promise: Promise<Void>, services: [MutableService]) {
         if services.count > 0 {
             let future = self.addService(services[0])
             future.onSuccess {

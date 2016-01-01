@@ -508,7 +508,7 @@ class CharacteristicTests: XCTestCase {
         startNotifyingFuture.onSuccess{_ in
             startNotifyingOnSuccessExpectation.fulfill()
         }
-        startNotifyingFuture.onFailure{_ in
+        startNotifyingFuture.onFailure {_ in
             XCTAssert(false, "start notifying onFailure called")
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
@@ -546,7 +546,7 @@ class CharacteristicTests: XCTestCase {
         startNotifyingFuture.onSuccess{_ in
             startNotifyingOnSuccessExpectation.fulfill()
         }
-        startNotifyingFuture.onFailure{_ in
+        startNotifyingFuture.onFailure {_ in
             XCTAssert(false, "start notifying onFailure called")
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
@@ -642,7 +642,7 @@ class CharacteristicTests: XCTestCase {
         startNotifyingFuture.onSuccess{_ in
             startNotifyingOnSuccessExpectation.fulfill()
         }
-        startNotifyingFuture.onFailure{_ in
+        startNotifyingFuture.onFailure {_ in
             XCTAssert(false, "start notifying onFailure called")
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)

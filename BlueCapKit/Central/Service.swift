@@ -16,9 +16,10 @@ public class Service {
     internal var discoveredCharacteristics          = [CBUUID:Characteristic]()
     private var _characteristicsDiscoveredPromise   = Promise<Service>()
 
-    internal let cbService : CBService
     private weak var _peripheral : Peripheral?
     
+    public let cbService : CBService
+
     public var characteristicsDiscoveredPromise : Promise<Service> {
         return self._characteristicsDiscoveredPromise
     }

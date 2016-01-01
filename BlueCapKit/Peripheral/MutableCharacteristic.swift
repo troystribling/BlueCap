@@ -11,16 +11,14 @@ import CoreBluetooth
 
 public class MutableCharacteristic {
 
-    private let profile  : CharacteristicProfile!
+    private let profile  : CharacteristicProfile
     private var _hasSubscriber   = false
     private var _isUpdating      = false
 
-    internal let cbMutableChracteristic : CBMutableCharacteristic!
     internal var processWriteRequestPromise : StreamPromise<CBATTRequest>?
     internal weak var service : MutableService?
     
-    // MutableCharacteristicWrappable
-    
+    public let cbMutableChracteristic : CBMutableCharacteristic
     public var value : NSData?
 
     public var uuid : CBUUID {

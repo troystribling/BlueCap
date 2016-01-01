@@ -24,11 +24,11 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
     var scanForPeripheralsWithServicesCalled = false
     var stopScanCalled = false
     
-    init(state:CBCentralManagerState = .PoweredOn) {
+    init(state: CBCentralManagerState = .PoweredOn) {
         self.state = state
     }
     
-    func scanForPeripheralsWithServices(uuids:[CBUUID]?, options:[String:AnyObject]?) {
+    func scanForPeripheralsWithServices(uuids: [CBUUID]?, options:[ String:AnyObject]?) {
         self.scanForPeripheralsWithServicesCalled = true
     }
     
@@ -36,10 +36,10 @@ class CBCentralManagerMock : CBCentralManagerWrappable {
         self.stopScanCalled = true
     }
     
-    func connectPeripheral(peripheral:CBPeripheral, options:[String:AnyObject]?) {
+    func connectPeripheral(peripheral: CBPeripheral, options: [String:AnyObject]?) {
     }
     
-    func cancelPeripheralConnection(peripheral:CBPeripheral) {
+    func cancelPeripheralConnection(peripheral: CBPeripheral) {
     }
     
 }
@@ -49,11 +49,11 @@ class CentralManagerUT : CentralManager {
     var connectPeripheralCalled     = false
     var cancelPeripheralConnection  = false
     
-    override func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
+    override func connectPeripheral(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
         self.connectPeripheralCalled = true
     }
     
-    override func cancelPeripheralConnection(peripheral:Peripheral) {
+    override func cancelPeripheralConnection(peripheral: Peripheral) {
         peripheral.didDisconnectPeripheral()
         self.cancelPeripheralConnection = true
     }
@@ -107,28 +107,28 @@ class CBPeripheralMock : CBPeripheralWrappable {
         return nil
     }
     
-    func discoverServices(services:[CBUUID]?) {
+    func discoverServices(services: [CBUUID]?) {
         self.discoverServicesCalled = true
         self.discoverServicesCalledCount++
     }
     
-    func discoverCharacteristics(characteristics:[CBUUID]?, forService:CBService) {
+    func discoverCharacteristics(characteristics: [CBUUID]?, forService: CBService) {
         self.discoverCharacteristicsCalled = true
         self.discoverCharacteristicsCalledCount++
     }
     
-    func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic) {
+    func setNotifyValue(state: Bool, forCharacteristic: CBCharacteristic) {
         self.setNotifyValueCalled = true
         self.setNotifyValueCount++
         self.notifyingState = state
     }
     
-    func readValueForCharacteristic(characteristic:CBCharacteristic) {
+    func readValueForCharacteristic(characteristic: CBCharacteristic) {
         self.readValueForCharacteristicCount++
         self.readValueForCharacteristicCalled = true
     }
     
-    func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType) {
+    func writeValue(data:NSData, forCharacteristic: CBCharacteristic, type: CBCharacteristicWriteType) {
         self.writeValueCount++
         self.writeValueCalled = true
         self.writtenData = data
@@ -141,12 +141,12 @@ class PeripheralUT : Peripheral {
     
     let error:NSError?
     
-    init(cbPeripheral:CBPeripheralWrappable, centralManager:CentralManager, advertisements:[String:AnyObject], rssi:Int, error:NSError?) {
+    init(cbPeripheral: CBPeripheralWrappable, centralManager: CentralManager, advertisements: [String:AnyObject], rssi: Int, error: NSError?) {
         self.error = error
-        super.init(cbPeripheral:cbPeripheral, centralManager:centralManager, advertisements:advertisements, rssi:rssi)
+        super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, rssi: rssi)
     }
     
-    override func discoverService(head:Service, tail:[Service], promise:Promise<Peripheral>) {
+    override func discoverService(head: Service, tail: [Service], promise: Promise<Peripheral>) {
         if let error = self.error {
             promise.failure(error)
         } else {
@@ -170,7 +170,7 @@ class ServiceUT : Service {
     let error : NSError?
     let mockCharacteristics : [CBCharacteristic]
     
-    init(cbService:CBServiceMock, peripheral:Peripheral, mockCharacteristics:[CBCharacteristic], error:NSError?) {
+    init(cbService: CBServiceMock, peripheral: Peripheral, mockCharacteristics: [CBCharacteristic], error: NSError?) {
         self.error = error
         self.mockCharacteristics = mockCharacteristics
         cbService.characteristics = mockCharacteristics
@@ -196,8 +196,8 @@ class CBCharacteristicMock : CBMutableCharacteristic {
         }
     }
 
-    init (UUID:CBUUID, properties:CBCharacteristicProperties, permissions:CBAttributePermissions, isNotifying:Bool) {
-        super.init(type:UUID, properties:properties, value:nil, permissions:permissions)
+    init (UUID: CBUUID, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, isNotifying: Bool) {
+        super.init(type: UUID, properties: properties, value: nil, permissions: permissions)
         self._isNotifying = isNotifying
     }
     
@@ -215,16 +215,21 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
     var respondToRequestCalled  = false
     var updateValueCalled       = false
 
-    var advertisementData:[String:AnyObject]?
+    var advertisementData : [String:AnyObject]?
     var isAdvertising  : Bool
     var state : CBPeripheralManagerState
+    var addedService : CBMutableService?
+    var removedService : CBMutableService?
     
-    init(isAdvertising:Bool, state:CBPeripheralManagerState) {
+    var removeServiceCount = 0
+    var addServiceCount = 0
+    
+    init(isAdvertising: Bool, state: CBPeripheralManagerState) {
         self.isAdvertising = isAdvertising
         self.state = state
     }
     
-    func startAdvertising(advertisementData:[String:AnyObject]?) {
+    func startAdvertising(advertisementData: [String:AnyObject]?) {
         self.startAdvertisingCalled = true
         self.advertisementData = advertisementData
     }
@@ -233,24 +238,40 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
         self.stopAdvertisingCalled = true
     }
     
-    func addService(service:CBMutableService) {
+    func addService(service: CBMutableService) {
         self.addServiceCalled = true
+        self.addedService = service
+        self.addServiceCount++
     }
     
-    func removeService(service:CBMutableService) {
+    func removeService(service: CBMutableService) {
         self.removeServiceCalled = true
+        self.removedService = service
+        self.removeServiceCount++
     }
     
     func removeAllServices() {
         self.removeAllServicesCalled = true
     }
     
-    func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
+    func respondToRequest(request: CBATTRequest, withResult result: CBATTError) {
         self.respondToRequestCalled = true
     }
     
-    func updateValue(value:NSData, forCharacteristic characteristic:CBMutableCharacteristic, onSubscribedCentrals centrals:[CBCentral]?) -> Bool {
+    func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool {
         self.updateValueCalled = true
         return self.updateValueReturn
+    }
+}
+
+class PeripheralManagerUT : PeripheralManager {
+    
+    var error : NSError?
+    
+    override func addServices(promise: Promise<Void>, services: [MutableService]) {
+        super.addServices(promise, services: services)
+        if let service = services.first {
+            self.didAddService(service.cbMutableService, error: self.error)
+        }
     }
 }

@@ -47,7 +47,7 @@ public class Characteristic {
     private var _writeSequence  = 0
     private let defaultTimeout  = 10.0
 
-    internal let cbCharacteristic : CBCharacteristic
+    public let cbCharacteristic : CBCharacteristic
     
     public var uuid : CBUUID {
         return self.cbCharacteristic.UUID

@@ -77,7 +77,7 @@ class MutableCharacteristicTests: XCTestCase {
 //        future.onSuccess {_ in
 //            expectation.fulfill()
 //        }
-//        future.onFailure{error in
+//        future.onFailure {error in
 //            XCTAssert(false, "onFailure called")
 //        }
 //        PeripheralQueue.sync {
@@ -95,7 +95,7 @@ class MutableCharacteristicTests: XCTestCase {
 //        future.onSuccess {_ in
 //            XCTAssert(false, "onSuccess called")
 //        }
-//        future.onFailure{error in
+//        future.onFailure {error in
 //            XCTAssert(false, "onFailure called")
 //        }
 //        mock.impl.didRespondToWriteRequest(RequestMock())

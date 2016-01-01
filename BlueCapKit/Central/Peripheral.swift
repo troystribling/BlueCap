@@ -129,8 +129,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     internal var timeoutRetries : UInt?
     internal var disconnectRetries : UInt?
     internal weak var centralManager : CentralManager?
-    internal let cbPeripheral : CBPeripheralWrappable
     
+    public let cbPeripheral : CBPeripheralWrappable
     public let advertisements : PeripheralAdvertisements
     public let rssi : Int
 
@@ -266,7 +266,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
                 }
             }
         }
-        servicesDiscoveredFuture.onFailure{(error) in
+        servicesDiscoveredFuture.onFailure {(error) in
             peripheralDiscoveredPromise.failure(error)
         }
         return peripheralDiscoveredPromise.future

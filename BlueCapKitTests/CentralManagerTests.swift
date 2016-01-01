@@ -30,7 +30,7 @@ class CentralManagerTests: XCTestCase {
         future.onSuccess {
             expectation.fulfill()
         }
-        future.onFailure{error in
+        future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
@@ -46,7 +46,7 @@ class CentralManagerTests: XCTestCase {
         future.onSuccess {
             expectation.fulfill()
         }
-        future.onFailure{error in
+        future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
         mock.state = .PoweredOn
@@ -64,7 +64,7 @@ class CentralManagerTests: XCTestCase {
         future.onSuccess {
             expectation.fulfill()
         }
-        future.onFailure{error in
+        future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
         mock.state = .PoweredOff
@@ -82,7 +82,7 @@ class CentralManagerTests: XCTestCase {
         future.onSuccess {
             expectation.fulfill()
         }
-        future.onFailure{error in
+        future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
@@ -107,7 +107,7 @@ class CentralManagerTests: XCTestCase {
                 XCTAssert(false, "Discovered peripheral missing")
             }
         }
-        future.onFailure{error in
+        future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData:peripheralAdvertisements, RSSI:NSNumber(integer: -45))
@@ -124,7 +124,7 @@ class CentralManagerTests: XCTestCase {
         future.onSuccess {_ in
             XCTAssert(false, "onSuccess called")
         }
-        future.onFailure{error in
+        future.onFailure {error in
             expectation.fulfill()
             XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices is called")
             XCTAssert(error.code == BCError.centralIsPoweredOff.code, "Error code invalid")
