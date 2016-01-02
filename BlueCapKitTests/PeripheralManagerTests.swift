@@ -318,7 +318,7 @@ class PeripheralManagerTests: XCTestCase {
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
         }
-        waitForExpectationsWithTimeout(200) {error in
+        waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -414,12 +414,13 @@ class PeripheralManagerTests: XCTestCase {
     }
     
     func testRemoveServiceWhenAdvertising() {
-        let (mock, peripheralManager) = self.createPeripheral(true, state: .PoweredOn)
+        let (mock, peripheralManager) = self.createPeripheral(false, state: .PoweredOn)
         let services = self.createServices(peripheralManager)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let addServicesFuture = peripheralManager.addServices(services)
-        let removeServiceFuture = addServicesFuture.flatmap {
-            peripheralManager.removeService(services[0])
+        let removeServiceFuture = addServicesFuture.flatmap { Void -> Future<Void> in
+            mock.isAdvertising = true
+            return peripheralManager.removeService(services[0])
         }
         removeServiceFuture.onSuccess {
             XCTAssert(false, "onSuccess called")
@@ -447,9 +448,8 @@ class PeripheralManagerTests: XCTestCase {
         removeServiceFuture.onSuccess {
             expectation.fulfill()
             let peripheralServices = peripheralManager.services
-            XCTAssert(mock.removeServiceCalled, "removeService not called")
+            XCTAssert(mock.removeAllServicesCalled, "removeAllServices not called")
             XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
-            XCTAssertEqual(mock.removeServiceCount, 2, "removeServices not called 2 times")
         }
         removeServiceFuture.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -460,12 +460,13 @@ class PeripheralManagerTests: XCTestCase {
     }
     
     func testRemoveAllServicseWhenAdvertising() {
-        let (mock, peripheralManager) = self.createPeripheral(true, state: .PoweredOn)
+        let (mock, peripheralManager) = self.createPeripheral(false, state: .PoweredOn)
         let services = self.createServices(peripheralManager)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let addServicesFuture = peripheralManager.addServices(services)
-        let removeServiceFuture = addServicesFuture.flatmap {
-            peripheralManager.removeAllServices()
+        let removeServiceFuture = addServicesFuture.flatmap { Void -> Future<Void> in
+            mock.isAdvertising = true
+            return peripheralManager.removeAllServices()
         }
         removeServiceFuture.onSuccess {
             XCTAssert(false, "onSuccess called")

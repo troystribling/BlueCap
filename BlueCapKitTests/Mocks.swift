@@ -232,10 +232,12 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
     func startAdvertising(advertisementData: [String:AnyObject]?) {
         self.startAdvertisingCalled = true
         self.advertisementData = advertisementData
+        self.isAdvertising = true
     }
     
     func stopAdvertising() {
         self.stopAdvertisingCalled = true
+        self.isAdvertising = false
     }
     
     func addService(service: CBMutableService) {

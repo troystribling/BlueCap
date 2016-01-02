@@ -294,13 +294,13 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         switch self.state {
         case CBPeripheralManagerState.PoweredOn:
             Logger.debug("poweredOn")
-            if !self.afterPowerOnPromise.completed {
+            if self.afterPowerOnPromise.completed == false {
                 self.afterPowerOnPromise.success()
             }
             break
         case CBPeripheralManagerState.PoweredOff:
             Logger.debug("poweredOff")
-            if !self.afterPowerOffPromise.completed {
+            if self.afterPowerOffPromise.completed == false {
                 self.afterPowerOffPromise.success()
             }
             break
