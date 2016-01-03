@@ -16,7 +16,7 @@ public class MutableCharacteristic {
     private var _isUpdating      = false
 
     internal var processWriteRequestPromise : StreamPromise<CBATTRequest>?
-    internal weak var service : MutableService?
+    internal weak var _service : MutableService?
     
     public let cbMutableChracteristic : CBMutableCharacteristic
     public var value : NSData?
@@ -44,20 +44,28 @@ public class MutableCharacteristic {
     public var hasSubscriber : Bool {
         return self._hasSubscriber
     }
-
-    public init(profile:CharacteristicProfile) {
-        self.profile = profile
-        self.value = profile.initialValue
-        self.cbMutableChracteristic = CBMutableCharacteristic(type:profile.uuid, properties:profile.properties, value:nil, permissions:profile.permissions)
+    
+    public var isUpdating : Bool {
+        return self._isUpdating
+    }
+    
+    public var service : MutableService? {
+        return self._service
     }
 
-    public init(uuid:String, properties:CBCharacteristicProperties, permissions:CBAttributePermissions, value:NSData?) {
+    public init(profile: CharacteristicProfile) {
+        self.profile = profile
+        self.value = profile.initialValue
+        self.cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
+    }
+
+    public init(uuid: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: NSData?) {
         self.profile = CharacteristicProfile(uuid:uuid)
         self.value = value
         self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
     }
 
-    public convenience init(uuid:String) {
+    public convenience init(uuid:String, service: MutableService) {
         self.init(profile:CharacteristicProfile(uuid:uuid))
     }
 
@@ -77,31 +85,34 @@ public class MutableCharacteristic {
         }
     }
     
-    public func dataFromStringValue(stringValue:[String:String]) -> NSData? {
+    public func dataFromStringValue(stringValue: [String:String]) -> NSData? {
         return self.profile.dataFromStringValue(stringValue)
     }
     
-    public func updateValueWithData(value:NSData) -> Bool  {
+    public func updateValueWithData(value: NSData) -> Bool  {
         self.value = value
-        if self._isUpdating &&
+        if let peripheralManager = self.service?.peripheralManager where self._isUpdating &&
                 (self.propertyEnabled(.Notify)                    ||
                  self.propertyEnabled(.Indicate)                  ||
                  self.propertyEnabled(.NotifyEncryptionRequired)  ||
                  self.propertyEnabled(.IndicateEncryptionRequired)) {
-            self._isUpdating = PeripheralManager.sharedInstance.updateValue(value, forCharacteristic:self)
+            
+            self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
+        } else {
+            self._isUpdating = false
         }
         return self._isUpdating
     }
     
-    public func respondToWrappedRequest(request:CBATTRequest, withResult result:CBATTError) {
+    public func respondToWrappedRequest(request: CBATTRequest, withResult result:  CBATTError) {
         self.service?.peripheralManager?.respondToRequest(request, withResult:result)
     }
     
-    public class func withProfiles(profiles:[CharacteristicProfile]) -> [MutableCharacteristic] {
-        return profiles.map{MutableCharacteristic(profile:$0)}
+    public class func withProfiles(profiles: [CharacteristicProfile], service: MutableService) -> [MutableCharacteristic] {
+        return profiles.map{MutableCharacteristic(profile: $0)}
     }
         
-    public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest> {
+    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<CBATTRequest> {
         self.processWriteRequestPromise = StreamPromise<CBATTRequest>(capacity:capacity)
         return self.processWriteRequestPromise!.future
     }
@@ -110,7 +121,7 @@ public class MutableCharacteristic {
         self.processWriteRequestPromise = nil
     }
     
-    internal func didRespondToWriteRequest(request:CBATTRequest) -> Bool  {
+    internal func didRespondToWriteRequest(request: CBATTRequest) -> Bool  {
         if let processWriteRequestPromise = self.processWriteRequestPromise {
             processWriteRequestPromise.success(request)
             return true
@@ -135,7 +146,7 @@ public class MutableCharacteristic {
         }
     }
 
-    public func updateValueWithString(value:Dictionary<String, String>) -> Bool {
+    public func updateValueWithString(value: [String:String]) -> Bool {
         if let data = self.profile.dataFromStringValue(value) {
             return self.updateValueWithData(data)
         } else {
@@ -144,27 +155,27 @@ public class MutableCharacteristic {
         }
     }
     
-    public func respondToRequest(request:CBATTRequest, withResult result:CBATTError) {
+    public func respondToRequest(request: CBATTRequest, withResult result: CBATTError) {
         self.service?.peripheralManager?.respondToRequest(request, withResult:result)
     }
     
-    public func updateValue<T:Deserializable>(value:T) -> Bool {
+    public func updateValue<T:Deserializable>(value: T) -> Bool {
         return self.updateValueWithData(Serde.serialize(value))
     }
 
-    public func updateValue<T:RawDeserializable>(value:T) -> Bool  {
+    public func updateValue<T:RawDeserializable>(value: T) -> Bool  {
         return self.updateValueWithData(Serde.serialize(value))
     }
 
-    public func updateValue<T:RawArrayDeserializable>(value:T) -> Bool  {
+    public func updateValue<T:RawArrayDeserializable>(value: T) -> Bool  {
         return self.updateValueWithData(Serde.serialize(value))
     }
 
-    public func updateValue<T:RawPairDeserializable>(value:T) -> Bool  {
+    public func updateValue<T:RawPairDeserializable>(value: T) -> Bool  {
         return self.updateValueWithData(Serde.serialize(value))
     }
 
-    public func updateValue<T:RawArrayPairDeserializable>(value:T) -> Bool  {
+    public func updateValue<T:RawArrayPairDeserializable>(value: T) -> Bool  {
         return self.updateValueWithData(Serde.serialize(value))
     }
 

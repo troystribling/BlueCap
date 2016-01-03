@@ -184,12 +184,6 @@ public class Characteristic {
         }
     }
     
-    public required init(original:Characteristic) {
-        self.cbCharacteristic = original.cbCharacteristic.copy() as! CBCharacteristic
-        self._service = original.service
-        self.profile = original.profile
-    }
-
     public func stringValue(data:NSData?) -> [String:String]? {
         if let data = data {
             return self.profile.stringValue(data)

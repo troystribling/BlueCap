@@ -223,6 +223,7 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
     
     var removeServiceCount = 0
     var addServiceCount = 0
+    var updateValueCount = 0
     
     init(isAdvertising: Bool, state: CBPeripheralManagerState) {
         self.isAdvertising = isAdvertising
@@ -262,6 +263,7 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
     
     func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool {
         self.updateValueCalled = true
+        self.updateValueCount++
         return self.updateValueReturn
     }
 }
@@ -277,3 +279,14 @@ class PeripheralManagerUT : PeripheralManager {
         }
     }
 }
+
+func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerState) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
+    let mock = CBPeripheralManagerMock(isAdvertising: isAdvertising, state: state)
+    return (mock, PeripheralManagerUT(peripheralManager:mock))
+}
+
+func createPeripheralManagerServices(peripheral: PeripheralManager) -> [MutableService] {
+    let profileManager = ProfileManager.sharedInstance
+    return [MutableService(profile: profileManager.service[CBUUID(string: Gnosus.HelloWorldService.uuid)]!, peripheralManager: peripheral), MutableService(profile: profileManager.service[CBUUID(string: Gnosus.LocationService.uuid)]!, peripheralManager: peripheral)]
+}
+

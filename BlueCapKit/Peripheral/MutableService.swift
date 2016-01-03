@@ -33,7 +33,7 @@ public class MutableService : NSObject {
         set {
             self._characteristics = newValue
             let cbCharacteristics = self._characteristics.reduce([CBMutableCharacteristic]()) {(cbCharacteristics, characteristic) in
-                characteristic.service = self
+                characteristic._service = self
                 return cbCharacteristics + [characteristic.cbMutableChracteristic]
             }
             self.cbMutableService.characteristics = cbCharacteristics
@@ -51,8 +51,8 @@ public class MutableService : NSObject {
         self.init(profile:ServiceProfile(uuid:uuid), peripheralManager:peripheralManager)
     }
 
-    public func characteristicsFromProfiles(profiles:[CharacteristicProfile]) {
-        self.characteristics = profiles.map{MutableCharacteristic(profile:$0)}
+    public func characteristicsFromProfiles() {
+        self.characteristics = self.profile.characteristics.map{MutableCharacteristic(profile: $0)}
     }
     
 }

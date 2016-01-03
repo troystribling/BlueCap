@@ -62,6 +62,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return Array(self.configuredServices.values)
     }
     
+    public var characteristics : [MutableCharacteristic] {
+        return Array(self.configuredCharcteristics.values)
+    }
+    
     public func addWrappedService(service: MutableService) {
         self.configuredServices[service.uuid] = service
         self.cbPeripheralManager.addService(service.cbMutableService)
@@ -240,26 +244,15 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func peripheralManager(_: CBPeripheralManager, central: CBCentral, didSubscribeToCharacteristic characteristic: CBCharacteristic) {
-        Logger.debug()
-        if let characteristic = self.configuredCharcteristics[characteristic] {
-            characteristic.didSubscribeToCharacteristic()
-        }
+        self.didSubscribeToCharacteristic(characteristic)
     }
     
     public func peripheralManager(_: CBPeripheralManager, central: CBCentral, didUnsubscribeFromCharacteristic characteristic: CBCharacteristic) {
-        Logger.debug()
-        if let characteristic = self.configuredCharcteristics[characteristic] {
-            characteristic.didUnsubscribeFromCharacteristic()
-        }
+        self.didUnsubscribeFromCharacteristic(characteristic)
     }
     
     public func peripheralManagerIsReadyToUpdateSubscribers(_: CBPeripheralManager) {
-        Logger.debug()
-        for characteristic in self.configuredCharcteristics.values {
-            if characteristic.hasSubscriber {
-                characteristic.peripheralManagerIsReadyToUpdateSubscribers()
-            }
-        }
+        self.isReadyToUpdateSubscribers()
     }
     
     public func peripheralManager(_: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
@@ -286,6 +279,29 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 }
             } else {
                 Logger.debug("error writing characteristic \(request.characteristic.UUID.UUIDString) not found")
+            }
+        }
+    }
+    
+    public func didSubscribeToCharacteristic(characteristic: CBCharacteristic) {
+        Logger.debug()
+        if let characteristic = self.configuredCharcteristics[characteristic] {
+            characteristic.didSubscribeToCharacteristic()
+        }
+    }
+    
+    public func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristic) {
+        Logger.debug()
+        if let characteristic = self.configuredCharcteristics[characteristic] {
+            characteristic.didUnsubscribeFromCharacteristic()
+        }
+    }
+    
+    public func isReadyToUpdateSubscribers() {
+        Logger.debug()
+        for characteristic in self.configuredCharcteristics.values {
+            if characteristic.hasSubscriber {
+                characteristic.peripheralManagerIsReadyToUpdateSubscribers()
             }
         }
     }
