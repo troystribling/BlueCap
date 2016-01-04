@@ -168,18 +168,29 @@ class MutableCharacteristicTests: XCTestCase {
 
     func testStartRespondingToMultipleWriteRequestsSuccess() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        var writeCount = 0
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
-            let value = "aa".dataFromHexString()
-            let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
+            let values = ["aa".dataFromHexString(), "a1".dataFromHexString(), "a2".dataFromHexString(), "a3".dataFromHexString(), "a4".dataFromHexString(), "a5".dataFromHexString()]
+            let requestMocks = values.map{CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: $0)}
             let future = characteristic.startRespondingToWriteRequests()
-            future.onSuccess {_ in
-                expectation.fulfill()
+            future.onSuccess {request in
+                if writeCount == 0 {
+                    expectation.fulfill()
+                }
+                characteristic.respondToRequest(request, withResult: CBATTError.Success)
+                XCTAssertEqual(request.characteristic.UUID, characteristic.uuid, "characteristic UUID invalid")
+                XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
+                XCTAssertEqual(request.value, values[writeCount], "request value is invalid")
+                XCTAssert(peripheralManager.respondToRequestCalled, "respondoRequestNotCalled")
+                writeCount++
             }
             future.onFailure {error in
                 XCTAssert(false, "onFailure called")
             }
-            peripheralManager.didReceiveWriteRequest(request)
+            for requestMock in requestMocks {
+                peripheralManager.didReceiveWriteRequest(requestMock)
+            }
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -215,9 +226,15 @@ class MutableCharacteristicTests: XCTestCase {
     }
 
     func testRespondToReadRequestSuccess() {
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+            let characteristic = peripheralManager.characteristics[0]
+        }
     }
     
     func testRespondToReadRequestFailure() {
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+            let characteristic = peripheralManager.characteristics[0]
+        }
     }
 
 }
