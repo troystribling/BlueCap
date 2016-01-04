@@ -10,8 +10,8 @@ import Foundation
 import CoreBluetooth
 
 public protocol CBPeripheralManagerWrappable {
-    var isAdvertising   : Bool                      {get}
-    var state           : CBPeripheralManagerState  {get}
+    var isAdvertising   : Bool                      { get }
+    var state           : CBPeripheralManagerState  { get }
     
     func startAdvertising(advertisementData:[String:AnyObject]?)
     func stopAdvertising()
@@ -22,7 +22,14 @@ public protocol CBPeripheralManagerWrappable {
     func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool
 }
 
+public protocol CBATTRequestWrappable {
+    var characteristic: CBCharacteristic { get }
+    var offset: Int { get }
+    var value: NSData? { get }
+}
+
 extension CBPeripheralManager : CBPeripheralManagerWrappable {}
+extension CBATTRequest : CBATTRequestWrappable {}
 
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
@@ -38,7 +45,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private var afterSeriviceAddPromise                                                 = Promise<Void>()
 
     internal var configuredServices  : [CBUUID:MutableService]                          = [:]
-    internal var configuredCharcteristics : [CBCharacteristic:MutableCharacteristic]    = [:]
+    internal var configuredCharcteristics : [CBUUID:MutableCharacteristic]              = [:]
 
     public let peripheralQueue : Queue
     
@@ -223,8 +230,10 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return self.cbPeripheralManager.updateValue(value, forCharacteristic:characteristic.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
-    public func respondToRequest(request: CBATTRequest, withResult result: CBATTError) {
-        self.cbPeripheralManager.respondToRequest(request, withResult:result)
+    public func respondToRequest(request: CBATTRequestWrappable, withResult result: CBATTError) {
+        if let request = request as? CBATTRequest {
+            self.cbPeripheralManager.respondToRequest(request, withResult:result)
+        }
     }
 
     // CBPeripheralManagerDelegate
@@ -256,43 +265,26 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func peripheralManager(_: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
-        Logger.debug("chracteracteristic \(request.characteristic.UUID)")
-        if let characteristic = self.configuredCharcteristics[request.characteristic] {
-            Logger.debug("responding with data: \(characteristic.stringValue)")
-            request.value = characteristic.value
-            self.cbPeripheralManager.respondToRequest(request, withResult:CBATTError.Success)
-        } else {
-            Logger.debug("characteristic not found")
-            self.cbPeripheralManager.respondToRequest(request, withResult:CBATTError.AttributeNotFound)
-        }
+        self.didReceiveReadRequest(request)
     }
     
     public func peripheralManager(_: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
         Logger.debug()
         for request in requests {
-            if let characteristic = self.configuredCharcteristics[request.characteristic] {
-                Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
-                if characteristic.didRespondToWriteRequest(request) {
-                    characteristic.value = request.value
-                } else {
-                    characteristic.respondToRequest(request, withResult:CBATTError.WriteNotPermitted)
-                }
-            } else {
-                Logger.debug("error writing characteristic \(request.characteristic.UUID.UUIDString) not found")
-            }
+            self.didReceiveWriteRequest(request)
         }
     }
     
     public func didSubscribeToCharacteristic(characteristic: CBCharacteristic) {
         Logger.debug()
-        if let characteristic = self.configuredCharcteristics[characteristic] {
+        if let characteristic = self.configuredCharcteristics[characteristic.UUID] {
             characteristic.didSubscribeToCharacteristic()
         }
     }
     
     public func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristic) {
         Logger.debug()
-        if let characteristic = self.configuredCharcteristics[characteristic] {
+        if let characteristic = self.configuredCharcteristics[characteristic.UUID] {
             characteristic.didUnsubscribeFromCharacteristic()
         }
     }
@@ -303,6 +295,31 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
             if characteristic.hasSubscriber {
                 characteristic.peripheralManagerIsReadyToUpdateSubscribers()
             }
+        }
+    }
+    
+    public func didReceiveWriteRequest(request: CBATTRequestWrappable) {
+        if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
+            Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
+            if characteristic.didRespondToWriteRequest(request) {
+                characteristic.value = request.value
+            } else {
+                self.respondToRequest(request, withResult:CBATTError.WriteNotPermitted)
+            }
+        } else {
+            Logger.debug("error writing characteristic \(request.characteristic.UUID.UUIDString) not found")
+        }
+    }
+    
+    public func didReceiveReadRequest(request: CBATTRequest) {
+        Logger.debug("chracteracteristic \(request.characteristic.UUID)")
+        if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
+            Logger.debug("responding with data: \(characteristic.stringValue)")
+            request.value = characteristic.value
+            self.respondToRequest(request, withResult:CBATTError.Success)
+        } else {
+            Logger.debug("characteristic not found")
+            self.respondToRequest(request, withResult:CBATTError.AttributeNotFound)
         }
     }
     
@@ -388,14 +405,13 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
 
     private func addConfiguredCharacteristics(characteristics: [MutableCharacteristic]) {
         for characteristic in characteristics {
-            self.configuredCharcteristics[characteristic.cbMutableChracteristic] = characteristic
+            self.configuredCharcteristics[characteristic.cbMutableChracteristic.UUID] = characteristic
         }
     }
 
     private func removeServiceAndCharacteristics(service: MutableService) {
-        let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(cbCharacteristic) in
+        let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
             for bcCharacteristic in service.characteristics {
-                let uuid = cbCharacteristic.UUID
                 if uuid == bcCharacteristic.uuid {
                     return true
                 }

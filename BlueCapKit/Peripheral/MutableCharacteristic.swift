@@ -9,13 +9,17 @@
 import Foundation
 import CoreBluetooth
 
+struct MutableCharacteristicIO {
+    static let queue = Queue("us.gnos.mutable-characteristic")
+}
+
 public class MutableCharacteristic {
 
     private let profile  : CharacteristicProfile
     private var _hasSubscriber   = false
     private var _isUpdating      = false
 
-    internal var processWriteRequestPromise : StreamPromise<CBATTRequest>?
+    internal var processWriteRequestPromise : StreamPromise<CBATTRequestWrappable>?
     internal weak var _service : MutableService?
     
     public let cbMutableChracteristic : CBMutableCharacteristic
@@ -90,38 +94,39 @@ public class MutableCharacteristic {
     }
     
     public func updateValueWithData(value: NSData) -> Bool  {
-        self.value = value
-        if let peripheralManager = self.service?.peripheralManager where self._isUpdating &&
-                (self.propertyEnabled(.Notify)                    ||
-                 self.propertyEnabled(.Indicate)                  ||
-                 self.propertyEnabled(.NotifyEncryptionRequired)  ||
-                 self.propertyEnabled(.IndicateEncryptionRequired)) {
-            
-            self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
-        } else {
-            self._isUpdating = false
+        return MutableCharacteristicIO.queue.sync {
+            self.value = value
+            if let peripheralManager = self.service?.peripheralManager where self._isUpdating &&
+                    (self.propertyEnabled(.Notify)                    ||
+                     self.propertyEnabled(.Indicate)                  ||
+                     self.propertyEnabled(.NotifyEncryptionRequired)  ||
+                     self.propertyEnabled(.IndicateEncryptionRequired)) {
+                self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
+            } else {
+                self._isUpdating = false
+            }
+            return self._isUpdating
         }
-        return self._isUpdating
-    }
-    
-    public func respondToWrappedRequest(request: CBATTRequest, withResult result:  CBATTError) {
-        self.service?.peripheralManager?.respondToRequest(request, withResult:result)
     }
     
     public class func withProfiles(profiles: [CharacteristicProfile], service: MutableService) -> [MutableCharacteristic] {
         return profiles.map{MutableCharacteristic(profile: $0)}
     }
         
-    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<CBATTRequest> {
-        self.processWriteRequestPromise = StreamPromise<CBATTRequest>(capacity:capacity)
-        return self.processWriteRequestPromise!.future
+    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<CBATTRequestWrappable> {
+        return MutableCharacteristicIO.queue.sync {
+            self.processWriteRequestPromise = StreamPromise<CBATTRequestWrappable>(capacity:capacity)
+            return self.processWriteRequestPromise!.future
+        }
     }
     
     public func stopRespondingToWriteRequests() {
-        self.processWriteRequestPromise = nil
+        MutableCharacteristicIO.queue.sync {
+            self.processWriteRequestPromise = nil
+        }
     }
     
-    internal func didRespondToWriteRequest(request: CBATTRequest) -> Bool  {
+    internal func didRespondToWriteRequest(request: CBATTRequestWrappable) -> Bool  {
         if let processWriteRequestPromise = self.processWriteRequestPromise {
             processWriteRequestPromise.success(request)
             return true
@@ -131,18 +136,24 @@ public class MutableCharacteristic {
     }
     
     internal func didSubscribeToCharacteristic() {
-        self._hasSubscriber = true
-        self._isUpdating = true
+        MutableCharacteristicIO.queue.sync {
+            self._hasSubscriber = true
+            self._isUpdating = true
+        }
     }
     
     internal func didUnsubscribeFromCharacteristic() {
-        self._hasSubscriber = false
-        self._isUpdating = false
+        MutableCharacteristicIO.queue.sync {
+            self._hasSubscriber = false
+            self._isUpdating = false
+        }
     }
 
     public func peripheralManagerIsReadyToUpdateSubscribers() {
-        if self._hasSubscriber {
-            self._isUpdating = true
+        MutableCharacteristicIO.queue.sync {
+            if self._hasSubscriber {
+                self._isUpdating = true
+            }
         }
     }
 
@@ -150,12 +161,11 @@ public class MutableCharacteristic {
         if let data = self.profile.dataFromStringValue(value) {
             return self.updateValueWithData(data)
         } else {
-            NSException(name:"Characteristic update error", reason: "invalid value '\(value)' for \(self.uuid.UUIDString)", userInfo: nil).raise()
             return false
         }
     }
     
-    public func respondToRequest(request: CBATTRequest, withResult result: CBATTError) {
+    public func respondToRequest(request: CBATTRequestWrappable, withResult result: CBATTError) {
         self.service?.peripheralManager?.respondToRequest(request, withResult:result)
     }
     

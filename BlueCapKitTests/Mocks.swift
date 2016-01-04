@@ -178,7 +178,7 @@ class ServiceUT : Service {
     }
     
     override func discoverAllCharacteristics() -> Future<Service> {
-        self.didDiscoverCharacteristics(self.self.mockCharacteristics, error:self.error)
+        self.didDiscoverCharacteristics(self.mockCharacteristics, error:self.error)
         return self.characteristicsDiscoveredPromise.future
     }
 }
@@ -270,7 +270,11 @@ class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
 
 class PeripheralManagerUT : PeripheralManager {
     
+    var respondToRequestCalled = false
+
     var error : NSError?
+    var result : CBATTError?
+    var request : CBATTRequestWrappable?
     
     override func addServices(promise: Promise<Void>, services: [MutableService]) {
         super.addServices(promise, services: services)
@@ -278,6 +282,26 @@ class PeripheralManagerUT : PeripheralManager {
             self.didAddService(service.cbMutableService, error: self.error)
         }
     }
+    
+    override func respondToRequest(request: CBATTRequestWrappable, withResult result: CBATTError) {
+        self.respondToRequestCalled = true
+        self.result = result
+        self.request = request
+    }
+}
+
+class CBATTRequestMock : CBATTRequestWrappable {
+
+    let characteristic: CBCharacteristic
+    let offset: Int
+    var value: NSData?
+    
+    init(characteristic: CBMutableCharacteristic, offset: Int, value: NSData? = nil) {
+        self.value = value
+        self.characteristic = characteristic
+        self.offset = offset
+    }
+    
 }
 
 func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerState) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
