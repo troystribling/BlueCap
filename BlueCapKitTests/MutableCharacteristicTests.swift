@@ -154,7 +154,7 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(request.characteristic.UUID, characteristic.uuid, "characteristic UUID invalid")
                 XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
                 XCTAssertEqual(request.value, value, "request value is invalid")
-                XCTAssert(peripheralManager.respondToRequestCalled, "respondoRequestNotCalled")                
+                XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
             }
             future.onFailure {error in
                 XCTAssert(false, "onFailure called")
@@ -182,7 +182,7 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(request.characteristic.UUID, characteristic.uuid, "characteristic UUID invalid")
                 XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
                 XCTAssertEqual(request.value, values[writeCount], "request value is invalid")
-                XCTAssert(peripheralManager.respondToRequestCalled, "respondoRequestNotCalled")
+                XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
                 writeCount++
             }
             future.onFailure {error in
@@ -203,9 +203,21 @@ class MutableCharacteristicTests: XCTestCase {
             let value = "aa".dataFromHexString()
             let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
             peripheralManager.didReceiveWriteRequest(request)
-            XCTAssertEqual(peripheralManager.result, CBATTError.WriteNotPermitted, "result is invalid")
-            XCTAssert(peripheralManager.respondToRequestCalled, "respondoRequestNotCalled")
+            XCTAssertEqual(peripheralManager.result, CBATTError.RequestNotSupported, "result is invalid")
+            XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
         }
+    }
+
+    func testRespondToWriteRequestFailure() {
+        let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let characteristic = MutableCharacteristic(profile: StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
+        let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
+        let value = "aa".dataFromHexString()
+        characteristic.value = value
+        peripheralManager.didReceiveWriteRequest(request)
+        XCTAssertEqual(request.value, nil, "value is invalid")
+        XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
+        XCTAssertEqual(peripheralManager.result, CBATTError.UnlikelyError, "result is invalid")
     }
 
     func testStopRespondingToWriteRequests() {
@@ -222,19 +234,34 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssert(false, "onFailure called")
             }
             peripheralManager.didReceiveWriteRequest(request)
+            XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
+            XCTAssertEqual(peripheralManager.result, CBATTError.RequestNotSupported, "result is invalid")
         }
     }
 
     func testRespondToReadRequestSuccess() {
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
+            let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
+            let value = "aa".dataFromHexString()
+            characteristic.value = value
+            peripheralManager.didReceiveReadRequest(request)
+            XCTAssertEqual(request.value, value, "value is invalid")
+            XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
+            XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
         }
     }
     
     func testRespondToReadRequestFailure() {
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
-            let characteristic = peripheralManager.characteristics[0]
-        }
+        let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let characteristic = MutableCharacteristic(profile: StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
+        let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
+        let value = "aa".dataFromHexString()
+        characteristic.value = value
+        peripheralManager.didReceiveReadRequest(request)
+        XCTAssertEqual(request.value, nil, "value is invalid")
+        XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
+        XCTAssertEqual(peripheralManager.result, CBATTError.UnlikelyError, "result is invalid")
     }
 
 }
