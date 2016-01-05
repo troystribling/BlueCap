@@ -304,7 +304,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
             if characteristic.didRespondToWriteRequest(request) {
                 characteristic.value = request.value
             } else {
-                self.respondToRequest(request, withResult:CBATTError.WriteNotPermitted)
+                self.respondToRequest(request, withResult:CBATTError.RequestNotSupported)
             }
         } else {
             self.respondToRequest(request, withResult:CBATTError.UnlikelyError)

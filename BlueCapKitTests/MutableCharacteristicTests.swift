@@ -47,7 +47,7 @@ class MutableCharacteristicTests: XCTestCase {
             XCTAssert(chracteristics.contains(CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)), "characteristic uuid is invalid")
             XCTAssert(chracteristics.contains(CBUUID(string: Gnosus.HelloWorldService.UpdatePeriod.uuid)), "characteristic uuid is invalid")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -63,7 +63,7 @@ class MutableCharacteristicTests: XCTestCase {
             XCTAssertEqual(service.uuid, characteristic.service?.uuid, "characteristic service not found")
             XCTAssertFalse(mock.updateValueCalled, "updateValue not called")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -79,7 +79,7 @@ class MutableCharacteristicTests: XCTestCase {
             XCTAssert(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssert(mock.updateValueCalled, "updateValueWithData not called")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -96,7 +96,7 @@ class MutableCharacteristicTests: XCTestCase {
             XCTAssertFalse(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssertFalse(mock.updateValueCalled, "updateValueWithData not called")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -115,7 +115,7 @@ class MutableCharacteristicTests: XCTestCase {
             XCTAssert(characteristic.hasSubscriber, "hasSubscriber not set")
             XCTAssert(mock.updateValueCalled, "updateValueWithData not called")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -136,7 +136,7 @@ class MutableCharacteristicTests: XCTestCase {
             peripheralManager.isReadyToUpdateSubscribers()
             XCTAssert(characteristic.isUpdating, "isUpdating not set")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -161,7 +161,7 @@ class MutableCharacteristicTests: XCTestCase {
             }
             peripheralManager.didReceiveWriteRequest(requestMock)
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -192,7 +192,7 @@ class MutableCharacteristicTests: XCTestCase {
                 peripheralManager.didReceiveWriteRequest(requestMock)
             }
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }

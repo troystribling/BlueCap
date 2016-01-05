@@ -52,12 +52,10 @@ public class TimedScannerator {
         Logger.debug("timeout in \(self.timeoutSeconds)s")
         self.centralManager.centralQueue.delay(self.timeoutSeconds) {
             if self._isScanning {
-                self.stopScanning()
-                
-                // Only call failure if it was stopped by timeout
                 if self.peripherals.count == 0 {
                     self.centralManager.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
                 }
+                self.stopScanning()
             }
         }
     }

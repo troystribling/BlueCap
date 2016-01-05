@@ -312,7 +312,7 @@ class CharacteristicTests: XCTestCase {
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.read(2.0)
         future.onSuccess {_ in
-            XCTAssert(false, "onFailure called")
+            XCTAssert(false, "onSuccess called")
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
@@ -320,7 +320,7 @@ class CharacteristicTests: XCTestCase {
             XCTAssertEqual(error.code, CharacteristicError.ReadTimeout.rawValue, "Error code invalid")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "readValue not called 1 time")
         }
-        waitForExpectationsWithTimeout(120) {error in
+        waitForExpectationsWithTimeout(300) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
