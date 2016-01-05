@@ -25,7 +25,7 @@ public protocol CBPeripheralManagerWrappable {
 public protocol CBATTRequestWrappable {
     var characteristic: CBCharacteristic { get }
     var offset: Int { get }
-    var value: NSData? { get }
+    var value: NSData? { get set }
 }
 
 extension CBPeripheralManager : CBPeripheralManagerWrappable {}
@@ -307,11 +307,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 self.respondToRequest(request, withResult:CBATTError.WriteNotPermitted)
             }
         } else {
-            Logger.debug("error writing characteristic \(request.characteristic.UUID.UUIDString) not found")
+            self.respondToRequest(request, withResult:CBATTError.UnlikelyError)
         }
     }
     
-    public func didReceiveReadRequest(request: CBATTRequest) {
+    public func didReceiveReadRequest(var request: CBATTRequestWrappable) {
         Logger.debug("chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             Logger.debug("responding with data: \(characteristic.stringValue)")
@@ -319,7 +319,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
             self.respondToRequest(request, withResult:CBATTError.Success)
         } else {
             Logger.debug("characteristic not found")
-            self.respondToRequest(request, withResult:CBATTError.AttributeNotFound)
+            self.respondToRequest(request, withResult:CBATTError.UnlikelyError)
         }
     }
     
