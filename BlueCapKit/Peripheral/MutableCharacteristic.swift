@@ -16,7 +16,7 @@ struct MutableCharacteristicIO {
 public class MutableCharacteristic {
 
     private let profile  : CharacteristicProfile
-    private var _hasSubscriber   = false
+    private var subscribers      = [NSUUID:CBCentralInjectable]()
     private var _isUpdating      = false
 
     internal var processWriteRequestPromise : StreamPromise<CBATTRequestInjectable>?
@@ -46,7 +46,7 @@ public class MutableCharacteristic {
     }
     
     public var hasSubscriber : Bool {
-        return self._hasSubscriber
+        return self.subscribers.count > 0
     }
     
     public var isUpdating : Bool {
@@ -135,23 +135,23 @@ public class MutableCharacteristic {
         }
     }
     
-    internal func didSubscribeToCharacteristic() {
+    internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
         MutableCharacteristicIO.queue.sync {
-            self._hasSubscriber = true
+            self.subscribers[central.identifier] = central
             self._isUpdating = true
         }
     }
     
-    internal func didUnsubscribeFromCharacteristic() {
+    internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
         MutableCharacteristicIO.queue.sync {
-            self._hasSubscriber = false
+            self.subscribers.removeValueForKey(central.identifier)
             self._isUpdating = false
         }
     }
 
     public func peripheralManagerIsReadyToUpdateSubscribers() {
         MutableCharacteristicIO.queue.sync {
-            if self._hasSubscriber {
+            if self.hasSubscriber {
                 self._isUpdating = true
             }
         }

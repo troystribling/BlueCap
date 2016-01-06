@@ -9,15 +9,15 @@
 import Foundation
 import CoreBluetooth
 
-public protocol CBCentralManagerWrappable {
+public protocol CBCentralManagerInjectable {
     var state : CBCentralManagerState {get}
-    func scanForPeripheralsWithServices(uuids:[CBUUID]?, options:[String:AnyObject]?)
+    func scanForPeripheralsWithServices(uuids: [CBUUID]?, options: [String:AnyObject]?)
     func stopScan()
-    func connectPeripheral(peripheral:CBPeripheral, options:[String:AnyObject]?)
-    func cancelPeripheralConnection(peripheral:CBPeripheral)
+    func connectPeripheral(peripheral: CBPeripheral, options: [String:AnyObject]?)
+    func cancelPeripheralConnection(peripheral: CBPeripheral)
 }
 
-extension CBCentralManager : CBCentralManagerWrappable {}
+extension CBCentralManager : CBCentralManagerInjectable {}
 
 public class CentralManager : NSObject, CBCentralManagerDelegate {
     
@@ -29,7 +29,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     internal var afterPeripheralDiscoveredPromise               = StreamPromise<Peripheral>()
     internal var discoveredPeripherals                          = [NSUUID: Peripheral]()
 
-    public var cbCentralManager : CBCentralManagerWrappable!
+    public var cbCentralManager : CBCentralManagerInjectable!
     public let centralQueue : Queue
 
     public var poweredOn : Bool {
@@ -78,36 +78,36 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue)
     }
     
-    public init(queue:dispatch_queue_t, options:[String:AnyObject]?=nil) {
+    public init(queue:dispatch_queue_t, options: [String:AnyObject]?=nil) {
         self.centralQueue = Queue(queue)
         super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue, options:options)
+        self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
     }
 
-    public init(centralManager:CBCentralManagerWrappable) {
+    public init(centralManager: CBCentralManagerInjectable) {
         self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbCentralManager = centralManager
     }
     
-    public func connectPeripheral(peripheral:Peripheral, options:[String:AnyObject]? = nil) {
+    public func connectPeripheral(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
         if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
-            self.cbCentralManager.connectPeripheral(cbPeripheral, options:options)
+            self.cbCentralManager.connectPeripheral(cbPeripheral, options: options)
         }
     }
     
-    public func cancelPeripheralConnection(peripheral:Peripheral) {
+    public func cancelPeripheralConnection(peripheral: Peripheral) {
         if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
             self.cbCentralManager.cancelPeripheralConnection(cbPeripheral)
         }
     }
 
     // scanning
-    public func startScanning(capacity:Int? = nil, options:[String:AnyObject]? = nil) -> FutureStream<Peripheral> {
-        return self.startScanningForServiceUUIDs(nil, capacity:capacity)
+    public func startScanning(capacity:Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+        return self.startScanningForServiceUUIDs(nil, capacity: capacity)
     }
     
-    public func startScanningForServiceUUIDs(uuids:[CBUUID]?, capacity:Int? = nil, options:[String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+    public func startScanningForServiceUUIDs(uuids: [CBUUID]?, capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         if !self._isScanning {
             Logger.debug("UUIDs \(uuids)")
             self._isScanning = true
@@ -166,63 +166,63 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     // CBCentralManagerDelegate
-    public func centralManager(_:CBCentralManager, didConnectPeripheral peripheral:CBPeripheral) {
+    public func centralManager(_: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         self.didConnectPeripheral(peripheral)
     }
 
-    public func centralManager(_:CBCentralManager, didDisconnectPeripheral peripheral:CBPeripheral, error:NSError?) {
+    public func centralManager(_: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         self.didDisconnectPeripheral(peripheral, error:error)
     }
 
-    public func centralManager(_:CBCentralManager, didDiscoverPeripheral peripheral:CBPeripheral, advertisementData:[String:AnyObject], RSSI:NSNumber) {
+    public func centralManager(_: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String:AnyObject], RSSI: NSNumber) {
         self.didDiscoverPeripheral(peripheral, advertisementData:advertisementData, RSSI:RSSI)
     }
 
-    public func centralManager(_:CBCentralManager, didFailToConnectPeripheral peripheral:CBPeripheral, error:NSError?) {
+    public func centralManager(_: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         self.didFailToConnectPeripheral(peripheral, error:error)
     }
 
-    public func centralManager(_:CBCentralManager!, didRetrieveConnectedPeripherals peripherals:[AnyObject]!) {
+    public func centralManager(_: CBCentralManager!, didRetrieveConnectedPeripherals peripherals: [AnyObject]!) {
         Logger.debug()
     }
     
-    public func centralManager(_:CBCentralManager!, didRetrievePeripherals peripherals:[AnyObject]!) {
+    public func centralManager(_: CBCentralManager!, didRetrievePeripherals peripherals: [AnyObject]!) {
         Logger.debug()
     }
     
     // central manager state
-    public func centralManager(_:CBCentralManager, willRestoreState dict:[String:AnyObject]) {
+    public func centralManager(_: CBCentralManager, willRestoreState dict: [String:AnyObject]) {
         Logger.debug()
     }
     
-    public func centralManagerDidUpdateState(_:CBCentralManager) {
+    public func centralManagerDidUpdateState(_: CBCentralManager) {
         self.didUpdateState()
     }
     
-    public func didConnectPeripheral(peripheral:CBPeripheralWrappable) {
+    public func didConnectPeripheral(peripheral: CBPeripheralInjectable) {
         Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
-    public func didDisconnectPeripheral(peripheral:CBPeripheralWrappable, error:NSError?) {
+    public func didDisconnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
         Logger.debug("peripheral name \(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral()
         }
     }
     
-    public func didDiscoverPeripheral(peripheral:CBPeripheralWrappable, advertisementData:[String:AnyObject], RSSI:NSNumber) {
+    public func didDiscoverPeripheral(peripheral: CBPeripheralInjectable, advertisementData: [String:AnyObject], RSSI: NSNumber) {
         if self.discoveredPeripherals[peripheral.identifier] == nil {
-            let bcPeripheral = Peripheral(cbPeripheral:peripheral, centralManager:self, advertisements:advertisementData, rssi:RSSI.integerValue)
+            let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, rssi: RSSI.integerValue)
             Logger.debug("peripheral name \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral.identifier] = bcPeripheral
             self.afterPeripheralDiscoveredPromise.success(bcPeripheral)
         }
     }
     
-    public func didFailToConnectPeripheral(peripheral:CBPeripheralWrappable, error:NSError?) {
+    public func didFailToConnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
         Logger.debug()
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didFailToConnectPeripheral(error)

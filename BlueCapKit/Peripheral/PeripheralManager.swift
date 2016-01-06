@@ -28,8 +28,14 @@ public protocol CBATTRequestInjectable {
     var value: NSData? { get set }
 }
 
+public protocol CBCentralInjectable {
+    var identifier: NSUUID { get }
+    var maximumUpdateValueLength: Int { get }
+}
+
 extension CBPeripheralManager : CBPeripheralManagerInjectable {}
 extension CBATTRequest : CBATTRequestInjectable {}
+extension CBCentral : CBCentralInjectable {}
 
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
@@ -253,11 +259,11 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func peripheralManager(_: CBPeripheralManager, central: CBCentral, didSubscribeToCharacteristic characteristic: CBCharacteristic) {
-        self.didSubscribeToCharacteristic(characteristic)
+        self.didSubscribeToCharacteristic(characteristic, central: central)
     }
     
     public func peripheralManager(_: CBPeripheralManager, central: CBCentral, didUnsubscribeFromCharacteristic characteristic: CBCharacteristic) {
-        self.didUnsubscribeFromCharacteristic(characteristic)
+        self.didUnsubscribeFromCharacteristic(characteristic, central: central)
     }
     
     public func peripheralManagerIsReadyToUpdateSubscribers(_: CBPeripheralManager) {
@@ -265,27 +271,27 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func peripheralManager(_: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
-        self.didReceiveReadRequest(request)
+        self.didReceiveReadRequest(request, central: request.central)
     }
     
     public func peripheralManager(_: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
         Logger.debug()
         for request in requests {
-            self.didReceiveWriteRequest(request)
+            self.didReceiveWriteRequest(request, central: request.central)
         }
     }
     
-    public func didSubscribeToCharacteristic(characteristic: CBCharacteristic) {
+    public func didSubscribeToCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
         Logger.debug()
         if let characteristic = self.configuredCharcteristics[characteristic.UUID] {
-            characteristic.didSubscribeToCharacteristic()
+            characteristic.didSubscribeToCharacteristic(central)
         }
     }
     
-    public func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristic) {
+    public func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
         Logger.debug()
         if let characteristic = self.configuredCharcteristics[characteristic.UUID] {
-            characteristic.didUnsubscribeFromCharacteristic()
+            characteristic.didUnsubscribeFromCharacteristic(central)
         }
     }
     
@@ -298,7 +304,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didReceiveWriteRequest(request: CBATTRequestInjectable) {
+    public func didReceiveWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
             if characteristic.didRespondToWriteRequest(request) {
@@ -311,7 +317,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didReceiveReadRequest(var request: CBATTRequestInjectable) {
+    public func didReceiveReadRequest(var request: CBATTRequestInjectable, central: CBCentralInjectable) {
         Logger.debug("chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             Logger.debug("responding with data: \(characteristic.stringValue)")

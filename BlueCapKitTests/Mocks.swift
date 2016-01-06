@@ -18,7 +18,7 @@ struct TestFailure {
 let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral",
                                 CBAdvertisementDataTxPowerLevelKey:NSNumber(integer:-45)]
 
-class CBCentralManagerMock : CBCentralManagerWrappable {
+class CBCentralManagerMock : CBCentralManagerInjectable {
     
     var state : CBCentralManagerState
     var scanForPeripheralsWithServicesCalled = false
@@ -60,7 +60,7 @@ class CentralManagerUT : CentralManager {
     
 }
 
-class CBPeripheralMock : CBPeripheralWrappable {
+class CBPeripheralMock : CBPeripheralInjectable {
    
     var state : CBPeripheralState
     var _delegate : CBPeripheralDelegate? = nil
@@ -141,7 +141,7 @@ class PeripheralUT : Peripheral {
     
     let error:NSError?
     
-    init(cbPeripheral: CBPeripheralWrappable, centralManager: CentralManager, advertisements: [String:AnyObject], rssi: Int, error: NSError?) {
+    init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String:AnyObject], rssi: Int, error: NSError?) {
         self.error = error
         super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, rssi: rssi)
     }
@@ -203,7 +203,7 @@ class CBCharacteristicMock : CBMutableCharacteristic {
     
 }
 
-class CBPeripheralManagerMock : CBPeripheralManagerWrappable {
+class CBPeripheralManagerMock : CBPeripheralManagerInjectable {
 
     var updateValueReturn       = true
     
@@ -274,7 +274,7 @@ class PeripheralManagerUT : PeripheralManager {
 
     var error : NSError?
     var result : CBATTError?
-    var request : CBATTRequestWrappable?
+    var request : CBATTRequestInjectable?
     
     override func addServices(promise: Promise<Void>, services: [MutableService]) {
         super.addServices(promise, services: services)
@@ -283,14 +283,14 @@ class PeripheralManagerUT : PeripheralManager {
         }
     }
     
-    override func respondToRequest(request: CBATTRequestWrappable, withResult result: CBATTError) {
+    override func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError) {
         self.respondToRequestCalled = true
         self.result = result
         self.request = request
     }
 }
 
-class CBATTRequestMock : CBATTRequestWrappable {
+class CBATTRequestMock : CBATTRequestInjectable {
 
     let characteristic: CBCharacteristic
     let offset: Int
