@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-public protocol CBPeripheralManagerWrappable {
+public protocol CBPeripheralManagerInjectable {
     var isAdvertising   : Bool                      { get }
     var state           : CBPeripheralManagerState  { get }
     
@@ -22,21 +22,21 @@ public protocol CBPeripheralManagerWrappable {
     func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool
 }
 
-public protocol CBATTRequestWrappable {
+public protocol CBATTRequestInjectable {
     var characteristic: CBCharacteristic { get }
     var offset: Int { get }
     var value: NSData? { get set }
 }
 
-extension CBPeripheralManager : CBPeripheralManagerWrappable {}
-extension CBATTRequest : CBATTRequestWrappable {}
+extension CBPeripheralManager : CBPeripheralManagerInjectable {}
+extension CBATTRequest : CBATTRequestInjectable {}
 
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Double                  = 0.25
 
     private var _name : String?
-    private var cbPeripheralManager : CBPeripheralManagerWrappable!
+    private var cbPeripheralManager : CBPeripheralManagerInjectable!
     
     private var afterAdvertisingStartedPromise                                          = Promise<Void>()
     private var afterAdvertsingStoppedPromise                                           = Promise<Void>()
@@ -101,7 +101,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
     }
 
-    public init(peripheralManager: CBPeripheralManagerWrappable) {
+    public init(peripheralManager: CBPeripheralManagerInjectable) {
         self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbPeripheralManager = peripheralManager
@@ -230,7 +230,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return self.cbPeripheralManager.updateValue(value, forCharacteristic:characteristic.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
-    public func respondToRequest(request: CBATTRequestWrappable, withResult result: CBATTError) {
+    public func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError) {
         if let request = request as? CBATTRequest {
             self.cbPeripheralManager.respondToRequest(request, withResult:result)
         }
@@ -298,7 +298,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didReceiveWriteRequest(request: CBATTRequestWrappable) {
+    public func didReceiveWriteRequest(request: CBATTRequestInjectable) {
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
             if characteristic.didRespondToWriteRequest(request) {
@@ -311,7 +311,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didReceiveReadRequest(var request: CBATTRequestWrappable) {
+    public func didReceiveReadRequest(var request: CBATTRequestInjectable) {
         Logger.debug("chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             Logger.debug("responding with data: \(characteristic.stringValue)")

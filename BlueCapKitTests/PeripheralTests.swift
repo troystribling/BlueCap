@@ -215,7 +215,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
         NSLog("testConnect : %@", peripheral.identifier.UUIDString)
         let connectionExpectation = expectationWithDescription("onSuccess fulfilled for Connect")
-        let future = peripheral.connect(connectionTimeout:5.0)
+        let future = peripheral.connect(connectionTimeout:20.0)
         future.onSuccess{(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:

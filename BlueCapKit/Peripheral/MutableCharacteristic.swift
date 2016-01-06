@@ -19,7 +19,7 @@ public class MutableCharacteristic {
     private var _hasSubscriber   = false
     private var _isUpdating      = false
 
-    internal var processWriteRequestPromise : StreamPromise<CBATTRequestWrappable>?
+    internal var processWriteRequestPromise : StreamPromise<CBATTRequestInjectable>?
     internal weak var _service : MutableService?
     
     public let cbMutableChracteristic : CBMutableCharacteristic
@@ -113,9 +113,9 @@ public class MutableCharacteristic {
         return profiles.map{MutableCharacteristic(profile: $0)}
     }
         
-    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<CBATTRequestWrappable> {
+    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<CBATTRequestInjectable> {
         return MutableCharacteristicIO.queue.sync {
-            self.processWriteRequestPromise = StreamPromise<CBATTRequestWrappable>(capacity:capacity)
+            self.processWriteRequestPromise = StreamPromise<CBATTRequestInjectable>(capacity:capacity)
             return self.processWriteRequestPromise!.future
         }
     }
@@ -126,7 +126,7 @@ public class MutableCharacteristic {
         }
     }
     
-    internal func didRespondToWriteRequest(request: CBATTRequestWrappable) -> Bool  {
+    internal func didRespondToWriteRequest(request: CBATTRequestInjectable) -> Bool  {
         if let processWriteRequestPromise = self.processWriteRequestPromise {
             processWriteRequestPromise.success(request)
             return true
@@ -165,7 +165,7 @@ public class MutableCharacteristic {
         }
     }
     
-    public func respondToRequest(request: CBATTRequestWrappable, withResult result: CBATTError) {
+    public func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError) {
         self.service?.peripheralManager?.respondToRequest(request, withResult:result)
     }
     
