@@ -10,8 +10,8 @@ import Foundation
 import CoreBluetooth
 
 public protocol CBPeripheralManagerInjectable {
-    var isAdvertising   : Bool                      { get }
-    var state           : CBPeripheralManagerState  { get }
+    var isAdvertising: Bool                 { get }
+    var state: CBPeripheralManagerState     { get }
     
     func startAdvertising(advertisementData:[String:AnyObject]?)
     func stopAdvertising()
@@ -39,43 +39,43 @@ extension CBCentral : CBCentralInjectable {}
 
 public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
-    private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL : Double                  = 0.25
+    private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL: Double                   = 0.25
 
-    private var _name : String?
-    private var cbPeripheralManager : CBPeripheralManagerInjectable!
+    private var _name: String?
+    private var cbPeripheralManager: CBPeripheralManagerInjectable!
     
-    private var afterAdvertisingStartedPromise                                          = Promise<Void>()
-    private var afterAdvertsingStoppedPromise                                           = Promise<Void>()
-    private var afterPowerOnPromise                                                     = Promise<Void>()
-    private var afterPowerOffPromise                                                    = Promise<Void>()
-    private var afterSeriviceAddPromise                                                 = Promise<Void>()
+    private var afterAdvertisingStartedPromise                                  = Promise<Void>()
+    private var afterAdvertsingStoppedPromise                                   = Promise<Void>()
+    private var afterPowerOnPromise                                             = Promise<Void>()
+    private var afterPowerOffPromise                                            = Promise<Void>()
+    private var afterSeriviceAddPromise                                         = Promise<Void>()
 
-    internal var configuredServices  : [CBUUID:MutableService]                          = [:]
-    internal var configuredCharcteristics : [CBUUID:MutableCharacteristic]              = [:]
+    internal var configuredServices: [CBUUID:MutableService]                    = [:]
+    internal var configuredCharcteristics: [CBUUID:MutableCharacteristic]       = [:]
 
-    public let peripheralQueue : Queue
+    public let peripheralQueue: Queue
     
-    public var isAdvertising : Bool {
+    public var isAdvertising: Bool {
         return self.cbPeripheralManager.isAdvertising
     }
     
-    public var poweredOn : Bool {
+    public var poweredOn: Bool {
         return self.cbPeripheralManager.state == CBPeripheralManagerState.PoweredOn
     }
     
-    public var poweredOff : Bool {
+    public var poweredOff: Bool {
         return self.cbPeripheralManager.state == CBPeripheralManagerState.PoweredOff
     }
 
-    public var state : CBPeripheralManagerState {
+    public var state: CBPeripheralManagerState {
         return self.cbPeripheralManager.state
     }
     
-    public var services : [MutableService] {
+    public var services: [MutableService] {
         return Array(self.configuredServices.values)
     }
     
-    public var characteristics : [MutableCharacteristic] {
+    public var characteristics: [MutableCharacteristic] {
         return Array(self.configuredCharcteristics.values)
     }
     
@@ -84,7 +84,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self.cbPeripheralManager.addService(service.cbMutableService)
     }
     
-    public class var sharedInstance : PeripheralManager {
+    public class var sharedInstance: PeripheralManager {
         struct StaticInstance {
             static var onceToken : dispatch_once_t      = 0
             static var instance : PeripheralManager?    = nil
@@ -307,7 +307,7 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func didReceiveWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             Logger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
-            if characteristic.didRespondToWriteRequest(request) {
+            if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic.value = request.value
             } else {
                 self.respondToRequest(request, withResult:CBATTError.RequestNotSupported)

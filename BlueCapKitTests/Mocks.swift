@@ -304,6 +304,17 @@ class CBATTRequestMock : CBATTRequestInjectable {
     
 }
 
+class CBCentralMock : CBCentralInjectable {
+
+    let identifier: NSUUID
+    let maximumUpdateValueLength: Int
+
+    init(identifier: NSUUID, maximumUpdateValueLength: Int) {
+        self.identifier = identifier
+        self.maximumUpdateValueLength = maximumUpdateValueLength
+    }
+}
+
 func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerState) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
     let mock = CBPeripheralManagerMock(isAdvertising: isAdvertising, state: state)
     return (mock, PeripheralManagerUT(peripheralManager:mock))

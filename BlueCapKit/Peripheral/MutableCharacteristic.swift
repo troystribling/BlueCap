@@ -15,45 +15,50 @@ struct MutableCharacteristicIO {
 
 public class MutableCharacteristic {
 
-    private let profile  : CharacteristicProfile
-    private var subscribers      = [NSUUID:CBCentralInjectable]()
+    private let profile: CharacteristicProfile
+    
+    private var _subscribers     = [NSUUID:CBCentralInjectable]()
     private var _isUpdating      = false
 
-    internal var processWriteRequestPromise : StreamPromise<CBATTRequestInjectable>?
+    internal var processWriteRequestPromise : StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>?
     internal weak var _service : MutableService?
     
     public let cbMutableChracteristic : CBMutableCharacteristic
-    public var value : NSData?
+    public var value: NSData?
 
-    public var uuid : CBUUID {
+    public var uuid: CBUUID {
         return self.profile.uuid
     }
     
-    public var name : String {
+    public var name: String {
         return self.profile.name
     }
     
-    public var stringValues : [String] {
+    public var stringValues: [String] {
         return self.profile.stringValues
     }
     
-    public var permissions : CBAttributePermissions {
+    public var permissions: CBAttributePermissions {
         return self.cbMutableChracteristic.permissions
     }
     
-    public var properties : CBCharacteristicProperties {
+    public var properties: CBCharacteristicProperties {
         return self.cbMutableChracteristic.properties
     }
-    
-    public var hasSubscriber : Bool {
+
+    public var subscribers: [CBCentralInjectable] {
+        return Array(self._subscribers.values)
+    }
+
+    public var hasSubscriber: Bool {
         return self.subscribers.count > 0
     }
     
-    public var isUpdating : Bool {
+    public var isUpdating: Bool {
         return self._isUpdating
     }
     
-    public var service : MutableService? {
+    public var service: MutableService? {
         return self._service
     }
 
@@ -113,9 +118,9 @@ public class MutableCharacteristic {
         return profiles.map{MutableCharacteristic(profile: $0)}
     }
         
-    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<CBATTRequestInjectable> {
+    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<(CBATTRequestInjectable, CBCentralInjectable)> {
         return MutableCharacteristicIO.queue.sync {
-            self.processWriteRequestPromise = StreamPromise<CBATTRequestInjectable>(capacity:capacity)
+            self.processWriteRequestPromise = StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>(capacity:capacity)
             return self.processWriteRequestPromise!.future
         }
     }
@@ -126,9 +131,9 @@ public class MutableCharacteristic {
         }
     }
     
-    internal func didRespondToWriteRequest(request: CBATTRequestInjectable) -> Bool  {
+    internal func didRespondToWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) -> Bool  {
         if let processWriteRequestPromise = self.processWriteRequestPromise {
-            processWriteRequestPromise.success(request)
+            processWriteRequestPromise.success((request, central))
             return true
         } else {
             return false
@@ -137,15 +142,17 @@ public class MutableCharacteristic {
     
     internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
         MutableCharacteristicIO.queue.sync {
-            self.subscribers[central.identifier] = central
+            self._subscribers[central.identifier] = central
             self._isUpdating = true
         }
     }
     
     internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
         MutableCharacteristicIO.queue.sync {
-            self.subscribers.removeValueForKey(central.identifier)
-            self._isUpdating = false
+            self._subscribers.removeValueForKey(central.identifier)
+            if !self.hasSubscriber {
+                self._isUpdating = false
+            }
         }
     }
 

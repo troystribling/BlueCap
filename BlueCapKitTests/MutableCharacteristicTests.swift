@@ -62,6 +62,7 @@ class MutableCharacteristicTests: XCTestCase {
             XCTAssertFalse(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssertEqual(service.uuid, characteristic.service?.uuid, "characteristic service not found")
             XCTAssertFalse(mock.updateValueCalled, "updateValue not called")
+            XCTAssertEqual(characteristic.subscribers.count, 0, "characteristic has subscribers")
         }
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
@@ -70,31 +71,57 @@ class MutableCharacteristicTests: XCTestCase {
 
     func testSubscribeToUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
-            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic)
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock)
             XCTAssert(characteristic.hasSubscriber, "hasSubscriber value invalid")
             XCTAssert(characteristic.isUpdating, "isUpdating value invalid")
             XCTAssert(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssert(mock.updateValueCalled, "updateValueWithData not called")
+            XCTAssertEqual(characteristic.subscribers.count, 1, "characteristic subscriber count invalid")
         }
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
-    
-    func testUnsubscribeToUpdates() {
+
+    func testMultipleSubscribersToUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
+        let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
-            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic)
-            peripheralManager.didUnsubscribeFromCharacteristic(characteristic.cbMutableChracteristic)
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock1)
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock2)
+//            XCTAssertEqual(centralMock1.identifier, central.identifier, "invalid central identifier")
+            XCTAssert(characteristic.hasSubscriber, "hasSubscriber value invalid")
+            XCTAssert(characteristic.isUpdating, "isUpdating value invalid")
+            XCTAssert(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
+            XCTAssert(mock.updateValueCalled, "updateValueWithData not called")
+            XCTAssertEqual(characteristic.subscribers.count, 2, "characteristic subscriber count invalid")
+        }
+        waitForExpectationsWithTimeout(20) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testUnsubscribeToUpdates() {
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+            expectation.fulfill()
+            let characteristic = peripheralManager.characteristics[0]
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock)
+            XCTAssertEqual(characteristic.subscribers.count, 1, "characteristic subscriber count invalid")
+            peripheralManager.didUnsubscribeFromCharacteristic(characteristic.cbMutableChracteristic, central: centralMock)
             XCTAssertFalse(characteristic.hasSubscriber, "hasSubscriber value invalid")
             XCTAssertFalse(characteristic.isUpdating, "isUpdating value invalid")
             XCTAssertFalse(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssertFalse(mock.updateValueCalled, "updateValueWithData not called")
+            XCTAssertEqual(characteristic.subscribers.count, 0, "characteristic subscriber count invalid")
         }
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
@@ -103,12 +130,14 @@ class MutableCharacteristicTests: XCTestCase {
 
     func testSubscriberUpdateFailed() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
-            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic)
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock)
             XCTAssert(characteristic.hasSubscriber, "hasSubscriber not set")
             XCTAssert(characteristic.isUpdating, "isUpdating not set")
+            XCTAssertEqual(characteristic.subscribers.count, 1, "characteristic subscriber count invalid")
             mock.updateValueReturn = false
             XCTAssertFalse(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssertFalse(characteristic.isUpdating, "isUpdating not set")
@@ -122,12 +151,14 @@ class MutableCharacteristicTests: XCTestCase {
     
     func testResumeSubscriberUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
-            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic)
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock)
             XCTAssert(characteristic.hasSubscriber, "hasSubscriber not set")
             XCTAssert(characteristic.isUpdating, "isUpdating not set")
+            XCTAssertEqual(characteristic.subscribers.count, 1, "characteristic subscriber count invalid")
             mock.updateValueReturn = false
             XCTAssertFalse(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssertFalse(characteristic.isUpdating, "isUpdating not set")
@@ -143,14 +174,16 @@ class MutableCharacteristicTests: XCTestCase {
     
     func testStartRespondingToWriteRequestsSuccess() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
             let requestMock = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
             let future = characteristic.startRespondingToWriteRequests()
-            future.onSuccess {request in
+            future.onSuccess {(request, central) in
                 expectation.fulfill()
                 characteristic.respondToRequest(request, withResult: CBATTError.Success)
+                XCTAssertEqual(centralMock.identifier, central.identifier, "invalid central identifier")
                 XCTAssertEqual(request.characteristic.UUID, characteristic.uuid, "characteristic UUID invalid")
                 XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
                 XCTAssertEqual(request.value, value, "request value is invalid")
@@ -159,7 +192,7 @@ class MutableCharacteristicTests: XCTestCase {
             future.onFailure {error in
                 XCTAssert(false, "onFailure called")
             }
-            peripheralManager.didReceiveWriteRequest(requestMock)
+            peripheralManager.didReceiveWriteRequest(requestMock, central: centralMock)
         }
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
@@ -168,17 +201,19 @@ class MutableCharacteristicTests: XCTestCase {
 
     func testStartRespondingToMultipleWriteRequestsSuccess() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         var writeCount = 0
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let values = ["aa".dataFromHexString(), "a1".dataFromHexString(), "a2".dataFromHexString(), "a3".dataFromHexString(), "a4".dataFromHexString(), "a5".dataFromHexString()]
             let requestMocks = values.map{CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: $0)}
             let future = characteristic.startRespondingToWriteRequests()
-            future.onSuccess {request in
+            future.onSuccess {(request, central) in
                 if writeCount == 0 {
                     expectation.fulfill()
                 }
                 characteristic.respondToRequest(request, withResult: CBATTError.Success)
+                XCTAssertEqual(centralMock.identifier, central.identifier, "invalid central identifier")
                 XCTAssertEqual(request.characteristic.UUID, characteristic.uuid, "characteristic UUID invalid")
                 XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
                 XCTAssertEqual(request.value, values[writeCount], "request value is invalid")
@@ -189,7 +224,7 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssert(false, "onFailure called")
             }
             for requestMock in requestMocks {
-                peripheralManager.didReceiveWriteRequest(requestMock)
+                peripheralManager.didReceiveWriteRequest(requestMock, central: centralMock)
             }
         }
         waitForExpectationsWithTimeout(20) {error in
@@ -198,29 +233,32 @@ class MutableCharacteristicTests: XCTestCase {
     }
 
     func testStartRespondingToWriteRequestsFailure() {
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
             let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
-            peripheralManager.didReceiveWriteRequest(request)
+            peripheralManager.didReceiveWriteRequest(request, central: centralMock)
             XCTAssertEqual(peripheralManager.result, CBATTError.RequestNotSupported, "result is invalid")
             XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
         }
     }
 
     func testRespondToWriteRequestFailure() {
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let characteristic = MutableCharacteristic(profile: StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
         let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
         let value = "aa".dataFromHexString()
         characteristic.value = value
-        peripheralManager.didReceiveWriteRequest(request)
+        peripheralManager.didReceiveWriteRequest(request, central: centralMock)
         XCTAssertEqual(request.value, nil, "value is invalid")
         XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
         XCTAssertEqual(peripheralManager.result, CBATTError.UnlikelyError, "result is invalid")
     }
 
     func testStopRespondingToWriteRequests() {
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
@@ -233,19 +271,20 @@ class MutableCharacteristicTests: XCTestCase {
             future.onFailure {error in
                 XCTAssert(false, "onFailure called")
             }
-            peripheralManager.didReceiveWriteRequest(request)
+            peripheralManager.didReceiveWriteRequest(request, central: centralMock)
             XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
             XCTAssertEqual(peripheralManager.result, CBATTError.RequestNotSupported, "result is invalid")
         }
     }
 
     func testRespondToReadRequestSuccess() {
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
             let value = "aa".dataFromHexString()
             characteristic.value = value
-            peripheralManager.didReceiveReadRequest(request)
+            peripheralManager.didReceiveReadRequest(request, central: centralMock)
             XCTAssertEqual(request.value, value, "value is invalid")
             XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
             XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
@@ -253,12 +292,13 @@ class MutableCharacteristicTests: XCTestCase {
     }
     
     func testRespondToReadRequestFailure() {
+        let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let characteristic = MutableCharacteristic(profile: StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
         let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
         let value = "aa".dataFromHexString()
         characteristic.value = value
-        peripheralManager.didReceiveReadRequest(request)
+        peripheralManager.didReceiveReadRequest(request, central: centralMock)
         XCTAssertEqual(request.value, nil, "value is invalid")
         XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
         XCTAssertEqual(peripheralManager.result, CBATTError.UnlikelyError, "result is invalid")
