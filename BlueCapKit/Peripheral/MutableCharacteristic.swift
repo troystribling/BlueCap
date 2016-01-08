@@ -10,20 +10,21 @@ import Foundation
 import CoreBluetooth
 
 struct MutableCharacteristicIO {
-    static let queue = Queue("us.gnos.mutable-characteristic")
+    static let queue = Queue("us.gnos.mutable-characteristic.io")
 }
 
 public class MutableCharacteristic {
 
     private let profile: CharacteristicProfile
     
-    private var _subscribers     = [NSUUID:CBCentralInjectable]()
-    private var _isUpdating      = false
+    private var _subscribers            = [NSUUID:CBCentralInjectable]()
+    private var _isUpdating             = false
+    private var valueUpdatesPausedQueue = [NSData]()
 
-    internal var processWriteRequestPromise : StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>?
-    internal weak var _service : MutableService?
+    internal var processWriteRequestPromise: StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>?
+    internal weak var _service: MutableService?
     
-    public let cbMutableChracteristic : CBMutableCharacteristic
+    public let cbMutableChracteristic: CBMutableCharacteristic
     public var value: NSData?
 
     public var uuid: CBUUID {
@@ -62,6 +63,14 @@ public class MutableCharacteristic {
         return self._service
     }
 
+    public var stringValue: [String:String]? {
+        if let value = self.value {
+            return self.profile.stringValue(value)
+        } else {
+            return nil
+        }
+    }
+
     public init(profile: CharacteristicProfile) {
         self.profile = profile
         self.value = profile.initialValue
@@ -86,32 +95,12 @@ public class MutableCharacteristic {
         return (self.permissions.rawValue & permission.rawValue) > 0
     }
 
-    public var stringValue : [String:String]? {
-        if let value = self.value {
-            return self.profile.stringValue(value)
-        } else {
-            return nil
-        }
-    }
-    
     public func dataFromStringValue(stringValue: [String:String]) -> NSData? {
         return self.profile.dataFromStringValue(stringValue)
     }
     
     public func updateValueWithData(value: NSData) -> Bool  {
-        return MutableCharacteristicIO.queue.sync {
-            self.value = value
-            if let peripheralManager = self.service?.peripheralManager where self._isUpdating &&
-                    (self.propertyEnabled(.Notify)                    ||
-                     self.propertyEnabled(.Indicate)                  ||
-                     self.propertyEnabled(.NotifyEncryptionRequired)  ||
-                     self.propertyEnabled(.IndicateEncryptionRequired)) {
-                self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
-            } else {
-                self._isUpdating = false
-            }
-            return self._isUpdating
-        }
+        return updateValuesWithData([value])
     }
     
     public class func withProfiles(profiles: [CharacteristicProfile], service: MutableService) -> [MutableCharacteristic] {
@@ -131,37 +120,13 @@ public class MutableCharacteristic {
         }
     }
     
-    internal func didRespondToWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) -> Bool  {
-        if let processWriteRequestPromise = self.processWriteRequestPromise {
-            processWriteRequestPromise.success((request, central))
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
-        MutableCharacteristicIO.queue.sync {
-            self._subscribers[central.identifier] = central
-            self._isUpdating = true
-        }
-    }
-    
-    internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
-        MutableCharacteristicIO.queue.sync {
-            self._subscribers.removeValueForKey(central.identifier)
-            if !self.hasSubscriber {
-                self._isUpdating = false
-            }
-        }
-    }
-
     public func peripheralManagerIsReadyToUpdateSubscribers() {
+        var updateValues = [NSData]()
         MutableCharacteristicIO.queue.sync {
-            if self.hasSubscriber {
-                self._isUpdating = true
-            }
+            updateValues = self.valueUpdatesPausedQueue.map{($0.copy() as! NSData)}
+            self.valueUpdatesPausedQueue.removeAll()
         }
+        self.updateValuesWithData(updateValues)
     }
 
     public func updateValueWithString(value: [String:String]) -> Bool {
@@ -194,6 +159,52 @@ public class MutableCharacteristic {
 
     public func updateValue<T:RawArrayPairDeserializable>(value: T) -> Bool  {
         return self.updateValueWithData(Serde.serialize(value))
+    }
+
+    internal func didRespondToWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) -> Bool  {
+        if let processWriteRequestPromise = self.processWriteRequestPromise {
+            processWriteRequestPromise.success((request, central))
+            return true
+        } else {
+            return false
+        }
+    }
+
+    internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
+        MutableCharacteristicIO.queue.sync {
+            self._subscribers[central.identifier] = central
+            self._isUpdating = true
+        }
+    }
+
+    internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
+        MutableCharacteristicIO.queue.sync {
+            self._subscribers.removeValueForKey(central.identifier)
+            if !self.hasSubscriber {
+                self._isUpdating = false
+            }
+        }
+    }
+
+    private func updateValuesWithData(values: [NSData]) -> Bool  {
+        return MutableCharacteristicIO.queue.sync {
+            if let peripheralManager = self.service?.peripheralManager where self._isUpdating &&
+                (self.propertyEnabled(.Notify)                    ||
+                 self.propertyEnabled(.Indicate)                  ||
+                 self.propertyEnabled(.NotifyEncryptionRequired)  ||
+                 self.propertyEnabled(.IndicateEncryptionRequired)) {
+                for value in values {
+                    self.value = value
+                    self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
+                    if self.isUpdating == false {
+                        self.valueUpdatesPausedQueue.append(value)
+                    }
+                }
+            } else {
+                self._isUpdating = false
+            }
+            return self._isUpdating
+        }
     }
 
 }

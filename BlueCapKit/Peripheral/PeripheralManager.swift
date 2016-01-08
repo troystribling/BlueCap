@@ -266,14 +266,14 @@ public class PeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self.didUnsubscribeFromCharacteristic(characteristic, central: central)
     }
     
-    public func peripheralManagerIsReadyToUpdateSubscribers(_: CBPeripheralManager) {
-        self.isReadyToUpdateSubscribers()
-    }
-    
     public func peripheralManager(_: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
         self.didReceiveReadRequest(request, central: request.central)
     }
     
+    public func peripheralManagerIsReadyToUpdateSubscribers(_: CBPeripheralManager) {
+        self.isReadyToUpdateSubscribers()
+    }
+
     public func peripheralManager(_: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
         Logger.debug()
         for request in requests {

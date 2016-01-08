@@ -96,12 +96,15 @@ class MutableCharacteristicTests: XCTestCase {
             let characteristic = peripheralManager.characteristics[0]
             peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock1)
             peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock2)
-//            XCTAssertEqual(centralMock1.identifier, central.identifier, "invalid central identifier")
+            let centrals = characteristic.subscribers
+            let centralIDs = centrals.map{$0.identifier}
             XCTAssert(characteristic.hasSubscriber, "hasSubscriber value invalid")
             XCTAssert(characteristic.isUpdating, "isUpdating value invalid")
             XCTAssert(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
             XCTAssert(mock.updateValueCalled, "updateValueWithData not called")
-            XCTAssertEqual(characteristic.subscribers.count, 2, "characteristic subscriber count invalid")
+            XCTAssertEqual(centrals.count, 2, "characteristic subscriber count invalid")
+            XCTAssert(centralIDs.contains(centralMock1.identifier), "invalid central identifier")
+            XCTAssert(centralIDs.contains(centralMock2.identifier), "invalid central identifier")
         }
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
@@ -128,6 +131,30 @@ class MutableCharacteristicTests: XCTestCase {
         }
     }
 
+    func testMultipleSubscribersUnsubscribeToUpdates() {
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
+        let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+            expectation.fulfill()
+            let characteristic = peripheralManager.characteristics[0]
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock1)
+            peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock2)
+            XCTAssertEqual(characteristic.subscribers.count, 2, "characteristic subscriber count invalid")
+            peripheralManager.didUnsubscribeFromCharacteristic(characteristic.cbMutableChracteristic, central: centralMock1)
+            let centrals = characteristic.subscribers
+            XCTAssert(characteristic.hasSubscriber, "hasSubscriber value invalid")
+            XCTAssert(characteristic.isUpdating, "isUpdating value invalid")
+            XCTAssert(characteristic.updateValueWithData("aa".dataFromHexString()), "updateValueWithData invalid return status")
+            XCTAssert(mock.updateValueCalled, "updateValueWithData not called")
+            XCTAssertEqual(centrals.count, 1, "characteristic subscriber count invalid")
+            XCTAssertEqual(centrals[0].identifier, centralMock2.identifier, "invalid central identifier")
+        }
+        waitForExpectationsWithTimeout(20) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
     func testSubscriberUpdateFailed() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
@@ -148,7 +175,7 @@ class MutableCharacteristicTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
     func testResumeSubscriberUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
