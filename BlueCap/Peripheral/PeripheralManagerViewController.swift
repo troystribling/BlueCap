@@ -173,7 +173,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             let services = serviceUUIDs.reduce([MutableService]()){(services, uuid) in
                 if let serviceProfile = ProfileManager.sharedInstance.service[uuid] {
                     let service = MutableService(profile:serviceProfile, peripheralManager:peripheralManager)
-                    service.characteristicsFromProfiles(serviceProfile.characteristics)
+                    service.characteristicsFromProfiles()
                     return services + [service]
                 } else {
                     return services

@@ -63,7 +63,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             let perpheralManager = PeripheralManager.sharedInstance
             let serviceProfile = profiles[indexPath.row]
             let service = MutableService(profile:serviceProfile, peripheralManager:perpheralManager)
-            service.characteristicsFromProfiles(serviceProfile.characteristics)
+            service.characteristicsFromProfiles()
             self.progressView.show()
             let future = perpheralManager.addService(service)
             future.onSuccess {
