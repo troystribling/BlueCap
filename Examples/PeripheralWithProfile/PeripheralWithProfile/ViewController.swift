@@ -151,7 +151,7 @@ class ViewController: UITableViewController {
     
     func respondToWriteRequests() {
         let accelerometerUpdatePeriodFuture = self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(2)
-        accelerometerUpdatePeriodFuture.onSuccess {request in
+        accelerometerUpdatePeriodFuture.onSuccess {(request, _) in
             if let value = request.value where value.length > 0 &&  value.length <= 8 {
                 self.accelerometerUpdatePeriodCharacteristic.value = value
                 self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
@@ -161,7 +161,7 @@ class ViewController: UITableViewController {
             }
         }
         let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(2)
-        accelerometerEnabledFuture.onSuccess {request in
+        accelerometerEnabledFuture.onSuccess {(request, _) in
             if let value = request.value where value.length == 1 {
                 self.accelerometerEnabledCharacteristic.value = value
                 self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
