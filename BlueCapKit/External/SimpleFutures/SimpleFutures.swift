@@ -8,8 +8,7 @@
 
 import Foundation
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Optional
+// MARK: - Optional -
 extension Optional {
     
     func flatmap<M>(mapping:Wrapped -> M?) -> M? {
@@ -141,8 +140,7 @@ public func forcomp<T,U,V,W>(f:T?, g:U?, h:V?, filter:(T,U,V) -> Bool, yield:(T,
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Try
+// MARK: - Try -
 public struct TryError {
     public static let domain = "Wrappers"
     public static let filterFailed = NSError(domain:domain, code:1, userInfo:[NSLocalizedDescriptionKey:"Filter failed"])
@@ -356,15 +354,12 @@ public func forcomp<T,U,V,W>(f:Try<T>, g:Try<U>, h:Try<V>, filter:(T,U,V) -> Boo
     
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ExecutionContext
+// MARK: - ExecutionContext -
 public protocol ExecutionContext {
     
     func execute(task:Void->Void)
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Immediate Context
 public class ImmediateContext : ExecutionContext {
     
     public init() {}
@@ -374,8 +369,6 @@ public class ImmediateContext : ExecutionContext {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// QueueContext
 public struct QueueContext : ExecutionContext {
     
     public static let main =  QueueContext(queue:Queue.main)
@@ -393,8 +386,7 @@ public struct QueueContext : ExecutionContext {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Queue
+//MARK: - Queue -
 public struct Queue {
     
     public static let main              = Queue(dispatch_get_main_queue());
@@ -438,7 +430,7 @@ public struct Queue {
     
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MARK: - Errors -
 public struct SimpleFuturesError {
     static let domain = "SimpleFutures"
     static let futureCompleted      = NSError(domain:domain, code:1, userInfo:[NSLocalizedDescriptionKey:"Future has been completed"])
@@ -449,8 +441,7 @@ public struct SimpleFuturesException {
     static let futureCompleted = NSException(name:"Future complete error", reason: "Future previously completed.", userInfo:nil)
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Promise
+//MARK: - Promise -
 public class Promise<T> {
     
     public let future : Future<T>
@@ -485,8 +476,7 @@ public class Promise<T> {
 
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Future
+//MARK: - Future -
 public class Future<T> {
     
     internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
@@ -505,7 +495,6 @@ public class Future<T> {
     
     public init() {}
     
-    // should be future mixin
     internal func complete(result:Try<T>) {
         self.futureQueue.sync {
             if self.result != nil {
@@ -681,7 +670,6 @@ public class Future<T> {
         self.complete(Try<T>(error))
     }
     
-    // future stream extensions
     public func flatmap<M>(capacity:Int, mapping:T -> FutureStream<M>) -> FutureStream<M> {
         return self.flatMapStream(capacity, executionContext:self.defaultExecutionContext, mapping:mapping)
     }
@@ -752,8 +740,7 @@ public class Future<T> {
     
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// create futures
+//MARK: - Future constructs -
 public func future<T>(computeResult:Void -> Try<T>) -> Future<T> {
     return future(QueueContext.global, calculateResult:computeResult)
 }
@@ -766,6 +753,7 @@ public func future<T>(executionContext:ExecutionContext, calculateResult:Void ->
     return promise.future
 }
 
+//MARK: - Future forcomp -
 public func forcomp<T,U>(f:Future<T>, g:Future<U>, apply:(T,U) -> Void) -> Void {
     return forcomp(f.defaultExecutionContext, f:f, g:g, apply:apply)
 }
@@ -779,8 +767,6 @@ public func forcomp<T,U>(executionContext:ExecutionContext, f:Future<T>, g:Futur
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// for comprehensions
 public func forcomp<T,U>(f:Future<T>, g:Future<U>, filter:(T,U) -> Bool, apply:(T,U) -> Void) -> Void {
     return forcomp(f.defaultExecutionContext, f:f, g:g, filter:filter, apply:apply)
 }
@@ -881,8 +867,7 @@ public func forcomp<T,U, V, W>(executionContext:ExecutionContext, f:Future<T>, g
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// StreamPromise
+//MARK: - StreamPromise -
 public class StreamPromise<T> {
     
     public let future : FutureStream<T>
@@ -921,8 +906,7 @@ public class StreamPromise<T> {
     
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FutureStream
+//MARK: - FutureStream -
 public class FutureStream<T> {
     
     private var futures         = [Future<T>]()
