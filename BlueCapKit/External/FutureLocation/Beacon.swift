@@ -9,40 +9,53 @@
 import Foundation
 import CoreLocation
 
-public class Beacon : BeaconWrappable {
+// MARK: - CLBeaconInjectable -
+public protocol CLBeaconInjectable {
+    var proximityUUID: NSUUID { get }
+    var major: NSNumber { get }
+    var minor: NSNumber { get }
+    var proximity: CLProximity { get }
+    var accuracy: CLLocationAccuracy { get }
+    var rssi: Int { get }
+}
+
+extension CLBeacon: CLBeaconInjectable {}
+
+// MARK: - Beacon -
+public class Beacon {
     
-    private let clbeacon        : CLBeacon
-    private let _discoveredAt   = NSDate()
+    private let clBeacon : CLBeaconInjectable
+    private let _discoveredAt = NSDate()
     
     public var discoveredAt : NSDate {
         return self._discoveredAt
     }
     
-    internal init(clbeacon:CLBeacon) {
-        self.clbeacon = clbeacon
+    internal init(clBeacon: CLBeaconInjectable) {
+        self.clBeacon = clBeacon
     }
     
     public var major : Int {
-        return self.clbeacon.major.integerValue
+        return self.clBeacon.major.integerValue
     }
     
     public var minor : Int {
-        return self.clbeacon.minor.integerValue
+        return self.clBeacon.minor.integerValue
     }
     
     public var proximityUUID : NSUUID {
-        return self.clbeacon.proximityUUID
+        return self.clBeacon.proximityUUID
     }
     
     public var proximity : CLProximity {
-        return self.clbeacon.proximity
+        return self.clBeacon.proximity
     }
     
     public var accuracy : CLLocationAccuracy {
-        return self.clbeacon.accuracy
+        return self.clBeacon.accuracy
     }
     
     public var rssi : Int {
-        return self.clbeacon.rssi
+        return self.clBeacon.rssi
     }
 }

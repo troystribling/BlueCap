@@ -17,14 +17,12 @@ public enum RegionState {
 
 public class Region {
     
-    // RegionWrappable
     public var regionPromise  : StreamPromise<RegionState>
     
     public var identifier : String {
         return self.clRegion.identifier
     }
-    // RegionWrappable
-    
+
     internal let clRegion : CLRegion
     
     public var notifyOnEntry : Bool {
@@ -45,7 +43,7 @@ public class Region {
         }
     }
     
-    internal init(region:CLRegion, capacity:Int? = nil) {
+    public init(region:CLRegion, capacity:Int? = nil) {
         self.clRegion = region
         if let capacity = capacity {
             self.regionPromise = StreamPromise<RegionState>(capacity:capacity)

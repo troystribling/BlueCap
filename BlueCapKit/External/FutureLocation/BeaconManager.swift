@@ -9,214 +9,94 @@
 import Foundation
 import CoreLocation
 
-///////////////////////////////////////////////
-//// BeaconManagerImpl
-public protocol BeaconManagerWrappable {
+// MARK - BeaconManager -
+public class BeaconManager : RegionManager {
 
-    typealias WrappedBeaconRegion
+    // MARK: Properties
+    private var regionRangingStatus = SerialDictionary<String, Bool>(LocationManagerIO.queue)
+    internal var configuredBeaconRegions = SerialDictionary<String, BeaconRegion>(LocationManagerIO.queue)
 
-    var beaconRegions : [WrappedBeaconRegion] {get}
-    
-    func wrappedStartRangingBeaconsInRegion(beaconRegion:WrappedBeaconRegion)
-    func wrappedStopRangingBeaconsInRegion(beaconRegion:WrappedBeaconRegion)
-    
-    func authorize(requestedAuthorization:CLAuthorizationStatus) -> Future<Void>
-}
-
-public protocol BeaconRegionWrappable {
-    
-    typealias WrappedBeacon
-    
-    var identifier     : String                         {get}
-    var beaconPromise  : StreamPromise<[WrappedBeacon]> {get}
-    
-    func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [String:AnyObject]
-}
-
-public protocol BeaconWrappable {
-}
-
-public class BeaconManagerImpl<Wrapper where
-                                 Wrapper:BeaconManagerWrappable,
-                                 Wrapper.WrappedBeaconRegion:BeaconRegionWrappable,
-                                 Wrapper.WrappedBeaconRegion.WrappedBeacon:BeaconWrappable> {
-
-    private var regionRangingStatus = [String:Bool]()
-
-    public var isRanging : Bool {
-        var status = false
-        for rangingStatus in Array(self.regionRangingStatus.values) {
-            if rangingStatus {
-                status = true
-                break
-            }
-        }
-        return status
+    public func isRangingAvailable() -> Bool {
+        return CLLocationManager.isRangingAvailable()
     }
-    
-    public init() {
+
+    public var beaconRegions: [BeaconRegion] {
+        return self.configuredBeaconRegions.values
     }
-    
+
+    public func beaconRegion(identifier: String) -> BeaconRegion? {
+        return self.configuredBeaconRegions[identifier]
+    }
+
+    //MARK: Initialize
+    public convenience init() {
+        self.init(clLocationManager: CLLocationManager())
+    }
+
+    public override init(clLocationManager: CLLocationManagerInjectable) {
+        super.init(clLocationManager: clLocationManager)
+    }
+
+    // MARK: Control
+    public var isRanging: Bool {
+        return Array(self.regionRangingStatus.values).filter{$0}.count > 0
+    }
+
     public func isRangingRegion(identifier:String) -> Bool {
-        if let status = self.regionRangingStatus[identifier] {
-            return status
-        } else {
-            return false
-        }
+        return self.regionRangingStatus[identifier] ?? false
     }
-    
-    // control
-    public func startRangingBeaconsInRegion(manager:Wrapper, authorization:CLAuthorizationStatus, beaconRegion:Wrapper.WrappedBeaconRegion) -> FutureStream<[Wrapper.WrappedBeaconRegion.WrappedBeacon]> {
-        let authoriztaionFuture = manager.authorize(authorization)
-        authoriztaionFuture.onSuccess {status in
+
+    public func startRangingBeaconsInRegion(beaconRegion: BeaconRegion, context: ExecutionContext = QueueContext.main) -> FutureStream<[Beacon]> {
+        let authoriztaionFuture = self.authorize(CLAuthorizationStatus.AuthorizedAlways)
+        authoriztaionFuture.onSuccess(context) {status in
             Logger.debug("authorization status: \(status)")
             self.regionRangingStatus[beaconRegion.identifier] = true
-            manager.wrappedStartRangingBeaconsInRegion(beaconRegion)
+            self.configuredBeaconRegions[beaconRegion.identifier] = beaconRegion
+            self.configuredRegions[beaconRegion.identifier] = beaconRegion
+            self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
         }
-        authoriztaionFuture.onFailure {error in
+        authoriztaionFuture.onFailure(context) {error in
             beaconRegion.beaconPromise.failure(error)
         }
         return beaconRegion.beaconPromise.future
-    }
-    
-    public func stopRangingBeaconsInRegion(manager:Wrapper, beaconRegion:Wrapper.WrappedBeaconRegion) {
-        self.regionRangingStatus.removeValueForKey(beaconRegion.identifier)
-        manager.wrappedStartRangingBeaconsInRegion(beaconRegion)
-    }
-    
-    public func resumeRangingAllBeacons(manager:Wrapper) {
-        for beaconRegion in manager.beaconRegions {
-            self.regionRangingStatus[beaconRegion.identifier] = true
-            manager.wrappedStartRangingBeaconsInRegion(beaconRegion)
-        }
-    }
-    
-    public func pauseRangingAllBeacons(manager:Wrapper) {
-        for beaconRegion in manager.beaconRegions {
-            self.regionRangingStatus[beaconRegion.identifier] = false
-            manager.wrappedStopRangingBeaconsInRegion(beaconRegion)
-        }
-    }
-    
-    public func stopRangingAllBeacons(manager:Wrapper) {
-        for beaconRegion in manager.beaconRegions {
-            self.stopRangingBeaconsInRegion(manager, beaconRegion:beaconRegion)
-        }
-    }
-    
-    // CLLocationManagerDelegate
-    public func didRangeBeacons(beacons:[Wrapper.WrappedBeaconRegion.WrappedBeacon], region:Wrapper.WrappedBeaconRegion) {
-        Logger.debug("region identifier = \(region.identifier)")
-        region.beaconPromise.success(beacons)
-    }
-    
-    public func didFailRangingBeaconsForRegion(region:Wrapper.WrappedBeaconRegion, error:NSError) {
-        Logger.debug("region identifier \(region.identifier)")
-        region.beaconPromise.failure(error)
+
     }
 
-}
-// BeaconManagerImpl
-/////////////////////////////////////////////
-
-public class BeaconManager : RegionManager, BeaconManagerWrappable {
-    
-    let beaconImpl = BeaconManagerImpl<BeaconManager>()
-    
-    // BeaconManagerWrappable
-    public var beaconRegions : [BeaconRegion] {
-        return Array(self.configuredBeaconRegions.values)
-    }
-    
-    public func wrappedStartRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
-        self.configuredBeaconRegions[beaconRegion.clBeaconRegion] = beaconRegion
-        self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
-    }
-    
-    public func wrappedStopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
-        self.configuredBeaconRegions.removeValueForKey(beaconRegion.clBeaconRegion)
+    public func stopRangingBeaconsInRegion(beaconRegion: BeaconRegion) {
+        self.configuredBeaconRegions.removeValueForKey(beaconRegion.identifier)
+        self.regionRangingStatus[beaconRegion.identifier] = false
+        self.configuredRegions.removeValueForKey(beaconRegion.identifier)
         self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
     }
 
-    // BeaconManagerWrappable
-    internal var configuredBeaconRegions    : [CLBeaconRegion:BeaconRegion]     = [:]
-
-    public class func isRangingAvailable() -> Bool {
-        return CLLocationManager.isRangingAvailable()
-    }
-    
-    public var isRanging : Bool {
-        return self.beaconImpl.isRanging
-    }
-    
-    public override init() {
-        super.init()
-    }
-
-    public override class var sharedInstance : BeaconManager {
-        struct Static {
-            static let instance = BeaconManager()
-        }
-        return Static.instance
-    }
-    
-    public func beaconRegion(identifier:String) -> BeaconRegion? {
-        let regions = Array(self.configuredBeaconRegions.keys).filter{$0.identifier == identifier}
-        if let region = regions.first {
-            return self.configuredBeaconRegions[region]
-        } else {
-            return nil
-        }
-    }
-
-    public func isRangingRegion(identifier:String) -> Bool {
-        return self.beaconImpl.isRangingRegion(identifier)
-    }
-
-    // control
-    public func startRangingBeaconsInRegion(beaconRegion:BeaconRegion, authorization:CLAuthorizationStatus? = nil) -> FutureStream<[Beacon]> {
-        if let authorization = authorization {
-            return self.beaconImpl.startRangingBeaconsInRegion(self, authorization:authorization, beaconRegion:beaconRegion)
-        } else {
-            return self.beaconImpl.startRangingBeaconsInRegion(self, authorization:LocationManager.authorizationStatus(), beaconRegion:beaconRegion)
-        }
-    }
-
-    public func stopRangingBeaconsInRegion(beaconRegion:BeaconRegion) {
-        self.beaconImpl.stopRangingBeaconsInRegion(self, beaconRegion:beaconRegion)
-    }
-    
-    public func resumeRangingAllBeacons() {
-        self.beaconImpl.resumeRangingAllBeacons(self)
-    }
-    
-    public func pauseRangingAllBeacons() {
-        self.beaconImpl.pauseRangingAllBeacons(self)
-    }
-
     public func stopRangingAllBeacons() {
-        self.beaconImpl.stopRangingAllBeacons(self)
+        for beaconRegion in self.beaconRegions {
+            self.stopRangingBeaconsInRegion(beaconRegion)
+        }
+    }
+    
+    // MARK: CLLocationManagerDelegate
+    public func locationManager(_: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
+        self.didRangeBeacons(beacons.map{$0 as CLBeaconInjectable}, inRegion: region)
+    }
+    
+    public func locationManager(_: CLLocationManager, rangingBeaconsDidFailForRegion region: CLBeaconRegion, withError error: NSError) {
+        self.rangingBeaconsDidFailForRegion(region, withError: error)
     }
 
-    public func requestStateForRegion(beaconMonitor:BeaconRegion) {
-        self.clLocationManager.requestStateForRegion(beaconMonitor.clRegion)
-    }
-    
-    // CLLocationManagerDelegate
-    public func locationManager(_:CLLocationManager, didRangeBeacons beacons:[CLBeacon], inRegion region:CLBeaconRegion) {
+    public func didRangeBeacons(beacons: [CLBeaconInjectable], inRegion region: CLBeaconRegion) {
         Logger.debug("region identifier \(region.identifier)")
-        if let beaconRegion = self.configuredBeaconRegions[region] {
-            let bcbeacons = beacons.map{Beacon(clbeacon:$0)}
-            beaconRegion._beacons = bcbeacons
-            self.beaconImpl.didRangeBeacons(bcbeacons, region:beaconRegion)
+        if let beaconRegion = self.configuredBeaconRegions[region.identifier] {
+            let flBeacons = beacons.map{Beacon(clBeacon:$0)}
+            beaconRegion._beacons = flBeacons
+            beaconRegion.beaconPromise.success(flBeacons)
         }
     }
-    
-    public func locationManager(_:CLLocationManager, rangingBeaconsDidFailForRegion region:CLBeaconRegion, withError error:NSError) {
+
+    public func rangingBeaconsDidFailForRegion(region: CLBeaconRegion, withError error: NSError) {
         Logger.debug("region identifier \(region.identifier)")
-        if let beaconRegion = self.configuredBeaconRegions[region] {
-            self.beaconImpl.didFailRangingBeaconsForRegion(beaconRegion, error:error)
-        }
+        self.regionRangingStatus[region.identifier] = false
+        self.configuredBeaconRegions[region.identifier]?.beaconPromise.failure(error)
     }
     
 }

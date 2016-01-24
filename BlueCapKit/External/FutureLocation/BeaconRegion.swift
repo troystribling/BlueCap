@@ -9,29 +9,11 @@
 import UIKit
 import CoreLocation
 
-public class BeaconRegion : Region, BeaconRegionWrappable {
+public class BeaconRegion : Region {
     
-    // BeaconRegionWrappable
     public let beaconPromise  : StreamPromise<[Beacon]>
     
-    public func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [String:AnyObject] {
-        let power : [NSObject:AnyObject]
-        if let measuredPower = measuredPower {
-            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as [NSObject:AnyObject]
-        } else {
-            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(nil) as [NSObject:AnyObject]
-        }
-        return power.keys.reduce([String:AnyObject]()){(var result, key) in
-            if let keyPower = power[key], key = key as? String {
-                result[key] = keyPower
-            }
-            return result
-        }
-    }
-    // BeaconRegionWrappable
-    
     internal var _beacons       = [Beacon]()
-
     internal  let clBeaconRegion : CLBeaconRegion
     
     public var beacons : [Beacon] {
@@ -76,7 +58,7 @@ public class BeaconRegion : Region, BeaconRegionWrappable {
         }
     }
     
-    internal init(region:CLBeaconRegion, capacity:Int? = nil) {
+    public init(region:CLBeaconRegion, capacity:Int? = nil) {
         self.clBeaconRegion = region
         if let capacity = capacity {
             self.beaconPromise = StreamPromise<[Beacon]>(capacity:capacity)
@@ -107,5 +89,20 @@ public class BeaconRegion : Region, BeaconRegionWrappable {
     public override class func isMonitoringAvailableForClass() -> Bool {
         return CLLocationManager.isMonitoringAvailableForClass(CLBeaconRegion)
     }
-    
+
+    public func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [String:AnyObject] {
+        let power : [NSObject:AnyObject]
+        if let measuredPower = measuredPower {
+            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer:measuredPower)) as [NSObject:AnyObject]
+        } else {
+            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(nil) as [NSObject:AnyObject]
+        }
+        return power.keys.reduce([String:AnyObject]()){(var result, key) in
+            if let keyPower = power[key], key = key as? String {
+                result[key] = keyPower
+            }
+            return result
+        }
+    }
+
 }
