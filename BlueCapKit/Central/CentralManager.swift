@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - CBCentralManagerInjectable -
 public protocol CBCentralManagerInjectable {
     var state : CBCentralManagerState {get}
     func scanForPeripheralsWithServices(uuids: [CBUUID]?, options: [String:AnyObject]?)
@@ -19,18 +20,52 @@ public protocol CBCentralManagerInjectable {
 
 extension CBCentralManager : CBCentralManagerInjectable {}
 
+// MARK: - CBCentralManagerIO -
+struct CentralManagerIO {
+    static let queue = Queue("us.gnos.blueCap.central-manager.io")
+}
+
+// MARK: - CBCentralManager -
 public class CentralManager : NSObject, CBCentralManagerDelegate {
-    
-    private var afterPowerOnPromise                             = Promise<Void>()
-    private var afterPowerOffPromise                            = Promise<Void>()
+
+    // MARK: Properties
+    private var _afterPowerOnPromise                            = Promise<Void>()
+    private var _afterPowerOffPromise                           = Promise<Void>()
     
     private var _isScanning                                     = false
 
-    internal var afterPeripheralDiscoveredPromise               = StreamPromise<Peripheral>()
-    internal var discoveredPeripherals                          = [NSUUID: Peripheral]()
+    internal var _afterPeripheralDiscoveredPromise              = StreamPromise<Peripheral>()
+    internal var discoveredPeripherals                          = SerialIODictionary<NSUUID, Peripheral>(CentralManagerIO.queue)
 
     public var cbCentralManager : CBCentralManagerInjectable!
     public let centralQueue : Queue
+
+    private var afterPowerOnPromise: Promise<Void> {
+        get {
+            return CentralManagerIO.queue.sync { return self._afterPowerOnPromise }
+        }
+        set {
+            CentralManagerIO.queue.sync { self._afterPowerOnPromise = newValue }
+        }
+    }
+
+    private var afterPowerOffPromise: Promise<Void> {
+        get {
+            return CentralManagerIO.queue.sync { return self._afterPowerOffPromise }
+        }
+        set {
+            CentralManagerIO.queue.sync { self._afterPowerOffPromise = newValue }
+        }
+    }
+
+    internal var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral> {
+        get {
+            return CentralManagerIO.queue.sync { return self._afterPeripheralDiscoveredPromise }
+        }
+        set {
+            CentralManagerIO.queue.sync { self._afterPeripheralDiscoveredPromise = newValue }
+        }
+    }
 
     public var poweredOn : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
@@ -39,7 +74,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     public var poweredOff : Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOff
     }
-    
+
     public var peripherals : [Peripheral] {
         return Array(self.discoveredPeripherals.values).sort() {(p1:Peripheral, p2:Peripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
@@ -61,19 +96,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return self._isScanning
     }
 
-    public class var sharedInstance : CentralManager {
-        struct StaticInstance {
-            static var onceToken : dispatch_once_t  = 0
-            static var instance : CentralManager?   = nil
-        }
-        dispatch_once(&StaticInstance.onceToken) {
-            StaticInstance.instance = CentralManager()
-        }
-        return StaticInstance.instance!
-    }
-    
+    // MARK: Initializers
     private override init() {
-        self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
+        self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         super.init()
         self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue)
     }
@@ -85,7 +110,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public init(centralManager: CBCentralManagerInjectable) {
-        self.centralQueue = Queue(dispatch_queue_create("com.gnos.us.central.main", DISPATCH_QUEUE_SERIAL))
+        self.centralQueue = Queue("us.gnos.blueCap.central-manger.main")
         super.init()
         self.cbCentralManager = centralManager
     }
@@ -134,38 +159,32 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func removeAllPeripherals() {
-        self.discoveredPeripherals.removeAll(keepCapacity:false)
+        self.discoveredPeripherals.removeAll()
     }
     
-    // connection
     public func disconnectAllPeripherals() {
         for peripheral in self.discoveredPeripherals.values {
             peripheral.disconnect()
         }
     }
     
-    // power up
     public func powerOn() -> Future<Void> {
-        self.centralQueue.sync {
-            self.afterPowerOnPromise = Promise<Void>()
-            if self.poweredOn {
-                self.afterPowerOnPromise.success()
-            }
+        self.afterPowerOnPromise = Promise<Void>()
+        if self.poweredOn {
+            self.afterPowerOnPromise.success()
         }
         return self.afterPowerOnPromise.future
     }
     
     public func powerOff() -> Future<Void> {
-        self.centralQueue.sync {
-            self.afterPowerOffPromise = Promise<Void>()
-            if self.poweredOff {
-                self.afterPowerOffPromise.success()
-            }
+        self.afterPowerOffPromise = Promise<Void>()
+        if self.poweredOff {
+            self.afterPowerOffPromise.success()
         }
         return self.afterPowerOffPromise.future
     }
     
-    // CBCentralManagerDelegate
+    // MARK: CBCentralManagerDelegate
     public func centralManager(_: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         self.didConnectPeripheral(peripheral)
     }
@@ -190,7 +209,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug()
     }
     
-    // central manager state
     public func centralManager(_: CBCentralManager, willRestoreState dict: [String:AnyObject]) {
         Logger.debug()
     }

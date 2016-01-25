@@ -11,40 +11,8 @@ import CoreLocation
 
 // MARK: - Property Update Serialization -
 struct LocationManagerIO {
-    static let queue = Queue("us.gnos.location-manager")
+    static let queue = Queue("us.gnos.futureLocation.location-manager.io")
     static let context = QueueContext(queue: queue)
-}
-
-// MARK: Serialize Dictionary Access
-class SerialDictionary<T, U where T: Hashable> {
-
-    var data = [T: U]()
-    let queue: Queue
-
-    init(_ queue: Queue) {
-        self.queue = queue
-    }
-
-    var values: [U] {
-        return self.queue.sync { return Array(self.data.values) }
-    }
-
-    var keys: [T] {
-        return self.queue.sync { return Array(self.data.keys) }
-    }
-
-    subscript(key: T) -> U? {
-        get {
-            return self.queue.sync { return self.data[key] }
-        }
-        set {
-            self.queue.sync { self.data[key] = newValue }
-        }
-    }
-
-    func removeValueForKey(key: T) {
-        self.queue.sync { self.data.removeValueForKey(key) }
-    }
 }
 
 // MARK: - Errors -
@@ -53,7 +21,7 @@ public enum FLErrorCode : Int {
     case UpdateFailed               = 1
     case AuthorizationAlwaysFailed  = 2
     case AuthorisedWhenInUseFailed  = 3
-    case NotSupportedForIOSVersion = 4
+    case NotSupportedForIOSVersion  = 4
 }
 
 public struct FLError {

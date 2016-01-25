@@ -13,9 +13,9 @@ import CoreLocation
 public class RegionManager : LocationManager {
 
     // MARK: Properties
-    internal var regionMonitorStatus = SerialDictionary<String, Bool>(LocationManagerIO.queue)
-    internal var configuredRegions = SerialDictionary<String, Region>(LocationManagerIO.queue)
-    private var requestStateForRegionPromises = SerialDictionary<String, Promise<CLRegionState>>(LocationManagerIO.queue)
+    internal var regionMonitorStatus = SerialIODictionary<String, Bool>(LocationManagerIO.queue)
+    internal var configuredRegions = SerialIODictionary<String, Region>(LocationManagerIO.queue)
+    private var requestStateForRegionPromises = SerialIODictionary<String, Promise<CLRegionState>>(LocationManagerIO.queue)
 
 
     // MARK: Configure

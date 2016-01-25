@@ -48,6 +48,72 @@ public class Characteristic {
     private let defaultTimeout  = 10.0
 
     public let cbCharacteristic : CBCharacteristic
+
+    private var notificationStateChangedPromise : Promise<Characteristic>? {
+        get {
+            return CharacteristicIO.queue.sync {
+                return self._notificationStateChangedPromise
+            }
+        }
+        set {
+            CharacteristicIO.queue.sync {self._notificationStateChangedPromise = newValue}
+        }
+    }
+
+    private var notificationUpdatePromise : StreamPromise<NSData?>? {
+        get {
+            return CharacteristicIO.queue.sync {
+                return self._notificationUpdatePromise
+            }
+        }
+        set {
+            CharacteristicIO.queue.sync {self._notificationUpdatePromise = newValue}
+        }
+    }
+
+    private var reading : Bool {
+        get {
+            return CharacteristicIO.queue.sync {
+                return self._reading
+            }
+        }
+        set {
+            CharacteristicIO.queue.sync{self._reading = newValue}
+        }
+    }
+
+    private var writing : Bool {
+        get {
+            return CharacteristicIO.queue.sync {
+                return self._writing
+            }
+        }
+        set {
+            CharacteristicIO.queue.sync{self._writing = newValue}
+        }
+    }
+
+    private var readSequence : Int {
+        get {
+            return CharacteristicIO.queue.sync {
+                return self._readSequence
+            }
+        }
+        set {
+            CharacteristicIO.queue.sync{self._readSequence = newValue}
+        }
+    }
+
+    private var writeSequence : Int {
+        get {
+            return CharacteristicIO.queue.sync {
+                return self._writeSequence
+            }
+        }
+        set {
+            CharacteristicIO.queue.sync{self._writeSequence = newValue}
+        }
+    }
     
     public var uuid : CBUUID {
         return self.cbCharacteristic.UUID
@@ -100,72 +166,6 @@ public class Characteristic {
         return self.cbCharacteristic.properties
     }
     
-    private var notificationStateChangedPromise : Promise<Characteristic>? {
-        get {
-            return CharacteristicIO.queue.sync {
-                return self._notificationStateChangedPromise
-            }
-        }
-        set {
-            CharacteristicIO.queue.sync {self._notificationStateChangedPromise = newValue}
-        }
-    }
-
-    private var notificationUpdatePromise : StreamPromise<NSData?>? {
-        get {
-            return CharacteristicIO.queue.sync {
-                return self._notificationUpdatePromise
-            }
-        }
-        set {
-            CharacteristicIO.queue.sync {self._notificationUpdatePromise = newValue}
-        }
-    }
-    
-    private var reading : Bool {
-        get {
-            return CharacteristicIO.queue.sync {
-                return self._reading
-            }
-        }
-        set {
-            CharacteristicIO.queue.sync{self._reading = newValue}
-        }
-    }
-
-    private var writing : Bool {
-        get {
-            return CharacteristicIO.queue.sync {
-                return self._writing
-            }
-        }
-        set {
-            CharacteristicIO.queue.sync{self._writing = newValue}
-        }
-    }
-
-    private var readSequence : Int {
-        get {
-            return CharacteristicIO.queue.sync {
-                return self._readSequence
-            }
-        }
-        set {
-            CharacteristicIO.queue.sync{self._readSequence = newValue}
-        }
-    }
-
-    private var writeSequence : Int {
-        get {
-            return CharacteristicIO.queue.sync {
-                return self._writeSequence
-            }
-        }
-        set {
-            CharacteristicIO.queue.sync{self._writeSequence = newValue}
-        }
-    }
-
     public init(cbCharacteristic:CBCharacteristic, service:Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
