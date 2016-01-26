@@ -20,7 +20,7 @@ public protocol CBCentralManagerInjectable {
 
 extension CBCentralManager : CBCentralManagerInjectable {}
 
-// MARK: - CBCentralManagerIO -
+// MARK: - CentralManagerIO -
 struct CentralManagerIO {
     static let queue = Queue("us.gnos.blueCap.central-manager.io")
 }
@@ -100,7 +100,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private override init() {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         super.init()
-        self.cbCentralManager = CBCentralManager(delegate:self, queue:self.centralQueue.queue)
+        self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)
     }
     
     public init(queue:dispatch_queue_t, options: [String:AnyObject]?=nil) {
@@ -127,7 +127,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    // scanning
+    // MARK: Control
     public func startScanning(capacity:Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         return self.startScanningForServiceUUIDs(nil, capacity: capacity)
     }
@@ -137,12 +137,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             Logger.debug("UUIDs \(uuids)")
             self._isScanning = true
             if let capacity = capacity {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity:capacity)
+                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
             } else {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
             }
             if self.poweredOn {
-                self.cbCentralManager.scanForPeripheralsWithServices(uuids, options:options)
+                self.cbCentralManager.scanForPeripheralsWithServices(uuids, options: options)
             } else {
                 self.afterPeripheralDiscoveredPromise.failure(BCError.centralIsPoweredOff)
             }
