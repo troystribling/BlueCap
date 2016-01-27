@@ -1,5 +1,5 @@
 //
-//  SerialIODictionary.swift
+//  FLSerialIODictionary.swift
 //  FutureLocation
 //
 //  Created by Troy Stribling on 1/24/16.
@@ -9,7 +9,7 @@
 import Foundation
 
 // MARK: Serialize Dictionary Access
-public class SerialIODictionary<T, U where T: Hashable> {
+public class FLSerialIODictionary<T, U where T: Hashable> {
 
     var data = [T: U]()
     let queue: Queue
@@ -42,4 +42,5 @@ public class SerialIODictionary<T, U where T: Hashable> {
     func removeAll() {
         self.queue.sync { self.data.removeAll() }
     }
+
 }

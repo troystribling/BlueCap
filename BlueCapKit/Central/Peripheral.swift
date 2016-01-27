@@ -35,11 +35,6 @@ public protocol CBPeripheralInjectable {
 
 extension CBPeripheral : CBPeripheralInjectable {}
 
-// MARK: - PeripheralIO -
-struct PeripheralIO {
-    static let queue = Queue("us.gnos.blueCap.peripheral.io")
-}
-
 // MARK: - PeripheralAdvertisements -
 public struct PeripheralAdvertisements {
     
@@ -113,6 +108,9 @@ public struct PeripheralAdvertisements {
 // MARK: - Peripheral -
 public class Peripheral : NSObject, CBPeripheralDelegate {
 
+    // MARK: Serialize Property IO
+    static let ioQueue = Queue("us.gnos.blueCap.peripheral.io")
+
     // MARK: Properties
     private var _servicesDiscoveredPromise: Promise<Peripheral>?
     private var _readRSSIPromise: Promise<Int>?
@@ -132,8 +130,8 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var _connectedAt: NSDate?
     private var _disconnectedAt : NSDate?
     
-    private var discoveredServices          = SerialIODictionary<CBUUID, Service>(PeripheralIO.queue)
-    private var discoveredCharacteristics   = SerialIODictionary<CBUUID, Characteristic>(PeripheralIO.queue)
+    private var discoveredServices          = BCSerialIODictionary<CBUUID, Service>(Peripheral.ioQueue)
+    private var discoveredCharacteristics   = BCSerialIODictionary<CBUUID, Characteristic>(Peripheral.ioQueue)
 
     internal var connectionTimeout          = 10.0
     internal var timeoutRetries: UInt?
@@ -147,7 +145,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     // MARK: Serial Properties
     private var servicesDiscoveredPromise: Promise<Peripheral>? {
         get {
-            return PeripheralIO.queue.sync { return self._servicesDiscoveredPromise }
+            return Peripheral.ioQueue.sync { return self._servicesDiscoveredPromise }
         }
         set {
             self._servicesDiscoveredPromise = newValue
@@ -156,64 +154,64 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
 
     private var readRSSIPromise: Promise<Int>? {
         get {
-            return PeripheralIO.queue.sync { return self._readRSSIPromise }
+            return Peripheral.ioQueue.sync { return self._readRSSIPromise }
         }
         set {
-            PeripheralIO.queue.sync { self._readRSSIPromise = newValue }
+            Peripheral.ioQueue.sync { self._readRSSIPromise = newValue }
         }
     }
 
     private var connectionPromise: StreamPromise<(Peripheral, ConnectionEvent)>? {
         get {
-            return PeripheralIO.queue.sync { return self._connectionPromise }
+            return Peripheral.ioQueue.sync { return self._connectionPromise }
         }
         set {
-            PeripheralIO.queue.sync { self._connectionPromise = newValue }
+            Peripheral.ioQueue.sync { self._connectionPromise = newValue }
         }
     }
 
     private var timeoutCount: UInt {
         get {
-            return PeripheralIO.queue.sync  { return self._timeoutCount }
+            return Peripheral.ioQueue.sync  { return self._timeoutCount }
         }
         set {
-            PeripheralIO.queue.sync { self._timeoutCount = newValue }
+            Peripheral.ioQueue.sync { self._timeoutCount = newValue }
         }
     }
 
     private var disconnectCount: UInt {
         get {
-            return PeripheralIO.queue.sync { return self._disconnectCount }
+            return Peripheral.ioQueue.sync { return self._disconnectCount }
         }
         set {
-            PeripheralIO.queue.sync { self._disconnectCount = newValue }
+            Peripheral.ioQueue.sync { self._disconnectCount = newValue }
         }
     }
 
     private var connectionSequence: Int {
         get {
-            return PeripheralIO.queue.sync { return self._connectionSequence }
+            return Peripheral.ioQueue.sync { return self._connectionSequence }
         }
         set {
-            PeripheralIO.queue.sync { self._connectionSequence = newValue }
+            Peripheral.ioQueue.sync { self._connectionSequence = newValue }
         }
     }
 
     private var currentError: PeripheralConnectionError {
         get {
-            return PeripheralIO.queue.sync { return self._currentError }
+            return Peripheral.ioQueue.sync { return self._currentError }
         }
         set {
-            PeripheralIO.queue.sync { self._currentError = newValue }
+            Peripheral.ioQueue.sync { self._currentError = newValue }
         }
     }
 
     private var forcedDisconnect: Bool {
         get {
-            return PeripheralIO.queue.sync { return self._forcedDisconnect }
+            return Peripheral.ioQueue.sync { return self._forcedDisconnect }
         }
         set {
-            PeripheralIO.queue.sync { self._forcedDisconnect = newValue }
+            Peripheral.ioQueue.sync { self._forcedDisconnect = newValue }
         }
     }
 

@@ -1,5 +1,5 @@
 //
-//  BeaconRegion.swift
+//  FLBeaconRegion.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 9/14/14.
@@ -9,15 +9,15 @@
 import UIKit
 import CoreLocation
 
-public class BeaconRegion : Region {
+public class FLBeaconRegion : FLRegion {
     
-    public let beaconPromise  : StreamPromise<[Beacon]>
+    public let beaconPromise  : StreamPromise<[FLBeacon]>
     
-    internal var _beacons       = [Beacon]()
+    internal var _beacons       = [FLBeacon]()
     internal  let clBeaconRegion : CLBeaconRegion
     
-    public var beacons : [Beacon] {
-        return self._beacons.sort() {(b1:Beacon, b2:Beacon) -> Bool in
+    public var beacons : [FLBeacon] {
+        return self._beacons.sort() {(b1:FLBeacon, b2:FLBeacon) -> Bool in
             switch b1.discoveredAt.compare(b2.discoveredAt) {
             case .OrderedSame:
                 return true
@@ -61,9 +61,9 @@ public class BeaconRegion : Region {
     public init(region:CLBeaconRegion, capacity:Int? = nil) {
         self.clBeaconRegion = region
         if let capacity = capacity {
-            self.beaconPromise = StreamPromise<[Beacon]>(capacity:capacity)
+            self.beaconPromise = StreamPromise<[FLBeacon]>(capacity:capacity)
         } else {
-            self.beaconPromise = StreamPromise<[Beacon]>()
+            self.beaconPromise = StreamPromise<[FLBeacon]>()
         }
         super.init(region:region, capacity:capacity)
         self.notifyEntryStateOnDisplay = true

@@ -1,5 +1,5 @@
 //
-//  Region.swift
+//  FLRegion.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/24/14.
@@ -11,13 +11,13 @@ import CoreLocation
 
 let DEFAULT_REGION_RADIUS = 100.0
 
-public enum RegionState {
+public enum FLRegionState {
     case Start, Inside, Outside
 }
 
-public class Region {
+public class FLRegion {
     
-    public var regionPromise  : StreamPromise<RegionState>
+    public var regionPromise  : StreamPromise<FLRegionState>
     
     public var identifier : String {
         return self.clRegion.identifier
@@ -46,9 +46,9 @@ public class Region {
     public init(region:CLRegion, capacity:Int? = nil) {
         self.clRegion = region
         if let capacity = capacity {
-            self.regionPromise = StreamPromise<RegionState>(capacity:capacity)
+            self.regionPromise = StreamPromise<FLRegionState>(capacity:capacity)
         } else {
-            self.regionPromise = StreamPromise<RegionState>()
+            self.regionPromise = StreamPromise<FLRegionState>()
         }
     }
 

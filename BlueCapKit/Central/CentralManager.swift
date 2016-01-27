@@ -20,13 +20,11 @@ public protocol CBCentralManagerInjectable {
 
 extension CBCentralManager : CBCentralManagerInjectable {}
 
-// MARK: - CentralManagerIO -
-struct CentralManagerIO {
-    static let queue = Queue("us.gnos.blueCap.central-manager.io")
-}
-
 // MARK: - CBCentralManager -
 public class CentralManager : NSObject, CBCentralManagerDelegate {
+
+    // MARK: Serialize Property IO
+    static let ioQueue = Queue("us.gnos.blueCap.central-manager.io")
 
     // MARK: Properties
     private var _afterPowerOnPromise                            = Promise<Void>()
@@ -35,35 +33,35 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private var _isScanning                                     = false
 
     internal var _afterPeripheralDiscoveredPromise              = StreamPromise<Peripheral>()
-    internal var discoveredPeripherals                          = SerialIODictionary<NSUUID, Peripheral>(CentralManagerIO.queue)
+    internal var discoveredPeripherals                          = BCSerialIODictionary<NSUUID, Peripheral>(CentralManager.ioQueue)
 
     public var cbCentralManager : CBCentralManagerInjectable!
     public let centralQueue : Queue
 
     private var afterPowerOnPromise: Promise<Void> {
         get {
-            return CentralManagerIO.queue.sync { return self._afterPowerOnPromise }
+            return CentralManager.ioQueue.sync { return self._afterPowerOnPromise }
         }
         set {
-            CentralManagerIO.queue.sync { self._afterPowerOnPromise = newValue }
+            CentralManager.ioQueue.sync { self._afterPowerOnPromise = newValue }
         }
     }
 
     private var afterPowerOffPromise: Promise<Void> {
         get {
-            return CentralManagerIO.queue.sync { return self._afterPowerOffPromise }
+            return CentralManager.ioQueue.sync { return self._afterPowerOffPromise }
         }
         set {
-            CentralManagerIO.queue.sync { self._afterPowerOffPromise = newValue }
+            CentralManager.ioQueue.sync { self._afterPowerOffPromise = newValue }
         }
     }
 
     internal var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral> {
         get {
-            return CentralManagerIO.queue.sync { return self._afterPeripheralDiscoveredPromise }
+            return CentralManager.ioQueue.sync { return self._afterPeripheralDiscoveredPromise }
         }
         set {
-            CentralManagerIO.queue.sync { self._afterPeripheralDiscoveredPromise = newValue }
+            CentralManager.ioQueue.sync { self._afterPeripheralDiscoveredPromise = newValue }
         }
     }
 

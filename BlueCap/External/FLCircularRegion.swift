@@ -1,5 +1,5 @@
 //
-//  CircularRegion.swift
+//  FLCircularRegion.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 10/6/14.
@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 
-public class CircularRegion : Region {
+public class FLCircularRegion : FLRegion {
 
     internal let clCircularRegion : CLCircularRegion
     
