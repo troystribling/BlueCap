@@ -35,8 +35,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     internal var _afterPeripheralDiscoveredPromise              = StreamPromise<Peripheral>()
     internal var discoveredPeripherals                          = BCSerialIODictionary<NSUUID, Peripheral>(CentralManager.ioQueue)
 
-    public var cbCentralManager : CBCentralManagerInjectable!
-    public let centralQueue : Queue
+    public var cbCentralManager: CBCentralManagerInjectable!
+    public let centralQueue: Queue
 
     private var afterPowerOnPromise: Promise<Void> {
         get {
@@ -112,7 +112,25 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         super.init()
         self.cbCentralManager = centralManager
     }
-    
+
+    // MARK: Power ON/OFF
+    public func powerOn() -> Future<Void> {
+        self.afterPowerOnPromise = Promise<Void>()
+        if self.poweredOn {
+            self.afterPowerOnPromise.success()
+        }
+        return self.afterPowerOnPromise.future
+    }
+
+    public func powerOff() -> Future<Void> {
+        self.afterPowerOffPromise = Promise<Void>()
+        if self.poweredOff {
+            self.afterPowerOffPromise.success()
+        }
+        return self.afterPowerOffPromise.future
+    }
+
+    // MARK: Manage Peripherals
     public func connectPeripheral(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
         if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
             self.cbCentralManager.connectPeripheral(cbPeripheral, options: options)
@@ -125,7 +143,17 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    // MARK: Control
+    public func removeAllPeripherals() {
+        self.discoveredPeripherals.removeAll()
+    }
+
+    public func disconnectAllPeripherals() {
+        for peripheral in self.discoveredPeripherals.values {
+            peripheral.disconnect()
+        }
+    }
+
+    // MARK: Scan
     public func startScanning(capacity:Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         return self.startScanningForServiceUUIDs(nil, capacity: capacity)
     }
@@ -154,32 +182,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             self.cbCentralManager.stopScan()
             self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
         }
-    }
-    
-    public func removeAllPeripherals() {
-        self.discoveredPeripherals.removeAll()
-    }
-    
-    public func disconnectAllPeripherals() {
-        for peripheral in self.discoveredPeripherals.values {
-            peripheral.disconnect()
-        }
-    }
-    
-    public func powerOn() -> Future<Void> {
-        self.afterPowerOnPromise = Promise<Void>()
-        if self.poweredOn {
-            self.afterPowerOnPromise.success()
-        }
-        return self.afterPowerOnPromise.future
-    }
-    
-    public func powerOff() -> Future<Void> {
-        self.afterPowerOffPromise = Promise<Void>()
-        if self.poweredOff {
-            self.afterPowerOffPromise.success()
-        }
-        return self.afterPowerOffPromise.future
     }
     
     // MARK: CBCentralManagerDelegate

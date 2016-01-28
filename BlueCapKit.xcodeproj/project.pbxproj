@@ -9,7 +9,17 @@
 /* Begin PBXBuildFile section */
 		053139B01AC1ADC4002B4B36 /* MutableCharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139AF1AC1ADC4002B4B36 /* MutableCharacteristicTests.swift */; };
 		053139B41AC2CE23002B4B36 /* PeripheralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */; };
-		05415EEC1C57D6FD0005B68E /* BCSerialIODictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EEB1C57D6FD0005B68E /* BCSerialIODictionary.swift */; };
+		05415EEC1C57D6FD0005B68E /* BCSerialIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */; };
+		05415EFC1C5929670005B68E /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF21C5929670005B68E /* CLProximityExtension.swift */; };
+		05415EFD1C5929670005B68E /* FLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF31C5929670005B68E /* FLBeacon.swift */; };
+		05415EFE1C5929670005B68E /* FLBeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF41C5929670005B68E /* FLBeaconManager.swift */; };
+		05415EFF1C5929670005B68E /* FLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF51C5929670005B68E /* FLBeaconRegion.swift */; };
+		05415F001C5929670005B68E /* FLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF61C5929670005B68E /* FLCircularRegion.swift */; };
+		05415F011C5929670005B68E /* FLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF71C5929670005B68E /* FLLocationManager.swift */; };
+		05415F021C5929670005B68E /* FLLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF81C5929670005B68E /* FLLogger.swift */; };
+		05415F031C5929670005B68E /* FLRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF91C5929670005B68E /* FLRegion.swift */; };
+		05415F041C5929670005B68E /* FLRegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EFA1C5929670005B68E /* FLRegionManager.swift */; };
+		05415F051C5929670005B68E /* FLSerialIODictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EFB1C5929670005B68E /* FLSerialIODictionary.swift */; };
 		0551208819F5506000ED3B74 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0551208719F5506000ED3B74 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
 		055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209E19F5513700ED3B74 /* CentralManager.swift */; };
@@ -70,7 +80,17 @@
 /* Begin PBXFileReference section */
 		053139AF1AC1ADC4002B4B36 /* MutableCharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableCharacteristicTests.swift; sourceTree = "<group>"; };
 		053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerTests.swift; sourceTree = "<group>"; };
-		05415EEB1C57D6FD0005B68E /* BCSerialIODictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCSerialIODictionary.swift; sourceTree = "<group>"; };
+		05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCSerialIO.swift; sourceTree = "<group>"; };
+		05415EF21C5929670005B68E /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLProximityExtension.swift; path = FutureLocation/CLProximityExtension.swift; sourceTree = "<group>"; };
+		05415EF31C5929670005B68E /* FLBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLBeacon.swift; path = FutureLocation/FLBeacon.swift; sourceTree = "<group>"; };
+		05415EF41C5929670005B68E /* FLBeaconManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLBeaconManager.swift; path = FutureLocation/FLBeaconManager.swift; sourceTree = "<group>"; };
+		05415EF51C5929670005B68E /* FLBeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLBeaconRegion.swift; path = FutureLocation/FLBeaconRegion.swift; sourceTree = "<group>"; };
+		05415EF61C5929670005B68E /* FLCircularRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLCircularRegion.swift; path = FutureLocation/FLCircularRegion.swift; sourceTree = "<group>"; };
+		05415EF71C5929670005B68E /* FLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLLocationManager.swift; path = FutureLocation/FLLocationManager.swift; sourceTree = "<group>"; };
+		05415EF81C5929670005B68E /* FLLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLLogger.swift; path = FutureLocation/FLLogger.swift; sourceTree = "<group>"; };
+		05415EF91C5929670005B68E /* FLRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLRegion.swift; path = FutureLocation/FLRegion.swift; sourceTree = "<group>"; };
+		05415EFA1C5929670005B68E /* FLRegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLRegionManager.swift; path = FutureLocation/FLRegionManager.swift; sourceTree = "<group>"; };
+		05415EFB1C5929670005B68E /* FLSerialIODictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLSerialIODictionary.swift; path = FutureLocation/FLSerialIODictionary.swift; sourceTree = "<group>"; };
 		05449D511B51ED4B00417A0C /* BlueCapKit.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BlueCapKit.playground; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -151,6 +171,23 @@
 				053139B31AC2CE23002B4B36 /* PeripheralManagerTests.swift */,
 			);
 			name = Peripheral;
+			sourceTree = "<group>";
+		};
+		05415EF11C5929230005B68E /* FutrueLocation */ = {
+			isa = PBXGroup;
+			children = (
+				05415EF21C5929670005B68E /* CLProximityExtension.swift */,
+				05415EF31C5929670005B68E /* FLBeacon.swift */,
+				05415EF41C5929670005B68E /* FLBeaconManager.swift */,
+				05415EF51C5929670005B68E /* FLBeaconRegion.swift */,
+				05415EF61C5929670005B68E /* FLCircularRegion.swift */,
+				05415EF71C5929670005B68E /* FLLocationManager.swift */,
+				05415EF81C5929670005B68E /* FLLogger.swift */,
+				05415EF91C5929670005B68E /* FLRegion.swift */,
+				05415EFA1C5929670005B68E /* FLRegionManager.swift */,
+				05415EFB1C5929670005B68E /* FLSerialIODictionary.swift */,
+			);
+			name = FutrueLocation;
 			sourceTree = "<group>";
 		};
 		0551207819F5506000ED3B74 = {
@@ -281,7 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				055120C919F5513700ED3B74 /* Logger.swift */,
-				05415EEB1C57D6FD0005B68E /* BCSerialIODictionary.swift */,
+				05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -314,6 +351,7 @@
 		05D3B9191A2B8C4E008E794E /* External */ = {
 			isa = PBXGroup;
 			children = (
+				05415EF11C5929230005B68E /* FutrueLocation */,
 				05E1A7251A55BE1600A00C02 /* SimpleFutures */,
 			);
 			path = External;
@@ -445,31 +483,41 @@
 			buildActionMask = 2147483647;
 			files = (
 				055120D019F5513700ED3B74 /* Peripheral.swift in Sources */,
+				05415EFD1C5929670005B68E /* FLBeacon.swift in Sources */,
 				055120E919F5513700ED3B74 /* ProfileManager.swift in Sources */,
+				05415F021C5929670005B68E /* FLLogger.swift in Sources */,
 				055120D219F5513700ED3B74 /* Service.swift in Sources */,
 				055120CE19F5513700ED3B74 /* Characteristic.swift in Sources */,
-				05415EEC1C57D6FD0005B68E /* BCSerialIODictionary.swift in Sources */,
+				05415EEC1C57D6FD0005B68E /* BCSerialIO.swift in Sources */,
 				055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */,
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
+				05415EFE1C5929670005B68E /* FLBeaconManager.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
+				05415F001C5929670005B68E /* FLCircularRegion.swift in Sources */,
 				055120DD19F5513700ED3B74 /* MutableService.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
+				05415EFF1C5929670005B68E /* FLBeaconRegion.swift in Sources */,
 				055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */,
+				05415EFC1C5929670005B68E /* CLProximityExtension.swift in Sources */,
 				05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */,
 				055120D319F5513700ED3B74 /* TimedScannerator.swift in Sources */,
 				055120DE19F5513700ED3B74 /* PeripheralManager.swift in Sources */,
 				055120F219F5513700ED3B74 /* Logger.swift in Sources */,
+				05415F031C5929670005B68E /* FLRegion.swift in Sources */,
+				05415F041C5929670005B68E /* FLRegionManager.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
 				05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */,
 				058BA8BD1B139135005CF0FE /* SimpleFutures.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
 				055120EA19F5513700ED3B74 /* ServiceProfile.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
+				05415F011C5929670005B68E /* FLLocationManager.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
 				055120E519F5513700ED3B74 /* CharacteristicProfile.swift in Sources */,
 				055120CD19F5513700ED3B74 /* CentralManager.swift in Sources */,
+				05415F051C5929670005B68E /* FLSerialIODictionary.swift in Sources */,
 				055120DC19F5513700ED3B74 /* MutableCharacteristic.swift in Sources */,
 				055120E219F5513700ED3B74 /* SerDe.swift in Sources */,
 			);

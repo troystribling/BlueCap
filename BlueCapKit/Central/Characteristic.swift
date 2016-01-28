@@ -19,27 +19,22 @@ struct ReadParameters {
     let timeout : Double
 }
 
-struct CharacteristicIO {
-    static let queue = Queue("us.gnos.characteristic")
-}
-
-struct CharacteristicTimeout {
-    static let queue = Queue("us.gnos.characteristic.timeout")
-}
-
 public class Characteristic {
 
-    private var _notificationStateChangedPromise : Promise<Characteristic>?
-    private var _notificationUpdatePromise : StreamPromise<NSData?>?
+    static let ioQueue      = Queue("us.gnos.blueCap.characteristic.io")
+    static let timeoutQueue = Queue("us.gnos.blueCap.characteristic.timeout")
 
-    private var readPromises    = [Promise<Characteristic>]()
-    private var writePromises   = [Promise<Characteristic>]()
-    private var readParameters  = [ReadParameters]()
-    private var writeParameters = [WriteParameters]()
+    private var _notificationStateChangedPromise: Promise<Characteristic>?
+    private var _notificationUpdatePromise: StreamPromise<NSData?>?
+
+    private var readPromises    = BCSerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
+    private var writePromises   = BCSerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
+    private var readParameters  = BCSerialIOArray<ReadParameters>(Characteristic.ioQueue)
+    private var writeParameters = BCSerialIOArray<WriteParameters>(Characteristic.ioQueue)
     
-    private weak var _service : Service?
+    private weak var _service: Service?
     
-    private let profile : CharacteristicProfile
+    private let profile: CharacteristicProfile
 
     private var _reading        = false
     private var _writing        = false
@@ -47,71 +42,59 @@ public class Characteristic {
     private var _writeSequence  = 0
     private let defaultTimeout  = 10.0
 
-    public let cbCharacteristic : CBCharacteristic
+    public let cbCharacteristic: CBCharacteristic
 
-    private var notificationStateChangedPromise : Promise<Characteristic>? {
+    private var notificationStateChangedPromise: Promise<Characteristic>? {
         get {
-            return CharacteristicIO.queue.sync {
-                return self._notificationStateChangedPromise
-            }
+            return Characteristic.ioQueue.sync { return self._notificationStateChangedPromise }
         }
         set {
-            CharacteristicIO.queue.sync {self._notificationStateChangedPromise = newValue}
+            Characteristic.ioQueue.sync { self._notificationStateChangedPromise = newValue }
         }
     }
 
-    private var notificationUpdatePromise : StreamPromise<NSData?>? {
+    private var notificationUpdatePromise: StreamPromise<NSData?>? {
         get {
-            return CharacteristicIO.queue.sync {
-                return self._notificationUpdatePromise
-            }
+            return Characteristic.ioQueue.sync { return self._notificationUpdatePromise }
         }
         set {
-            CharacteristicIO.queue.sync {self._notificationUpdatePromise = newValue}
+            Characteristic.ioQueue.sync { self._notificationUpdatePromise = newValue }
         }
     }
 
-    private var reading : Bool {
+    private var reading: Bool {
         get {
-            return CharacteristicIO.queue.sync {
-                return self._reading
-            }
+            return Characteristic.ioQueue.sync { return self._reading }
         }
         set {
-            CharacteristicIO.queue.sync{self._reading = newValue}
+            Characteristic.ioQueue.sync{self._reading = newValue}
         }
     }
 
     private var writing : Bool {
         get {
-            return CharacteristicIO.queue.sync {
-                return self._writing
-            }
+            return Characteristic.ioQueue.sync { return self._writing }
         }
         set {
-            CharacteristicIO.queue.sync{self._writing = newValue}
+            Characteristic.ioQueue.sync{ self._writing = newValue }
         }
     }
 
     private var readSequence : Int {
         get {
-            return CharacteristicIO.queue.sync {
-                return self._readSequence
-            }
+            return Characteristic.ioQueue.sync { return self._readSequence }
         }
         set {
-            CharacteristicIO.queue.sync{self._readSequence = newValue}
+            Characteristic.ioQueue.sync{ self._readSequence = newValue }
         }
     }
 
     private var writeSequence : Int {
         get {
-            return CharacteristicIO.queue.sync {
-                return self._writeSequence
-            }
+            return Characteristic.ioQueue.sync { return self._writeSequence }
         }
         set {
-            CharacteristicIO.queue.sync{self._writeSequence = newValue}
+            Characteristic.ioQueue.sync{ self._writeSequence = newValue }
         }
     }
     
@@ -279,10 +262,8 @@ public class Characteristic {
     public func read(timeout:Double = 10.0) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canRead {
-            CharacteristicIO.queue.sync {
-                self.readPromises.append(promise)
-                self.readParameters.append(ReadParameters(timeout:timeout))
-            }
+            self.readPromises.append(promise)
+            self.readParameters.append(ReadParameters(timeout:timeout))
             self.readNext()
         } else {
             promise.failure(BCError.characteristicReadNotSupported)
@@ -293,10 +274,8 @@ public class Characteristic {
     public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canWrite {
-            CharacteristicIO.queue.sync {
-                self.writePromises.append(promise)
-                self.writeParameters.append(WriteParameters(value:value, timeout:timeout, type:type))
-            }
+            self.writePromises.append(promise)
+            self.writeParameters.append(WriteParameters(value:value, timeout:timeout, type:type))
             self.writeNext()
         } else {
             promise.failure(BCError.characteristicWriteNotSupported)
@@ -397,7 +376,7 @@ public class Characteristic {
     
     private func timeoutRead(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
-        CharacteristicTimeout.queue.delay(timeout) {
+        Characteristic.timeoutQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 self.didUpdate(BCError.characteristicReadTimeout)
@@ -409,7 +388,7 @@ public class Characteristic {
     
     private func timeoutWrite(sequence:Int, timeout:Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
-        CharacteristicTimeout.queue.delay(timeout) {
+        Characteristic.timeoutQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 self.didWrite(BCError.characteristicWriteTimeout)
@@ -455,14 +434,12 @@ public class Characteristic {
         self.timeoutRead(self.readSequence, timeout:parameters.timeout)
     }
     
-    private func shiftPromise(inout promises:[Promise<Characteristic>]) -> Promise<Characteristic>? {
-        return CharacteristicIO.queue.sync {
-            if let item = promises.first {
-                promises.removeAtIndex(0)
-                return item
-            } else {
-                return nil
-            }
+    private func shiftPromise(inout promises:BCSerialIOArray<Promise<Characteristic>>) -> Promise<Characteristic>? {
+        if let item = promises.first {
+            promises.removeAtIndex(0)
+            return item
+        } else {
+            return nil
         }
     }
 }

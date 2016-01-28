@@ -109,7 +109,8 @@ public struct PeripheralAdvertisements {
 public class Peripheral : NSObject, CBPeripheralDelegate {
 
     // MARK: Serialize Property IO
-    static let ioQueue = Queue("us.gnos.blueCap.peripheral.io")
+    static let ioQueue      = Queue("us.gnos.blueCap.peripheral.io")
+    static let timeoutQueue = Queue("us.gnos.blueCap.peripheral.timeout")
 
     // MARK: Properties
     private var _servicesDiscoveredPromise: Promise<Peripheral>?
@@ -124,8 +125,6 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private var _currentError               = PeripheralConnectionError.None
     private var _forcedDisconnect           = false
 
-    private let timeoutQueue                = Queue("us.gnos.blueCap.peripheral.timeout")
-    
     private let _discoveredAt               = NSDate()
     private var _connectedAt: NSDate?
     private var _disconnectedAt : NSDate?
@@ -583,7 +582,7 @@ public class Peripheral : NSObject, CBPeripheralDelegate {
     private func timeoutConnection(sequence: Int) {
         if let centralManager = self.centralManager {
             Logger.debug("sequence \(sequence), timeout:\(self.connectionTimeout)")
-            self.timeoutQueue.delay(self.connectionTimeout) {
+            Peripheral.timeoutQueue.delay(self.connectionTimeout) {
                 if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                     Logger.debug("timing out sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                     self.currentError = .Timeout

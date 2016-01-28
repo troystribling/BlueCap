@@ -44,3 +44,37 @@ public class BCSerialIODictionary<T, U where T: Hashable> {
     }
     
 }
+
+// MARK: Serialize Array Access
+public class BCSerialIOArray<T> {
+
+    var data = [T]()
+    let queue: Queue
+
+    init(_ queue: Queue) {
+        self.queue = queue
+    }
+
+    var first: T? {
+        return self.queue.sync { return self.data.first }
+    }
+
+    subscript(i: Int) -> T {
+        get {
+            return self.queue.sync { return self.data[i] }
+        }
+        set {
+            self.queue.sync { self.data[i] = newValue }
+        }
+    }
+
+    func append(value: T) {
+        self.queue.sync { self.data.append(value) }
+    }
+
+    func removeAtIndex(i: Int) {
+        self.queue.sync { self.data.removeAtIndex(i) }
+    }
+    
+}
+
