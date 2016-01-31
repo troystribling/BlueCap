@@ -1,5 +1,5 @@
 //
-//  Characteristic.swift
+//  BCCharacteristic.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/8/14.
@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - IO Parameters -
 struct WriteParameters {
     let value : NSData
     let timeout : Double
@@ -19,20 +20,22 @@ struct ReadParameters {
     let timeout : Double
 }
 
-public class Characteristic {
+// MARK: - BCCharacteristic -
+public class BCCharacteristic {
 
+    // MARK: Properties
     static let ioQueue      = Queue("us.gnos.blueCap.characteristic.io")
     static let timeoutQueue = Queue("us.gnos.blueCap.characteristic.timeout")
 
-    private var _notificationStateChangedPromise: Promise<Characteristic>?
+    private var _notificationStateChangedPromise: Promise<BCCharacteristic>?
     private var _notificationUpdatePromise: StreamPromise<NSData?>?
 
-    private var readPromises    = BCSerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
-    private var writePromises   = BCSerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
-    private var readParameters  = BCSerialIOArray<ReadParameters>(Characteristic.ioQueue)
-    private var writeParameters = BCSerialIOArray<WriteParameters>(Characteristic.ioQueue)
+    private var readPromises    = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
+    private var writePromises   = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
+    private var readParameters  = BCSerialIOArray<ReadParameters>(BCCharacteristic.ioQueue)
+    private var writeParameters = BCSerialIOArray<WriteParameters>(BCCharacteristic.ioQueue)
     
-    private weak var _service: Service?
+    private weak var _service: BCService?
     
     private let profile: CharacteristicProfile
 
@@ -44,57 +47,57 @@ public class Characteristic {
 
     public let cbCharacteristic: CBCharacteristic
 
-    private var notificationStateChangedPromise: Promise<Characteristic>? {
+    private var notificationStateChangedPromise: Promise<BCCharacteristic>? {
         get {
-            return Characteristic.ioQueue.sync { return self._notificationStateChangedPromise }
+            return BCCharacteristic.ioQueue.sync { return self._notificationStateChangedPromise }
         }
         set {
-            Characteristic.ioQueue.sync { self._notificationStateChangedPromise = newValue }
+            BCCharacteristic.ioQueue.sync { self._notificationStateChangedPromise = newValue }
         }
     }
 
     private var notificationUpdatePromise: StreamPromise<NSData?>? {
         get {
-            return Characteristic.ioQueue.sync { return self._notificationUpdatePromise }
+            return BCCharacteristic.ioQueue.sync { return self._notificationUpdatePromise }
         }
         set {
-            Characteristic.ioQueue.sync { self._notificationUpdatePromise = newValue }
+            BCCharacteristic.ioQueue.sync { self._notificationUpdatePromise = newValue }
         }
     }
 
     private var reading: Bool {
         get {
-            return Characteristic.ioQueue.sync { return self._reading }
+            return BCCharacteristic.ioQueue.sync { return self._reading }
         }
         set {
-            Characteristic.ioQueue.sync{self._reading = newValue}
+            BCCharacteristic.ioQueue.sync{self._reading = newValue}
         }
     }
 
     private var writing : Bool {
         get {
-            return Characteristic.ioQueue.sync { return self._writing }
+            return BCCharacteristic.ioQueue.sync { return self._writing }
         }
         set {
-            Characteristic.ioQueue.sync{ self._writing = newValue }
+            BCCharacteristic.ioQueue.sync{ self._writing = newValue }
         }
     }
 
     private var readSequence : Int {
         get {
-            return Characteristic.ioQueue.sync { return self._readSequence }
+            return BCCharacteristic.ioQueue.sync { return self._readSequence }
         }
         set {
-            Characteristic.ioQueue.sync{ self._readSequence = newValue }
+            BCCharacteristic.ioQueue.sync{ self._readSequence = newValue }
         }
     }
 
     private var writeSequence : Int {
         get {
-            return Characteristic.ioQueue.sync { return self._writeSequence }
+            return BCCharacteristic.ioQueue.sync { return self._writeSequence }
         }
         set {
-            Characteristic.ioQueue.sync{ self._writeSequence = newValue }
+            BCCharacteristic.ioQueue.sync{ self._writeSequence = newValue }
         }
     }
     
@@ -110,7 +113,7 @@ public class Characteristic {
         return self.cbCharacteristic.isNotifying
     }
     
-    public var afterDiscoveredPromise : StreamPromise<Characteristic>? {
+    public var afterDiscoveredPromise : StreamPromise<BCCharacteristic>? {
         return self.profile.afterDiscoveredPromise
     }
     
@@ -129,7 +132,7 @@ public class Characteristic {
         return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse)
     }
     
-    public var service : Service? {
+    public var service : BCService? {
         return self._service
     }
     
@@ -148,25 +151,27 @@ public class Characteristic {
     public var properties : CBCharacteristicProperties {
         return self.cbCharacteristic.properties
     }
-    
-    public init(cbCharacteristic:CBCharacteristic, service:Service) {
+
+    // MARK: Initializers
+    public init(cbCharacteristic: CBCharacteristic, service: BCService) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         if let serviceProfile = ProfileManager.sharedInstance.serviceProfiles[service.uuid] {
-            Logger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
+            BCLogger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
-                Logger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
+                BCLogger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
                 self.profile = characteristicProfile
             } else {
-                Logger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+                BCLogger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
                 self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
             }
         } else {
-            Logger.debug("no service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
+            BCLogger.debug("no service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
             self.profile = CharacteristicProfile(uuid:service.uuid.UUIDString)
         }
     }
-    
+
+    // MARK: Data Access
     public func stringValue(data:NSData?) -> [String:String]? {
         if let data = data {
             return self.profile.stringValue(data)
@@ -223,8 +228,9 @@ public class Characteristic {
         }
     }
 
-    public func startNotifying() -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
+    // MARK: Notifications
+    public func startNotifying() -> Future<BCCharacteristic> {
+        let promise = Promise<BCCharacteristic>()
         if self.canNotify {
             self.notificationStateChangedPromise = promise
             self.setNotifyValue(true)
@@ -234,8 +240,8 @@ public class Characteristic {
         return promise.future
     }
 
-    public func stopNotifying() -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
+    public func stopNotifying() -> Future<BCCharacteristic> {
+        let promise = Promise<BCCharacteristic>()
         if self.canNotify {
             self.notificationStateChangedPromise = promise
             self.setNotifyValue(false)
@@ -258,9 +264,10 @@ public class Characteristic {
     public func stopNotificationUpdates() {
         self.notificationUpdatePromise = nil
     }
-    
-    public func read(timeout:Double = 10.0) -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
+
+    // MARK: Read Data
+    public func read(timeout:Double = 10.0) -> Future<BCCharacteristic> {
+        let promise = Promise<BCCharacteristic>()
         if self.canRead {
             self.readPromises.append(promise)
             self.readParameters.append(ReadParameters(timeout:timeout))
@@ -271,8 +278,9 @@ public class Characteristic {
         return promise.future
     }
 
-    public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
+    // MARK: Write Data
+    public func writeData(value:NSData, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
+        let promise = Promise<BCCharacteristic>()
         if self.canWrite {
             self.writePromises.append(promise)
             self.writeParameters.append(WriteParameters(value:value, timeout:timeout, type:type))
@@ -283,45 +291,46 @@ public class Characteristic {
         return promise.future
     }
 
-    public func writeString(stringValue:[String:String], timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func writeString(stringValue:[String:String], timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
         if let value = self.dataFromStringValue(stringValue) {
             return self.writeData(value, timeout:timeout, type:type)
         } else {
-            let promise = Promise<Characteristic>()
+            let promise = Promise<BCCharacteristic>()
             promise.failure(BCError.characteristicNotSerilaizable)
             return promise.future
         }
     }
 
-    public func write<T:Deserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T:Deserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
     
-    public func write<T:RawDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T:RawDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
-    public func write<T:RawArrayDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T:RawArrayDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
 
-    public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
     
-    public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0, type:CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
         return self.writeData(Serde.serialize(value), timeout:timeout, type:type)
     }
-    
+
+    // MARK: CBPeripheralDelegate
     internal func didUpdateNotificationState(error:NSError?) {
         guard let notificationStateChangedPromise = self.notificationStateChangedPromise else {
             return
         }
         if let error = error {
-            Logger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
             notificationStateChangedPromise.failure(error)
         } else {
-            Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             notificationStateChangedPromise.success(self)
         }
     }
@@ -339,10 +348,10 @@ public class Characteristic {
             return
         }
         if let error = error {
-            Logger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             promise.failure(error)
         } else {
-            Logger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
             promise.success(self)
         }
         self.writing = false
@@ -373,31 +382,33 @@ public class Characteristic {
             notificationUpdatePromise.success(self.dataValue.flatmap{$0.copy() as? NSData})
         }
     }
-    
+
+    // MARK: IO Timeout
     private func timeoutRead(sequence:Int, timeout:Double) {
-        Logger.debug("sequence \(sequence), timeout:\(timeout))")
-        Characteristic.timeoutQueue.delay(timeout) {
+        BCLogger.debug("sequence \(sequence), timeout:\(timeout))")
+        BCCharacteristic.timeoutQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
-                Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
+                BCLogger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 self.didUpdate(BCError.characteristicReadTimeout)
             } else {
-                Logger.debug("timeout expired")
+                BCLogger.debug("timeout expired")
             }
         }
     }
     
     private func timeoutWrite(sequence:Int, timeout:Double) {
-        Logger.debug("sequence \(sequence), timeout:\(timeout)")
-        Characteristic.timeoutQueue.delay(timeout) {
+        BCLogger.debug("sequence \(sequence), timeout:\(timeout)")
+        BCCharacteristic.timeoutQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
-                Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
+                BCLogger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 self.didWrite(BCError.characteristicWriteTimeout)
             } else {
-                Logger.debug("timeout expired")
+                BCLogger.debug("timeout expired")
             }
         }
     }
-    
+
+    // MARK: Peripheral Delegates
     private func setNotifyValue(state:Bool) {
         self.service?.peripheral?.setNotifyValue(state, forCharacteristic:self)
     }
@@ -409,12 +420,13 @@ public class Characteristic {
     private func writeValue(value:NSData, type:CBCharacteristicWriteType = .WithResponse) {
         self.service?.peripheral?.writeValue(value, forCharacteristic:self, type:type)
     }
-    
+
+    // MARK: Utilities
     private func writeNext() {
         guard let parameters = self.writeParameters.first where self.writing == false else {
             return
         }
-        Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
+        BCLogger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
         self.writeParameters.removeAtIndex(0)
         self.writing = true
         self.writeValue(parameters.value, type:parameters.type)
@@ -426,7 +438,7 @@ public class Characteristic {
         guard let parameters = self.readParameters.first where self.reading == false else {
             return
         }
-        Logger.debug("read characteristic \(self.uuid.UUIDString)")
+        BCLogger.debug("read characteristic \(self.uuid.UUIDString)")
         self.readParameters.removeAtIndex(0)
         self.readValueForCharacteristic()
         self.reading = true
@@ -434,7 +446,7 @@ public class Characteristic {
         self.timeoutRead(self.readSequence, timeout:parameters.timeout)
     }
     
-    private func shiftPromise(inout promises:BCSerialIOArray<Promise<Characteristic>>) -> Promise<Characteristic>? {
+    private func shiftPromise(inout promises:BCSerialIOArray<Promise<BCCharacteristic>>) -> Promise<BCCharacteristic>? {
         if let item = promises.first {
             promises.removeAtIndex(0)
             return item

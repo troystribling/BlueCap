@@ -1,5 +1,5 @@
 //
-//  MutableCharacteristic.swift
+//  BCMutableCharacteristic.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/9/14.
@@ -9,49 +9,49 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - MutableCharacteristic -
-public class MutableCharacteristic {
+// MARK: - BCMutableCharacteristic -
+public class BCMutableCharacteristic {
 
     // MARK: Properties
     static let ioQueue = Queue("us.gnos.blueCap.mutable-characteristic.io")
 
     private let profile: CharacteristicProfile
 
-    private var centrals            = BCSerialIODictionary<NSUUID, CBCentralInjectable>(MutableCharacteristic.ioQueue)
+    private var centrals            = BCSerialIODictionary<NSUUID, CBCentralInjectable>(BCMutableCharacteristic.ioQueue)
 
     private var _updating           = false
     private var _queuedUpdates      = [NSData]()
 
     internal var _processWriteRequestPromise: StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>?
-    internal weak var _service: MutableService?
+    internal weak var _service: BCMutableService?
     
     public let cbMutableChracteristic: CBMutableCharacteristic
     public var value: NSData?
 
     private var queuedUpdates: [NSData] {
         get {
-            return MutableCharacteristic.ioQueue.sync { return self._queuedUpdates }
+            return BCMutableCharacteristic.ioQueue.sync { return self._queuedUpdates }
         }
         set {
-            MutableCharacteristic.ioQueue.sync { self._queuedUpdates = newValue }
+            BCMutableCharacteristic.ioQueue.sync { self._queuedUpdates = newValue }
         }
     }
 
     private var updating: Bool {
         get {
-            return MutableCharacteristic.ioQueue.sync { return self._updating }
+            return BCMutableCharacteristic.ioQueue.sync { return self._updating }
         }
         set {
-            MutableCharacteristic.ioQueue.sync { self._updating = newValue }
+            BCMutableCharacteristic.ioQueue.sync { self._updating = newValue }
         }
     }
 
     private var processWriteRequestPromise: StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>? {
         get {
-            return MutableCharacteristic.ioQueue.sync { return self._processWriteRequestPromise }
+            return BCMutableCharacteristic.ioQueue.sync { return self._processWriteRequestPromise }
         }
         set {
-            MutableCharacteristic.ioQueue.sync { self._processWriteRequestPromise = newValue }
+            BCMutableCharacteristic.ioQueue.sync { self._processWriteRequestPromise = newValue }
         }
     }
 
@@ -91,7 +91,7 @@ public class MutableCharacteristic {
         return self.updating
     }
     
-    public var service: MutableService? {
+    public var service: BCMutableService? {
         return self._service
     }
 
@@ -123,12 +123,12 @@ public class MutableCharacteristic {
         self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
     }
 
-    public convenience init(uuid:String, service: MutableService) {
+    public convenience init(uuid: String, service: BCMutableService) {
         self.init(profile:CharacteristicProfile(uuid:uuid))
     }
 
-    public class func withProfiles(profiles: [CharacteristicProfile], service: MutableService) -> [MutableCharacteristic] {
-        return profiles.map{MutableCharacteristic(profile: $0)}
+    public class func withProfiles(profiles: [CharacteristicProfile], service: BCMutableService) -> [BCMutableCharacteristic] {
+        return profiles.map{ BCMutableCharacteristic(profile: $0) }
     }
 
     // MARK: Properties & Permissions

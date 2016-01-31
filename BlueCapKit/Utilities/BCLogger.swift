@@ -1,5 +1,5 @@
 //
-//  Logger.swift
+//  BCLogger.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/8/14.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Logger {
+public class BCLogger {
     public class func debug(message:String? = nil, function: String = __FUNCTION__, file: String = __FILE__, line: Int = __LINE__) {
 #if DEBUG
         if let message = message {

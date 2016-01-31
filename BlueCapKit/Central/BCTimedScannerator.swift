@@ -1,5 +1,5 @@
 //
-//  TimedScannerator.swift
+//  BCTimedScannerator.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/24/14.
@@ -9,26 +9,26 @@
 import Foundation
 import CoreBluetooth
 
-public class TimedScannerator {
+public class BCTimedScannerator {
     
-    private let centralManager : CentralManager
+    private let centralManager: BCCentralManager
 
     internal var timeoutSeconds     = 10.0
     internal var _isScanning        = false
 
-    public var peripherals : [Peripheral] {
+    public var peripherals: [BCPeripheral] {
         return self.centralManager.peripherals
     }
     
-    public var isScanning : Bool {
+    public var isScanning: Bool {
         return self._isScanning
     }
 
-    public init(centralManager:CentralManager) {
+    public init(centralManager: BCCentralManager) {
         self.centralManager = centralManager
     }
     
-    public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(timeoutSeconds: Double, capacity: Int? = nil) -> FutureStream<BCPeripheral> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
@@ -36,7 +36,7 @@ public class TimedScannerator {
 
     }
     
-    public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral> {
+    public func startScanningForServiceUUIDs(timeoutSeconds: Double, uuids: [CBUUID]!, capacity: Int? = nil) -> FutureStream<BCPeripheral> {
         self.timeoutSeconds = timeoutSeconds
         self._isScanning = true
         self.timeoutScan()
@@ -49,7 +49,7 @@ public class TimedScannerator {
     }
 
     internal func timeoutScan() {
-        Logger.debug("timeout in \(self.timeoutSeconds)s")
+        BCLogger.debug("timeout in \(self.timeoutSeconds)s")
         self.centralManager.centralQueue.delay(self.timeoutSeconds) {
             if self._isScanning {
                 if self.peripherals.count == 0 {

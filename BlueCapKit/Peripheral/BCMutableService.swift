@@ -1,5 +1,5 @@
 //
-//  MutableService.swift
+//  BCMutableService.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/9/14.
@@ -9,16 +9,16 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - MutableService -
-public class MutableService : NSObject {
+// MARK: - BCMutableService -
+public class BCMutableService : NSObject {
 
     static let ioQueue = Queue("us.gnos.blueCap.mutable-service")
 
-    private var _characteristics = BCSerialIOArray<MutableCharacteristic>(MutableService.ioQueue)
+    private var _characteristics = BCSerialIOArray<BCMutableCharacteristic>(BCMutableService.ioQueue)
 
     private let profile: ServiceProfile
 
-    internal weak var peripheralManager: PeripheralManager?
+    internal weak var peripheralManager: BCPeripheralManager?
 
     public let cbMutableService: CBMutableService
 
@@ -30,7 +30,7 @@ public class MutableService : NSObject {
         return self.profile.name
     }
     
-    public var characteristics: [MutableCharacteristic] {
+    public var characteristics: [BCMutableCharacteristic] {
         get {
             return self._characteristics.data
         }
@@ -44,19 +44,19 @@ public class MutableService : NSObject {
         }
     }
     
-    public init(profile: ServiceProfile, peripheralManager: PeripheralManager) {
+    public init(profile: ServiceProfile, peripheralManager: BCPeripheralManager) {
         self.profile = profile
         self.peripheralManager = peripheralManager
         self.cbMutableService = CBMutableService(type: self.profile.uuid, primary: true)
         super.init()
     }
     
-    public convenience init(uuid: String, peripheralManager: PeripheralManager) {
+    public convenience init(uuid: String, peripheralManager: BCPeripheralManager) {
         self.init(profile:ServiceProfile(uuid: uuid), peripheralManager:peripheralManager)
     }
 
     public func characteristicsFromProfiles() {
-        self.characteristics = self.profile.characteristics.map{MutableCharacteristic(profile: $0)}
+        self.characteristics = self.profile.characteristics.map{ BCMutableCharacteristic(profile: $0) }
     }
     
 }

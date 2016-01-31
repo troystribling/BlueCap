@@ -1,5 +1,5 @@
 //
-//  SerDe.swift
+//  BCSerDe.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/8/14.
@@ -32,14 +32,14 @@ func reverseBytes<T>(value:T) -> T {
     return result
 }
 
-public protocol Deserializable {
+public protocol BCDeserializable {
     static var size : Int {get}
     static func deserialize(data:NSData) -> Self?
     static func deserialize(data:NSData, start:Int) -> Self?
     static func deserialize(data:NSData) -> [Self]
 }
 
-public protocol Serializable {
+public protocol BCSerializable {
     static func fromString(value:String, encoding:NSStringEncoding) -> NSData?
     static func serialize<T>(value:T) -> NSData
     static func serialize<T>(values:[T]) -> NSData
@@ -47,7 +47,7 @@ public protocol Serializable {
     static func serialize<T1, T2>(value1:[T1], value2:[T2]) -> NSData
 }
 
-public protocol CharacteristicConfigurable {
+public protocol BCCharacteristicConfigurable {
     static var name          : String {get}
     static var uuid          : String {get}
     static var permissions   : CBAttributePermissions {get}
@@ -55,26 +55,26 @@ public protocol CharacteristicConfigurable {
     static var initialValue  : NSData? {get}
 }
 
-public protocol ServiceConfigurable {
+public protocol BCServiceConfigurable {
     static var name  : String {get}
     static var uuid  : String {get}
     static var tag   : String {get}
 }
 
-public protocol StringDeserializable {
+public protocol BCStringDeserializable {
     static var stringValues : [String] {get}
     var stringValue         : [String:String] {get}
     init?(stringValue:[String:String])
 }
 
-public protocol RawDeserializable {
+public protocol BCRawDeserializable {
     typealias RawType
     static var uuid         : String {get}
     var rawValue            : RawType {get}
     init?(rawValue:RawType)
 }
 
-public protocol RawArrayDeserializable {
+public protocol BCRawArrayDeserializable {
     typealias RawType
     static var uuid     : String {get}
     static var size     : Int {get}
@@ -82,7 +82,7 @@ public protocol RawArrayDeserializable {
     init?(rawValue:[RawType])
 }
 
-public protocol RawPairDeserializable {
+public protocol BCRawPairDeserializable {
     typealias RawType1
     typealias RawType2
     static var uuid     : String {get}
@@ -91,7 +91,7 @@ public protocol RawPairDeserializable {
     init?(rawValue1:RawType1, rawValue2:RawType2)
 }
 
-public protocol RawArrayPairDeserializable {
+public protocol BCRawArrayPairDeserializable {
     typealias RawType1
     typealias RawType2
     static var uuid     : String {get}
@@ -102,37 +102,37 @@ public protocol RawArrayPairDeserializable {
     init?(rawValue1:[RawType1], rawValue2:[RawType2])
 }
 
-public struct Serde {
+public struct BCSerDe {
     
-    public static func serialize(value:String, encoding:NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
-        return NSData.fromString(value, encoding:encoding)
+    public static func serialize(value: String, encoding: NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
+        return NSData.fromString(value, encoding: encoding)
     }
 
-    public static func deserialize(data:NSData, encoding:NSStringEncoding = NSUTF8StringEncoding) -> String? {
-        return (NSString(data:data, encoding:encoding) as? String)
+    public static func deserialize(data: NSData, encoding: NSStringEncoding = NSUTF8StringEncoding) -> String? {
+        return (NSString(data: data, encoding: encoding) as? String)
     }
 
-    public static func deserialize<T:Deserializable>(data:NSData) -> T? {
+    public static func deserialize<T: BCDeserializable>(data:NSData) -> T? {
         return T.deserialize(data)
     }
 
-    public static func serialize<T:Deserializable>(value:T) -> NSData {
+    public static func serialize<T: BCDeserializable>(value:T) -> NSData {
         return NSData.serialize(value)
     }
 
-    public static func serialize<T:Deserializable>(values:[T]) -> NSData {
+    public static func serialize<T: BCDeserializable>(values:[T]) -> NSData {
         return NSData.serializeArray(values)
     }
 
-    public static func deserialize<T:RawDeserializable where T.RawType:Deserializable>(data:NSData) -> T? {
+    public static func deserialize<T: BCRawDeserializable where T.RawType: BCDeserializable>(data:NSData) -> T? {
         return T.RawType.deserialize(data).flatmap{T(rawValue:$0)}
     }
 
-    public static func serialize<T:RawDeserializable>(value:T) -> NSData {
+    public static func serialize<T: BCRawDeserializable>(value:T) -> NSData {
         return NSData.serialize(value.rawValue)
     }
 
-    public static func deserialize<T:RawArrayDeserializable where T.RawType:Deserializable>(data:NSData) -> T? {
+    public static func deserialize<T: BCRawArrayDeserializable where T.RawType: BCDeserializable>(data:NSData) -> T? {
         if data.length >= T.size {
             return T(rawValue:T.RawType.deserialize(data))
         } else {
@@ -140,17 +140,17 @@ public struct Serde {
         }
     }
 
-    public static func serialize<T:RawArrayDeserializable>(value:T) -> NSData {
+    public static func serialize<T: BCRawArrayDeserializable>(value: T) -> NSData {
         return NSData.serializeArray(value.rawValue)
     }
 
-    public static func deserialize<T:RawPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T? {
+    public static func deserialize<T: BCRawPairDeserializable where T.RawType1: BCDeserializable,  T.RawType2: BCDeserializable>(data:NSData) -> T? {
         if data.length >= (T.RawType1.size + T.RawType2.size) {
             let rawData1 = data.subdataWithRange(NSMakeRange(0, T.RawType1.size))
             let rawData2 = data.subdataWithRange(NSMakeRange(T.RawType1.size, T.RawType2.size))
             return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
                 T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
-                    T(rawValue1:rawValue1, rawValue2:rawValue2)
+                    T(rawValue1: rawValue1, rawValue2: rawValue2)
                 }
             }
         } else {
@@ -158,22 +158,22 @@ public struct Serde {
         }
     }
 
-    public static func serialize<T:RawPairDeserializable>(value:T) -> NSData {
-        return NSData.serialize(value.rawValue1, value2:value.rawValue2)
+    public static func serialize<T: BCRawPairDeserializable>(value: T) -> NSData {
+        return NSData.serialize(value.rawValue1, value2: value.rawValue2)
     }
 
-    public static func deserialize<T:RawArrayPairDeserializable where T.RawType1:Deserializable,  T.RawType2:Deserializable>(data:NSData) -> T? {
+    public static func deserialize<T: BCRawArrayPairDeserializable where T.RawType1: BCDeserializable,  T.RawType2: BCDeserializable>(data: NSData) -> T? {
         if data.length >= (T.size1 + T.size2) {
             let rawData1 = data.subdataWithRange(NSMakeRange(0, T.size1))
             let rawData2 = data.subdataWithRange(NSMakeRange(T.size1, T.size2))
-            return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2:T.RawType2.deserialize(rawData2))
+            return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2: T.RawType2.deserialize(rawData2))
         } else {
             return nil
         }
     }
 
-    public static func serialize<T:RawArrayPairDeserializable>(value:T) -> NSData {
-        return NSData.serializeArrays(value.rawValue1, values2:value.rawValue2)
+    public static func serialize<T: BCRawArrayPairDeserializable>(value:T) -> NSData {
+        return NSData.serializeArrays(value.rawValue1, values2: value.rawValue2)
     }
 }
 
