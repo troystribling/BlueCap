@@ -23,7 +23,6 @@ public class MutableCharacteristic {
     private var _queuedUpdates      = [NSData]()
 
     internal var _processWriteRequestPromise: StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>?
-
     internal weak var _service: MutableService?
     
     public let cbMutableChracteristic: CBMutableCharacteristic

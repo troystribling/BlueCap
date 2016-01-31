@@ -11,7 +11,7 @@ import Foundation
 // MARK: Serialize Dictionary Access
 public class BCSerialIODictionary<T, U where T: Hashable> {
 
-    var data = [T: U]()
+    private var data = [T: U]()
     let queue: Queue
 
     init(_ queue: Queue) {
@@ -48,33 +48,46 @@ public class BCSerialIODictionary<T, U where T: Hashable> {
 // MARK: Serialize Array Access
 public class BCSerialIOArray<T> {
 
-    var data = [T]()
+    private var _data = [T]()
     let queue: Queue
 
     init(_ queue: Queue) {
         self.queue = queue
     }
 
+    var data: [T] {
+        get {
+            return self.queue.sync { return self._data }
+        }
+        set {
+            self.queue.sync { self._data = newValue }
+        }
+    }
+
     var first: T? {
-        return self.queue.sync { return self.data.first }
+        return self.queue.sync { return self._data.first }
     }
 
     subscript(i: Int) -> T {
         get {
-            return self.queue.sync { return self.data[i] }
+            return self.queue.sync { return self._data[i] }
         }
         set {
-            self.queue.sync { self.data[i] = newValue }
+            self.queue.sync { self._data[i] = newValue }
         }
     }
 
     func append(value: T) {
-        self.queue.sync { self.data.append(value) }
+        self.queue.sync { self._data.append(value) }
     }
 
     func removeAtIndex(i: Int) {
-        self.queue.sync { self.data.removeAtIndex(i) }
+        self.queue.sync { self._data.removeAtIndex(i) }
     }
-    
+
+    func map<M>(transform: T -> M) -> [M] {
+        return self._data.map(transform)
+    }
+
 }
 
