@@ -112,20 +112,20 @@ public struct BCSerDe {
         return (NSString(data: data, encoding: encoding) as? String)
     }
 
-    public static func deserialize<T: BCDeserializable>(data:NSData) -> T? {
+    public static func deserialize<T: BCDeserializable>(data: NSData) -> T? {
         return T.deserialize(data)
     }
 
-    public static func serialize<T: BCDeserializable>(value:T) -> NSData {
+    public static func serialize<T: BCDeserializable>(value: T) -> NSData {
         return NSData.serialize(value)
     }
 
-    public static func serialize<T: BCDeserializable>(values:[T]) -> NSData {
+    public static func serialize<T: BCDeserializable>(values: [T]) -> NSData {
         return NSData.serializeArray(values)
     }
 
     public static func deserialize<T: BCRawDeserializable where T.RawType: BCDeserializable>(data:NSData) -> T? {
-        return T.RawType.deserialize(data).flatmap{T(rawValue:$0)}
+        return T.RawType.deserialize(data).flatmap{ T(rawValue:$0) }
     }
 
     public static func serialize<T: BCRawDeserializable>(value:T) -> NSData {

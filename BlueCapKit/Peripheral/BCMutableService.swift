@@ -16,7 +16,7 @@ public class BCMutableService : NSObject {
 
     private var _characteristics = BCSerialIOArray<BCMutableCharacteristic>(BCMutableService.ioQueue)
 
-    private let profile: ServiceProfile
+    private let profile: BCServiceProfile
 
     internal weak var peripheralManager: BCPeripheralManager?
 
@@ -44,7 +44,7 @@ public class BCMutableService : NSObject {
         }
     }
     
-    public init(profile: ServiceProfile, peripheralManager: BCPeripheralManager) {
+    public init(profile: BCServiceProfile, peripheralManager: BCPeripheralManager) {
         self.profile = profile
         self.peripheralManager = peripheralManager
         self.cbMutableService = CBMutableService(type: self.profile.uuid, primary: true)
@@ -52,7 +52,7 @@ public class BCMutableService : NSObject {
     }
     
     public convenience init(uuid: String, peripheralManager: BCPeripheralManager) {
-        self.init(profile:ServiceProfile(uuid: uuid), peripheralManager:peripheralManager)
+        self.init(profile: BCServiceProfile(uuid: uuid), peripheralManager: peripheralManager)
     }
 
     public func characteristicsFromProfiles() {

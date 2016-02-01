@@ -8,13 +8,13 @@
 
 import Foundation
 
-extension UInt8 : BCDeserializable {
+extension UInt8: BCDeserializable {
     
-    public static var size : Int {
+    public static var size: Int {
         return sizeof(UInt8)
     }
 
-    public init?(doubleValue:Double) {
+    public init?(doubleValue: Double) {
         if doubleValue > 255.0 || doubleValue < 0.0 {
             return nil
         } else {
@@ -22,7 +22,7 @@ extension UInt8 : BCDeserializable {
         }
     }
 
-    public init?(uintValue:UInt16) {
+    public init?(uintValue: UInt16) {
         if uintValue > 255 {
             return nil
         } else {
@@ -30,7 +30,7 @@ extension UInt8 : BCDeserializable {
         }
     }
 
-    public init?(intValue:Int16) {
+    public init?(intValue: Int16) {
         if intValue > 255 || intValue < 0 {
             return nil
         } else {
@@ -38,17 +38,17 @@ extension UInt8 : BCDeserializable {
         }
     }
 
-    public static func deserialize(data:NSData) -> UInt8? {
+    public static func deserialize(data: NSData) -> UInt8? {
         if data.length >= sizeof(UInt8) {
             var value : UInt8 = 0
-            data.getBytes(&value, length:sizeof(UInt8))
+            data.getBytes(&value, length: sizeof(UInt8))
             return toHostByteOrder(value)
         } else {
             return nil
         }
     }
     
-    public static func deserialize(data:NSData, start:Int) -> UInt8? {
+    public static func deserialize(data: NSData, start: Int) -> UInt8? {
         if data.length >= start + sizeof(UInt8) {
             var value : UInt8 = 0
             data.getBytes(&value, range: NSMakeRange(start, sizeof(UInt8)))
@@ -58,10 +58,10 @@ extension UInt8 : BCDeserializable {
         }
     }
 
-    public static func deserialize(data:NSData) -> [UInt8] {
+    public static func deserialize(data: NSData) -> [UInt8] {
         let count = data.length / sizeof(UInt8)
         return [Int](0..<count).reduce([]) {(result, start) in
-            if let value = self.deserialize(data, start:start) {
+            if let value = self.deserialize(data, start: start) {
                 return result + [value]
             } else {
                 return result

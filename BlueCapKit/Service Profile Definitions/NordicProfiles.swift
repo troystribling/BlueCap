@@ -11,19 +11,18 @@ import CoreBluetooth
 
 public struct Nordic {
 
-    //***************************************************************************************************
-    // Nordic Device Temperature Service
-    public struct DeviceTemperatureService : ServiceConfigurable {
+    // MARK - Nordic Device Temperature Service -
+    public struct DeviceTemperatureService : BCServiceConfigurable {
         
         // ServiceConfigurable
         public static let uuid  = "2f0a0003-69aa-f316-3e78-4194989a6c1a"
         public static let name  = "Nordic Device Temperature"
         public static let tag   = "Nordic"
         
-        public struct Data : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
+        public struct Data : BCRawDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
 
-            private let temperatureRaw  : Int16
-            public let temperature      : Double
+            private let temperatureRaw: Int16
+            public let temperature: Double
 
             private static func valueFromRaw(rawValue:Int16) -> Double {
                 return Double(rawValue)/4.0
@@ -32,16 +31,16 @@ public struct Nordic {
             // CharacteristicConfigurable
             public static let uuid                                      = "2f0a0004-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Device Temperature Data"
-            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
+            public static let properties: CBCharacteristicProperties    = [.Read, .Notify]
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let initialValue : NSData?                    = Serde.serialize(Int16(100))
+            public static let initialValue: NSData?                     = BCSerDe.serialize(Int16(100))
 
             // RawDeserializable
-            public var rawValue : Int16 {
+            public var rawValue: Int16 {
                 return self.temperatureRaw
             }
             
-            public init?(rawValue:Int16) {
+            public init?(rawValue: Int16) {
                 self.temperatureRaw = rawValue
                 self.temperature = Data.valueFromRaw(self.temperatureRaw)
             }
@@ -49,8 +48,8 @@ public struct Nordic {
             // StringDeserializable
             public static let stringValues = [String]()
             
-            public init?(stringValue:[String:String]) {
-                let temperatureRawInit = int16ValueFromStringValue("temperatureRaw", values:stringValue)
+            public init?(stringValue: [String: String]) {
+                let temperatureRawInit = int16ValueFromStringValue("temperatureRaw", values: stringValue)
                 if temperatureRawInit != nil {
                     self.temperatureRaw = temperatureRawInit!
                     self.temperature = Data.valueFromRaw(self.temperatureRaw)
@@ -58,45 +57,44 @@ public struct Nordic {
                     return nil
                 }
             }
-            public var stringValue : [String:String] {
+            public var stringValue: [String: String] {
                 return ["temperatureRaw":"\(temperatureRaw)", "temperature":"\(temperature)"]
             }
         }
     }
 
-    //***************************************************************************************************
-    // Nordic BLE Address Service
-    public struct BLEAddressService : ServiceConfigurable {
+    // MARK: - Nordic BLE Address Service -
+    public struct BLEAddressService: BCServiceConfigurable {
         
         // ServiceConfigurable
         public static let uuid = "2f0a0005-69aa-f316-3e78-4194989a6c1a"
         public static let name = "Nordic BLE Address"
         public static let tag   = "Nordic"
 
-        public struct Address : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+        public struct Address: BCRawArrayDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
             
-            public let addr1 : UInt8
-            public let addr2 : UInt8
-            public let addr3 : UInt8
-            public let addr4 : UInt8
-            public let addr5 : UInt8
-            public let addr6 : UInt8
+            public let addr1: UInt8
+            public let addr2: UInt8
+            public let addr3: UInt8
+            public let addr4: UInt8
+            public let addr5: UInt8
+            public let addr6: UInt8
 
             // CharacteristicConfigurable
             public static let uuid                                      = "2f0a0006-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Addresss"
-            public static let properties : CBCharacteristicProperties   = [.Read, .Notify]
-            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
-            public static let initialValue : NSData?                    = Serde.serialize(Int16(100))
+            public static let properties: CBCharacteristicProperties    = [.Read, .Notify]
+            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
+            public static let initialValue: NSData?                     = BCSerDe.serialize(Int16(100))
 
             // RawArrayDeserializable
             public static let size = 6
 
-            public var rawValue : [UInt8] {
+            public var rawValue: [UInt8] {
                 return [self.addr1, self.addr2, self.addr3, self.addr4, self.addr5, self.addr5]
             }
 
-            public init?(rawValue:[UInt8]) {
+            public init?(rawValue: [UInt8]) {
                 if rawValue.count == 6 {
                     self.addr1 = rawValue[0]
                     self.addr2 = rawValue[1]
@@ -112,25 +110,24 @@ public struct Nordic {
             // StringDeserializable
             public static let stringValues = [String]()
             
-            public var stringValue : [String:String] {
+            public var stringValue: [String: String] {
                 return ["addr1":"\(addr1)", "addr2":"\(addr2)", "addr3":"\(addr3)",
                         "addr4":"\(addr4)", "addr5":"\(addr5)", "addr6":"\(addr6)"]
             }
             
-            public init?(stringValue:[String:String]) {
-                let addr1Init = uint8ValueFromStringValue("addr1", values:stringValue)
-                let addr2Init = uint8ValueFromStringValue("addr2", values:stringValue)
-                let addr3Init = uint8ValueFromStringValue("addr3", values:stringValue)
-                let addr4Init = uint8ValueFromStringValue("addr4", values:stringValue)
-                let addr5Init = uint8ValueFromStringValue("addr5", values:stringValue)
-                let addr6Init = uint8ValueFromStringValue("addr6", values:stringValue)
-                if addr1Init != nil && addr2Init != nil && addr3Init != nil && addr4Init != nil && addr5Init != nil && addr6Init != nil {
-                    self.addr1 = addr1Init!
-                    self.addr2 = addr2Init!
-                    self.addr3 = addr3Init!
-                    self.addr4 = addr4Init!
-                    self.addr5 = addr5Init!
-                    self.addr6 = addr6Init!
+            public init?(stringValue: [String: String]) {
+                if let addr1Init = uint8ValueFromStringValue("addr1", values: stringValue),
+                       addr2Init = uint8ValueFromStringValue("addr2", values: stringValue),
+                       addr3Init = uint8ValueFromStringValue("addr3", values: stringValue),
+                       addr4Init = uint8ValueFromStringValue("addr4", values: stringValue),
+                       addr5Init = uint8ValueFromStringValue("addr5", values: stringValue),
+                       addr6Init = uint8ValueFromStringValue("addr6", values: stringValue) {
+                    self.addr1 = addr1Init
+                    self.addr2 = addr2Init
+                    self.addr3 = addr3Init
+                    self.addr4 = addr4Init
+                    self.addr5 = addr5Init
+                    self.addr6 = addr6Init
                 } else {
                     return nil
                 }
@@ -138,7 +135,7 @@ public struct Nordic {
 
         }
         
-        public enum AddressType : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable  {
+        public enum AddressType: UInt8, BCRawDeserializable, BCStringDeserializable, BCCharacteristicConfigurable  {
             
             case Unknown                    = 0
             case Public                     = 1
@@ -149,31 +146,31 @@ public struct Nordic {
             // CharacteristicConfigurable
             public static let uuid                                      = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Address Type"
-            public static let properties : CBCharacteristicProperties   = [.Read]
-            public static let permissions : CBAttributePermissions      = [.Readable, .Writeable]
-            public static let initialValue : NSData?                    = Serde.serialize(AddressType.Public)
+            public static let properties: CBCharacteristicProperties    = [.Read]
+            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
+            public static let initialValue: NSData?                     = BCSerDe.serialize(AddressType.Public)
 
 
             // StringDeserializable
             public static let stringValues = ["Unknown", "Public", "RandomStatic",
                                               "RandomPrivateResolvable", "RandomPrivateUnresolvable"]
 
-            public var stringValue : [String:String] {
+            public var stringValue: [String: String] {
                 switch self {
                 case .Unknown:
-                    return [AddressType.name:"Unknown"]
+                    return [AddressType.name: "Unknown"]
                 case .Public:
-                    return [AddressType.name:"Public"]
+                    return [AddressType.name: "Public"]
                 case .RandomStatic:
-                    return [AddressType.name:"RandomStatic"]
+                    return [AddressType.name: "RandomStatic"]
                 case .RandomPrivateResolvable:
-                    return [AddressType.name:"RandomPrivateResolvable"]
+                    return [AddressType.name: "RandomPrivateResolvable"]
                 case .RandomPrivateUnresolvable:
-                    return [AddressType.name:"RandomPrivateUnresolvable"]
+                    return [AddressType.name: "RandomPrivateUnresolvable"]
                 }
             }
 
-            public init?(stringValue:[String:String]) {
+            public init?(stringValue: [String: String]) {
                 if let value = stringValue[AddressType.name] {
                     switch value {
                     case "Unknown":
@@ -198,26 +195,24 @@ public struct Nordic {
     }
 }
 
-
+// MARK: - Profile Definition -
 public class NordicProfiles {
     
     public class func create() {
         
-        let profileManager = ProfileManager.sharedInstance
+        let profileManager = BCProfileManager.sharedInstance
         
-        //***************************************************************************************************
         // Nordic Device Temperature Service
-        let temperatureService = ConfiguredServiceProfile<Nordic.DeviceTemperatureService>()
-        let temperatureDataCharcteristic = RawCharacteristicProfile<Nordic.DeviceTemperatureService.Data>()
+        let temperatureService = BCConfiguredServiceProfile<Nordic.DeviceTemperatureService>()
+        let temperatureDataCharcteristic = BCRawCharacteristicProfile<Nordic.DeviceTemperatureService.Data>()
 
         temperatureService.addCharacteristic(temperatureDataCharcteristic)
         profileManager.addService(temperatureService)
 
-        //***************************************************************************************************
         // Nordic BLE Address Service
-        let bleAddressService = ConfiguredServiceProfile<Nordic.BLEAddressService>()
-        let bleAddressCharacteristic = RawArrayCharacteristicProfile<Nordic.BLEAddressService.Address>()
-        let bleAddressTypeCharacteristic = RawCharacteristicProfile<Nordic.BLEAddressService.AddressType>()
+        let bleAddressService = BCConfiguredServiceProfile<Nordic.BLEAddressService>()
+        let bleAddressCharacteristic = BCRawArrayCharacteristicProfile<Nordic.BLEAddressService.Address>()
+        let bleAddressTypeCharacteristic = BCRawCharacteristicProfile<Nordic.BLEAddressService.AddressType>()
         
         bleAddressService.addCharacteristic(bleAddressCharacteristic)
         bleAddressService.addCharacteristic(bleAddressTypeCharacteristic)

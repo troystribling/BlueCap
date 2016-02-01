@@ -215,19 +215,19 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Public Properties
-    public var discoveredAt : NSDate {
+    public var discoveredAt: NSDate {
         return self._discoveredAt
     }
     
-    public var connectedAt : NSDate? {
+    public var connectedAt: NSDate? {
         return self._connectedAt
     }
     
-    public var disconnectedAt : NSDate? {
+    public var disconnectedAt: NSDate? {
         return self._disconnectedAt
     }
     
-    public var name : String {
+    public var name: String {
         if let name = self.cbPeripheral.name {
             return name
         } else {
@@ -235,19 +235,19 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var state : CBPeripheralState {
+    public var state: CBPeripheralState {
         return self.cbPeripheral.state
     }
     
-    public var services : [BCService] {
+    public var services: [BCService] {
         return Array(self.discoveredServices.values)
     }
     
-    public var identifier : NSUUID {
+    public var identifier: NSUUID {
         return self.cbPeripheral.identifier
     }
 
-    public func service(uuid:CBUUID) -> Service? {
+    public func service(uuid: CBUUID) -> BCService? {
         return self.discoveredServices[uuid]
     }
 
@@ -348,7 +348,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         return peripheralDiscoveredPromise.future
     }
     
-    public func discoverService(head: Service, tail: [Service], promise: Promise<BCPeripheral>) {
+    public func discoverService(head: BCService, tail: [BCService], promise: Promise<BCPeripheral>) {
         let discoveryFuture = head.discoverAllCharacteristics()
         BCLogger.debug("service name \(head.name) count \(tail.count + 1)")
         if tail.count > 0 {
@@ -568,7 +568,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
             self.cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type:type)
     }
     
-    internal func discoverCharacteristics(characteristics: [CBUUID]?, forService service: Service) {
+    internal func discoverCharacteristics(characteristics: [CBUUID]?, forService service: BCService) {
         self.cbPeripheral.discoverCharacteristics(characteristics, forService:service.cbService)
     }
 

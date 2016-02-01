@@ -125,7 +125,7 @@ public class FLRegionManager : FLLocationManager {
     }
 
     public func didStartMonitoringForRegion(region: CLRegion) {
-        FLBCLogger.debug("region identifier \(region.identifier)")
+        FLLogger.debug("region identifier \(region.identifier)")
         self.regionMonitorStatus[region.identifier] = true
         self.configuredRegions[region.identifier]?.regionPromise.success(.Start)
     }

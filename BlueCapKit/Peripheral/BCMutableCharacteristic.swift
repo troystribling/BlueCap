@@ -15,7 +15,7 @@ public class BCMutableCharacteristic {
     // MARK: Properties
     static let ioQueue = Queue("us.gnos.blueCap.mutable-characteristic.io")
 
-    private let profile: CharacteristicProfile
+    private let profile: BCCharacteristicProfile
 
     private var centrals            = BCSerialIODictionary<NSUUID, CBCentralInjectable>(BCMutableCharacteristic.ioQueue)
 
@@ -111,23 +111,23 @@ public class BCMutableCharacteristic {
     }
 
     // MARK: Initializers
-    public init(profile: CharacteristicProfile) {
+    public init(profile: BCCharacteristicProfile) {
         self.profile = profile
         self.value = profile.initialValue
         self.cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
     }
 
     public init(uuid: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: NSData?) {
-        self.profile = CharacteristicProfile(uuid:uuid)
+        self.profile = BCCharacteristicProfile(uuid:uuid)
         self.value = value
         self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
     }
 
     public convenience init(uuid: String, service: BCMutableService) {
-        self.init(profile:CharacteristicProfile(uuid:uuid))
+        self.init(profile: BCCharacteristicProfile(uuid:uuid))
     }
 
-    public class func withProfiles(profiles: [CharacteristicProfile], service: BCMutableService) -> [BCMutableCharacteristic] {
+    public class func withProfiles(profiles: [BCCharacteristicProfile], service: BCMutableService) -> [BCMutableCharacteristic] {
         return profiles.map{ BCMutableCharacteristic(profile: $0) }
     }
 
@@ -181,24 +181,24 @@ public class BCMutableCharacteristic {
         return self.updateValuesWithData([value])
     }
 
-    public func updateValue<T:Deserializable>(value: T) -> Bool {
-        return self.updateValueWithData(Serde.serialize(value))
+    public func updateValue<T: BCDeserializable>(value: T) -> Bool {
+        return self.updateValueWithData(BCSerDe.serialize(value))
     }
 
-    public func updateValue<T:RawDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(Serde.serialize(value))
+    public func updateValue<T: BCRawDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(BCSerDe.serialize(value))
     }
 
-    public func updateValue<T:RawArrayDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(Serde.serialize(value))
+    public func updateValue<T: BCRawArrayDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(BCSerDe.serialize(value))
     }
 
-    public func updateValue<T:RawPairDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(Serde.serialize(value))
+    public func updateValue<T: BCRawPairDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(BCSerDe.serialize(value))
     }
 
-    public func updateValue<T:RawArrayPairDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(Serde.serialize(value))
+    public func updateValue<T: BCRawArrayPairDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(BCSerDe.serialize(value))
     }
 
     internal func peripheralManagerIsReadyToUpdateSubscribers() {

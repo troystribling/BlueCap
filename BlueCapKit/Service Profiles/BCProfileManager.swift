@@ -39,7 +39,7 @@ public class BCProfileManager {
     }
     
     public func addService(serviceProfile: BCServiceProfile) -> BCServiceProfile {
-        Logger.debug("name=\(serviceProfile.name), uuid=\(serviceProfile.uuid.UUIDString)")
+        BCLogger.debug("name=\(serviceProfile.name), uuid=\(serviceProfile.uuid.UUIDString)")
         self.serviceProfiles[serviceProfile.uuid] = serviceProfile
         return serviceProfile
     }
