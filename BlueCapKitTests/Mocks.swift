@@ -44,16 +44,20 @@ class CBCentralManagerMock : CBCentralManagerInjectable {
     
 }
 
-class CentralManagerUT : CentralManager {
+class CentralManagerUT: BCCentralManager {
     
     var connectPeripheralCalled     = false
     var cancelPeripheralConnection  = false
-    
-    override func connectPeripheral(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
+
+    override init(centralManager: CBCentralManagerInjectable) {
+        super.init(centralManager: centralManager)
+    }
+
+    override func connectPeripheral(peripheral: BCPeripheral, options: [String: AnyObject]? = nil) {
         self.connectPeripheralCalled = true
     }
     
-    override func cancelPeripheralConnection(peripheral: Peripheral) {
+    override func cancelPeripheralConnection(peripheral: BCPeripheral) {
         peripheral.didDisconnectPeripheral()
         self.cancelPeripheralConnection = true
     }
@@ -137,16 +141,16 @@ class CBPeripheralMock : CBPeripheralInjectable {
 
 }
 
-class PeripheralUT : Peripheral {
+class PeripheralUT: BCPeripheral {
     
     let error:NSError?
     
-    init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String:AnyObject], rssi: Int, error: NSError?) {
+    init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String: AnyObject], rssi: Int, error: NSError?) {
         self.error = error
         super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, rssi: rssi)
     }
     
-    override func discoverService(head: Service, tail: [Service], promise: Promise<Peripheral>) {
+    override func discoverService(head: BCService, tail: [BCService], promise: Promise<BCPeripheral>) {
         if let error = self.error {
             promise.failure(error)
         } else {
@@ -157,7 +161,7 @@ class PeripheralUT : Peripheral {
 
 }
 
-class CBServiceMock : CBMutableService {
+class CBServiceMock: CBMutableService {
     
     init(UUID:CBUUID = CBUUID(string: "2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
         super.init(type: UUID, primary: true)
@@ -165,29 +169,29 @@ class CBServiceMock : CBMutableService {
     
 }
 
-class ServiceUT : Service {
+class ServiceUT: BCService {
     
     let error : NSError?
     let mockCharacteristics : [CBCharacteristic]
     
-    init(cbService: CBServiceMock, peripheral: Peripheral, mockCharacteristics: [CBCharacteristic], error: NSError?) {
+    init(cbService: CBServiceMock, peripheral: BCPeripheral, mockCharacteristics: [CBCharacteristic], error: NSError?) {
         self.error = error
         self.mockCharacteristics = mockCharacteristics
         cbService.characteristics = mockCharacteristics
         super.init(cbService:cbService, peripheral:peripheral)
     }
     
-    override func discoverAllCharacteristics() -> Future<Service> {
-        self.didDiscoverCharacteristics(self.mockCharacteristics, error:self.error)
+    override func discoverAllCharacteristics() -> Future<BCService> {
+        self.didDiscoverCharacteristics(self.mockCharacteristics, error: self.error)
         return self.characteristicsDiscoveredPromise.future
     }
 }
 
-class CBCharacteristicMock : CBMutableCharacteristic {
+class CBCharacteristicMock: CBMutableCharacteristic {
     
     var _isNotifying = false
     
-    override var isNotifying : Bool {
+    override var isNotifying: Bool {
         get {
             return self._isNotifying
         }
@@ -203,7 +207,7 @@ class CBCharacteristicMock : CBMutableCharacteristic {
     
 }
 
-class CBPeripheralManagerMock : CBPeripheralManagerInjectable {
+class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
 
     var updateValueReturn       = true
     
@@ -268,15 +272,15 @@ class CBPeripheralManagerMock : CBPeripheralManagerInjectable {
     }
 }
 
-class PeripheralManagerUT : PeripheralManager {
+class PeripheralManagerUT: BCPeripheralManager {
     
     var respondToRequestCalled = false
 
-    var error : NSError?
-    var result : CBATTError?
-    var request : CBATTRequestInjectable?
+    var error: NSError?
+    var result: CBATTError?
+    var request: CBATTRequestInjectable?
     
-    override func addServices(promise: Promise<Void>, services: [MutableService]) {
+    override func addServices(promise: Promise<Void>, services: [BCMutableService]) {
         super.addServices(promise, services: services)
         if let service = services.first {
             self.didAddService(service.cbMutableService, error: self.error)
@@ -320,12 +324,12 @@ func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerStat
     return (mock, PeripheralManagerUT(peripheralManager:mock))
 }
 
-func createPeripheralManagerServices(peripheral: PeripheralManager) -> [MutableService] {
-    let profileManager = ProfileManager.sharedInstance
+func createPeripheralManagerServices(peripheral: BCPeripheralManager) -> [BCMutableService] {
+    let profileManager = BCProfileManager.sharedInstance
     if let helloWoroldService = profileManager.service[CBUUID(string: Gnosus.HelloWorldService.uuid)],
            locationService = profileManager.service[CBUUID(string: Gnosus.LocationService.uuid)] {
-        return [MutableService(profile:helloWoroldService, peripheralManager: peripheral),
-                MutableService(profile:locationService , peripheralManager: peripheral)]
+        return [BCMutableService(profile: helloWoroldService, peripheralManager: peripheral),
+                BCMutableService(profile: locationService , peripheralManager: peripheral)]
     } else {
         return []
     }

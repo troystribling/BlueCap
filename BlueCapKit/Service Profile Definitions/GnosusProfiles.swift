@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - Gnosus -
 public struct Gnosus {
 
     // MARK: - Hello World Service -

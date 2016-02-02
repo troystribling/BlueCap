@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - Nordic -
 public struct Nordic {
 
     // MARK - Nordic Device Temperature Service -

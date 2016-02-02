@@ -15,30 +15,8 @@ import BlueCapKit
 class PeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
-    let advertisedUUIDs = CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid)
+    let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)
   
-//
-//    class BeaconRegionMock : BeaconRegionWrappable {
-//        
-//        let promise = StreamPromise<[BeaconMock]>()
-//        
-//        var identifier : String {
-//            return "ID"
-//        }
-//        
-//        var beaconPromise  : StreamPromise<[BeaconMock]> {
-//            return self.promise
-//        }
-//        
-//        func peripheralDataWithMeasuredPower(measuredPower:Int?) -> [String:AnyObject] {
-//            return [:]
-//        }
-//    }
-//    
-//    class BeaconMock : BeaconWrappable {
-//        
-//    }
-//
     override func setUp() {
         GnosusProfiles.create()
         super.setUp()

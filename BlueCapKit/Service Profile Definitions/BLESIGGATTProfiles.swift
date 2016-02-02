@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - BLESIGGATT -
 public struct BLESIGGATT {
 
     // MARK: - Device Information Service -
@@ -26,7 +27,7 @@ public struct BLESIGGATT {
             public static let name                                      = "Device Model Number"
             public static let permissions: CBAttributePermissions      = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties   = .Read
-            public static let initialValue                              = Serde.serialize("Model A")
+            public static let initialValue                              = BCSerDe.serialize("Model A")
             
         }
         
@@ -37,7 +38,7 @@ public struct BLESIGGATT {
             public static let name                                      = "Device Serial Number"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = .Read
-            public static let initialValue                              = Serde.serialize("AAA11")
+            public static let initialValue                              = BCSerDe.serialize("AAA11")
             
         }
         
@@ -48,7 +49,7 @@ public struct BLESIGGATT {
             public static let name                                      = "Device Firmware Revision"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = .Read
-            public static let initialValue                              = Serde.serialize("1.0")
+            public static let initialValue                              = BCSerDe.serialize("1.0")
 
         }
         

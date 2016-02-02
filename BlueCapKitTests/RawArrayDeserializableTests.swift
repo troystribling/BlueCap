@@ -14,7 +14,7 @@ import BlueCapKit
 
 class RawArrayDeserializableTests: XCTestCase {
 
-    struct RawArray : RawArrayDeserializable {
+    struct RawArray: BCRawArrayDeserializable {
         
         let value1:Int8
         let value2:Int8
@@ -48,7 +48,7 @@ class RawArrayDeserializableTests: XCTestCase {
 
     func testSuccessfulDeserialization() {
         let data = "02ab".dataFromHexString()
-        if let value : RawArray = Serde.deserialize(data) {
+        if let value : RawArray = BCSerDe.deserialize(data) {
             XCTAssert(value.value1 == 2 && value.value2 == -85, "RawArrayDeserializable deserialization value invalid: \(value.value1), \(value.value2)")
         } else {
             XCTFail("RawArrayDeserializable deserialization failed")
@@ -57,14 +57,14 @@ class RawArrayDeserializableTests: XCTestCase {
     
     func testFailedDeserialization() {
         let data = "02ab0c".dataFromHexString()
-        if let _ : RawArray = Serde.deserialize(data) {
+        if let _ : RawArray = BCSerDe.deserialize(data) {
             XCTFail("RawArrayDeserializable deserialization succeeded")
         }
     }
     
     func testSerialization() {
-        if let value = RawArray(rawValue:[5, 100]) {
-            let data = Serde.serialize(value)
+        if let value = RawArray(rawValue: [5, 100]) {
+            let data = BCSerDe.serialize(value)
             XCTAssert(data.hexStringValue() == "0564", "RawArrayDeserializable serialization value invalid: \(data)")
         } else {
             XCTFail("RawArrayDeserializable RawArray creation failed")

@@ -14,7 +14,7 @@ import BlueCapKit
 
 class RawDeserializableTests: XCTestCase {
 
-    enum Testit: UInt8, RawDeserializable {
+    enum Testit: UInt8, BCRawDeserializable {
         case No     = 0
         case Yes    = 1
         case Maybe  = 2        
@@ -31,7 +31,7 @@ class RawDeserializableTests: XCTestCase {
 
     func testSuccessfulDeserialization() {
         let data = "02".dataFromHexString()
-        if let value : Testit = Serde.deserialize(data) {
+        if let value : Testit = BCSerDe.deserialize(data) {
             XCTAssert(value == .Maybe, "RawDeserializable deserialization value wrong: \(data)")
         } else {
             XCTFail("RawDeserializable deserialization failed")
@@ -40,14 +40,14 @@ class RawDeserializableTests: XCTestCase {
 
     func testFailedDeserialization() {
         let data = "03".dataFromHexString()
-        if let _ : Testit = Serde.deserialize(data) {
+        if let _ : Testit = BCSerDe.deserialize(data) {
             XCTFail("RawDeserializable deserialization succeeded")
         }
     }
     
     func testSerialization() {
         let value = Testit.Yes
-        let data = Serde.serialize(value)
+        let data = BCSerDe.serialize(value)
         XCTAssert(data.hexStringValue() == "01", "RawDeserializable serialization failed: \(data)")
     }
 

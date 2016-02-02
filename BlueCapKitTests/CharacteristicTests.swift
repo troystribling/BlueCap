@@ -14,16 +14,16 @@ import BlueCapKit
 
 class CharacteristicTests: XCTestCase {
     
-    var centralManager : CentralManager!
-    var peripheral : Peripheral!
-    var service : Service!
-    let mockPerpheral = CBPeripheralMock(state:.Connected)
-    let mockService = CBServiceMock(UUID:CBUUID(string:Gnosus.HelloWorldService.uuid))
+    var centralManager: BCCentralManager!
+    var peripheral: BCPeripheral!
+    var service: BCService!
+    let mockPerpheral = CBPeripheralMock(state: .Connected)
+    let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.uuid))
 
     override func setUp() {
         GnosusProfiles.create()
-        self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
-        self.peripheral = Peripheral(cbPeripheral:self.mockPerpheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
+        self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)
         self.service = self.peripheral.services.first!
         super.setUp()
@@ -33,7 +33,7 @@ class CharacteristicTests: XCTestCase {
         super.tearDown()
     }
     
-    func createCharacteristic(properties:CBCharacteristicProperties, isNotifying:Bool) -> (Characteristic, CBCharacteristicMock) {
+    func createCharacteristic(properties: CBCharacteristicProperties, isNotifying:Bool) -> (BCCharacteristic, CBCharacteristicMock) {
         let mockCharacteristic = CBCharacteristicMock(UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), properties:properties, permissions:[.Readable, .Writeable], isNotifying:isNotifying)
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
         return (self.service.characteristics.first!, mockCharacteristic)
@@ -43,7 +43,7 @@ class CharacteristicTests: XCTestCase {
         let mockCharacteristic = CBCharacteristicMock(UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), properties:[.Read, .Write], permissions:[.Readable, .Writeable], isNotifying:false)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:[mockCharacteristic], error:nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let serviceProfile = ProfileManager.sharedInstance.service[CBUUID(string:Gnosus.HelloWorldService.uuid)]
+        let serviceProfile = BCProfileManager.sharedInstance.service[CBUUID(string:Gnosus.HelloWorldService.uuid)]
         let characteristicProfile = serviceProfile?.characteristic[CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid)]
         characteristicProfile?.afterDiscovered(nil).onSuccess {_ in
             onSuccessExpectation.fulfill()
@@ -115,7 +115,7 @@ class CharacteristicTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssertEqual(error.code, CharacteristicError.WriteTimeout.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, BCCharacteristicErrorCode.WriteTimeout.rawValue, "Error code invalid")
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "writeValue called more than once")
             XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
@@ -139,7 +139,7 @@ class CharacteristicTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssertEqual(error.code, CharacteristicError.WriteNotSupported.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, BCCharacteristicErrorCode.WriteNotSupported.rawValue, "Error code invalid")
             XCTAssertFalse(self.mockPerpheral.writeValueCalled, "writeValue called")
         }
         waitForExpectationsWithTimeout(120) {error in
@@ -317,7 +317,7 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
-            XCTAssertEqual(error.code, CharacteristicError.ReadTimeout.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, BCCharacteristicErrorCode.ReadTimeout.rawValue, "Error code invalid")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "readValue not called 1 time")
         }
         waitForExpectationsWithTimeout(300) {error in
@@ -335,7 +335,7 @@ class CharacteristicTests: XCTestCase {
         future.onFailure {error in
             onFailureExpectation.fulfill()
             XCTAssertFalse(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic called")
-            XCTAssertEqual(error.code, CharacteristicError.ReadNotSupported.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, BCCharacteristicErrorCode.ReadNotSupported.rawValue, "Error code invalid")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
