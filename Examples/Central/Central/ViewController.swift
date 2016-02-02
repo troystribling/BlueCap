@@ -216,7 +216,7 @@ class ViewController: UITableViewController {
         }
 
         dataSubscriptionFuture.flatmap {characteristic -> FutureStream<NSData?> in
-            return characteristic.recieveNotificationUpdates(10)
+            return characteristic.receiveNotificationUpdates(10)
         }.onSuccess {data in
             self.updateData(data)
         }

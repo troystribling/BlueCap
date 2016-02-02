@@ -262,7 +262,7 @@ public class Characteristic {
         return promise.future
     }
 
-    public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<NSData?> {
+    public func receiveNotificationUpdates(capacity:Int? = nil) -> FutureStream<NSData?> {
         let promise = StreamPromise<NSData?>(capacity:capacity)
         if self.canNotify {
             self.notificationUpdatePromise = promise

@@ -76,7 +76,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     @IBAction func updateValues() {
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
-                let future = characteristic.recieveNotificationUpdates(10)
+                let future = characteristic.receiveNotificationUpdates(10)
                 future.onSuccess {_ in
                     self.updateWhenActive()
                 }
