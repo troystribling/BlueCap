@@ -23,7 +23,7 @@ class MutableCharacteristicTests: XCTestCase {
         super.tearDown()
     }
 
-    func addCharacteristics(onSuccess: (mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void) {
+    func addCharacteristics(onSuccess: (mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void) {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
         services[0].characteristicsFromProfiles()
@@ -40,7 +40,7 @@ class MutableCharacteristicTests: XCTestCase {
     
     func testAddCharacteristicsSuccess() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let chracteristics = peripheralManager.characteristics.map{$0.uuid}
             XCTAssertEqual(chracteristics.count, 2, "characteristic count invalid")
@@ -54,7 +54,7 @@ class MutableCharacteristicTests: XCTestCase {
     
     func testNotSubscribedToUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             XCTAssertFalse(characteristic.hasSubscriber, "hasSubscriber value invalid")
@@ -72,7 +72,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testSubscribeToUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
@@ -93,7 +93,7 @@ class MutableCharacteristicTests: XCTestCase {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
@@ -119,7 +119,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testUnsubscribeToUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
@@ -143,7 +143,7 @@ class MutableCharacteristicTests: XCTestCase {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
@@ -169,7 +169,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testSubscriberUpdateFailed() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             let value1 = "aa".dataFromHexString()
@@ -196,7 +196,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testResumeSubscriberUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             let value1 = "aa".dataFromHexString()
@@ -229,7 +229,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testSubscribeToUpdatesWithPendingUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
             let value1 = "aa".dataFromHexString()
@@ -255,7 +255,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testStartRespondingToWriteRequestsSuccess() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
             let requestMock = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
@@ -283,7 +283,7 @@ class MutableCharacteristicTests: XCTestCase {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         var writeCount = 0
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let values = ["aa".dataFromHexString(), "a1".dataFromHexString(), "a2".dataFromHexString(), "a3".dataFromHexString(), "a4".dataFromHexString(), "a5".dataFromHexString()]
             let requestMocks = values.map{CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: $0)}
@@ -314,7 +314,7 @@ class MutableCharacteristicTests: XCTestCase {
 
     func testStartRespondingToWriteRequestsFailure() {
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
             let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
@@ -327,7 +327,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testRespondToWriteRequestFailure() {
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let characteristic = MutableCharacteristic(profile: StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
+        let characteristic = BCMutableCharacteristic(profile: BCStringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
         let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
         let value = "aa".dataFromHexString()
         characteristic.value = value
@@ -339,7 +339,7 @@ class MutableCharacteristicTests: XCTestCase {
 
     func testStopRespondingToWriteRequests() {
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let value = "aa".dataFromHexString()
             let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
@@ -359,7 +359,7 @@ class MutableCharacteristicTests: XCTestCase {
 
     func testRespondToReadRequestSuccess() {
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
-        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: MutableService) -> Void in
+        self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
             let value = "aa".dataFromHexString()
@@ -374,7 +374,7 @@ class MutableCharacteristicTests: XCTestCase {
     func testRespondToReadRequestFailure() {
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let characteristic = MutableCharacteristic(profile: StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
+        let characteristic = BCMutableCharacteristic(profile: BCStringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
         let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
         let value = "aa".dataFromHexString()
         characteristic.value = value

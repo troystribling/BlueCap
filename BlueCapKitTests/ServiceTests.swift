@@ -14,7 +14,7 @@ import BlueCapKit
 
 class ServiceTests: XCTestCase {
     
-    var centralManager : CentralManager!
+    var centralManager: BCCentralManager!
     var mockCharateristics = [CBCharacteristicMock]()
     let mockService = CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"))
     
@@ -31,7 +31,7 @@ class ServiceTests: XCTestCase {
     }
 
     func testDiscoverCharacteristicsSuccess() {
-        let peripheral = Peripheral(cbPeripheral:CBPeripheralMock(state:.Connected), centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Connected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:self.mockCharateristics, error:nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = service.discoverAllCharacteristics()
@@ -48,7 +48,7 @@ class ServiceTests: XCTestCase {
     }
 
     func testDiscoverCharacteristicsFailure() {
-        let peripheral = Peripheral(cbPeripheral:CBPeripheralMock(state:.Connected), centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
+        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Connected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi:-45)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:self.mockCharateristics, error:TestFailure.error)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()
@@ -64,8 +64,8 @@ class ServiceTests: XCTestCase {
     }
 
     func testDiscoverCharacteristicsDisconnected() {
-        let peripheral = Peripheral(cbPeripheral:CBPeripheralMock(state:.Disconnected), centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi:-45)
-        let service  = Service(cbService:self.mockService, peripheral:peripheral)
+        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Disconnected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
+        let service  = BCService(cbService: self.mockService, peripheral: peripheral)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()
         future.onSuccess {_ in
@@ -73,7 +73,7 @@ class ServiceTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssert(error.code == PeripheralError.Disconnected.rawValue, "Error code invalid \(error.code)")
+            XCTAssert(error.code == BCPeripheralErrorCode.Disconnected.rawValue, "Error code invalid \(error.code)")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")

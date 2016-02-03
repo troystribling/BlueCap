@@ -124,7 +124,7 @@ class MutableServiceTests: XCTestCase {
         future.onFailure {error in
             expectation.fulfill()
             let peripheralServices = peripheralManager.services
-            XCTAssertEqual(error.code, PeripheralManagerError.IsAdvertising.rawValue, "error code is invalid")
+            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "error code is invalid")
             XCTAssertFalse(mock.addServiceCalled, "addService called")
             XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
         }
@@ -178,7 +178,7 @@ class MutableServiceTests: XCTestCase {
             let peripheralServices = peripheralManager.services
             XCTAssertFalse(mock.removeServiceCalled, "removeService called")
             XCTAssertEqual(peripheralServices.count, 2, "peripheralManager service count invalid")
-            XCTAssertEqual(error.code, PeripheralManagerError.IsAdvertising.rawValue, "error code is invalid")
+            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "error code is invalid")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -224,7 +224,7 @@ class MutableServiceTests: XCTestCase {
             let peripheralServices = peripheralManager.services
             XCTAssertFalse(mock.removeServiceCalled, "removeService called")
             XCTAssertEqual(peripheralServices.count, 2, "peripheralManager service count invalid")
-            XCTAssertEqual(error.code, PeripheralManagerError.IsAdvertising.rawValue, "error code is invalid")
+            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "error code is invalid")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")

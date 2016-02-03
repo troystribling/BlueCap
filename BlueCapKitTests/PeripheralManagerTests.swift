@@ -97,6 +97,7 @@ class PeripheralManagerTests: XCTestCase {
         future.onSuccess {
             expectation.fulfill()
             XCTAssert(mock.startAdvertisingCalled, "startAdvertising not called")
+            XCTAssert(peripheralManager.isAdvertising, "isAdvertising invalid value")
             if let advertisedData = mock.advertisementData,
                    name = advertisedData[CBAdvertisementDataLocalNameKey] as? String,
                    uuids = advertisedData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
@@ -136,7 +137,7 @@ class PeripheralManagerTests: XCTestCase {
             }
         }
         peripheralManager.didStartAdvertising(TestFailure.error)
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(2) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -148,9 +149,9 @@ class PeripheralManagerTests: XCTestCase {
         future.onSuccess {
             XCTAssert(false, "onSuccess called")
         }
-        future.onFailure {error in
+        future.onFailure { error in
             expectation.fulfill()
-            XCTAssertEqual(error.code, PeripheralManagerError.IsAdvertising.rawValue, "Error code is invalid")
+            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "Error code is invalid")
             XCTAssert(mock.advertisementData == nil, "advertisementData found")
         }
         waitForExpectationsWithTimeout(2) {error in
@@ -158,42 +159,42 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
     
-//    func testStartAdvertisingBeaconSuccess() {
-//        let mock = PeripheralManagerMock(isAdvertising:false, state:.PoweredOn)
-//        let expectation = expectationWithDescription("onSuccess fulfilled for future")
-//        let future = mock.impl.startAdvertising(mock, region:BeaconRegionMock())
-//        future.onSuccess {
-//            expectation.fulfill()
-//        }
-//        future.onFailure {error in
-//            XCTAssert(false, "onFailure called")
-//        }
-//        PeripheralQueue.sync {
-//            mock.impl.didStartAdvertising(nil)
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//
-//    func testStartAdvertisingBeaconFailure() {
-//        let mock = PeripheralManagerMock(isAdvertising:false, state:.PoweredOn)
-//        let expectation = expectationWithDescription("onFailure fulfilled for future")
-//        let future = mock.impl.startAdvertising(mock, region:BeaconRegionMock())
-//        future.onSuccess {
-//            XCTAssert(false, "onSuccess called")
-//        }
-//        future.onFailure {error in
-//            expectation.fulfill()
-//        }
-//        PeripheralQueue.sync {
-//            mock.impl.didStartAdvertising(TestFailure.error)
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
-//
+    func testStartAdvertisingBeaconSuccess() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
+        future.onSuccess {
+            expectation.fulfill()
+            XCTAssert(mock.startAdvertisingCalled, "startAdvertising not called")
+            XCTAssert(peripheralManager.isAdvertising, "isAdvertising invalid value")
+        }
+        future.onFailure { error in
+            XCTAssert(false, "onFailure called")
+        }
+        peripheralManager.didStartAdvertising(nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testStartAdvertisingBeaconFailure() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
+        future.onSuccess {
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure { error in
+            expectation.fulfill()
+            XCTAssertEqual(error.code, TestFailure.error.code, "error code invalid")
+            XCTAssert(mock.startAdvertisingCalled, "startAdvertising not called")
+        }
+        peripheralManager.didStartAdvertising(TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
 //    func testStartAdvertisingBeaconWhenAdvertising() {
 //        let mock = PeripheralManagerMock(isAdvertising:true, state:.PoweredOn)
 //        let expectation = expectationWithDescription("onFailure fulfilled for future")
@@ -235,7 +236,7 @@ class PeripheralManagerTests: XCTestCase {
             XCTAssert(false, "onSuccess called")
         }
         future.onFailure {error in
-            XCTAssertEqual(error.code, PeripheralManagerError.IsNotAdvertising.rawValue, "Error code is invalid")
+            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsNotAdvertising.rawValue, "Error code is invalid")
             XCTAssertFalse(mock.stopAdvertisingCalled, "stopAdvertisingCalled called")
             expectation.fulfill()
         }

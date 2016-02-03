@@ -14,23 +14,23 @@ import BlueCapKit
 
 class RawPairDeserializableTests: XCTestCase {
     
-    struct Pair : RawPairDeserializable {
+    struct Pair: BCRawPairDeserializable {
         
-        let value1:Int8
-        let value2:UInt8
+        let value1: Int8
+        let value2: UInt8
         
         // RawArrayPairDeserializable
         static let uuid = "abc"
         
-        var rawValue1 : Int8  {
+        var rawValue1: Int8  {
             return self.value1
         }
         
-        var rawValue2 : UInt8 {
+        var rawValue2: UInt8 {
             return self.value2
         }
         
-        init?(rawValue1:Int8, rawValue2:UInt8) {
+        init?(rawValue1: Int8, rawValue2: UInt8) {
             if rawValue2 > 10 {
                 self.value1 = rawValue1
                 self.value2 = rawValue2
@@ -52,7 +52,7 @@ class RawPairDeserializableTests: XCTestCase {
     
     func testSuccessfulDeserialization() {
         let data = "02ab".dataFromHexString()
-        if let value : Pair = Serde.deserialize(data) {
+        if let value : Pair = BCSerDe.deserialize(data) {
             XCTAssert(value.value1 == 2 && value.value2 == 171, "RawPairDeserializableTests deserialization value invalid: \(value.value1), \(value.value2)")
         } else {
             XCTFail("RawPairDeserializableTests deserialization failed")
@@ -61,14 +61,14 @@ class RawPairDeserializableTests: XCTestCase {
     
     func testFailedDeserialization() {
         let data = "0201".dataFromHexString()
-        if let _ : Pair = Serde.deserialize(data) {
+        if let _ : Pair = BCSerDe.deserialize(data) {
             XCTFail("RawPairDeserializableTests deserialization succeeded")
         }
     }
     
     func testSuccessfuleSerialization() {
         if let value = Pair(rawValue1:5, rawValue2:100) {
-            let data = Serde.serialize(value)
+            let data = BCSerDe.serialize(value)
             XCTAssert(data.hexStringValue() == "0564", "RawDeserializable serialization failed: \(data)")
         } else {
             XCTFail("RawPairDeserializableTests RawArray creation failed")

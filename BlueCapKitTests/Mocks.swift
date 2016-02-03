@@ -11,13 +11,16 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+ // MARK: - Error -
 struct TestFailure {
     static let error = NSError(domain:"BlueCapKit Tests", code:100, userInfo:[NSLocalizedDescriptionKey:"Testing"])
 }
 
+// MARK: - Advertisements -
 let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral",
                                 CBAdvertisementDataTxPowerLevelKey:NSNumber(integer:-45)]
 
+// MARK: - CBCentralManagerMock -
 class CBCentralManagerMock : CBCentralManagerInjectable {
     
     var state : CBCentralManagerState
@@ -44,6 +47,7 @@ class CBCentralManagerMock : CBCentralManagerInjectable {
     
 }
 
+// MARK: - CentralManagerUT -
 class CentralManagerUT: BCCentralManager {
     
     var connectPeripheralCalled     = false
@@ -64,6 +68,7 @@ class CentralManagerUT: BCCentralManager {
     
 }
 
+// MARK: - CBPeripheralMock -
 class CBPeripheralMock : CBPeripheralInjectable {
    
     var state : CBPeripheralState
@@ -141,6 +146,7 @@ class CBPeripheralMock : CBPeripheralInjectable {
 
 }
 
+// MARK: - PeripheralUT -
 class PeripheralUT: BCPeripheral {
     
     let error:NSError?
@@ -161,6 +167,7 @@ class PeripheralUT: BCPeripheral {
 
 }
 
+// MARK: - CBServiceMock -
 class CBServiceMock: CBMutableService {
     
     init(UUID:CBUUID = CBUUID(string: "2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
@@ -169,6 +176,7 @@ class CBServiceMock: CBMutableService {
     
 }
 
+// MARK: - ServiceUT -
 class ServiceUT: BCService {
     
     let error : NSError?
@@ -187,6 +195,7 @@ class ServiceUT: BCService {
     }
 }
 
+// MARK: - CBCharacteristicMock -
 class CBCharacteristicMock: CBMutableCharacteristic {
     
     var _isNotifying = false
@@ -207,6 +216,7 @@ class CBCharacteristicMock: CBMutableCharacteristic {
     
 }
 
+// MARK: - CBPeripheralManagerMock -
 class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
 
     var updateValueReturn       = true
@@ -272,6 +282,7 @@ class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
     }
 }
 
+// MARK: - PeripheralManagerUT -
 class PeripheralManagerUT: BCPeripheralManager {
     
     var respondToRequestCalled = false
@@ -294,6 +305,7 @@ class PeripheralManagerUT: BCPeripheralManager {
     }
 }
 
+// MARK: - CBATTRequestMock -
 class CBATTRequestMock : CBATTRequestInjectable {
 
     let characteristic: CBCharacteristic
@@ -308,6 +320,7 @@ class CBATTRequestMock : CBATTRequestInjectable {
     
 }
 
+// MARK: - CBCentralMock -
 class CBCentralMock : CBCentralInjectable {
 
     let identifier: NSUUID
@@ -319,6 +332,7 @@ class CBCentralMock : CBCentralInjectable {
     }
 }
 
+// MARK: - Utilities -
 func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerState) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
     let mock = CBPeripheralManagerMock(isAdvertising: isAdvertising, state: state)
     return (mock, PeripheralManagerUT(peripheralManager:mock))
