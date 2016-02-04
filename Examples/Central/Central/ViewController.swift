@@ -18,10 +18,10 @@ public enum CentralExampleError : Int {
     case PeripheralNotConnected             = 5
 }
 
-public struct CenteralError {
+public struct CentralError {
     public static let domain = "Central Example"
-    public static let dataCharacteristicNotFound = NSError(domain:domain, code:CentralExampleError.DataCharactertisticNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Data Chacateristic Not Found"])
-    public static let enabledCharacteristicNotFound = NSError(domain:domain, code:CentralExampleError.EnabledCharactertisticNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Enabled Chacateristic Not Found"])
+    public static let dataCharacteristicNotFound = NSError(domain:domain, code:CentralExampleError.DataCharactertisticNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Data Characteristic Not Found"])
+    public static let enabledCharacteristicNotFound = NSError(domain:domain, code:CentralExampleError.EnabledCharactertisticNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Enabled Characteristic Not Found"])
     public static let serviceNotFound = NSError(domain:domain, code:CentralExampleError.ServiceNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Service Not Found"])
     public static let characteristicNotFound = NSError(domain:domain, code:CentralExampleError.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Accelerometer Characteristic Not Found"])
     public static let peripheralNotConnected = NSError(domain:domain, code:CentralExampleError.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
@@ -149,7 +149,7 @@ class ViewController: UITableViewController {
                 return peripheral.discoverPeripheralServices([serviceUUID])
             } else {
                 let promise = Promise<Peripheral>()
-                promise.failure(CenteralError.peripheralNotConnected)
+                promise.failure(CentralError.peripheralNotConnected)
                 return promise.future
             }
         }.flatmap {peripheral -> Future<Characteristic> in
@@ -161,12 +161,12 @@ class ViewController: UITableViewController {
                     return accelerometerEnabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.Yes)
                 } else {
                     let promise = Promise<Characteristic>()
-                    promise.failure(CenteralError.enabledCharacteristicNotFound)
+                    promise.failure(CentralError.enabledCharacteristicNotFound)
                     return promise.future
                 }
             } else {
                 let promise = Promise<Characteristic>()
-                promise.failure(CenteralError.serviceNotFound)
+                promise.failure(CentralError.serviceNotFound)
                 return promise.future
             }
         }
@@ -177,7 +177,7 @@ class ViewController: UITableViewController {
                 return accelerometerEnabledCharacteristic.read(10.0)
             } else {
                 let promise = Promise<Characteristic>()
-                promise.failure(CenteralError.characteristicNotFound)
+                promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
         }
@@ -191,7 +191,7 @@ class ViewController: UITableViewController {
                 return accelerometerUpdatePeriodCharacteristic.read(10.0)
             } else {
                 let promise = Promise<Characteristic>()
-                promise.failure(CenteralError.characteristicNotFound)
+                promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
         }
@@ -205,18 +205,18 @@ class ViewController: UITableViewController {
                 return accelerometerDataCharacteristic.startNotifying()
             } else {
                 let promise = Promise<Characteristic>()
-                promise.failure(CenteralError.characteristicNotFound)
+                promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
         }
         dataSubscriptionFuture.onFailure {error in
-            if error.domain != CenteralError.domain || error.code == CentralExampleError.PeripheralNotConnected.rawValue {
+            if error.domain != CentralError.domain || error.code == CentralExampleError.PeripheralNotConnected.rawValue {
                 self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
         }
 
         dataSubscriptionFuture.flatmap {characteristic -> FutureStream<NSData?> in
-            return characteristic.recieveNotificationUpdates(10)
+            return characteristic.receiveNotificationUpdates(10)
         }.onSuccess {data in
             self.updateData(data)
         }
