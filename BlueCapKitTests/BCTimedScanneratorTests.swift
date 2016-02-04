@@ -1,5 +1,5 @@
 //
-//  TimedScanneratorTests.swift
+//  BCTimedScanneratorTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class TimedScanneratorTests: XCTestCase {
+class BCTimedScanneratorTests: XCTestCase {
     
     var centralManager: BCCentralManager!
     let mockPerpheral = CBPeripheralMock(state:.Connected)

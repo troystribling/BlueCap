@@ -1,5 +1,5 @@
 //
-//  SerializableTests.swift
+//  BCSerializableTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 2/8/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class SerializableTests: XCTestCase {
+class SBCerializableTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

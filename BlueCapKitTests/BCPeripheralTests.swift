@@ -1,5 +1,5 @@
 //
-//  PeripheralTests.swift
+//  BCPeripheralTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class PeripheralTests: XCTestCase {
+class BCPeripheralTests: XCTestCase {
 
     var centralManager      = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
     let mockServices        = [CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),

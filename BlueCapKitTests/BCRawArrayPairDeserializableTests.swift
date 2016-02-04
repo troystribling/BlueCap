@@ -1,5 +1,5 @@
 //
-//  RawArrayPairDeserializableTests.swift
+//  BCRawArrayPairDeserializableTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 2/10/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class RawArrayPairDeserializableTests: XCTestCase {
+class BCRawArrayPairDeserializableTests: XCTestCase {
 
     struct Pair: BCRawArrayPairDeserializable {
         

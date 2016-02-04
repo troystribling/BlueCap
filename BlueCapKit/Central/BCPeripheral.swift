@@ -14,7 +14,7 @@ enum PeripheralConnectionError {
     case None, Timeout, Unknown
 }
 
-public enum ConnectionEvent {
+public enum BCConnectionEvent {
     case Connect, Timeout, Disconnect, ForceDisconnect, Failed, GiveUp
 }
 
@@ -116,7 +116,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
     private var _servicesDiscoveredPromise: Promise<BCPeripheral>?
     private var _readRSSIPromise: Promise<Int>?
 
-    private var _connectionPromise: StreamPromise<(BCPeripheral, ConnectionEvent)>?
+    private var _connectionPromise: StreamPromise<(BCPeripheral, BCConnectionEvent)>?
 
     private var _timeoutCount: UInt         = 0
     private var _disconnectCount: UInt      = 0
@@ -160,7 +160,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         }
     }
 
-    private var connectionPromise: StreamPromise<(BCPeripheral, ConnectionEvent)>? {
+    private var connectionPromise: StreamPromise<(BCPeripheral, BCConnectionEvent)>? {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectionPromise }
         }
@@ -277,8 +277,8 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         }
     }
      
-    public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(BCPeripheral, ConnectionEvent)> {
-        self.connectionPromise = StreamPromise<(BCPeripheral, ConnectionEvent)>(capacity:capacity)
+    public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(BCPeripheral, BCConnectionEvent)> {
+        self.connectionPromise = StreamPromise<(BCPeripheral, BCConnectionEvent)>(capacity:capacity)
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         self.connectionTimeout = connectionTimeout
@@ -476,7 +476,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         if (self.forcedDisconnect) {
             self.forcedDisconnect = false
             BCLogger.debug("forced disconnect")
-            self.connectionPromise?.success((self, ConnectionEvent.ForceDisconnect))
+            self.connectionPromise?.success((self, .ForceDisconnect))
         } else {
             switch(self.currentError) {
             case .None:
@@ -494,7 +494,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
     public func didConnectPeripheral() {
         BCLogger.debug()
         self._connectedAt = NSDate()
-        self.connectionPromise?.success((self, ConnectionEvent.Connect))
+        self.connectionPromise?.success((self, .Connect))
     }
     
     public func didFailToConnectPeripheral(error: NSError?) {
@@ -507,12 +507,12 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
                     ++self.disconnectCount
                 } else {
                     self.disconnectCount = 0
-                    self.connectionPromise?.success((self, ConnectionEvent.GiveUp))
+                    self.connectionPromise?.success((self, BCConnectionEvent.GiveUp))
                 }
             }
         } else {
             BCLogger.debug("connection success")
-            self.connectionPromise?.success((self, ConnectionEvent.Failed))
+            self.connectionPromise?.success((self, .Failed))
         }
     }
     
@@ -520,14 +520,14 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         BCLogger.debug()
         if let timeoutRetries = self.timeoutRetries {
             if self.timeoutCount < timeoutRetries {
-                self.connectionPromise?.success((self, ConnectionEvent.Timeout))
+                self.connectionPromise?.success((self, .Timeout))
                 ++self.timeoutCount
             } else {
                 self.timeoutCount = 0
-                self.connectionPromise?.success((self, ConnectionEvent.GiveUp))
+                self.connectionPromise?.success((self, .GiveUp))
             }
         } else {
-            self.connectionPromise?.success((self, ConnectionEvent.Timeout))
+            self.connectionPromise?.success((self, .Timeout))
         }
     }
     
@@ -536,13 +536,13 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < disconnectRetries {
                 ++self.disconnectCount
-                self.connectionPromise?.success((self, ConnectionEvent.Disconnect))
+                self.connectionPromise?.success((self, .Disconnect))
             } else {
                 self.disconnectCount = 0
-                self.connectionPromise?.success((self, ConnectionEvent.GiveUp))
+                self.connectionPromise?.success((self, .GiveUp))
             }
         } else {
-            self.connectionPromise?.success((self, ConnectionEvent.Disconnect))
+            self.connectionPromise?.success((self, .Disconnect))
         }
     }
 

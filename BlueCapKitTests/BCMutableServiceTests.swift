@@ -1,5 +1,5 @@
 //
-//  MutableServiceTests.swift
+//  BCMutableServiceTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/2/16.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class MutableServiceTests: XCTestCase {
+class BCMutableServiceTests: XCTestCase {
     
     override func setUp() {
         GnosusProfiles.create()

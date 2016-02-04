@@ -1,5 +1,5 @@
 //
-//  CentralManagerTests.swift
+//  BCCentralManagerTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class CentralManagerTests: XCTestCase {
+class NCCentralManagerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()

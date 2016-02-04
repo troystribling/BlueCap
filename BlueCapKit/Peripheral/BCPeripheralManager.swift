@@ -139,7 +139,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Initialize
-    private override init() {
+    public override init() {
         self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)

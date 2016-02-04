@@ -1,5 +1,5 @@
 //
-//  RawDeserializableTests.swift
+//  BCRawDeserializableTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 2/9/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class RawDeserializableTests: XCTestCase {
+class BCRawDeserializableTests: XCTestCase {
 
     enum Testit: UInt8, BCRawDeserializable {
         case No     = 0

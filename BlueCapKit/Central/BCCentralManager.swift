@@ -95,7 +95,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Initializers
-    private override init() {
+    public override init() {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)

@@ -12,7 +12,7 @@ import BlueCapKit
 class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate {
 
     @IBOutlet var updatePeriodTextField : UITextField!
-    var characteristic : Characteristic?
+    var characteristic : BCCharacteristic?
     var isRaw : Bool?
     
     required init?(coder aDecoder:NSCoder) {

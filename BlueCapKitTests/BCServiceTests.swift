@@ -1,5 +1,5 @@
 //
-//  ServiceTests.swift
+//  BCServiceTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class ServiceTests: XCTestCase {
+class BCServiceTests: XCTestCase {
     
     var centralManager: BCCentralManager!
     var mockCharateristics = [CBCharacteristicMock]()

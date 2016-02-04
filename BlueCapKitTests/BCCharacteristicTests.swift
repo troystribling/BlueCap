@@ -1,5 +1,5 @@
 //
-//  CharacteristicTests.swift
+//  BCCharacteristicTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class CharacteristicTests: XCTestCase {
+class BCCharacteristicTests: XCTestCase {
     
     var centralManager: BCCentralManager!
     var peripheral: BCPeripheral!

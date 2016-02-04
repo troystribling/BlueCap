@@ -1,5 +1,5 @@
 //
-//  DeserilaizableTests.swift
+//  BCDeserilaizableTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 2/8/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class DeserilaizableTests: XCTestCase {
+class BCDeserilaizableTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

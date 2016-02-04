@@ -1,5 +1,5 @@
 //
-//  PeripheralManagerTests.swift
+//  BCPeripheralManagerTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 3/25/15.
@@ -12,7 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class PeripheralManagerTests: XCTestCase {
+class BCPeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
     let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)
@@ -195,21 +195,22 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
-//    func testStartAdvertisingBeaconWhenAdvertising() {
-//        let mock = PeripheralManagerMock(isAdvertising:true, state:.PoweredOn)
-//        let expectation = expectationWithDescription("onFailure fulfilled for future")
-//        let future = mock.impl.startAdvertising(mock, region:BeaconRegionMock())
-//        future.onSuccess {
-//            XCTAssert(false, "onSuccess called")
-//        }
-//        future.onFailure {error in
-//            XCTAssert(error.code == PeripheralManagerError.IsAdvertising.rawValue, "Error code is invalid \(error.code)")
-//            expectation.fulfill()
-//        }
-//        waitForExpectationsWithTimeout(2) {error in
-//            XCTAssertNil(error, "\(error)")
-//        }
-//    }
+    func testStartAdvertisingBeaconWhenAdvertising() {
+        let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
+        future.onSuccess {
+            XCTAssert(false, "onSuccess called")
+        }
+        future.onFailure {error in
+            expectation.fulfill()
+            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "Error code is invalid \(error.code)")
+            XCTAssertFalse(mock.startAdvertisingCalled, "startAdvertising not called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 
     func testStopAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
