@@ -12,11 +12,11 @@ import BlueCapKit
 class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate {
 
     @IBOutlet var updatePeriodTextField : UITextField!
-    var characteristic : Characteristic?
+    var characteristic: BCCharacteristic?
     var isRaw : Bool?
     
-    required init?(coder aDecoder:NSCoder) {
-        super.init(coder:aDecoder)
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
@@ -39,7 +39,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField:UITextField) -> Bool {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         if let enteredPeriod = self.updatePeriodTextField.text, isRaw = self.isRaw, value = UInt16(enteredPeriod) where !enteredPeriod.isEmpty {
             let rawValue : String
             if  isRaw {
@@ -47,13 +47,13 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
             } else {
                 rawValue = "\(value / 10)"
             }
-            let writeFuture = self.characteristic?.writeString(["periodRaw":rawValue], timeout:10.0)
+            let writeFuture = self.characteristic?.writeString(["periodRaw": rawValue], timeout:10.0)
             writeFuture?.onSuccess {_ in
                 textField.resignFirstResponder()
                 self.navigationController?.popViewControllerAnimated(true)
             }
             writeFuture?.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true) {action in
+                self.presentViewController(UIAlertController.alertOnError(error), animated: true) {action in
                     textField.resignFirstResponder()
                     self.navigationController?.popViewControllerAnimated(true)
                 }

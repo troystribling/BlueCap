@@ -74,7 +74,7 @@ public class BCCharacteristic {
         }
     }
 
-    private var writing : Bool {
+    private var writing: Bool {
         get {
             return BCCharacteristic.ioQueue.sync { return self._writing }
         }
@@ -83,7 +83,7 @@ public class BCCharacteristic {
         }
     }
 
-    private var readSequence : Int {
+    private var readSequence: Int {
         get {
             return BCCharacteristic.ioQueue.sync { return self._readSequence }
         }
@@ -92,7 +92,7 @@ public class BCCharacteristic {
         }
     }
 
-    private var writeSequence : Int {
+    private var writeSequence: Int {
         get {
             return BCCharacteristic.ioQueue.sync { return self._writeSequence }
         }
@@ -101,54 +101,54 @@ public class BCCharacteristic {
         }
     }
     
-    public var uuid : CBUUID {
+    public var uuid: CBUUID {
         return self.cbCharacteristic.UUID
     }
     
-    public var name : String {
+    public var name: String {
         return self.profile.name
     }
     
-    public var isNotifying : Bool {
+    public var isNotifying: Bool {
         return self.cbCharacteristic.isNotifying
     }
     
-    public var afterDiscoveredPromise : StreamPromise<BCCharacteristic>? {
+    public var afterDiscoveredPromise: StreamPromise<BCCharacteristic>? {
         return self.profile.afterDiscoveredPromise
     }
     
-    public var canNotify : Bool {
+    public var canNotify: Bool {
         return self.propertyEnabled(.Notify)                    ||
                self.propertyEnabled(.Indicate)                  ||
                self.propertyEnabled(.NotifyEncryptionRequired)  ||
                self.propertyEnabled(.IndicateEncryptionRequired)
     }
     
-    public var canRead : Bool {
+    public var canRead: Bool {
         return self.propertyEnabled(.Read)
     }
     
-    public var canWrite : Bool {
+    public var canWrite: Bool {
         return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse)
     }
     
-    public var service : BCService? {
+    public var service: BCService? {
         return self._service
     }
     
-    public var dataValue : NSData? {
+    public var dataValue: NSData? {
         return self.cbCharacteristic.value
     }
     
-    public var stringValues : [String] {
+    public var stringValues: [String] {
         return self.profile.stringValues
     }
 
-    public var stringValue :[String:String]? {
+    public var stringValue: [String:String]? {
         return self.stringValue(self.dataValue)
     }
     
-    public var properties : CBCharacteristicProperties {
+    public var properties: CBCharacteristicProperties {
         return self.cbCharacteristic.properties
     }
 
