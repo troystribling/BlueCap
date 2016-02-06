@@ -82,7 +82,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     
     @IBAction func toggleAdvertise(sender: AnyObject) {
         if self.manager.isAdvertising {
-            let stopAdvertiseFuture = manager.stopAdvertising()
+            let stopAdvertiseFuture = self.manager.stopAdvertising()
             stopAdvertiseFuture.onSuccess {
                 self.presentViewController(UIAlertController.alertWithMessage("stoped advertising"), animated: true, completion: nil)
             }
@@ -92,19 +92,20 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         } else {
             // Start advertising on bluetooth power on
             if let beaconRegion = self.createBeaconRegion() {
-                let startAdvertiseFuture = manager.powerOn().flatmap{ _ in
+                let startAdvertiseFuture = self.manager.powerOn().flatmap{ _ in
                     self.manager.startAdvertising(beaconRegion)
                 }
                 startAdvertiseFuture.onSuccess {
                     self.presentViewController(UIAlertController.alertWithMessage("powered on and started advertising"), animated: true, completion: nil)
                 }
-                startAdvertiseFuture.onFailure {error in
+                startAdvertiseFuture.onFailure { error in
                     self.presentViewController(UIAlertController.alertOnError(error), animated: true, completion: nil)
                     self.startAdvertisingSwitch.on = false
                 }
             }
+
             // stop advertising on bluetooth power off
-            let powerOffFuture = manager.powerOff().flatmap { _ in
+            let powerOffFuture = self.manager.powerOff().flatmap { _ in
                 self.manager.stopAdvertising()
             }
             powerOffFuture.onSuccess {
@@ -119,6 +120,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 self.startAdvertisingLabel.textColor = UIColor.lightGrayColor()
                 self.presentViewController(UIAlertController.alertWithMessage("advertising failed"), animated: true, completion: nil)
             }
+
             // enable controls when bluetooth is powered on again after stop advertising is successul
             let powerOffFutureSuccessFuture = powerOffFuture.flatmap { _ in
                 self.manager.powerOn()
@@ -127,6 +129,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 self.startAdvertisingSwitch.enabled = true
                 self.startAdvertisingLabel.textColor = UIColor.blackColor()
             }
+            
             // enable controls when bluetooth is powered on again after stop advertising fails
             let powerOffFutureFailedFuture = powerOffFuture.recoverWith { _  in
                 self.manager.powerOn()

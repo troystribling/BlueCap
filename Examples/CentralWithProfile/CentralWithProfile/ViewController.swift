@@ -18,7 +18,7 @@ public enum CentralExampleError : Int {
     case PeripheralNotConnected             = 5
 }
 
-public struct CenteralError {
+public struct CentralError {
     public static let domain = "Central Example"
     public static let dataCharacteristicNotFound = NSError(domain: domain, code: CentralExampleError.DataCharactertisticNotFound.rawValue, userInfo: [NSLocalizedDescriptionKey: "Accelerometer Data Chacateristic Not Found"])
     public static let enabledCharacteristicNotFound = NSError(domain: domain, code: CentralExampleError.EnabledCharactertisticNotFound.rawValue, userInfo: [NSLocalizedDescriptionKey: "Accelerometer Enabled Chacateristic Not Found"])
@@ -87,13 +87,13 @@ class ViewController: UITableViewController {
 
     }
     
-    @IBAction func toggleEnabled(sender:AnyObject) {
+    @IBAction func toggleEnabled(sender: AnyObject) {
         if let peripheral = self.peripheral where peripheral.state == .Connected {
             self.writeEnabled()
         }
     }
     
-    @IBAction func toggleActivate(sender:AnyObject) {
+    @IBAction func toggleActivate(sender: AnyObject) {
         if self.activateSwitch.on  {
             self.activate()
         } else {
@@ -101,7 +101,7 @@ class ViewController: UITableViewController {
         }
     }
     
-    @IBAction func disconnect(sender:AnyObject) {
+    @IBAction func disconnect(sender: AnyObject) {
         if let peripheral = self.peripheral where peripheral.state != .Disconnected {
             peripheral.disconnect()
         }
@@ -114,9 +114,9 @@ class ViewController: UITableViewController {
         let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.uuid)
 
         // on power, start scanning. when peripoheral is discovered connect and stop scanning
-        let peripheraConnectFuture = self.manager.powerOn().flatmap { _ -> FutureStream<BCPeripheral> in
+        let peripheraConnectFuture = self.manager.powerOn().flatmap { [unowned self] _ -> FutureStream<BCPeripheral> in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
-        }.flatmap { peripheral -> FutureStream<(BCPeripheral, BCConnectionEvent)> in
+        }.flatmap { [unowned self] peripheral -> FutureStream<(BCPeripheral, BCConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(10, timeoutRetries: 5, disconnectRetries: 5)
@@ -149,7 +149,7 @@ class ViewController: UITableViewController {
                 return peripheral.discoverPeripheralServices([serviceUUID])
             } else {
                 let promise = Promise<BCPeripheral>()
-                promise.success(peripheral)
+                promise.failure(CentralError.peripheralNotConnected)
                 return promise.future
             }
         }
@@ -167,7 +167,7 @@ class ViewController: UITableViewController {
                 return accelerometerEnabledCharacteristic.read(10.0)
             } else {
                 let promise = Promise<BCCharacteristic>()
-                promise.failure(CenteralError.characteristicNotFound)
+                promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
         }
@@ -181,7 +181,7 @@ class ViewController: UITableViewController {
                 return accelerometerUpdatePeriodCharacteristic.read(10.0)
             } else {
                 let promise = Promise<BCCharacteristic>()
-                promise.failure(CenteralError.characteristicNotFound)
+                promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
         }
@@ -195,16 +195,15 @@ class ViewController: UITableViewController {
                 return accelerometerDataCharacteristic.startNotifying()
             } else {
                 let promise = Promise<BCCharacteristic>()
-                promise.failure(CenteralError.characteristicNotFound)
+                promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
         }
         dataSubscriptionFuture.onFailure { error in
-            if error.domain != CenteralError.domain || error.code == CentralExampleError.PeripheralNotConnected.rawValue {
+            if error.domain != CentralError.domain || error.code == CentralExampleError.PeripheralNotConnected.rawValue {
                 self.presentViewController(UIAlertController.alertOnError(error), animated: true, completion: nil)
             }
         }
-
         dataSubscriptionFuture.flatmap { characteristic -> FutureStream<NSData?> in
             return characteristic.recieveNotificationUpdates(10)
         }.onSuccess { data in
@@ -212,7 +211,7 @@ class ViewController: UITableViewController {
         }
             
         // handle bluetooth power off
-        let powerOffFuture = manager.powerOff()
+        let powerOffFuture = self.manager.powerOff()
         powerOffFuture.onSuccess {
             self.deactivate()
         }
@@ -227,6 +226,7 @@ class ViewController: UITableViewController {
         powerOffFutureSuccessFuture.onSuccess {
             self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated: true, completion: nil)
         }
+
         // enable controls when bluetooth is powered on again after stop advertising fails
         let powerOffFutureFailedFuture = powerOffFuture.recoverWith { _  -> Future<Void> in
             self.manager.powerOn()

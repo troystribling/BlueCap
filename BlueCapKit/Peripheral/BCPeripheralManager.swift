@@ -217,6 +217,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
 
     // MARK: Manage Services
     public func addService(service: BCMutableService) -> Future<Void> {
+        service.peripheralManager = self
         self.addConfiguredCharacteristics(service.characteristics)
         self.afterSeriviceAddPromise = Promise<Void>()
         if !self.isAdvertising {

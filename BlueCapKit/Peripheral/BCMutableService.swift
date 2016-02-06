@@ -44,15 +44,14 @@ public class BCMutableService : NSObject {
         }
     }
     
-    public init(profile: BCServiceProfile, peripheralManager: BCPeripheralManager) {
+    public init(profile: BCServiceProfile) {
         self.profile = profile
-        self.peripheralManager = peripheralManager
         self.cbMutableService = CBMutableService(type: self.profile.uuid, primary: true)
         super.init()
     }
     
-    public convenience init(uuid: String, peripheralManager: BCPeripheralManager) {
-        self.init(profile: BCServiceProfile(uuid: uuid), peripheralManager: peripheralManager)
+    public convenience init(uuid: String) {
+        self.init(profile: BCServiceProfile(uuid: uuid))
     }
 
     public func characteristicsFromProfiles() {

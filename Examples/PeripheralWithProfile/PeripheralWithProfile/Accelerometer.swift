@@ -14,7 +14,7 @@ class Accelerometer {
 
     var motionManager           = CMMotionManager()
     let queue                   = NSOperationQueue.mainQueue()
-    let accelerationDataPromise = StreamPromise<CMAcceleration>(capacity:10)
+    let accelerationDataPromise = StreamPromise<CMAcceleration>(capacity: 10)
     
     var updatePeriod : NSTimeInterval {
         get {
@@ -25,11 +25,11 @@ class Accelerometer {
         }
     }
     
-    var accelerometerActive : Bool {
+    var accelerometerActive: Bool {
         return self.motionManager.accelerometerActive
     }
     
-    var accelerometerAvailable : Bool {
+    var accelerometerAvailable: Bool {
         return self.motionManager.accelerometerAvailable
     }
     
@@ -38,7 +38,7 @@ class Accelerometer {
     }
 
     func startAcceleromterUpdates() -> FutureStream<CMAcceleration> {
-        self.motionManager.startAccelerometerUpdatesToQueue(self.queue) {(data:CMAccelerometerData?, error:NSError?) in
+        self.motionManager.startAccelerometerUpdatesToQueue(self.queue) { (data: CMAccelerometerData?, error: NSError?) in
             if let error = error {
                 self.accelerationDataPromise.failure(error)
             } else {
