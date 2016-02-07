@@ -31,10 +31,7 @@ class ViewController: UITableViewController {
     let manager = BCPeripheralManager()
     let accelerometer = Accelerometer()
     
-    var accelerometerService: BCMutableService {
-        return BCMutableService(uuid: TISensorTag.AccelerometerService.uuid, peripheralManager: self.manager)
-    }
-
+    let accelerometerService                    = BCMutableService(uuid: TISensorTag.AccelerometerService.uuid)
     let accelerometerDataCharacteristic         = BCMutableCharacteristic(uuid: TISensorTag.AccelerometerService.Data.uuid,
                                                     properties: [.Read, .Indicate],
                                                     permissions: [.Readable, .Writeable],
