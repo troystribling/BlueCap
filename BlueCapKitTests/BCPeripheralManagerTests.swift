@@ -29,7 +29,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testPowerOnWhenPoweredOn() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheralManager.powerOn()
+        let future = peripheralManager.whenPowerOn()
         future.onSuccess {
             expectation.fulfill()
         }
@@ -44,7 +44,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testPowerOnWhenPoweredOff() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheralManager.powerOn()
+        let future = peripheralManager.whenPowerOn()
         future.onSuccess {
             expectation.fulfill()
         }
@@ -61,7 +61,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testPowerOffWhenPoweredOn() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheralManager.powerOff()
+        let future = peripheralManager.whenPowerOff()
         future.onSuccess {
             expectation.fulfill()
         }
@@ -78,7 +78,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testPowerOffWhenPoweredOff() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = peripheralManager.powerOff()
+        let future = peripheralManager.whenPowerOff()
         future.onSuccess {
             expectation.fulfill()
         }

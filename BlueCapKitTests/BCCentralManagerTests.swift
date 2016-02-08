@@ -26,7 +26,7 @@ class NCCentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = centralManager.powerOn()
+        let future = centralManager.whenPowerOn()
         future.onSuccess {
             expectation.fulfill()
         }
@@ -42,7 +42,7 @@ class NCCentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = centralManager.powerOn()
+        let future = centralManager.whenPowerOn()
         future.onSuccess {
             expectation.fulfill()
         }
@@ -60,7 +60,7 @@ class NCCentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = centralManager.powerOff()
+        let future = centralManager.whenPowerOff()
         future.onSuccess {
             expectation.fulfill()
         }
@@ -78,7 +78,7 @@ class NCCentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let future = centralManager.powerOff()
+        let future = centralManager.whenPowerOff()
         future.onSuccess {
             expectation.fulfill()
         }

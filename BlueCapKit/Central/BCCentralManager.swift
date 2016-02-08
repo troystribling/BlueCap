@@ -114,7 +114,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Power ON/OFF
-    public func powerOn() -> Future<Void> {
+    public func whenPowerOn() -> Future<Void> {
         self.afterPowerOnPromise = Promise<Void>()
         if self.poweredOn {
             self.afterPowerOnPromise.success()
@@ -122,7 +122,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         return self.afterPowerOnPromise.future
     }
 
-    public func powerOff() -> Future<Void> {
+    public func whenPowerOff() -> Future<Void> {
         self.afterPowerOffPromise = Promise<Void>()
         if self.poweredOff {
             self.afterPowerOffPromise.success()

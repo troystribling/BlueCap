@@ -342,8 +342,8 @@ func createPeripheralManagerServices(peripheral: BCPeripheralManager) -> [BCMuta
     let profileManager = BCProfileManager.sharedInstance
     if let helloWoroldService = profileManager.service[CBUUID(string: Gnosus.HelloWorldService.uuid)],
            locationService = profileManager.service[CBUUID(string: Gnosus.LocationService.uuid)] {
-        return [BCMutableService(profile: helloWoroldService, peripheralManager: peripheral),
-                BCMutableService(profile: locationService , peripheralManager: peripheral)]
+        return [BCMutableService(profile: helloWoroldService),
+                BCMutableService(profile: locationService)]
     } else {
         return []
     }

@@ -158,7 +158,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Power ON/OFF
-    public func powerOn() -> Future<Void> {
+    public func whenPowerOn() -> Future<Void> {
         BCLogger.debug()
         self.afterPowerOnPromise = Promise<Void>()
         if self.poweredOn {
@@ -167,7 +167,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         return self.afterPowerOnPromise.future
     }
     
-    public func powerOff() -> Future<Void> {
+    public func whenPowerOff() -> Future<Void> {
         BCLogger.debug()
         self.afterPowerOffPromise = Promise<Void>()
         if self.poweredOff {
