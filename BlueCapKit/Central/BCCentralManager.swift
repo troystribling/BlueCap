@@ -27,13 +27,14 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     static let ioQueue = Queue("us.gnos.blueCap.central-manager.io")
 
     // MARK: Properties
-    private var _afterPowerOnPromise                            = Promise<Void>()
-    private var _afterPowerOffPromise                           = Promise<Void>()
-    
-    private var _isScanning                                     = false
+    private var _afterPowerOnPromise                    = Promise<Void>()
+    private var _afterPowerOffPromise                   = Promise<Void>()
+    private var _afterStateRestoredPromise              = Promise<[BCService]>()
 
-    internal var _afterPeripheralDiscoveredPromise              = StreamPromise<BCPeripheral>()
-    internal var discoveredPeripherals                          = BCSerialIODictionary<NSUUID, BCPeripheral>(BCCentralManager.ioQueue)
+    private var _isScanning                             = false
+
+    internal var _afterPeripheralDiscoveredPromise      = StreamPromise<BCPeripheral>()
+    internal var discoveredPeripherals                  = BCSerialIODictionary<NSUUID, BCPeripheral>(BCCentralManager.ioQueue)
 
     public var cbCentralManager: CBCentralManagerInjectable!
     public let centralQueue: Queue
@@ -62,6 +63,15 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
         set {
             BCCentralManager.ioQueue.sync { self._afterPeripheralDiscoveredPromise = newValue }
+        }
+    }
+
+    private var afterStateRestoredPromise: Promise<[BCService]> {
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._afterStateRestoredPromise = newValue }
         }
     }
 
@@ -183,7 +193,13 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
             self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
         }
     }
-    
+
+    // MARK: State Restoration
+    public func whenStateRestored() -> Future<[BCService]> {
+        self.afterStateRestoredPromise = Promise<[BCService]>()
+        return self.afterStateRestoredPromise.future
+    }
+
     // MARK: CBCentralManagerDelegate
     public func centralManager(_: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         self.didConnectPeripheral(peripheral)

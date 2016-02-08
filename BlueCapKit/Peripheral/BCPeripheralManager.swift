@@ -48,17 +48,18 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral-manager.io")
 
-    private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL: Double                   = 0.25
+    private let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL   = 0.25
 
     // MARK: Properties
     private var _name: String?
     private var cbPeripheralManager: CBPeripheralManagerInjectable!
     
-    private var _afterAdvertisingStartedPromise                                 = Promise<Void>()
-    private var _afterAdvertsingStoppedPromise                                  = Promise<Void>()
-    private var _afterPowerOnPromise                                            = Promise<Void>()
-    private var _afterPowerOffPromise                                           = Promise<Void>()
-    private var _afterSeriviceAddPromise                                        = Promise<Void>()
+    private var _afterAdvertisingStartedPromise = Promise<Void>()
+    private var _afterAdvertsingStoppedPromise  = Promise<Void>()
+    private var _afterPowerOnPromise            = Promise<Void>()
+    private var _afterPowerOffPromise           = Promise<Void>()
+    private var _afterSeriviceAddPromise        = Promise<Void>()
+    private var _afterStateRestoredPromise      = Promise<[BCService]>()
 
     internal var configuredServices         = BCSerialIODictionary<CBUUID, BCMutableService>(BCPeripheralManager.ioQueue)
     internal var configuredCharcteristics   = BCSerialIODictionary<CBUUID, BCMutableCharacteristic>(BCPeripheralManager.ioQueue)
@@ -107,6 +108,15 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
         set {
             BCPeripheralManager.ioQueue.sync { self._afterSeriviceAddPromise = newValue }
+        }
+    }
+
+    private var afterStateRestoredPromise: Promise<[BCService]> {
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._afterStateRestoredPromise = newValue }
         }
     }
 
@@ -275,12 +285,18 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
 
+    // MARK: State Restoration
+    public func whenStateRestored() -> Future<[BCService]> {
+        self.afterStateRestoredPromise = Promise<[BCService]>()
+        return self.afterStateRestoredPromise.future
+    }
+
     // MARK: CBPeripheralManagerDelegate
     public func peripheralManagerDidUpdateState(_: CBPeripheralManager) {
         self.didUpdateState()
     }
     
-    public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {
+    public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {        
     }
     
     public func peripheralManagerDidStartAdvertising(_: CBPeripheralManager, error: NSError?) {
