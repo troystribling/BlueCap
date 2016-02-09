@@ -22,7 +22,7 @@ public class BCMutableCharacteristic {
     private var _updating           = false
     private var _queuedUpdates      = [NSData]()
 
-    internal var _processWriteRequestPromise: StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>?
+    internal var _processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
     internal weak var _service: BCMutableService?
     
     public let cbMutableChracteristic: CBMutableCharacteristic
@@ -46,7 +46,7 @@ public class BCMutableCharacteristic {
         }
     }
 
-    private var processWriteRequestPromise: StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>? {
+    private var processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>? {
         get {
             return BCMutableCharacteristic.ioQueue.sync { return self._processWriteRequestPromise }
         }
@@ -146,8 +146,8 @@ public class BCMutableCharacteristic {
     }
 
     // MARK: Manage Writes
-    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<(CBATTRequestInjectable, CBCentralInjectable)> {
-        self.processWriteRequestPromise = StreamPromise<(CBATTRequestInjectable, CBCentralInjectable)>(capacity:capacity)
+    public func startRespondingToWriteRequests(capacity: Int? = nil) -> FutureStream<(request: CBATTRequestInjectable, central: CBCentralInjectable)> {
+        self.processWriteRequestPromise = StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>(capacity:capacity)
         return self.processWriteRequestPromise!.future
     }
     

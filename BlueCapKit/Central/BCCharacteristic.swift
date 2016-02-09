@@ -28,7 +28,7 @@ public class BCCharacteristic {
     static let timeoutQueue = Queue("us.gnos.blueCap.characteristic.timeout")
 
     private var _notificationStateChangedPromise: Promise<BCCharacteristic>?
-    private var _notificationUpdatePromise: StreamPromise<NSData?>?
+    private var _notificationUpdatePromise: StreamPromise<(characteristic: BCCharacteristic, data: NSData?)>?
 
     private var readPromises    = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
     private var writePromises   = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
@@ -56,7 +56,7 @@ public class BCCharacteristic {
         }
     }
 
-    private var notificationUpdatePromise: StreamPromise<NSData?>? {
+    private var notificationUpdatePromise: StreamPromise<(characteristic: BCCharacteristic, data: NSData?)>? {
         get {
             return BCCharacteristic.ioQueue.sync { return self._notificationUpdatePromise }
         }
@@ -251,8 +251,8 @@ public class BCCharacteristic {
         return promise.future
     }
 
-    public func recieveNotificationUpdates(capacity: Int? = nil) -> FutureStream<NSData?> {
-        let promise = StreamPromise<NSData?>(capacity:capacity)
+    public func recieveNotificationUpdates(capacity: Int? = nil) -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> {
+        let promise = StreamPromise<(characteristic: BCCharacteristic, data: NSData?)>(capacity:capacity)
         if self.canNotify {
             self.notificationUpdatePromise = promise
         } else {
@@ -379,7 +379,7 @@ public class BCCharacteristic {
         if let error = error {
             notificationUpdatePromise.failure(error)
         } else {
-            notificationUpdatePromise.success(self.dataValue.flatmap{ $0.copy() as? NSData} )
+            notificationUpdatePromise.success((self, self.dataValue.flatmap{ $0.copy() as? NSData}))
         }
     }
 

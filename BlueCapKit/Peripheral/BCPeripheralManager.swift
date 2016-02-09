@@ -59,7 +59,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private var _afterPowerOnPromise            = Promise<Void>()
     private var _afterPowerOffPromise           = Promise<Void>()
     private var _afterSeriviceAddPromise        = Promise<Void>()
-    private var _afterStateRestoredPromise      = Promise<[BCService]>()
+    private var _afterStateRestoredPromise      = Promise<([BCService], BCPeripheralAdvertisements)>()
 
     internal var configuredServices         = BCSerialIODictionary<CBUUID, BCMutableService>(BCPeripheralManager.ioQueue)
     internal var configuredCharcteristics   = BCSerialIODictionary<CBUUID, BCMutableCharacteristic>(BCPeripheralManager.ioQueue)
@@ -111,7 +111,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    private var afterStateRestoredPromise: Promise<[BCService]> {
+    private var afterStateRestoredPromise: Promise<([BCService], BCPeripheralAdvertisements)> {
         get {
             return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
         }
@@ -286,8 +286,8 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: State Restoration
-    public func whenStateRestored() -> Future<[BCService]> {
-        self.afterStateRestoredPromise = Promise<[BCService]>()
+    public func whenStateRestored() -> Future<([BCService], BCPeripheralAdvertisements)> {
+        self.afterStateRestoredPromise = Promise<([BCService], BCPeripheralAdvertisements)>()
         return self.afterStateRestoredPromise.future
     }
 
@@ -296,7 +296,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self.didUpdateState()
     }
     
-    public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {        
+    public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {
     }
     
     public func peripheralManagerDidStartAdvertising(_: CBPeripheralManager, error: NSError?) {

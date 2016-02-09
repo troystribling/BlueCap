@@ -116,7 +116,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
     private var _servicesDiscoveredPromise: Promise<BCPeripheral>?
     private var _readRSSIPromise: Promise<Int>?
 
-    private var _connectionPromise: StreamPromise<(BCPeripheral, BCConnectionEvent)>?
+    private var _connectionPromise: StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>?
 
     private var _timeoutCount: UInt         = 0
     private var _disconnectCount: UInt      = 0
@@ -160,7 +160,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         }
     }
 
-    private var connectionPromise: StreamPromise<(BCPeripheral, BCConnectionEvent)>? {
+    private var connectionPromise: StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>? {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectionPromise }
         }
@@ -277,8 +277,8 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         }
     }
      
-    public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(BCPeripheral, BCConnectionEvent)> {
-        self.connectionPromise = StreamPromise<(BCPeripheral, BCConnectionEvent)>(capacity:capacity)
+    public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> {
+        self.connectionPromise = StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>(capacity:capacity)
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         self.connectionTimeout = connectionTimeout

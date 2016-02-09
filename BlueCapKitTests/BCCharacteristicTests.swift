@@ -34,25 +34,25 @@ class BCCharacteristicTests: XCTestCase {
     }
     
     func createCharacteristic(properties: CBCharacteristicProperties, isNotifying:Bool) -> (BCCharacteristic, CBCharacteristicMock) {
-        let mockCharacteristic = CBCharacteristicMock(UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), properties:properties, permissions:[.Readable, .Writeable], isNotifying:isNotifying)
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics:[mockCharacteristic], error:nil)
+        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: properties, permissions: [.Readable, .Writeable], isNotifying: isNotifying)
+        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
     }
     
     func testAfterDiscovered() {
-        let mockCharacteristic = CBCharacteristicMock(UUID:CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid), properties:[.Read, .Write], permissions:[.Readable, .Writeable], isNotifying:false)
-        let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:[mockCharacteristic], error:nil)
+        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
+        let service  = ServiceUT(cbService: self.mockService, peripheral: peripheral, mockCharacteristics: [mockCharacteristic], error: nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let serviceProfile = BCProfileManager.sharedInstance.service[CBUUID(string:Gnosus.HelloWorldService.uuid)]
-        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string:Gnosus.HelloWorldService.Greeting.uuid)]
-        characteristicProfile?.afterDiscovered(nil).onSuccess {_ in
+        let serviceProfile = BCProfileManager.sharedInstance.service[CBUUID(string: Gnosus.HelloWorldService.uuid)]
+        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)]
+        characteristicProfile?.afterDiscovered(nil).onSuccess { _ in
             onSuccessExpectation.fulfill()
         }
-        characteristicProfile?.afterDiscovered(nil).onFailure {error in
+        characteristicProfile?.afterDiscovered(nil).onFailure { error in
             XCTAssert(false, "onFailure called")
         }
-        service.didDiscoverCharacteristics([mockCharacteristic], error:nil)
-        waitForExpectationsWithTimeout(2) {error in
+        service.didDiscoverCharacteristics([mockCharacteristic], error: nil)
+        waitForExpectationsWithTimeout(2) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -61,7 +61,7 @@ class BCCharacteristicTests: XCTestCase {
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
         let future = characteristic.writeData("aa".dataFromHexString())
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             onSuccessExpectation.fulfill()
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "writeValue not called 1 time")
@@ -513,13 +513,13 @@ class BCCharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
 
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<NSData?> in
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
-        updateFuture.onSuccess {data in
+        updateFuture.onSuccess {(_, data) in
             updateOnSuccessExpectation.fulfill()
             if let data = data {
                 XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
@@ -551,7 +551,7 @@ class BCCharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
         
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<NSData?> in
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "00".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
@@ -567,7 +567,7 @@ class BCCharacteristicTests: XCTestCase {
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
-        updateFuture.onSuccess {data in
+        updateFuture.onSuccess {(_, data) in
             if updates == 0 {
                 updateOnSuccessExpectation.fulfill()
             }
@@ -639,15 +639,15 @@ class BCCharacteristicTests: XCTestCase {
 
         var updates = 0
         let startNotifyingFuture = characteristic.startNotifying()
-        startNotifyingFuture.onSuccess{_ in
+        startNotifyingFuture.onSuccess{ _ in
             startNotifyingOnSuccessExpectation.fulfill()
         }
-        startNotifyingFuture.onFailure {_ in
+        startNotifyingFuture.onFailure { _ in
             XCTAssert(false, "start notifying onFailure called")
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
 
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<NSData?> in
+        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "0".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
@@ -655,7 +655,7 @@ class BCCharacteristicTests: XCTestCase {
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
             return future
         }
-        updateFuture.onSuccess {data in
+        updateFuture.onSuccess { (_, data) in
             if updates == 0 {
                 updateOnSuccessExpectation.fulfill()
                 ++updates
