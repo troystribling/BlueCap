@@ -12,19 +12,15 @@ import CoreBluetooth
 public class BCProfileManager {
     
     // INTERNAL
-    internal var serviceProfiles = [CBUUID: BCServiceProfile]()
+    internal var _services = [CBUUID: BCServiceProfile]()
     
     // PRIVATE
     private init() {
     }
     
     // PUBLIC
-    public var services: [BCServiceProfile] {
-        return Array(self.serviceProfiles.values)
-    }
-    
-    public var service: [CBUUID: BCServiceProfile] {
-        return self.serviceProfiles
+    public var services: [CBUUID: BCServiceProfile] {
+        return self._services
     }
 
     public class var sharedInstance: BCProfileManager {
@@ -40,7 +36,7 @@ public class BCProfileManager {
     
     public func addService(serviceProfile: BCServiceProfile) -> BCServiceProfile {
         BCLogger.debug("name=\(serviceProfile.name), uuid=\(serviceProfile.uuid.UUIDString)")
-        self.serviceProfiles[serviceProfile.uuid] = serviceProfile
+        self._services[serviceProfile.uuid] = serviceProfile
         return serviceProfile
     }
     

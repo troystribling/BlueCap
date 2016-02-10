@@ -297,6 +297,13 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     }
     
     public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {
+        if let cbServices = dict[CBPeripheralManagerRestoredStateServicesKey] as? [CBMutableService],
+           let cbAdvertisements = dict[CBPeripheralManagerRestoredStateAdvertisementDataKey] {
+            let services = cbServices.map { cbService -> BCMutableService in
+                let service = BCMutableService(cbMutableService: cbService)
+                return service
+            }
+        }
     }
     
     public func peripheralManagerDidStartAdvertising(_: CBPeripheralManager, error: NSError?) {
