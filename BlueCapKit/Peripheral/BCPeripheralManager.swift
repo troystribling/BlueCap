@@ -301,6 +301,10 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
            let cbAdvertisements = dict[CBPeripheralManagerRestoredStateAdvertisementDataKey] {
             let services = cbServices.map { cbService -> BCMutableService in
                 let service = BCMutableService(cbMutableService: cbService)
+                    if let serviceProfile = BCProfileManager.sharedInstance.services[service.uuid] {
+                    } else {
+//                        self.profile = BCCharacteristicProfile(uuid: charateristic.UUID.UUIDString)
+                    }
                 return service
             }
         }

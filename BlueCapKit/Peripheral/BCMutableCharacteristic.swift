@@ -111,23 +111,38 @@ public class BCMutableCharacteristic {
     }
 
     // MARK: Initializers
-    public init(profile: BCCharacteristicProfile) {
+    public convenience init(profile: BCCharacteristicProfile) {
+        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
+        self.init(profile: profile, cbMutableCharacteristic:  cbMutableChracteristic)
+    }
+
+    internal init(profile: BCCharacteristicProfile, cbMutableCharacteristic: CBMutableCharacteristic) {
         self.profile = profile
         self.value = profile.initialValue
-        self.cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
+        self.cbMutableChracteristic = cbMutableCharacteristic
+    }
+
+    internal init(cbMutableCharacteristic: CBMutableCharacteristic) {
+        self.profile = BCCharacteristicProfile(uuid: cbMutableCharacteristic.UUID.UUIDString)
+        self.value = profile.initialValue
+        self.cbMutableChracteristic = cbMutableCharacteristic
     }
 
     public init(uuid: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: NSData?) {
-        self.profile = BCCharacteristicProfile(uuid:uuid)
+        self.profile = BCCharacteristicProfile(uuid: uuid)
         self.value = value
         self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
     }
 
-    public convenience init(uuid: String, service: BCMutableService) {
-        self.init(profile: BCCharacteristicProfile(uuid:uuid))
+    public convenience init(uuid: String) {
+        self.init(profile: BCCharacteristicProfile(uuid: uuid))
     }
 
-    public class func withProfiles(profiles: [BCCharacteristicProfile], service: BCMutableService) -> [BCMutableCharacteristic] {
+    public class func withProfiles(profiles: [BCCharacteristicProfile]) -> [BCMutableCharacteristic] {
+        return profiles.map{ BCMutableCharacteristic(profile: $0) }
+    }
+
+    public class func withProfiles(profiles: [BCCharacteristicProfile], cbCharacteristics: [CBMutableCharacteristic]) -> [BCMutableCharacteristic] {
         return profiles.map{ BCMutableCharacteristic(profile: $0) }
     }
 

@@ -50,7 +50,7 @@ public class BCService {
     public init(cbService: CBService, peripheral: BCPeripheral) {
         self.cbService = cbService
         self._peripheral = peripheral
-        self.profile = BCProfileManager.sharedInstance.serviceProfiles[cbService.UUID]
+        self.profile = BCProfileManager.sharedInstance.services[cbService.UUID]
     }
 
     // MARK: Discover Characteristics

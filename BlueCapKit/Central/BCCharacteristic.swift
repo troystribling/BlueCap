@@ -156,7 +156,7 @@ public class BCCharacteristic {
     public init(cbCharacteristic: CBCharacteristic, service: BCService) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
-        if let serviceProfile = BCProfileManager.sharedInstance.serviceProfiles[service.uuid] {
+        if let serviceProfile = BCProfileManager.sharedInstance.services[service.uuid] {
             BCLogger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
                 BCLogger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
