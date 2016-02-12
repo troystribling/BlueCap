@@ -209,7 +209,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.didDisconnectPeripheral(peripheral, error:error)
     }
 
-    public func centralManager(_: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String:AnyObject], RSSI: NSNumber) {
+    public func centralManager(_: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String: AnyObject], RSSI: NSNumber) {
         self.didDiscoverPeripheral(peripheral, advertisementData:advertisementData, RSSI:RSSI)
     }
 
@@ -225,7 +225,18 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         BCLogger.debug()
     }
     
-    public func centralManager(_: CBCentralManager, willRestoreState dict: [String:AnyObject]) {
+    public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
+        if let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral],
+           let cbServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBService],
+           let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject] {
+
+            let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
+                let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
+                return peripheral
+            }
+
+        }
+
         BCLogger.debug()
     }
     

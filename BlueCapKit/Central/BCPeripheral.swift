@@ -138,7 +138,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
     internal weak var centralManager: BCCentralManager?
     
     public let cbPeripheral: CBPeripheralInjectable
-    public let advertisements: BCPeripheralAdvertisements
+    public let advertisements: BCPeripheralAdvertisements?
     public let rssi: Int
 
     // MARK: Serial Properties
@@ -254,9 +254,17 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
     // MARK: Initializers
     public init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String:AnyObject], rssi: Int) {
         self.cbPeripheral = cbPeripheral
-        self.advertisements = BCPeripheralAdvertisements(advertisements:advertisements)
+        self.advertisements = BCPeripheralAdvertisements(advertisements: advertisements)
         self.centralManager = centralManager
         self.rssi = rssi
+        super.init()
+        self.cbPeripheral.delegate = self
+    }
+
+    public init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager) {
+        self.cbPeripheral = cbPeripheral
+        self.centralManager = centralManager
+        self.rssi = 0
         super.init()
         self.cbPeripheral.delegate = self
     }

@@ -340,8 +340,8 @@ func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerStat
 
 func createPeripheralManagerServices(peripheral: BCPeripheralManager) -> [BCMutableService] {
     let profileManager = BCProfileManager.sharedInstance
-    if let helloWoroldService = profileManager.service[CBUUID(string: Gnosus.HelloWorldService.uuid)],
-           locationService = profileManager.service[CBUUID(string: Gnosus.LocationService.uuid)] {
+    if let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.uuid)],
+           locationService = profileManager.services[CBUUID(string: Gnosus.LocationService.uuid)] {
         return [BCMutableService(profile: helloWoroldService),
                 BCMutableService(profile: locationService)]
     } else {

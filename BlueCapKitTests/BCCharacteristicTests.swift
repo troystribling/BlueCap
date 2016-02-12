@@ -43,7 +43,7 @@ class BCCharacteristicTests: XCTestCase {
         let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
         let service  = ServiceUT(cbService: self.mockService, peripheral: peripheral, mockCharacteristics: [mockCharacteristic], error: nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let serviceProfile = BCProfileManager.sharedInstance.service[CBUUID(string: Gnosus.HelloWorldService.uuid)]
+        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.uuid)]
         let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)]
         characteristicProfile?.afterDiscovered(nil).onSuccess { _ in
             onSuccessExpectation.fulfill()
