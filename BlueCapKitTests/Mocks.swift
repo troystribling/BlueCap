@@ -44,7 +44,15 @@ class CBCentralManagerMock : CBCentralManagerInjectable {
     
     func cancelPeripheralConnection(peripheral: CBPeripheral) {
     }
-    
+
+    func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheral] {
+        return []
+    }
+
+    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheral] {
+        return []
+    }
+
 }
 
 // MARK: - CentralManagerUT -

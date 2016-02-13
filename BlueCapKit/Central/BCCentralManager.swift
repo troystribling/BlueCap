@@ -11,11 +11,13 @@ import CoreBluetooth
 
 // MARK: - CBCentralManagerInjectable -
 public protocol CBCentralManagerInjectable {
-    var state : CBCentralManagerState {get}
-    func scanForPeripheralsWithServices(uuids: [CBUUID]?, options: [String:AnyObject]?)
+    var state : CBCentralManagerState { get }
+    func scanForPeripheralsWithServices(uuids: [CBUUID]?, options: [String: AnyObject]?)
     func stopScan()
-    func connectPeripheral(peripheral: CBPeripheral, options: [String:AnyObject]?)
+    func connectPeripheral(peripheral: CBPeripheral, options: [String: AnyObject]?)
     func cancelPeripheralConnection(peripheral: CBPeripheral)
+    func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheral]
+    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheral]
 }
 
 extension CBCentralManager : CBCentralManagerInjectable {}
@@ -75,11 +77,11 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public var poweredOn : Bool {
+    public var poweredOn: Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
     }
     
-    public var poweredOff : Bool {
+    public var poweredOff: Bool {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOff
     }
 
@@ -95,12 +97,12 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
             }
         }
     }
-    
+
     public var state: CBCentralManagerState {
         return self.cbCentralManager.state
     }
     
-    public var isScanning : Bool {
+    public var isScanning: Bool {
         return self._isScanning
     }
 
@@ -200,7 +202,28 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         return self.afterStateRestoredPromise.future
     }
 
-    // MARK: retrive Peripherals
+    // MARK: Retrieve Peripherals
+    public func retrieveConnectedPeripheralsWithServices(services: [CBUUID]) -> [BCPeripheral] {
+        let cbPeripherals = self.cbCentralManager.retrieveConnectedPeripheralsWithServices(services).filter { cbPeripheral in
+            if let _ = self.discoveredPeripherals[cbPeripheral.identifier] {
+                return true
+            } else {
+                return false
+            }
+        }
+        return cbPeripherals.map { self.discoveredPeripherals[$0.identifier]! }
+    }
+
+    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [BCPeripheral] {
+        let cbPeripherals = self.cbCentralManager.retrievePeripheralsWithIdentifiers(identifiers).filter { cbPeripheral in
+            if let _ = self.discoveredPeripherals[cbPeripheral.identifier] {
+                return true
+            } else {
+                return false
+            }
+        }
+        return cbPeripherals.map { self.discoveredPeripherals[$0.identifier]! }
+    }
 
     // MARK: CBCentralManagerDelegate
     public func centralManager(_: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
@@ -219,14 +242,6 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.didFailToConnectPeripheral(peripheral, error:error)
     }
 
-    public func centralManager(_: CBCentralManager!, didRetrieveConnectedPeripherals peripherals: [AnyObject]!) {
-        BCLogger.debug()
-    }
-    
-    public func centralManager(_: CBCentralManager!, didRetrievePeripherals peripherals: [AnyObject]!) {
-        BCLogger.debug()
-    }
-    
     public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
         if let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral],
            let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID],
