@@ -299,7 +299,6 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {
         if let cbServices = dict[CBPeripheralManagerRestoredStateServicesKey] as? [CBMutableService],
            let cbAdvertisements = dict[CBPeripheralManagerRestoredStateAdvertisementDataKey] as? [String: AnyObject] {
-            
             let services = cbServices.map { cbService -> BCMutableService in
                 let service = BCMutableService(cbMutableService: cbService)
                 self.configuredServices[service.uuid] = service

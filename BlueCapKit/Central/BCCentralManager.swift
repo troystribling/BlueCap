@@ -29,7 +29,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: Properties
     private var _afterPowerOnPromise                    = Promise<Void>()
     private var _afterPowerOffPromise                   = Promise<Void>()
-    private var _afterStateRestoredPromise              = Promise<(peripherals: [BCPeripheral], services: [BCService], options: [String:AnyObject])>()
+    private var _afterStateRestoredPromise              = Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
 
     private var _isScanning                             = false
 
@@ -66,7 +66,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    private var afterStateRestoredPromise: Promise<(peripherals: [BCPeripheral], services: [BCService], options: [String:AnyObject])> {
+    private var afterStateRestoredPromise: Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
         get {
             return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
         }
@@ -195,10 +195,12 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: State Restoration
-    public func whenStateRestored() -> Future<(peripherals: [BCPeripheral], services: [BCService], options: [String:AnyObject])> {
-        self.afterStateRestoredPromise = Promise<(peripherals: [BCPeripheral], services: [BCService], options: [String:AnyObject])>()
+    public func whenStateRestored() -> Future<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
+        self.afterStateRestoredPromise = Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
         return self.afterStateRestoredPromise.future
     }
+
+    // MARK: retrive Peripherals
 
     // MARK: CBCentralManagerDelegate
     public func centralManager(_: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
@@ -227,14 +229,27 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     
     public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
         if let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral],
-           let cbServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBService],
+           let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID],
            let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject] {
 
             let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
                 let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
+                self.discoveredPeripherals[peripheral.identifier] = peripheral
+                if let cbServices = cbPeripheral.services {
+                    for cbService in cbServices {
+                        let service = BCService(cbService: cbService, peripheral: peripheral)
+                        peripheral.discoveredServices[service.uuid] = service
+                        if let cbCharacteristics = cbService.characteristics {
+                            for cbCharacteristic in cbCharacteristics {
+                                let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
+                                peripheral.discoveredCharacteristics[characteristic.uuid] = characteristic
+                            }
+                        }
+                    }
+                }
                 return peripheral
             }
-
+            self.afterStateRestoredPromise.success((peripherals, scannedServices, options))
         }
 
         BCLogger.debug()

@@ -129,8 +129,8 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
     private var _connectedAt: NSDate?
     private var _disconnectedAt : NSDate?
     
-    private var discoveredServices          = BCSerialIODictionary<CBUUID, BCService>(BCPeripheral.ioQueue)
-    private var discoveredCharacteristics   = BCSerialIODictionary<CBUUID, BCCharacteristic>(BCPeripheral.ioQueue)
+    internal var discoveredServices         = BCSerialIODictionary<CBUUID, BCService>(BCPeripheral.ioQueue)
+    internal var discoveredCharacteristics  = BCSerialIODictionary<CBUUID, BCCharacteristic>(BCPeripheral.ioQueue)
 
     internal var connectionTimeout          = 10.0
     internal var timeoutRetries: UInt?
@@ -265,6 +265,7 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
         self.rssi = 0
+        self.advertisements = nil
         super.init()
         self.cbPeripheral.delegate = self
     }
