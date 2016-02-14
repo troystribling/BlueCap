@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="W4p-td-jxE">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="W4p-td-jxE">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -34,7 +34,6 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lF4-qf-wAb">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <animations/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
                             <tableViewSection headerTitle=" Status" id="RJP-vE-gGv">
@@ -48,20 +47,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertise" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="teB-n6-0e4">
                                                     <rect key="frame" x="20" y="19" width="88" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vTf-mE-M5l">
                                                     <rect key="frame" x="531" y="16" width="51" height="31"/>
-                                                    <animations/>
                                                     <connections>
                                                         <action selector="toggleAdvertise:" destination="W4p-td-jxE" eventType="valueChanged" id="7m4-Pw-PFB"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="teB-n6-0e4" firstAttribute="top" secondItem="V7D-ae-b94" secondAttribute="topMargin" constant="11" id="PfN-Jh-C5R"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="vTf-mE-M5l" secondAttribute="trailing" constant="12" id="dVc-i4-MPe"/>
@@ -69,7 +65,6 @@
                                                 <constraint firstItem="teB-n6-0e4" firstAttribute="leading" secondItem="V7D-ae-b94" secondAttribute="leadingMargin" constant="12" id="n3O-UL-745"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="Du8-7w-A3t">
                                         <rect key="frame" x="0.0" y="109.5" width="600" height="60"/>
@@ -80,20 +75,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ord-Gz-DQs">
                                                     <rect key="frame" x="20" y="17" width="71" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GyD-6e-bBB">
                                                     <rect key="frame" x="531" y="16" width="51" height="31"/>
-                                                    <animations/>
                                                     <connections>
                                                         <action selector="toggleEnabled:" destination="W4p-td-jxE" eventType="valueChanged" id="Tj8-qy-WDn"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="Ord-Gz-DQs" firstAttribute="top" secondItem="piD-vB-ZCW" secondAttribute="topMargin" constant="9" id="SS1-56-1aW"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="GyD-6e-bBB" secondAttribute="trailing" constant="12" id="loi-s8-q0p"/>
@@ -101,7 +93,6 @@
                                                 <constraint firstItem="GyD-6e-bBB" firstAttribute="top" secondItem="piD-vB-ZCW" secondAttribute="topMargin" constant="8" id="w0X-3d-yvz"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -116,20 +107,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value (ms)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LU0-RC-EjJ">
                                                     <rect key="frame" x="20" y="17" width="101" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7t-aT-zue">
                                                     <rect key="frame" x="567" y="17" width="13" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="G7t-aT-zue" firstAttribute="top" secondItem="gur-ia-1oR" secondAttribute="topMargin" constant="9" id="D0H-Yd-Tq1"/>
                                                 <constraint firstItem="LU0-RC-EjJ" firstAttribute="top" secondItem="gur-ia-1oR" secondAttribute="topMargin" constant="9" id="WtD-gj-nAK"/>
@@ -137,7 +125,6 @@
                                                 <constraint firstItem="LU0-RC-EjJ" firstAttribute="leading" secondItem="gur-ia-1oR" secondAttribute="leadingMargin" constant="12" id="zbW-hS-7Qv"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="N9T-zc-m28">
                                         <rect key="frame" x="0.0" y="271.5" width="600" height="60"/>
@@ -148,20 +135,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Raw Value" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GhO-TH-wKM">
                                                     <rect key="frame" x="20" y="17" width="94" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pAY-6I-cU8">
                                                     <rect key="frame" x="567" y="17" width="13" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="GhO-TH-wKM" firstAttribute="leading" secondItem="ztB-Kp-4lS" secondAttribute="leadingMargin" constant="12" id="0OV-9S-BpY"/>
                                                 <constraint firstItem="pAY-6I-cU8" firstAttribute="top" secondItem="ztB-Kp-4lS" secondAttribute="topMargin" constant="9" id="GPJ-ZW-TXl"/>
@@ -169,7 +153,6 @@
                                                 <constraint firstAttribute="trailingMargin" secondItem="pAY-6I-cU8" secondAttribute="trailing" constant="12" id="v5k-i2-jch"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -184,20 +167,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GtK-TN-cX3">
                                                     <rect key="frame" x="20" y="17" width="12" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SVK-Z8-RqJ">
                                                     <rect key="frame" x="548" y="17" width="32" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="SVK-Z8-RqJ" secondAttribute="trailing" constant="12" id="2Mv-pj-mos"/>
                                                 <constraint firstItem="GtK-TN-cX3" firstAttribute="leading" secondItem="riy-1W-ETs" secondAttribute="leadingMargin" constant="12" id="fd1-1d-fuX"/>
@@ -205,7 +185,6 @@
                                                 <constraint firstItem="GtK-TN-cX3" firstAttribute="top" secondItem="riy-1W-ETs" secondAttribute="topMargin" constant="9" id="ofo-Zy-A2m"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="ryZ-RP-i9K">
                                         <rect key="frame" x="0.0" y="433.5" width="600" height="60"/>
@@ -216,20 +195,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Y" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d2C-CQ-B2n">
                                                     <rect key="frame" x="20" y="17" width="12" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yCm-ac-0mL">
                                                     <rect key="frame" x="548" y="17" width="32" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="yCm-ac-0mL" firstAttribute="top" secondItem="qhs-SN-v4m" secondAttribute="topMargin" constant="9" id="5y0-nL-aDA"/>
                                                 <constraint firstItem="d2C-CQ-B2n" firstAttribute="leading" secondItem="qhs-SN-v4m" secondAttribute="leadingMargin" constant="12" id="Ifg-cm-zJI"/>
@@ -237,7 +213,6 @@
                                                 <constraint firstItem="d2C-CQ-B2n" firstAttribute="top" secondItem="qhs-SN-v4m" secondAttribute="topMargin" constant="9" id="o3b-oS-b0C"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="emO-Pt-Rb8">
                                         <rect key="frame" x="0.0" y="493.5" width="600" height="60"/>
@@ -248,20 +223,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Z" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qe5-Ak-qmz">
                                                     <rect key="frame" x="20" y="17" width="11" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K23-2m-y28">
                                                     <rect key="frame" x="548" y="17" width="32" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="Qe5-Ak-qmz" firstAttribute="top" secondItem="oJe-n8-P7h" secondAttribute="topMargin" constant="9" id="W8a-1u-EKj"/>
                                                 <constraint firstItem="K23-2m-y28" firstAttribute="top" secondItem="oJe-n8-P7h" secondAttribute="topMargin" constant="9" id="oMN-eo-SjU"/>
@@ -269,7 +241,6 @@
                                                 <constraint firstItem="Qe5-Ak-qmz" firstAttribute="leading" secondItem="oJe-n8-P7h" secondAttribute="leadingMargin" constant="12" id="pUL-io-VfY"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -284,20 +255,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="egl-Vl-mlF">
                                                     <rect key="frame" x="20" y="17" width="12" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N7L-4n-9xO">
                                                     <rect key="frame" x="567" y="17" width="13" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="N7L-4n-9xO" firstAttribute="top" secondItem="H8d-fE-GkI" secondAttribute="topMargin" constant="9" id="18D-6S-v1k"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="N7L-4n-9xO" secondAttribute="trailing" constant="12" id="Gbb-sK-uE0"/>
@@ -305,7 +273,6 @@
                                                 <constraint firstItem="egl-Vl-mlF" firstAttribute="top" secondItem="H8d-fE-GkI" secondAttribute="topMargin" constant="9" id="VV8-Bu-hSb"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="rdk-ih-n7z">
                                         <rect key="frame" x="0.0" y="655.5" width="600" height="60"/>
@@ -316,20 +283,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Y" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LeP-sc-MRP">
                                                     <rect key="frame" x="20" y="17" width="12" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yh3-xW-luT">
                                                     <rect key="frame" x="567" y="17" width="13" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Yh3-xW-luT" secondAttribute="trailing" constant="12" id="Cmt-yU-rsg"/>
                                                 <constraint firstItem="Yh3-xW-luT" firstAttribute="top" secondItem="lll-br-XSI" secondAttribute="topMargin" constant="9" id="aK5-9D-cDF"/>
@@ -337,7 +301,6 @@
                                                 <constraint firstItem="LeP-sc-MRP" firstAttribute="leading" secondItem="lll-br-XSI" secondAttribute="leadingMargin" constant="12" id="gdE-gg-jgQ"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="1u4-e5-5rf">
                                         <rect key="frame" x="0.0" y="715.5" width="600" height="60"/>
@@ -348,20 +311,17 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Z" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fro-xw-OdW">
                                                     <rect key="frame" x="20" y="17" width="11" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cfI-Mm-wVL">
                                                     <rect key="frame" x="567" y="17" width="13" height="25"/>
-                                                    <animations/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <animations/>
                                             <constraints>
                                                 <constraint firstItem="fro-xw-OdW" firstAttribute="leading" secondItem="rbj-ZZ-dw0" secondAttribute="leadingMargin" constant="12" id="BWV-Iw-s5v"/>
                                                 <constraint firstItem="cfI-Mm-wVL" firstAttribute="top" secondItem="rbj-ZZ-dw0" secondAttribute="topMargin" constant="9" id="DaJ-Jb-EoT"/>
@@ -369,7 +329,6 @@
                                                 <constraint firstAttribute="trailingMargin" secondItem="cfI-Mm-wVL" secondAttribute="trailing" constant="12" id="ugc-S7-HPJ"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <animations/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>

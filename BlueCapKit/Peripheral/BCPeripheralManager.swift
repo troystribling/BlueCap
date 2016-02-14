@@ -314,6 +314,8 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
                 return service
             }
             self.afterStateRestoredPromise.success((services, BCPeripheralAdvertisements(advertisements: cbAdvertisements)))
+        } else {
+            self.afterStateRestoredPromise.failure(BCError.peripheralManagerRestoreFailed)
         }
     }
     

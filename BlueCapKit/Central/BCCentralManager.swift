@@ -243,31 +243,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
-        if let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral],
-           let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID],
-           let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject] {
-
-            let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
-                let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
-                self.discoveredPeripherals[peripheral.identifier] = peripheral
-                if let cbServices = cbPeripheral.services {
-                    for cbService in cbServices {
-                        let service = BCService(cbService: cbService, peripheral: peripheral)
-                        peripheral.discoveredServices[service.uuid] = service
-                        if let cbCharacteristics = cbService.characteristics {
-                            for cbCharacteristic in cbCharacteristics {
-                                let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
-                                peripheral.discoveredCharacteristics[characteristic.uuid] = characteristic
-                            }
-                        }
-                    }
-                }
-                return peripheral
-            }
-            self.afterStateRestoredPromise.success((peripherals, scannedServices, options))
-        }
-
-        BCLogger.debug()
+        self.willRestoreState(dict)
     }
     
     public func centralManagerDidUpdateState(_: CBCentralManager) {
@@ -303,7 +279,36 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
             bcPeripheral.didFailToConnectPeripheral(error)
         }
     }
-    
+
+    public func willRestoreState(dict: [String: AnyObject]) {
+        BCLogger.debug()
+        if let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheralInjectable],
+            let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID],
+            let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject] {
+
+                let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
+                    let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
+                    self.discoveredPeripherals[peripheral.identifier] = peripheral
+                    if let cbServices = cbPeripheral.services {
+                        for cbService in cbServices {
+                            let service = BCService(cbService: cbService, peripheral: peripheral)
+                            peripheral.discoveredServices[service.uuid] = service
+                            if let cbCharacteristics = cbService.characteristics {
+                                for cbCharacteristic in cbCharacteristics {
+                                    let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
+                                    peripheral.discoveredCharacteristics[characteristic.uuid] = characteristic
+                                }
+                            }
+                        }
+                    }
+                    return peripheral
+                }
+                self.afterStateRestoredPromise.success((peripherals, scannedServices, options))
+        } else {
+            self.afterStateRestoredPromise.failure(BCError.centralRestoreFailed)
+        }
+    }
+
     public func didUpdateState() {
         switch(self.cbCentralManager.state) {
         case .Unauthorized:
