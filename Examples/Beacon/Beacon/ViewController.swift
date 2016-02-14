@@ -92,7 +92,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         } else {
             // Start advertising on bluetooth power on
             if let beaconRegion = self.createBeaconRegion() {
-                let startAdvertiseFuture = self.manager.powerOn().flatmap{ _ in
+                let startAdvertiseFuture = self.manager.whenPowerOn().flatmap{ _ in
                     self.manager.startAdvertising(beaconRegion)
                 }
                 startAdvertiseFuture.onSuccess {
@@ -105,7 +105,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             }
 
             // stop advertising on bluetooth power off
-            let powerOffFuture = self.manager.powerOff().flatmap { _ in
+            let powerOffFuture = self.manager.whenPowerOff().flatmap { _ in
                 self.manager.stopAdvertising()
             }
             powerOffFuture.onSuccess {
@@ -123,7 +123,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
 
             // enable controls when bluetooth is powered on again after stop advertising is successul
             let powerOffFutureSuccessFuture = powerOffFuture.flatmap { _ in
-                self.manager.powerOn()
+                self.manager.whenPowerOn()
             }
             powerOffFutureSuccessFuture.onSuccess {
                 self.startAdvertisingSwitch.enabled = true
@@ -132,7 +132,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             
             // enable controls when bluetooth is powered on again after stop advertising fails
             let powerOffFutureFailedFuture = powerOffFuture.recoverWith { _  in
-                self.manager.powerOn()
+                self.manager.whenPowerOn()
             }
             powerOffFutureFailedFuture.onSuccess {
                 if self.manager.poweredOn {

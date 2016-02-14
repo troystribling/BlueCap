@@ -115,9 +115,9 @@ class ViewController: UITableViewController {
 
             
         // on power, start scanning. when peripheral is discovered connect and stop scanning
-        let peripheralConnectFuture = self.manager.powerOn().flatmap { _ -> FutureStream<BCPeripheral> in
+        let peripheralConnectFuture = self.manager.whenPowerOn().flatmap { _ -> FutureStream<BCPeripheral> in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
-        }.flatmap { [unowned self] peripheral -> FutureStream<(BCPeripheral, BCConnectionEvent)> in
+            }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(10, timeoutRetries:5, disconnectRetries:5)
@@ -218,12 +218,12 @@ class ViewController: UITableViewController {
 
         dataSubscriptionFuture.flatmap { characteristic in
             return characteristic.recieveNotificationUpdates(10)
-        }.onSuccess {data in
+        }.onSuccess {(_, data) in
             self.updateData(data)
         }
             
         // handle bluetooth power off
-        let powerOffFuture = manager.powerOff()
+        let powerOffFuture = manager.whenPowerOff()
         powerOffFuture.onSuccess {
             self.deactivate()
         }
@@ -231,14 +231,14 @@ class ViewController: UITableViewController {
         }
         // enable controls when bluetooth is powered on again after stop advertising is successul
         let powerOffFutureSuccessFuture = powerOffFuture.flatmap { _ in
-            self.manager.powerOn()
+            self.manager.whenPowerOn()
         }
         powerOffFutureSuccessFuture.onSuccess {
             self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
         }
         // enable controls when bluetooth is powered on again after stop advertising fails
         let powerOffFutureFailedFuture = powerOffFuture.recoverWith { _ in
-            self.manager.powerOn()
+            self.manager.whenPowerOn()
         }
         powerOffFutureFailedFuture.onSuccess {
             if self.manager.poweredOn {

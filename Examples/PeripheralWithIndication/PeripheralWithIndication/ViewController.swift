@@ -105,7 +105,7 @@ class ViewController: UITableViewController {
     func startAdvertising() {
         let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid)
         // on power on remove all services add service and start advertising
-        let startAdvertiseFuture = self.manager.powerOn().flatmap { _ -> Future<Void> in
+        let startAdvertiseFuture = self.manager.whenPowerOn().flatmap { _ -> Future<Void> in
             self.manager.removeAllServices()
         }.flatmap { _ -> Future<Void> in
                 self.manager.addService(self.accelerometerService)
@@ -121,7 +121,7 @@ class ViewController: UITableViewController {
         }
 
         // stop advertising and updating accelerometer on bluetooth power off
-        let powerOffFuture = manager.powerOff().flatmap { _ -> Future<Void> in
+        let powerOffFuture = manager.whenPowerOff().flatmap { _ -> Future<Void> in
             if self.accelerometer.accelerometerActive {
                 self.accelerometer.stopAccelerometerUpdates()
                 self.enabledSwitch.on = false
@@ -142,7 +142,7 @@ class ViewController: UITableViewController {
         }
         // enable controls when bluetooth is powered on again after stop advertising is successul
         let powerOffFutureSuccessFuture = powerOffFuture.flatmap { _ -> Future<Void> in
-            self.manager.powerOn()
+            self.manager.whenPowerOn()
         }
         powerOffFutureSuccessFuture.onSuccess {
             self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
@@ -150,7 +150,7 @@ class ViewController: UITableViewController {
 
         // enable controls when bluetooth is powered on again after stop advertising fails
         let powerOffFutureFailedFuture = powerOffFuture.recoverWith {_  -> Future<Void> in
-            self.manager.powerOn()
+            self.manager.whenPowerOn()
         }
         powerOffFutureFailedFuture.onSuccess {
             if self.manager.poweredOn {

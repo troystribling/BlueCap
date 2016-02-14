@@ -114,9 +114,9 @@ class ViewController: UITableViewController {
         let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.uuid)
 
         // on power, start scanning. when peripoheral is discovered connect and stop scanning
-        let peripheraConnectFuture = self.manager.powerOn().flatmap { [unowned self] _ -> FutureStream<BCPeripheral> in
+        let peripheraConnectFuture = self.manager.whenPowerOn().flatmap { [unowned self] _ -> FutureStream<BCPeripheral> in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
-        }.flatmap { [unowned self] peripheral -> FutureStream<(BCPeripheral, BCConnectionEvent)> in
+            }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(10, timeoutRetries: 5, disconnectRetries: 5)
@@ -204,14 +204,14 @@ class ViewController: UITableViewController {
                 self.presentViewController(UIAlertController.alertOnError(error), animated: true, completion: nil)
             }
         }
-        dataSubscriptionFuture.flatmap { characteristic -> FutureStream<NSData?> in
+        dataSubscriptionFuture.flatmap { characteristic -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             return characteristic.recieveNotificationUpdates(10)
-        }.onSuccess { data in
+        }.onSuccess { (_, data) in
             self.updateData(data)
         }
             
         // handle bluetooth power off
-        let powerOffFuture = self.manager.powerOff()
+        let powerOffFuture = self.manager.whenPowerOff()
         powerOffFuture.onSuccess {
             self.deactivate()
         }
@@ -221,7 +221,7 @@ class ViewController: UITableViewController {
 
         // enable controls when bluetooth is powered on again after stop advertising is successul
         let powerOffFutureSuccessFuture = powerOffFuture.flatmap { _ -> Future<Void> in
-            self.manager.powerOn()
+            self.manager.whenPowerOn()
         }
         powerOffFutureSuccessFuture.onSuccess {
             self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated: true, completion: nil)
@@ -229,7 +229,7 @@ class ViewController: UITableViewController {
 
         // enable controls when bluetooth is powered on again after stop advertising fails
         let powerOffFutureFailedFuture = powerOffFuture.recoverWith { _  -> Future<Void> in
-            self.manager.powerOn()
+            self.manager.whenPowerOn()
         }
         powerOffFutureFailedFuture.onSuccess {
             if self.manager.poweredOn {
