@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewController {
 
-    weak var peripheral : Peripheral?
+    weak var peripheral: BCPeripheral?
     
     struct MainStoryboard {
         static let peripheralAdvertisementsSolicitedServiceCell = "PeripheralAdvertisementsSolicitedServiceCell"
@@ -27,8 +27,8 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -38,11 +38,11 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
     
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
     // UITableViewDataSource
@@ -51,7 +51,7 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let services = self.peripheral?.advertisements.solicitedServiceUUIDs {
+        if let services = self.peripheral?.advertisements?.solicitedServiceUUIDs {
             return services.count
         } else {
             return 0;
@@ -60,7 +60,7 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementsSolicitedServiceCell, forIndexPath:indexPath)
-        if let services = self.peripheral?.advertisements.solicitedServiceUUIDs {
+        if let services = self.peripheral?.advertisements?.solicitedServiceUUIDs {
             let service = services[indexPath.row]
             cell.textLabel?.text = service.UUIDString
         }

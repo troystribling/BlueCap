@@ -12,14 +12,14 @@ import CoreBluetooth
 
 class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewController {
     
-    var characteristic                  : MutableCharacteristic!
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    var characteristic: BCMutableCharacteristic!
+    var peripheralManagerViewController: PeripheralManagerViewController?
 
     
     struct MainStoryboard {
-        static let peripheralManagerServiceCharacteristicEditValueSegue             = "PeripheralManagerServiceCharacteristicEditValue"
-        static let peripheralManagerServiceCharacteristicEditDiscreteValuesSegue    = "PeripheralManagerServiceCharacteristicEditDiscreteValues"
-        static let peripheralManagerServicesCharacteristicValueCell                 = "PeripheralManagerServicesCharacteristicValueCell"
+        static let peripheralManagerServiceCharacteristicEditValueSegue = "PeripheralManagerServiceCharacteristicEditValue"
+        static let peripheralManagerServiceCharacteristicEditDiscreteValuesSegue = "PeripheralManagerServiceCharacteristicEditDiscreteValues"
+        static let peripheralManagerServicesCharacteristicValueCell = "PeripheralManagerServicesCharacteristicValueCell"
     }
     
     required init?(coder aDecoder:NSCoder) {
@@ -40,24 +40,24 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         future.onSuccess {(request, _) in
             if let value = request.value where value.length > 0 {
                 self.characteristic.value = request.value
-                self.characteristic.respondToRequest(request, withResult:CBATTError.Success)
+                self.characteristic.respondToRequest(request, withResult: CBATTError.Success)
                 self.updateWhenActive()
             } else {
-                self.characteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+                self.characteristic.respondToRequest(request, withResult :CBATTError.InvalidAttributeValueLength)
             }
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
-    override func viewWillDisappear(animated:Bool) {
+    override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
         NSNotificationCenter.defaultCenter().removeObserver(self)
         self.characteristic.stopRespondingToWriteRequests()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue {
             let viewController = segue.destinationViewController as! PeripheralManagerServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
@@ -79,21 +79,21 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let values = self.characteristic?.stringValue {
             return values.count
         } else {
@@ -101,7 +101,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServicesCharacteristicValueCell, forIndexPath: indexPath) as! CharacteristicValueCell
         if let values = self.characteristic?.stringValue {
             let characteristicValueNames = Array(values.keys)
@@ -112,7 +112,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         return cell
     }
     
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if self.characteristic.stringValues.isEmpty {
             self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue, sender:indexPath)
         } else {

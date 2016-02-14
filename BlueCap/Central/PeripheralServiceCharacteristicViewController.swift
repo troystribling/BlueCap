@@ -12,33 +12,33 @@ import BlueCapKit
 class PeripheralServiceCharacteristicViewController : UITableViewController {
 
     struct MainStoryboard {
-        static let peripheralServiceCharacteristicValueSegue                        = "PeripheralServiceCharacteristicValues"
-        static let peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue  = "PeripheralServiceCharacteristicEditWriteOnlyDiscreteValues"
-        static let peripheralServiceCharacteristicEditWriteOnlyValueSeque           = "PeripheralServiceCharacteristicEditWriteOnlyValue"
+        static let peripheralServiceCharacteristicValueSegue = "PeripheralServiceCharacteristicValues"
+        static let peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue = "PeripheralServiceCharacteristicEditWriteOnlyDiscreteValues"
+        static let peripheralServiceCharacteristicEditWriteOnlyValueSeque = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
-    weak var characteristic                                 : Characteristic!
-    var peripheralViewController                            : PeripheralViewController!
+    weak var characteristic: BCCharacteristic!
+    var peripheralViewController: PeripheralViewController!
     
-    @IBOutlet var valuesLabel                               : UILabel!
+    @IBOutlet var valuesLabel: UILabel!
 
-    @IBOutlet var notifySwitch                              : UISwitch!
-    @IBOutlet var notifyLabel                               : UILabel!
+    @IBOutlet var notifySwitch: UISwitch!
+    @IBOutlet var notifyLabel: UILabel!
     
-    @IBOutlet var uuidLabel                                 : UILabel!
-    @IBOutlet var broadcastingLabel                         : UILabel!
-    @IBOutlet var notifyingLabel                            : UILabel!
+    @IBOutlet var uuidLabel: UILabel!
+    @IBOutlet var broadcastingLabel: UILabel!
+    @IBOutlet var notifyingLabel: UILabel!
     
-    @IBOutlet var propertyBroadcastLabel                    : UILabel!
-    @IBOutlet var propertyReadLabel                         : UILabel!
-    @IBOutlet var propertyWriteWithoutResponseLabel         : UILabel!
-    @IBOutlet var propertyWriteLabel                        : UILabel!
-    @IBOutlet var propertyNotifyLabel                       : UILabel!
-    @IBOutlet var propertyIndicateLabel                     : UILabel!
-    @IBOutlet var propertyAuthenticatedSignedWritesLabel    : UILabel!
-    @IBOutlet var propertyExtendedPropertiesLabel           : UILabel!
-    @IBOutlet var propertyNotifyEncryptionRequiredLabel     : UILabel!
-    @IBOutlet var propertyIndicateEncryptionRequiredLabel   : UILabel!
+    @IBOutlet var propertyBroadcastLabel: UILabel!
+    @IBOutlet var propertyReadLabel: UILabel!
+    @IBOutlet var propertyWriteWithoutResponseLabel: UILabel!
+    @IBOutlet var propertyWriteLabel: UILabel!
+    @IBOutlet var propertyNotifyLabel: UILabel!
+    @IBOutlet var propertyIndicateLabel: UILabel!
+    @IBOutlet var propertyAuthenticatedSignedWritesLabel: UILabel!
+    @IBOutlet var propertyExtendedPropertiesLabel: UILabel!
+    @IBOutlet var propertyNotifyEncryptionRequiredLabel: UILabel!
+    @IBOutlet var propertyIndicateEncryptionRequiredLabel: UILabel!
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -68,9 +68,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self.setUI()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service?.peripheral)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.characteristic?.service?.peripheral)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -92,7 +92,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
         if let _ = identifier {
             return (self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.Write)) && self.peripheralViewController.peripehealConnected
         } else {
@@ -110,7 +110,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             future.onFailure {(error) in
                 self.notifySwitch.on = false
                 self.setUI()
-                self.presentViewController(UIAlertController.alertOnError("Stop Notifications Error", error:error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Stop Notifications Error", error: error), animated: true, completion: nil)
             }
         } else {
             let future = self.characteristic.startNotifying()
@@ -120,7 +120,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             future.onFailure {(error) in
                 self.notifySwitch.on = false
                 self.setUI()
-                self.presentViewController(UIAlertController.alertOnError("Start Notifications Error", error:error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Start Notifications Error", error: error), animated: true, completion: nil)
             }
         }
     }
@@ -147,38 +147,38 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
     }
     
-    func booleanStringValue(value:Bool) -> String {
+    func booleanStringValue(value: Bool) -> String {
         return value ? "YES" : "NO"
     }
     
     func peripheralDisconnected() {
-        Logger.debug()
+        BCLogger.debug()
         if self.peripheralViewController.peripehealConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
                     self.peripheralViewController.peripehealConnected = false
                     self.setUI()
-                }, animated:true, completion:nil)
+                }, animated: true, completion: nil)
         }
     }
 
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-       Logger.debug()
+       BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if indexPath.row == 0 {
             if self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying  {
-                self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicValueSegue, sender:indexPath)
+                self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicValueSegue, sender: indexPath)
             } else if (self.characteristic.propertyEnabled(.Write) || self.characteristic.propertyEnabled(.WriteWithoutResponse)) && !self.characteristic.propertyEnabled(.Read) {
                 if self.characteristic.stringValues.isEmpty {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender:indexPath)
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender: indexPath)
                 } else {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender:indexPath)
+                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender: indexPath)
                 }
             }
         }

@@ -12,14 +12,14 @@ import BlueCapKit
 
 class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
 
-    weak var peripheral : Peripheral?
+    weak var peripheral: BCPeripheral?
     
     struct MainStoryboard {
         static let peripheralAdvertisementsServiceDataCell = "PeripheralAdvertisementsServiceDataCell"
     }
     
-    required init?(coder aDecoder:NSCoder)  {
-        super.init(coder:aDecoder)
+    required init?(coder aDecoder: NSCoder)  {
+        super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
@@ -28,8 +28,8 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -39,11 +39,11 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
     
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
     // UITableViewDataSource
@@ -51,17 +51,17 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
         return 1
     }
     
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let services = self.peripheral?.advertisements.serviceData {
+    override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let services = self.peripheral?.advertisements?.serviceData {
             return services.count
         } else {
             return 0;
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementsServiceDataCell, forIndexPath:indexPath) as! NameUUIDCell
-        if let serviceData = self.peripheral?.advertisements.serviceData {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementsServiceDataCell, forIndexPath: indexPath) as! NameUUIDCell
+        if let serviceData = self.peripheral?.advertisements?.serviceData {
             let uuids = [CBUUID](serviceData.keys)
             let uuid = uuids[indexPath.row]
             let data = serviceData[uuid]

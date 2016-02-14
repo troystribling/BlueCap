@@ -12,9 +12,9 @@ import CoreBluetooth
 
 class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewController {
    
-    var progressView                    : ProgressView!
-    var peripheral                      : String?
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    var progressView: ProgressView!
+    var peripheral: String?
+    var peripheralManagerViewController: PeripheralManagerViewController?
 
     
     struct MainStoryboard {
@@ -22,7 +22,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     }
     
     override var excludedServices : Array<CBUUID> {
-        return PeripheralManager.sharedInstance.services.map{$0.uuid}
+        return Singletons.peripheralManager.services.map{$0.uuid}
     }
     
     override var serviceProfileCell : String {
@@ -46,26 +46,25 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
     // UITableViewDelegate
     override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
         let tags = Array(self.serviceProfiles.keys)
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
-            let perpheralManager = PeripheralManager.sharedInstance
             let serviceProfile = profiles[indexPath.row]
-            let service = MutableService(profile:serviceProfile, peripheralManager:perpheralManager)
+            let service = BCMutableService(profile:serviceProfile)
             service.characteristicsFromProfiles()
             self.progressView.show()
-            let future = perpheralManager.addService(service)
+            let future = Singletons.peripheralManager.addService(service)
             future.onSuccess {
                 if let peripheral = self.peripheral {
                     PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
@@ -74,7 +73,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
                 self.progressView.remove()
             }
             future.onFailure {(error) in
-                self.presentViewController(UIAlertController.alertOnError("Add Service Error", error:error), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertOnError("Add Service Error", error: error), animated: true, completion: nil)
                 self.navigationController?.popViewControllerAnimated(true)
                 self.progressView.remove()
             }

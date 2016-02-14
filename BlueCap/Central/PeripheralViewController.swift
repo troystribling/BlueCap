@@ -11,19 +11,19 @@ import BlueCapKit
 
 class PeripheralViewController : UITableViewController {
     
-    weak var peripheral             : Peripheral!
-    var progressView                = ProgressView()
-    var peripehealConnected         = true
-    var hasData                     = false
+    weak var peripheral: BCPeripheral!
+    var progressView = ProgressView()
+    var peripehealConnected = true
+    var hasData = false
     
-    @IBOutlet var uuidLabel         : UILabel!
-    @IBOutlet var rssiLabel         : UILabel!
-    @IBOutlet var stateLabel        : UILabel!
-    @IBOutlet var serviceLabel      : UILabel!
+    @IBOutlet var uuidLabel: UILabel!
+    @IBOutlet var rssiLabel: UILabel!
+    @IBOutlet var stateLabel: UILabel!
+    @IBOutlet var serviceLabel: UILabel!
     
     struct MainStoryBoard {
-        static let peripheralServicesSegue          = "PeripheralServices"
-        static let peripehralAdvertisementsSegue    = "PeripheralAdvertisements"
+        static let peripheralServicesSegue  = "PeripheralServices"
+        static let peripehralAdvertisementsSegue = "PeripheralAdvertisements"
     }
     
     required init?(coder aDecoder:NSCoder) {
@@ -49,7 +49,7 @@ class PeripheralViewController : UITableViewController {
             self.serviceLabel.textColor = UIColor.lightGrayColor()
             if self.peripehealConnected {
                 self.peripehealConnected = false
-                self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error:error, handler:{(action) in
+                self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
                     self.setStateLabel()
                 }), animated: true, completion:nil)
             }
@@ -60,9 +60,9 @@ class PeripheralViewController : UITableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self.setStateLabel()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.peripheral!)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.peripheral!)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object :nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -94,33 +94,33 @@ class PeripheralViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {        
-        Logger.debug()
+        BCLogger.debug()
         self.progressView.remove()
         if self.peripehealConnected {
             self.peripehealConnected = false
-            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected", handler:{(action) in
+            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected", handler:{ action in
                 self.setStateLabel()
             }), animated:true, completion:nil)
         }
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func setStateLabel() {
         if self.peripehealConnected {
             self.stateLabel.text = "Connected"
-            self.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:1.0)
+            self.stateLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 1.0)
             self.serviceLabel.textColor = UIColor.blackColor()
         } else {
             self.stateLabel.text = "Disconnected"
-            self.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:1.0)
+            self.stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
             self.serviceLabel.textColor = UIColor.lightGrayColor()
         }
     }

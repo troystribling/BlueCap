@@ -9,12 +9,12 @@
 import UIKit
 import BlueCapKit
 
-class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewController, UITextViewDelegate {
+class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewController, UITextViewDelegate {
   
-    @IBOutlet var valueTextField        : UITextField!
-    var characteristic                  : MutableCharacteristic?
-    var valueName                       : String?
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    @IBOutlet var valueTextField: UITextField!
+    var characteristic: BCMutableCharacteristic?
+    var valueName: String?
+    var peripheralManagerViewController: PeripheralManagerViewController?
 
     
     required init?(coder aDecoder:NSCoder) {
@@ -33,8 +33,8 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -43,14 +43,14 @@ class PeripheralManagerServiceCharacteristicEditValueViewController : UIViewCont
     }
 
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     // UITextFieldDelegate

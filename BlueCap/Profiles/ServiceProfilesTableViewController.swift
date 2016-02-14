@@ -12,9 +12,9 @@ import CoreBluetooth
 
 class ServiceProfilesTableViewController : UITableViewController {
     
-    var serviceProfiles : Dictionary<String, [ServiceProfile]> = [:]
+    var serviceProfiles = [String: [BCServiceProfile]]()
 
-    var excludedServices : Array<CBUUID> {
+    var excludedServices : [CBUUID] {
         return []
     }
     
@@ -36,7 +36,7 @@ class ServiceProfilesTableViewController : UITableViewController {
     }
     
     func sortServiceProfiles() {
-        for profile in ProfileManager.sharedInstance.services {
+        for profile in BCProfileManager.sharedInstance.services {
             if !self.excludedServices.contains(profile.uuid) {
                 if let profiles = self.serviceProfiles[profile.tag] {
                     self.serviceProfiles[profile.tag] = profiles + [profile]

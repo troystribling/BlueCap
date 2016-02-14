@@ -11,30 +11,30 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
    
-    weak var characteristic         : Characteristic!
-    var peripheralViewController    : PeripheralViewController?
+    weak var characteristic: BCCharacteristic!
+    var peripheralViewController: PeripheralViewController?
 
-    var progressView                = ProgressView()
+    var progressView = ProgressView()
     
     struct MainStoryboard {
-        static let peripheralServiceCharacteristicDiscreteValueCell  = "PeripheraServiceCharacteristicEditDiscreteValueCell"
+        static let peripheralServiceCharacteristicDiscreteValueCell = "PeripheraServiceCharacteristicEditDiscreteValueCell"
     }
 
     required init?(coder aDecoder:NSCoder) {
-        super.init(coder:aDecoder)
+        super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = self.characteristic.name
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic?.service?.peripheral)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.characteristic?.service?.peripheral)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -42,41 +42,41 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
     }
 
     func peripheralDisconnected() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
                 self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
                         peripheralViewController.peripehealConnected = false
                         self.navigationController?.popViewControllerAnimated(true)
-                    }, animated:true, completion:nil)
+                    }, animated: true, completion: nil)
             }
         }
     }
 
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.characteristic.stringValues.count
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, forIndexPath: indexPath) as UITableViewCell
         let stringValue = self.characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
         if let valueName = characteristic.stringValue?.keys.first {
@@ -92,7 +92,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.progressView.show()
         if let characteristic = self.characteristic {
             if let valueName = characteristic.stringValue?.keys.first {
@@ -104,7 +104,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
                     return
                 }
                 write.onFailure {error in
-                    self.presentViewController(UIAlertController.alertOnError("Charactertistic Write Error", error:error), animated:true, completion:nil)
+                    self.presentViewController(UIAlertController.alertOnError("Charactertistic Write Error", error: error), animated: true, completion: nil)
                     self.progressView.remove()
                     self.navigationController?.popViewControllerAnimated(true)
                     return

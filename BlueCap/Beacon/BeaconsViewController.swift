@@ -11,7 +11,7 @@ import BlueCapKit
 
 class BeaconsViewController: UITableViewController {
 
-    var beaconRegion    : BeaconRegion?
+    var beaconRegion: FLBeaconRegion?
 
     struct MainStoryBoard {
         static let beaconCell   = "BeaconCell"
@@ -30,12 +30,12 @@ class BeaconsViewController: UITableViewController {
         super.viewWillAppear(animated)
         if let beaconRegion = self.beaconRegion {
             self.navigationItem.title = beaconRegion.identifier
-            NSNotificationCenter.defaultCenter().addObserver(self, selector:"updateBeacons", name:BlueCapNotification.didUpdateBeacon, object:beaconRegion)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateBeacons", name: BlueCapNotification.didUpdateBeacon, object: beaconRegion)
         } else {
             self.navigationItem.title = "Beacons"
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -48,12 +48,12 @@ class BeaconsViewController: UITableViewController {
     }
 
     func updateBeacons() {
-        Logger.debug()
+        BCLogger.debug()
         self.tableView.reloadData()
     }
     
-    func sortBeacons(beacons:[Beacon]) -> [Beacon] {
-        return beacons.sort(){(b1:Beacon, b2:Beacon) -> Bool in
+    func sortBeacons(beacons: [FLBeacon]) -> [FLBeacon] {
+        return beacons.sort(){(b1: FLBeacon, b2: FLBeacon) -> Bool in
             if b1.major > b2.major {
                 return true
             } else if b1.major == b2.major && b1.minor > b2.minor {
@@ -65,16 +65,16 @@ class BeaconsViewController: UITableViewController {
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
 

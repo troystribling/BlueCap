@@ -12,19 +12,15 @@ import BlueCapKit
 
 class PeripheralsViewController : UITableViewController {
     
-    var stopScanBarButtonItem   : UIBarButtonItem!
-    var startScanBarButtonItem  : UIBarButtonItem!
-    var centralManager          : CentralManager
-    var timedScannerator        : TimedScannerator
-    
+    var stopScanBarButtonItem: UIBarButtonItem!
+    var startScanBarButtonItem: UIBarButtonItem!
+
     struct MainStoryboard {
         static let peripheralCell   = "PeripheralCell"
         static let peripheralSegue  = "Peripheral"
     }
     
     required init?(coder aDecoder:NSCoder) {
-        self.centralManager = CentralManager.sharedInstance
-        self.timedScannerator = TimedScannerator(centralManager:self.centralManager)
         super.init(coder:aDecoder)
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleScan:")
@@ -58,7 +54,7 @@ class PeripheralsViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralSegue {
             if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
                 let viewController = segue.destinationViewController as! PeripheralViewController
-                viewController.peripheral = self.centralManager.peripherals[selectedIndex.row]
+                viewController.peripheral = Singletons.centralManager.peripherals[selectedIndex.row]
             }
         }
     }
@@ -68,7 +64,7 @@ class PeripheralsViewController : UITableViewController {
         if let identifier = identifier {
             if identifier == MainStoryboard.peripheralSegue {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                    let peripheral = self.centralManager.peripherals[selectedIndex.row]
+                    let peripheral = Singletons.centralManager.peripherals[selectedIndex.row]
                     perform = (peripheral.state == .Connected)
                 }
             }
@@ -78,21 +74,21 @@ class PeripheralsViewController : UITableViewController {
     
     // actions
     func toggleScan(sender:AnyObject) {
-        if BeaconManager.sharedInstance.isMonitoring == false {
-            Logger.debug("isScanning: \(self.centralManager.isScanning)")
-            if self.centralManager.isScanning {
+        if Singletons.beaconManager.isMonitoring == false {
+            BCLogger.debug("isScanning: \(Singletons.centralManager.isScanning)")
+            if Singletons.centralManager.isScanning {
                 if  ConfigStore.getScanTimeoutEnabled() {
-                    self.timedScannerator.stopScanning()
+                    Singletons.timedScannerator.stopScanning()
                 } else {
-                    self.centralManager.stopScanning()
+                    Singletons.centralManager.stopScanning()
                 }
-                self.centralManager.disconnectAllPeripherals()
-                self.centralManager.removeAllPeripherals()
+                Singletons.centralManager.disconnectAllPeripherals()
+                Singletons.centralManager.removeAllPeripherals()
                 self.setScanButton()
                 self.updateWhenActive()
             } else {
-                self.centralManager.disconnectAllPeripherals()
-                self.centralManager.removeAllPeripherals()
+                Singletons.centralManager.disconnectAllPeripherals()
+                Singletons.centralManager.removeAllPeripherals()
                 self.powerOn()
             }
         } else {
@@ -102,17 +98,17 @@ class PeripheralsViewController : UITableViewController {
     
     // utils
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
         self.tableView.reloadData()
         self.setScanButton()
     }
     
     func setScanButton() {
-        if self.centralManager.isScanning || self.timedScannerator.isScanning {
+        if Singletons.centralManager.isScanning || Singletons.timedScannerator.isScanning {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -120,42 +116,42 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func powerOn() {
-        self.centralManager.powerOn().onSuccess {
-            Logger.debug()
+        Singletons.centralManager.whenPowerOn().onSuccess {
+            BCLogger.debug()
             self.startScan()
             self.setScanButton()
         }
     }
     
-    func connect(peripheral:Peripheral) {
+    func connect(peripheral: BCPeripheral) {
         let future = peripheral.connect(10, timeoutRetries:ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
         future.onSuccess {(peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
-                Logger.debug("Connected")
+                BCLogger.debug("Connected")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
                 self.updateWhenActive()
             case .Timeout:
-                Logger.debug("Timeout: '\(peripheral.name)'")
+                BCLogger.debug("Timeout: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 peripheral.reconnect()
                 self.updateWhenActive()
             case .Disconnect:
-                Logger.debug("Disconnect")
+                BCLogger.debug("Disconnect")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.reconnect()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .ForceDisconnect:
-                Logger.debug("ForcedDisconnect")
+                BCLogger.debug("ForcedDisconnect")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .Failed:
-                Logger.debug("Failed")
+                BCLogger.debug("Failed")
                 Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
             case .GiveUp:
-                Logger.debug("GiveUp: '\(peripheral.name)'")
+                BCLogger.debug("GiveUp: '\(peripheral.name)'")
                 peripheral.terminate()
                 self.updateWhenActive()
             }
@@ -167,47 +163,47 @@ class PeripheralsViewController : UITableViewController {
     
     func startScan() {
         let scanMode = ConfigStore.getScanMode()
-        let afterPeripheralDiscovered = {(peripheral:Peripheral) -> Void in
+        let afterPeripheralDiscovered = { (peripheral: BCPeripheral) -> Void in
             Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
             self.connect(peripheral)
             self.updateWhenActive()
         }
-        let afterTimeout = {(error:NSError) -> Void in
-            if error.domain == BCError.domain && error.code == PeripheralError.DiscoveryTimeout.rawValue {
-                Logger.debug("timeoutScan: timing out")
-                self.timedScannerator.stopScanning()
+        let afterTimeout = { (error:NSError) -> Void in
+            if error.domain == BCError.domain && error.code == BCPeripheralErrorCode.DiscoveryTimeout.rawValue {
+                BCLogger.debug("timeoutScan: timing out")
+                Singletons.timedScannerator.stopScanning()
                 self.setScanButton()
             }
         }
         // Promiscuous Scan Enabled
-        var future : FutureStream<Peripheral>
+        var future: FutureStream<BCPeripheral>
         switch scanMode {
         case "Promiscuous" :
             // Promiscuous Scan with Timeout Enabled
             if ConfigStore.getScanTimeoutEnabled() {
-                future = self.timedScannerator.startScanning(Double(ConfigStore.getScanTimeout()), capacity:10)
+                future = Singletons.timedScannerator.startScanning(Double(ConfigStore.getScanTimeout()), capacity: 10)
                 
             } else {
-                future = self.centralManager.startScanning(10)
+                future = Singletons.centralManager.startScanning(10)
             }
             future.onSuccess(afterPeripheralDiscovered)
             future.onFailure(afterTimeout)
         case "Service" :
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             if scannedServices.isEmpty {
-                self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated:true, completion:nil)
+                self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
             } else {
                 // Service Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
-                    future = self.timedScannerator.startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids:scannedServices, capacity:10)
+                    future = Singletons.timedScannerator.startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids: scannedServices, capacity: 10)
                 } else {
-                    future = self.centralManager.startScanningForServiceUUIDs(scannedServices, capacity:10)
+                    future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10)
                 }
                 future.onSuccess(afterPeripheralDiscovered)
                 future.onFailure(afterTimeout)
             }
         default:
-            Logger.debug("Scan Mode :'\(scanMode)' invalid")
+            BCLogger.debug("Scan Mode :'\(scanMode)' invalid")
         }
     }
         
@@ -217,12 +213,12 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return self.centralManager.peripherals.count
+        return Singletons.centralManager.peripherals.count
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as! PeripheralCell
-        let peripheral = self.centralManager.peripherals[indexPath.row]
+        let peripheral = Singletons.centralManager.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         cell.accessoryType = .None
         if peripheral.state == .Connected {

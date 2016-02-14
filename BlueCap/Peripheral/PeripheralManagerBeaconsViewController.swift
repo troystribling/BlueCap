@@ -55,14 +55,14 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {

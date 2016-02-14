@@ -12,25 +12,25 @@ import BlueCapKit
 
 class ServiceCharacteristicProfileViewController : UITableViewController {
     
-    var characteristicProfile : CharacteristicProfile?
+    var characteristicProfile: BCCharacteristicProfile?
     
-    @IBOutlet var uuidLabel                                 : UILabel!
+    @IBOutlet var uuidLabel: UILabel!
     
-    @IBOutlet var permissionReadableLabel                   : UILabel!
-    @IBOutlet var permissionWriteableLabel                  : UILabel!
-    @IBOutlet var permissionReadEncryptionLabel             : UILabel!
-    @IBOutlet var permissionWriteEncryptionLabel            : UILabel!
+    @IBOutlet var permissionReadableLabel: UILabel!
+    @IBOutlet var permissionWriteableLabel: UILabel!
+    @IBOutlet var permissionReadEncryptionLabel: UILabel!
+    @IBOutlet var permissionWriteEncryptionLabel: UILabel!
 
-    @IBOutlet var propertyBroadcastLabel                    : UILabel!
-    @IBOutlet var propertyReadLabel                         : UILabel!
-    @IBOutlet var propertyWriteWithoutResponseLabel         : UILabel!
-    @IBOutlet var propertyWriteLabel                        : UILabel!
-    @IBOutlet var propertyNotifyLabel                       : UILabel!
-    @IBOutlet var propertyIndicateLabel                     : UILabel!
-    @IBOutlet var propertyAuthenticatedSignedWritesLabel    : UILabel!
-    @IBOutlet var propertyExtendedPropertiesLabel           : UILabel!
-    @IBOutlet var propertyNotifyEncryptionRequiredLabel     : UILabel!
-    @IBOutlet var propertyIndicateEncryptionRequiredLabel   : UILabel!
+    @IBOutlet var propertyBroadcastLabel: UILabel!
+    @IBOutlet var propertyReadLabel: UILabel!
+    @IBOutlet var propertyWriteWithoutResponseLabel: UILabel!
+    @IBOutlet var propertyWriteLabel: UILabel!
+    @IBOutlet var propertyNotifyLabel: UILabel!
+    @IBOutlet var propertyIndicateLabel: UILabel!
+    @IBOutlet var propertyAuthenticatedSignedWritesLabel: UILabel!
+    @IBOutlet var propertyExtendedPropertiesLabel: UILabel!
+    @IBOutlet var propertyNotifyEncryptionRequiredLabel: UILabel!
+    @IBOutlet var propertyIndicateEncryptionRequiredLabel: UILabel!
 
     struct MainStoryboard {
         static let serviceCharacteristicProfileValuesSegue = "ServiceCharacteristicProfileValues"
@@ -45,7 +45,7 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
         if let characteristicProfile = self.characteristicProfile {
 
             self.navigationItem.title = characteristicProfile.name
-            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
 
             self.uuidLabel.text = characteristicProfile.uuid.UUIDString
             
@@ -72,14 +72,14 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfileValuesSegue {
             let viewController = segue.destinationViewController as! ServiceCharacteristicProfileValuesViewController
             viewController.characteristicProfile = self.characteristicProfile
         }
     }
     
-    func booleanStringValue(value:Bool) -> String {
+    func booleanStringValue(value: Bool) -> String {
         return value ? "YES" : "NO"
     }
 

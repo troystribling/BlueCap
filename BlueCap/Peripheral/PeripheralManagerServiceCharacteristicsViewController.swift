@@ -11,13 +11,13 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicsViewController : UITableViewController {
  
-    var service                         : MutableService?
+    var service: BCMutableService?
     var peripheralManagerViewController : PeripheralManagerViewController?
 
     
     struct MainStoryboard {
-        static let peripheralManagerServiceChracteristicCell    = "PeripheralManagerServiceChracteristicCell"
-        static let peripheralManagerServiceCharacteristicSegue  = "PeripheralManagerServiceCharacteristic"
+        static let peripheralManagerServiceChracteristicCell = "PeripheralManagerServiceChracteristicCell"
+        static let peripheralManagerServiceCharacteristicSegue = "PeripheralManagerServiceCharacteristic"
     }
     
     required init?(coder aDecoder:NSCoder) {
@@ -33,8 +33,8 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         if let service = self.service {
             self.navigationItem.title = service.name
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -58,14 +58,14 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     // UITableViewDataSource

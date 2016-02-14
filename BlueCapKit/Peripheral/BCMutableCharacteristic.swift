@@ -17,10 +17,10 @@ public class BCMutableCharacteristic {
 
     private let profile: BCCharacteristicProfile
 
-    private var centrals            = BCSerialIODictionary<NSUUID, CBCentralInjectable>(BCMutableCharacteristic.ioQueue)
+    private var centrals = BCSerialIODictionary<NSUUID, CBCentralInjectable>(BCMutableCharacteristic.ioQueue)
 
-    private var _updating           = false
-    private var _queuedUpdates      = [NSData]()
+    private var _updating = false
+    private var _queuedUpdates = [NSData]()
 
     internal var _processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
     internal weak var _service: BCMutableService?

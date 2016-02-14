@@ -11,8 +11,8 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
     
-    var characteristic                  : MutableCharacteristic!
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    var characteristic: BCMutableCharacteristic!
+    var peripheralManagerViewController: PeripheralManagerViewController?
 
     struct MainStoryboard {
         static let peripheralManagerServiceCharacteristicDiscreteValueCell  = "PeripheralManagerServiceCharacteristicEditDiscreteValueCell"
@@ -29,8 +29,8 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -39,14 +39,14 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     // UITableViewDataSource
@@ -59,7 +59,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, forIndexPath:indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, forIndexPath: indexPath) as UITableViewCell
         let stringValue = characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
         if let valueName = self.characteristic.stringValue?.keys.first {
@@ -75,7 +75,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if let characteristic = self.characteristic {
             if let valueName = self.characteristic.stringValue?.keys.first {
                 let stringValue = [valueName:characteristic.stringValues[indexPath.row]]

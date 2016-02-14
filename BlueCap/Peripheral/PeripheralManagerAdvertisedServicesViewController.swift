@@ -52,14 +52,14 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
@@ -79,7 +79,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         if let peripheral = self.peripheral {
             let serviceUUID = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)[indexPath.row]
             cell.uuidLabel.text = serviceUUID.UUIDString
-            if let service = PeripheralManager.sharedInstance.service(serviceUUID) {
+            if let service = Singletons.peripheralManager.service(serviceUUID) {
                 cell.nameLabel.text = service.name
             } else {
                 cell.nameLabel.text = "Unknown"

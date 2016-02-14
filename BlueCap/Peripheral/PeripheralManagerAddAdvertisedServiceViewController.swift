@@ -15,14 +15,14 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         static let peripheralManagerAddAdverstisedServiceCell = "PeripheralManagerAddAdverstisedServiceCell"
     }
     
-    var peripheral                      : String?
+    var peripheral: String?
     var peripheralManagerViewController : PeripheralManagerViewController?
 
 
-    var services : [MutableService] {
+    var services: [BCMutableService] {
         if let peripheral = self.peripheral {
             let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-            return PeripheralManager.sharedInstance.services.filter{!serviceUUIDs.contains($0.uuid)}
+            return Singletons.peripheralManager.services.filter{!serviceUUIDs.contains($0.uuid)}
         } else {
             return []
         }
@@ -30,18 +30,18 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     
 
     required init?(coder aDecoder:NSCoder) {
-        super.init(coder:aDecoder)
+        super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated:Bool) {
+    override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -49,30 +49,30 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_:UITableView, numberOfRowsInSection section:  Int) -> Int {
         return self.services.count
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAddAdverstisedServiceCell, forIndexPath:indexPath) as! NameUUIDCell
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAddAdverstisedServiceCell, forIndexPath: indexPath) as! NameUUIDCell
         if let _ = self.peripheral {
             let service = self.services[indexPath.row]
             cell.nameLabel.text = service.name

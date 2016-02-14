@@ -11,12 +11,13 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
-    weak var service                : Service?
-    var dataValid                   = false
-    var peripheralViewController    : PeripheralViewController?
+    weak var service: BCService?
+    var peripheralViewController: PeripheralViewController?
+
+    var dataValid = false
 
     struct MainStoryboard {
-        static let peripheralServiceCharacteristicCell  = "PeripheralServiceCharacteristicCell"
+        static let peripheralServiceCharacteristicCell = "PeripheralServiceCharacteristicCell"
         static let peripheralServiceCharacteristicSegue = "PeripheralServiceCharacteristic"
     }
     
@@ -26,15 +27,15 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self.updateWhenActive()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.service?.peripheral)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.service?.peripheral)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -42,7 +43,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicSegue {
             if let service = self.service {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
@@ -54,16 +55,16 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         }
     }
 
-    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
         return true
     }
     
     func peripheralDisconnected() {
-        Logger.debug()
+        BCLogger.debug()
         self.tableView.reloadData()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
-                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
                         peripheralViewController.peripehealConnected = false
                         self.updateWhenActive()
                     }, animated:true, completion:nil)
@@ -73,19 +74,19 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let service = self.service {
             return service.characteristics.count
         } else {
@@ -93,7 +94,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
+    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharacteristicCell, forIndexPath: indexPath) as! NameUUIDCell
         if let service = self.service {
             let characteristic = service.characteristics[indexPath.row]
@@ -112,7 +113,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         return cell
     }
     
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
+    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
     }
 
     // UITableViewDelegate

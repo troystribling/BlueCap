@@ -11,11 +11,11 @@ import BlueCapKit
 
 class ServiceCharacteristicProfilesViewController : UITableViewController {
 
-    var serviceProfile : ServiceProfile?
+    var serviceProfile: BCServiceProfile?
     
     struct MainStoryboard {
-        static let serviceCharacteristicProfileCell     = "ServiceCharacteristicProfileCell"
-        static let serviceCharacteristicProfileSegue    = "ServiceCharacteristicProfile"
+        static let serviceCharacteristicProfileCell = "ServiceCharacteristicProfileCell"
+        static let serviceCharacteristicProfileSegue = "ServiceCharacteristicProfile"
     }
     
     required init?(coder aDecoder:NSCoder)  {
@@ -26,7 +26,7 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
         super.viewDidLoad()
         if let serviceProfile = self.serviceProfile {
             self.navigationItem.title = serviceProfile.name
-            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         }
     }
     
@@ -46,11 +46,11 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let serviceProfile = self.serviceProfile {
             return serviceProfile.characteristics.count
         } else {
@@ -58,7 +58,7 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileCell, forIndexPath: indexPath) as! NameUUIDCell
         if let serviceProfile = self.serviceProfile {
             let characteristicProfile = serviceProfile.characteristics[indexPath.row]

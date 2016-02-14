@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralAdvertisementsOverflowServicesViewController: UITableViewController {
 
-    weak var peripheral : Peripheral?
+    weak var peripheral: BCPeripheral?
     
     struct MainStoryboard {
         static let peripheralAdvertisementsOverflowServiceCell = "PeripheralAdvertisementsOverflowServiceCell"
@@ -38,11 +38,11 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
     
     // UITableViewDataSource
@@ -51,7 +51,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let services = self.peripheral?.advertisements.overflowServiceUUIDs {
+        if let services = self.peripheral?.advertisements?.overflowServiceUUIDs {
             return services.count
         } else {
             return 0;
@@ -60,7 +60,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementsOverflowServiceCell, forIndexPath:indexPath)
-        if let services = self.peripheral?.advertisements.overflowServiceUUIDs {
+        if let services = self.peripheral?.advertisements?.overflowServiceUUIDs {
             let service = services[indexPath.row]
             cell.textLabel?.text = service.UUIDString
         }

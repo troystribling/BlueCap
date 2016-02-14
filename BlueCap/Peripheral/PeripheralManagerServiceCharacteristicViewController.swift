@@ -10,32 +10,32 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
-class PeripheralManagerServiceCharacteristicViewController : UITableViewController {
+class PeripheralManagerServiceCharacteristicViewController: UITableViewController {
     
-    var characteristic                  : MutableCharacteristic?
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    var characteristic: BCMutableCharacteristic?
+    var peripheralManagerViewController: PeripheralManagerViewController?
 
     
-    @IBOutlet var uuidLabel                                 : UILabel!
+    @IBOutlet var uuidLabel: UILabel!
     
-    @IBOutlet var permissionReadableLabel                   : UILabel!
-    @IBOutlet var permissionWriteableLabel                  : UILabel!
-    @IBOutlet var permissionReadEncryptionLabel             : UILabel!
-    @IBOutlet var permissionWriteEncryptionLabel            : UILabel!
+    @IBOutlet var permissionReadableLabel: UILabel!
+    @IBOutlet var permissionWriteableLabel: UILabel!
+    @IBOutlet var permissionReadEncryptionLabel: UILabel!
+    @IBOutlet var permissionWriteEncryptionLabel: UILabel!
     
-    @IBOutlet var propertyBroadcastLabel                    : UILabel!
-    @IBOutlet var propertyReadLabel                         : UILabel!
-    @IBOutlet var propertyWriteWithoutResponseLabel         : UILabel!
-    @IBOutlet var propertyWriteLabel                        : UILabel!
-    @IBOutlet var propertyNotifyLabel                       : UILabel!
-    @IBOutlet var propertyIndicateLabel                     : UILabel!
-    @IBOutlet var propertyAuthenticatedSignedWritesLabel    : UILabel!
-    @IBOutlet var propertyExtendedPropertiesLabel           : UILabel!
-    @IBOutlet var propertyNotifyEncryptionRequiredLabel     : UILabel!
-    @IBOutlet var propertyIndicateEncryptionRequiredLabel   : UILabel!
+    @IBOutlet var propertyBroadcastLabel: UILabel!
+    @IBOutlet var propertyReadLabel: UILabel!
+    @IBOutlet var propertyWriteWithoutResponseLabel: UILabel!
+    @IBOutlet var propertyWriteLabel: UILabel!
+    @IBOutlet var propertyNotifyLabel: UILabel!
+    @IBOutlet var propertyIndicateLabel: UILabel!
+    @IBOutlet var propertyAuthenticatedSignedWritesLabel: UILabel!
+    @IBOutlet var propertyExtendedPropertiesLabel: UILabel!
+    @IBOutlet var propertyNotifyEncryptionRequiredLabel: UILabel!
+    @IBOutlet var propertyIndicateEncryptionRequiredLabel: UILabel!
 
     struct MainStoryboard {
-        static let peripheralManagerServiceCharacteristicValuesSegue                            = "PeripheralManagerServiceCharacteristicValues"
+        static let peripheralManagerServiceCharacteristicValuesSegue = "PeripheralManagerServiceCharacteristicValues"
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -80,7 +80,7 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicValuesSegue {
             let viewController = segue.destinationViewController as! PeripheralManagerServicesCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
@@ -91,14 +91,14 @@ class PeripheralManagerServiceCharacteristicViewController : UITableViewControll
     }
     
     func didResignActive() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     func booleanStringValue(value:Bool) -> String {

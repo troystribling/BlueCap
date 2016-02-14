@@ -11,15 +11,15 @@ import BlueCapKit
 
 class PeripheralServiceCharacteristicEditValueViewController : UIViewController, UITextFieldDelegate {
    
-    @IBOutlet var valueTextField    : UITextField!
-    var characteristic              : Characteristic!
-    var peripheralViewController    : PeripheralViewController?
-    var valueName                   : String?
+    @IBOutlet var valueTextField: UITextField!
+    var characteristic: BCCharacteristic!
+    var peripheralViewController: PeripheralViewController?
+    var valueName: String?
     
-    var progressView                = ProgressView()
+    var progressView = ProgressView()
     
-    required init?(coder aDecoder:NSCoder) {
-        super.init(coder:aDecoder)
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 
     override func viewDidLoad() {
@@ -30,14 +30,14 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                 self.valueTextField.text = value
             }
         }
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"peripheralDisconnected", name:BlueCapNotification.peripheralDisconnected, object:self.characteristic.service?.peripheral)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.characteristic.service?.peripheral)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -46,10 +46,10 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     }
     
     func peripheralDisconnected() {
-        Logger.debug()
+        BCLogger.debug()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
-                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
                         peripheralViewController.peripehealConnected = false
                         self.navigationController?.popViewControllerAnimated(true)
                     }, animated:true, completion:nil)
@@ -59,22 +59,22 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
 
     func didResignActive() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        Logger.debug()
+        BCLogger.debug()
     }
     
     func didBecomeActive() {
-        Logger.debug()
+        BCLogger.debug()
     }
 
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if let newValue = self.valueTextField.text {
-            let afterWriteSuceses = {(characteristic:Characteristic) -> Void in
+            let afterWriteSuceses = { (characteristic: BCCharacteristic) -> Void in
                 self.progressView.remove()
                 self.navigationController?.popViewControllerAnimated(true)
                 return
             }
-            let afterWriteFailed = {(error:NSError) -> Void in
+            let afterWriteFailed = { (error: NSError) -> Void in
                 self.progressView.remove()
                 self.presentViewController(UIAlertController.alertOnError("Characteristic Write Error", error:error) {(action) in
                     self.navigationController?.popViewControllerAnimated(true)
@@ -85,16 +85,16 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
             if let valueName = self.valueName {
                 if var values = self.characteristic.stringValue {
                     values[valueName] = newValue
-                    let write = characteristic.writeString(values, timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                    let write = characteristic.writeString(values, timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                     write.onSuccess(afterWriteSuceses)
                     write.onFailure(afterWriteFailed)
                 } else {
-                    let write = characteristic.writeData(newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                    let write = characteristic.writeData(newValue.dataFromHexString(), timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                     write.onSuccess(afterWriteSuceses)
                     write.onFailure(afterWriteFailed)
                 }
             } else {
-                Logger.debug("VALUE: \(newValue.dataFromHexString())")
+                BCLogger.debug("VALUE: \(newValue.dataFromHexString())")
                 let write = characteristic.writeData(newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 write.onSuccess(afterWriteSuceses)
                 write.onFailure(afterWriteFailed)

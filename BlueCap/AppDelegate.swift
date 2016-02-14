@@ -27,6 +27,13 @@ struct BCAppError {
     static let outOfRegion = NSError(domain:domain, code:AppError.outOfRegion.rawValue, userInfo:[NSLocalizedDescriptionKey:"Out of region"])
 }
 
+struct Singletons {
+    static let centralManager = BCCentralManager()
+    static let peripheralManager = BCPeripheralManager()
+    static let timedScannerator = BCTimedScannerator(centralManager:Singletons.centralManager)
+    static let beaconManager = FLBeaconManager()
+}
+
 @UIApplicationMain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -57,10 +64,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         NSUserDefaults.standardUserDefaults().synchronize()
         NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didResignActive, object:nil)
-        if CentralManager.sharedInstance.isScanning {
-            CentralManager.sharedInstance.stopScanning()
-            CentralManager.sharedInstance.disconnectAllPeripherals()
-            CentralManager.sharedInstance.removeAllPeripherals()
+        if Singletons.centralManager.isScanning {
+            Singletons.centralManager.stopScanning()
+            Singletons.centralManager.disconnectAllPeripherals()
+            Singletons.centralManager.removeAllPeripherals()
         }
     }
 
