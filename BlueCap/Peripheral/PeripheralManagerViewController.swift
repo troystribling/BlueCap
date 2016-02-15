@@ -169,7 +169,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         if let peripheral = self.peripheral {
             let serviceUUIDs = PeripheralStore.getPeripheralServicesForPeripheral(peripheral)
             let services = serviceUUIDs.reduce([BCMutableService]()){ (services, uuid) in
-                if let serviceProfile = Singletons.peripheralManager.service[uuid] {
+                if let serviceProfile = Singletons.profileManager.services[uuid] {
                     let service = BCMutableService(profile:serviceProfile)
                     service.characteristicsFromProfiles()
                     return services + [service]

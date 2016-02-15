@@ -32,6 +32,7 @@ struct Singletons {
     static let peripheralManager = BCPeripheralManager()
     static let timedScannerator = BCTimedScannerator(centralManager:Singletons.centralManager)
     static let beaconManager = FLBeaconManager()
+    static let profileManager = BCProfileManager.sharedInstance
 }
 
 @UIApplicationMain

@@ -14,19 +14,19 @@ public class BCServiceProfile {
     
     internal var characteristicProfiles = [CBUUID: BCCharacteristicProfile]()
 
-    public let uuid : CBUUID
-    public let name : String
-    public let tag  : String
+    public let uuid: CBUUID
+    public let name: String
+    public let tag: String
     
-    public var characteristics : [BCCharacteristicProfile] {
+    public var characteristics: [BCCharacteristicProfile] {
         return Array(self.characteristicProfiles.values)
     }
     
-    public var characteristic : [CBUUID: BCCharacteristicProfile] {
+    public var characteristic: [CBUUID: BCCharacteristicProfile] {
         return self.characteristicProfiles
     }
     
-    public init(uuid:String, name:String, tag:String = "Miscellaneous") {
+    public init(uuid: String, name: String, tag: String = "Miscellaneous") {
         self.name = name
         self.uuid = CBUUID(string:uuid)
         self.tag = tag
@@ -43,7 +43,7 @@ public class BCServiceProfile {
     
 }
 
-public class BCConfiguredServiceProfile<Config: BCServiceConfigurable> : BCServiceProfile {
+public class BCConfiguredServiceProfile<Config: BCServiceConfigurable>: BCServiceProfile {
     
     public init() {
         super.init(uuid: Config.uuid, name: Config.name, tag: Config.tag)
