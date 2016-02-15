@@ -12,7 +12,8 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class NCCentralManagerTests: XCTestCase {
+// MARK - BCCentralManagerTests -
+class BCCentralManagerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
@@ -22,6 +23,7 @@ class NCCentralManagerTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: Power on
     func testPowerOnWhenPoweredOn() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
@@ -56,6 +58,7 @@ class NCCentralManagerTests: XCTestCase {
         }
     }
 
+    // MARK: Power off
     func testPowerOffWhenPoweredOn() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
@@ -90,6 +93,7 @@ class NCCentralManagerTests: XCTestCase {
         }
     }
 
+    // MARK: Peripheral discovery
     func testPeripheralDiscoverWhenPoweredOn() {
         let centralMock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: centralMock)

@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCCharacteristicTests -
 class BCCharacteristicTests: XCTestCase {
     
     var centralManager: BCCentralManager!
@@ -38,7 +39,8 @@ class BCCharacteristicTests: XCTestCase {
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
     }
-    
+
+    // MARK: After discovered
     func testAfterDiscovered() {
         let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
         let service  = ServiceUT(cbService: self.mockService, peripheral: peripheral, mockCharacteristics: [mockCharacteristic], error: nil)
@@ -56,7 +58,8 @@ class BCCharacteristicTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
+    // MARK: Write data
     func testWriteDataSuccess() {
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
@@ -271,6 +274,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
+    // MARK: Read data
     func testReadSuccess() {
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying:false)
@@ -382,7 +386,8 @@ class BCCharacteristicTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
+    // MARK: Notifications
     func testStartNotifyingSuccess() {
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying:false)
@@ -576,7 +581,7 @@ class BCCharacteristicTests: XCTestCase {
             } else {
                 XCTAssert(false, "characteristic value not set")
             }
-            ++updates
+            updates += 1
         }
         updateFuture.onFailure {error in
             XCTAssert(false, "update onFailure called")
@@ -658,7 +663,7 @@ class BCCharacteristicTests: XCTestCase {
         updateFuture.onSuccess { (_, data) in
             if updates == 0 {
                 updateOnSuccessExpectation.fulfill()
-                ++updates
+                updates += 1
                 if let data = data {
                     XCTAssertEqual(data, "0".dataFromHexString(), "")
                 } else {

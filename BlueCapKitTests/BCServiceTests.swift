@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCServiceTests -
 class BCServiceTests: XCTestCase {
     
     var centralManager: BCCentralManager!
@@ -30,6 +31,7 @@ class BCServiceTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: Discover characteristics
     func testDiscoverCharacteristicsSuccess() {
         let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Connected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:self.mockCharateristics, error:nil)

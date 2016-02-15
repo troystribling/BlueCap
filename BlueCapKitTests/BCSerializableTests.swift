@@ -12,7 +12,8 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
-class SBCerializableTests: XCTestCase {
+// MARK: - BCSerializableTests -
+class BCSerializableTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
@@ -67,6 +68,7 @@ class SBCerializableTests: XCTestCase {
         XCTAssert(data.hexStringValue() == "b4fb6400", "Int16 array serialization value invalid: \(data.hexStringValue())")
     }
 
+    // TODO: UInt32 tests
     func testSerializePair() {
         let data = NSData.serialize(Int16(-1100),  value2:UInt8(100))
         XCTAssert(data.hexStringValue() == "b4fb64", "Pair serialization value invalid: \(data.hexStringValue())")

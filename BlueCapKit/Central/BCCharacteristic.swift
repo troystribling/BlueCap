@@ -430,7 +430,7 @@ public class BCCharacteristic {
         self.writeParameters.removeAtIndex(0)
         self.writing = true
         self.writeValue(parameters.value, type: parameters.type)
-        ++self.writeSequence
+        self.writeSequence += 1
         self.timeoutWrite(self.writeSequence, timeout: parameters.timeout)
     }
     
@@ -442,7 +442,7 @@ public class BCCharacteristic {
         self.readParameters.removeAtIndex(0)
         self.readValueForCharacteristic()
         self.reading = true
-        ++self.readSequence
+        self.readSequence += 1
         self.timeoutRead(self.readSequence, timeout: parameters.timeout)
     }
     

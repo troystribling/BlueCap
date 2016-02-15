@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCTimedScanneratorTests -
 class BCTimedScanneratorTests: XCTestCase {
     
     var centralManager: BCCentralManager!
@@ -26,6 +27,7 @@ class BCTimedScanneratorTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: Scan timeout
     func testScanSuccessful() {
         let scannerator = BCTimedScannerator(centralManager: self.centralManager)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")

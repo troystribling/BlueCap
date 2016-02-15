@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCRawArrayPairDeserializableTests -
 class BCRawArrayPairDeserializableTests: XCTestCase {
 
     struct Pair: BCRawArrayPairDeserializable {

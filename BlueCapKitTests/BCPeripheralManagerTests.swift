@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCPeripheralManagerTests -
 class BCPeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
@@ -25,7 +26,8 @@ class BCPeripheralManagerTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
     }
-    
+
+    // MARK: Power on
     func testPowerOnWhenPoweredOn() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -58,6 +60,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
+    // MARK: Power off
     func testPowerOffWhenPoweredOn() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -90,6 +93,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
+    // MARK: Start advertising
     func testStartAdvertisingSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -158,7 +162,8 @@ class BCPeripheralManagerTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
+    // MARK: iBeacon
     func testStartAdvertisingBeaconSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -212,6 +217,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
+    // MARK: Stop advertising
     func testStopAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")

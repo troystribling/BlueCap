@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCRawDeserializableTests -
 class BCRawDeserializableTests: XCTestCase {
 
     enum Testit: UInt8, BCRawDeserializable {

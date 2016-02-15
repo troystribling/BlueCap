@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK - BCPeripheralTests -
 class BCPeripheralTests: XCTestCase {
 
     var centralManager      = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
@@ -33,7 +34,8 @@ class BCPeripheralTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
     }
-    
+
+    // MARK: Discover Services
     func testDiscoverServicesSuccess() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
@@ -211,7 +213,8 @@ class BCPeripheralTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
+    // MARK: Connection
     func testConnect() {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
@@ -469,4 +472,5 @@ class BCPeripheralTests: XCTestCase {
         }
     }
 
+    // TODO: Read RSSI
 }

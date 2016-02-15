@@ -21,9 +21,9 @@ let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral
                                 CBAdvertisementDataTxPowerLevelKey:NSNumber(integer:-45)]
 
 // MARK: - CBCentralManagerMock -
-class CBCentralManagerMock : CBCentralManagerInjectable {
+class CBCentralManagerMock: CBCentralManagerInjectable {
     
-    var state : CBCentralManagerState
+    var state: CBCentralManagerState
     var scanForPeripheralsWithServicesCalled = false
     var stopScanCalled = false
     
@@ -77,36 +77,38 @@ class CentralManagerUT: BCCentralManager {
 }
 
 // MARK: - CBPeripheralMock -
-class CBPeripheralMock : CBPeripheralInjectable {
+class CBPeripheralMock: CBPeripheralInjectable {
    
-    var state : CBPeripheralState
-    var _delegate : CBPeripheralDelegate? = nil
+    var state: CBPeripheralState
+    var _delegate: CBPeripheralDelegate? = nil
     
-    var setDelegateCalled                       = false
-    var discoverServicesCalled                  = false
-    var discoverCharacteristicsCalled           = false
-    var setNotifyValueCalled                    = false
-    var readValueForCharacteristicCalled        = false
-    var writeValueCalled                        = false
+    var setDelegateCalled = false
+    var discoverServicesCalled = false
+    var discoverCharacteristicsCalled = false
+    var setNotifyValueCalled = false
+    var readValueForCharacteristicCalled = false
+    var writeValueCalled = false
+    var readRSSICalled = false
     
-    var writtenData : NSData?
-    var writtenType : CBCharacteristicWriteType?
-    var notifyingState : Bool?
+    var writtenData: NSData?
+    var writtenType: CBCharacteristicWriteType?
+    var notifyingState: Bool?
     
-    var discoverServicesCalledCount         = 0
-    var discoverCharacteristicsCalledCount  = 0
+    var discoverServicesCalledCount = 0
+    var discoverCharacteristicsCalledCount = 0
+    var readRSSICalledCount = 0
     
-    var setNotifyValueCount                 = 0
-    var readValueForCharacteristicCount     = 0
-    var writeValueCount                     = 0
+    var setNotifyValueCount = 0
+    var readValueForCharacteristicCount = 0
+    var writeValueCount = 0
     
-    let identifier                          = NSUUID()
+    let identifier = NSUUID()
 
     init(state:CBPeripheralState = .Disconnected) {
         self.state = state
     }
     
-    var delegate : CBPeripheralDelegate? {
+    var delegate: CBPeripheralDelegate? {
         get {
             return self._delegate
         }
@@ -116,37 +118,41 @@ class CBPeripheralMock : CBPeripheralInjectable {
         }
     }
     
-    var name : String? {
+    var name: String? {
         return "Test Peripheral"
     }
 
-    var services : [CBService]? {
+    var services: [CBService]? {
         return nil
     }
-    
+
+    func readRSSI() {
+        self.readRSSICalled = true
+    }
+
     func discoverServices(services: [CBUUID]?) {
         self.discoverServicesCalled = true
-        self.discoverServicesCalledCount++
+        self.discoverServicesCalledCount += 1
     }
     
     func discoverCharacteristics(characteristics: [CBUUID]?, forService: CBService) {
         self.discoverCharacteristicsCalled = true
-        self.discoverCharacteristicsCalledCount++
+        self.discoverCharacteristicsCalledCount += 1
     }
     
     func setNotifyValue(state: Bool, forCharacteristic: CBCharacteristic) {
         self.setNotifyValueCalled = true
-        self.setNotifyValueCount++
+        self.setNotifyValueCount += 1
         self.notifyingState = state
     }
     
     func readValueForCharacteristic(characteristic: CBCharacteristic) {
-        self.readValueForCharacteristicCount++
+        self.readValueForCharacteristicCount += 1
         self.readValueForCharacteristicCalled = true
     }
     
     func writeValue(data:NSData, forCharacteristic: CBCharacteristic, type: CBCharacteristicWriteType) {
-        self.writeValueCount++
+        self.writeValueCount += 1
         self.writeValueCalled = true
         self.writtenData = data
         self.writtenType = type
@@ -187,8 +193,8 @@ class CBServiceMock: CBMutableService {
 // MARK: - ServiceUT -
 class ServiceUT: BCService {
     
-    let error : NSError?
-    let mockCharacteristics : [CBCharacteristic]
+    let error: NSError?
+    let mockCharacteristics: [CBCharacteristic]
     
     init(cbService: CBServiceMock, peripheral: BCPeripheral, mockCharacteristics: [CBCharacteristic], error: NSError?) {
         self.error = error
@@ -227,21 +233,21 @@ class CBCharacteristicMock: CBMutableCharacteristic {
 // MARK: - CBPeripheralManagerMock -
 class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
 
-    var updateValueReturn       = true
+    var updateValueReturn = true
     
-    var startAdvertisingCalled  = false
-    var stopAdvertisingCalled   = false
-    var addServiceCalled        = false
-    var removeServiceCalled     = false
+    var startAdvertisingCalled = false
+    var stopAdvertisingCalled = false
+    var addServiceCalled = false
+    var removeServiceCalled = false
     var removeAllServicesCalled = false
-    var respondToRequestCalled  = false
-    var updateValueCalled       = false
+    var respondToRequestCalled = false
+    var updateValueCalled = false
 
-    var advertisementData : [String:AnyObject]?
-    var isAdvertising  : Bool
-    var state : CBPeripheralManagerState
-    var addedService : CBMutableService?
-    var removedService : CBMutableService?
+    var advertisementData: [String:AnyObject]?
+    var isAdvertising : Bool
+    var state: CBPeripheralManagerState
+    var addedService: CBMutableService?
+    var removedService: CBMutableService?
     
     var removeServiceCount = 0
     var addServiceCount = 0
@@ -266,13 +272,13 @@ class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
     func addService(service: CBMutableService) {
         self.addServiceCalled = true
         self.addedService = service
-        self.addServiceCount++
+        self.addServiceCount += 1
     }
     
     func removeService(service: CBMutableService) {
         self.removeServiceCalled = true
         self.removedService = service
-        self.removeServiceCount++
+        self.removeServiceCount += 1
     }
     
     func removeAllServices() {
@@ -285,7 +291,7 @@ class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
     
     func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool {
         self.updateValueCalled = true
-        self.updateValueCount++
+        self.updateValueCount += 1
         return self.updateValueReturn
     }
 }

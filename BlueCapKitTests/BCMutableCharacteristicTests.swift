@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCMutableCharacteristicTests -
 class BCMutableCharacteristicTests: XCTestCase {
     
     override func setUp() {
@@ -23,6 +24,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: Add characteristics
     func addCharacteristics(onSuccess: (mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void) {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
@@ -51,7 +53,8 @@ class BCMutableCharacteristicTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
+    // MARK: Subscribe to charcteristic updates
     func testNotSubscribedToUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
@@ -252,6 +255,8 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
+
+    // MARK: Respond to write requests
     func testStartRespondingToWriteRequestsSuccess() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
@@ -298,7 +303,7 @@ class BCMutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
                 XCTAssertEqual(request.value, values[writeCount], "request value is invalid")
                 XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
-                writeCount++
+                writeCount += 1
             }
             future.onFailure {error in
                 XCTAssert(false, "onFailure called")
@@ -357,6 +362,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
+    // MARK: Respond to read requests
     func testRespondToReadRequestSuccess() {
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in

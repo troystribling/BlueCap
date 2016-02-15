@@ -428,7 +428,7 @@ public struct Queue {
         dispatch_async(self.queue, block);
     }
     
-    public func delay(delay: Double, request: Void -> Void) {
+    public func delay(delay: NSTimeInterval, request: Void -> Void) {
         let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
         dispatch_after(popTime, self.queue, request)
     }

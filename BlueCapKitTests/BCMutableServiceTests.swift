@@ -12,6 +12,7 @@ import CoreBluetooth
 import CoreLocation
 import BlueCapKit
 
+// MARK: - BCMutableServiceTests -
 class BCMutableServiceTests: XCTestCase {
     
     override func setUp() {
@@ -24,6 +25,7 @@ class BCMutableServiceTests: XCTestCase {
     }
     
 
+    // MARK: Add service
     func testAddServiceSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
@@ -132,7 +134,8 @@ class BCMutableServiceTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
+    // MARK: Remove service
     func testRemoveServiceSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
