@@ -58,7 +58,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
             let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
@@ -77,20 +77,20 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
                 let future = characteristic.recieveNotificationUpdates(10)
-                future.onSuccess {_ in
+                future.onSuccess { _ in
                     self.updateWhenActive()
                 }
-                future.onFailure{(error) in
+                future.onFailure{ error in
                     self.presentViewController(UIAlertController.alertOnError("Characteristic Notification Error", error: error), animated: true, completion: nil)
                 }
             } else if characteristic.propertyEnabled(.Read) {
                 self.progressView.show()
                 let future = characteristic.read(Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-                future.onSuccess {_ in
+                future.onSuccess { _ in
                     self.updateWhenActive()
                     self.progressView.remove()
                 }
-                future.onFailure {(error) in
+                future.onFailure { error in
                     self.progressView.remove()
                     self.presentViewController(UIAlertController.alertOnError("Charcteristic Read Error", error: error) { action in
                         self.navigationController?.popViewControllerAnimated(true)
@@ -123,7 +123,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     

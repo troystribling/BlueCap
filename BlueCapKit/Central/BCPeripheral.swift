@@ -20,11 +20,11 @@ public enum BCConnectionEvent {
 
 // MARK: - CBPeripheralInjectable -
 public protocol CBPeripheralInjectable {
-    var name : String?                      {get}
-    var state : CBPeripheralState           {get}
-    var identifier : NSUUID                 {get}
-    var delegate : CBPeripheralDelegate?    {get set}
-    var services : [CBService]?             {get}
+    var name: String?                      {get}
+    var state: CBPeripheralState           {get}
+    var identifier: NSUUID                 {get}
+    var delegate: CBPeripheralDelegate?    {get set}
+    var services: [CBService]?             {get}
     
     func discoverServices(services:[CBUUID]?)
     func discoverCharacteristics(characteristics:[CBUUID]?, forService:CBService)
@@ -38,9 +38,9 @@ extension CBPeripheral : CBPeripheralInjectable {}
 // MARK: - BCPeripheralAdvertisements -
 public struct BCPeripheralAdvertisements {
     
-    let advertisements : [String: AnyObject]
+    let advertisements: [String: AnyObject]
     
-    public var localName : String? {
+    public var localName: String? {
         if let localname = self.advertisements[CBAdvertisementDataLocalNameKey] {
             return localname as? String
         } else {
@@ -48,7 +48,7 @@ public struct BCPeripheralAdvertisements {
         }
     }
     
-    public var manufactuereData : NSData? {
+    public var manufactuereData: NSData? {
         if let mfgData = self.advertisements[CBAdvertisementDataManufacturerDataKey] {
             return mfgData as? NSData
         } else {
@@ -56,7 +56,7 @@ public struct BCPeripheralAdvertisements {
         }
     }
     
-    public var txPower : NSNumber? {
+    public var txPower: NSNumber? {
         if let txPower = self.advertisements[CBAdvertisementDataTxPowerLevelKey] {
             return txPower as? NSNumber
         } else {
@@ -64,7 +64,7 @@ public struct BCPeripheralAdvertisements {
         }
     }
     
-    public var isConnectable : NSNumber? {
+    public var isConnectable: NSNumber? {
         if let isConnectable = self.advertisements[CBAdvertisementDataIsConnectable] {
             return isConnectable as? NSNumber
         } else {
@@ -72,7 +72,7 @@ public struct BCPeripheralAdvertisements {
         }
     }
     
-    public var serviceUUIDs : [CBUUID]? {
+    public var serviceUUIDs: [CBUUID]? {
         if let serviceUUIDs = self.advertisements[CBAdvertisementDataServiceUUIDsKey] {
             return serviceUUIDs as? [CBUUID]
         } else {
@@ -80,7 +80,7 @@ public struct BCPeripheralAdvertisements {
         }
     }
     
-    public var serviceData : [CBUUID:NSData]? {
+    public var serviceData: [CBUUID:NSData]? {
         if let serviceData = self.advertisements[CBAdvertisementDataServiceDataKey] {
             return serviceData as? [CBUUID:NSData]
         } else {
@@ -88,7 +88,7 @@ public struct BCPeripheralAdvertisements {
         }
     }
     
-    public var overflowServiceUUIDs : [CBUUID]? {
+    public var overflowServiceUUIDs: [CBUUID]? {
         if let serviceUUIDs = self.advertisements[CBAdvertisementDataOverflowServiceUUIDsKey] {
             return serviceUUIDs as? [CBUUID]
         } else {
@@ -96,7 +96,7 @@ public struct BCPeripheralAdvertisements {
         }
     }
     
-    public var solicitedServiceUUIDs : [CBUUID]? {
+    public var solicitedServiceUUIDs: [CBUUID]? {
         if let serviceUUIDs = self.advertisements[CBAdvertisementDataSolicitedServiceUUIDsKey] {
             return serviceUUIDs as? [CBUUID]
         } else {
@@ -106,7 +106,7 @@ public struct BCPeripheralAdvertisements {
 }
 
 // MARK: - BCPeripheral -
-public class BCPeripheral : NSObject, CBPeripheralDelegate {
+public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Serialize Property IO
     static let ioQueue      = Queue("us.gnos.blueCap.peripheral.io")
@@ -118,21 +118,21 @@ public class BCPeripheral : NSObject, CBPeripheralDelegate {
 
     private var _connectionPromise: StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>?
 
-    private var _timeoutCount: UInt         = 0
-    private var _disconnectCount: UInt      = 0
+    private var _timeoutCount: UInt = 0
+    private var _disconnectCount: UInt = 0
     
-    private var _connectionSequence         = 0
-    private var _currentError               = PeripheralConnectionError.None
-    private var _forcedDisconnect           = false
+    private var _connectionSequence = 0
+    private var _currentError = PeripheralConnectionError.None
+    private var _forcedDisconnect = false
 
-    private let _discoveredAt               = NSDate()
+    private let _discoveredAt = NSDate()
     private var _connectedAt: NSDate?
     private var _disconnectedAt : NSDate?
     
-    internal var discoveredServices         = BCSerialIODictionary<CBUUID, BCService>(BCPeripheral.ioQueue)
-    internal var discoveredCharacteristics  = BCSerialIODictionary<CBUUID, BCCharacteristic>(BCPeripheral.ioQueue)
+    internal var discoveredServices = BCSerialIODictionary<CBUUID, BCService>(BCPeripheral.ioQueue)
+    internal var discoveredCharacteristics = BCSerialIODictionary<CBUUID, BCCharacteristic>(BCPeripheral.ioQueue)
 
-    internal var connectionTimeout          = 10.0
+    internal var connectionTimeout = 10.0
     internal var timeoutRetries: UInt?
     internal var disconnectRetries: UInt?
     internal weak var centralManager: BCCentralManager?
