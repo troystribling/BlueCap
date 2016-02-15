@@ -47,7 +47,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         BeaconStore.setBeaconUUID(uuid)
         self.setUI()
     }
-    
+
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         return self.addBeacon(textField)

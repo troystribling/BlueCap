@@ -281,7 +281,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             BCLogger.debug("reconnect peripheral \(self.name)")
             centralManager.connectPeripheral(self)
             self.forcedDisconnect = false
-            ++self.connectionSequence
+            self.connectionSequence += 1
             self.timeoutConnection(self.connectionSequence)
         }
     }
@@ -513,7 +513,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             self.connectionPromise?.failure(error)
             if let disconnectRetries = self.disconnectRetries {
                 if self.disconnectCount < disconnectRetries {
-                    ++self.disconnectCount
+                    self.disconnectCount += 1
                 } else {
                     self.disconnectCount = 0
                     self.connectionPromise?.success((self, BCConnectionEvent.GiveUp))
@@ -530,7 +530,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         if let timeoutRetries = self.timeoutRetries {
             if self.timeoutCount < timeoutRetries {
                 self.connectionPromise?.success((self, .Timeout))
-                ++self.timeoutCount
+                self.timeoutCount += 1
             } else {
                 self.timeoutCount = 0
                 self.connectionPromise?.success((self, .GiveUp))
@@ -544,7 +544,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         BCLogger.debug()
         if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < disconnectRetries {
-                ++self.disconnectCount
+                self.disconnectCount += 1
                 self.connectionPromise?.success((self, .Disconnect))
             } else {
                 self.disconnectCount = 0

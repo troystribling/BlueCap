@@ -513,7 +513,7 @@ class BCCharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
 
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap{ _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
@@ -551,7 +551,7 @@ class BCCharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
         
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap{ _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "00".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
@@ -647,7 +647,7 @@ class BCCharacteristicTests: XCTestCase {
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
 
-        let updateFuture = startNotifyingFuture.flatmap{_ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap{ _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.recieveNotificationUpdates()
             mockCharacteristic.value = "0".dataFromHexString()
             self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)

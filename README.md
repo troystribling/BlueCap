@@ -1515,7 +1515,7 @@ After a Peripherals Characteristics are discovered subscribing to Characteristic
 public func startNotifying() -> Future<Characteristic>
 
 // receive characteristic value updates
-public func recieveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>
+public func receiveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>
 
 // unsubscribe from characteristic updates
 public func stopNotifying() -> Future<Characteristic>
@@ -1564,7 +1564,7 @@ subscribeCharacteristicFuture.onFailure {error in
 }
 
 let updateCharacteristicFuture = subscribeCharacteristicFuture.flatmap{characteristic -> FutureStream<Characteristic> in
-	return characteristic.recieveNotificationUpdates(capacity:10)
+	return characteristic.receiveNotificationUpdates(capacity:10)
 }
 updateCharacteristicFuture.onSuccess {characteristic in
 	if let value : Enabled = characteristic.value {
@@ -1575,7 +1575,7 @@ updateCharacteristicFuture.onFailure {error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *startNotifying() -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to *recieveNotificationUpdates(capacity:Int?) -> FutureStream&lt;Characteristic&gt;* to ensure that the subsections is completed before receiving updates.
+Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *startNotifying() -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to *receiveNotificationUpdates(capacity:Int?) -> FutureStream&lt;Characteristic&gt;* to ensure that the subsections is completed before receiving updates.
 
 For an application to unsubscribe to Characteristic value updates and stop receiving updates,
 
