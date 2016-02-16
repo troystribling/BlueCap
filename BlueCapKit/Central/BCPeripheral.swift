@@ -20,11 +20,11 @@ public enum BCConnectionEvent {
 
 // MARK: - CBPeripheralInjectable -
 public protocol CBPeripheralInjectable {
-    var name: String?                      {get}
-    var state: CBPeripheralState           {get}
-    var identifier: NSUUID                 {get}
-    var delegate: CBPeripheralDelegate?    {get set}
-    var services: [CBService]?             {get}
+    var name: String?                      { get }
+    var state: CBPeripheralState           { get }
+    var identifier: NSUUID                 { get }
+    var delegate: CBPeripheralDelegate?    { get set }
+    var services: [CBService]?             { get }
 
     func readRSSI()
     func discoverServices(services:[CBUUID]?)
@@ -291,6 +291,8 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     public func startPollingRSSI(period: NSTimeInterval = 10.0, capacity: Int? = nil) -> FutureStream<Int> {
         self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
+        self.cbPeripheral.readRSSI()
+        self.pollRSSI(period)
         return pollRSSIPromise!.future
     }
 

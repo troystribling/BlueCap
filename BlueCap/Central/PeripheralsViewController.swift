@@ -11,9 +11,13 @@ import CoreBluetooth
 import BlueCapKit
 
 class PeripheralsViewController : UITableViewController {
-    
+
+    static let peripheralRSSIPollingInterval = 2.0
+
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
+
+    var rssiPollingFutures = [NSUUID: (future: FutureStream<Int>, cellUpdate: Bool)]()
 
     struct MainStoryboard {
         static let peripheralCell   = "PeripheralCell"
@@ -36,11 +40,17 @@ class PeripheralsViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.startPollingRSSIForConnectedPeripherals()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
         self.setScanButton()
     }
-    
+
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.stopPollingRSSIForPeripherals()
+    }
+
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         NSNotificationCenter.defaultCenter().removeObserver(self)
@@ -71,7 +81,25 @@ class PeripheralsViewController : UITableViewController {
         }
         return perform
     }
-    
+
+    func startPollingRSSIForConnectedPeripherals() {
+        for peripheral in Singletons.centralManager.peripherals {
+            if peripheral.state == .Connected {
+                self.rssiPollingFutures[peripheral.identifier] =
+                    (peripheral.startPollingRSSI(PeripheralsViewController.peripheralRSSIPollingInterval, capacity: 10), false)
+            }
+        }
+    }
+
+    func stopPollingRSSIForPeripherals() {
+        for peripheral in Singletons.centralManager.peripherals {
+            if self.rssiPollingFutures[peripheral.identifier] != nil {
+                 peripheral.stopPollingRSSI()
+            }
+        }
+        self.rssiPollingFutures.removeAll()
+    }
+
     // actions
     func toggleScan(sender:AnyObject) {
         if Singletons.beaconManager.isMonitoring == false {
@@ -130,6 +158,8 @@ class PeripheralsViewController : UITableViewController {
             case .Connect:
                 BCLogger.debug("Connected")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+                self.rssiPollingFutures[peripheral.identifier] =
+                    peripheral.startPollingRSSI(PeripheralsViewController.peripheralRSSIPollingInterval, capacity: 10)
                 self.updateWhenActive()
             case .Timeout:
                 BCLogger.debug("Timeout: '\(peripheral.name)'")
@@ -141,11 +171,15 @@ class PeripheralsViewController : UITableViewController {
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.reconnect()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
+                peripheral.stopPollingRSSI()
                 self.updateWhenActive()
             case .ForceDisconnect:
                 BCLogger.debug("ForcedDisconnect")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
+                peripheral.stopPollingRSSI()
                 self.updateWhenActive()
             case .Failed:
                 BCLogger.debug("Failed")
@@ -223,17 +257,20 @@ class PeripheralsViewController : UITableViewController {
         cell.accessoryType = .None
         if peripheral.state == .Connected {
             cell.nameLabel.textColor = UIColor.blackColor()
-            cell.rssiLabel.text = "\(peripheral.rssi)"
             cell.stateLabel.text = "Connected"
             cell.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
         } else {
             cell.nameLabel.textColor = UIColor.lightGrayColor()
-            cell.rssiLabel.text = "NA"
             cell.stateLabel.text = "Disconnected"
             cell.stateLabel.textColor = UIColor.lightGrayColor()
         }
+        if let future = self.rssiPollingFutures[peripheral.identifier] {
+            future.onSuccess { rssi in
+                cell.rssiLabel.text = "\(rssi)"
+            }
+        } else {
+            cell.rssiLabel.text = "NA"
+        }
         return cell
     }
-    
-
 }

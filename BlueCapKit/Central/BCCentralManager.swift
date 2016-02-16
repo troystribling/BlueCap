@@ -155,14 +155,14 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public func removeAllPeripherals() {
-        self.discoveredPeripherals.removeAll()
-    }
-
     public func disconnectAllPeripherals() {
         for peripheral in self.discoveredPeripherals.values {
             peripheral.disconnect()
         }
+    }
+
+    public func removeAllPeripherals() {
+        self.discoveredPeripherals.removeAll()
     }
 
     // MARK: Scan
