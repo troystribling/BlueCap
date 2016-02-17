@@ -12,8 +12,6 @@ import BlueCapKit
 
 class PeripheralsViewController : UITableViewController {
 
-    static let peripheralRSSIPollingInterval = 2.0
-
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
 
@@ -86,7 +84,7 @@ class PeripheralsViewController : UITableViewController {
         for peripheral in Singletons.centralManager.peripherals {
             if peripheral.state == .Connected {
                 self.rssiPollingFutures[peripheral.identifier] =
-                    (peripheral.startPollingRSSI(PeripheralsViewController.peripheralRSSIPollingInterval, capacity: 10), false)
+                    (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
             }
         }
     }
@@ -159,7 +157,7 @@ class PeripheralsViewController : UITableViewController {
                 BCLogger.debug("Connected")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
                 self.rssiPollingFutures[peripheral.identifier] =
-                    peripheral.startPollingRSSI(PeripheralsViewController.peripheralRSSIPollingInterval, capacity: 10)
+                    (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
                 self.updateWhenActive()
             case .Timeout:
                 BCLogger.debug("Timeout: '\(peripheral.name)'")
@@ -262,14 +260,14 @@ class PeripheralsViewController : UITableViewController {
         } else {
             cell.nameLabel.textColor = UIColor.lightGrayColor()
             cell.stateLabel.text = "Disconnected"
+            cell.rssiLabel.text = "NA"
             cell.stateLabel.textColor = UIColor.lightGrayColor()
         }
-        if let future = self.rssiPollingFutures[peripheral.identifier] {
-            future.onSuccess { rssi in
-                cell.rssiLabel.text = "\(rssi)"
+        if let (future, cellUpdate) = self.rssiPollingFutures[peripheral.identifier] where cellUpdate == false {
+            self.rssiPollingFutures[peripheral.identifier] = (future, true)
+            future.onSuccess { [weak cell] rssi in
+                cell?.rssiLabel.text = "\(rssi)"
             }
-        } else {
-            cell.rssiLabel.text = "NA"
         }
         return cell
     }

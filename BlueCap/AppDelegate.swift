@@ -35,6 +35,11 @@ struct Singletons {
     static let profileManager = BCProfileManager.sharedInstance
 }
 
+struct Params {
+    static let peripheralRSSIPollingInterval = 2.0
+    static let peripheralRSSIFutureCapacity = 10
+}
+
 @UIApplicationMain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {

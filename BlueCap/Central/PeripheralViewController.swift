@@ -15,6 +15,7 @@ class PeripheralViewController : UITableViewController {
     var progressView = ProgressView()
     var peripehealConnected = true
     var hasData = false
+    var rssiFuture: FutureStream<Int>?
     
     @IBOutlet var uuidLabel: UILabel!
     @IBOutlet var rssiLabel: UILabel!
@@ -35,9 +36,13 @@ class PeripheralViewController : UITableViewController {
         self.hasData = false
         self.setStateLabel()
         self.progressView.show()
-        self.navigationItem.title = peripheral.name
-        self.peripehealConnected = (peripheral.state == .Connected)
+        self.navigationItem.title = self.peripheral.name
+        self.peripehealConnected = (self.peripheral.state == .Connected)
+        self.rssiFuture = self.peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
         self.rssiLabel.text = "\(self.peripheral.rssi)"
+        self.rssiFuture?.onSuccess { [unowned self] rssi in
+            self.rssiLabel.text = "\(rssi)"
+        }
         let future = self.peripheral.discoverAllPeripheralServices()
         future.onSuccess {_ in
             self.hasData = true
@@ -66,6 +71,8 @@ class PeripheralViewController : UITableViewController {
     }
     
     override func viewDidDisappear(animated: Bool) {
+        self.peripheral.stopPollingRSSI()
+        self.rssiFuture = nil
         super.viewDidDisappear(animated)
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
