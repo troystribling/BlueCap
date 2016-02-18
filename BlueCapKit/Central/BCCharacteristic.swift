@@ -251,7 +251,7 @@ public class BCCharacteristic {
         return promise.future
     }
 
-    public func recieveNotificationUpdates(capacity: Int? = nil) -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> {
+    public func receiveNotificationUpdates(capacity: Int? = nil) -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> {
         let promise = StreamPromise<(characteristic: BCCharacteristic, data: NSData?)>(capacity:capacity)
         if self.canNotify {
             self.notificationUpdatePromise = promise
