@@ -12,29 +12,94 @@ import CoreBluetooth
 import CoreLocation
 
 // MARK: Scan Mode
-enum ScanMode {
+enum ScanMode: Int {
+    case Promiscuous = 0
+    case Service = 1
 
+    init?(_ stringValue: String) {
+        switch stringValue {
+        case "Promiscuous":
+            self = .Promiscuous
+        case "Service":
+            self = .Service
+        default:
+            return nil
+        }
+    }
+
+    init?(_ rawValue: Int) {
+        switch rawValue {
+        case 0:
+            self = .Promiscuous
+        case 1:
+            self = .Service
+        default:
+            return nil
+        }
+    }
+
+    var stringValue: String {
+        switch self {
+        case .Promiscuous:
+            return "Promiscuous"
+        case .Service:
+            return "Service"
+        }
+    }
 }
 
 // MARK: Sort Order
-enum SortOrder {
+enum SortOrder: Int {
+    case DiscoveryDate = 0
+    case RSSI = 1
 
+    init?(_ stringValue: String) {
+        switch stringValue {
+        case "Discovery Date":
+            self = .DiscoveryDate
+        case "RSSI":
+            self = .RSSI
+        default:
+            return nil
+        }
+    }
+
+    init?(_ rawValue: Int) {
+        switch rawValue {
+        case 0:
+            self = .DiscoveryDate
+        case 1:
+            self = .RSSI
+        default:
+            return nil
+        }
+    }
+
+    var stringValue: String {
+        switch self {
+        case .DiscoveryDate:
+            return "Discovery Date"
+        case .RSSI:
+            return "RSSI"
+        }
+    }
 }
 
 // MARK: - ConfigStore -
 class ConfigStore {
   
     // MARK: scan mode
-    class func getScanMode() -> String {
-        if let scanMode = NSUserDefaults.standardUserDefaults().stringForKey("scanMode") {
+    class func getScanMode() -> ScanMode {
+        let rawValue = NSUserDefaults.standardUserDefaults().integerForKey("scanMode")
+        if let scanMode = ScanMode(rawValue) {
             return scanMode
         } else {
-            return "Promiscuous"
+            return .Promiscuous
         }
     }
     
-    class func setScanMode(scanMode: String) {
-        NSUserDefaults.standardUserDefaults().setObject(scanMode, forKey:"scanMode")
+    class func setScanMode(scanMode: ScanMode) {
+        NSUserDefaults.standardUserDefaults().setInteger(scanMode.rawValue, forKey:"scanMode")
     }
     
     // MARK: scan timeout
@@ -101,7 +166,7 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setInteger(Int(maximumReconnections), forKey:"maximumReconnections")
     }
 
-    // MARK: maximum connections
+    // MARK: maximum peripheral connections
     class func getMaximumConnections() -> UInt {
         let maximumReconnetions = NSUserDefaults.standardUserDefaults().integerForKey("maximumConnections")
         if maximumReconnetions == 0 {
@@ -115,18 +180,32 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setInteger(Int(maximumConnections), forKey:"maximumConnections")
     }
 
-
-    // MARK: sort order
-    class func getSortOrder() -> String {
-        if let scanMode = NSUserDefaults.standardUserDefaults().stringForKey("sortOrder") {
-            return scanMode
+    // MARK: maximum discovered peripherals
+    class func getMaximumPeripherals() -> UInt {
+        let maximumReconnetions = NSUserDefaults.standardUserDefaults().integerForKey("maximumDiscovered")
+        if maximumReconnetions == 0 {
+            return 20
         } else {
-            return "Discovery Data"
+            return UInt(maximumReconnetions)
         }
     }
 
-    class func setSortMode(sortOrder: String) {
-        NSUserDefaults.standardUserDefaults().setObject(sortOrder, forKey:"sortOrder")
+    class func setMaximumPeripherals(maximumPeripherals: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumPeripherals), forKey:"maximumDiscovered")
+    }
+
+    // MARK: sort order
+    class func getSortOrder() -> SortOrder {
+        let rawValue = NSUserDefaults.standardUserDefaults().integerForKey("sortOrder")
+        if let sortOrder = SortOrder(rawValue) {
+            return sortOrder
+        } else {
+            return .DiscoveryDate
+        }
+    }
+
+    class func setSortOrder(sortOrder: SortOrder) {
+        NSUserDefaults.standardUserDefaults().setInteger(sortOrder.rawValue, forKey:"sortOrder")
     }
 
 

@@ -210,7 +210,7 @@ class PeripheralsViewController : UITableViewController {
         // Promiscuous Scan Enabled
         var future: FutureStream<BCPeripheral>
         switch scanMode {
-        case "Promiscuous" :
+        case .Promiscuous:
             // Promiscuous Scan with Timeout Enabled
             if ConfigStore.getScanTimeoutEnabled() {
                 future = Singletons.timedScannerator.startScanning(Double(ConfigStore.getScanTimeout()), capacity: 10)
@@ -220,7 +220,7 @@ class PeripheralsViewController : UITableViewController {
             }
             future.onSuccess(afterPeripheralDiscovered)
             future.onFailure(afterTimeout)
-        case "Service" :
+        case .Service:
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             if scannedServices.isEmpty {
                 self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
@@ -234,8 +234,6 @@ class PeripheralsViewController : UITableViewController {
                 future.onSuccess(afterPeripheralDiscovered)
                 future.onFailure(afterTimeout)
             }
-        default:
-            BCLogger.debug("Scan Mode :'\(scanMode)' invalid")
         }
     }
         

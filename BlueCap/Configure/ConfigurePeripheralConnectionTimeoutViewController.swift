@@ -10,7 +10,7 @@ import UIKit
 
 class ConfigurePeripheralConnectionTimeoutViewController: UIViewController {
 
-    @IBOutlet var peripheralConnectionTimeoutTextField : UITextField!
+    @IBOutlet var peripheralConnectionTimeoutTextField: UITextField!
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
