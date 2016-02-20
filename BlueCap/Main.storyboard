@@ -221,6 +221,9 @@
             <string>Thonburi</string>
             <string>Thonburi</string>
             <string>Thonburi</string>
+            <string>Thonburi</string>
+            <string>Thonburi</string>
+            <string>Thonburi</string>
         </mutableArray>
     </customFonts>
     <scenes>
@@ -1715,10 +1718,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
-                            <tableViewSection id="gGd-fN-SEn">
+                            <tableViewSection headerTitle="Service Scan" id="gGd-fN-SEn">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Yuz-Fm-Dje" detailTextLabel="4dU-Qj-ty3" rowHeight="50" style="IBUITableViewCellStyleValue1" id="0HI-MV-ohr">
-                                        <rect key="frame" x="0.0" y="35" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="49.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0HI-MV-ohr" id="ihf-7o-wWK">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -1745,13 +1748,13 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="clG-Jf-3IE" rowHeight="50" style="IBUITableViewCellStyleDefault" id="Yfa-HA-hLd">
-                                        <rect key="frame" x="0.0" y="85" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="99.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yfa-HA-hLd" id="Fro-WM-52x">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Services" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="clG-Jf-3IE">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Scanned Services" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="clG-Jf-3IE">
                                                     <rect key="frame" x="15" y="0.0" width="550" height="49.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
@@ -1766,10 +1769,10 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="8ju-Zn-yKL">
+                            <tableViewSection headerTitle="Scan Timeout" id="yD7-s5-g8p">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="u42-iW-m88">
-                                        <rect key="frame" x="0.0" y="155" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="191.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u42-iW-m88" id="0VI-QY-fJa">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
@@ -1781,8 +1784,8 @@
                                                         <action selector="toggleScanTimeout:" destination="z0r-2o-HqO" eventType="valueChanged" id="2NE-JZ-yCg"/>
                                                     </connections>
                                                 </switch>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Scan Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WEG-8P-fl3">
-                                                    <rect key="frame" x="15" y="12" width="133" height="22"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enabled" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WEG-8P-fl3">
+                                                    <rect key="frame" x="15" y="12" width="133" height="25"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1794,7 +1797,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="zZz-gK-YHp" detailTextLabel="1mj-Pi-WdG" rowHeight="50" style="IBUITableViewCellStyleValue1" id="5on-Zw-Xtl">
-                                        <rect key="frame" x="0.0" y="205" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="241.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5on-Zw-Xtl" id="geu-IR-mu5">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -1822,10 +1825,188 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="0Nn-2E-9qr">
+                            <tableViewSection headerTitle="Peripheral Connection" id="8ju-Zn-yKL">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qrc-QP-hIY" detailTextLabel="4dO-vw-8Qf" rowHeight="50" style="IBUITableViewCellStyleValue1" id="1yW-3g-tr9">
+                                        <rect key="frame" x="0.0" y="333.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1yW-3g-tr9" id="WlY-oX-rF3">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Reconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qrc-QP-hIY">
+                                                    <rect key="frame" x="15" y="13" width="175" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="5" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4dO-vw-8Qf">
+                                                    <rect key="frame" x="552" y="13" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="qNM-jR-e9y" kind="show" identifier="ConfigurePeripheralReconnections" id="ZGV-zq-pST"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="ma4-TX-8iG" detailTextLabel="5gg-0v-ZvH" rowHeight="50" style="IBUITableViewCellStyleValue1" id="NO9-17-ZP8">
+                                        <rect key="frame" x="0.0" y="383.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NO9-17-ZP8" id="UKM-2X-lR9">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Connection Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ma4-TX-8iG">
+                                                    <rect key="frame" x="15" y="13" width="185" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="10s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5gg-0v-ZvH">
+                                                    <rect key="frame" x="529.5" y="13" width="35.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="SvA-DH-tna" kind="show" identifier="PeripheralConnectionTimeout" id="hvr-qI-F8Z"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Charcteristic I/O" id="khN-Sv-olX">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
+                                        <rect key="frame" x="0.0" y="475.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pfT-ct-Yfa" id="HnQ-CP-pw2">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Read/Write Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lQo-z4-DBP">
+                                                    <rect key="frame" x="15" y="13" width="186" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="10s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="60B-HI-lJ8">
+                                                    <rect key="frame" x="529.5" y="13" width="35.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="YVL-nm-gv9" kind="show" identifier="CharacteristicReadWriteTimeout" id="51g-c2-fcX"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Peripheral Discovery" id="vNl-7P-Qsf">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="HAL-3Y-xgm" detailTextLabel="HVV-RC-weh" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xyn-sW-H09">
+                                        <rect key="frame" x="0.0" y="567.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xyn-sW-H09" id="ET7-mw-zVx">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Connected" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="HAL-3Y-xgm">
+                                                    <rect key="frame" x="15" y="13" width="140.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="HVV-RC-weh">
+                                                    <rect key="frame" x="539.5" y="13" width="25.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="Loh-OD-U7S" kind="show" identifier="ConfigureMaxConnections" id="0yj-rC-x8T"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="BnY-Zz-EPi" detailTextLabel="0E3-Dh-OXL" rowHeight="50" style="IBUITableViewCellStyleValue1" id="Vkq-GO-2zI">
+                                        <rect key="frame" x="0.0" y="617.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Vkq-GO-2zI" id="DiP-ZL-kq6">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Discovered" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BnY-Zz-EPi">
+                                                    <rect key="frame" x="15" y="13" width="143" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="100" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0E3-Dh-OXL">
+                                                    <rect key="frame" x="527" y="13" width="38" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="vxU-cq-Vn7" kind="show" identifier="ConfiguredMaxDiscovered" id="qT3-v9-hBd"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Periphearls Display" id="EsL-WL-l85">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Lkd-kf-40S" detailTextLabel="9UP-xy-XPA" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xhJ-Gm-deP">
+                                        <rect key="frame" x="0.0" y="709.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xhJ-Gm-deP" id="ccy-xg-7Es">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Sort Order" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="Lkd-kf-40S">
+                                                    <rect key="frame" x="15" y="13" width="96.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Discovery Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="9UP-xy-XPA">
+                                                    <rect key="frame" x="426" y="13" width="139" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="MQW-Dp-8iz" kind="show" identifier="ConfigureSortOrder" id="PS9-6m-JVa"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Application" id="0Nn-2E-9qr">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="2xs-Jj-nLz">
-                                        <rect key="frame" x="0.0" y="275" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="801.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2xs-Jj-nLz" id="Aj9-a3-5ac">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
@@ -1855,171 +2036,6 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="khN-Sv-olX">
-                                <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qrc-QP-hIY" detailTextLabel="4dO-vw-8Qf" rowHeight="50" style="IBUITableViewCellStyleValue1" id="1yW-3g-tr9">
-                                        <rect key="frame" x="0.0" y="345" width="600" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1yW-3g-tr9" id="WlY-oX-rF3">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Reconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qrc-QP-hIY">
-                                                    <rect key="frame" x="15" y="13" width="175" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="5" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4dO-vw-8Qf">
-                                                    <rect key="frame" x="552" y="13" width="13" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="qNM-jR-e9y" kind="show" identifier="ConfigurePeripheralReconnections" id="ZGV-zq-pST"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="ma4-TX-8iG" detailTextLabel="5gg-0v-ZvH" rowHeight="50" style="IBUITableViewCellStyleValue1" id="NO9-17-ZP8">
-                                        <rect key="frame" x="0.0" y="395" width="600" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NO9-17-ZP8" id="UKM-2X-lR9">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Connection Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ma4-TX-8iG">
-                                                    <rect key="frame" x="15" y="13" width="185" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="10s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5gg-0v-ZvH">
-                                                    <rect key="frame" x="529.5" y="13" width="35.5" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="SvA-DH-tna" kind="show" identifier="PeripheralConnectionTimeout" id="hvr-qI-F8Z"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
-                                        <rect key="frame" x="0.0" y="445" width="600" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pfT-ct-Yfa" id="HnQ-CP-pw2">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Read/Write Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lQo-z4-DBP">
-                                                    <rect key="frame" x="15" y="13" width="186" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="10s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="60B-HI-lJ8">
-                                                    <rect key="frame" x="529.5" y="13" width="35.5" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="YVL-nm-gv9" kind="show" identifier="CharacteristicReadWriteTimeout" id="51g-c2-fcX"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection id="vNl-7P-Qsf">
-                                <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="HAL-3Y-xgm" detailTextLabel="HVV-RC-weh" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xyn-sW-H09">
-                                        <rect key="frame" x="0.0" y="515" width="600" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xyn-sW-H09" id="ET7-mw-zVx">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Connections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="HAL-3Y-xgm">
-                                                    <rect key="frame" x="15" y="13" width="154.5" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="HVV-RC-weh">
-                                                    <rect key="frame" x="539.5" y="13" width="25.5" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="BnY-Zz-EPi" detailTextLabel="0E3-Dh-OXL" rowHeight="50" style="IBUITableViewCellStyleValue1" id="Vkq-GO-2zI">
-                                        <rect key="frame" x="0.0" y="565" width="600" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Vkq-GO-2zI" id="DiP-ZL-kq6">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Discovered" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BnY-Zz-EPi">
-                                                    <rect key="frame" x="15" y="13" width="143" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="100" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0E3-Dh-OXL">
-                                                    <rect key="frame" x="527" y="13" width="38" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection id="EsL-WL-l85">
-                                <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Lkd-kf-40S" detailTextLabel="9UP-xy-XPA" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xhJ-Gm-deP">
-                                        <rect key="frame" x="0.0" y="635" width="600" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xhJ-Gm-deP" id="ccy-xg-7Es">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Peripheral Sort Order" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Lkd-kf-40S">
-                                                    <rect key="frame" x="15" y="14" width="172" height="22.5"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Discovery Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9UP-xy-XPA">
-                                                    <rect key="frame" x="440.5" y="14" width="124.5" height="22.5"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="17"/>
-                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="z0r-2o-HqO" id="DWm-cy-L4r"/>
@@ -2030,9 +2046,12 @@
                     <navigationItem key="navigationItem" title="Configure" id="RE9-39-6QO"/>
                     <connections>
                         <outlet property="characteristicReadWriteTimeout" destination="60B-HI-lJ8" id="bpY-3j-cRC"/>
+                        <outlet property="maximumPeripheralsConnected" destination="HVV-RC-weh" id="T2h-bN-8Tl"/>
+                        <outlet property="maximumPeripheralsDiscovered" destination="0E3-Dh-OXL" id="vDR-oj-BVW"/>
                         <outlet property="notifySwitch" destination="0Qo-VB-F4m" id="Qt0-oE-hNV"/>
                         <outlet property="peripheralConnectionTimeout" destination="5gg-0v-ZvH" id="154-ix-9Ql"/>
                         <outlet property="peripheralReconnectionsLabel" destination="4dO-vw-8Qf" id="URm-PR-AL9"/>
+                        <outlet property="peripheralSortOrder" destination="9UP-xy-XPA" id="Ld9-pg-nYI"/>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
                         <outlet property="scanTimeoutEnabledLabel" destination="WEG-8P-fl3" id="VBk-35-Xsm"/>
                         <outlet property="scanTimeoutLabel" destination="1mj-Pi-WdG" id="ZUP-94-yf9"/>
@@ -2199,7 +2218,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qx4-Gn-PXd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3105" y="-1984"/>
+            <point key="canvasLocation" x="3091" y="-1984"/>
         </scene>
         <!--Scan Modes-->
         <scene sceneID="snv-qS-2Gb">
@@ -4638,7 +4657,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="twy-aE-u6K" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2283" y="-1238"/>
+            <point key="canvasLocation" x="2271" y="-1238"/>
         </scene>
         <!--Max Reconnections-->
         <scene sceneID="0fw-zi-j5i">
@@ -4679,6 +4698,124 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cca-8q-tIP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3105" y="-1238"/>
+        </scene>
+        <!--Peripheral Sort Order-->
+        <scene sceneID="ajL-HY-bOd">
+            <objects>
+                <tableViewController id="MQW-Dp-8iz" customClass="ConfigurePeripheralSortOrderViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="50" sectionHeaderHeight="22" sectionFooterHeight="22" id="ZdK-9J-ohq">
+                        <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ConfigureScanModeCell" textLabel="w8N-NZ-2LB" rowHeight="50" style="IBUITableViewCellStyleDefault" id="k2s-Vx-g9t">
+                                <rect key="frame" x="0.0" y="22" width="600" height="50"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="k2s-Vx-g9t" id="44t-KA-B1Q">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="w8N-NZ-2LB">
+                                            <rect key="frame" x="15" y="0.0" width="570" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="MQW-Dp-8iz" id="PKV-te-uOr"/>
+                            <outlet property="delegate" destination="MQW-Dp-8iz" id="hsi-l3-Vvf"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Peripheral Sort Order" id="3uK-C7-Hxl"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="p98-Y8-VAa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3097" y="-4247"/>
+        </scene>
+        <!--Maximum Peripheral Connections-->
+        <scene sceneID="57g-Wf-HP4">
+            <objects>
+                <viewController id="Loh-OD-U7S" customClass="ConfigureMaximumPeripheralsConnected" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="8nk-qg-oJR"/>
+                        <viewControllerLayoutGuide type="bottom" id="Cse-X9-eke"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="CCh-Id-2qm">
+                        <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Maximum Connected" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qES-ia-Wft">
+                                <rect key="frame" x="20" y="60" width="560" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="jqj-hy-2d0"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Loh-OD-U7S" id="ZZT-O9-Vss"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="qES-ia-Wft" firstAttribute="leading" secondItem="CCh-Id-2qm" secondAttribute="leadingMargin" id="29i-Zc-tHo"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="qES-ia-Wft" secondAttribute="trailing" id="MO8-GV-C8m"/>
+                            <constraint firstItem="qES-ia-Wft" firstAttribute="top" secondItem="8nk-qg-oJR" secondAttribute="bottom" constant="60" id="yqa-hK-RFV"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Maximum Peripheral Connections" id="yym-UI-1we"/>
+                    <connections>
+                        <outlet property="maximumPeripheralsConnectedTextField" destination="qES-ia-Wft" id="Dn1-XG-Zes"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="trp-v6-cNj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3097" y="-4974"/>
+        </scene>
+        <!--Maximum Peripherals Discovered-->
+        <scene sceneID="KLQ-NY-8UT">
+            <objects>
+                <viewController id="vxU-cq-Vn7" customClass="ConfigureMaximumPeripheralsDiscovered" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="7Ee-GT-B9W"/>
+                        <viewControllerLayoutGuide type="bottom" id="3MY-Kf-0aN"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="HcL-UP-oBC">
+                        <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Maximum Peripherals" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="fMh-sa-udN">
+                                <rect key="frame" x="20" y="60" width="560" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="yeR-xP-bF5"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="vxU-cq-Vn7" id="MIF-Xo-64M"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="fMh-sa-udN" secondAttribute="trailing" id="Bfg-13-zp2"/>
+                            <constraint firstItem="fMh-sa-udN" firstAttribute="top" secondItem="7Ee-GT-B9W" secondAttribute="bottom" constant="60" id="Qmq-oR-iPo"/>
+                            <constraint firstItem="fMh-sa-udN" firstAttribute="leading" secondItem="HcL-UP-oBC" secondAttribute="leadingMargin" id="wyl-vc-f4B"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Maximum Peripherals Discovered" id="RHj-df-LrM"/>
+                    <connections>
+                        <outlet property="maximumPeripheralsDiscoveredTextField" destination="fMh-sa-udN" id="ejm-Dn-Njf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2KY-PJ-ZZk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3097" y="-5724"/>
         </scene>
     </scenes>
     <resources>

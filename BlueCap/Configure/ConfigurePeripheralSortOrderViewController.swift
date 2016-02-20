@@ -30,7 +30,7 @@ class ConfigurePeripheralSortOrderViewController: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
         let sortOrderString = sortOrders[indexPath.row]
         cell.textLabel?.text = sortOrderString
-        if let sortOrder = SortOrder(sortOrderString) where sortOrder == ConfigStore.getSortOrder() {
+        if let sortOrder = PeripheralSortOrder(sortOrderString) where sortOrder == ConfigStore.getPeripheralSortOrder() {
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
         } else {
             cell.accessoryType = UITableViewCellAccessoryType.None
@@ -41,7 +41,7 @@ class ConfigurePeripheralSortOrderViewController: UITableViewController {
     // UITableViewDelegate
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let sortOrder = self.sortOrders[indexPath.row]
-        ConfigStore.setSortOrder(SortOrder(sortOrder)!)
+        ConfigStore.setPeripheralSortOrder(PeripheralSortOrder(sortOrder)!)
         self.navigationController?.popViewControllerAnimated(true)
     }
     

@@ -30,7 +30,7 @@ class ConfigureScanModeViewController: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
         let scanModeString = scanModes[indexPath.row]
         cell.textLabel?.text = scanModeString
-        if let scanMode = ScanMode(scanModeString) where scanMode == ConfigStore.getScanMode() {
+        if let scanMode = ServiceScanMode(scanModeString) where scanMode == ConfigStore.getScanMode() {
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
         } else {
             cell.accessoryType = UITableViewCellAccessoryType.None
@@ -41,7 +41,7 @@ class ConfigureScanModeViewController: UITableViewController {
     // UITableViewDelegate
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let scanMode = self.scanModes[indexPath.row]
-        ConfigStore.setScanMode(ScanMode(scanMode)!)
+        ConfigStore.setScanMode(ServiceScanMode(scanMode)!)
         self.navigationController?.popViewControllerAnimated(true)
     }
 
