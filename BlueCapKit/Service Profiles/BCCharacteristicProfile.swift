@@ -12,32 +12,32 @@ import CoreBluetooth
 // MARK:  - BCCharacteristicProfile -
 public class BCCharacteristicProfile {
     
-    public let uuid: CBUUID
+    public let UUID: CBUUID
     public let name: String
     public let permissions: CBAttributePermissions
     public let properties: CBCharacteristicProperties
     public let initialValue: NSData?
 
-    internal var afterDiscoveredPromise : StreamPromise<BCCharacteristic>!
+    internal var afterDiscoveredPromise: StreamPromise<BCCharacteristic>!
 
-    public var stringValues : [String] {
+    public var stringValues: [String] {
         return []
     }
     
-    public init(uuid: String,
+    public init(UUID: String,
                 name: String,
                 permissions: CBAttributePermissions = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable],
                 properties: CBCharacteristicProperties = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write, CBCharacteristicProperties.Notify],
                 initialValue:NSData? = nil) {
-        self.uuid = CBUUID(string:uuid)
+        self.UUID = CBUUID(string: UUID)
         self.name = name
         self.permissions = permissions
         self.properties = properties
         self.initialValue = initialValue
     }
     
-    public convenience init(uuid:String) {
-        self.init(uuid:uuid, name:"Unknown")
+    public convenience init(UUID:String) {
+        self.init(UUID:UUID, name:"Unknown")
     }
     
     public func afterDiscovered(capacity: Int?) -> FutureStream<BCCharacteristic> {
@@ -48,19 +48,19 @@ public class BCCharacteristicProfile {
         return afterDiscoveredPromise.future
     }
 
-    public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
+    public func propertyEnabled(property: CBCharacteristicProperties) -> Bool {
         return (self.properties.rawValue & property.rawValue) > 0
     }
     
-    public func permissionEnabled(permission:CBAttributePermissions) -> Bool {
+    public func permissionEnabled(permission: CBAttributePermissions) -> Bool {
         return (self.permissions.rawValue & permission.rawValue) > 0
     }
         
-    public func stringValue(data:NSData) -> [String:String]? {
+    public func stringValue(data: NSData) -> [String:String]? {
         return [self.name:data.hexStringValue()]
     }
     
-    public func dataFromStringValue(data:[String:String]) -> NSData? {
+    public func dataFromStringValue(data: [String: String]) -> NSData? {
         return data[self.name].map{$0.dataFromHexString()}
     }
     
@@ -74,11 +74,11 @@ public final class BCRawCharacteristicProfile<DeserializedType where
                                               DeserializedType.RawType: BCDeserializable>: BCCharacteristicProfile {
     
     public init() {
-        super.init(uuid:DeserializedType.uuid,
-            name:DeserializedType.name,
-            permissions:DeserializedType.permissions,
-            properties:DeserializedType.properties,
-            initialValue:DeserializedType.initialValue)
+        super.init(UUID: DeserializedType.UUID,
+            name: DeserializedType.name,
+            permissions: DeserializedType.permissions,
+            properties: DeserializedType.properties,
+            initialValue: DeserializedType.initialValue)
     }
     
     public override var stringValues: [String] {
@@ -86,12 +86,12 @@ public final class BCRawCharacteristicProfile<DeserializedType where
     }
     
     public override func stringValue(data: NSData) -> [String:String]? {
-        let value : DeserializedType? = BCSerDe.deserialize(data)
+        let value: DeserializedType? = BCSerDe.deserialize(data)
         return value.map{$0.stringValue}
     }
     
-    public override func dataFromStringValue(data:Dictionary<String, String>) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{ BCSerDe.serialize($0) }
+    public override func dataFromStringValue(data: Dictionary<String, String>) -> NSData? {
+        return DeserializedType(stringValue: data).flatmap{ BCSerDe.serialize($0) }
     }
     
 }
@@ -104,11 +104,11 @@ public final class BCRawArrayCharacteristicProfile<DeserializedType where
                                                    DeserializedType.RawType: BCDeserializable>: BCCharacteristicProfile {
     
     public init() {
-        super.init(uuid:DeserializedType.uuid,
-                   name:DeserializedType.name,
-                   permissions:DeserializedType.permissions,
-                   properties:DeserializedType.properties,
-                   initialValue:DeserializedType.initialValue)
+        super.init(UUID: DeserializedType.UUID,
+                   name: DeserializedType.name,
+                   permissions: DeserializedType.permissions,
+                   properties: DeserializedType.properties,
+                   initialValue: DeserializedType.initialValue)
     }
     
     public override var stringValues: [String] {
@@ -135,7 +135,7 @@ public final class BCRawPairCharacteristicProfile<DeserializedType where
                                                   DeserializedType.RawType2: BCDeserializable>: BCCharacteristicProfile {
     
     public init() {
-        super.init(uuid:  DeserializedType.uuid,
+        super.init(UUID:  DeserializedType.UUID,
             name: DeserializedType.name,
             permissions: DeserializedType.permissions,
             properties: DeserializedType.properties,
@@ -167,7 +167,7 @@ public final class BCRawArrayPairCharacteristicProfile<DeserializedType where
                                                        DeserializedType.RawType2: BCDeserializable>: BCCharacteristicProfile {
     
     public init() {
-        super.init(uuid: DeserializedType.uuid,
+        super.init(UUID: DeserializedType.UUID,
             name: DeserializedType.name,
             permissions: DeserializedType.permissions,
             properties: DeserializedType.properties,
@@ -195,17 +195,17 @@ public final class BCStringCharacteristicProfile<T: BCCharacteristicConfigurable
     public var encoding : NSStringEncoding
     
     public convenience init(encoding: NSStringEncoding = NSUTF8StringEncoding) {
-        self.init(uuid: T.uuid, name: T.name, permissions: T.permissions, properties: T.properties, initialValue: T.initialValue, encoding: encoding)
+        self.init(UUID: T.UUID, name: T.name, permissions: T.permissions, properties: T.properties, initialValue: T.initialValue, encoding: encoding)
     }
     
-    public init(uuid: String,
+    public init(UUID: String,
                 name: String,
                 permissions: CBAttributePermissions = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable],
                 properties:CBCharacteristicProperties = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write, CBCharacteristicProperties.Notify],
                 initialValue:NSData? = nil,
                 encoding:NSStringEncoding = NSUTF8StringEncoding) {
         self.encoding = encoding
-        super.init(uuid: uuid, name: name, permissions: permissions, properties: properties)
+        super.init(UUID: UUID, name: name, permissions: permissions, properties: properties)
     }
     
     public override func stringValue(data: NSData) -> [String: String]? {

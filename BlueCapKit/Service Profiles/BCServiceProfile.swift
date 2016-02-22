@@ -14,7 +14,7 @@ public class BCServiceProfile {
     
     internal var characteristicProfiles = [CBUUID: BCCharacteristicProfile]()
 
-    public let uuid: CBUUID
+    public let UUID: CBUUID
     public let name: String
     public let tag: String
     
@@ -26,19 +26,19 @@ public class BCServiceProfile {
         return self.characteristicProfiles
     }
     
-    public init(uuid: String, name: String, tag: String = "Miscellaneous") {
+    public init(UUID: String, name: String, tag: String = "Miscellaneous") {
         self.name = name
-        self.uuid = CBUUID(string:uuid)
+        self.UUID = CBUUID(string:UUID)
         self.tag = tag
     }
     
-    public convenience init(uuid:String) {
-        self.init(uuid:uuid, name:"Unknown")
+    public convenience init(UUID:String) {
+        self.init(UUID:UUID, name:"Unknown")
     }
 
     public func addCharacteristic(characteristicProfile: BCCharacteristicProfile) {
-        BCLogger.debug("name=\(characteristicProfile.name), uuid=\(characteristicProfile.uuid.UUIDString)")
-        self.characteristicProfiles[characteristicProfile.uuid] = characteristicProfile
+        BCLogger.debug("name=\(characteristicProfile.name), uuid=\(characteristicProfile.UUID.UUIDString)")
+        self.characteristicProfiles[characteristicProfile.UUID] = characteristicProfile
     }
     
 }
@@ -46,7 +46,7 @@ public class BCServiceProfile {
 public class BCConfiguredServiceProfile<Config: BCServiceConfigurable>: BCServiceProfile {
     
     public init() {
-        super.init(uuid: Config.uuid, name: Config.name, tag: Config.tag)
+        super.init(UUID: Config.UUID, name: Config.name, tag: Config.tag)
     }
     
 }

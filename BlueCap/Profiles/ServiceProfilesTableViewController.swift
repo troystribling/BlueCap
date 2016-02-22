@@ -37,7 +37,7 @@ class ServiceProfilesTableViewController : UITableViewController {
     
     func sortServiceProfiles() {
         for (_, profile) in Singletons.profileManager.services {
-            if !self.excludedServices.contains(profile.uuid) {
+            if !self.excludedServices.contains(profile.UUID) {
                 if let profiles = self.serviceProfiles[profile.tag] {
                     self.serviceProfiles[profile.tag] = profiles + [profile]
                 } else {
@@ -72,7 +72,7 @@ class ServiceProfilesTableViewController : UITableViewController {
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let profile = profiles[indexPath.row]
             cell.nameLabel.text = profile.name
-            cell.uuidLabel.text = profile.uuid.UUIDString
+            cell.uuidLabel.text = profile.UUID.UUIDString
         } else {
             cell.nameLabel.text = "Unknown"
             cell.uuidLabel.text = "Unknown"

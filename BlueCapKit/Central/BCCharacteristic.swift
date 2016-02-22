@@ -101,7 +101,7 @@ public class BCCharacteristic {
         }
     }
     
-    public var uuid: CBUUID {
+    public var UUID: CBUUID {
         return self.cbCharacteristic.UUID
     }
     
@@ -156,18 +156,18 @@ public class BCCharacteristic {
     public init(cbCharacteristic: CBCharacteristic, service: BCService) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
-        if let serviceProfile = BCProfileManager.sharedInstance.services[service.uuid] {
-            BCLogger.debug("creating characteristic for service profile: \(service.name):\(service.uuid)")
+        if let serviceProfile = BCProfileManager.sharedInstance.services[service.UUID] {
+            BCLogger.debug("creating characteristic for service profile: \(service.name):\(service.UUID)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
-                BCLogger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.uuid.UUIDString)")
+                BCLogger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.UUID.UUIDString)")
                 self.profile = characteristicProfile
             } else {
-                BCLogger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
-                self.profile = BCCharacteristicProfile(uuid: service.uuid.UUIDString)
+                BCLogger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.UUID.UUIDString)")
+                self.profile = BCCharacteristicProfile(UUID: service.UUID.UUIDString)
             }
         } else {
-            BCLogger.debug("no service profile found. Creating characteristic with UUID: \(service.uuid.UUIDString)")
-            self.profile = BCCharacteristicProfile(uuid: service.uuid.UUIDString)
+            BCLogger.debug("no service profile found. Creating characteristic with UUID: \(service.UUID.UUIDString)")
+            self.profile = BCCharacteristicProfile(UUID: service.UUID.UUIDString)
         }
     }
 
@@ -327,10 +327,10 @@ public class BCCharacteristic {
             return
         }
         if let error = error {
-            BCLogger.debug("failed uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("failed uuid=\(self.UUID.UUIDString), name=\(self.name)")
             notificationStateChangedPromise.failure(error)
         } else {
-            BCLogger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("success:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
             notificationStateChangedPromise.success(self)
         }
     }
@@ -348,10 +348,10 @@ public class BCCharacteristic {
             return
         }
         if let error = error {
-            BCLogger.debug("failed:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("failed:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
             promise.failure(error)
         } else {
-            BCLogger.debug("success:  uuid=\(self.uuid.UUIDString), name=\(self.name)")
+            BCLogger.debug("success:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
             promise.success(self)
         }
         self.writing = false
@@ -426,7 +426,7 @@ public class BCCharacteristic {
         guard let parameters = self.writeParameters.first where self.writing == false else {
             return
         }
-        BCLogger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.uuid.UUIDString)")
+        BCLogger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.UUID.UUIDString)")
         self.writeParameters.removeAtIndex(0)
         self.writing = true
         self.writeValue(parameters.value, type: parameters.type)
@@ -438,7 +438,7 @@ public class BCCharacteristic {
         guard let parameters = self.readParameters.first where self.reading == false else {
             return
         }
-        BCLogger.debug("read characteristic \(self.uuid.UUIDString)")
+        BCLogger.debug("read characteristic \(self.UUID.UUIDString)")
         self.readParameters.removeAtIndex(0)
         self.readValueForCharacteristic()
         self.reading = true

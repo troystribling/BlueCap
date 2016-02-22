@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: Byte Swap
 func toHostByteOrder<T>(value:T) -> T {
     return value;
 }
@@ -32,6 +33,7 @@ func reverseBytes<T>(value:T) -> T {
     return result
 }
 
+// MARK: SerDe Protocols
 public protocol BCDeserializable {
     static var size : Int {get}
     static func deserialize(data:NSData) -> Self?
@@ -49,7 +51,7 @@ public protocol BCSerializable {
 
 public protocol BCCharacteristicConfigurable {
     static var name          : String {get}
-    static var uuid          : String {get}
+    static var UUID          : String {get}
     static var permissions   : CBAttributePermissions {get}
     static var properties    : CBCharacteristicProperties {get}
     static var initialValue  : NSData? {get}
@@ -57,7 +59,7 @@ public protocol BCCharacteristicConfigurable {
 
 public protocol BCServiceConfigurable {
     static var name  : String {get}
-    static var uuid  : String {get}
+    static var UUID  : String {get}
     static var tag   : String {get}
 }
 
@@ -69,14 +71,14 @@ public protocol BCStringDeserializable {
 
 public protocol BCRawDeserializable {
     typealias RawType
-    static var uuid         : String {get}
+    static var UUID         : String {get}
     var rawValue            : RawType {get}
     init?(rawValue:RawType)
 }
 
 public protocol BCRawArrayDeserializable {
     typealias RawType
-    static var uuid     : String {get}
+    static var UUID     : String {get}
     static var size     : Int {get}
     var rawValue        : [RawType] {get}
     init?(rawValue:[RawType])
@@ -85,7 +87,7 @@ public protocol BCRawArrayDeserializable {
 public protocol BCRawPairDeserializable {
     typealias RawType1
     typealias RawType2
-    static var uuid     : String {get}
+    static var UUID     : String {get}
     var rawValue1       : RawType1 {get}
     var rawValue2       : RawType2 {get}
     init?(rawValue1:RawType1, rawValue2:RawType2)
@@ -94,7 +96,7 @@ public protocol BCRawPairDeserializable {
 public protocol BCRawArrayPairDeserializable {
     typealias RawType1
     typealias RawType2
-    static var uuid     : String {get}
+    static var UUID     : String {get}
     static var size1    : Int {get}
     static var size2    : Int {get}
     var rawValue1       : [RawType1] {get}
@@ -102,6 +104,7 @@ public protocol BCRawArrayPairDeserializable {
     init?(rawValue1:[RawType1], rawValue2:[RawType2])
 }
 
+// MARK: BCSerDe
 public struct BCSerDe {
     
     public static func serialize(value: String, encoding: NSStringEncoding = NSUTF8StringEncoding) -> NSData? {

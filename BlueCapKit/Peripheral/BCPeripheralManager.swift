@@ -231,9 +231,9 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         self.addConfiguredCharacteristics(service.characteristics)
         self.afterSeriviceAddPromise = Promise<Void>()
         if !self.isAdvertising {
-            self.configuredServices[service.uuid] = service
+            self.configuredServices[service.UUID] = service
             self.cbPeripheralManager.addService(service.cbMutableService)
-            BCLogger.debug("service name=\(service.name), uuid=\(service.uuid)")
+            BCLogger.debug("service name=\(service.name), uuid=\(service.UUID)")
         } else {
             self.afterSeriviceAddPromise.failure(BCError.peripheralManagerIsAdvertising)
         }
@@ -253,7 +253,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     public func removeService(service: BCMutableService) -> Future<Void> {
         let promise = Promise<Void>()
         if !self.isAdvertising {
-            BCLogger.debug("removing service \(service.uuid.UUIDString)")
+            BCLogger.debug("removing service \(service.UUID.UUIDString)")
             self.removeServiceAndCharacteristics(service)
             promise.success()
         } else {
@@ -301,12 +301,12 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
            let cbAdvertisements = dict[CBPeripheralManagerRestoredStateAdvertisementDataKey] as? [String: AnyObject] {
             let services = cbServices.map { cbService -> BCMutableService in
                 let service = BCMutableService(cbMutableService: cbService)
-                self.configuredServices[service.uuid] = service
+                self.configuredServices[service.UUID] = service
                 var characteristics = [BCMutableCharacteristic]()
                 if let cbCharacteristics = cbService.characteristics as? [CBMutableCharacteristic] {
                     characteristics = cbCharacteristics.map { bcChracteristic in
                         let characteristic = BCMutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
-                        self.configuredCharcteristics[characteristic.uuid] = characteristic
+                        self.configuredCharcteristics[characteristic.UUID] = characteristic
                         return characteristic
                     }
                 }
@@ -371,7 +371,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     
     public func didReceiveWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
-            BCLogger.debug("characteristic write request received for \(characteristic.uuid.UUIDString)")
+            BCLogger.debug("characteristic write request received for \(characteristic.UUID.UUIDString)")
             if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic.value = request.value
             } else {
@@ -483,7 +483,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
     private func removeServiceAndCharacteristics(service: BCMutableService) {
         let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
             for bcCharacteristic in service.characteristics {
-                if uuid == bcCharacteristic.uuid {
+                if uuid == bcCharacteristic.UUID {
                     return true
                 }
             }
@@ -492,7 +492,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         for cbCharacteristic in removedCharacteristics {
             self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
         }
-        self.configuredServices.removeValueForKey(service.uuid)
+        self.configuredServices.removeValueForKey(service.UUID)
         self.cbPeripheralManager.removeService(service.cbMutableService)
     }
     

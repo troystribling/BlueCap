@@ -34,7 +34,7 @@ public class BCService {
         }
     }
     
-    public var uuid: CBUUID {
+    public var UUID: CBUUID {
         return self.cbService.UUID
     }
     
@@ -55,12 +55,12 @@ public class BCService {
 
     // MARK: Discover Characteristics
     public func discoverAllCharacteristics() -> Future<BCService> {
-        BCLogger.debug("uuid=\(self.uuid.UUIDString), name=\(self.name)")
+        BCLogger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
         return self.discoverIfConnected(nil)
     }
     
     public func discoverCharacteristics(characteristics: [CBUUID]) -> Future<BCService> {
-        BCLogger.debug("uuid=\(self.uuid.UUIDString), name=\(self.name)")
+        BCLogger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
         return self.discoverIfConnected(characteristics)
     }
     
@@ -77,10 +77,10 @@ public class BCService {
             self.discoveredCharacteristics.removeAll()
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: self)
-                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-                BCLogger.debug("uuid=\(self.uuid.UUIDString), name=\(self.name)")
+                self.discoveredCharacteristics[bcCharacteristic.UUID] = bcCharacteristic
+                BCLogger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
                 bcCharacteristic.afterDiscoveredPromise?.success(bcCharacteristic)
-                BCLogger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+                BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             }
             BCLogger.debug("discover success")
             self.characteristicsDiscoveredPromise.success(self)

@@ -29,14 +29,14 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     static let ioQueue = Queue("us.gnos.blueCap.central-manager.io")
 
     // MARK: Properties
-    private var _afterPowerOnPromise                    = Promise<Void>()
-    private var _afterPowerOffPromise                   = Promise<Void>()
-    private var _afterStateRestoredPromise              = Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
+    private var _afterPowerOnPromise = Promise<Void>()
+    private var _afterPowerOffPromise = Promise<Void>()
+    private var _afterStateRestoredPromise = Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
 
-    private var _isScanning                             = false
+    private var _isScanning = false
 
-    internal var _afterPeripheralDiscoveredPromise      = StreamPromise<BCPeripheral>()
-    internal var discoveredPeripherals                  = BCSerialIODictionary<NSUUID, BCPeripheral>(BCCentralManager.ioQueue)
+    internal var _afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
+    internal var discoveredPeripherals = BCSerialIODictionary<NSUUID, BCPeripheral>(BCCentralManager.ioQueue)
 
     public var cbCentralManager: CBCentralManagerInjectable!
     public let centralQueue: Queue
@@ -85,7 +85,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         return self.cbCentralManager.state == CBCentralManagerState.PoweredOff
     }
 
-    public var peripherals : [BCPeripheral] {
+    public var peripherals: [BCPeripheral] {
         return Array(self.discoveredPeripherals.values).sort() {(p1: BCPeripheral, p2: BCPeripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
             case .OrderedSame:
@@ -166,7 +166,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Scan
-    public func startScanning(capacity:Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<BCPeripheral> {
+    public func startScanning(capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<BCPeripheral> {
         return self.startScanningForServiceUUIDs(nil, capacity: capacity)
     }
     
@@ -266,7 +266,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     
     public func didDiscoverPeripheral(peripheral: CBPeripheralInjectable, advertisementData: [String:AnyObject], RSSI: NSNumber) {
         if self.discoveredPeripherals[peripheral.identifier] == nil {
-            let bcPeripheral = BCPeripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, rssi: RSSI.integerValue)
+            let bcPeripheral = BCPeripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.integerValue)
             BCLogger.debug("peripheral name \(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral.identifier] = bcPeripheral
             self.afterPeripheralDiscoveredPromise.success(bcPeripheral)
@@ -292,11 +292,11 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
                     if let cbServices = cbPeripheral.services {
                         for cbService in cbServices {
                             let service = BCService(cbService: cbService, peripheral: peripheral)
-                            peripheral.discoveredServices[service.uuid] = service
+                            peripheral.discoveredServices[service.UUID] = service
                             if let cbCharacteristics = cbService.characteristics {
                                 for cbCharacteristic in cbCharacteristics {
                                     let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
-                                    peripheral.discoveredCharacteristics[characteristic.uuid] = characteristic
+                                    peripheral.discoveredCharacteristics[characteristic.UUID] = characteristic
                                 }
                             }
                         }

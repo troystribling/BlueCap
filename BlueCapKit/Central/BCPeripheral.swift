@@ -121,6 +121,8 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     private var _connectionPromise: StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>?
 
+    private var _RSSI: Int = 0
+
     private var _timeoutCount: UInt = 0
     private var _disconnectCount: UInt = 0
     
@@ -142,15 +144,23 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     
     public let cbPeripheral: CBPeripheralInjectable
     public let advertisements: BCPeripheralAdvertisements?
-    public let rssi: Int
 
     // MARK: Serial Properties
+    public var RSSI: Int {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._RSSI }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._RSSI = newValue }
+        }
+    }
+
     private var servicesDiscoveredPromise: Promise<BCPeripheral>? {
         get {
             return BCPeripheral.ioQueue.sync { return self._servicesDiscoveredPromise }
         }
         set {
-            self._servicesDiscoveredPromise = newValue
+            BCPeripheral.ioQueue.sync { self._servicesDiscoveredPromise = newValue }
         }
     }
 
@@ -264,21 +274,21 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Initializers
-    public init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String:AnyObject], rssi: Int) {
+    public init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String:AnyObject], RSSI: Int) {
         self.cbPeripheral = cbPeripheral
         self.advertisements = BCPeripheralAdvertisements(advertisements: advertisements)
         self.centralManager = centralManager
-        self.rssi = rssi
         super.init()
+        self.RSSI = RSSI
         self.cbPeripheral.delegate = self
     }
 
     public init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
-        self.rssi = 0
         self.advertisements = nil
         super.init()
+        self.RSSI = 0
         self.cbPeripheral.delegate = self
     }
 
@@ -473,8 +483,8 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         } else {
             for service in discoveredServices {
                 let bcService = BCService(cbService:service, peripheral:self)
-                self.discoveredServices[bcService.uuid] = bcService
-                BCLogger.debug("uuid=\(bcService.uuid.UUIDString), name=\(bcService.name)")
+                self.discoveredServices[bcService.UUID] = bcService
+                BCLogger.debug("uuid=\(bcService.UUID.UUIDString), name=\(bcService.name)")
             }
             self.servicesDiscoveredPromise?.success(self)
         }
@@ -483,7 +493,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     public func didUpdateNotificationStateForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
-            BCLogger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             bcCharacteristic.didUpdateNotificationState(error)
         }
     }
@@ -491,7 +501,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     public func didUpdateValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
-            BCLogger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             bcCharacteristic.didUpdate(error)
         }
     }
@@ -499,7 +509,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     public func didWriteValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
-            BCLogger.debug("uuid=\(bcCharacteristic.uuid.UUIDString), name=\(bcCharacteristic.name)")
+            BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             bcCharacteristic.didWrite(error)
         }
     }
@@ -581,11 +591,13 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     private func didReadRSSI(RSSI: NSNumber, error: NSError?) {
-        BCLogger.debug()
         if let error = error {
+            BCLogger.debug("RSSI read failed: \(error.localizedDescription)")
             self.readRSSIPromise?.failure(error)
             self.pollRSSIPromise?.failure(error)
         } else {
+            BCLogger.debug("RSSI = \(RSSI.stringValue), peripheral name = \(self.name), state = \(self.state.rawValue)")
+            self.RSSI = RSSI.integerValue
             self.readRSSIPromise?.success(RSSI.integerValue)
             self.pollRSSIPromise?.success(RSSI.integerValue)
         }

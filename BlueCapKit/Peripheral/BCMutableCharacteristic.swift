@@ -55,8 +55,8 @@ public class BCMutableCharacteristic {
         }
     }
 
-    public var uuid: CBUUID {
-        return self.profile.uuid
+    public var UUID: CBUUID {
+        return self.profile.UUID
     }
     
     public var name: String {
@@ -112,7 +112,7 @@ public class BCMutableCharacteristic {
 
     // MARK: Initializers
     public convenience init(profile: BCCharacteristicProfile) {
-        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
+        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.UUID, properties: profile.properties, value: nil, permissions: profile.permissions)
         self.init(profile: profile, cbMutableCharacteristic:  cbMutableChracteristic)
     }
 
@@ -123,19 +123,19 @@ public class BCMutableCharacteristic {
     }
 
     internal init(cbMutableCharacteristic: CBMutableCharacteristic) {
-        self.profile = BCCharacteristicProfile(uuid: cbMutableCharacteristic.UUID.UUIDString)
+        self.profile = BCCharacteristicProfile(UUID: cbMutableCharacteristic.UUID.UUIDString)
         self.value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
     }
 
-    public init(uuid: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: NSData?) {
-        self.profile = BCCharacteristicProfile(uuid: uuid)
+    public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: NSData?) {
+        self.profile = BCCharacteristicProfile(UUID: UUID)
         self.value = value
-        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
+        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.UUID, properties:properties, value:nil, permissions:permissions)
     }
 
-    public convenience init(uuid: String) {
-        self.init(profile: BCCharacteristicProfile(uuid: uuid))
+    public convenience init(UUID: String) {
+        self.init(profile: BCCharacteristicProfile(UUID: UUID))
     }
 
     public class func withProfiles(profiles: [BCCharacteristicProfile]) -> [BCMutableCharacteristic] {

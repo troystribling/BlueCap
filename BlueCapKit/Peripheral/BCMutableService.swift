@@ -22,8 +22,8 @@ public class BCMutableService : NSObject {
 
     public let cbMutableService: CBMutableService
 
-    public var uuid: CBUUID {
-        return self.profile.uuid
+    public var UUID: CBUUID {
+        return self.profile.UUID
     }
     
     public var name: String {
@@ -46,12 +46,12 @@ public class BCMutableService : NSObject {
     
     public init(profile: BCServiceProfile) {
         self.profile = profile
-        self.cbMutableService = CBMutableService(type: self.profile.uuid, primary: true)
+        self.cbMutableService = CBMutableService(type: self.profile.UUID, primary: true)
         super.init()
     }
 
-    public convenience init(uuid: String) {
-        self.init(profile: BCServiceProfile(uuid: uuid))
+    public convenience init(UUID: String) {
+        self.init(profile: BCServiceProfile(UUID: UUID))
     }
 
     internal init(cbMutableService: CBMutableService) {
@@ -60,7 +60,7 @@ public class BCMutableService : NSObject {
         if let profile = BCProfileManager.sharedInstance.services[uuid] {
             self.profile = profile
         } else {
-            self.profile = BCServiceProfile(uuid: uuid.UUIDString)
+            self.profile = BCServiceProfile(UUID: uuid.UUIDString)
         }
         super.init()
     }

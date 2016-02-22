@@ -89,7 +89,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCell, forIndexPath:indexPath) as! NameUUIDCell
         let service = Singletons.peripheralManager.services[indexPath.row]
         cell.nameLabel.text = service.name
-        cell.uuidLabel.text = service.uuid.UUIDString
+        cell.uuidLabel.text = service.UUID.UUIDString
         return cell
     }
     
@@ -107,8 +107,8 @@ class PeripheralManagerServicesViewController : UITableViewController {
                 let service = Singletons.peripheralManager.services[indexPath.row]
                 let future = Singletons.peripheralManager.removeService(service)
                 future.onSuccess {
-                    PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.uuid)
-                    PeripheralStore.removePeripheralService(peripheral, service: service.uuid)
+                    PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.UUID)
+                    PeripheralStore.removePeripheralService(peripheral, service: service.UUID)
                     self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
                 }
                 future.onFailure {error in
