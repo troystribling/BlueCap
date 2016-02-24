@@ -39,7 +39,7 @@ class PeripheralViewController : UITableViewController {
         self.navigationItem.title = self.peripheral.name
         self.peripehealConnected = (self.peripheral.state == .Connected)
         self.rssiFuture = self.peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
-        self.rssiLabel.text = "\(self.peripheral.rssi)"
+        self.rssiLabel.text = "\(self.peripheral.RSSI)"
         self.rssiFuture?.onSuccess { [unowned self] rssi in
             self.rssiLabel.text = "\(rssi)"
         }

@@ -31,15 +31,15 @@ class PeripheralsViewController : UITableViewController {
     }
 
     struct MainStoryboard {
-        static let peripheralCell   = "PeripheralCell"
-        static let peripheralSegue  = "Peripheral"
+        static let peripheralCell = "PeripheralCell"
+        static let peripheralSegue = "Peripheral"
     }
     
-    required init?(coder aDecoder:NSCoder) {
-        super.init(coder:aDecoder)
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
-        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem:.Stop, target:self, action:"toggleScan:")
-        self.startScanBarButtonItem = UIBarButtonItem(title:"Scan", style:UIBarButtonItemStyle.Plain, target:self, action:"toggleScan:")
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop, target: self, action: "toggleScan:")
+        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.Plain, target: self, action: "toggleScan:")
         self.styleUIBarButton(self.startScanBarButtonItem)
     }
     
@@ -155,14 +155,12 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func connect(peripheral: BCPeripheral) {
-        let future = peripheral.connect(10, timeoutRetries:ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
-        future.onSuccess {(peripheral, connectionEvent) in
+        let future = peripheral.connect(10, timeoutRetries: ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 BCLogger.debug("Connected")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
-                self.rssiPollingFutures[peripheral.identifier] =
-                    (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
                 self.updateWhenActive()
             case .Timeout:
                 BCLogger.debug("Timeout: '\(peripheral.name)'")
@@ -174,30 +172,26 @@ class PeripheralsViewController : UITableViewController {
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.reconnect()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
-                peripheral.stopPollingRSSI()
                 self.updateWhenActive()
             case .ForceDisconnect:
                 BCLogger.debug("ForcedDisconnect")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
-                peripheral.stopPollingRSSI()
                 self.updateWhenActive()
             case .Failed:
                 BCLogger.debug("Failed")
                 Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
             case .GiveUp:
+                BCLogger.debug("GiveUp: '\(peripheral.name)'")
                 peripheral.stopPollingRSSI()
                 self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
                 self.peripheralConnectionStatus.removeValueForKey(peripheral.identifier)
                 self.startScan()
-                BCLogger.debug("GiveUp: '\(peripheral.name)'")
                 peripheral.terminate()
                 self.updateWhenActive()
             }
         }
-        future.onFailure {error in
+        future.onFailure { error in
             self.updateWhenActive()
         }
     }
@@ -215,7 +209,7 @@ class PeripheralsViewController : UITableViewController {
                 Singletons.centralManager.stopScanning()
             }
         }
-        let afterTimeout = { (error:NSError) -> Void in
+        let afterTimeout = { (error: NSError) -> Void in
             if error.domain == BCError.domain && error.code == BCPeripheralErrorCode.DiscoveryTimeout.rawValue {
                 BCLogger.debug("timeoutScan: timing out")
                 Singletons.timedScannerator.stopScanning()
@@ -226,7 +220,7 @@ class PeripheralsViewController : UITableViewController {
         // Promiscuous Scan Enabled
         var future: FutureStream<BCPeripheral>
         switch scanMode {
-        case "Promiscuous" :
+        case .Promiscuous:
             // Promiscuous Scan with Timeout Enabled
             if ConfigStore.getScanTimeoutEnabled() {
                 future = Singletons.timedScannerator.startScanning(Double(ConfigStore.getScanTimeout()), capacity: 10)
@@ -236,7 +230,7 @@ class PeripheralsViewController : UITableViewController {
             }
             future.onSuccess(afterPeripheralDiscovered)
             future.onFailure(afterTimeout)
-        case "Service" :
+        case .Service:
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             if scannedServices.isEmpty {
                 self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
@@ -250,8 +244,6 @@ class PeripheralsViewController : UITableViewController {
                 future.onSuccess(afterPeripheralDiscovered)
                 future.onFailure(afterTimeout)
             }
-        default:
-            BCLogger.debug("Scan Mode :'\(scanMode)' invalid")
         }
     }
 
@@ -276,13 +268,13 @@ class PeripheralsViewController : UITableViewController {
         } else {
             cell.nameLabel.textColor = UIColor.lightGrayColor()
             cell.stateLabel.text = "Disconnected"
-            cell.rssiLabel.text = "NA"
             cell.stateLabel.textColor = UIColor.lightGrayColor()
         }
+        cell.rssiLabel.text = "\(peripheral.RSSI)"
         if let (future, cellUpdate) = self.rssiPollingFutures[peripheral.identifier] where cellUpdate == false {
             self.rssiPollingFutures[peripheral.identifier] = (future, true)
             future.onSuccess { [weak cell] rssi in
-                cell?.rssiLabel.text = "\(rssi)"
+                Queue.main.async { cell?.rssiLabel.text = "\(rssi)" }
             }
         }
         return cell

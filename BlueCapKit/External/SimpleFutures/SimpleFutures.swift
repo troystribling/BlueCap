@@ -145,7 +145,7 @@ public func forcomp<T,U,V,W>(f: T?, g: U?, h: V?, filter: (T,U,V) -> Bool, yield
 // MARK: - Try -
 public struct TryError {
     public static let domain = "Wrappers"
-    public static let filterFailed = NSError(domain:domain, code:1, userInfo:[NSLocalizedDescriptionKey:"Filter failed"])
+    public static let filterFailed = NSError(domain: domain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Filter failed"])
 }
 
 public enum Try<T> {
@@ -157,7 +157,7 @@ public enum Try<T> {
         self = .Success(value)
     }
     
-    public init(_ error:NSError) {
+    public init(_ error: NSError) {
         self = .Failure(error)
     }
     
@@ -444,8 +444,8 @@ enum SimpleFuturesErrorCodes: Int {
 
 public struct SimpleFuturesError {
     static let domain               = "SimpleFutures"
-    static let futureCompleted      = NSError(domain: domain, code: SimpleFuturesErrorCodes.FutureCompleted.rawValue, userInfo: [NSLocalizedDescriptionKey:"Future has been completed"])
-    static let futureNotCompleted   = NSError(domain: domain, code: SimpleFuturesErrorCodes.FutureNotCompleted.rawValue, userInfo: [NSLocalizedDescriptionKey:"Future has not been completed"])
+    static let futureCompleted      = NSError(domain: domain, code: SimpleFuturesErrorCodes.FutureCompleted.rawValue, userInfo: [NSLocalizedDescriptionKey: "Future has been completed"])
+    static let futureNotCompleted   = NSError(domain: domain, code: SimpleFuturesErrorCodes.FutureNotCompleted.rawValue, userInfo: [NSLocalizedDescriptionKey: "Future has not been completed"])
 }
 
 public struct SimpleFuturesException {
@@ -532,11 +532,11 @@ public class Future<T> {
         }
     }
 
-    internal func success(value:T) {
+    internal func success(value: T) {
         self.complete(Try(value))
     }
 
-    internal func failure(error:NSError) {
+    internal func failure(error: NSError) {
         self.complete(Try<T>(error))
     }
 
@@ -885,9 +885,9 @@ public func forcomp<T,U, V, W>(executionContext: ExecutionContext, f: Future<T>,
 // MARK: - StreamPromise -
 public class StreamPromise<T> {
     
-    public let future : FutureStream<T>
+    public let future: FutureStream<T>
     
-    public init(capacity:Int?=nil) {
+    public init(capacity: Int?=nil) {
         self.future = FutureStream<T>(capacity: capacity)
     }
     
@@ -924,20 +924,20 @@ public class StreamPromise<T> {
 // MARK: - FutureStream -
 public class FutureStream<T> {
     
-    private var futures         = [Future<T>]()
-    private typealias InFuture  = Future<T> -> Void
+    private var futures = [Future<T>]()
+    private typealias InFuture = Future<T> -> Void
 
-    private var saveCompletes   = [InFuture]()
-    private let futureQueue     = Queue.simpleFutureStreams
+    private var saveCompletes = [InFuture]()
+    private let futureQueue = Queue.simpleFutureStreams
     private var capacity: Int?
     
     internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
     
-    public var count : Int {
+    public var count: Int {
         return futures.count
     }
     
-    public init(capacity:Int?=nil) {
+    public init(capacity: Int?=nil) {
         self.capacity = capacity
     }
 
@@ -1022,7 +1022,7 @@ public class FutureStream<T> {
         }
     }
     
-    public func onFailure(failure :NSError -> Void) {
+    public func onFailure(failure: NSError -> Void) {
         self.onFailure(self.defaultExecutionContext, failure: failure)
     }
     
@@ -1080,11 +1080,11 @@ public class FutureStream<T> {
         return future
     }
     
-    public func recover(recovery :NSError -> Try<T>) -> FutureStream<T> {
+    public func recover(recovery: NSError -> Try<T>) -> FutureStream<T> {
         return self.recover(self.defaultExecutionContext, recovery: recovery)
     }
     
-    public func recover(executionContext: ExecutionContext, recovery :NSError -> Try<T>) -> FutureStream<T> {
+    public func recover(executionContext: ExecutionContext, recovery: NSError -> Try<T>) -> FutureStream<T> {
         let future = FutureStream<T>(capacity:self.capacity)
         self.onComplete(executionContext) { result in
             future.complete(result.recoverWith(recovery))

@@ -49,7 +49,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
 
         self.setUI()
         
-        self.uuidLabel.text = self.characteristic.uuid.UUIDString
+        self.uuidLabel.text = self.characteristic.UUID.UUIDString
         self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
         
         self.propertyBroadcastLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Broadcast))

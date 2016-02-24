@@ -94,7 +94,7 @@ class PeripheralServicesViewController : UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCell, forIndexPath: indexPath) as! NameUUIDCell
         let service = peripheral.services[indexPath.row]
         cell.nameLabel.text = service.name
-        cell.uuidLabel.text = service.uuid.UUIDString
+        cell.uuidLabel.text = service.UUID.UUIDString
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripehealConnected {
                 cell.nameLabel.textColor = UIColor.blackColor()

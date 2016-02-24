@@ -63,7 +63,7 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
         if let serviceProfile = self.serviceProfile {
             let characteristicProfile = serviceProfile.characteristics[indexPath.row]
             cell.nameLabel.text = characteristicProfile.name
-            cell.uuidLabel.text = characteristicProfile.uuid.UUIDString
+            cell.uuidLabel.text = characteristicProfile.UUID.UUIDString
         }
         return cell
     }

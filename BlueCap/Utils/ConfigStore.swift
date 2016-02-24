@@ -20,7 +20,7 @@ struct Defaults {
     static let characteristicReadWriteTimeout: UInt = 10
     static let maximumReconnections: UInt = 5
     static let maximumPeripheralsConnected: Int = 20
-    static let maximumPeripheralsDiscovered: Int = 100
+    static let maximumPeripheralsDiscovered: Int = 20
     static let peripheralSortOrder: PeripheralSortOrder = .DiscoveryDate
 }
 
@@ -101,76 +101,77 @@ enum PeripheralSortOrder: Int {
 // MARK: - ConfigStore -
 class ConfigStore {
   
-    // scan mode
-    class func getScanMode() -> String {
-        if let scanMode = NSUserDefaults.standardUserDefaults().stringForKey("scanMode") {
-            return scanMode
+    // MARK: Scan Mode
+    class func getScanMode() -> ServiceScanMode {
+        let rawValue = NSUserDefaults.standardUserDefaults().integerForKey("scanMode")
+        if let serviceScanMode = ServiceScanMode(rawValue) {
+            return serviceScanMode
         } else {
-            return "Promiscuous"
+            return Defaults.serviceScanMode
         }
     }
     
-    class func setScanMode(scanMode:String) {
-        NSUserDefaults.standardUserDefaults().setObject(scanMode, forKey:"scanMode")
+    class func setScanMode(scanMode: ServiceScanMode) {
+        NSUserDefaults.standardUserDefaults().setInteger(scanMode.rawValue, forKey:"scanMode")
     }
     
-    // scan timeout
+    // MARK: Scan Timeout
     class func getScanTimeoutEnabled() -> Bool {
         return NSUserDefaults.standardUserDefaults().boolForKey("scanTimeoutEnabled")
     }
     
-    class func setScanTimeoutEnabled(timeoutEnabled:Bool) {
+    class func setScanTimeoutEnabled(timeoutEnabled: Bool) {
         NSUserDefaults.standardUserDefaults().setBool(timeoutEnabled, forKey:"scanTimeoutEnabled")
     }
     
-    class func getScanTimeout() -> Int {
+    class func getScanTimeout() -> UInt {
         let timeout = NSUserDefaults.standardUserDefaults().integerForKey("scanTimeout")
         if timeout == 0 {
-            return 10
+            return Defaults.scanTimeout
         } else {
-            return timeout
+            return UInt(timeout)
         }
     }
     
-    class func setScanTimeout(timeout:Int) {
-        NSUserDefaults.standardUserDefaults().setInteger(timeout, forKey:"scanTimeout")
+    class func setScanTimeout(timeout: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(timeout), forKey:"scanTimeout")
     }
     
-    // peripheral connection timeout
-    class func getPeripheralConnectionTimeout() -> Int {
+    // MARK: Peripheral Connection Timeout
+    class func getPeripheralConnectionTimeout() -> UInt {
         let peripheralConnectionTimeout = NSUserDefaults.standardUserDefaults().integerForKey("peripheralConnectionTimeout")
         if peripheralConnectionTimeout == 0 {
-            return 10
+            return Defaults.peripheralConnectionTimeout
         } else {
-            return peripheralConnectionTimeout
+            return UInt(peripheralConnectionTimeout)
         }
     }
     
-    class func setPeripheralConnectionTimeout(peripheralConnectionTimeout:Int) {
-        NSUserDefaults.standardUserDefaults().setInteger(peripheralConnectionTimeout, forKey:"peripheralConnectionTimeout")
+    class func setPeripheralConnectionTimeout(peripheralConnectionTimeout: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(peripheralConnectionTimeout), forKey:"peripheralConnectionTimeout")
     }
 
-    // characteristic read write timeout
-    class func getCharacteristicReadWriteTimeout() -> Int {
+    // MARK: Characteristic Read Write Timeout
+    class func getCharacteristicReadWriteTimeout() -> UInt {
         let characteristicReadWriteTimeout = NSUserDefaults.standardUserDefaults().integerForKey("characteristicReadWriteTimeout")
         if characteristicReadWriteTimeout == 0 {
-            return 10
+            return Defaults.characteristicReadWriteTimeout
         } else {
-            return characteristicReadWriteTimeout
+            return UInt(characteristicReadWriteTimeout)
         }
     }
     
-    class func setCharacteristicReadWriteTimeout(characteristicReadWriteTimeout:Int) {
-        NSUserDefaults.standardUserDefaults().setInteger(characteristicReadWriteTimeout, forKey:"characteristicReadWriteTimeout")
+    class func setCharacteristicReadWriteTimeout(characteristicReadWriteTimeout: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(characteristicReadWriteTimeout), forKey:"characteristicReadWriteTimeout")
     }
 
-    // maximum reconnections
+    // MARK: Maximum Reconnections
     class func getMaximumReconnections() -> UInt {
-        let maximumReconnetions = NSUserDefaults.standardUserDefaults().integerForKey("maximumReconnections")
-        if maximumReconnetions == 0 {
-            return 5
+        let maximumReconnections = NSUserDefaults.standardUserDefaults().integerForKey("maximumReconnections")
+        if maximumReconnections == 0 {
+            return Defaults.maximumReconnections
         } else {
-            return UInt(maximumReconnetions)
+            return UInt(maximumReconnections)
         }
     }
     
@@ -188,8 +189,8 @@ class ConfigStore {
         }
     }
 
-    class func setMaximumPeripheralsConnected(maximumConnections: UInt) {
-        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumConnections), forKey:"maximumPeripheralsConnected")
+    class func setMaximumPeripheralsConnected(maximumConnections: Int) {
+        NSUserDefaults.standardUserDefaults().setInteger(maximumConnections, forKey:"maximumPeripheralsConnected")
     }
 
     // MARK: Maximum Discovered Peripherals
@@ -202,8 +203,8 @@ class ConfigStore {
         }
     }
 
-    class func setMaximumPeripheralsDiscovered(maximumPeripherals: UInt) {
-        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumPeripherals), forKey:"maximumPeripheralsDiscovered")
+    class func setMaximumPeripheralsDiscovered(maximumPeripherals: Int) {
+        NSUserDefaults.standardUserDefaults().setInteger(maximumPeripherals, forKey:"maximumPeripheralsDiscovered")
     }
 
     // MARK: Peripheral Sort Order
@@ -221,9 +222,9 @@ class ConfigStore {
     }
     
     // MARK: Scanned Services
-    class func getScannedServices() -> [String:CBUUID] {
+    class func getScannedServices() -> [String: CBUUID] {
         if let storedServices = NSUserDefaults.standardUserDefaults().dictionaryForKey("services") {
-            var services = [String:CBUUID]()
+            var services = [String: CBUUID]()
             for (name, uuid) in storedServices {
                 if let uuid = uuid as? String {
                     services[name] = CBUUID(string: uuid)
@@ -243,7 +244,7 @@ class ConfigStore {
         return Array(self.getScannedServices().values)
     }
     
-    class func getScannedServiceUUID(name:String) -> CBUUID? {
+    class func getScannedServiceUUID(name: String) -> CBUUID? {
         let services = self.getScannedServices()
         if let uuid = services[name] {
             return uuid
@@ -252,7 +253,7 @@ class ConfigStore {
         }
     }
     
-    class func setScannedServices(services:[String:CBUUID]) {
+    class func setScannedServices(services:[String: CBUUID]) {
         var storedServices = [String:String]()
         for (name, uuid) in services {
             storedServices[name] = uuid.UUIDString
@@ -260,13 +261,13 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setObject(storedServices, forKey:"services")
     }
     
-    class func addScannedService(name:String, uuid:CBUUID) {
+    class func addScannedService(name :String, uuid: CBUUID) {
         var services = self.getScannedServices()
         services[name] = uuid
         self.setScannedServices(services)
     }
     
-    class func removeScannedService(name:String) {
+    class func removeScannedService(name: String) {
         var beacons = self.getScannedServices()
         beacons.removeValueForKey(name)
         self.setScannedServices(beacons)

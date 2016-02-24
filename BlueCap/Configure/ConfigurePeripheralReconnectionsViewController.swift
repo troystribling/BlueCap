@@ -10,7 +10,7 @@ import UIKit
 
 class ConfigurePeripheralReconnectionsViewController: UIViewController {
 
-    @IBOutlet var maximumReconnectionsTextField    : UITextField!
+    @IBOutlet var maximumReconnectionsTextField: UITextField!
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)

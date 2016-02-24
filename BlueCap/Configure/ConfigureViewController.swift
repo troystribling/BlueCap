@@ -11,22 +11,24 @@ import BlueCapKit
 
 class ConfigureViewController : UITableViewController {
     
-    @IBOutlet var scanModeLabel                     : UILabel!
-    @IBOutlet var servicesLabel                     : UILabel!
-    @IBOutlet var scanTimeoutLabel                  : UILabel!
-    @IBOutlet var scanTimeoutEnabledLabel           : UILabel!
-    @IBOutlet var peripheralReconnectionsLabel      : UILabel!
-    @IBOutlet var peripheralConnectionTimeout       : UILabel!
-    @IBOutlet var characteristicReadWriteTimeout    : UILabel!
-    @IBOutlet var scanTimeoutSwitch                 : UISwitch!
-    @IBOutlet var notifySwitch                      : UISwitch!
-    
-    var scanMode = "None"
-    
+    @IBOutlet var scanModeLabel: UILabel!
+    @IBOutlet var servicesLabel: UILabel!
+    @IBOutlet var scanTimeoutLabel: UILabel!
+    @IBOutlet var scanTimeoutEnabledLabel: UILabel!
+    @IBOutlet var peripheralReconnectionsLabel: UILabel!
+    @IBOutlet var peripheralConnectionTimeout: UILabel!
+    @IBOutlet var characteristicReadWriteTimeout: UILabel!
+    @IBOutlet var maximumPeripheralsConnected: UILabel!
+    @IBOutlet var maximumPeripheralsDiscovered: UILabel!
+    @IBOutlet var peripheralSortOrder: UILabel!
+
+    @IBOutlet var scanTimeoutSwitch: UISwitch!
+    @IBOutlet var notifySwitch: UISwitch!
+
     struct MainStroryboard {
-        static let configureScanServicesSegue   = "ConfigureScanServices"
-        static let configureScanModeSegue       = "ConfigureScanMode"
-        static let configureScanTimeoutSegue    = "ConfigureScanTimeout"
+        static let configureScanServicesSegue = "ConfigureScanServices"
+        static let configureScanModeSegue = "ConfigureScanMode"
+        static let configureScanTimeoutSegue = "ConfigureScanTimeout"
     }
     
     required init?(coder aDecoder:NSCoder) {
@@ -40,12 +42,14 @@ class ConfigureViewController : UITableViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        self.scanMode = ConfigStore.getScanMode()
-        self.scanModeLabel.text = self.scanMode
+        self.scanModeLabel.text = ConfigStore.getScanMode().stringValue
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.peripheralReconnectionsLabel.text = "\(ConfigStore.getMaximumReconnections())"
         self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
         self.characteristicReadWriteTimeout.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
+        self.maximumPeripheralsConnected.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
+        self.maximumPeripheralsDiscovered.text = "\(ConfigStore.getMaximumPeripheralsDiscovered())"
+        self.peripheralSortOrder.text = ConfigStore.getPeripheralSortOrder().stringValue
         self.configUI()
         self.navigationItem.title = "Configure"
         super.viewWillAppear(animated)

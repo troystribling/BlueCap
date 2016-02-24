@@ -1,18 +1,18 @@
 //
-//  ConfigureScanModeViewController.swift
+//  ConfigurePeripheralSortOrderViewController.swift
 //  BlueCap
 //
-//  Created by Troy Stribling on 8/29/14.
-//  Copyright (c) 2014 Troy Stribling. The MIT License (MIT).
+//  Created by Troy Stribling on 2/19/16.
+//  Copyright © 2016 Troy Stribling. All rights reserved.
 //
 
 import UIKit
 import BlueCapKit
 
-class ConfigureScanModeViewController: UITableViewController {
-    
-    let scanModes = ["Promiscuous", "Service"]
-    
+class ConfigurePeripheralSortOrderViewController: UITableViewController {
+
+    let sortOrders = ["Discovery Date", "RSSI"]
+
     struct MainStoryboard {
         static let configureScanModeCell = "ConfigureScanModeCell"
     }
@@ -21,28 +21,28 @@ class ConfigureScanModeViewController: UITableViewController {
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
-    
+
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.scanModes.count
+        return self.sortOrders.count
     }
-    
+
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
-        let scanModeString = scanModes[indexPath.row]
-        cell.textLabel?.text = scanModeString
-        if let scanMode = ServiceScanMode(scanModeString) where scanMode == ConfigStore.getScanMode() {
+        let sortOrderString = sortOrders[indexPath.row]
+        cell.textLabel?.text = sortOrderString
+        if let sortOrder = PeripheralSortOrder(sortOrderString) where sortOrder == ConfigStore.getPeripheralSortOrder() {
             cell.accessoryType = UITableViewCellAccessoryType.Checkmark
         } else {
             cell.accessoryType = UITableViewCellAccessoryType.None
         }
         return cell
     }
-    
+
     // UITableViewDelegate
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let scanMode = self.scanModes[indexPath.row]
-        ConfigStore.setScanMode(ServiceScanMode(scanMode)!)
+        let sortOrder = self.sortOrders[indexPath.row]
+        ConfigStore.setPeripheralSortOrder(PeripheralSortOrder(sortOrder)!)
         self.navigationController?.popViewControllerAnimated(true)
     }
-
+    
 }
