@@ -188,13 +188,10 @@ class PeripheralsViewController : UITableViewController {
                 BCLogger.debug("Failed")
                 Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
             case .GiveUp:
-<<<<<<< Updated upstream
-=======
                 peripheral.stopPollingRSSI()
                 self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
                 self.peripheralConnectionStatus.removeValueForKey(peripheral.identifier)
                 self.startScan()
->>>>>>> Stashed changes
                 BCLogger.debug("GiveUp: '\(peripheral.name)'")
                 peripheral.terminate()
                 self.updateWhenActive()
@@ -211,16 +208,12 @@ class PeripheralsViewController : UITableViewController {
             Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
             self.connect(peripheral)
             self.updateWhenActive()
-<<<<<<< Updated upstream
-=======
             self.rssiPollingFutures[peripheral.identifier] =
                 (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
             self.peripheralConnectionStatus[peripheral.identifier] = .Discovered
             if self.reachedDiscoveryLimit {
                 Singletons.centralManager.stopScanning()
             }
-
->>>>>>> Stashed changes
         }
         let afterTimeout = { (error:NSError) -> Void in
             if error.domain == BCError.domain && error.code == BCPeripheralErrorCode.DiscoveryTimeout.rawValue {
@@ -261,11 +254,7 @@ class PeripheralsViewController : UITableViewController {
             BCLogger.debug("Scan Mode :'\(scanMode)' invalid")
         }
     }
-<<<<<<< Updated upstream
-        
-=======
 
->>>>>>> Stashed changes
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

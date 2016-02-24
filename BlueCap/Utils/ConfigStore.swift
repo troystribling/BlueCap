@@ -11,8 +11,6 @@ import BlueCapKit
 import CoreBluetooth
 import CoreLocation
 
-<<<<<<< Updated upstream
-=======
 // MARK: Defaults
 struct Defaults {
     static let serviceScanMode: ServiceScanMode = .Promiscuous
@@ -101,7 +99,6 @@ enum PeripheralSortOrder: Int {
 }
 
 // MARK: - ConfigStore -
->>>>>>> Stashed changes
 class ConfigStore {
   
     // scan mode
@@ -177,10 +174,6 @@ class ConfigStore {
         }
     }
     
-<<<<<<< Updated upstream
-    class func setMaximumReconnections(maximumReconnetions:UInt) {
-        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumReconnetions), forKey:"maximumReconnections")
-=======
     class func setMaximumReconnections(maximumReconnections: UInt) {
         NSUserDefaults.standardUserDefaults().setInteger(Int(maximumReconnections), forKey:"maximumReconnections")
     }
@@ -225,10 +218,9 @@ class ConfigStore {
 
     class func setPeripheralSortOrder(sortOrder: PeripheralSortOrder) {
         NSUserDefaults.standardUserDefaults().setInteger(sortOrder.rawValue, forKey:"peripheralSortOrder")
->>>>>>> Stashed changes
     }
     
-    // scanned services
+    // MARK: Scanned Services
     class func getScannedServices() -> [String:CBUUID] {
         if let storedServices = NSUserDefaults.standardUserDefaults().dictionaryForKey("services") {
             var services = [String:CBUUID]()
