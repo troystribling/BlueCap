@@ -11,6 +11,97 @@ import BlueCapKit
 import CoreBluetooth
 import CoreLocation
 
+<<<<<<< Updated upstream
+=======
+// MARK: Defaults
+struct Defaults {
+    static let serviceScanMode: ServiceScanMode = .Promiscuous
+    static let scanTimeout: UInt = 10
+    static let connectionTimeout: UInt = 10
+    static let peripheralConnectionTimeout: UInt = 10
+    static let characteristicReadWriteTimeout: UInt = 10
+    static let maximumReconnections: UInt = 5
+    static let maximumPeripheralsConnected: Int = 20
+    static let maximumPeripheralsDiscovered: Int = 100
+    static let peripheralSortOrder: PeripheralSortOrder = .DiscoveryDate
+}
+
+// MARK: Service Scan Mode
+enum ServiceScanMode: Int {
+    case Promiscuous = 0
+    case Service = 1
+
+    init?(_ stringValue: String) {
+        switch stringValue {
+        case "Promiscuous":
+            self = .Promiscuous
+        case "Service":
+            self = .Service
+        default:
+            return nil
+        }
+    }
+
+    init?(_ rawValue: Int) {
+        switch rawValue {
+        case 0:
+            self = .Promiscuous
+        case 1:
+            self = .Service
+        default:
+            return nil
+        }
+    }
+
+    var stringValue: String {
+        switch self {
+        case .Promiscuous:
+            return "Promiscuous"
+        case .Service:
+            return "Service"
+        }
+    }
+}
+
+// MARK: Peripheral Sort Order
+enum PeripheralSortOrder: Int {
+    case DiscoveryDate = 0
+    case RSSI = 1
+
+    init?(_ stringValue: String) {
+        switch stringValue {
+        case "Discovery Date":
+            self = .DiscoveryDate
+        case "RSSI":
+            self = .RSSI
+        default:
+            return nil
+        }
+    }
+
+    init?(_ rawValue: Int) {
+        switch rawValue {
+        case 0:
+            self = .DiscoveryDate
+        case 1:
+            self = .RSSI
+        default:
+            return nil
+        }
+    }
+
+    var stringValue: String {
+        switch self {
+        case .DiscoveryDate:
+            return "Discovery Date"
+        case .RSSI:
+            return "RSSI"
+        }
+    }
+}
+
+// MARK: - ConfigStore -
+>>>>>>> Stashed changes
 class ConfigStore {
   
     // scan mode
@@ -86,8 +177,55 @@ class ConfigStore {
         }
     }
     
+<<<<<<< Updated upstream
     class func setMaximumReconnections(maximumReconnetions:UInt) {
         NSUserDefaults.standardUserDefaults().setInteger(Int(maximumReconnetions), forKey:"maximumReconnections")
+=======
+    class func setMaximumReconnections(maximumReconnections: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumReconnections), forKey:"maximumReconnections")
+    }
+
+    // MARK: Maximum Peripherals Connected
+    class func getMaximumPeripheralsConnected() -> Int {
+        let maximumPeripheralsConnected = NSUserDefaults.standardUserDefaults().integerForKey("maximumPeripheralsConnected")
+        if maximumPeripheralsConnected == 0 {
+            return Defaults.maximumPeripheralsConnected
+        } else {
+            return maximumPeripheralsConnected
+        }
+    }
+
+    class func setMaximumPeripheralsConnected(maximumConnections: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumConnections), forKey:"maximumPeripheralsConnected")
+    }
+
+    // MARK: Maximum Discovered Peripherals
+    class func getMaximumPeripheralsDiscovered() -> Int {
+        let maximumPeripheralsDiscovered = NSUserDefaults.standardUserDefaults().integerForKey("maximumPeripheralsDiscovered")
+        if maximumPeripheralsDiscovered == 0 {
+            return Defaults.maximumPeripheralsDiscovered
+        } else {
+            return maximumPeripheralsDiscovered
+        }
+    }
+
+    class func setMaximumPeripheralsDiscovered(maximumPeripherals: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumPeripherals), forKey:"maximumPeripheralsDiscovered")
+    }
+
+    // MARK: Peripheral Sort Order
+    class func getPeripheralSortOrder() -> PeripheralSortOrder {
+        let rawValue = NSUserDefaults.standardUserDefaults().integerForKey("peripheralSortOrder")
+        if let peripheralSortOrder = PeripheralSortOrder(rawValue) {
+            return peripheralSortOrder
+        } else {
+            return Defaults.peripheralSortOrder
+        }
+    }
+
+    class func setPeripheralSortOrder(sortOrder: PeripheralSortOrder) {
+        NSUserDefaults.standardUserDefaults().setInteger(sortOrder.rawValue, forKey:"peripheralSortOrder")
+>>>>>>> Stashed changes
     }
     
     // scanned services

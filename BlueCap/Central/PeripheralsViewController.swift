@@ -10,12 +10,25 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
+enum PeripheralConnectionStatus: UInt {
+    case Connected, ToConnect, ToDisconnect, Discovered
+}
+
 class PeripheralsViewController : UITableViewController {
 
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
 
     var rssiPollingFutures = [NSUUID: (future: FutureStream<Int>, cellUpdate: Bool)]()
+    var peripheralConnectionStatus = [NSUUID: PeripheralConnectionStatus]()
+
+    var reachedConnectionLimit: Bool {
+        return self.peripheralConnectionStatus.filter{ $0.1 == .Connected }.count >= ConfigStore.getMaximumPeripheralsConnected()
+    }
+
+    var reachedDiscoveryLimit: Bool {
+        return self.peripheralConnectionStatus.count >= ConfigStore.getMaximumPeripheralsDiscovered()
+    }
 
     struct MainStoryboard {
         static let peripheralCell   = "PeripheralCell"
@@ -38,7 +51,7 @@ class PeripheralsViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        self.startPollingRSSIForConnectedPeripherals()
+        self.stopPollingRSSIForPeripherals()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
         self.setScanButton()
@@ -80,15 +93,6 @@ class PeripheralsViewController : UITableViewController {
         return perform
     }
 
-    func startPollingRSSIForConnectedPeripherals() {
-        for peripheral in Singletons.centralManager.peripherals {
-            if peripheral.state == .Connected {
-                self.rssiPollingFutures[peripheral.identifier] =
-                    (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
-            }
-        }
-    }
-
     func stopPollingRSSIForPeripherals() {
         for peripheral in Singletons.centralManager.peripherals {
             if self.rssiPollingFutures[peripheral.identifier] != nil {
@@ -108,6 +112,7 @@ class PeripheralsViewController : UITableViewController {
                 } else {
                     Singletons.centralManager.stopScanning()
                 }
+                self.stopPollingRSSIForPeripherals()
                 Singletons.centralManager.disconnectAllPeripherals()
                 Singletons.centralManager.removeAllPeripherals()
                 self.setScanButton()
@@ -183,6 +188,13 @@ class PeripheralsViewController : UITableViewController {
                 BCLogger.debug("Failed")
                 Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
             case .GiveUp:
+<<<<<<< Updated upstream
+=======
+                peripheral.stopPollingRSSI()
+                self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
+                self.peripheralConnectionStatus.removeValueForKey(peripheral.identifier)
+                self.startScan()
+>>>>>>> Stashed changes
                 BCLogger.debug("GiveUp: '\(peripheral.name)'")
                 peripheral.terminate()
                 self.updateWhenActive()
@@ -199,6 +211,16 @@ class PeripheralsViewController : UITableViewController {
             Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
             self.connect(peripheral)
             self.updateWhenActive()
+<<<<<<< Updated upstream
+=======
+            self.rssiPollingFutures[peripheral.identifier] =
+                (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
+            self.peripheralConnectionStatus[peripheral.identifier] = .Discovered
+            if self.reachedDiscoveryLimit {
+                Singletons.centralManager.stopScanning()
+            }
+
+>>>>>>> Stashed changes
         }
         let afterTimeout = { (error:NSError) -> Void in
             if error.domain == BCError.domain && error.code == BCPeripheralErrorCode.DiscoveryTimeout.rawValue {
@@ -207,6 +229,7 @@ class PeripheralsViewController : UITableViewController {
                 self.setScanButton()
             }
         }
+
         // Promiscuous Scan Enabled
         var future: FutureStream<BCPeripheral>
         switch scanMode {
@@ -238,7 +261,11 @@ class PeripheralsViewController : UITableViewController {
             BCLogger.debug("Scan Mode :'\(scanMode)' invalid")
         }
     }
+<<<<<<< Updated upstream
         
+=======
+
+>>>>>>> Stashed changes
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1

@@ -304,11 +304,11 @@
 		05840F61194206F100C744E6 /* BlueCap */ = {
 			isa = PBXGroup;
 			children = (
-				0543FEBD1B42E22D00363415 /* LaunchScreen.xib */,
 				056B7C7419DE4E52001B7F95 /* Main.storyboard */,
-				050796E519C4C42100A4D547 /* Beacon */,
 				05840F64194206F100C744E6 /* AppDelegate.swift */,
 				05840F6D194206F100C744E6 /* Images.xcassets */,
+				0543FEBD1B42E22D00363415 /* LaunchScreen.xib */,
+				050796E519C4C42100A4D547 /* Beacon */,
 				05277C9B1944CAE50022FB59 /* Central */,
 				05B45BFC19A78BBB009DAF6D /* Configure */,
 				05E6870219508799009B38DA /* Peripheral */,
