@@ -19,6 +19,7 @@ class PeripheralsViewController : UITableViewController {
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
 
+    var scanStatus = false
     var rssiPollingFutures = [NSUUID: (future: FutureStream<Int>, cellUpdate: Bool)]()
     var peripheralConnectionStatus = [NSUUID: PeripheralConnectionStatus]()
 
@@ -28,6 +29,12 @@ class PeripheralsViewController : UITableViewController {
 
     var reachedDiscoveryLimit: Bool {
         return self.peripheralConnectionStatus.count >= ConfigStore.getMaximumPeripheralsDiscovered()
+    }
+
+    var peripheralsSortedByRSSI: [BCPeripheral] {
+        return Singletons.centralManager.peripherals.sort() { (p1, p2) -> Bool in
+            return p1.RSSI >= p2.RSSI
+        }
     }
 
     struct MainStoryboard {
@@ -105,21 +112,22 @@ class PeripheralsViewController : UITableViewController {
     // actions
     func toggleScan(sender:AnyObject) {
         if Singletons.beaconManager.isMonitoring == false {
-            BCLogger.debug("isScanning: \(Singletons.centralManager.isScanning)")
-            if Singletons.centralManager.isScanning {
-                if  ConfigStore.getScanTimeoutEnabled() {
-                    Singletons.timedScannerator.stopScanning()
-                } else {
-                    Singletons.centralManager.stopScanning()
+            self.scanStatus = !self.scanStatus
+            if self.scanStatus == false {
+                if Singletons.centralManager.isScanning || Singletons.timedScannerator.isScanning {
+                    if  ConfigStore.getScanTimeoutEnabled() {
+                        Singletons.timedScannerator.stopScanning()
+                    } else {
+                        Singletons.centralManager.stopScanning()
+                    }
                 }
                 self.stopPollingRSSIForPeripherals()
                 Singletons.centralManager.disconnectAllPeripherals()
                 Singletons.centralManager.removeAllPeripherals()
+                self.peripheralConnectionStatus.removeAll()
                 self.setScanButton()
                 self.updateWhenActive()
             } else {
-                Singletons.centralManager.disconnectAllPeripherals()
-                Singletons.centralManager.removeAllPeripherals()
                 self.powerOn()
             }
         } else {
@@ -139,7 +147,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     func setScanButton() {
-        if Singletons.centralManager.isScanning || Singletons.timedScannerator.isScanning {
+        if self.scanStatus {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
         } else {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
@@ -186,8 +194,8 @@ class PeripheralsViewController : UITableViewController {
                 peripheral.stopPollingRSSI()
                 self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
                 self.peripheralConnectionStatus.removeValueForKey(peripheral.identifier)
-                self.startScan()
                 peripheral.terminate()
+                self.startScan()
                 self.updateWhenActive()
             }
         }
