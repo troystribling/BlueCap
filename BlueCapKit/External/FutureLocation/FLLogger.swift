@@ -8,7 +8,7 @@
 import Foundation
 
 public class FLLogger {
-    public class func debug(message:String? = nil, function: String = __FUNCTION__, file: String = __FILE__, line: Int = __LINE__) {
+    public class func debug(message:String? = nil, function: String = #function, file: String = #file, line: Int = #line) {
 #if DEBUG
         if let message = message {
             print("\(file):\(function):\(line): \(message)")
