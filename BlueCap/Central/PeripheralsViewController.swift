@@ -10,22 +10,17 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
-enum PeripheralConnectionStatus: UInt {
-    case Connected, ToConnect, ToDisconnect, Discovered
-}
-
 class PeripheralsViewController : UITableViewController {
+
+    static let updateConnectionsFrequency = 5.0
 
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
 
     var scanStatus = false
+    var updatePeripheralConnectionsSwitch = false
     var rssiPollingFutures = [NSUUID: (future: FutureStream<Int>, cellUpdate: Bool)]()
-    var peripheralConnectionStatus = [NSUUID: PeripheralConnectionStatus]()
-
-    var reachedConnectionLimit: Bool {
-        return self.peripheralConnectionStatus.filter{ $0.1 == .Connected }.count >= ConfigStore.getMaximumPeripheralsConnected()
-    }
+    var peripheralConnectionStatus = [NSUUID: Bool]()
 
     var reachedDiscoveryLimit: Bool {
         return self.peripheralConnectionStatus.count >= ConfigStore.getMaximumPeripheralsDiscovered()
@@ -66,11 +61,13 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        self.updatePeripheralConnectionsSwitch = true
         self.stopPollingRSSIForPeripherals()
     }
 
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        self.updatePeripheralConnectionsSwitch = false
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
@@ -128,7 +125,12 @@ class PeripheralsViewController : UITableViewController {
                 self.setScanButton()
                 self.updateWhenActive()
             } else {
-                self.powerOn()
+                Singletons.centralManager.whenPowerOn().onSuccess {
+                    BCLogger.debug()
+                    self.startScan()
+                    self.setScanButton()
+                    self.updatePeripheralConnectionsIfNeeded()
+                }
             }
         } else {
             self.presentViewController(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
@@ -153,15 +155,39 @@ class PeripheralsViewController : UITableViewController {
             self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
         }
     }
-    
-    func powerOn() {
-        Singletons.centralManager.whenPowerOn().onSuccess {
-            BCLogger.debug()
-            self.startScan()
-            self.setScanButton()
+
+    func updatePeripheralConnections() {
+        let peripherals = self.peripheralsSortedByRSSI
+        let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
+        for i in 0..<peripherals.count {
+            let peripheral = peripherals[i]
+            if let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] {
+                if i < maxConnections {
+                    if connectionStatus == false {
+                        self.peripheralConnectionStatus[peripheral.identifier] = true
+                        self.connect(peripheral)
+                    }
+                } else {
+                    if connectionStatus {
+                        self.peripheralConnectionStatus[peripheral.identifier] = false
+                        peripheral.disconnect()
+                    }
+                }
+            }
         }
     }
-    
+
+    func updatePeripheralConnectionsIfNeeded() {
+        guard self.updatePeripheralConnectionsSwitch && self.scanStatus else {
+            return
+        }
+        Queue.main.delay(PeripheralsViewController.updateConnectionsFrequency) { [unowned self] in
+            self.updatePeripheralConnections()
+            self.updateWhenActive()
+            self.updatePeripheralConnectionsIfNeeded()
+        }
+    }
+
     func connect(peripheral: BCPeripheral) {
         let future = peripheral.connect(10, timeoutRetries: ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
         future.onSuccess { (peripheral, connectionEvent) in
@@ -208,14 +234,14 @@ class PeripheralsViewController : UITableViewController {
         let scanMode = ConfigStore.getScanMode()
         let afterPeripheralDiscovered = { (peripheral: BCPeripheral) -> Void in
             Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
-            self.connect(peripheral)
             self.updateWhenActive()
             self.rssiPollingFutures[peripheral.identifier] =
                 (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
-            self.peripheralConnectionStatus[peripheral.identifier] = .Discovered
+            self.peripheralConnectionStatus[peripheral.identifier] = false
             if self.reachedDiscoveryLimit {
                 Singletons.centralManager.stopScanning()
             }
+            self.updatePeripheralConnections()
         }
         let afterTimeout = { (error: NSError) -> Void in
             if error.domain == BCError.domain && error.code == BCPeripheralErrorCode.DiscoveryTimeout.rawValue {
@@ -282,7 +308,7 @@ class PeripheralsViewController : UITableViewController {
         if let (future, cellUpdate) = self.rssiPollingFutures[peripheral.identifier] where cellUpdate == false {
             self.rssiPollingFutures[peripheral.identifier] = (future, true)
             future.onSuccess { [weak cell] rssi in
-                Queue.main.async { cell?.rssiLabel.text = "\(rssi)" }
+                cell?.rssiLabel.text = "\(rssi)"
             }
         }
         return cell

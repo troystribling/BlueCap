@@ -332,20 +332,24 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func disconnect() {
-        if let central = self.centralManager {
-            central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
-            self.forcedDisconnect = true
-            if self.state == .Connected {
-                BCLogger.debug("disconnect peripheral \(self.name)")
-                central.cancelPeripheralConnection(self)
-            } else {
-                self.didDisconnectPeripheral()
-            }
+        guard let central = self.centralManager else {
+            return
+        }
+        self.forcedDisconnect = true
+        if self.state == .Connected {
+            BCLogger.debug("disconnect peripheral \(self.name)")
+            central.cancelPeripheralConnection(self)
+        } else {
+            self.didDisconnectPeripheral()
         }
     }
     
     public func terminate() {
-        self.disconnect()
+        guard let central = self.centralManager else {
+            return
+        }
+        central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
+        self.didConnectPeripheral()
     }
 
     // MARK: Discover Services
