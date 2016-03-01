@@ -167,7 +167,7 @@ class PeripheralUT: BCPeripheral {
     
     init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String: AnyObject], rssi: Int, error: NSError?) {
         self.error = error
-        super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, rssi: rssi)
+        super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, RSSI: rssi)
     }
     
     override func discoverService(head: BCService, tail: [BCService], promise: Promise<BCPeripheral>) {
@@ -354,8 +354,8 @@ func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerStat
 
 func createPeripheralManagerServices(peripheral: BCPeripheralManager) -> [BCMutableService] {
     let profileManager = BCProfileManager.sharedInstance
-    if let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.uuid)],
-           locationService = profileManager.services[CBUUID(string: Gnosus.LocationService.uuid)] {
+    if let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)],
+           locationService = profileManager.services[CBUUID(string: Gnosus.LocationService.UUID)] {
         return [BCMutableService(profile: helloWoroldService),
                 BCMutableService(profile: locationService)]
     } else {

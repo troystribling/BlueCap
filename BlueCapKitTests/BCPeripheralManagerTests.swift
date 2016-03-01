@@ -16,7 +16,7 @@ import BlueCapKit
 class BCPeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
-    let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)
+    let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)
   
     override func setUp() {
         GnosusProfiles.create()
@@ -251,4 +251,10 @@ class BCPeripheralManagerTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
+
+    // MARK: State Restoration
+    func testStateRestoration() {
+
+    }
+
 }

@@ -19,12 +19,13 @@ class BCCharacteristicTests: XCTestCase {
     var peripheral: BCPeripheral!
     var service: BCService!
     let mockPerpheral = CBPeripheralMock(state: .Connected)
-    let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.uuid))
+    let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))
+    let RSSI = -45
 
     override func setUp() {
         GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
-        self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
+        self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)
         self.service = self.peripheral.services.first!
         super.setUp()
@@ -35,18 +36,18 @@ class BCCharacteristicTests: XCTestCase {
     }
     
     func createCharacteristic(properties: CBCharacteristicProperties, isNotifying:Bool) -> (BCCharacteristic, CBCharacteristicMock) {
-        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: properties, permissions: [.Readable, .Writeable], isNotifying: isNotifying)
+        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, permissions: [.Readable, .Writeable], isNotifying: isNotifying)
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
     }
 
     // MARK: After discovered
     func testAfterDiscovered() {
-        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
+        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
         let service  = ServiceUT(cbService: self.mockService, peripheral: peripheral, mockCharacteristics: [mockCharacteristic], error: nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.uuid)]
-        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)]
+        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]
+        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]
         characteristicProfile?.afterDiscovered(nil).onSuccess { _ in
             onSuccessExpectation.fulfill()
         }

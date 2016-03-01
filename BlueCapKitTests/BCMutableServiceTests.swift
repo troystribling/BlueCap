@@ -36,9 +36,9 @@ class BCMutableServiceTests: XCTestCase {
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.addServiceCalled, "addService not called")
             XCTAssertEqual(peripheralServices.count, 1, "peripheralManager service count invalid")
-            XCTAssertEqual(peripheralServices[0].uuid, services[0].uuid, "addedService has invalid UUID")
+            XCTAssertEqual(peripheralServices[0].UUID, services[0].UUID, "addedService has invalid UUID")
             if let addedService = mock.addedService {
-                XCTAssertEqual(services[0].uuid, addedService.UUID, "addedService UUID invalid")
+                XCTAssertEqual(services[0].UUID, addedService.UUID, "addedService UUID invalid")
             } else {
                 XCTAssert(false, "addService not found")
             }
@@ -59,11 +59,11 @@ class BCMutableServiceTests: XCTestCase {
         let future = peripheralManager.addServices(services)
         future.onSuccess {
             expectation.fulfill()
-            let peripheralServices = peripheralManager.services.map{$0.uuid}
+            let peripheralServices = peripheralManager.services.map{$0.UUID}
             XCTAssert(mock.addServiceCalled, "addService not called")
             XCTAssertEqual(peripheralServices.count, 2, "peripheralManager service count invalid")
-            XCTAssert(peripheralServices.contains(services[0].uuid), "addedService has invalid UUID")
-            XCTAssert(peripheralServices.contains(services[1].uuid), "addedService has invalid UUID")
+            XCTAssert(peripheralServices.contains(services[0].UUID), "addedService has invalid UUID")
+            XCTAssert(peripheralServices.contains(services[1].UUID), "addedService has invalid UUID")
         }
         future.onFailure {error in
             XCTAssert(false, "onFailure called")
@@ -149,9 +149,9 @@ class BCMutableServiceTests: XCTestCase {
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.removeServiceCalled, "removeService not called")
             XCTAssertEqual(peripheralServices.count, 1, "peripheralManager service count invalid")
-            XCTAssertEqual(peripheralServices[0].uuid, services[1].uuid, "addedService has invalid UUID")
+            XCTAssertEqual(peripheralServices[0].UUID, services[1].UUID, "addedService has invalid UUID")
             if let removedService = mock.removedService {
-                XCTAssertEqual(removedService.UUID, services[0].uuid, "addedService has invalid UUID")
+                XCTAssertEqual(removedService.UUID, services[0].UUID, "addedService has invalid UUID")
             } else {
                 XCTAssert(false, "removedService not found")
             }

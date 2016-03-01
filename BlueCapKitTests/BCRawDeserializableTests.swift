@@ -19,7 +19,7 @@ class BCRawDeserializableTests: XCTestCase {
         case No     = 0
         case Yes    = 1
         case Maybe  = 2        
-        static let uuid = "abc"
+        static let UUID = "abc"
     }
 
     override func setUp() {

@@ -18,6 +18,7 @@ class BCServiceTests: XCTestCase {
     var centralManager: BCCentralManager!
     var mockCharateristics = [CBCharacteristicMock]()
     let mockService = CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"))
+    let RSSI = -45
     
     override func setUp() {
         self.centralManager = CentralManagerUT(centralManager:CBCentralManagerMock(state:.PoweredOn))
@@ -33,7 +34,7 @@ class BCServiceTests: XCTestCase {
 
     // MARK: Discover characteristics
     func testDiscoverCharacteristicsSuccess() {
-        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Connected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
+        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Connected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:self.mockCharateristics, error:nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = service.discoverAllCharacteristics()
@@ -50,7 +51,7 @@ class BCServiceTests: XCTestCase {
     }
 
     func testDiscoverCharacteristicsFailure() {
-        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Connected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi:-45)
+        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Connected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let service  = ServiceUT(cbService:self.mockService, peripheral:peripheral, mockCharacteristics:self.mockCharateristics, error:TestFailure.error)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()
@@ -66,7 +67,7 @@ class BCServiceTests: XCTestCase {
     }
 
     func testDiscoverCharacteristicsDisconnected() {
-        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Disconnected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, rssi: -45)
+        let peripheral = BCPeripheral(cbPeripheral: CBPeripheralMock(state: .Disconnected), centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let service  = BCService(cbService: self.mockService, peripheral: peripheral)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()

@@ -137,5 +137,9 @@ class BCCentralManagerTests: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
+    // MARK: State Restoration
+    func testStateRestoration() {
+
+    }
 }
