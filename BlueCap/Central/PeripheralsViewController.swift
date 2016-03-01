@@ -28,7 +28,15 @@ class PeripheralsViewController : UITableViewController {
 
     var peripheralsSortedByRSSI: [BCPeripheral] {
         return Singletons.centralManager.peripherals.sort() { (p1, p2) -> Bool in
-            return p1.RSSI >= p2.RSSI
+            if p1.RSSI == 127 && p2.RSSI != 127 {
+                return false
+            }  else if p1.RSSI != 127 && p2.RSSI == 127 {
+                return true
+            } else if p1.RSSI == 127 && p2.RSSI == 127 {
+                return true
+            } else {
+                return p1.RSSI >= p2.RSSI
+            }
         }
     }
 
@@ -53,6 +61,7 @@ class PeripheralsViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.updatePeripheralConnectionsSwitch = true
         self.stopPollingRSSIForPeripherals()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
@@ -61,7 +70,6 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        self.updatePeripheralConnectionsSwitch = true
         self.stopPollingRSSIForPeripherals()
     }
 
@@ -189,11 +197,12 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func connect(peripheral: BCPeripheral) {
+        BCLogger.debug("Connect peripheral: '\(peripheral.name)'")
         let future = peripheral.connect(10, timeoutRetries: ConfigStore.getMaximumReconnections(), connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
         future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
-                BCLogger.debug("Connected")
+                BCLogger.debug("Connected peripheral: '\(peripheral.name)'")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
                 self.updateWhenActive()
             case .Timeout:
@@ -202,18 +211,18 @@ class PeripheralsViewController : UITableViewController {
                 peripheral.reconnect()
                 self.updateWhenActive()
             case .Disconnect:
-                BCLogger.debug("Disconnect")
+                BCLogger.debug("Disconnected peripheral: '\(peripheral.name)'")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.reconnect()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .ForceDisconnect:
-                BCLogger.debug("ForcedDisconnect")
+                BCLogger.debug("Force disconnection of: '\(peripheral.name)'")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .Failed:
-                BCLogger.debug("Failed")
+                BCLogger.debug("Connection failed peripheral: '\(peripheral.name)'")
                 Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
             case .GiveUp:
                 BCLogger.debug("GiveUp: '\(peripheral.name)'")
@@ -292,7 +301,12 @@ class PeripheralsViewController : UITableViewController {
     
     override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as! PeripheralCell
-        let peripheral = Singletons.centralManager.peripherals[indexPath.row]
+        let peripheral: BCPeripheral
+        if ConfigStore.getPeripheralSortOrder() == .DiscoveryDate {
+             peripheral = Singletons.centralManager.peripherals[indexPath.row]
+        } else {
+            peripheral = self.peripheralsSortedByRSSI[indexPath.row]
+        }
         cell.nameLabel.text = peripheral.name
         cell.accessoryType = .None
         if peripheral.state == .Connected {
