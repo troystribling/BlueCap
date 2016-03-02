@@ -19,7 +19,7 @@ struct Defaults {
     static let peripheralConnectionTimeout: UInt = 10
     static let characteristicReadWriteTimeout: UInt = 10
     static let maximumReconnections: UInt = 5
-    static let maximumPeripheralsConnected: Int = 20
+    static let maximumPeripheralsConnected: Int = 5
     static let maximumPeripheralsDiscovered: Int = 20
     static let peripheralSortOrder: PeripheralSortOrder = .DiscoveryDate
 }

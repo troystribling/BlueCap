@@ -12,8 +12,6 @@ import BlueCapKit
 struct BlueCapNotification {
     static let peripheralDisconnected   = "PeripheralDisconnected"
     static let didUpdateBeacon          = "DidUpdateBeacon"
-    static let didBecomeActive          = "DidBecomeActive"
-    static let didResignActive          = "DidResignActive"
 }
 
 enum AppError : Int {
@@ -69,7 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(application: UIApplication) {
         NSUserDefaults.standardUserDefaults().synchronize()
-        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didResignActive, object:nil)
         if Singletons.centralManager.isScanning {
             Singletons.centralManager.stopScanning()
             Singletons.centralManager.disconnectAllPeripherals()
@@ -82,7 +79,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(application: UIApplication) {
         Notify.resetEventCount()
-        NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didBecomeActive, object:nil)
     }
 
     func applicationWillTerminate(application: UIApplication) {

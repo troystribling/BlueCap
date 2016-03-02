@@ -38,8 +38,8 @@ class PeripheralManagerServicesViewController : UITableViewController {
         } else {
             self.navigationItem.rightBarButtonItem!.enabled = true
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {

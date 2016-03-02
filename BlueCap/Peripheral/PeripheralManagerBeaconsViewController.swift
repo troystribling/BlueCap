@@ -29,8 +29,8 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         self.navigationItem.title = "Beacons"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name:BlueCapNotification.didBecomeActive, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name:BlueCapNotification.didResignActive, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {

@@ -34,8 +34,8 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         super.viewDidAppear(animated)
         self.updateWhenActive()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.service?.peripheral)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: BlueCapNotification.didBecomeActive, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: BlueCapNotification.didResignActive, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
