@@ -251,14 +251,14 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func didConnectPeripheral(peripheral: CBPeripheralInjectable) {
-        BCLogger.debug("peripheral name \(peripheral.name)")
+        BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     public func didDisconnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
-        BCLogger.debug("peripheral name \(peripheral.name)")
+        BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral()
         }
@@ -267,7 +267,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     public func didDiscoverPeripheral(peripheral: CBPeripheralInjectable, advertisementData: [String:AnyObject], RSSI: NSNumber) {
         if self.discoveredPeripherals[peripheral.identifier] == nil {
             let bcPeripheral = BCPeripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.integerValue)
-            BCLogger.debug("peripheral name \(bcPeripheral.name)")
+            BCLogger.debug("uuid=\(bcPeripheral.identifier.UUIDString), name=\(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral.identifier] = bcPeripheral
             self.afterPeripheralDiscoveredPromise.success(bcPeripheral)
         }

@@ -117,21 +117,8 @@ class PeripheralsViewController : UITableViewController {
     // actions
     func toggleScan(sender:AnyObject) {
         if Singletons.beaconManager.isMonitoring == false {
-            self.scanStatus = !self.scanStatus
-            if self.scanStatus == false {
-                if Singletons.centralManager.isScanning || Singletons.timedScannerator.isScanning {
-                    if  ConfigStore.getScanTimeoutEnabled() {
-                        Singletons.timedScannerator.stopScanning()
-                    } else {
-                        Singletons.centralManager.stopScanning()
-                    }
-                }
-                self.stopPollingRSSIForPeripherals()
-                Singletons.centralManager.disconnectAllPeripherals()
-                Singletons.centralManager.removeAllPeripherals()
-                self.peripheralConnectionStatus.removeAll()
-                self.setScanButton()
-                self.updateWhenActive()
+            if self.scanStatus {
+                self.stopScanning()
             } else {
                 Singletons.centralManager.whenPowerOn().onSuccess {
                     BCLogger.debug()
@@ -140,16 +127,37 @@ class PeripheralsViewController : UITableViewController {
                     self.updatePeripheralConnectionsIfNeeded()
                 }
             }
+            self.scanStatus = !self.scanStatus
         } else {
             self.presentViewController(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
         }
     }
-    
+
+    func stopScanning() {
+        if Singletons.centralManager.isScanning || Singletons.timedScannerator.isScanning {
+            if  ConfigStore.getScanTimeoutEnabled() {
+                Singletons.timedScannerator.stopScanning()
+            } else {
+                Singletons.centralManager.stopScanning()
+            }
+        }
+        self.stopPollingRSSIForPeripherals()
+        Singletons.centralManager.disconnectAllPeripherals()
+        Singletons.centralManager.removeAllPeripherals()
+        self.peripheralConnectionStatus.removeAll()
+        self.setScanButton()
+        self.updateWhenActive()
+    }
+
     // utils
     func didResignActive() {
         BCLogger.debug()
+        if self.scanStatus {
+            self.stopScanning()
+        }
+        self.scanStatus = false
     }
-    
+
     func didBecomeActive() {
         BCLogger.debug()
         self.tableView.reloadData()
@@ -172,12 +180,12 @@ class PeripheralsViewController : UITableViewController {
             if let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] {
                 if i < maxConnections {
                     if connectionStatus == false {
-                        self.peripheralConnectionStatus[peripheral.identifier] = true
+                        BCLogger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                         self.connect(peripheral)
                     }
                 } else {
                     if connectionStatus {
-                        self.peripheralConnectionStatus[peripheral.identifier] = false
+                        BCLogger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                         peripheral.disconnect()
                     }
                 }
@@ -202,30 +210,32 @@ class PeripheralsViewController : UITableViewController {
         future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
-                BCLogger.debug("Connected peripheral: '\(peripheral.name)'")
-                Notify.withMessage("Connected peripheral: '\(peripheral.name)'")
+                BCLogger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
+                Notify.withMessage("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
+                self.peripheralConnectionStatus[peripheral.identifier] = true
                 self.updateWhenActive()
             case .Timeout:
-                BCLogger.debug("Timeout: '\(peripheral.name)'")
+                BCLogger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                peripheral.reconnect()
+                self.reconnectIfNecessary(peripheral)
                 self.updateWhenActive()
             case .Disconnect:
-                BCLogger.debug("Disconnected peripheral: '\(peripheral.name)'")
+                BCLogger.debug("Disconnected peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
-                peripheral.reconnect()
+                self.reconnectIfNecessary(peripheral)
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .ForceDisconnect:
-                BCLogger.debug("Force disconnection of: '\(peripheral.name)'")
-                Notify.withMessage("Force disconnection of: '\(peripheral.name)'")
+                BCLogger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
+                Notify.withMessage("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.UUIDString)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                self.peripheralConnectionStatus[peripheral.identifier] = false
                 self.updateWhenActive()
             case .Failed:
-                BCLogger.debug("Connection failed peripheral: '\(peripheral.name)'")
-                Notify.withMessage("Connection failed peripheral: '\(peripheral.name)'")
+                BCLogger.debug("Connection failed peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
+                Notify.withMessage("Connection failed peripheral, '\(peripheral.name)'")
             case .GiveUp:
-                BCLogger.debug("GiveUp: '\(peripheral.name)'")
+                BCLogger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 peripheral.stopPollingRSSI()
                 self.rssiPollingFutures.removeValueForKey(peripheral.identifier)
                 self.peripheralConnectionStatus.removeValueForKey(peripheral.identifier)
@@ -236,6 +246,12 @@ class PeripheralsViewController : UITableViewController {
         }
         future.onFailure { error in
             self.updateWhenActive()
+        }
+    }
+
+    func reconnectIfNecessary(peripheral: BCPeripheral) {
+        if let _ = self.peripheralConnectionStatus[peripheral.identifier] {
+            peripheral.reconnect()
         }
     }
     

@@ -337,7 +337,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         self.forcedDisconnect = true
         if self.state == .Connected {
-            BCLogger.debug("disconnect peripheral \(self.name)")
+            BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
             central.cancelPeripheralConnection(self)
         } else {
             self.didDisconnectPeripheral()
@@ -361,7 +361,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func discoverAllServices() -> Future<BCPeripheral> {
-        BCLogger.debug("peripheral name \(self.name)")
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         return self.discoverServices(nil)
     }
 
@@ -371,7 +371,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     public func discoverPeripheralServices(services: [CBUUID]?) -> Future<BCPeripheral> {
         let peripheralDiscoveredPromise = Promise<BCPeripheral>()
-        BCLogger.debug("peripheral name \(self.name)")
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         let servicesDiscoveredFuture = self.discoverServices(services)
         servicesDiscoveredFuture.onSuccess {_ in
             if self.services.count > 1 {
@@ -468,7 +468,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func didDiscoverCharacteristicsForService(service: CBService, characteristics: [CBCharacteristic], error: NSError?) {
-        BCLogger.debug("peripheral name \(self.name)")
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         if let bcService = self.discoveredServices[service.UUID] {
             bcService.didDiscoverCharacteristics(characteristics, error:error)
             if error == nil {
@@ -480,7 +480,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func didDiscoverServices(discoveredServices: [CBService], error: NSError?) {
-        BCLogger.debug("peripheral name \(self.name)")
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self.clearAll()
         if let error = error {
             self.servicesDiscoveredPromise?.failure(error)
@@ -519,7 +519,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func didDisconnectPeripheral() {
-        BCLogger.debug()
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self._disconnectedAt = NSDate()
         if (self.forcedDisconnect) {
             self.forcedDisconnect = false
@@ -540,7 +540,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     public func didConnectPeripheral() {
-        BCLogger.debug()
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self._connectedAt = NSDate()
         self.connectionPromise?.success((self, .Connect))
     }
@@ -565,7 +565,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     internal func callDidTimeout() {
-        BCLogger.debug()
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         if let timeoutRetries = self.timeoutRetries {
             if self.timeoutCount < timeoutRetries {
                 self.connectionPromise?.success((self, .Timeout))
@@ -580,7 +580,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     internal func callDidDisconnect() {
-        BCLogger.debug()
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < disconnectRetries {
                 self.disconnectCount += 1
