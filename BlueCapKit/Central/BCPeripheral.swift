@@ -466,8 +466,9 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     public func peripheral(_: CBPeripheral, didWriteValueForDescriptor descriptor: CBDescriptor, error: NSError?) {
         BCLogger.debug()
     }
-    
-    public func didDiscoverCharacteristicsForService(service: CBService, characteristics: [CBCharacteristic], error: NSError?) {
+
+    // MARK: CBPeripheralDelegate Shims
+    internal func didDiscoverCharacteristicsForService(service: CBService, characteristics: [CBCharacteristic], error: NSError?) {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         if let bcService = self.discoveredServices[service.UUID] {
             bcService.didDiscoverCharacteristics(characteristics, error:error)
@@ -479,7 +480,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didDiscoverServices(discoveredServices: [CBService], error: NSError?) {
+    internal func didDiscoverServices(discoveredServices: [CBService], error: NSError?) {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self.clearAll()
         if let error = error {
@@ -494,7 +495,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didUpdateNotificationStateForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
+    internal func didUpdateNotificationStateForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
@@ -502,7 +503,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didUpdateValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
+    internal func didUpdateValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
@@ -510,15 +511,29 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func didWriteValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
+    internal func didWriteValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             bcCharacteristic.didWrite(error)
         }
     }
-    
-    public func didDisconnectPeripheral() {
+
+    internal func didReadRSSI(RSSI: NSNumber, error: NSError?) {
+        if let error = error {
+            BCLogger.debug("RSSI read failed: \(error.localizedDescription)")
+            self.readRSSIPromise?.failure(error)
+            self.pollRSSIPromise?.failure(error)
+        } else {
+            BCLogger.debug("RSSI = \(RSSI.stringValue), peripheral name = \(self.name), state = \(self.state.rawValue)")
+            self.RSSI = RSSI.integerValue
+            self.readRSSIPromise?.success(RSSI.integerValue)
+            self.pollRSSIPromise?.success(RSSI.integerValue)
+        }
+    }
+
+    // MARK: CBCentralManagerDelegate Shims
+    internal func didDisconnectPeripheral() {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self._disconnectedAt = NSDate()
         if (self.forcedDisconnect) {
@@ -529,23 +544,23 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             switch(self.currentError) {
             case .None:
                 BCLogger.debug("no errors disconnecting")
-                self.callDidDisconnect()
+                self.shouldDisconnectOrGiveuo()
             case .Timeout:
                 BCLogger.debug("timeout reconnecting")
-                self.callDidTimeout()
+                self.shouldTimeoutOrGiveup()
             case .Unknown:
                 BCLogger.debug("unknown error")
             }
         }
     }
 
-    public func didConnectPeripheral() {
+    internal func didConnectPeripheral() {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self._connectedAt = NSDate()
         self.connectionPromise?.success((self, .Connect))
     }
     
-    public func didFailToConnectPeripheral(error: NSError?) {
+    internal func didFailToConnectPeripheral(error: NSError?) {
         if let error = error {
             BCLogger.debug("connection failed for \(self.name) with error:'\(error.localizedDescription)'")
             self.currentError = .Unknown
@@ -561,49 +576,6 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         } else {
             BCLogger.debug("connection success")
             self.connectionPromise?.success((self, .Failed))
-        }
-    }
-    
-    internal func callDidTimeout() {
-        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
-        if let timeoutRetries = self.timeoutRetries {
-            if self.timeoutCount < timeoutRetries {
-                self.connectionPromise?.success((self, .Timeout))
-                self.timeoutCount += 1
-            } else {
-                self.timeoutCount = 0
-                self.connectionPromise?.success((self, .GiveUp))
-            }
-        } else {
-            self.connectionPromise?.success((self, .Timeout))
-        }
-    }
-    
-    internal func callDidDisconnect() {
-        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
-        if let disconnectRetries = self.disconnectRetries {
-            if self.disconnectCount < disconnectRetries {
-                self.disconnectCount += 1
-                self.connectionPromise?.success((self, .Disconnect))
-            } else {
-                self.disconnectCount = 0
-                self.connectionPromise?.success((self, .GiveUp))
-            }
-        } else {
-            self.connectionPromise?.success((self, .Disconnect))
-        }
-    }
-
-    private func didReadRSSI(RSSI: NSNumber, error: NSError?) {
-        if let error = error {
-            BCLogger.debug("RSSI read failed: \(error.localizedDescription)")
-            self.readRSSIPromise?.failure(error)
-            self.pollRSSIPromise?.failure(error)
-        } else {
-            BCLogger.debug("RSSI = \(RSSI.stringValue), peripheral name = \(self.name), state = \(self.state.rawValue)")
-            self.RSSI = RSSI.integerValue
-            self.readRSSIPromise?.success(RSSI.integerValue)
-            self.pollRSSIPromise?.success(RSSI.integerValue)
         }
     }
 
@@ -625,6 +597,36 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Utilities
+    private func shouldTimeoutOrGiveup() {
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
+        if let timeoutRetries = self.timeoutRetries {
+            if self.timeoutCount < timeoutRetries {
+                self.connectionPromise?.success((self, .Timeout))
+                self.timeoutCount += 1
+            } else {
+                self.timeoutCount = 0
+                self.connectionPromise?.success((self, .GiveUp))
+            }
+        } else {
+            self.connectionPromise?.success((self, .Timeout))
+        }
+    }
+
+    private func shouldDisconnectOrGiveuo() {
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
+        if let disconnectRetries = self.disconnectRetries {
+            if self.disconnectCount < disconnectRetries {
+                self.disconnectCount += 1
+                self.connectionPromise?.success((self, .Disconnect))
+            } else {
+                self.disconnectCount = 0
+                self.connectionPromise?.success((self, .GiveUp))
+            }
+        } else {
+            self.connectionPromise?.success((self, .Disconnect))
+        }
+    }
+
     private func discoverIfConnected(services: [CBUUID]?) {
         if self.state == .Connected {
             self.cbPeripheral.discoverServices(services)

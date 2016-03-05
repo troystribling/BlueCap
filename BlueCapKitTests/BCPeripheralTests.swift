@@ -10,12 +10,14 @@ import UIKit
 import XCTest
 import CoreBluetooth
 import CoreLocation
-import BlueCapKit
+@testable import BlueCapKit
 
 // MARK - BCPeripheralTests -
 class BCPeripheralTests: XCTestCase {
 
     let RSSI = -45
+    let updatedRSSI = -50
+
     var centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
     let mockServices = [CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
                                CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))]
@@ -42,7 +44,7 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheral.discoverAllServices()
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             onSuccessExpectation.fulfill()
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 2, "Peripheral service count invalid")
@@ -64,7 +66,7 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllServices()
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             XCTAssert(false, "onSuccess called")
         }
         future.onFailure { error in
@@ -85,7 +87,7 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllServices()
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             XCTAssert(false, "onSuccess called")
         }
         future.onFailure { error in
@@ -105,7 +107,7 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi: self.RSSI, error:nil)
         let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             onSuccessExpectation.fulfill()
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 2, "Peripheral service count invalid")
@@ -125,10 +127,10 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi: self.RSSI, error:TestFailure.error)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             XCTAssert(false, "onSuccess called")
         }
-        future.onFailure {error in
+        future.onFailure { error in
             onFailureExpectation.fulfill()
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
@@ -144,7 +146,7 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi: self.RSSI, error:TestFailure.error)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             XCTAssert(false, "onSuccess called")
         }
         future.onFailure {error in
@@ -163,7 +165,7 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
-        future.onSuccess {_ in
+        future.onSuccess { _ in
             XCTAssert(false, "onSuccess called")
         }
         future.onFailure {error in
@@ -184,7 +186,7 @@ class BCPeripheralTests: XCTestCase {
         let bcServices = [ServiceUT(cbService: self.mockServices[0], peripheral: peripheral, mockCharacteristics: [self.mockCharateristics[0]], error: nil),
                           ServiceUT(cbService: self.mockServices[1], peripheral: peripheral, mockCharacteristics: [self.mockCharateristics[1], self.mockCharateristics[2]], error: nil)]
         let promise = Promise<BCPeripheral>()
-        promise.future.onSuccess {_ in
+        promise.future.onSuccess { _ in
             onSuccessExpectation.fulfill()
         }
         promise.future.onFailure { error in
@@ -203,7 +205,7 @@ class BCPeripheralTests: XCTestCase {
         let bcServices = [ServiceUT(cbService: self.mockServices[0], peripheral: peripheral, mockCharacteristics: [self.mockCharateristics[0]], error: TestFailure.error),
                           ServiceUT(cbService: self.mockServices[1], peripheral: peripheral, mockCharacteristics: [self.mockCharateristics[1], self.mockCharateristics[2]], error: nil)]
         let promise = Promise<BCPeripheral>()
-        promise.future.onSuccess {_ in
+        promise.future.onSuccess { _ in
             XCTAssert(false, "onSuccess called")
         }
         promise.future.onFailure { error in
@@ -222,7 +224,7 @@ class BCPeripheralTests: XCTestCase {
         NSLog("testConnect : %@", peripheral.identifier.UUIDString)
         let connectionExpectation = expectationWithDescription("onSuccess fulfilled for Connect")
         let future = peripheral.connect(connectionTimeout: 20.0)
-        future.onSuccess{(peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 connectionExpectation.fulfill()
@@ -254,7 +256,7 @@ class BCPeripheralTests: XCTestCase {
         NSLog("testFailedConnect : %@", peripheral.identifier.UUIDString)
         let failedExpectation = expectationWithDescription("onSuccess fulfilled for Failed")
         let future = peripheral.connect(connectionTimeout: 20.0)
-        future.onSuccess{(peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 XCTAssert(false, "onSuccess Connect invalid")
@@ -286,7 +288,7 @@ class BCPeripheralTests: XCTestCase {
         NSLog("testFailedConnectWithError : %@", peripheral.identifier.UUIDString)
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheral.connect(connectionTimeout: 20.0)
-        future.onSuccess{(peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 XCTAssert(false, "onSuccess Connect invalid")
@@ -319,7 +321,7 @@ class BCPeripheralTests: XCTestCase {
         NSLog("testForcedDisconnectWhenDisconnected : %@", peripheral.identifier.UUIDString)
         let forcedDisconnectExpectation = expectationWithDescription("onSuccess fulfilled for ForceDisconnect")
         let future = peripheral.connect(connectionTimeout: 50.0)
-        future.onSuccess{(peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 XCTAssert(false, "onSuccess Connect invalid")
@@ -351,7 +353,7 @@ class BCPeripheralTests: XCTestCase {
         NSLog("testForcedDisconnectWhenConnected : %@", peripheral.identifier.UUIDString)
         let forcedDisconnectExpectation = expectationWithDescription("onSuccess fulfilled for ForceDisconnect")
         let future = peripheral.connect(connectionTimeout:50.0)
-        future.onSuccess{(peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 XCTAssert(false, "onSuccess Connect invalid")
@@ -383,7 +385,7 @@ class BCPeripheralTests: XCTestCase {
         NSLog("testDisconnect : %@", peripheral.identifier.UUIDString)
         let disconnectExpectation = expectationWithDescription("onSuccess fulfilled for Disconnect")
         let future = peripheral.connect(connectionTimeout: 1.0)
-        future.onSuccess{(peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 XCTAssert(false, "onSuccess Connect invalid")
@@ -415,7 +417,7 @@ class BCPeripheralTests: XCTestCase {
         NSLog("testTimeout : %@", peripheral.identifier.UUIDString)
         let timeoutExpectation = expectationWithDescription("onSuccess fulfilled for Timeout")
         let future = peripheral.connect(connectionTimeout: 1.0)
-        future.onSuccess{ (peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 XCTAssert(false, "onSuccess Connect invalid")
@@ -447,7 +449,7 @@ class BCPeripheralTests: XCTestCase {
         let timeoutExpectation = expectationWithDescription("onSuccess fulfilled for Timeout")
         let giveUpExpectation = expectationWithDescription("onSuccess fulfilled for GiveUp")
         let future = peripheral.connect(connectionTimeout: 1.0, timeoutRetries: 1)
-        future.onSuccess{ (peripheral, connectionEvent) in
+        future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 XCTAssert(false, "onSuccess Connect invalid")
@@ -477,7 +479,24 @@ class BCPeripheralTests: XCTestCase {
     func testDisconnectedReadRSSISuccess() {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let expectation = expectationWithDescription("onSuccess fulfilled for Timeout")
+        let future = peripheral.readRSSI()
 
+        future.onSuccess { rssi in
+            XCTAssertEqual(rssi, self.updatedRSSI, "RSSI invalid")
+            XCTAssertEqual(peripheral.RSSI, self.updatedRSSI, "RSSI invalid")
+            expectation.fulfill()
+        }
+
+        future.onFailure { error in
+            XCTAssert(false, "onFailure called")
+        }
+
+        peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI)), error: nil)
+
+        waitForExpectationsWithTimeout(20) { error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testConnectedReadRSSISuccess() {

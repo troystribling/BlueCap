@@ -10,7 +10,7 @@ import UIKit
 import XCTest
 import CoreBluetooth
 import CoreLocation
-import BlueCapKit
+@testable import BlueCapKit
 
 // MARK: - BCMutableServiceTests -
 class BCMutableServiceTests: XCTestCase {

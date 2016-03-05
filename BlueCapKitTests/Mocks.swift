@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 import CoreLocation
-import BlueCapKit
+@testable import BlueCapKit
 
  // MARK: - Error -
 struct TestFailure {

@@ -68,8 +68,8 @@ public class BCService {
         return self.discoveredCharacteristics[uuid]
     }
 
-    // MARK: CBPeripheralDelegate
-    public func didDiscoverCharacteristics(discoveredCharacteristics: [CBCharacteristic], error: NSError?) {
+    // MARK: CBPeripheralDelegate Shim
+    internal func didDiscoverCharacteristics(discoveredCharacteristics: [CBCharacteristic], error: NSError?) {
         if let error = error {
             BCLogger.debug("discover failed")
             self.characteristicsDiscoveredPromise.failure(error)
@@ -86,7 +86,8 @@ public class BCService {
             self.characteristicsDiscoveredPromise.success(self)
         }
     }
-    
+
+    // MARK: Utils
     private func discoverIfConnected(characteristics: [CBUUID]?) -> Future<BCService> {
         self._characteristicsDiscoveredPromise = Promise<BCService>()
         if self.peripheral?.state == .Connected {

@@ -216,6 +216,7 @@ public class BCMutableCharacteristic {
         return self.updateValueWithData(BCSerDe.serialize(value))
     }
 
+    // MARK: CBPeripheralManagerDelegate Shims
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
         self.updating = true
         self.updateValuesWithData(self.queuedUpdates)
@@ -236,6 +237,7 @@ public class BCMutableCharacteristic {
         }
     }
 
+    // MARK: Utils
     private func updateValuesWithData(values: [NSData]) -> Bool  {
         guard let value = values.last else {
             return self.updating

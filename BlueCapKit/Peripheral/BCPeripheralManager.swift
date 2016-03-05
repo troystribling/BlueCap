@@ -349,18 +349,19 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
             self.didReceiveWriteRequest(request, central: request.central)
         }
     }
-    
-    public func didSubscribeToCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
+
+    // MARK: CBPeripheralManagerDelegate Shims
+    internal func didSubscribeToCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
         BCLogger.debug()
         self.configuredCharcteristics[characteristic.UUID]?.didSubscribeToCharacteristic(central)
     }
     
-    public func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
+    internal func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
         BCLogger.debug()
         self.configuredCharcteristics[characteristic.UUID]?.didUnsubscribeFromCharacteristic(central)
     }
     
-    public func isReadyToUpdateSubscribers() {
+    internal func isReadyToUpdateSubscribers() {
         BCLogger.debug()
         for characteristic in self.configuredCharcteristics.values {
             if characteristic.hasSubscriber {
@@ -369,7 +370,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didReceiveWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
+    internal func didReceiveWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             BCLogger.debug("characteristic write request received for \(characteristic.UUID.UUIDString)")
             if characteristic.didRespondToWriteRequest(request, central: central) {
@@ -382,7 +383,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didReceiveReadRequest(var request: CBATTRequestInjectable, central: CBCentralInjectable) {
+    internal func didReceiveReadRequest(var request: CBATTRequestInjectable, central: CBCentralInjectable) {
         BCLogger.debug("chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             BCLogger.debug("responding with data: \(characteristic.stringValue)")
@@ -394,7 +395,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didUpdateState() {
+    internal func didUpdateState() {
         switch self.state {
         case .PoweredOn:
             BCLogger.debug("poweredOn")
@@ -419,7 +420,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didStartAdvertising(error: NSError?) {
+    internal func didStartAdvertising(error: NSError?) {
         if let error = error {
             BCLogger.debug("failed '\(error.localizedDescription)'")
             self.afterAdvertisingStartedPromise.failure(error)
@@ -429,7 +430,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    public func didAddService(service: CBService, error: NSError?) {
+    internal func didAddService(service: CBService, error: NSError?) {
         if let error = error {
             BCLogger.debug("failed '\(error.localizedDescription)'")
             self.configuredServices.removeValueForKey(service.UUID)
@@ -440,6 +441,7 @@ public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
         }
     }
 
+    // MARK: Utils
     public func addServices(promise: Promise<Void>, services: [BCMutableService]) {
         if services.count > 0 {
             let future = self.addService(services[0])

@@ -249,22 +249,23 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     public func centralManagerDidUpdateState(_: CBCentralManager) {
         self.didUpdateState()
     }
-    
-    public func didConnectPeripheral(peripheral: CBPeripheralInjectable) {
+
+    // MARK: CBCentralManagerDelegate Shims
+    internal func didConnectPeripheral(peripheral: CBPeripheralInjectable) {
         BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
-    public func didDisconnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
+    internal func didDisconnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
         BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral()
         }
     }
     
-    public func didDiscoverPeripheral(peripheral: CBPeripheralInjectable, advertisementData: [String:AnyObject], RSSI: NSNumber) {
+    internal func didDiscoverPeripheral(peripheral: CBPeripheralInjectable, advertisementData: [String:AnyObject], RSSI: NSNumber) {
         if self.discoveredPeripherals[peripheral.identifier] == nil {
             let bcPeripheral = BCPeripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.integerValue)
             BCLogger.debug("uuid=\(bcPeripheral.identifier.UUIDString), name=\(bcPeripheral.name)")
@@ -273,14 +274,14 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
     
-    public func didFailToConnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
+    internal func didFailToConnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
         BCLogger.debug()
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didFailToConnectPeripheral(error)
         }
     }
 
-    public func willRestoreState(dict: [String: AnyObject]) {
+    internal func willRestoreState(dict: [String: AnyObject]) {
         BCLogger.debug()
         if let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheralInjectable],
             let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID],
@@ -309,7 +310,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public func didUpdateState() {
+    internal func didUpdateState() {
         switch(self.cbCentralManager.state) {
         case .Unauthorized:
             BCLogger.debug("Unauthorized")

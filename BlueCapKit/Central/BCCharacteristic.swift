@@ -321,7 +321,7 @@ public class BCCharacteristic {
         return self.writeData(BCSerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    // MARK: CBPeripheralDelegate
+    // MARK: CBPeripheralDelegate Shim
     internal func didUpdateNotificationState(error: NSError?) {
         guard let notificationStateChangedPromise = self.notificationStateChangedPromise else {
             return
@@ -408,7 +408,7 @@ public class BCCharacteristic {
         }
     }
 
-    // MARK: Peripheral Delegates
+    // MARK: Peripheral Delegation
     private func setNotifyValue(state: Bool) {
         self.service?.peripheral?.setNotifyValue(state, forCharacteristic: self)
     }
