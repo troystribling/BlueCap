@@ -70,14 +70,14 @@ public protocol BCStringDeserializable {
 }
 
 public protocol BCRawDeserializable {
-    associatedtype RawType
+    typealias RawType
     static var UUID         : String {get}
     var rawValue            : RawType {get}
     init?(rawValue:RawType)
 }
 
 public protocol BCRawArrayDeserializable {
-    associatedtype RawType
+    typealias RawType
     static var UUID     : String {get}
     static var size     : Int {get}
     var rawValue        : [RawType] {get}
@@ -85,8 +85,8 @@ public protocol BCRawArrayDeserializable {
 }
 
 public protocol BCRawPairDeserializable {
-    associatedtype RawType1
-    associatedtype RawType2
+    typealias RawType1
+    typealias RawType2
     static var UUID     : String {get}
     var rawValue1       : RawType1 {get}
     var rawValue2       : RawType2 {get}
@@ -94,8 +94,8 @@ public protocol BCRawPairDeserializable {
 }
 
 public protocol BCRawArrayPairDeserializable {
-    associatedtype RawType1
-    associatedtype RawType2
+    typealias RawType1
+    typealias RawType2
     static var UUID     : String {get}
     static var size1    : Int {get}
     static var size2    : Int {get}
