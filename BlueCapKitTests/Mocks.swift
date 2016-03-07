@@ -102,10 +102,11 @@ class CBPeripheralMock: CBPeripheralInjectable {
     var readValueForCharacteristicCount = 0
     var writeValueCount = 0
     
-    let identifier = NSUUID()
+    let identifier: NSUUID
 
-    init(state:CBPeripheralState = .Disconnected) {
+    init(state: CBPeripheralState = .Disconnected, identifier: NSUUID = NSUUID()) {
         self.state = state
+        self.identifier = identifier
     }
     
     var delegate: CBPeripheralDelegate? {

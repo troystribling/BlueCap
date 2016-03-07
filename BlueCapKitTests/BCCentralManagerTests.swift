@@ -139,7 +139,35 @@ class BCCentralManagerTests: XCTestCase {
     }
 
     // MARK: State Restoration
-    func testStateRestoration() {
+    func testStateRestorationSuccess() {
+        let mock = CBCentralManagerMock(state: .PoweredOff)
+        let centralManager = BCCentralManager(centralManager: mock)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let testPeripherals = [CBPeripheralMock(state: .Connected, identifier: NSUUID()), CBPeripheralMock(state: .Connected, identifier: NSUUID())]
+        let testScannedServices = [CBUUID(string: NSUUID().UUIDString), CBUUID(string: NSUUID().UUIDString)]
+        let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(bool: true),
+                                            CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test"]
+        let state = [CBCentralManagerRestoredStatePeripheralsKey: testPeripherals,
+                     CBCentralManagerRestoredStateScanServicesKey: testScannedServices,
+                     CBCentralManagerRestoredStateScanOptionsKey: testOptions]
+        let future = centralManager.whenStateRestored()
+        future.onSuccess { (peripherals, scannedServices, options) in
+            expectation.fulfill()
+            XCTAssertEqual(peripherals.count, 2, "Restored peripherals count invalid")
+            XCTAssertEqual(peripherals[0].identifier, testPeripherals[0].identifier, "Restored peripherals identofier invalid")
+            XCTAssertEqual(peripherals[1].identifier, testPeripherals[1].identifier, "Restored peripherals identofier invalid")
+            XCTAssertEqual(scannedServices, testScannedServices, "Scanned servodes invalid")
+//            XCTAssertEqual(options, testOptions)
+        }
+        future.onFailure { error in
+            XCTAssert(false, "onFailure called")
+        }
+        centralManager.willRestoreState(state as! [String : AnyObject])
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 
+    func testStateRestorationFailure() {
     }
 }
