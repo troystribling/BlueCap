@@ -1,5 +1,5 @@
 //
-//  ConfigurePeripheralReconnectionsViewController.swift
+//  ConfigurePeripheralMaximumTimeoutsViewController.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 10/22/14.
@@ -8,9 +8,9 @@
 
 import UIKit
 
-class ConfigurePeripheralReconnectionsViewController: UIViewController {
+class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
 
-    @IBOutlet var maximumReconnectionsTextField: UITextField!
+    @IBOutlet var maximumTimeoutsTextField: UITextField!
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -18,7 +18,7 @@ class ConfigurePeripheralReconnectionsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.maximumReconnectionsTextField.text = "\(ConfigStore.getMaximumReconnections())"
+        self.maximumTimeoutsTextField.text = "\(ConfigStore.getMaximumTimeouts())"
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -31,9 +31,8 @@ class ConfigurePeripheralReconnectionsViewController: UIViewController {
     
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let maximumReconnections = self.maximumReconnectionsTextField.text, maximumReconnectionsInt = Int(maximumReconnections)
-            where !maximumReconnections.isEmpty && maximumReconnectionsInt > 0 {
-            ConfigStore.setMaximumReconnections(UInt(maximumReconnectionsInt))
+        if let maximumTimeouts = self.maximumTimeoutsTextField.text, maximumTimeoutsInt = UInt(maximumTimeouts) where !maximumTimeouts.isEmpty {
+            ConfigStore.setMaximumTimeouts(maximumTimeoutsInt)
             self.navigationController?.popToRootViewControllerAnimated(true)
             return true
         } else {

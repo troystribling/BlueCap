@@ -544,7 +544,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             switch(self.currentError) {
             case .None:
                 BCLogger.debug("no errors disconnecting")
-                self.shouldDisconnectOrGiveuo()
+                self.shouldDisconnectOrGiveup()
             case .Timeout:
                 BCLogger.debug("timeout reconnecting")
                 self.shouldTimeoutOrGiveup()
@@ -612,7 +612,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private func shouldDisconnectOrGiveuo() {
+    private func shouldDisconnectOrGiveup() {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < disconnectRetries {

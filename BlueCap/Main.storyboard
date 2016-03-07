@@ -226,6 +226,9 @@
             <string>Thonburi</string>
             <string>Thonburi</string>
             <string>Thonburi</string>
+            <string>Thonburi</string>
+            <string>Thonburi</string>
+            <string>Thonburi</string>
         </mutableArray>
     </customFonts>
     <scenes>
@@ -1845,35 +1848,8 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Peripheral Connection" id="8ju-Zn-yKL">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qrc-QP-hIY" detailTextLabel="4dO-vw-8Qf" rowHeight="50" style="IBUITableViewCellStyleValue1" id="1yW-3g-tr9">
-                                        <rect key="frame" x="0.0" y="333.5" width="600" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1yW-3g-tr9" id="WlY-oX-rF3">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Reconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qrc-QP-hIY">
-                                                    <rect key="frame" x="15" y="13" width="175" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="5" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4dO-vw-8Qf">
-                                                    <rect key="frame" x="552" y="13" width="13" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="qNM-jR-e9y" kind="show" identifier="ConfigurePeripheralReconnections" id="ZGV-zq-pST"/>
-                                        </connections>
-                                    </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="ma4-TX-8iG" detailTextLabel="5gg-0v-ZvH" rowHeight="50" style="IBUITableViewCellStyleValue1" id="NO9-17-ZP8">
-                                        <rect key="frame" x="0.0" y="383.5" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="333.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NO9-17-ZP8" id="UKM-2X-lR9">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -1899,12 +1875,66 @@
                                             <segue destination="SvA-DH-tna" kind="show" identifier="PeripheralConnectionTimeout" id="hvr-qI-F8Z"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="qrc-QP-hIY" detailTextLabel="4dO-vw-8Qf" rowHeight="50" style="IBUITableViewCellStyleValue1" id="1yW-3g-tr9">
+                                        <rect key="frame" x="0.0" y="383.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1yW-3g-tr9" id="WlY-oX-rF3">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Timeouts" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qrc-QP-hIY">
+                                                    <rect key="frame" x="15" y="13" width="127.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="5" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4dO-vw-8Qf">
+                                                    <rect key="frame" x="552" y="13" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="qNM-jR-e9y" kind="show" identifier="ConfigurePeripheralMaxTimeouts" id="ZGV-zq-pST"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="8rO-lY-WdU" detailTextLabel="f80-ez-8gP" rowHeight="50" style="IBUITableViewCellStyleValue1" id="2gH-lj-H6p">
+                                        <rect key="frame" x="0.0" y="433.5" width="600" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2gH-lj-H6p" id="9j6-Xh-58b">
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Disconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8rO-lY-WdU">
+                                                    <rect key="frame" x="15" y="13" width="180" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="f80-ez-8gP">
+                                                    <rect key="frame" x="552" y="13" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                    <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="ptv-4j-nKq" kind="show" identifier="ConfigurePeripheralMaxDisconnections" id="7Ab-dS-MhT"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Charcteristic I/O" id="khN-Sv-olX">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
-                                        <rect key="frame" x="0.0" y="475.5" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="525.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pfT-ct-Yfa" id="HnQ-CP-pw2">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -1935,7 +1965,7 @@
                             <tableViewSection headerTitle="Peripheral Discovery" id="vNl-7P-Qsf">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="HAL-3Y-xgm" detailTextLabel="HVV-RC-weh" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xyn-sW-H09">
-                                        <rect key="frame" x="0.0" y="567.5" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="617.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xyn-sW-H09" id="ET7-mw-zVx">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -1962,7 +1992,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="BnY-Zz-EPi" detailTextLabel="0E3-Dh-OXL" rowHeight="50" style="IBUITableViewCellStyleValue1" id="Vkq-GO-2zI">
-                                        <rect key="frame" x="0.0" y="617.5" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="667.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Vkq-GO-2zI" id="DiP-ZL-kq6">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -1993,7 +2023,7 @@
                             <tableViewSection headerTitle="Periphearls Display" id="EsL-WL-l85">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Lkd-kf-40S" detailTextLabel="9UP-xy-XPA" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xhJ-Gm-deP">
-                                        <rect key="frame" x="0.0" y="709.5" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="759.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xhJ-Gm-deP" id="ccy-xg-7Es">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -2024,7 +2054,7 @@
                             <tableViewSection headerTitle="Application" id="0Nn-2E-9qr">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="2xs-Jj-nLz">
-                                        <rect key="frame" x="0.0" y="801.5" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="851.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2xs-Jj-nLz" id="Aj9-a3-5ac">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="49.5"/>
@@ -2068,7 +2098,8 @@
                         <outlet property="maximumPeripheralsDiscovered" destination="0E3-Dh-OXL" id="vDR-oj-BVW"/>
                         <outlet property="notifySwitch" destination="0Qo-VB-F4m" id="Qt0-oE-hNV"/>
                         <outlet property="peripheralConnectionTimeout" destination="5gg-0v-ZvH" id="154-ix-9Ql"/>
-                        <outlet property="peripheralReconnectionsLabel" destination="4dO-vw-8Qf" id="URm-PR-AL9"/>
+                        <outlet property="peripheralMaxDisconnectionsLabel" destination="f80-ez-8gP" id="BPh-v2-nhn"/>
+                        <outlet property="peripheralMaxTimeoutsLabel" destination="4dO-vw-8Qf" id="3Qf-Vb-Ywk"/>
                         <outlet property="peripheralSortOrder" destination="9UP-xy-XPA" id="Ld9-pg-nYI"/>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
                         <outlet property="scanTimeoutEnabledLabel" destination="WEG-8P-fl3" id="VBk-35-Xsm"/>
@@ -4677,10 +4708,10 @@
             </objects>
             <point key="canvasLocation" x="2271" y="-1238"/>
         </scene>
-        <!--Max Reconnections-->
+        <!--Max Timeouts-->
         <scene sceneID="0fw-zi-j5i">
             <objects>
-                <viewController id="qNM-jR-e9y" customClass="ConfigurePeripheralReconnectionsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="qNM-jR-e9y" customClass="ConfigurePeripheralMaximumTimeoutsViewController" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="XM8-Ge-AOG"/>
                         <viewControllerLayoutGuide type="bottom" id="oNa-em-hNM"/>
@@ -4689,7 +4720,7 @@
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Max Reconnections" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="obe-QH-yps">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Max Timeouts" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="obe-QH-yps">
                                 <rect key="frame" x="20" y="60" width="560" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="Yma-8N-uoK"/>
@@ -4708,14 +4739,14 @@
                             <constraint firstItem="obe-QH-yps" firstAttribute="top" secondItem="XM8-Ge-AOG" secondAttribute="bottom" constant="60" id="qQF-tJ-J1D"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Max Reconnections" id="IDu-qG-Zdj"/>
+                    <navigationItem key="navigationItem" title="Max Timeouts" id="IDu-qG-Zdj"/>
                     <connections>
-                        <outlet property="maximumReconnectionsTextField" destination="obe-QH-yps" id="rAy-4y-Goh"/>
+                        <outlet property="maximumTimeoutsTextField" destination="obe-QH-yps" id="bcA-Hc-Sm6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cca-8q-tIP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3105" y="-1238"/>
+            <point key="canvasLocation" x="3091" y="-1238"/>
         </scene>
         <!--Peripheral Sort Order-->
         <scene sceneID="ajL-HY-bOd">
@@ -4834,6 +4865,46 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2KY-PJ-ZZk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3097" y="-5724"/>
+        </scene>
+        <!--Max Disconnections-->
+        <scene sceneID="JDc-v4-OQ7">
+            <objects>
+                <viewController id="ptv-4j-nKq" customClass="ConfigurePeripheralMaximumDisconnections" customModule="BlueCap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="MhD-00-tGv"/>
+                        <viewControllerLayoutGuide type="bottom" id="ic6-M3-nGq"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="DkA-1M-TOF">
+                        <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Max Disconnections" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="jjw-JP-nO7">
+                                <rect key="frame" x="20" y="60" width="560" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="MhU-M9-XLl"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="ptv-4j-nKq" id="wfL-2X-3Mp"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="jjw-JP-nO7" firstAttribute="top" secondItem="MhD-00-tGv" secondAttribute="bottom" constant="60" id="Uej-NQ-0nC"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="jjw-JP-nO7" secondAttribute="trailing" id="acm-P6-4so"/>
+                            <constraint firstItem="jjw-JP-nO7" firstAttribute="leading" secondItem="DkA-1M-TOF" secondAttribute="leadingMargin" id="uay-6w-WQ5"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Max Disconnections" id="5Ar-Fl-dHU"/>
+                    <connections>
+                        <outlet property="maximumDisconnectionsTextField" destination="jjw-JP-nO7" id="1gL-Vz-9Hr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sRs-RZ-efc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3853" y="-1238"/>
         </scene>
     </scenes>
     <resources>

@@ -18,7 +18,8 @@ struct Defaults {
     static let connectionTimeout: UInt = 10
     static let peripheralConnectionTimeout: UInt = 10
     static let characteristicReadWriteTimeout: UInt = 10
-    static let maximumReconnections: UInt = 5
+    static let maximumTimeouts: UInt = 5
+    static let maximumDisconnections: UInt = 0
     static let maximumPeripheralsConnected: Int = 5
     static let maximumPeripheralsDiscovered: Int = 20
     static let peripheralSortOrder: PeripheralSortOrder = .DiscoveryDate
@@ -165,28 +166,30 @@ class ConfigStore {
         NSUserDefaults.standardUserDefaults().setInteger(Int(characteristicReadWriteTimeout), forKey:"characteristicReadWriteTimeout")
     }
 
-    // MARK: Maximum Reconnections
-    class func getMaximumReconnections() -> UInt {
-        let maximumReconnections = NSUserDefaults.standardUserDefaults().integerForKey("maximumReconnections")
-        if maximumReconnections == 0 {
-            return Defaults.maximumReconnections
-        } else {
-            return UInt(maximumReconnections)
-        }
+    // MARK: Maximum Disconnections
+    class func getMaximumDisconnections() -> UInt {
+        let maximumDisconnections = NSUserDefaults.standardUserDefaults().integerForKey("maximumDisconnections")
+        return maximumDisconnections == 0 ? Defaults.maximumDisconnections : UInt(maximumDisconnections)
     }
     
-    class func setMaximumReconnections(maximumReconnections: UInt) {
-        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumReconnections), forKey:"maximumReconnections")
+    class func setMaximumDisconnections(maximumDisconnections: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumDisconnections), forKey:"maximumDisconnections")
+    }
+
+    // MARK: Maximum Timeouts
+    class func getMaximumTimeouts() -> UInt {
+        let maximumTimeouts = NSUserDefaults.standardUserDefaults().integerForKey("maximumTimeouts")
+        return maximumTimeouts == 0 ? Defaults.maximumTimeouts : UInt(maximumTimeouts)
+    }
+
+    class func setMaximumTimeouts(maximumTimeouts: UInt) {
+        NSUserDefaults.standardUserDefaults().setInteger(Int(maximumTimeouts), forKey:"maximumTimeouts")
     }
 
     // MARK: Maximum Peripherals Connected
     class func getMaximumPeripheralsConnected() -> Int {
         let maximumPeripheralsConnected = NSUserDefaults.standardUserDefaults().integerForKey("maximumPeripheralsConnected")
-        if maximumPeripheralsConnected == 0 {
-            return Defaults.maximumPeripheralsConnected
-        } else {
-            return maximumPeripheralsConnected
-        }
+        return maximumPeripheralsConnected == 0 ? Defaults.maximumPeripheralsConnected : maximumPeripheralsConnected
     }
 
     class func setMaximumPeripheralsConnected(maximumConnections: Int) {

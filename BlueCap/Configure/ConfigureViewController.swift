@@ -15,7 +15,8 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var servicesLabel: UILabel!
     @IBOutlet var scanTimeoutLabel: UILabel!
     @IBOutlet var scanTimeoutEnabledLabel: UILabel!
-    @IBOutlet var peripheralReconnectionsLabel: UILabel!
+    @IBOutlet var peripheralMaxDisconnectionsLabel: UILabel!
+    @IBOutlet var peripheralMaxTimeoutsLabel: UILabel!
     @IBOutlet var peripheralConnectionTimeout: UILabel!
     @IBOutlet var characteristicReadWriteTimeout: UILabel!
     @IBOutlet var maximumPeripheralsConnected: UILabel!
@@ -44,7 +45,8 @@ class ConfigureViewController : UITableViewController {
     override func viewWillAppear(animated: Bool) {
         self.scanModeLabel.text = ConfigStore.getScanMode().stringValue
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
-        self.peripheralReconnectionsLabel.text = "\(ConfigStore.getMaximumReconnections())"
+        self.peripheralMaxDisconnectionsLabel.text = "\(ConfigStore.getMaximumDisconnections())"
+        self.peripheralMaxTimeoutsLabel.text = "\(ConfigStore.getMaximumTimeouts())"
         self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
         self.characteristicReadWriteTimeout.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
         self.maximumPeripheralsConnected.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
