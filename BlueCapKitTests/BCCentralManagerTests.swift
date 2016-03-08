@@ -143,7 +143,9 @@ class BCCentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let testPeripherals = [CBPeripheralMock(state: .Connected, identifier: NSUUID()), CBPeripheralMock(state: .Connected, identifier: NSUUID())]
+        let testPeripherals : [CBPeripheralManagerInjectable] =
+            [CBPeripheralMock(state: .Connected, identifier: NSUUID()),
+             CBPeripheralMock(state: .Connected, identifier: NSUUID())].map { $0 as! CBPeripheralManagerInjectable }
         let testScannedServices = [CBUUID(string: NSUUID().UUIDString), CBUUID(string: NSUUID().UUIDString)]
         let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(bool: true),
                                             CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test"]

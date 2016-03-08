@@ -11,8 +11,8 @@ import CoreBluetooth
 
 // MARK: - CBPeripheralManagerInjectable -
 public protocol CBPeripheralManagerInjectable {
-    var isAdvertising: Bool                 { get }
-    var state: CBPeripheralManagerState     { get }
+    var isAdvertising: Bool { get }
+    var state: CBPeripheralManagerState { get }
     
     func startAdvertising(advertisementData:[String:AnyObject]?)
     func stopAdvertising()
@@ -23,7 +23,7 @@ public protocol CBPeripheralManagerInjectable {
     func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool
 }
 
-extension CBPeripheralManager : CBPeripheralManagerInjectable {}
+extension CBPeripheralManager: CBPeripheralManagerInjectable {}
 
 // MARK: - CBATTRequestInjectable -
 public protocol CBATTRequestInjectable {
@@ -32,7 +32,7 @@ public protocol CBATTRequestInjectable {
     var value: NSData? { get set }
 }
 
-extension CBATTRequest : CBATTRequestInjectable {}
+extension CBATTRequest: CBATTRequestInjectable {}
 
 // MARK: - CBCentralInjectable -
 public protocol CBCentralInjectable {
@@ -40,10 +40,10 @@ public protocol CBCentralInjectable {
     var maximumUpdateValueLength: Int { get }
 }
 
-extension CBCentral : CBCentralInjectable {}
+extension CBCentral: CBCentralInjectable {}
 
 // MARK: - BCPeripheralManager -
-public class BCPeripheralManager : NSObject, CBPeripheralManagerDelegate {
+public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral-manager.io")

@@ -243,7 +243,13 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
-        self.willRestoreState(dict)
+//        var injectablePeripherals: [CBPeripheralInjectable]? = nil
+//        let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
+//            injectablePeripherals = cbPeripherals.map { $0 as! CBPeripheralManagerInjectable }
+//        }
+//        let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID]
+//        let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject]
+//        self.willRestoreState(injectablePeripherals, scannedServices: scannedServices, options: options)
     }
     
     public func centralManagerDidUpdateState(_: CBCentralManager) {
@@ -281,30 +287,27 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    internal func willRestoreState(dict: [String: AnyObject]) {
+    internal func willRestoreState(cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
         BCLogger.debug()
-        if let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheralInjectable],
-            let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID],
-            let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject] {
-
-                let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
-                    let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
-                    self.discoveredPeripherals[peripheral.identifier] = peripheral
-                    if let cbServices = cbPeripheral.services {
-                        for cbService in cbServices {
-                            let service = BCService(cbService: cbService, peripheral: peripheral)
-                            peripheral.discoveredServices[service.UUID] = service
-                            if let cbCharacteristics = cbService.characteristics {
-                                for cbCharacteristic in cbCharacteristics {
-                                    let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
-                                    peripheral.discoveredCharacteristics[characteristic.UUID] = characteristic
-                                }
+        if let cbPeripherals = cbPeripherals, scannedServices = scannedServices, options = options {
+            let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
+                let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
+                self.discoveredPeripherals[peripheral.identifier] = peripheral
+                if let cbServices = cbPeripheral.services {
+                    for cbService in cbServices {
+                        let service = BCService(cbService: cbService, peripheral: peripheral)
+                        peripheral.discoveredServices[service.UUID] = service
+                        if let cbCharacteristics = cbService.characteristics {
+                            for cbCharacteristic in cbCharacteristics {
+                                let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
+                                peripheral.discoveredCharacteristics[characteristic.UUID] = characteristic
                             }
                         }
                     }
-                    return peripheral
                 }
-                self.afterStateRestoredPromise.success((peripherals, scannedServices, options))
+                return peripheral
+            }
+            self.afterStateRestoredPromise.success((peripherals, scannedServices, options))
         } else {
             self.afterStateRestoredPromise.failure(BCError.centralRestoreFailed)
         }
