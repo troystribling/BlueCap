@@ -121,13 +121,13 @@ class PeripheralsViewController : UITableViewController {
                 self.stopScanning()
             } else {
                 Singletons.centralManager.whenPowerOn().onSuccess {
+                    self.scanStatus = true
                     BCLogger.debug()
                     self.startScan()
                     self.setScanButton()
                     self.updatePeripheralConnectionsIfNeeded()
                 }
             }
-            self.scanStatus = !self.scanStatus
         } else {
             self.presentViewController(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
         }
@@ -141,6 +141,7 @@ class PeripheralsViewController : UITableViewController {
                 Singletons.centralManager.stopScanning()
             }
         }
+        self.scanStatus = false
         self.stopPollingRSSIForPeripherals()
         Singletons.centralManager.disconnectAllPeripherals()
         Singletons.centralManager.removeAllPeripherals()
@@ -152,10 +153,6 @@ class PeripheralsViewController : UITableViewController {
     // utils
     func didResignActive() {
         BCLogger.debug()
-        if self.scanStatus {
-            self.stopScanning()
-        }
-        self.scanStatus = false
     }
 
     func didBecomeActive() {
@@ -337,12 +334,6 @@ class PeripheralsViewController : UITableViewController {
             cell.stateLabel.textColor = UIColor.lightGrayColor()
         }
         cell.rssiLabel.text = "\(peripheral.RSSI)"
-        if let (future, cellUpdate) = self.rssiPollingFutures[peripheral.identifier] where cellUpdate == false {
-            self.rssiPollingFutures[peripheral.identifier] = (future, true)
-            future.onSuccess { [weak cell] rssi in
-                cell?.rssiLabel.text = "\(rssi)"
-            }
-        }
         return cell
     }
 }

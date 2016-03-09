@@ -646,7 +646,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
                 self.currentError = .Timeout
                 centralManager.cancelPeripheralConnection(self)
             } else {
-                BCLogger.debug()
+                BCLogger.debug("expired")
             }
         }
     }
