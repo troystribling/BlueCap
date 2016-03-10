@@ -34,8 +34,9 @@ struct Singletons {
 }
 
 struct Params {
-    static let peripheralRSSIPollingInterval = 2.0
+    static let peripheralRSSIPollingInterval = 4.0
     static let peripheralRSSIFutureCapacity = 10
+    static let updateConnectionsInterval = 5.0
 }
 
 @UIApplicationMain
@@ -67,11 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(application: UIApplication) {
         NSUserDefaults.standardUserDefaults().synchronize()
-        if Singletons.centralManager.isScanning {
-            Singletons.centralManager.stopScanning()
-            Singletons.centralManager.disconnectAllPeripherals()
-            Singletons.centralManager.removeAllPeripherals()
-        }
     }
 
     func applicationWillEnterForeground(application: UIApplication) {

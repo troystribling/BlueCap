@@ -127,10 +127,11 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     private var _disconnectCount: UInt = 0
     
     private var _connectionSequence = 0
+    private var _secondsConnected = 0.0
+    private var _numberOfConnections = 0
     private var _currentError = PeripheralConnectionError.None
     private var _forcedDisconnect = false
 
-    private let _discoveredAt = NSDate()
     private var _connectedAt: NSDate?
     private var _disconnectedAt : NSDate?
     
@@ -142,6 +143,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     internal var disconnectRetries: UInt?
     internal weak var centralManager: BCCentralManager?
     
+    public let discoveredAt = NSDate()
     public let cbPeripheral: CBPeripheralInjectable
     public let advertisements: BCPeripheralAdvertisements?
 
@@ -237,18 +239,42 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Public Properties
-    public var discoveredAt: NSDate {
-        return self._discoveredAt
-    }
-    
     public var connectedAt: NSDate? {
-        return self._connectedAt
+        get {
+            return BCPeripheral.ioQueue.sync { return self._connectedAt }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._connectedAt = newValue }
+        }
     }
     
     public var disconnectedAt: NSDate? {
-        return self._disconnectedAt
+        get {
+            return BCPeripheral.ioQueue.sync { return self._disconnectedAt }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._disconnectedAt = newValue }
+        }
     }
-    
+
+    public var numberOfConnections: Int {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._numberOfConnections }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._numberOfConnections = newValue }
+        }
+    }
+
+    public var secondsConnected: Double {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._secondsConnected }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._secondsConnected = newValue }
+        }
+    }
+
     public var name: String {
         if let name = self.cbPeripheral.name {
             return name
@@ -535,7 +561,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     // MARK: CBCentralManagerDelegate Shims
     internal func didDisconnectPeripheral() {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
-        self._disconnectedAt = NSDate()
+        self.disconnectedAt = NSDate()
         if (self.forcedDisconnect) {
             self.forcedDisconnect = false
             BCLogger.debug("forced disconnect")
@@ -556,7 +582,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     internal func didConnectPeripheral() {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
-        self._connectedAt = NSDate()
+        self.connectedAt = NSDate()
         self.connectionPromise?.success((self, .Connect))
     }
     

@@ -12,14 +12,12 @@ import BlueCapKit
 
 class PeripheralsViewController : UITableViewController {
 
-    static let updateConnectionsFrequency = 5.0
-
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
 
     var scanStatus = false
     var updatePeripheralConnectionsSwitch = false
-    var rssiPollingFutures = [NSUUID: (future: FutureStream<Int>, cellUpdate: Bool)]()
+    var rssiPollingFutures = [NSUUID: FutureStream<Int>]()
     var peripheralConnectionStatus = [NSUUID: Bool]()
 
     var reachedDiscoveryLimit: Bool {
@@ -105,15 +103,6 @@ class PeripheralsViewController : UITableViewController {
         return perform
     }
 
-    func stopPollingRSSIForPeripherals() {
-        for peripheral in Singletons.centralManager.peripherals {
-            if self.rssiPollingFutures[peripheral.identifier] != nil {
-                 peripheral.stopPollingRSSI()
-            }
-        }
-        self.rssiPollingFutures.removeAll()
-    }
-
     // actions
     func toggleScan(sender:AnyObject) {
         if Singletons.beaconManager.isMonitoring == false {
@@ -157,7 +146,7 @@ class PeripheralsViewController : UITableViewController {
 
     func didBecomeActive() {
         BCLogger.debug()
-        self.tableView.reloadData()
+        self.updateWhenActive()
         self.setScanButton()
     }
     
@@ -194,11 +183,20 @@ class PeripheralsViewController : UITableViewController {
         guard self.updatePeripheralConnectionsSwitch && self.scanStatus else {
             return
         }
-        Queue.main.delay(PeripheralsViewController.updateConnectionsFrequency) { [unowned self] in
+        Queue.main.delay(Params.updateConnectionsInterval) { [unowned self] in
             self.updatePeripheralConnections()
             self.updateWhenActive()
             self.updatePeripheralConnectionsIfNeeded()
         }
+    }
+
+    func stopPollingRSSIForPeripherals() {
+        for peripheral in Singletons.centralManager.peripherals {
+            if self.rssiPollingFutures[peripheral.identifier] != nil {
+                peripheral.stopPollingRSSI()
+            }
+        }
+        self.rssiPollingFutures.removeAll()
     }
 
     func connect(peripheral: BCPeripheral) {
@@ -259,8 +257,9 @@ class PeripheralsViewController : UITableViewController {
         let afterPeripheralDiscovered = { (peripheral: BCPeripheral) -> Void in
             Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
             self.updateWhenActive()
-            self.rssiPollingFutures[peripheral.identifier] =
-                (peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity), false)
+            let future = peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+            self.rssiPollingFutures[peripheral.identifier] = future
+            future.onSuccess { _ in }
             self.peripheralConnectionStatus[peripheral.identifier] = false
             if self.reachedDiscoveryLimit {
                 Singletons.centralManager.stopScanning()
