@@ -127,14 +127,13 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     private var _disconnectCount: UInt = 0
     
     private var _connectionSequence = 0
-    private var _secondsConnected = 0.0
-    private var _numberOfConnections = 0
     private var _currentError = PeripheralConnectionError.None
     private var _forcedDisconnect = false
 
     private var _connectedAt: NSDate?
     private var _disconnectedAt : NSDate?
-    
+    private var _totalSecondsConnected = 0.0
+
     internal var discoveredServices = BCSerialIODictionary<CBUUID, BCService>(BCPeripheral.ioQueue)
     internal var discoveredCharacteristics = BCSerialIODictionary<CBUUID, BCCharacteristic>(BCPeripheral.ioQueue)
 
@@ -143,9 +142,9 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     internal var disconnectRetries: UInt?
     internal weak var centralManager: BCCentralManager?
     
-    public let discoveredAt = NSDate()
     public let cbPeripheral: CBPeripheralInjectable
     public let advertisements: BCPeripheralAdvertisements?
+    public let discoveredAt = NSDate()
 
     // MARK: Serial Properties
     public var RSSI: Int {
@@ -238,8 +237,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    // MARK: Public Properties
-    public var connectedAt: NSDate? {
+    private var connectedAt: NSDate? {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectedAt }
         }
@@ -247,7 +245,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             BCPeripheral.ioQueue.sync { self._connectedAt = newValue }
         }
     }
-    
+
     public var disconnectedAt: NSDate? {
         get {
             return BCPeripheral.ioQueue.sync { return self._disconnectedAt }
@@ -257,21 +255,39 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var numberOfConnections: Int {
+    private var totalSecondsConnected: NSTimeInterval {
         get {
-            return BCPeripheral.ioQueue.sync { return self._numberOfConnections }
+            return BCPeripheral.ioQueue.sync { return self._totalSecondsConnected }
         }
         set {
-            BCPeripheral.ioQueue.sync { self._numberOfConnections = newValue }
+            BCPeripheral.ioQueue.sync { self._totalSecondsConnected = newValue }
         }
     }
 
-    public var secondsConnected: Double {
+    // MARK: Public Properties
+    public var numberOfConnections: Int {
         get {
-            return BCPeripheral.ioQueue.sync { return self._secondsConnected }
+            return BCPeripheral.ioQueue.sync { return self._connectionSequence }
         }
-        set {
-            BCPeripheral.ioQueue.sync { self._secondsConnected = newValue }
+    }
+
+    public var secondsConnected: NSTimeInterval {
+        if let disconnectedAt = self.disconnectedAt {
+            return disconnectedAt.timeIntervalSinceDate(self.connectedAt!)
+        } else {
+            if let connectedAt = self.connectedAt {
+                return NSDate().timeIntervalSinceDate(connectedAt)
+            } else {
+                return 0.0
+            }
+        }
+    }
+
+    public var cumlativeSecondsConnected: NSTimeInterval {
+        if self.disconnectedAt == nil {
+            return self.totalSecondsConnected
+        } else {
+            return self.totalSecondsConnected + self.secondsConnected
         }
     }
 
@@ -339,7 +355,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     // MARK: Connection
     public func reconnect() {
         if let centralManager = self.centralManager where self.state == .Disconnected {
-            BCLogger.debug("reconnect peripheral \(self.name)")
+            BCLogger.debug("reconnect peripheral \(self.name), \(self.identifier.UUIDString)")
             centralManager.connectPeripheral(self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
@@ -352,7 +368,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         self.connectionTimeout = connectionTimeout
-        BCLogger.debug("connect peripheral \(self.name)")
+        BCLogger.debug("connect peripheral \(self.name)', \(self.identifier.UUIDString)")
         self.reconnect()
         return self.connectionPromise!.future
     }
@@ -551,7 +567,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             self.readRSSIPromise?.failure(error)
             self.pollRSSIPromise?.failure(error)
         } else {
-            BCLogger.debug("RSSI = \(RSSI.stringValue), peripheral name = \(self.name), state = \(self.state.rawValue)")
+            BCLogger.debug("RSSI = \(RSSI.stringValue), peripheral name = \(self.name), uuid=\(self.identifier.UUIDString), state = \(self.state.rawValue)")
             self.RSSI = RSSI.integerValue
             self.readRSSIPromise?.success(RSSI.integerValue)
             self.pollRSSIPromise?.success(RSSI.integerValue)
@@ -559,9 +575,17 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: CBCentralManagerDelegate Shims
+    internal func didConnectPeripheral() {
+        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
+        self.connectedAt = NSDate()
+        self.disconnectedAt = nil
+        self.connectionPromise?.success((self, .Connect))
+    }
+
     internal func didDisconnectPeripheral() {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self.disconnectedAt = NSDate()
+        self.totalSecondsConnected += self.secondsConnected
         if (self.forcedDisconnect) {
             self.forcedDisconnect = false
             BCLogger.debug("forced disconnect")
@@ -580,15 +604,9 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    internal func didConnectPeripheral() {
-        BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
-        self.connectedAt = NSDate()
-        self.connectionPromise?.success((self, .Connect))
-    }
-    
     internal func didFailToConnectPeripheral(error: NSError?) {
         if let error = error {
-            BCLogger.debug("connection failed for \(self.name) with error:'\(error.localizedDescription)'")
+            BCLogger.debug("connection failed for '\(self.name)', \(self.identifier.UUIDString) with error:'\(error.localizedDescription)'")
             self.currentError = .Unknown
             self.connectionPromise?.failure(error)
             if let disconnectRetries = self.disconnectRetries {
