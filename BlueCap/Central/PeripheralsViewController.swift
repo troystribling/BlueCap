@@ -107,11 +107,12 @@ class PeripheralsViewController : UITableViewController {
     func toggleScan(sender:AnyObject) {
         if Singletons.beaconManager.isMonitoring == false {
             if self.scanStatus {
+                BCLogger.debug("Scan toggled off")
                 self.stopScanning()
             } else {
+                BCLogger.debug("Scan toggled on")
                 Singletons.centralManager.whenPowerOn().onSuccess {
                     self.scanStatus = true
-                    BCLogger.debug()
                     self.startScan()
                     self.setScanButton()
                     self.updatePeripheralConnectionsIfNeeded()
@@ -165,7 +166,7 @@ class PeripheralsViewController : UITableViewController {
             let peripheral = peripherals[i]
             if let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] {
                 if i < maxConnections {
-                    if connectionStatus == false {
+                    if connectionStatus == false && peripheral.state == .Disconnected {
                         BCLogger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                         self.connect(peripheral)
                     }
@@ -184,6 +185,7 @@ class PeripheralsViewController : UITableViewController {
             return
         }
         Queue.main.delay(Params.updateConnectionsInterval) { [unowned self] in
+            BCLogger.debug("update connections triggered")
             self.updatePeripheralConnections()
             self.updateWhenActive()
             self.updatePeripheralConnectionsIfNeeded()

@@ -291,6 +291,10 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
+    public var cumlativeSecondsDisconnected: NSTimeInterval {
+        return NSDate().timeIntervalSinceDate(self.discoveredAt) - self.cumlativeSecondsConnected
+    }
+
     public var name: String {
         if let name = self.cbPeripheral.name {
             return name
@@ -355,11 +359,13 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     // MARK: Connection
     public func reconnect() {
         if let centralManager = self.centralManager where self.state == .Disconnected {
-            BCLogger.debug("reconnect peripheral \(self.name), \(self.identifier.UUIDString)")
+            BCLogger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.UUIDString)")
             centralManager.connectPeripheral(self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
             self.timeoutConnection(self.connectionSequence)
+        } else {
+            BCLogger.debug("peripheral not disconnected \(self.name), \(self.identifier.UUIDString)")
         }
     }
      
@@ -379,9 +385,10 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         self.forcedDisconnect = true
         if self.state == .Connected {
-            BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
+            BCLogger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.UUIDString)")
             central.cancelPeripheralConnection(self)
         } else {
+            BCLogger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.UUIDString)")
             self.didDisconnectPeripheral()
         }
     }
@@ -588,18 +595,18 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.totalSecondsConnected += self.secondsConnected
         if (self.forcedDisconnect) {
             self.forcedDisconnect = false
-            BCLogger.debug("forced disconnect")
+            BCLogger.debug("forced disconnect uuid=\(self.identifier.UUIDString), name=\(self.name)")
             self.connectionPromise?.success((self, .ForceDisconnect))
         } else {
             switch(self.currentError) {
             case .None:
-                BCLogger.debug("no errors disconnecting")
+                BCLogger.debug("no errors disconnecting uuid=\(self.identifier.UUIDString), name=\(self.name)")
                 self.shouldDisconnectOrGiveup()
             case .Timeout:
-                BCLogger.debug("timeout reconnecting")
+                BCLogger.debug("timeout uuid=\(self.identifier.UUIDString), name=\(self.name)")
                 self.shouldTimeoutOrGiveup()
             case .Unknown:
-                BCLogger.debug("unknown error")
+                BCLogger.debug("unknown error uuid=\(self.identifier.UUIDString), name=\(self.name)")
             }
         }
     }
@@ -642,7 +649,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Utilities
     private func shouldTimeoutOrGiveup() {
-        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), timeoutCount=\(self.timeoutCount)")
+        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), timeoutCount=\(self.timeoutCount), timeoutRetries=\(self.timeoutRetries)")
         if let timeoutRetries = self.timeoutRetries {
             if self.timeoutCount < timeoutRetries {
                 self.connectionPromise?.success((self, .Timeout))
@@ -657,7 +664,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     private func shouldDisconnectOrGiveup() {
-        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString)")
+        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), disconnectCount=\(self.disconnectCount), disconnectRetries=\(self.disconnectRetries)")
         if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < disconnectRetries {
                 self.disconnectCount += 1
@@ -683,14 +690,14 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         guard let centralManager = self.centralManager else {
             return
         }
-        BCLogger.debug("name = \(self.name), UUID = \(self.identifier.UUIDString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
+        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
         BCPeripheral.timeoutQueue.delay(self.connectionTimeout) {
             if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 BCLogger.debug("timing out name = \(self.name), UUID = \(self.identifier.UUIDString), sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
                 centralManager.cancelPeripheralConnection(self)
             } else {
-                BCLogger.debug("expired")
+                BCLogger.debug("timeout expired name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current connectionSequence=\(self.connectionSequence), state=\(self.state)")
             }
         }
     }
@@ -704,7 +711,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         guard self.pollRSSIPromise != nil else {
             return
         }
-        BCLogger.debug("period = \(period)")
+        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period)")
         BCPeripheral.rssiQueue.delay(period) {
             self.cbPeripheral.readRSSI()
             self.pollRSSI(period)

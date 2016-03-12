@@ -129,6 +129,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     public func whenPowerOn() -> Future<Void> {
         self.afterPowerOnPromise = Promise<Void>()
         if self.poweredOn {
+            BCLogger.debug("Central already powered on")
             self.afterPowerOnPromise.success()
         }
         return self.afterPowerOnPromise.future
