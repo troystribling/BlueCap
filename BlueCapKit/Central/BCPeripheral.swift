@@ -398,7 +398,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             return
         }
         central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
-        self.didConnectPeripheral()
+        self.disconnect()
     }
 
     // MARK: Discover Services
@@ -613,19 +613,9 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     internal func didFailToConnectPeripheral(error: NSError?) {
         if let error = error {
-            BCLogger.debug("connection failed for '\(self.name)', \(self.identifier.UUIDString) with error:'\(error.localizedDescription)'")
-            self.currentError = .Unknown
-            self.connectionPromise?.failure(error)
-            if let disconnectRetries = self.disconnectRetries {
-                if self.disconnectCount < disconnectRetries {
-                    self.disconnectCount += 1
-                } else {
-                    self.disconnectCount = 0
-                    self.connectionPromise?.success((self, BCConnectionEvent.GiveUp))
-                }
-            }
+            self.shouldFailOrGiveUp(error)
         } else {
-            BCLogger.debug("connection success")
+            BCLogger.debug("connection failed without error name=\(self.name), uuid=\(self.identifier.UUIDString)")
             self.connectionPromise?.success((self, .Failed))
         }
     }
@@ -648,6 +638,20 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Utilities
+    private func shouldFailOrGiveUp(error: NSError) {
+        BCLogger.debug("connection failed for '\(self.name)', \(self.identifier.UUIDString) with error:'\(error.localizedDescription)'")
+        self.currentError = .Unknown
+        if let disconnectRetries = self.disconnectRetries {
+            if self.disconnectCount < disconnectRetries {
+                self.disconnectCount += 1
+                self.connectionPromise?.failure(error)
+            } else {
+                self.disconnectCount = 0
+                self.connectionPromise?.success((self, BCConnectionEvent.GiveUp))
+            }
+        }
+    }
+
     private func shouldTimeoutOrGiveup() {
         BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), timeoutCount=\(self.timeoutCount), timeoutRetries=\(self.timeoutRetries)")
         if let timeoutRetries = self.timeoutRetries {

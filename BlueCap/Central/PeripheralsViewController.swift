@@ -228,7 +228,9 @@ class PeripheralsViewController : UITableViewController {
                 BCLogger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.UUIDString)'")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
-                self.peripheralConnectionStatus[peripheral.identifier] = false
+                if self.peripheralConnectionStatus[peripheral.identifier] != nil {
+                    self.peripheralConnectionStatus[peripheral.identifier] = false
+                }
                 self.updateWhenActive()
             case .Failed:
                 BCLogger.debug("Connection failed peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
@@ -257,16 +259,18 @@ class PeripheralsViewController : UITableViewController {
     func startScan() {
         let scanMode = ConfigStore.getScanMode()
         let afterPeripheralDiscovered = { (peripheral: BCPeripheral) -> Void in
-            Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
-            self.updateWhenActive()
-            let future = peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
-            self.rssiPollingFutures[peripheral.identifier] = future
-            future.onSuccess { _ in }
-            self.peripheralConnectionStatus[peripheral.identifier] = false
-            if self.reachedDiscoveryLimit {
-                Singletons.centralManager.stopScanning()
+            if Singletons.centralManager.peripherals.contains(peripheral) {
+                BCLogger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
+                Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
+                self.updateWhenActive()
+                let future = peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+                self.rssiPollingFutures[peripheral.identifier] = future
+                self.peripheralConnectionStatus[peripheral.identifier] = false
+                if self.reachedDiscoveryLimit {
+                    Singletons.centralManager.stopScanning()
+                }
+                self.updatePeripheralConnections()
             }
-            self.updatePeripheralConnections()
         }
         let afterTimeout = { (error: NSError) -> Void in
             if error.domain == BCError.domain && error.code == BCPeripheralErrorCode.DiscoveryTimeout.rawValue {
