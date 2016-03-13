@@ -51,8 +51,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             }
             self.setUIState()
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -222,14 +220,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
     
-    func didResignActive() {
-        BCLogger.debug()
-    }
-    
-    func didBecomeActive() {
-        BCLogger.debug()
-    }
-
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()

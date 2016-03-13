@@ -42,8 +42,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -51,17 +50,13 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func didResignActive() {
+    func didEnterBackground() {
         BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
-    func didBecomeActive() {
-        BCLogger.debug()
-    }
-
     @IBAction func generateUUID(sender:AnyObject) {
         self.uuidTextField.text = NSUUID().UUIDString
         let enteredName = self.nameTextField.text

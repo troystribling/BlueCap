@@ -27,8 +27,7 @@ class PeripheralAdvertisementsServicesViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -36,12 +35,8 @@ class PeripheralAdvertisementsServicesViewController : UITableViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func didResignActive() {
+    func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
-    }
-    
-    func didBecomeActive() {
         BCLogger.debug()
     }
     

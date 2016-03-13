@@ -34,8 +34,7 @@ class BeaconsViewController: UITableViewController {
         } else {
             self.navigationItem.title = "Beacons"
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
 
     override func viewWillDisappear(animated: Bool) {
@@ -64,13 +63,9 @@ class BeaconsViewController: UITableViewController {
         }
     }
     
-    func didResignActive() {
+    func didEnterBackground() {
         BCLogger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
-    }
-    
-    func didBecomeActive() {
-        BCLogger.debug()
     }
     
     // UITableViewDataSource

@@ -29,8 +29,7 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         self.navigationItem.title = "Beacons"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -54,17 +53,13 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         }
     }
     
-    func didResignActive() {
+    func didEnterBackground() {
         BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
-    func didBecomeActive() {
-        BCLogger.debug()
-    }
-
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }

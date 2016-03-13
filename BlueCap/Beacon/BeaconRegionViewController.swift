@@ -33,8 +33,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -42,15 +41,11 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func didResignActive() {
+    func didEnterBackground() {
         BCLogger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
-    func didBecomeActive() {
-        BCLogger.debug()
-    }
-
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()

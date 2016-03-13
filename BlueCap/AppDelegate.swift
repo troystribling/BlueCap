@@ -64,23 +64,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(application: UIApplication) {
+        BCLogger.debug()
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
+        BCLogger.debug()
         NSUserDefaults.standardUserDefaults().synchronize()
+        if Singletons.centralManager.isScanning {
+            Singletons.centralManager.stopScanning()
+            Singletons.centralManager.disconnectAllPeripherals()
+            Singletons.centralManager.removeAllPeripherals()
+        }
     }
 
     func applicationWillEnterForeground(application: UIApplication) {
+        BCLogger.debug()
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
+        BCLogger.debug()
         Notify.resetEventCount()
     }
 
     func applicationWillTerminate(application: UIApplication) {
-         NSUserDefaults.standardUserDefaults().synchronize()
+        BCLogger.debug()
+        NSUserDefaults.standardUserDefaults().synchronize()
     }
-
 
 }
 

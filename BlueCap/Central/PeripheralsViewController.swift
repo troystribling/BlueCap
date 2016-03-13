@@ -62,7 +62,6 @@ class PeripheralsViewController : UITableViewController {
         self.updatePeripheralConnectionsSwitch = true
         self.stopPollingRSSIForPeripherals()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
         self.setScanButton()
     }
 
@@ -141,10 +140,6 @@ class PeripheralsViewController : UITableViewController {
     }
 
     // utils
-    func didResignActive() {
-        BCLogger.debug()
-    }
-
     func didBecomeActive() {
         BCLogger.debug()
         self.updateWhenActive()

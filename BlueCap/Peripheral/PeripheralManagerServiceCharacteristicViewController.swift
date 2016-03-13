@@ -70,8 +70,7 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -90,17 +89,13 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
         }
     }
     
-    func didResignActive() {
+    func didEnterBackground() {
         BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
-    func didBecomeActive() {
-        BCLogger.debug()
-    }
-
     func booleanStringValue(value:Bool) -> String {
         return value ? "YES" : "NO"
     }

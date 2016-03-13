@@ -69,8 +69,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         super.viewDidAppear(animated)
         self.setUI()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.characteristic?.service?.peripheral)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didResignActive", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -161,12 +160,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
     }
 
-    func didResignActive() {
+    func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-       BCLogger.debug()
-    }
-    
-    func didBecomeActive() {
         BCLogger.debug()
     }
     

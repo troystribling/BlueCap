@@ -30,8 +30,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Advertised Services"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didResignActive", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
         self.tableView.reloadData()
     }
     
@@ -51,17 +50,13 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         }
     }
     
-    func didResignActive() {
+    func didEnterBackground() {
         BCLogger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
-    func didBecomeActive() {
-        BCLogger.debug()
-    }
-
     override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
         return 1
     }
