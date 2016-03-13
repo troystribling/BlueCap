@@ -62,6 +62,7 @@ class PeripheralsViewController : UITableViewController {
         self.updatePeripheralConnectionsSwitch = true
         self.stopPollingRSSIForPeripherals()
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
         self.setScanButton()
     }
 
@@ -145,7 +146,12 @@ class PeripheralsViewController : UITableViewController {
         self.updateWhenActive()
         self.setScanButton()
     }
-    
+
+    func didEnterBackground() {
+        BCLogger.debug()
+        self.scanStatus = false
+    }
+
     func setScanButton() {
         if self.scanStatus {
             self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)

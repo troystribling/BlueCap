@@ -272,14 +272,12 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     public var secondsConnected: NSTimeInterval {
-        if let disconnectedAt = self.disconnectedAt {
-            return disconnectedAt.timeIntervalSinceDate(self.connectedAt!)
+        if let disconnectedAt = self.disconnectedAt, connectedAt = self.connectedAt {
+            return disconnectedAt.timeIntervalSinceDate(connectedAt)
+        } else if let connectedAt = self.connectedAt {
+            return NSDate().timeIntervalSinceDate(connectedAt)
         } else {
-            if let connectedAt = self.connectedAt {
-                return NSDate().timeIntervalSinceDate(connectedAt)
-            } else {
-                return 0.0
-            }
+            return 0.0
         }
     }
 
@@ -384,6 +382,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             return
         }
         self.forcedDisconnect = true
+        self.stopPollingRSSI()
         if self.state == .Connected {
             BCLogger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.UUIDString)")
             central.cancelPeripheralConnection(self)
