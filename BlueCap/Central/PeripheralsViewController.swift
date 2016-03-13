@@ -212,6 +212,8 @@ class PeripheralsViewController : UITableViewController {
             case .Connect:
                 BCLogger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
+                let future = peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+                self.rssiPollingFutures[peripheral.identifier] = future
                 self.peripheralConnectionStatus[peripheral.identifier] = true
                 self.updateWhenActive()
             case .Timeout:
@@ -222,12 +224,14 @@ class PeripheralsViewController : UITableViewController {
             case .Disconnect:
                 BCLogger.debug("Disconnected peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
+                peripheral.stopPollingRSSI()
                 self.reconnectIfNecessary(peripheral)
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .ForceDisconnect:
                 BCLogger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.UUIDString)'")
+                peripheral.stopPollingRSSI()
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 if self.peripheralConnectionStatus[peripheral.identifier] != nil {
                     self.peripheralConnectionStatus[peripheral.identifier] = false
@@ -252,7 +256,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func reconnectIfNecessary(peripheral: BCPeripheral) {
-        if let _ = self.peripheralConnectionStatus[peripheral.identifier] {
+        if let status = self.peripheralConnectionStatus[peripheral.identifier] where status {
             peripheral.reconnect()
         }
     }
@@ -264,8 +268,6 @@ class PeripheralsViewController : UITableViewController {
                 BCLogger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
                 self.updateWhenActive()
-                let future = peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
-                self.rssiPollingFutures[peripheral.identifier] = future
                 self.peripheralConnectionStatus[peripheral.identifier] = false
                 if self.reachedDiscoveryLimit {
                     Singletons.centralManager.stopScanning()

@@ -318,7 +318,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Initializers
-    public init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String:AnyObject], RSSI: Int) {
+    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String:AnyObject], RSSI: Int) {
         self.cbPeripheral = cbPeripheral
         self.advertisements = BCPeripheralAdvertisements(advertisements: advertisements)
         self.centralManager = centralManager
@@ -327,7 +327,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.cbPeripheral.delegate = self
     }
 
-    public init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager) {
+    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
         self.advertisements = nil
@@ -336,10 +336,25 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.cbPeripheral.delegate = self
     }
 
+    internal init(cbPeripheral: CBPeripheralInjectable, bcPeripheral: BCPeripheral) {
+        self.cbPeripheral = cbPeripheral
+        self.advertisements = bcPeripheral.advertisements
+        self.centralManager = bcPeripheral.centralManager
+        super.init()
+        self.RSSI = bcPeripheral.RSSI
+        self.cbPeripheral.delegate = self
+    }
+
+    // MARK: Invalidation
+    
     // MARK: RSSI
     public func readRSSI() -> Future<Int> {
         self.readRSSIPromise = Promise<Int>()
-        self.cbPeripheral.readRSSI()
+        if self.state == .Connected {
+            self.cbPeripheral.readRSSI()
+        } else {
+            self.readRSSIPromise?.failure(BCError.peripheralDisconnected)
+        }
         return self.readRSSIPromise!.future
     }
 
@@ -716,7 +731,11 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period)")
         BCPeripheral.rssiQueue.delay(period) {
-            self.cbPeripheral.readRSSI()
+            if self.state == .Connected {
+                self.cbPeripheral.readRSSI()
+            } else {
+                self.pollRSSIPromise?.failure(BCError.peripheralDisconnected)
+            }
             self.pollRSSI(period)
         }
     }

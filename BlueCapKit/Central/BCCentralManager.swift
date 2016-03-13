@@ -204,6 +204,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Retrieve Peripherals
+    // TODO: These should rebuild peripherals
     public func retrieveConnectedPeripheralsWithServices(services: [CBUUID]) -> [BCPeripheral] {
         let cbPeripherals = self.cbCentralManager.retrieveConnectedPeripheralsWithServices(services).filter { cbPeripheral in
             if let _ = self.discoveredPeripherals[cbPeripheral.identifier] {

@@ -47,7 +47,7 @@ public class BCService {
     }
 
     // MARK: Initializer
-    public init(cbService: CBService, peripheral: BCPeripheral) {
+    internal init(cbService: CBService, peripheral: BCPeripheral) {
         self.cbService = cbService
         self._peripheral = peripheral
         self.profile = BCProfileManager.sharedInstance.services[cbService.UUID]

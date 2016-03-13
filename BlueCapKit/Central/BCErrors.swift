@@ -46,8 +46,8 @@ public struct BCError {
     public static let characteristicWriteNotSupported = NSError(domain: domain, code: BCCharacteristicErrorCode.WriteNotSupported.rawValue, userInfo: [NSLocalizedDescriptionKey:"Characteristic write not supported"])
     public static let characteristicNotifyNotSupported = NSError(domain: domain, code: BCCharacteristicErrorCode.NotifyNotSupported.rawValue, userInfo: [NSLocalizedDescriptionKey:"Characteristic notify not supported"])
 
-    public static let peripheralDisconnected = NSError(domain: domain, code: BCPeripheralErrorCode.Disconnected.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral disconnected timeout"])
-    public static let peripheralDiscoveryTimeout = NSError(domain: domain, code: BCPeripheralErrorCode.DiscoveryTimeout.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral discovery Timeout"])
+    public static let peripheralDisconnected = NSError(domain: domain, code: BCPeripheralErrorCode.Disconnected.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral disconnected"])
+    public static let peripheralDiscoveryTimeout = NSError(domain: domain, code: BCPeripheralErrorCode.DiscoveryTimeout.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral discovery timeout"])
     public static let peripheralNoServices = NSError(domain: domain, code: BCPeripheralErrorCode.NoServices.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral services not found"])
     
     public static let peripheralManagerIsAdvertising = NSError(domain: domain, code: BCPeripheralManagerErrorCode.IsAdvertising.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral Manager is Advertising"])

@@ -153,7 +153,7 @@ public class BCCharacteristic {
     }
 
     // MARK: Initializers
-    public init(cbCharacteristic: CBCharacteristic, service: BCService) {
+    internal init(cbCharacteristic: CBCharacteristic, service: BCService) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         if let serviceProfile = BCProfileManager.sharedInstance.services[service.UUID] {
