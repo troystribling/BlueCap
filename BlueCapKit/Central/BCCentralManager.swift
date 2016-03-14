@@ -267,9 +267,9 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     internal func didDisconnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
-        BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name)")
+        BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name), error=\(error)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
-            bcPeripheral.didDisconnectPeripheral()
+            bcPeripheral.didDisconnectPeripheral(error)
         }
     }
     

@@ -11,7 +11,7 @@ import CoreBluetooth
 
 // MARK - Connection Error -
 enum PeripheralConnectionError {
-    case None, Timeout, Unknown
+    case None, Timeout
 }
 
 public enum BCConnectionEvent {
@@ -346,7 +346,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Invalidation
-    
+
     // MARK: RSSI
     public func readRSSI() -> Future<Int> {
         self.readRSSIPromise = Promise<Int>()
@@ -376,6 +376,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             centralManager.connectPeripheral(self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
+            self.currentError = .None
             self.timeoutConnection(self.connectionSequence)
         } else {
             BCLogger.debug("peripheral not disconnected \(self.name), \(self.identifier.UUIDString)")
@@ -403,7 +404,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             central.cancelPeripheralConnection(self)
         } else {
             BCLogger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.UUIDString)")
-            self.didDisconnectPeripheral()
+            self.didDisconnectPeripheral(BCError.peripheralDisconnected)
         }
     }
     
@@ -603,35 +604,31 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.connectionPromise?.success((self, .Connect))
     }
 
-    internal func didDisconnectPeripheral() {
+    internal func didDisconnectPeripheral(error: NSError?) {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self.disconnectedAt = NSDate()
         self.totalSecondsConnected += self.secondsConnected
-        if (self.forcedDisconnect) {
-            self.forcedDisconnect = false
-            BCLogger.debug("forced disconnect uuid=\(self.identifier.UUIDString), name=\(self.name)")
-            self.connectionPromise?.success((self, .ForceDisconnect))
-        } else {
-            switch(self.currentError) {
-            case .None:
-                BCLogger.debug("no errors disconnecting uuid=\(self.identifier.UUIDString), name=\(self.name)")
+        switch(self.currentError) {
+        case .None:
+            if let error = error {
+                BCLogger.debug("disconnecting with errors uuid=\(self.identifier.UUIDString), name=\(self.name), error=\(error.localizedDescription)")
+                self.shouldFailOrGiveUp(error)
+            } else if (self.forcedDisconnect) {
+                BCLogger.debug("disconnect forced uuid=\(self.identifier.UUIDString), name=\(self.name)")
+                self.forcedDisconnect = false
+                self.connectionPromise?.success((self, .ForceDisconnect))
+            } else  {
+                BCLogger.debug("disconnecting with no errors uuid=\(self.identifier.UUIDString), name=\(self.name)")
                 self.shouldDisconnectOrGiveup()
-            case .Timeout:
-                BCLogger.debug("timeout uuid=\(self.identifier.UUIDString), name=\(self.name)")
-                self.shouldTimeoutOrGiveup()
-            case .Unknown:
-                BCLogger.debug("unknown error uuid=\(self.identifier.UUIDString), name=\(self.name)")
             }
+        case .Timeout:
+            BCLogger.debug("timeout uuid=\(self.identifier.UUIDString), name=\(self.name)")
+            self.shouldTimeoutOrGiveup()
         }
     }
 
     internal func didFailToConnectPeripheral(error: NSError?) {
-        if let error = error {
-            self.shouldFailOrGiveUp(error)
-        } else {
-            BCLogger.debug("connection failed without error name=\(self.name), uuid=\(self.identifier.UUIDString)")
-            self.connectionPromise?.success((self, .Failed))
-        }
+        self.didDisconnectPeripheral(error)
     }
 
     // MARK: CBPeripheral Delegation
@@ -652,17 +649,25 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Utilities
-    private func shouldFailOrGiveUp(error: NSError) {
-        BCLogger.debug("connection failed for '\(self.name)', \(self.identifier.UUIDString) with error:'\(error.localizedDescription)'")
-        self.currentError = .Unknown
+    private func shouldFailOrGiveUp(error: NSError?) {
+        let errorOrFail = { (error: NSError?) in
+            if let error = error {
+                BCLogger.debug("connection failed for '\(self.name)', \(self.identifier.UUIDString) with error:'\(error.localizedDescription)', disconnectCount=\(self.disconnectCount), disconnectRetries=\(self.disconnectRetries)")
+                self.connectionPromise?.failure(error)
+            } else {
+                BCLogger.debug("connection failed for '\(self.name)', \(self.identifier.UUIDString), disconnectCount=\(self.disconnectCount), disconnectRetries=\(self.disconnectRetries)")
+                self.connectionPromise?.success((self, .Failed))
+            }
+        }
         if let disconnectRetries = self.disconnectRetries {
             if self.disconnectCount < disconnectRetries {
-                self.disconnectCount += 1
-                self.connectionPromise?.failure(error)
+                errorOrFail(error)
             } else {
                 self.disconnectCount = 0
                 self.connectionPromise?.success((self, BCConnectionEvent.GiveUp))
             }
+        } else {
+            errorOrFail(error)
         }
     }
 

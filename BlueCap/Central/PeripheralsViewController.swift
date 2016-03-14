@@ -240,6 +240,7 @@ class PeripheralsViewController : UITableViewController {
             case .Failed:
                 BCLogger.debug("Connection failed peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Connection failed peripheral, '\(peripheral.name)'")
+                self.reconnectIfNecessary(peripheral)
             case .GiveUp:
                 BCLogger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 peripheral.stopPollingRSSI()
@@ -251,6 +252,7 @@ class PeripheralsViewController : UITableViewController {
             }
         }
         future.onFailure { error in
+            self.reconnectIfNecessary(peripheral)
             self.updateWhenActive()
         }
     }
