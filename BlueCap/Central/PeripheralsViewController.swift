@@ -219,6 +219,7 @@ class PeripheralsViewController : UITableViewController {
             case .Timeout:
                 BCLogger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
+                peripheral.stopPollingRSSI()
                 self.reconnectIfNecessary(peripheral)
                 self.updateWhenActive()
             case .Disconnect:
@@ -252,6 +253,7 @@ class PeripheralsViewController : UITableViewController {
             }
         }
         future.onFailure { error in
+            peripheral.stopPollingRSSI()
             self.reconnectIfNecessary(peripheral)
             self.updateWhenActive()
         }
