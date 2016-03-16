@@ -206,25 +206,33 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: Retrieve Peripherals
     // TODO: These should rebuild peripherals
     public func retrieveConnectedPeripheralsWithServices(services: [CBUUID]) -> [BCPeripheral] {
-        let cbPeripherals = self.cbCentralManager.retrieveConnectedPeripheralsWithServices(services).filter { cbPeripheral in
-            if let _ = self.discoveredPeripherals[cbPeripheral.identifier] {
-                return true
+        return self.cbCentralManager.retrieveConnectedPeripheralsWithServices(services).map { cbPeripheral in
+            let newBCPeripheral: BCPeripheral
+            if let oldBCPeripheral = self.discoveredPeripherals[cbPeripheral.identifier] {
+                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)
             } else {
-                return false
+                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
             }
+            self.discoveredPeripherals[cbPeripheral.identifier] = newBCPeripheral
+            return newBCPeripheral
         }
-        return cbPeripherals.map { self.discoveredPeripherals[$0.identifier]! }
     }
 
     func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [BCPeripheral] {
-        let cbPeripherals = self.cbCentralManager.retrievePeripheralsWithIdentifiers(identifiers).filter { cbPeripheral in
-            if let _ = self.discoveredPeripherals[cbPeripheral.identifier] {
-                return true
+        return self.cbCentralManager.retrievePeripheralsWithIdentifiers(identifiers).map { cbPeripheral in
+            let newBCPeripheral: BCPeripheral
+            if let oldBCPeripheral = self.discoveredPeripherals[cbPeripheral.identifier] {
+                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)
             } else {
-                return false
+                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
             }
+            self.discoveredPeripherals[cbPeripheral.identifier] = newBCPeripheral
+            return newBCPeripheral
         }
-        return cbPeripherals.map { self.discoveredPeripherals[$0.identifier]! }
+    }
+
+    func retrievePeripherals() -> [BCPeripheral] {
+        return self.retrievePeripheralsWithIdentifiers(self.discoveredPeripherals.keys)
     }
 
     // MARK: CBCentralManagerDelegate
@@ -245,13 +253,13 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
-//        var injectablePeripherals: [CBPeripheralInjectable]? = nil
-//        let cbPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
-//            injectablePeripherals = cbPeripherals.map { $0 as! CBPeripheralManagerInjectable }
-//        }
-//        let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID]
-//        let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject]
-//        self.willRestoreState(injectablePeripherals, scannedServices: scannedServices, options: options)
+        var injectablePeripherals: [CBPeripheralInjectable]? = nil
+        if let cbPeripherals: [CBPeripheral] = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
+            injectablePeripherals = cbPeripherals.map { $0 as CBPeripheralInjectable }
+        }
+        let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID]
+        let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject]
+        self.willRestoreState(injectablePeripherals, scannedServices: scannedServices, options: options)
     }
     
     public func centralManagerDidUpdateState(_: CBCentralManager) {

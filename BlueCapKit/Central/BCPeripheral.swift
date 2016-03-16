@@ -15,7 +15,7 @@ enum PeripheralConnectionError {
 }
 
 public enum BCConnectionEvent {
-    case Connect, Timeout, Disconnect, ForceDisconnect, Failed, GiveUp
+    case Connect, Timeout, Disconnect, ForceDisconnect, GiveUp
 }
 
 // MARK: - CBPeripheralInjectable -
@@ -142,7 +142,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     internal var disconnectRetries: UInt?
     internal weak var centralManager: BCCentralManager?
     
-    public let cbPeripheral: CBPeripheralInjectable
+    public var cbPeripheral: CBPeripheralInjectable
     public let advertisements: BCPeripheralAdvertisements?
     public let discoveredAt = NSDate()
 
@@ -345,7 +345,9 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.cbPeripheral.delegate = self
     }
 
-    // MARK: Invalidation
+    deinit {
+        self.cbPeripheral.delegate = nil
+    }
 
     // MARK: RSSI
     public func readRSSI() -> Future<Int> {

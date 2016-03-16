@@ -70,7 +70,7 @@ class CentralManagerUT: BCCentralManager {
     }
     
     override func cancelPeripheralConnection(peripheral: BCPeripheral) {
-        peripheral.didDisconnectPeripheral()
+        peripheral.didDisconnectPeripheral(nil)
         self.cancelPeripheralConnection = true
     }
     
