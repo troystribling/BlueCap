@@ -143,7 +143,7 @@ class PeripheralsViewController : UITableViewController {
     // utils
     func didBecomeActive() {
         BCLogger.debug()
-        self.updateWhenActive()
+        self.tableView.reloadData()
         self.setScanButton()
     }
 

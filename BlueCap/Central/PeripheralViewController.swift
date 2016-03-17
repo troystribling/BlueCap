@@ -21,6 +21,12 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var rssiLabel: UILabel!
     @IBOutlet var stateLabel: UILabel!
     @IBOutlet var serviceLabel: UILabel!
+
+    @IBOutlet var discoveredAtLabel: UILabel!
+    @IBOutlet var connectedAtLabel: UILabel!
+    @IBOutlet var connectionsLabel: UILabel!
+    @IBOutlet var secondsConnectedLabel: UILabel!
+    @IBOutlet var avdSecondsConnected: UILabel!
     
     struct MainStoryBoard {
         static let peripheralServicesSegue  = "PeripheralServices"
@@ -34,28 +40,39 @@ class PeripheralViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hasData = false
-        self.setStateLabel()
+        self.setConnectionStateLabel()
         self.progressView.show()
         self.navigationItem.title = self.peripheral.name
+        self.discoveredAtLabel.text = "\(self.peripheral.discoveredAt)"
+        if let connectedAt = self.peripheral.connectedAt {
+            self.connectedAtLabel.text = "\(connectedAt)"
+        }
+        self.connectionsLabel.text = "\(self.peripheral.numberOfConnections)"
+        self.secondsConnectedLabel.text = "\(Int(self.peripheral.totalSecondsConnected))"
+        if self.peripheral.numberOfConnections > 0 {
+            self.avdSecondsConnected.text = "\(Int(self.peripheral.totalSecondsConnected) / self.peripheral.numberOfConnections)"
+        } else {
+            self.avdSecondsConnected.text = "0"
+        }
         self.peripehealConnected = (self.peripheral.state == .Connected)
         self.rssiFuture = self.peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
         self.rssiLabel.text = "\(self.peripheral.RSSI)"
         self.rssiFuture?.onSuccess { [unowned self] rssi in
             self.rssiLabel.text = "\(rssi)"
         }
-        let future = self.peripheral.discoverAllPeripheralServices()
-        future.onSuccess {_ in
+        let peripheralDiscoveryFuture = self.peripheral.discoverAllPeripheralServices()
+        peripheralDiscoveryFuture.onSuccess {_ in
             self.hasData = true
-            self.setStateLabel()
+            self.setConnectionStateLabel()
             self.progressView.remove()
         }
-        future.onFailure {(error) in
+        peripheralDiscoveryFuture.onFailure {(error) in
             self.progressView.remove()
             self.serviceLabel.textColor = UIColor.lightGrayColor()
             if self.peripehealConnected {
                 self.peripehealConnected = false
                 self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
-                    self.setStateLabel()
+                    self.setConnectionStateLabel()
                 }), animated: true, completion:nil)
             }
         }
@@ -64,7 +81,7 @@ class PeripheralViewController : UITableViewController {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        self.setStateLabel()
+        self.setConnectionStateLabel()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.peripheral!)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object :nil)
     }
@@ -105,7 +122,7 @@ class PeripheralViewController : UITableViewController {
         if self.peripehealConnected {
             self.peripehealConnected = false
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected", handler:{ action in
-                self.setStateLabel()
+                self.setConnectionStateLabel()
             }), animated:true, completion:nil)
         }
     }
@@ -115,7 +132,7 @@ class PeripheralViewController : UITableViewController {
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
-    func setStateLabel() {
+    func setConnectionStateLabel() {
         if self.peripehealConnected {
             self.stateLabel.text = "Connected"
             self.stateLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 1.0)

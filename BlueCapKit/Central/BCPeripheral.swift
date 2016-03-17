@@ -237,7 +237,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private var connectedAt: NSDate? {
+    public var connectedAt: NSDate? {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectedAt }
         }
@@ -255,7 +255,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private var totalSecondsConnected: NSTimeInterval {
+    public var totalSecondsConnected: NSTimeInterval {
         get {
             return BCPeripheral.ioQueue.sync { return self._totalSecondsConnected }
         }

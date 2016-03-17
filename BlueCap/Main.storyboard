@@ -512,7 +512,12 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Name" id="meN-Xl-hWE"/>
                     <connections>
+                        <outlet property="avdSecondsConnected" destination="Fdb-Z8-0Ne" id="dUd-IY-QZD"/>
+                        <outlet property="connectedAtLabel" destination="w2P-rj-hsa" id="DJt-ZK-pB5"/>
+                        <outlet property="connectionsLabel" destination="kIR-qi-Waa" id="YF6-Z0-SDf"/>
+                        <outlet property="discoveredAtLabel" destination="Tum-Vn-nQe" id="ZBM-MH-XbU"/>
                         <outlet property="rssiLabel" destination="q4d-zx-jkB" id="wYN-NU-crN"/>
+                        <outlet property="secondsConnectedLabel" destination="En3-lc-Rxz" id="Gqc-4B-mZ3"/>
                         <outlet property="serviceLabel" destination="STM-Ax-Kfc" id="RVc-Mk-tVw"/>
                         <outlet property="stateLabel" destination="olY-hM-y4A" id="oJf-bp-5OS"/>
                         <outlet property="uuidLabel" destination="Fuu-e0-HWI" id="dyO-0Q-jlO"/>
