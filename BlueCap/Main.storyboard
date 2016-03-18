@@ -512,7 +512,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Name" id="meN-Xl-hWE"/>
                     <connections>
-                        <outlet property="avdSecondsConnected" destination="Fdb-Z8-0Ne" id="dUd-IY-QZD"/>
+                        <outlet property="avgSecondsConnected" destination="Fdb-Z8-0Ne" id="rDy-qD-w9X"/>
                         <outlet property="connectedAtLabel" destination="w2P-rj-hsa" id="DJt-ZK-pB5"/>
                         <outlet property="connectionsLabel" destination="kIR-qi-Waa" id="YF6-Z0-SDf"/>
                         <outlet property="discoveredAtLabel" destination="Tum-Vn-nQe" id="ZBM-MH-XbU"/>

@@ -72,6 +72,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSUserDefaults.standardUserDefaults().synchronize()
         if Singletons.centralManager.isScanning {
             Singletons.centralManager.stopScanning()
+        }
+        if Singletons.centralManager.peripherals.count > 0 {
             Singletons.centralManager.disconnectAllPeripherals()
             Singletons.centralManager.removeAllPeripherals()
         }

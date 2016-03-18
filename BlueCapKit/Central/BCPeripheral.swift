@@ -237,6 +237,15 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
+    private var totalSecondsConnected: NSTimeInterval {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._totalSecondsConnected }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._totalSecondsConnected = newValue }
+        }
+    }
+
     public var connectedAt: NSDate? {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectedAt }
@@ -252,15 +261,6 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         set {
             BCPeripheral.ioQueue.sync { self._disconnectedAt = newValue }
-        }
-    }
-
-    public var totalSecondsConnected: NSTimeInterval {
-        get {
-            return BCPeripheral.ioQueue.sync { return self._totalSecondsConnected }
-        }
-        set {
-            BCPeripheral.ioQueue.sync { self._totalSecondsConnected = newValue }
         }
     }
 
@@ -282,7 +282,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     public var cumlativeSecondsConnected: NSTimeInterval {
-        if self.disconnectedAt == nil {
+        if self.disconnectedAt != nil {
             return self.totalSecondsConnected
         } else {
             return self.totalSecondsConnected + self.secondsConnected

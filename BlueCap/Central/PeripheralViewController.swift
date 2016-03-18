@@ -26,7 +26,7 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var connectedAtLabel: UILabel!
     @IBOutlet var connectionsLabel: UILabel!
     @IBOutlet var secondsConnectedLabel: UILabel!
-    @IBOutlet var avdSecondsConnected: UILabel!
+    @IBOutlet var avgSecondsConnected: UILabel!
     
     struct MainStoryBoard {
         static let peripheralServicesSegue  = "PeripheralServices"
@@ -39,20 +39,23 @@ class PeripheralViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = .ShortStyle
+        dateFormatter.timeStyle = .ShortStyle
         self.hasData = false
         self.setConnectionStateLabel()
         self.progressView.show()
         self.navigationItem.title = self.peripheral.name
-        self.discoveredAtLabel.text = "\(self.peripheral.discoveredAt)"
+        self.discoveredAtLabel.text = dateFormatter.stringFromDate(self.peripheral.discoveredAt)
         if let connectedAt = self.peripheral.connectedAt {
-            self.connectedAtLabel.text = "\(connectedAt)"
+            self.connectedAtLabel.text = dateFormatter.stringFromDate(connectedAt)
         }
         self.connectionsLabel.text = "\(self.peripheral.numberOfConnections)"
-        self.secondsConnectedLabel.text = "\(Int(self.peripheral.totalSecondsConnected))"
+        self.secondsConnectedLabel.text = "\(Int(self.peripheral.cumlativeSecondsConnected))"
         if self.peripheral.numberOfConnections > 0 {
-            self.avdSecondsConnected.text = "\(Int(self.peripheral.totalSecondsConnected) / self.peripheral.numberOfConnections)"
+            self.avgSecondsConnected.text = "\(Int(self.peripheral.cumlativeSecondsConnected) / self.peripheral.numberOfConnections)"
         } else {
-            self.avdSecondsConnected.text = "0"
+            self.avgSecondsConnected.text = "0"
         }
         self.peripehealConnected = (self.peripheral.state == .Connected)
         self.rssiFuture = self.peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)

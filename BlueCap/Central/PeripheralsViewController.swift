@@ -150,6 +150,9 @@ class PeripheralsViewController : UITableViewController {
     func didEnterBackground() {
         BCLogger.debug()
         self.scanStatus = false
+        self.peripheralConnectionStatus.removeAll()
+        self.stopPollingRSSIForPeripherals()
+        self.rssiPollingFutures.removeAll()
     }
 
     func setScanButton() {
