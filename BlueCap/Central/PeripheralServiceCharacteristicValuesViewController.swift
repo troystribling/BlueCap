@@ -103,10 +103,10 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     func peripheralDisconnected() {
         BCLogger.debug()
         if let peripheralViewController = self.peripheralViewController {
-            if peripheralViewController.peripehealConnected {
+            if peripheralViewController.peripheralConnected {
                 self.progressView.remove()
                 self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
-                        peripheralViewController.peripehealConnected = false
+                        peripheralViewController.peripheralConnected = false
                 }, animated: true, completion: nil)
             }
         }

@@ -62,9 +62,9 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         BCLogger.debug()
         self.tableView.reloadData()
         if let peripheralViewController = self.peripheralViewController {
-            if peripheralViewController.peripehealConnected {
+            if peripheralViewController.peripheralConnected {
                 self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
-                        peripheralViewController.peripehealConnected = false
+                        peripheralViewController.peripheralConnected = false
                         self.updateWhenActive()
                     }, animated:true, completion:nil)
             }
@@ -96,7 +96,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             cell.nameLabel.text = characteristic.name
             cell.uuidLabel.text = characteristic.UUID.UUIDString
             if let peripheralViewController = self.peripheralViewController {
-                if peripheralViewController.peripehealConnected {
+                if peripheralViewController.peripheralConnected {
                     cell.nameLabel.textColor = UIColor.blackColor()
                 } else {
                     cell.nameLabel.textColor = UIColor.lightGrayColor()

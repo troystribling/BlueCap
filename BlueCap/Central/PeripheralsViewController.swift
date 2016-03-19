@@ -38,6 +38,15 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
+    var peripherals: [BCPeripheral] {
+        if ConfigStore.getPeripheralSortOrder() == .DiscoveryDate {
+            return Singletons.centralManager.peripherals
+        } else {
+            return self.peripheralsSortedByRSSI
+        }
+
+    }
+
     struct MainStoryboard {
         static let peripheralCell = "PeripheralCell"
         static let peripheralSegue = "Peripheral"
@@ -81,21 +90,21 @@ class PeripheralsViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == MainStoryboard.peripheralSegue {
             if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
                 let viewController = segue.destinationViewController as! PeripheralViewController
-                viewController.peripheral = Singletons.centralManager.peripherals[selectedIndex.row]
+                viewController.peripheral = self.peripherals[selectedIndex.row]
             }
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
         var perform = false
         if let identifier = identifier {
             if identifier == MainStoryboard.peripheralSegue {
                 if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                    let peripheral = Singletons.centralManager.peripherals[selectedIndex.row]
+                    let peripheral = self.peripherals[selectedIndex.row]
                     perform = (peripheral.state == .Connected)
                 }
             }
@@ -104,7 +113,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     // actions
-    func toggleScan(sender:AnyObject) {
+    func toggleScan(sender: AnyObject) {
         if Singletons.beaconManager.isMonitoring == false {
             if self.scanStatus {
                 BCLogger.debug("Scan toggled off")
@@ -317,22 +326,17 @@ class PeripheralsViewController : UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
+    override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         return Singletons.centralManager.peripherals.count
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as! PeripheralCell
-        let peripheral: BCPeripheral
-        if ConfigStore.getPeripheralSortOrder() == .DiscoveryDate {
-             peripheral = Singletons.centralManager.peripherals[indexPath.row]
-        } else {
-            peripheral = self.peripheralsSortedByRSSI[indexPath.row]
-        }
+        let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         cell.accessoryType = .None
         if peripheral.state == .Connected {

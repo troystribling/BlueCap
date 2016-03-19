@@ -18,6 +18,9 @@ public enum BCConnectionEvent {
     case Connect, Timeout, Disconnect, ForceDisconnect, GiveUp
 }
 
+// MARK: - KVO Contexts -
+var CBPeripheralStateKVOContext = UInt8()
+
 // MARK: - CBPeripheralInjectable -
 public protocol CBPeripheralInjectable {
     var name: String?                      { get }
@@ -122,6 +125,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     private var _connectionPromise: StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>?
 
     private var _RSSI: Int = 0
+    private var _state = CBPeripheralState.Disconnected
 
     private var _timeoutCount: UInt = 0
     private var _disconnectCount: UInt = 0
@@ -237,7 +241,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private var totalSecondsConnected: NSTimeInterval {
+    private private(set) var totalSecondsConnected: NSTimeInterval {
         get {
             return BCPeripheral.ioQueue.sync { return self._totalSecondsConnected }
         }
@@ -246,7 +250,8 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var connectedAt: NSDate? {
+    // MARK: Public Properties
+    public private(set) var connectedAt: NSDate? {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectedAt }
         }
@@ -255,7 +260,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var disconnectedAt: NSDate? {
+    public private(set) var disconnectedAt: NSDate? {
         get {
             return BCPeripheral.ioQueue.sync { return self._disconnectedAt }
         }
@@ -264,7 +269,15 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    // MARK: Public Properties
+    public private(set) var state: CBPeripheralState {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._state }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._state = newValue }
+        }
+    }
+    
     public var numberOfConnections: Int {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectionSequence }
@@ -301,10 +314,6 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var state: CBPeripheralState {
-        return self.cbPeripheral.state
-    }
-    
     public var services: [BCService] {
         return Array(self.discoveredServices.values)
     }
@@ -325,6 +334,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         super.init()
         self.RSSI = RSSI
         self.cbPeripheral.delegate = self
+        self.startObserving()
     }
 
     internal init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager) {
@@ -334,6 +344,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         super.init()
         self.RSSI = 0
         self.cbPeripheral.delegate = self
+        self.startObserving()
     }
 
     internal init(cbPeripheral: CBPeripheralInjectable, bcPeripheral: BCPeripheral) {
@@ -342,11 +353,48 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.centralManager = bcPeripheral.centralManager
         super.init()
         self.RSSI = bcPeripheral.RSSI
+        self.startObserving()
         self.cbPeripheral.delegate = self
     }
 
     deinit {
         self.cbPeripheral.delegate = nil
+        self.stopObserving()
+    }
+
+    private func startObserving() {
+        guard let cbPeripheral = self.cbPeripheral as? CBPeripheral else {
+            return
+        }
+        let options = NSKeyValueObservingOptions([.New, .Old])
+        cbPeripheral.addObserver(self, forKeyPath: "state", options: options, context: &CBPeripheralStateKVOContext)
+    }
+
+    private func stopObserving() {
+        guard let cbPeripheral = self.cbPeripheral as? CBPeripheral else {
+            return
+        }
+        cbPeripheral.removeObserver(self, forKeyPath: "state", context: &CBPeripheralStateKVOContext)
+    }
+
+    // MARK: KVO
+    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &CBPeripheralStateKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
+                if newRawState != oldRawState {
+                    self.willChangeValueForKey("state")
+                    self.state = newState
+                    self.didChangeValueForKey("state")
+                }
+            }
+        default:
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
     }
 
     // MARK: RSSI

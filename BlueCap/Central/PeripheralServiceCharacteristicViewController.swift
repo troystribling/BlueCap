@@ -93,7 +93,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
         if let _ = identifier {
-            return (self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.Write)) && self.peripheralViewController.peripehealConnected
+            return (self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.Write)) && self.peripheralViewController.peripheralConnected
         } else {
             return false
         }
@@ -125,12 +125,12 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func setUI() {
-        if (!self.characteristic.propertyEnabled(.Read) && !self.characteristic.propertyEnabled(.Write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripehealConnected {
+        if (!self.characteristic.propertyEnabled(.Read) && !self.characteristic.propertyEnabled(.Write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripheralConnected {
             self.valuesLabel.textColor = UIColor.lightGrayColor()
         } else {
             self.valuesLabel.textColor = UIColor.blackColor()
         }
-        if self.peripheralViewController.peripehealConnected &&
+        if self.peripheralViewController.peripheralConnected &&
             (characteristic.propertyEnabled(.Notify)                     ||
              characteristic.propertyEnabled(.Indicate)                   ||
              characteristic.propertyEnabled(.NotifyEncryptionRequired)   ||
@@ -152,9 +152,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     func peripheralDisconnected() {
         BCLogger.debug()
-        if self.peripheralViewController.peripehealConnected {
+        if self.peripheralViewController.peripheralConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                    self.peripheralViewController.peripehealConnected = false
+                    self.peripheralViewController.peripheralConnected = false
                     self.setUI()
                 }, animated: true, completion: nil)
         }

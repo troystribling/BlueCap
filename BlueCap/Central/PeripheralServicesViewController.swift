@@ -60,9 +60,9 @@ class PeripheralServicesViewController : UITableViewController {
     
     func peripheralDisconnected() {
         BCLogger.debug()
-        if self.peripheralViewController.peripehealConnected {
+        if self.peripheralViewController.peripheralConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
-            self.peripheralViewController.peripehealConnected = false
+            self.peripheralViewController.peripheralConnected = false
             self.updateWhenActive()
         }
     }
@@ -91,7 +91,7 @@ class PeripheralServicesViewController : UITableViewController {
         cell.nameLabel.text = service.name
         cell.uuidLabel.text = service.UUID.UUIDString
         if let peripheralViewController = self.peripheralViewController {
-            if peripheralViewController.peripehealConnected {
+            if peripheralViewController.peripheralConnected {
                 cell.nameLabel.textColor = UIColor.blackColor()
             } else {
                 cell.nameLabel.textColor = UIColor.lightGrayColor()
