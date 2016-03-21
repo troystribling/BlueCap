@@ -117,7 +117,6 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     static let timeoutQueue = Queue("us.gnos.blueCap.peripheral.timeout")
     static let rssiQueue = Queue("us.gnos.blueCap.peripheral.rssi")
 
-    // MARK: Properties
     private var _servicesDiscoveredPromise: Promise<BCPeripheral>?
     private var _readRSSIPromise: Promise<Int>?
     private var _pollRSSIPromise: StreamPromise<Int>?
@@ -131,6 +130,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     private var _disconnectCount: UInt = 0
     
     private var _connectionSequence = 0
+    private var _RSSISequence = 0
     private var _currentError = PeripheralConnectionError.None
     private var _forcedDisconnect = false
 
@@ -141,9 +141,10 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     internal var discoveredServices = BCSerialIODictionary<CBUUID, BCService>(BCPeripheral.ioQueue)
     internal var discoveredCharacteristics = BCSerialIODictionary<CBUUID, BCCharacteristic>(BCPeripheral.ioQueue)
 
-    internal var connectionTimeout = 10.0
-    internal var timeoutRetries: UInt?
-    internal var disconnectRetries: UInt?
+    private var connectionTimeout = 10.0
+    private var timeoutRetries: UInt?
+    private var disconnectRetries: UInt?
+    
     internal weak var centralManager: BCCentralManager?
     
     public var cbPeripheral: CBPeripheralInjectable
@@ -220,6 +221,15 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         set {
             BCPeripheral.ioQueue.sync { self._connectionSequence = newValue }
+        }
+    }
+
+    private var RSSISequence: Int {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._RSSISequence }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._RSSISequence = newValue }
         }
     }
 
@@ -399,6 +409,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: RSSI
     public func readRSSI() -> Future<Int> {
+        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString)")
         self.readRSSIPromise = Promise<Int>()
         if self.state == .Connected {
             self.cbPeripheral.readRSSI()
@@ -409,13 +420,16 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     public func startPollingRSSI(period: NSTimeInterval = 10.0, capacity: Int? = nil) -> FutureStream<Int> {
+        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period)")
         self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
         self.cbPeripheral.readRSSI()
-        self.pollRSSI(period)
+        self.pollRSSI(period, sequence: self.RSSISequence)
+        self.RSSISequence += 1
         return pollRSSIPromise!.future
     }
 
     public func stopPollingRSSI() {
+        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString)")
         self.pollRSSIPromise = nil
     }
 
@@ -772,18 +786,19 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.discoveredCharacteristics.removeAll()
     }
 
-    private func pollRSSI(period: NSTimeInterval) {
-        guard self.pollRSSIPromise != nil else {
+    private func pollRSSI(period: NSTimeInterval, sequence: Int) {
+        guard self.pollRSSIPromise != nil && sequence == self.RSSISequence else {
+            BCLogger.debug("sequence = \(sequence), current sequence")
             return
         }
-        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period)")
+        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period), sequence = \(sequence), current sequence")
         BCPeripheral.rssiQueue.delay(period) {
             if self.state == .Connected {
                 self.cbPeripheral.readRSSI()
             } else {
                 self.pollRSSIPromise?.failure(BCError.peripheralDisconnected)
             }
-            self.pollRSSI(period)
+            self.pollRSSI(period, sequence: sequence)
         }
     }
     

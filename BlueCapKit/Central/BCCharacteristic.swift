@@ -423,7 +423,7 @@ public class BCCharacteristic {
 
     // MARK: Utilities
     private func writeNext() {
-        guard let parameters = self.writeParameters.first where self.writing == false else {
+        guard let parameters = self.writeParameters.first where !self.writing else {
             return
         }
         BCLogger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.UUID.UUIDString)")
@@ -435,7 +435,7 @@ public class BCCharacteristic {
     }
     
     private func readNext() {
-        guard let parameters = self.readParameters.first where self.reading == false else {
+        guard let parameters = self.readParameters.first where !self.reading else {
             return
         }
         BCLogger.debug("read characteristic \(self.UUID.UUIDString)")

@@ -34,9 +34,10 @@ struct Singletons {
 }
 
 struct Params {
-    static let peripheralRSSIPollingInterval = 4.0
-    static let peripheralRSSIFutureCapacity = 10
+    static let peripheralsViewRSSIPollingInterval = 5.0
     static let updateConnectionsInterval = 5.0
+    static let peripheralViewRSSIPollingInterval = 1.0
+    static let peripheralRSSIFutureCapacity = 10
 }
 
 @UIApplicationMain

@@ -66,7 +66,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func toggleMonitoring(sender:AnyObject) {
-        if Singletons.centralManager.isScanning == false {
+        if !Singletons.centralManager.isScanning {
             if Singletons.beaconManager.isRanging {
                 Singletons.beaconManager.stopRangingAllBeacons()
                 Singletons.beaconManager.stopMonitoringAllRegions()

@@ -525,7 +525,7 @@ public class Future<T> {
     }
 
     internal func completeWith(executionContext: ExecutionContext, future: Future<T>) {
-        if self.completed == false {
+        if !self.completed {
             future.onComplete(executionContext) { result in
                 self.complete(result)
             }

@@ -399,13 +399,13 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         switch self.state {
         case .PoweredOn:
             BCLogger.debug("poweredOn")
-            if self.afterPowerOnPromise.completed == false {
+            if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
             break
         case .PoweredOff:
             BCLogger.debug("poweredOff")
-            if self.afterPowerOffPromise.completed == false {
+            if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
             break

@@ -47,19 +47,18 @@ class PeripheralViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hasData = false
-        self.setConnectionStateLabel()
-        self.progressView.show()
         self.navigationItem.title = self.peripheral.name
         self.discoveredAtLabel.text = dateFormatter.stringFromDate(self.peripheral.discoveredAt)
-        self.peripheralConnected = (self.peripheral.state == .Connected)
-        self.toggleRSSIUpdates()
-        self.discoverPeripheral()
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self.setConnectionStateLabel()
+        self.peripheralConnected = (self.peripheral.state == .Connected)
+        self.discoverPeripheral()
+        self.setConnectionStateLabel()
+        self.toggleRSSIUpdates()
         let options = NSKeyValueObservingOptions([.New])
         self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "willResignActive", name: UIApplicationWillResignActiveNotification, object :nil)
@@ -108,7 +107,8 @@ class PeripheralViewController : UITableViewController {
         case("state", &BCPeripheralStateKVOContext):
             if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
                 dispatch_async(dispatch_get_main_queue()) {
-                    self.updatePeriphearState(newState)
+                    self.peripheralConnected = (newState == .Connected)
+                    self.setConnectionStateLabel()
                     self.toggleRSSIUpdates()
                     self.discoverPeripheral()
                     self.updatePeripheralProperties()
@@ -117,12 +117,6 @@ class PeripheralViewController : UITableViewController {
         default:
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
-    }
-
-    func updatePeriphearState(state: CBPeripheralState) {
-        self.progressView.remove()
-        self.peripheralConnected = (state == .Connected)
-        self.setConnectionStateLabel()
     }
 
     func updatePeripheralProperties() {
@@ -141,7 +135,7 @@ class PeripheralViewController : UITableViewController {
 
     func toggleRSSIUpdates() {
         if self.peripheralConnected {
-            let rssiFuture = self.peripheral.startPollingRSSI(Params.peripheralRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+            let rssiFuture = self.peripheral.startPollingRSSI(Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
             rssiFuture.onSuccess { [unowned self] _ in
                 self.updatePeripheralProperties()
             }
@@ -152,24 +146,23 @@ class PeripheralViewController : UITableViewController {
     }
 
     func discoverPeripheral() {
-        if self.peripheralConnected && !self.peripheralDiscovered {
-            let peripheralDiscoveryFuture = self.peripheral.discoverAllPeripheralServices()
-            peripheralDiscoveryFuture.onSuccess { _ in
-                self.hasData = true
+        guard self.peripheralConnected && !self.peripheralDiscovered else {
+            return
+        }
+        self.progressView.show()
+        let peripheralDiscoveryFuture = self.peripheral.discoverAllPeripheralServices()
+        peripheralDiscoveryFuture.onSuccess { _ in
+            self.hasData = true
+            self.setConnectionStateLabel()
+            self.progressView.remove()
+            self.peripheralDiscovered = true
+        }
+        peripheralDiscoveryFuture.onFailure { error in
+            self.progressView.remove()
+            self.serviceLabel.textColor = UIColor.lightGrayColor()
+            self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
                 self.setConnectionStateLabel()
-                self.progressView.remove()
-                self.peripheralDiscovered = true
-            }
-            peripheralDiscoveryFuture.onFailure { error in
-                self.progressView.remove()
-                self.serviceLabel.textColor = UIColor.lightGrayColor()
-                if self.peripheralConnected {
-                    self.peripheralConnected = false
-                    self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
-                        self.setConnectionStateLabel()
-                    }), animated: true, completion:nil)
-                }
-            }
+            }), animated: true, completion:nil)
         }
     }
 

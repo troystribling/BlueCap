@@ -246,7 +246,7 @@ public class BCMutableCharacteristic {
         if let peripheralManager = self.service?.peripheralManager where self.updating && self.canNotify {
             for value in values {
                 self.updating = peripheralManager.updateValue(value, forCharacteristic:self)
-                if self.isUpdating == false {
+                if !self.isUpdating {
                     self.queuedUpdates.append(value)
                 }
             }

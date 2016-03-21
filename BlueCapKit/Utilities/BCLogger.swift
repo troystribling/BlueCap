@@ -78,11 +78,17 @@ public class BCLogger {
             let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
             StderrOutputStream.appendToFile = false
             StderrOutputStream.redirectOutputToPath("\(documentsPath)/stderr.log")
-        }
-        if let message = message {
-            self.stream.write("\(NSDate()):\(file):\(function):\(line): \(message)\n")
+            if let message = message {
+                self.stream.write("\(NSDate()):\(file):\(function):\(line): \(message)\n")
+            } else {
+                self.stream.write("\(NSDate()):\(file):\(function):\(line)\n")
+            }
         } else {
-            self.stream.write("\(NSDate()):\(file):\(function):\(line)\n")
+            if let message = message {
+                print("\(file):\(function):\(line): \(message)")
+            } else {
+                print("\(file):\(function):\(line)")
+            }
         }
 #endif
     }
