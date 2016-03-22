@@ -72,7 +72,7 @@ func amIBeingDebugged() -> Bool {
 public class BCLogger {
     private static let stream = StderrOutputStream()
 
-    public class func debug(message:String? = nil, function: String = __FUNCTION__, file: String = __FILE__, line: Int = __LINE__) {
+    public class func debug(message:String? = nil, function: String = #function, file: String = __FILE__, line: Int = __LINE__) {
 #if DEBUG
         if !amIBeingDebugged() && !StderrOutputStream.isRedirected {
             let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]

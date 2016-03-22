@@ -61,7 +61,7 @@ class PeripheralViewController : UITableViewController {
         self.toggleRSSIUpdates()
         let options = NSKeyValueObservingOptions([.New])
         self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheralStateKVOContext)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "willResignActive", name: UIApplicationWillResignActiveNotification, object :nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: UIApplicationWillResignActiveNotification, object :nil)
     }
     
     override func viewDidDisappear(animated: Bool) {

@@ -388,24 +388,33 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: KVO
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", &CBPeripheralStateKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
-                if newRawState != oldRawState {
-                    self.willChangeValueForKey("state")
-                    self.state = newState
-                    self.didChangeValueForKey("state")
-                }
-            }
+    override public class func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {
+        switch(key) {
+        case "state":
+            return ["cbPeripheral:state"]
         default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return []
         }
     }
+
+//    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+//        guard keyPath != nil else {
+//            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+//            return
+//        }
+//        switch (keyPath!, context) {
+//        case("state", &CBPeripheralStateKVOContext):
+//            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
+//                if newRawState != oldRawState {
+//                    self.willChangeValueForKey("state")
+//                    self.state = newState
+//                    self.didChangeValueForKey("state")
+//                }
+//            }
+//        default:
+//            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+//        }
+//    }
 
     // MARK: RSSI
     public func readRSSI() -> Future<Int> {
@@ -423,8 +432,8 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period)")
         self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
         self.cbPeripheral.readRSSI()
-        self.pollRSSI(period, sequence: self.RSSISequence)
         self.RSSISequence += 1
+        self.pollRSSI(period, sequence: self.RSSISequence)
         return pollRSSIPromise!.future
     }
 
@@ -776,7 +785,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
                 self.currentError = .Timeout
                 centralManager.cancelPeripheralConnection(self)
             } else {
-                BCLogger.debug("timeout expired name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current connectionSequence=\(self.connectionSequence), state=\(self.state)")
+                BCLogger.debug("timeout expired name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current connectionSequence=\(self.connectionSequence), state=\(self.state.rawValue)")
             }
         }
     }
@@ -787,12 +796,13 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     private func pollRSSI(period: NSTimeInterval, sequence: Int) {
+        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period), sequence = \(sequence), current sequence = \(self.RSSISequence)")
         guard self.pollRSSIPromise != nil && sequence == self.RSSISequence else {
-            BCLogger.debug("sequence = \(sequence), current sequence")
+            BCLogger.debug("exiting: name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
             return
         }
-        BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period), sequence = \(sequence), current sequence")
         BCPeripheral.rssiQueue.delay(period) {
+            BCLogger.debug("trigger: name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
             if self.state == .Connected {
                 self.cbPeripheral.readRSSI()
             } else {

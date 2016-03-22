@@ -295,9 +295,9 @@ class PeripheralStore {
             var configs = [String: [UInt16]]()
             for (name, config) in storedConfigs {
                 if config.count == 2 {
-                    let minor = config[0] as! NSNumber
-                    let major = config[1] as! NSNumber
-                    configs[name] = [minor.unsignedShortValue, major.unsignedShortValue]
+//                    let minor = config[0] as! NSNumber
+//                    let major = config[1] as! NSNumber
+//                    configs[name] = [minor.unsignedShortValue, major.unsignedShortValue]
                 }
             }
             return configs
