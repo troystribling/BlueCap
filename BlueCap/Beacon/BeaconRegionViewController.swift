@@ -33,7 +33,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(BeaconRegionViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewDidDisappear(animated: Bool) {

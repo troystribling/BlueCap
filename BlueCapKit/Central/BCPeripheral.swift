@@ -279,15 +279,6 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public private(set) var state: CBPeripheralState {
-        get {
-            return BCPeripheral.ioQueue.sync { return self._state }
-        }
-        set {
-            BCPeripheral.ioQueue.sync { self._state = newValue }
-        }
-    }
-    
     public var numberOfConnections: Int {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectionSequence }
@@ -334,6 +325,15 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     public func service(uuid: CBUUID) -> BCService? {
         return self.discoveredServices[uuid]
+    }
+
+    public private(set) var state: CBPeripheralState {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._state }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._state = newValue }
+        }
     }
 
     // MARK: Initializers
@@ -388,33 +388,24 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: KVO
-    override public class func keyPathsForValuesAffectingValueForKey(key: String) -> Set<String> {
-        switch(key) {
-        case "state":
-            return ["cbPeripheral:state"]
+    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &CBPeripheralStateKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
+                if newRawState != oldRawState {
+                    self.willChangeValueForKey("state")
+                    self.state = newState
+                    self.didChangeValueForKey("state")
+                }
+            }
         default:
-            return []
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
-
-//    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
-//        guard keyPath != nil else {
-//            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-//            return
-//        }
-//        switch (keyPath!, context) {
-//        case("state", &CBPeripheralStateKVOContext):
-//            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
-//                if newRawState != oldRawState {
-//                    self.willChangeValueForKey("state")
-//                    self.state = newState
-//                    self.didChangeValueForKey("state")
-//                }
-//            }
-//        default:
-//            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-//        }
-//    }
 
     // MARK: RSSI
     public func readRSSI() -> Future<Int> {

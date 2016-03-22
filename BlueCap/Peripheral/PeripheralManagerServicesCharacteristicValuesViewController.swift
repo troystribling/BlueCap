@@ -46,7 +46,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
                 self.characteristic.respondToRequest(request, withResult :CBATTError.InvalidAttributeValueLength)
             }
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralManagerServicesCharacteristicValuesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {

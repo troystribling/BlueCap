@@ -30,7 +30,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Advertised Services"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralManagerAdvertisedServicesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
         self.tableView.reloadData()
     }
     

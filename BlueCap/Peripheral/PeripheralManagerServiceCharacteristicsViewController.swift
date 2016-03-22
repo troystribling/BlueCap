@@ -33,7 +33,7 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         if let service = self.service {
             self.navigationItem.title = service.name
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {

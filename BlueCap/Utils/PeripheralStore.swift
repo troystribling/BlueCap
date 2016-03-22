@@ -293,11 +293,11 @@ class PeripheralStore {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let storedConfigs = userDefaults.dictionaryForKey("peipheralBeaconConfigs") {
             var configs = [String: [UInt16]]()
-            for (name, config) in storedConfigs {
-                if config.count == 2 {
-//                    let minor = config[0] as! NSNumber
-//                    let major = config[1] as! NSNumber
-//                    configs[name] = [minor.unsignedShortValue, major.unsignedShortValue]
+            for (name, storedConfig) in storedConfigs {
+                if storedConfig.count == 2 {
+                    if let config = storedConfig as? [NSNumber] {
+                        configs[name] = [config[0].unsignedShortValue, config[1].unsignedShortValue]
+                    }
                 }
             }
             return configs

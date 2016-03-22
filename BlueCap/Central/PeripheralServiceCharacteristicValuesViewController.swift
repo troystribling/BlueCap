@@ -43,8 +43,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func viewDidAppear(animated:Bool)  {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "peripheralDisconnected", name: BlueCapNotification.peripheralDisconnected, object: self.characteristic?.service?.peripheral)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.peripheralDisconnected), name: BlueCapNotification.peripheralDisconnected, object: self.characteristic?.service?.peripheral)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
         self.updateValues()
     }
     

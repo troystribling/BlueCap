@@ -83,7 +83,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralAdvertisementsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewDidDisappear(animated: Bool) {

@@ -38,7 +38,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
         } else {
             self.navigationItem.rightBarButtonItem!.enabled = true
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralManagerServicesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(animated: Bool) {

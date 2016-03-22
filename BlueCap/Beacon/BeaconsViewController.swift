@@ -30,11 +30,11 @@ class BeaconsViewController: UITableViewController {
         super.viewWillAppear(animated)
         if let beaconRegion = self.beaconRegion {
             self.navigationItem.title = beaconRegion.identifier
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateBeacons", name: BlueCapNotification.didUpdateBeacon, object: beaconRegion)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BeaconsViewController.updateBeacons), name: BlueCapNotification.didUpdateBeacon, object: beaconRegion)
         } else {
             self.navigationItem.title = "Beacons"
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(BeaconsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
 
     override func viewWillDisappear(animated: Bool) {

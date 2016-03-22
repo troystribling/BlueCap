@@ -54,8 +54,8 @@ class PeripheralsViewController : UITableViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop, target: self, action: "toggleScan:")
-        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.Plain, target: self, action: "toggleScan:")
+        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
+        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
         self.styleUIBarButton(self.startScanBarButtonItem)
     }
     
@@ -70,8 +70,8 @@ class PeripheralsViewController : UITableViewController {
         self.shouldUpdatePeripheralConnectionStatus = true
         self.updatePeripheralConnectionsIfNeeded()
         self.startPolllingRSSIForPeripherals()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didBecomeActive", name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"didEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: UIApplicationDidBecomeActiveNotification, object:nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
         self.setScanButton()
     }
 
