@@ -383,7 +383,8 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    internal func didReceiveReadRequest(var request: CBATTRequestInjectable, central: CBCentralInjectable) {
+    internal func didReceiveReadRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
+        var request = request
         BCLogger.debug("chracteracteristic \(request.characteristic.UUID)")
         if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
             BCLogger.debug("responding with data: \(characteristic.stringValue)")
