@@ -10,10 +10,11 @@ import UIKit
 import CoreBluetooth
 import BlueCapKit
 
-var BCPeripheralStateKVOContext = UInt8()
 
 class PeripheralViewController : UITableViewController {
-    
+
+    private static var BCPeripheralStateKVOContext = UInt8()
+
     weak var peripheral: BCPeripheral!
     var progressView = ProgressView()
     var peripheralConnected = true
@@ -30,6 +31,8 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var discoveredAtLabel: UILabel!
     @IBOutlet var connectedAtLabel: UILabel!
     @IBOutlet var connectionsLabel: UILabel!
+    @IBOutlet var disconnectionsLabel: UILabel!
+    @IBOutlet var timeoutsLabel: UILabel!
     @IBOutlet var secondsConnectedLabel: UILabel!
     @IBOutlet var avgSecondsConnected: UILabel!
     
@@ -60,14 +63,14 @@ class PeripheralViewController : UITableViewController {
         self.setConnectionStateLabel()
         self.toggleRSSIUpdates()
         let options = NSKeyValueObservingOptions([.New])
-        self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheralStateKVOContext)
+        self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: UIApplicationWillResignActiveNotification, object :nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
         self.peripheral.stopPollingRSSI()
         super.viewDidDisappear(animated)
-        self.peripheral.removeObserver(self, forKeyPath: "state", context: &BCPeripheralStateKVOContext)
+        self.peripheral.removeObserver(self, forKeyPath: "state", context: &PeripheralViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
@@ -124,13 +127,15 @@ class PeripheralViewController : UITableViewController {
             self.connectedAtLabel.text = dateFormatter.stringFromDate(connectedAt)
         }
         self.rssiLabel.text = "\(self.peripheral.RSSI)"
-        self.connectionsLabel.text = "\(self.peripheral.numberOfConnections)"
+        self.connectionsLabel.text = "\(self.peripheral.connectionCount)"
         self.secondsConnectedLabel.text = "\(Int(self.peripheral.cumlativeSecondsConnected))"
-        if self.peripheral.numberOfConnections > 0 {
-            self.avgSecondsConnected.text = "\(Int(self.peripheral.cumlativeSecondsConnected) / self.peripheral.numberOfConnections)"
+        if self.peripheral.connectionCount > 0 {
+            self.avgSecondsConnected.text = "\(Int(self.peripheral.cumlativeSecondsConnected) / self.peripheral.connectionCount)"
         } else {
             self.avgSecondsConnected.text = "0"
         }
+        self.disconnectionsLabel.text = "\(self.peripheral.disconnectionCount)"
+        self.timeoutsLabel.text = "\(self.peripheral.timeoutCount)"
     }
 
     func toggleRSSIUpdates() {

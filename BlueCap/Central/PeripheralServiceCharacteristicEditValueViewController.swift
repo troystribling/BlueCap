@@ -8,9 +8,12 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 class PeripheralServiceCharacteristicEditValueViewController : UIViewController, UITextFieldDelegate {
-   
+
+    private static var BCPeripheralStateKVOContext = UInt8()
+
     @IBOutlet var valueTextField: UITextField!
     var characteristic: BCCharacteristic!
     var peripheralViewController: PeripheralViewController?
@@ -35,12 +38,14 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditValueViewController.peripheralDisconnected), name: BlueCapNotification.peripheralDisconnected, object: self.characteristic.service?.peripheral)
+        let options = NSKeyValueObservingOptions([.New])
+        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicEditValueViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditValueViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicEditValueViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
@@ -60,7 +65,24 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         self.navigationController?.popToRootViewControllerAnimated(false)
         BCLogger.debug()
     }
-    
+
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &PeripheralServiceCharacteristicEditValueViewController.BCPeripheralStateKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
+                if newState == .Disconnected {
+                    dispatch_async(dispatch_get_main_queue()) { self.peripheralDisconnected() }
+                }
+            }
+        default:
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if let newValue = self.valueTextField.text {

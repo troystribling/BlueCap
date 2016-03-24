@@ -221,7 +221,6 @@ class PeripheralsViewController : UITableViewController {
                 self.updateWhenActive()
             case .Timeout:
                 BCLogger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 peripheral.stopPollingRSSI()
                 self.reconnectIfNecessary(peripheral)
                 self.updateWhenActive()
@@ -230,13 +229,11 @@ class PeripheralsViewController : UITableViewController {
                 Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.stopPollingRSSI()
                 self.reconnectIfNecessary(peripheral)
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 self.updateWhenActive()
             case .ForceDisconnect:
                 BCLogger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.UUIDString)'")
                 peripheral.stopPollingRSSI()
-                NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.peripheralDisconnected, object:peripheral)
                 if self.peripheralConnectionStatus[peripheral.identifier] != nil {
                     self.peripheralConnectionStatus[peripheral.identifier] = false
                 }

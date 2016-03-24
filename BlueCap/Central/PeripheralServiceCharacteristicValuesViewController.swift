@@ -8,9 +8,12 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
 
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
-   
+
+    private static var BCPeripheralStateKVOContext = UInt8()
+
     weak var characteristic: BCCharacteristic?
     let progressView: ProgressView!
     var peripheralViewController: PeripheralViewController?
@@ -43,7 +46,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func viewDidAppear(animated:Bool)  {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.peripheralDisconnected), name: BlueCapNotification.peripheralDisconnected, object: self.characteristic?.service?.peripheral)
+        let options = NSKeyValueObservingOptions([.New])
+        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
         self.updateValues()
     }
@@ -54,6 +58,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 characteristic.stopNotificationUpdates()
             }
         }
+        self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
@@ -116,7 +121,24 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         self.navigationController?.popToRootViewControllerAnimated(false)
         BCLogger.debug()
     }
-    
+
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
+                if newState == .Disconnected {
+                    dispatch_async(dispatch_get_main_queue()) { self.peripheralDisconnected() }
+                }
+            }
+        default:
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+
     // UITableViewDataSource
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1

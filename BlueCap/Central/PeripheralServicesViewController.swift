@@ -8,15 +8,19 @@
 
 import UIKit
 import BlueCapKit
+import CoreBluetooth
+
 
 class PeripheralServicesViewController : UITableViewController {
-    
+
+    private static var BCPeripheralStateKVOContext = UInt8()
+
     weak var peripheral: BCPeripheral!
     var peripheralViewController: PeripheralViewController!
     var progressView  = ProgressView()
     
     struct MainStoryboard {
-        static let peripheralServiceCell            = "PeripheralServiceCell"
+        static let peripheralServiceCell = "PeripheralServiceCell"
         static let peripheralServicesCharacteritics = "PeripheralServicesCharacteritics"
     }
     
@@ -32,12 +36,14 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         self.updateWhenActive()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServicesViewController.peripheralDisconnected), name: BlueCapNotification.peripheralDisconnected, object: self.peripheral!)
+        let options = NSKeyValueObservingOptions([.New])
+        self.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServicesViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        self.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServicesViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
@@ -64,6 +70,23 @@ class PeripheralServicesViewController : UITableViewController {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
             self.peripheralViewController.peripheralConnected = false
             self.updateWhenActive()
+        }
+    }
+
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &PeripheralServicesViewController.BCPeripheralStateKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
+                if newState == .Disconnected {
+                    dispatch_async(dispatch_get_main_queue()) { self.peripheralDisconnected() }
+                }
+            }
+        default:
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
 

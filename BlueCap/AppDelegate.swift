@@ -10,8 +10,7 @@ import UIKit
 import BlueCapKit
 
 struct BlueCapNotification {
-    static let peripheralDisconnected   = "PeripheralDisconnected"
-    static let didUpdateBeacon          = "DidUpdateBeacon"
+    static let didUpdateBeacon = "DidUpdateBeacon"
 }
 
 enum AppError : Int {

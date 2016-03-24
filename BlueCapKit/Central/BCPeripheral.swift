@@ -127,7 +127,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     private var _state = CBPeripheralState.Disconnected
 
     private var _timeoutCount: UInt = 0
-    private var _disconnectCount: UInt = 0
+    private var _disconnectionCount: UInt = 0
     
     private var _connectionSequence = 0
     private var _RSSISequence = 0
@@ -197,24 +197,6 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private var timeoutCount: UInt {
-        get {
-            return BCPeripheral.ioQueue.sync  { return self._timeoutCount }
-        }
-        set {
-            BCPeripheral.ioQueue.sync { self._timeoutCount = newValue }
-        }
-    }
-
-    private var disconnectCount: UInt {
-        get {
-            return BCPeripheral.ioQueue.sync { return self._disconnectCount }
-        }
-        set {
-            BCPeripheral.ioQueue.sync { self._disconnectCount = newValue }
-        }
-    }
-
     private var connectionSequence: Int {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectionSequence }
@@ -279,7 +261,25 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var numberOfConnections: Int {
+    public private(set) var timeoutCount: UInt {
+        get {
+            return BCPeripheral.ioQueue.sync  { return self._timeoutCount }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._timeoutCount = newValue }
+        }
+    }
+
+    public private(set) var disconnectionCount: UInt {
+        get {
+            return BCPeripheral.ioQueue.sync { return self._disconnectionCount }
+        }
+        set {
+            BCPeripheral.ioQueue.sync { self._disconnectionCount = newValue }
+        }
+    }
+
+    public var connectionCount: Int {
         get {
             return BCPeripheral.ioQueue.sync { return self._connectionSequence }
         }
@@ -713,13 +713,13 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Utilities
     private func shouldFailOrGiveUp(error: NSError) {
-        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), disconnectCount=\(self.disconnectCount), disconnectRetries=\(self.disconnectRetries)")
+        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
         if let disconnectRetries = self.disconnectRetries {
-            if self.disconnectCount < disconnectRetries {
-                self.disconnectCount += 1
+            if self.disconnectionCount < disconnectRetries {
+                self.disconnectionCount += 1
                 self.connectionPromise?.failure(error)
             } else {
-                self.disconnectCount = 0
+                self.disconnectionCount = 0
                 self.connectionPromise?.success((self, BCConnectionEvent.GiveUp))
             }
         } else {
@@ -743,13 +743,13 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     private func shouldDisconnectOrGiveup() {
-        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), disconnectCount=\(self.disconnectCount), disconnectRetries=\(self.disconnectRetries)")
+        BCLogger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
         if let disconnectRetries = self.disconnectRetries {
-            if self.disconnectCount < disconnectRetries {
-                self.disconnectCount += 1
+            if self.disconnectionCount < disconnectRetries {
+                self.disconnectionCount += 1
                 self.connectionPromise?.success((self, .Disconnect))
             } else {
-                self.disconnectCount = 0
+                self.disconnectionCount = 0
                 self.connectionPromise?.success((self, .GiveUp))
             }
         } else {
