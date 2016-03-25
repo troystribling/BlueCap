@@ -107,7 +107,7 @@ class PeripheralViewController : UITableViewController {
             return
         }
         switch (keyPath!, context) {
-        case("state", &BCPeripheralStateKVOContext):
+        case("state", &PeripheralViewController.BCPeripheralStateKVOContext):
             if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
                 dispatch_async(dispatch_get_main_queue()) {
                     self.peripheralConnected = (newState == .Connected)

@@ -53,7 +53,7 @@ public class BCTimedScannerator {
         self.centralManager.centralQueue.delay(self.timeoutSeconds) {
             if self._isScanning {
                 if self.peripherals.count == 0 {
-                    self.centralManager.afterPeripheralDiscoveredPromise.failure(BCError.peripheralDiscoveryTimeout)
+                    self.centralManager.afterPeripheralDiscoveredPromise.failure(BCError.centralPeripheralScanTimeout)
                 }
                 self.stopScanning()
             }

@@ -233,10 +233,7 @@ class PeripheralsViewController : UITableViewController {
             case .ForceDisconnect:
                 BCLogger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
                 Notify.withMessage("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.UUIDString)'")
-                peripheral.stopPollingRSSI()
-                if self.peripheralConnectionStatus[peripheral.identifier] != nil {
-                    self.peripheralConnectionStatus[peripheral.identifier] = false
-                }
+                self.reconnectIfNecessary(peripheral)
                 self.updateWhenActive()
             case .GiveUp:
                 BCLogger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
@@ -276,7 +273,7 @@ class PeripheralsViewController : UITableViewController {
             }
         }
         let afterTimeout = { (error: NSError) -> Void in
-            if error.domain == BCError.domain && error.code == BCPeripheralErrorCode.DiscoveryTimeout.rawValue {
+            if error.domain == BCError.domain && error.code == BCError.centralPeripheralScanTimeout.code {
                 BCLogger.debug("timeoutScan: timing out")
                 Singletons.timedScannerator.stopScanning()
                 self.setScanButton()
