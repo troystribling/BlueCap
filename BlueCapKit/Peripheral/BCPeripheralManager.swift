@@ -167,6 +167,8 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.cbPeripheralManager = peripheralManager
     }
 
+    // TODO: KVO isAdvertising and state
+
     // MARK: Power ON/OFF
     public func whenPowerOn() -> Future<Void> {
         BCLogger.debug()

@@ -25,6 +25,8 @@ extension CBCentralManager : CBCentralManagerInjectable {}
 // MARK: - BCCentralManager -
 public class BCCentralManager : NSObject, CBCentralManagerDelegate {
 
+    private static var CBCentralManagerStateKVOContext = UInt8()
+
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.central-manager.io")
 
@@ -34,6 +36,8 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     private var _afterStateRestoredPromise = Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
 
     private var _isScanning = false
+    private var _poweredOn = false
+    private var _state = CBCentralManagerState.Unknown
 
     internal var _afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
     internal var discoveredPeripherals = BCSerialIODictionary<NSUUID, BCPeripheral>(BCCentralManager.ioQueue)
@@ -77,14 +81,6 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public var poweredOn: Bool {
-        return self.cbCentralManager.state == CBCentralManagerState.PoweredOn
-    }
-    
-    public var poweredOff: Bool {
-        return self.cbCentralManager.state == CBCentralManagerState.PoweredOff
-    }
-
     public var peripherals: [BCPeripheral] {
         return Array(self.discoveredPeripherals.values).sort() {(p1: BCPeripheral, p2: BCPeripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
@@ -98,12 +94,32 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public var state: CBCentralManagerState {
-        return self.cbCentralManager.state
+    // TODO: should be updated in IO queue
+    public private(set) var isScanning: Bool {
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._isScanning }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._isScanning = newValue }
+        }
     }
-    
-    public var isScanning: Bool {
-        return self._isScanning
+
+    public private(set) var poweredOn: Bool {
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._poweredOn }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._poweredOn = newValue }
+        }
+    }
+
+    public private(set) var state: CBCentralManagerState {
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._state }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._state = newValue }
+        }
     }
 
     // MARK: Initializers
@@ -125,6 +141,26 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.cbCentralManager = centralManager
     }
 
+    // MARK: KVO
+    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &BCCentralManager.CBCentralManagerStateKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBCentralManagerState(rawValue: newRawState) {
+                if newRawState != oldRawState {
+                    self.willChangeValueForKey("state")
+                    self.state = newState
+                    self.didChangeValueForKey("state")
+                }
+            }
+        default:
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+
     // MARK: Power ON/OFF
     public func whenPowerOn() -> Future<Void> {
         self.afterPowerOnPromise = Promise<Void>()
@@ -137,7 +173,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
 
     public func whenPowerOff() -> Future<Void> {
         self.afterPowerOffPromise = Promise<Void>()
-        if self.poweredOff {
+        if !self.poweredOn {
             self.afterPowerOffPromise.success()
         }
         return self.afterPowerOffPromise.future
@@ -172,9 +208,9 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func startScanningForServiceUUIDs(uuids: [CBUUID]?, capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<BCPeripheral> {
-        if !self._isScanning {
+        if !self.isScanning {
             BCLogger.debug("UUIDs \(uuids)")
-            self._isScanning = true
+            self.isScanning = true
             if let capacity = capacity {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>(capacity: capacity)
             } else {
@@ -190,8 +226,8 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func stopScanning() {
-        if self._isScanning {
-            self._isScanning = false
+        if self.isScanning {
+            self.isScanning = false
             self.cbCentralManager.stopScan()
             self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
         }
@@ -204,7 +240,6 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Retrieve Peripherals
-    // TODO: These should rebuild peripherals
     public func retrieveConnectedPeripheralsWithServices(services: [CBUUID]) -> [BCPeripheral] {
         return self.cbCentralManager.retrieveConnectedPeripheralsWithServices(services).map { cbPeripheral in
             let newBCPeripheral: BCPeripheral
@@ -324,6 +359,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     internal func didUpdateState() {
+        self.poweredOn = self.cbCentralManager.state == .PoweredOn
         switch(self.cbCentralManager.state) {
         case .Unauthorized:
             BCLogger.debug("Unauthorized")
