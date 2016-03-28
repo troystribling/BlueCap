@@ -41,6 +41,7 @@ public enum BCCentralErrorCode: Int {
 
 public enum BCServiceErrorCode: Int {
     case CharacteristicDiscoveryTimeout = 60
+    case CharacteristicDiscoveryInProgress = 61
 }
 
 
@@ -76,6 +77,7 @@ public struct BCError {
 
     // MARK: Service
     public static let serviceCharacteristicDiscoveryTimeout = NSError(domain: domain, code: BCServiceErrorCode.CharacteristicDiscoveryTimeout.rawValue, userInfo: [NSLocalizedDescriptionKey:"Characteristic discovery timeout"])
+    public static let serviceCharacteristicDiscoveryInProgress = NSError(domain: domain, code: BCServiceErrorCode.CharacteristicDiscoveryInProgress.rawValue, userInfo: [NSLocalizedDescriptionKey:"Characteristic discovery in progress"])
 
 }
 
