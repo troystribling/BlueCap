@@ -509,15 +509,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     public func discoverServices(services: [CBUUID]?, timeout: NSTimeInterval? = nil) -> Future<BCPeripheral> {
         BCLogger.debug(" \(self.name)")
-        if self.serviceDiscoveryComplete {
-            self.servicesDiscoveredPromise = Promise<BCPeripheral>()
-            self.discoverIfConnected(services, timeout: timeout)
-            return self.servicesDiscoveredPromise!.future
-        } else {
-            let promise = Promise<BCPeripheral>()
-            promise.failure(BCError.peripheralServiceDiscoveryInProgress)
-            return promise.future
-        }
+        return self.discoverIfConnected(services, timeout: timeout)
     }
     
     public func discoverAllPeripheralServices(timeout: NSTimeInterval = BCPeripheral.DefaultServiceScanTimeout) -> Future<BCPeripheral> {
@@ -785,14 +777,22 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private func discoverIfConnected(services: [CBUUID]?, timeout: NSTimeInterval? = nil) {
-        if self.state == .Connected {
-            self.serviceDiscoveryComplete = false
-            self.serviceDiscoverySequence += 1
-            self.timeoutServiceDiscovery(self.serviceDiscoverySequence, timeout: timeout)
-            self.cbPeripheral.discoverServices(services)
+    private func discoverIfConnected(services: [CBUUID]?, timeout: NSTimeInterval? = nil)  -> Future<BCPeripheral> {
+        if self.serviceDiscoveryComplete {
+            self.servicesDiscoveredPromise = Promise<BCPeripheral>()
+            if self.state == .Connected {
+                self.serviceDiscoveryComplete = false
+                self.serviceDiscoverySequence += 1
+                self.timeoutServiceDiscovery(self.serviceDiscoverySequence, timeout: timeout)
+                self.cbPeripheral.discoverServices(services)
+            } else {
+                self.servicesDiscoveredPromise?.failure(BCError.peripheralDisconnected)
+            }
+            return self.servicesDiscoveredPromise!.future
         } else {
-            self.servicesDiscoveredPromise?.failure(BCError.peripheralDisconnected)
+            let promise = Promise<BCPeripheral>()
+            promise.failure(BCError.peripheralServiceDiscoveryInProgress)
+            return promise.future
         }
     }
 
@@ -826,6 +826,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             if sequence == self.serviceDiscoverySequence && !self.serviceDiscoveryComplete {
                 BCLogger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.UUIDString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(self)
+                self.serviceDiscoveryComplete = true
                 self.servicesDiscoveredPromise?.failure(BCError.peripheralServiceDiscoveryTimeout)
             } else {
                 BCLogger.debug("service scan timeout expired name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.serviceDiscoverySequence)")

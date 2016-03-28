@@ -88,13 +88,7 @@ public class BCService {
     
     public func discoverCharacteristics(characteristics: [CBUUID], timeout: NSTimeInterval? = nil) -> Future<BCService> {
         BCLogger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
-        if self.characteristicDiscoveryComplete {
-            return self.discoverIfConnected(characteristics, timeout: timeout)
-        } else {
-            let promise = Promise<BCService>()
-            promise.failure(BCError.serviceCharacteristicDiscoveryInProgress)
-            return promise.future
-        }
+        return self.discoverIfConnected(characteristics, timeout: timeout)
     }
     
     public func characteristic(uuid: CBUUID) -> BCCharacteristic? {
@@ -123,16 +117,22 @@ public class BCService {
 
     // MARK: Utils
     private func discoverIfConnected(characteristics: [CBUUID]?, timeout: NSTimeInterval?) -> Future<BCService> {
-        self.characteristicsDiscoveredPromise = Promise<BCService>()
-        if self.peripheral?.state == .Connected {
-            self.characteristicDiscoveryComplete = false
-            self.characteristicDiscoverySequence += 1
-            self.timeoutCharacteristicDiscovery(self.characteristicDiscoverySequence, timeout: timeout)
-            self.peripheral?.discoverCharacteristics(characteristics, forService:self)
+        if self.characteristicDiscoveryComplete {
+            self.characteristicsDiscoveredPromise = Promise<BCService>()
+            if self.peripheral?.state == .Connected {
+                self.characteristicDiscoveryComplete = false
+                self.characteristicDiscoverySequence += 1
+                self.timeoutCharacteristicDiscovery(self.characteristicDiscoverySequence, timeout: timeout)
+                self.peripheral?.discoverCharacteristics(characteristics, forService:self)
+            } else {
+                self.characteristicsDiscoveredPromise?.failure(BCError.peripheralDisconnected)
+            }
+            return self.characteristicsDiscoveredPromise!.future
         } else {
-            self.characteristicsDiscoveredPromise?.failure(BCError.peripheralDisconnected)
+            let promise = Promise<BCService>()
+            promise.failure(BCError.serviceCharacteristicDiscoveryInProgress)
+            return promise.future
         }
-        return self.characteristicsDiscoveredPromise!.future
     }
 
     private func timeoutCharacteristicDiscovery(sequence: Int, timeout: NSTimeInterval?) {
@@ -144,6 +144,7 @@ public class BCService {
             if sequence == self.characteristicDiscoverySequence && !self.characteristicDiscoveryComplete {
                 BCLogger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.UUIDString), peripheral UUID = \(peripheral.identifier.UUIDString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(peripheral)
+                self.characteristicDiscoveryComplete = true
                 self.characteristicsDiscoveredPromise?.failure(BCError.serviceCharacteristicDiscoveryTimeout)
             } else {
                 BCLogger.debug("characteristic scan timeout expired name = \(self.name), UUID = \(self.UUID.UUIDString), peripheral UUID = \(peripheral.identifier.UUIDString), sequence = \(sequence), current connectionSequence=\(self.characteristicDiscoverySequence)")

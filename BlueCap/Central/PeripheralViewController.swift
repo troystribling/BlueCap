@@ -16,7 +16,6 @@ class PeripheralViewController : UITableViewController {
     private static var BCPeripheralStateKVOContext = UInt8()
 
     weak var peripheral: BCPeripheral!
-    var progressView = ProgressView()
     var peripheralConnected = true
     var hasData = false
     var peripheralDiscovered = false
@@ -154,20 +153,19 @@ class PeripheralViewController : UITableViewController {
         guard self.peripheralConnected && !self.peripheralDiscovered else {
             return
         }
-        self.progressView.show()
         let peripheralDiscoveryFuture = self.peripheral.discoverAllPeripheralServices()
         peripheralDiscoveryFuture.onSuccess { _ in
             self.hasData = true
             self.setConnectionStateLabel()
-            self.progressView.remove()
             self.peripheralDiscovered = true
         }
         peripheralDiscoveryFuture.onFailure { error in
-            self.progressView.remove()
-            self.serviceLabel.textColor = UIColor.lightGrayColor()
-            self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
-                self.setConnectionStateLabel()
-            }), animated: true, completion:nil)
+            if error.code != BCError.peripheralServiceDiscoveryInProgress.code {
+                self.serviceLabel.textColor = UIColor.lightGrayColor()
+                self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
+                    self.setConnectionStateLabel()
+                }), animated: true, completion:nil)
+            }
         }
     }
 
@@ -175,10 +173,13 @@ class PeripheralViewController : UITableViewController {
         if self.peripheralConnected {
             self.stateLabel.text = "Connected"
             self.stateLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 1.0)
-            self.serviceLabel.textColor = UIColor.blackColor()
         } else {
             self.stateLabel.text = "Disconnected"
             self.stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
+        }
+        if self.hasData {
+            self.serviceLabel.textColor = UIColor.blackColor()
+        } else {
             self.serviceLabel.textColor = UIColor.lightGrayColor()
         }
     }
