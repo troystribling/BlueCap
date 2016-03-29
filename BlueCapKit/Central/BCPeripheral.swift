@@ -519,7 +519,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     public func discoverPeripheralServices(services: [CBUUID]?, timeout: NSTimeInterval = BCPeripheral.DefaultServiceScanTimeout) -> Future<BCPeripheral> {
         let peripheralDiscoveredPromise = Promise<BCPeripheral>()
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
-        let servicesDiscoveredFuture = self.discoverServices(services)
+        let servicesDiscoveredFuture = self.discoverServices(services, timeout: timeout)
         servicesDiscoveredFuture.onSuccess {_ in
             if self.services.count > 1 {
                 self.discoverService(self.services[0], tail:Array(self.services[1..<self.services.count]), promise: peripheralDiscoveredPromise)

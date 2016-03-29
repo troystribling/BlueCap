@@ -17,7 +17,6 @@ class PeripheralViewController : UITableViewController {
 
     weak var peripheral: BCPeripheral!
     var peripheralConnected = true
-    var hasData = false
     var peripheralDiscovered = false
 
     let dateFormatter = NSDateFormatter()
@@ -26,6 +25,7 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var rssiLabel: UILabel!
     @IBOutlet var stateLabel: UILabel!
     @IBOutlet var serviceLabel: UILabel!
+    @IBOutlet var serviceCount: UILabel!
 
     @IBOutlet var discoveredAtLabel: UILabel!
     @IBOutlet var connectedAtLabel: UILabel!
@@ -48,7 +48,6 @@ class PeripheralViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hasData = false
         self.navigationItem.title = self.peripheral.name
         self.discoveredAtLabel.text = dateFormatter.stringFromDate(self.peripheral.discoveredAt)
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
@@ -87,7 +86,7 @@ class PeripheralViewController : UITableViewController {
     override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
         if let identifier = identifier {
             if identifier == MainStoryBoard.peripheralServicesSegue {
-                return self.hasData
+                return self.peripheralDiscovered
             } else {
                 return true
             }
@@ -155,9 +154,8 @@ class PeripheralViewController : UITableViewController {
         }
         let peripheralDiscoveryFuture = self.peripheral.discoverAllPeripheralServices()
         peripheralDiscoveryFuture.onSuccess { _ in
-            self.hasData = true
-            self.setConnectionStateLabel()
             self.peripheralDiscovered = true
+            self.setConnectionStateLabel()
         }
         peripheralDiscoveryFuture.onFailure { error in
             if error.code != BCError.peripheralServiceDiscoveryInProgress.code {
@@ -177,11 +175,12 @@ class PeripheralViewController : UITableViewController {
             self.stateLabel.text = "Disconnected"
             self.stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
         }
-        if self.hasData {
+        if self.peripheralDiscovered {
             self.serviceLabel.textColor = UIColor.blackColor()
         } else {
             self.serviceLabel.textColor = UIColor.lightGrayColor()
         }
+        self.serviceCount.text = "\(self.peripheral.services.count)"
     }
     
 }
