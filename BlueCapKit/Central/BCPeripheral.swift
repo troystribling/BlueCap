@@ -20,11 +20,11 @@ public enum BCConnectionEvent {
 
 // MARK: - CBPeripheralInjectable -
 public protocol CBPeripheralInjectable {
-    var name: String?                      { get }
-    var state: CBPeripheralState           { get }
-    var identifier: NSUUID                 { get }
-    var delegate: CBPeripheralDelegate?    { get set }
-    var services: [CBService]?             { get }
+    var name: String? { get }
+    var state: CBPeripheralState { get }
+    var identifier: NSUUID { get }
+    var delegate: CBPeripheralDelegate? { get set }
+    var services: [CBService]? { get }
 
     func readRSSI()
     func discoverServices(services:[CBUUID]?)
@@ -135,7 +135,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     private var _currentError = PeripheralConnectionError.None
     private var _forcedDisconnect = false
-    private var _serviceDiscoveryComplete = true
+    private var _serviceDiscoveryInProgress = false
 
     private var _connectedAt: NSDate?
     private var _disconnectedAt : NSDate?
@@ -245,12 +245,12 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private var serviceDiscoveryComplete: Bool {
+    private var serviceDiscoveryInProgress: Bool {
         get {
-            return BCPeripheral.ioQueue.sync { return self._serviceDiscoveryComplete }
+            return BCPeripheral.ioQueue.sync { return self._serviceDiscoveryInProgress }
         }
         set {
-            BCPeripheral.ioQueue.sync { self._serviceDiscoveryComplete = newValue }
+            BCPeripheral.ioQueue.sync { self._serviceDiscoveryInProgress = newValue }
         }
     }
 
@@ -393,6 +393,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.stopObserving()
     }
 
+    // MARK: KVO
     private func startObserving() {
         guard let cbPeripheral = self.cbPeripheral as? CBPeripheral else {
             return
@@ -407,8 +408,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         cbPeripheral.removeObserver(self, forKeyPath: "state", context: &BCPeripheral.CBPeripheralStateKVOContext)
     }
-
-    // MARK: KVO
+    
     override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
         guard keyPath != nil else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
@@ -630,7 +630,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     internal func didDiscoverServices(discoveredServices: [CBService], error: NSError?) {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self.clearAll()
-        self.serviceDiscoveryComplete = true
+        self.serviceDiscoveryInProgress = false
         if let error = error {
             self.servicesDiscoveredPromise?.failure(error)
         } else {
@@ -691,6 +691,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     internal func didDisconnectPeripheral(error: NSError?) {
         self.disconnectedAt = NSDate()
         self.totalSecondsConnected += self.secondsConnected
+        self.serviceDiscoveryInProgress = false
         switch(self.currentError) {
         case .None:
             if let error = error {
@@ -707,6 +708,9 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         case .Timeout:
             BCLogger.debug("timeout uuid=\(self.identifier.UUIDString), name=\(self.name)")
             self.shouldTimeoutOrGiveup()
+        }
+        for service in self.services {
+            service.didDisconnectPeripheral(error)
         }
     }
 
@@ -778,10 +782,10 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     private func discoverIfConnected(services: [CBUUID]?, timeout: NSTimeInterval? = nil)  -> Future<BCPeripheral> {
-        if self.serviceDiscoveryComplete {
+        if !self.serviceDiscoveryInProgress {
             self.servicesDiscoveredPromise = Promise<BCPeripheral>()
             if self.state == .Connected {
-                self.serviceDiscoveryComplete = false
+                self.serviceDiscoveryInProgress = true
                 self.serviceDiscoverySequence += 1
                 self.timeoutServiceDiscovery(self.serviceDiscoverySequence, timeout: timeout)
                 self.cbPeripheral.discoverServices(services)
@@ -823,10 +827,10 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), timeout = \(timeout)")
         BCPeripheral.timeoutQueue.delay(timeout) {
-            if sequence == self.serviceDiscoverySequence && !self.serviceDiscoveryComplete {
+            if sequence == self.serviceDiscoverySequence && self.serviceDiscoveryInProgress {
                 BCLogger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.UUIDString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(self)
-                self.serviceDiscoveryComplete = true
+                self.serviceDiscoveryInProgress = false
                 self.servicesDiscoveredPromise?.failure(BCError.peripheralServiceDiscoveryTimeout)
             } else {
                 BCLogger.debug("service scan timeout expired name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.serviceDiscoverySequence)")

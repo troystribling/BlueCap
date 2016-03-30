@@ -21,7 +21,9 @@ struct ReadParameters {
 }
 
 // MARK: - BCCharacteristic -
-public class BCCharacteristic {
+public class BCCharacteristic : NSObject {
+
+    private static var CBCharacteristicIsNotifyingKVOContext = UInt8()
 
     // MARK: Properties
     static let ioQueue      = Queue("us.gnos.blueCap.characteristic.io")
@@ -39,10 +41,11 @@ public class BCCharacteristic {
     
     private let profile: BCCharacteristicProfile
 
-    private var _reading        = false
-    private var _writing        = false
-    private var _readSequence   = 0
-    private var _writeSequence  = 0
+    private var _reading = false
+    private var _writing = false
+    private var _readSequence = 0
+    private var _writeSequence = 0
+    private var _isNotifying = false
     private let defaultTimeout  = 10.0
 
     public let cbCharacteristic: CBCharacteristic
@@ -109,8 +112,13 @@ public class BCCharacteristic {
         return self.profile.name
     }
     
-    public var isNotifying: Bool {
-        return self.cbCharacteristic.isNotifying
+    public private(set) var isNotifying: Bool {
+        get {
+            return BCCharacteristic.ioQueue.sync { return self._isNotifying }
+        }
+        set {
+            BCCharacteristic.ioQueue.sync{ self._isNotifying = newValue }
+        }
     }
     
     public var afterDiscoveredPromise: StreamPromise<BCCharacteristic>? {
@@ -118,9 +126,9 @@ public class BCCharacteristic {
     }
     
     public var canNotify: Bool {
-        return self.propertyEnabled(.Notify)                    ||
-               self.propertyEnabled(.Indicate)                  ||
-               self.propertyEnabled(.NotifyEncryptionRequired)  ||
+        return self.propertyEnabled(.Notify) ||
+               self.propertyEnabled(.Indicate) ||
+               self.propertyEnabled(.NotifyEncryptionRequired) ||
                self.propertyEnabled(.IndicateEncryptionRequired)
     }
     
@@ -168,6 +176,35 @@ public class BCCharacteristic {
         } else {
             BCLogger.debug("no service profile found. Creating characteristic with UUID: \(service.UUID.UUIDString)")
             self.profile = BCCharacteristicProfile(UUID: service.UUID.UUIDString)
+        }
+    }
+
+    // MARK: KVO
+    private func startObserving() {
+        let options = NSKeyValueObservingOptions([.New, .Old])
+        self.cbCharacteristic.addObserver(self, forKeyPath: "isNotifying", options: options, context: &BCCharacteristic.CBCharacteristicIsNotifyingKVOContext)
+    }
+
+    private func stopObserving() {
+        self.cbCharacteristic.removeObserver(self, forKeyPath: "isNotifying", context: &BCCharacteristic.CBCharacteristicIsNotifyingKVOContext)
+    }
+
+    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &BCCharacteristic.CBCharacteristicIsNotifyingKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newIsNotifying = newValue as? Bool, oldIsNotifying = oldValue as? Bool {
+                if newIsNotifying != oldIsNotifying {
+                    self.willChangeValueForKey("isNotifying")
+                    self.isNotifying = newIsNotifying
+                    self.didChangeValueForKey("isNotifying")
+                }
+            }
+        default:
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
 

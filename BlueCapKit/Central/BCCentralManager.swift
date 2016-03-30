@@ -12,6 +12,7 @@ import CoreBluetooth
 // MARK: - CBCentralManagerInjectable -
 public protocol CBCentralManagerInjectable {
     var state : CBCentralManagerState { get }
+    var delegate: CBCentralManagerDelegate? { get set }
     func scanForPeripheralsWithServices(uuids: [CBUUID]?, options: [String: AnyObject]?)
     func stopScan()
     func connectPeripheral(peripheral: CBPeripheral, options: [String: AnyObject]?)
@@ -127,21 +128,44 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)
+        self.startObserving()
     }
-    
+
     public init(queue:dispatch_queue_t, options: [String:AnyObject]?=nil) {
         self.centralQueue = Queue(queue)
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
+        self.startObserving()
     }
 
     public init(centralManager: CBCentralManagerInjectable) {
         self.centralQueue = Queue("us.gnos.blueCap.central-manger.main")
         super.init()
         self.cbCentralManager = centralManager
+        self.startObserving()
+    }
+
+    deinit {
+        self.cbCentralManager.delegate = nil
+        self.stopObserving()
     }
 
     // MARK: KVO
+    private func startObserving() {
+        guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
+            return
+        }
+        let options = NSKeyValueObservingOptions([.New, .Old])
+        cbCentralManager.addObserver(self, forKeyPath: "state", options: options, context: &BCCentralManager.CBCentralManagerStateKVOContext)
+    }
+
+    private func stopObserving() {
+        guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
+            return
+        }
+        cbCentralManager.removeObserver(self, forKeyPath: "state", context: &BCCentralManager.CBCentralManagerStateKVOContext)
+    }
+
     override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
         guard keyPath != nil else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
