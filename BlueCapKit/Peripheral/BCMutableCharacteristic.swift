@@ -19,8 +19,8 @@ public class BCMutableCharacteristic {
 
     private var centrals = BCSerialIODictionary<NSUUID, CBCentralInjectable>(BCMutableCharacteristic.ioQueue)
 
-    private var _updating = false
     private var _queuedUpdates = [NSData]()
+    private var _isUpdating = false
 
     internal var _processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
     internal weak var _service: BCMutableService?
@@ -37,21 +37,21 @@ public class BCMutableCharacteristic {
         }
     }
 
-    private var updating: Bool {
-        get {
-            return BCMutableCharacteristic.ioQueue.sync { return self._updating }
-        }
-        set {
-            BCMutableCharacteristic.ioQueue.sync { self._updating = newValue }
-        }
-    }
-
     private var processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>? {
         get {
             return BCMutableCharacteristic.ioQueue.sync { return self._processWriteRequestPromise }
         }
         set {
             BCMutableCharacteristic.ioQueue.sync { self._processWriteRequestPromise = newValue }
+        }
+    }
+
+    public private(set) var isUpdating: Bool {
+        get {
+            return BCMutableCharacteristic.ioQueue.sync { return self._isUpdating }
+        }
+        set {
+            BCMutableCharacteristic.ioQueue.sync { self._isUpdating = newValue }
         }
     }
 
@@ -79,18 +79,10 @@ public class BCMutableCharacteristic {
         return Array(self.centrals.values)
     }
 
-    public var hasSubscriber: Bool {
-        return self.subscribers.count > 0
-    }
-
     public var pendingUpdates : [NSData] {
         return Array(self.queuedUpdates)
     }
 
-    public var isUpdating: Bool {
-        return self.updating
-    }
-    
     public var service: BCMutableService? {
         return self._service
     }
@@ -218,43 +210,43 @@ public class BCMutableCharacteristic {
 
     // MARK: CBPeripheralManagerDelegate Shims
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
-        self.updating = true
+        self.isUpdating = true
         self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
-            self.centrals[central.identifier] = central
-            self.updating = true
-            self.updateValuesWithData(self.queuedUpdates)
-            self.queuedUpdates.removeAll()
+        self.isUpdating = true
+        self.centrals[central.identifier] = central
+        self.updateValuesWithData(self.queuedUpdates)
+        self.queuedUpdates.removeAll()
     }
 
     internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
         self.centrals.removeValueForKey(central.identifier)
-        if !self.hasSubscriber {
-            self.updating = false
+        if self.centrals.keys.count == 0 {
+            self.isUpdating = false
         }
     }
 
     // MARK: Utils
     private func updateValuesWithData(values: [NSData]) -> Bool  {
         guard let value = values.last else {
-            return self.updating
+            return self.isUpdating
         }
         self.value = value
-        if let peripheralManager = self.service?.peripheralManager where self.updating && self.canNotify {
+        if let peripheralManager = self.service?.peripheralManager where self.isUpdating && self.canNotify {
             for value in values {
-                self.updating = peripheralManager.updateValue(value, forCharacteristic:self)
+                self.isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
                 if !self.isUpdating {
                     self.queuedUpdates.append(value)
                 }
             }
         } else {
-            self.updating = false
+            self.isUpdating = false
             self.queuedUpdates.append(value)
         }
-        return self.updating
+        return self.isUpdating
     }
 
 }

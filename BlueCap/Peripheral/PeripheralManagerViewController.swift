@@ -23,9 +23,9 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBOutlet var beaconLabel: UILabel!
 
     struct MainStoryboard {
-        static let peripheralManagerServicesSegue           = "PeripheralManagerServices"
+        static let peripheralManagerServicesSegue = "PeripheralManagerServices"
         static let peripheralManagerAdvertisedServicesSegue = "PeripheralManagerAdvertisedServices"
-        static let peripheralManagerBeaconsSegue            = "PeripheralManagerBeacons"
+        static let peripheralManagerBeaconsSegue = "PeripheralManagerBeacons"
     }
     
     var peripheral : String?

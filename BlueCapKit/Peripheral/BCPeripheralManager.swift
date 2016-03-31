@@ -11,9 +11,9 @@ import CoreBluetooth
 
 // MARK: - CBPeripheralManagerInjectable -
 public protocol CBPeripheralManagerInjectable {
+    var delegate: CBPeripheralManagerDelegate? { get set }
     var isAdvertising: Bool { get }
     var state: CBPeripheralManagerState { get }
-    
     func startAdvertising(advertisementData:[String:AnyObject]?)
     func stopAdvertising()
     func addService(service: CBMutableService)
@@ -45,6 +45,9 @@ extension CBCentral: CBCentralInjectable {}
 // MARK: - BCPeripheralManager -
 public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
+    private static var CBPeripheralManagerStateKVOContext = UInt8()
+    private static var CBPeripheralManagerIsAdvertisingKVOContext = UInt8()
+
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral-manager.io")
 
@@ -55,14 +58,18 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     private var cbPeripheralManager: CBPeripheralManagerInjectable!
     
     private var _afterAdvertisingStartedPromise = Promise<Void>()
-    private var _afterAdvertsingStoppedPromise  = Promise<Void>()
-    private var _afterPowerOnPromise            = Promise<Void>()
-    private var _afterPowerOffPromise           = Promise<Void>()
-    private var _afterSeriviceAddPromise        = Promise<Void>()
-    private var _afterStateRestoredPromise      = Promise<([BCMutableService], BCPeripheralAdvertisements)>()
+    private var _afterAdvertsingStoppedPromise = Promise<Void>()
+    private var _afterPowerOnPromise = Promise<Void>()
+    private var _afterPowerOffPromise = Promise<Void>()
+    private var _afterSeriviceAddPromise = Promise<Void>()
+    private var _afterStateRestoredPromise = Promise<([BCMutableService], BCPeripheralAdvertisements)>()
 
-    internal var configuredServices         = BCSerialIODictionary<CBUUID, BCMutableService>(BCPeripheralManager.ioQueue)
-    internal var configuredCharcteristics   = BCSerialIODictionary<CBUUID, BCMutableCharacteristic>(BCPeripheralManager.ioQueue)
+    private var _state = CBPeripheralManagerState.Unknown
+    private var _poweredOn = false
+    private var _isAdvertising = false
+
+    internal var configuredServices  = BCSerialIODictionary<CBUUID, BCMutableService>(BCPeripheralManager.ioQueue)
+    internal var configuredCharcteristics = BCSerialIODictionary<CBUUID, BCMutableCharacteristic>(BCPeripheralManager.ioQueue)
 
     public let peripheralQueue: Queue
 
@@ -120,20 +127,31 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    public var isAdvertising: Bool {
-        return self.cbPeripheralManager.isAdvertising
+    public private(set) var isAdvertising: Bool {
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._isAdvertising }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._isAdvertising = newValue }
+        }
     }
-    
-    public var poweredOn: Bool {
-        return self.cbPeripheralManager.state == CBPeripheralManagerState.PoweredOn
-    }
-    
-    public var poweredOff: Bool {
-        return self.cbPeripheralManager.state == CBPeripheralManagerState.PoweredOff
+
+    public private(set) var poweredOn: Bool {
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._poweredOn }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._poweredOn = newValue }
+        }
     }
 
     public var state: CBPeripheralManagerState {
-        return self.cbPeripheralManager.state
+        get {
+            return BCPeripheralManager.ioQueue.sync { return self._state }
+        }
+        set {
+            BCPeripheralManager.ioQueue.sync { self._state = newValue }
+        }
     }
     
     public var services: [BCMutableService] {
@@ -153,22 +171,73 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
+        self.startObserving()
     }
 
     public init(queue: dispatch_queue_t, options: [String:AnyObject]?=nil) {
         self.peripheralQueue = Queue(queue)
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
+        self.startObserving()
     }
 
     public init(peripheralManager: CBPeripheralManagerInjectable) {
         self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbPeripheralManager = peripheralManager
+        self.startObserving()
     }
 
-    // TODO: KVO isAdvertising and state
+    deinit {
+        self.cbPeripheralManager.delegate = nil
+        self.stopObserving()
+    }
 
+    // MARK: KVO
+    private func startObserving() {
+        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
+            return
+        }
+        let options = NSKeyValueObservingOptions([.New, .Old])
+        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+    }
+
+    private func stopObserving() {
+        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
+            return
+        }
+        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+    }
+
+    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard keyPath != nil else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        switch (keyPath!, context) {
+        case("state", &BCPeripheralManager.CBPeripheralManagerStateKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralManagerState(rawValue: newRawState) {
+                if newRawState != oldRawState {
+                    self.willChangeValueForKey("state")
+                    self.state = newState
+                    self.didChangeValueForKey("state")
+                }
+            }
+        case ("isAdvertising", &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext):
+            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newIsAdvertising = newValue as? Bool, oldIsAdvertising = oldValue as? Bool {
+                if newIsAdvertising != oldIsAdvertising {
+                    self.willChangeValueForKey("isAdvertising")
+                    self.isAdvertising = newIsAdvertising
+                    self.didChangeValueForKey("isAdvertising")
+                }
+            }
+        default:
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+    
     // MARK: Power ON/OFF
     public func whenPowerOn() -> Future<Void> {
         BCLogger.debug()
@@ -182,7 +251,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     public func whenPowerOff() -> Future<Void> {
         BCLogger.debug()
         self.afterPowerOffPromise = Promise<Void>()
-        if self.poweredOff {
+        if !self.poweredOn {
             self.afterPowerOffPromise.success()
         }
         return self.afterPowerOffPromise.future
@@ -366,7 +435,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal func isReadyToUpdateSubscribers() {
         BCLogger.debug()
         for characteristic in self.configuredCharcteristics.values {
-            if characteristic.hasSubscriber {
+            if characteristic.isUpdating {
                 characteristic.peripheralManagerIsReadyToUpdateSubscribers()
             }
         }
@@ -399,6 +468,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     internal func didUpdateState() {
+        self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
         switch self.state {
         case .PoweredOn:
             BCLogger.debug("poweredOn")

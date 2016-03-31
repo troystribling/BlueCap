@@ -177,6 +177,12 @@ public class BCCharacteristic : NSObject {
             BCLogger.debug("no service profile found. Creating characteristic with UUID: \(service.UUID.UUIDString)")
             self.profile = BCCharacteristicProfile(UUID: service.UUID.UUIDString)
         }
+        super.init()
+        self.startObserving()
+    }
+
+    deinit {
+        self.stopObserving()
     }
 
     // MARK: KVO
