@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - BCMutableCharacteristic -
-public class BCMutableCharacteristic {
+public class BCMutableCharacteristic : NSObject {
 
     // MARK: Properties
     static let ioQueue = Queue("us.gnos.blueCap.mutable-characteristic.io")
@@ -210,13 +210,17 @@ public class BCMutableCharacteristic {
 
     // MARK: CBPeripheralManagerDelegate Shims
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
+        self.willChangeValueForKey("isUpdating")
         self.isUpdating = true
+        self.didChangeValueForKey("isUpdating")
         self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
+        self.willChangeValueForKey("isUpdating")
         self.isUpdating = true
+        self.didChangeValueForKey("isUpdating")
         self.centrals[central.identifier] = central
         self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
@@ -225,7 +229,9 @@ public class BCMutableCharacteristic {
     internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
         self.centrals.removeValueForKey(central.identifier)
         if self.centrals.keys.count == 0 {
+            self.willChangeValueForKey("isUpdating")
             self.isUpdating = false
+            self.didChangeValueForKey("isUpdating")
         }
     }
 

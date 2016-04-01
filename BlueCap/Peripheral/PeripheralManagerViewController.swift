@@ -84,7 +84,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
         if let identifier = identifier {
             if Singletons.peripheralManager.isAdvertising {
-                return identifier != MainStoryboard.peripheralManagerServicesSegue
+                return identifier == MainStoryboard.peripheralManagerServicesSegue
             } else if identifier == MainStoryboard.peripheralManagerAdvertisedServicesSegue {
                 return PeripheralStore.getPeripheralServicesForPeripheral(peripheral).count > 0
             } else {

@@ -178,40 +178,9 @@ public class BCCharacteristic : NSObject {
             self.profile = BCCharacteristicProfile(UUID: service.UUID.UUIDString)
         }
         super.init()
-        self.startObserving()
     }
 
     deinit {
-        self.stopObserving()
-    }
-
-    // MARK: KVO
-    private func startObserving() {
-        let options = NSKeyValueObservingOptions([.New, .Old])
-        self.cbCharacteristic.addObserver(self, forKeyPath: "isNotifying", options: options, context: &BCCharacteristic.CBCharacteristicIsNotifyingKVOContext)
-    }
-
-    private func stopObserving() {
-        self.cbCharacteristic.removeObserver(self, forKeyPath: "isNotifying", context: &BCCharacteristic.CBCharacteristicIsNotifyingKVOContext)
-    }
-
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", &BCCharacteristic.CBCharacteristicIsNotifyingKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newIsNotifying = newValue as? Bool, oldIsNotifying = oldValue as? Bool {
-                if newIsNotifying != oldIsNotifying {
-                    self.willChangeValueForKey("isNotifying")
-                    self.isNotifying = newIsNotifying
-                    self.didChangeValueForKey("isNotifying")
-                }
-            }
-        default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-        }
     }
 
     // MARK: Data Access
@@ -366,15 +335,15 @@ public class BCCharacteristic : NSObject {
 
     // MARK: CBPeripheralDelegate Shim
     internal func didUpdateNotificationState(error: NSError?) {
-        guard let notificationStateChangedPromise = self.notificationStateChangedPromise else {
-            return
-        }
         if let error = error {
             BCLogger.debug("failed uuid=\(self.UUID.UUIDString), name=\(self.name)")
-            notificationStateChangedPromise.failure(error)
+            self.notificationStateChangedPromise?.failure(error)
         } else {
             BCLogger.debug("success:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
-            notificationStateChangedPromise.success(self)
+            self.willChangeValueForKey("isNotifying")
+            self.isNotifying = self.cbCharacteristic.isNotifying
+            self.didChangeValueForKey("isNotifying")
+            self.notificationStateChangedPromise?.success(self)
         }
     }
     
@@ -416,13 +385,10 @@ public class BCCharacteristic : NSObject {
 
 
     private func didNotify(error: NSError?) {
-        guard let notificationUpdatePromise = self.notificationUpdatePromise else {
-            return
-        }
         if let error = error {
-            notificationUpdatePromise.failure(error)
+            self.notificationUpdatePromise?.failure(error)
         } else {
-            notificationUpdatePromise.success((self, self.dataValue.flatmap{ $0.copy() as? NSData}))
+            self.notificationUpdatePromise?.success((self, self.dataValue.flatmap{ $0.copy() as? NSData}))
         }
     }
 
