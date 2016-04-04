@@ -360,10 +360,11 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     // MARK: Initializers
     internal init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String:AnyObject], RSSI: Int) {
         self.cbPeripheral = cbPeripheral
-        self.advertisements = BCPeripheralAdvertisements(advertisements: advertisements)
         self.centralManager = centralManager
+        self.advertisements = BCPeripheralAdvertisements(advertisements: advertisements)
         super.init()
         self.RSSI = RSSI
+        self.state = cbPeripheral.state
         self.cbPeripheral.delegate = self
         self.startObserving()
     }
@@ -374,6 +375,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.advertisements = nil
         super.init()
         self.RSSI = 0
+        self.state = cbPeripheral.state
         self.cbPeripheral.delegate = self
         self.startObserving()
     }
@@ -384,8 +386,9 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         self.centralManager = bcPeripheral.centralManager
         super.init()
         self.RSSI = bcPeripheral.RSSI
-        self.startObserving()
+        self.state = cbPeripheral.state
         self.cbPeripheral.delegate = self
+        self.startObserving()
     }
 
     deinit {

@@ -171,6 +171,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
+        self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
         self.startObserving()
     }
 
@@ -178,6 +179,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.peripheralQueue = Queue(queue)
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
+        self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
         self.startObserving()
     }
 
@@ -185,6 +187,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.peripheralQueue = Queue(dispatch_queue_create("com.gnos.us.peripheral.main", DISPATCH_QUEUE_SERIAL))
         super.init()
         self.cbPeripheralManager = peripheralManager
+        self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
         self.startObserving()
     }
 
@@ -469,7 +472,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     internal func didUpdateState() {
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
-        switch self.state {
+        switch self.cbPeripheralManager.state {
         case .PoweredOn:
             BCLogger.debug("poweredOn")
             if !self.afterPowerOnPromise.completed {

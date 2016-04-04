@@ -206,6 +206,7 @@ class ServiceUT: BCService {
     }
     
     override func discoverAllCharacteristics(timout: NSTimeInterval? = nil) -> Future<BCService> {
+        self.characteristicsDiscoveredPromise = Promise<BCService>()
         self.didDiscoverCharacteristics(self.mockCharacteristics, error: self.error)
         return self.characteristicsDiscoveredPromise!.future
     }

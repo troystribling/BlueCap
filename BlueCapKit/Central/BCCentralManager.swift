@@ -128,6 +128,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)
+        self.poweredOn = self.cbCentralManager.state == .PoweredOn
         self.startObserving()
     }
 
@@ -135,6 +136,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.centralQueue = Queue(queue)
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
+        self.poweredOn = self.cbCentralManager.state == .PoweredOn
         self.startObserving()
     }
 
@@ -142,6 +144,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.centralQueue = Queue("us.gnos.blueCap.central-manger.main")
         super.init()
         self.cbCentralManager = centralManager
+        self.poweredOn = self.cbCentralManager.state == .PoweredOn
         self.startObserving()
     }
 
