@@ -26,6 +26,7 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
     var state: CBCentralManagerState
     var scanForPeripheralsWithServicesCalled = false
     var stopScanCalled = false
+    var delegate: CBCentralManagerDelegate?
     
     init(state: CBCentralManagerState = .PoweredOn) {
         self.state = state
@@ -204,9 +205,9 @@ class ServiceUT: BCService {
         super.init(cbService:cbService, peripheral:peripheral)
     }
     
-    override func discoverAllCharacteristics() -> Future<BCService> {
+    override func discoverAllCharacteristics(timout: NSTimeInterval? = nil) -> Future<BCService> {
         self.didDiscoverCharacteristics(self.mockCharacteristics, error: self.error)
-        return self.characteristicsDiscoveredPromise.future
+        return self.characteristicsDiscoveredPromise!.future
     }
 }
 
@@ -249,6 +250,7 @@ class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
     var state: CBPeripheralManagerState
     var addedService: CBMutableService?
     var removedService: CBMutableService?
+    var delegate: CBPeripheralManagerDelegate?
     
     var removeServiceCount = 0
     var addServiceCount = 0

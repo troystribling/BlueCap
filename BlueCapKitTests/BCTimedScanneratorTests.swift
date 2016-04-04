@@ -53,7 +53,7 @@ class BCTimedScanneratorTests: XCTestCase {
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
-            XCTAssertEqual(BCPeripheralErrorCode.DiscoveryTimeout.rawValue, error.code, "onFailure error invalid")
+            XCTAssertEqual(BCError.centralPeripheralScanTimeout.code, error.code, "onFailure error invalid")
         }
         waitForExpectationsWithTimeout(30) {error in
             XCTAssertNil(error, "\(error)")

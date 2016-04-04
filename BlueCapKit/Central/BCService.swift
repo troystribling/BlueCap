@@ -38,7 +38,7 @@ public class BCService {
         }
     }
 
-     private var characteristicsDiscoveredPromise: Promise<BCService>? {
+     internal var characteristicsDiscoveredPromise: Promise<BCService>? {
         get {
             return BCService.ioQueue.sync { return self._characteristicsDiscoveredPromise }
         }
