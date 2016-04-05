@@ -234,7 +234,7 @@ class CBCharacteristicMock: CBMutableCharacteristic {
 }
 
 // MARK: - CBPeripheralManagerMock -
-class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
+class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
 
     var updateValueReturn = true
     
@@ -247,8 +247,8 @@ class CBPeripheralManagerMock: CBPeripheralManagerInjectable {
     var updateValueCalled = false
 
     var advertisementData: [String:AnyObject]?
-    var isAdvertising : Bool
-    var state: CBPeripheralManagerState
+    dynamic var isAdvertising : Bool
+    dynamic var state: CBPeripheralManagerState
     var addedService: CBMutableService?
     var removedService: CBMutableService?
     var delegate: CBPeripheralManagerDelegate?

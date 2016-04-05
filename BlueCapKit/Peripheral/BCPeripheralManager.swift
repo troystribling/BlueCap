@@ -172,6 +172,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
+        self.isAdvertising = self.cbPeripheralManager.isAdvertising
         self.startObserving()
     }
 
@@ -180,6 +181,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
+        self.isAdvertising = self.cbPeripheralManager.isAdvertising
         self.startObserving()
     }
 
@@ -188,6 +190,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         super.init()
         self.cbPeripheralManager = peripheralManager
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
+        self.isAdvertising = self.cbPeripheralManager.isAdvertising
         self.startObserving()
     }
 
