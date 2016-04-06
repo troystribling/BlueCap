@@ -45,8 +45,8 @@ extension CBCentral: CBCentralInjectable {}
 // MARK: - BCPeripheralManager -
 public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
-    private static var CBPeripheralManagerStateKVOContext = UInt8()
-    private static var CBPeripheralManagerIsAdvertisingKVOContext = UInt8()
+    internal static var CBPeripheralManagerStateKVOContext = UInt8()
+    internal static var CBPeripheralManagerIsAdvertisingKVOContext = UInt8()
 
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral-manager.io")
@@ -55,7 +55,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: Properties
     private var _name: String?
-    private var cbPeripheralManager: CBPeripheralManagerInjectable!
+    internal private(set) var cbPeripheralManager: CBPeripheralManagerInjectable!
     
     private var _afterAdvertisingStartedPromise = Promise<Void>()
     private var _afterAdvertsingStoppedPromise = Promise<Void>()
@@ -200,7 +200,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: KVO
-    private func startObserving() {
+    internal func startObserving() {
         guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
             return
         }
@@ -209,7 +209,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
     }
 
-    private func stopObserving() {
+    internal func stopObserving() {
         guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
             return
         }
@@ -441,7 +441,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal func isReadyToUpdateSubscribers() {
         BCLogger.debug()
         for characteristic in self.configuredCharcteristics.values {
-            if characteristic.isUpdating {
+            if !characteristic.isUpdating {
                 characteristic.peripheralManagerIsReadyToUpdateSubscribers()
             }
         }

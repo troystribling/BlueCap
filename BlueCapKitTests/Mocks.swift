@@ -321,6 +321,24 @@ class PeripheralManagerUT: BCPeripheralManager {
         self.result = result
         self.request = request
     }
+
+    override internal func startObserving() {
+        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManagerMock else {
+            return
+        }
+        let options = NSKeyValueObservingOptions([.New, .Old])
+        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+    }
+
+    override internal func stopObserving() {
+        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManagerMock else {
+            return
+        }
+        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+    }
+
 }
 
 // MARK: - CBATTRequestMock -

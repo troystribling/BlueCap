@@ -26,7 +26,7 @@ extension CBCentralManager : CBCentralManagerInjectable {}
 // MARK: - BCCentralManager -
 public class BCCentralManager : NSObject, CBCentralManagerDelegate {
 
-    private static var CBCentralManagerStateKVOContext = UInt8()
+    internal static var CBCentralManagerStateKVOContext = UInt8()
 
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.central-manager.io")
@@ -154,7 +154,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: KVO
-    private func startObserving() {
+    internal func startObserving() {
         guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
             return
         }
@@ -162,7 +162,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         cbCentralManager.addObserver(self, forKeyPath: "state", options: options, context: &BCCentralManager.CBCentralManagerStateKVOContext)
     }
 
-    private func stopObserving() {
+    internal func stopObserving() {
         guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
             return
         }

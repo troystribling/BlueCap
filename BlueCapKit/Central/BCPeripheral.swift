@@ -109,8 +109,8 @@ public struct BCPeripheralAdvertisements {
 // MARK: - BCPeripheral -
 public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
-    private static var CBPeripheralStateKVOContext = UInt8()
-    private static let DefaultServiceScanTimeout: NSTimeInterval = 10.0
+    internal static var CBPeripheralStateKVOContext = UInt8()
+    internal static let DefaultServiceScanTimeout: NSTimeInterval = 10.0
 
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral.io")
@@ -397,7 +397,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: KVO
-    private func startObserving() {
+    internal func startObserving() {
         guard let cbPeripheral = self.cbPeripheral as? CBPeripheral else {
             return
         }
@@ -405,7 +405,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         cbPeripheral.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheral.CBPeripheralStateKVOContext)
     }
 
-    private func stopObserving() {
+    internal func stopObserving() {
         guard let cbPeripheral = self.cbPeripheral as? CBPeripheral else {
             return
         }

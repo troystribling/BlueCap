@@ -243,13 +243,17 @@ public class BCMutableCharacteristic : NSObject {
         self.value = value
         if let peripheralManager = self.service?.peripheralManager where self.isUpdating && self.canNotify {
             for value in values {
+                self.willChangeValueForKey("isUpdating")
                 self.isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
+                self.didChangeValueForKey("isUpdating")
                 if !self.isUpdating {
                     self.queuedUpdates.append(value)
                 }
             }
         } else {
+            self.willChangeValueForKey("isUpdating")
             self.isUpdating = false
+            self.didChangeValueForKey("isUpdating")
             self.queuedUpdates.append(value)
         }
         return self.isUpdating
