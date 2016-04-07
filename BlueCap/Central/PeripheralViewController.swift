@@ -26,6 +26,7 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var stateLabel: UILabel!
     @IBOutlet var serviceLabel: UILabel!
     @IBOutlet var serviceCount: UILabel!
+    @IBOutlet var serviceDiscoverySpinner: UIActivityIndicatorView!
 
     @IBOutlet var discoveredAtLabel: UILabel!
     @IBOutlet var connectedAtLabel: UILabel!
@@ -153,6 +154,7 @@ class PeripheralViewController : UITableViewController {
             return
         }
         let peripheralDiscoveryFuture = self.peripheral.discoverAllPeripheralServices()
+        self.toggleDiscoveryIndicator()
         peripheralDiscoveryFuture.onSuccess { _ in
             self.peripheralDiscovered = true
             self.setConnectionStateLabel()
@@ -167,6 +169,18 @@ class PeripheralViewController : UITableViewController {
         }
     }
 
+    func toggleDiscoveryIndicator() {
+        if self.peripheralDiscovered {
+            self.serviceLabel.textColor = UIColor.blackColor()
+            self.serviceCount.hidden = false
+            self.serviceDiscoverySpinner.stopAnimating()
+        } else {
+            self.serviceLabel.textColor = UIColor.lightGrayColor()
+            self.serviceCount.hidden = true
+            self.serviceDiscoverySpinner.startAnimating()
+        }
+    }
+
     func setConnectionStateLabel() {
         if self.peripheralConnected {
             self.stateLabel.text = "Connected"
@@ -175,11 +189,7 @@ class PeripheralViewController : UITableViewController {
             self.stateLabel.text = "Disconnected"
             self.stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
         }
-        if self.peripheralDiscovered {
-            self.serviceLabel.textColor = UIColor.blackColor()
-        } else {
-            self.serviceLabel.textColor = UIColor.lightGrayColor()
-        }
+        self.toggleDiscoveryIndicator()
         self.serviceCount.text = "\(self.peripheral.services.count)"
     }
     
