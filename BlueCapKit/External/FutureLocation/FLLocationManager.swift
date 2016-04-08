@@ -87,12 +87,17 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
     private var _requestLocationPromise: Promise<[CLLocation]>?
     private var _authorizationStatusChangedPromise: Promise<CLAuthorizationStatus>?
 
-    private var _updating = false
+    private var _isUpdating = false
 
     internal var clLocationManager: CLLocationManagerInjectable
 
-    public var isUpdating: Bool {
-        return self.updating
+    public private(set) var isUpdating: Bool {
+        get {
+            return FLLocationManager.ioQueue.sync { return self._isUpdating }
+        }
+        set {
+            FLLocationManager.ioQueue.sync { self._isUpdating = newValue }
+        }
     }
 
     private var locationUpdatePromise: StreamPromise<[CLLocation]>? {
@@ -128,15 +133,6 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         }
         set {
             FLLocationManager.ioQueue.sync { self._authorizationStatusChangedPromise = newValue }
-        }
-    }
-
-    private var updating: Bool {
-        get {
-            return FLLocationManager.ioQueue.sync { return self._updating }
-        }
-        set {
-            FLLocationManager.ioQueue.sync { self._updating = newValue }
         }
     }
 
@@ -303,18 +299,18 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
             self.locationUpdatePromise = StreamPromise<[CLLocation]>(capacity:capacity)
             let authoriztaionFuture = self.authorize(authorization)
             authoriztaionFuture.onSuccess(context) {status in
-                self.updating = true
+                self.updateIsUpdating(true)
                 self.clLocationManager.startUpdatingLocation()
             }
             authoriztaionFuture.onFailure(context) {error in
-                self.updating = false
+                self.updateIsUpdating(false)
                 self.locationUpdatePromise!.failure(error)
             }
             return self.locationUpdatePromise!.future
     }
 
     public func stopUpdatingLocation() {
-        self.updating = false
+        self.updateIsUpdating(false)
         self.locationUpdatePromise = nil
         self.clLocationManager.stopUpdatingLocation()
     }
@@ -332,11 +328,11 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         self.requestLocationPromise = Promise<[CLLocation]>()
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess(context) {status in
-            self.updating = true
+            self.updateIsUpdating(true)
             clLocationManager.requestLocation()
         }
         authoriztaionFuture.onFailure(context) {error in
-            self.updating = false
+            self.updateIsUpdating(false)
             self.requestLocationPromise!.failure(error)
         }
         return self.requestLocationPromise!.future
@@ -351,18 +347,18 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         self.locationUpdatePromise = StreamPromise<[CLLocation]>(capacity:capacity)
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess(context) {status in
-            self.updating = true
+            self.updateIsUpdating(true)
             self.clLocationManager.startMonitoringSignificantLocationChanges()
         }
         authoriztaionFuture.onFailure(context) {error in
-            self.updating = false
+            self.updateIsUpdating(false)
             self.locationUpdatePromise!.failure(error)
         }
         return self.locationUpdatePromise!.future
     }
     
     public func stopMonitoringSignificantLocationChanges() {
-        self.updating = false
+        self.updateIsUpdating(false)
         self.locationUpdatePromise  = nil
         self.clLocationManager.stopMonitoringSignificantLocationChanges()
     }
@@ -425,5 +421,11 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         FLLogger.debug("status: \(status)")
         self.authorizationStatusChangedPromise?.success(status)
     }
-    
+
+    // MARK: Utilies
+    func updateIsUpdating(value: Bool) {
+        self.willChangeValueForKey("isUpdating")
+        self.isUpdating = value
+        self.didChangeValueForKey("isUpdating")
+    }
 }

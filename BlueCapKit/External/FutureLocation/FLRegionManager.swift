@@ -12,11 +12,12 @@ import CoreLocation
 // MARK: - FLRegionManager -
 public class FLRegionManager : FLLocationManager {
 
-    // MARK: Properties
+    // MARK: Serialized Properties
     internal var regionMonitorStatus = FLSerialIODictionary<String, Bool>(FLLocationManager.ioQueue)
     internal var configuredRegions = FLSerialIODictionary<String, FLRegion>(FLLocationManager.ioQueue)
     private var requestStateForRegionPromises = FLSerialIODictionary<String, Promise<CLRegionState>>(FLLocationManager.ioQueue)
 
+    private var _isMonitoring = false
 
     // MARK: Configure
     public var maximumRegionMonitoringDistance: CLLocationDistance {
@@ -41,8 +42,13 @@ public class FLRegionManager : FLLocationManager {
     }
 
     // MARK: Control
-    public var isMonitoring : Bool {
-        return self.regionMonitorStatus.values.filter{$0}.count > 0
+    public private(set) var isMonitoring : Bool {
+        get {
+            return FLLocationManager.ioQueue.sync { return self._isMonitoring}
+        }
+        set {
+            FLLocationManager.ioQueue.sync { self._isMonitoring = newValue }
+        }
     }
 
     public func isMonitoringRegion(identifier: String) -> Bool {
@@ -65,6 +71,7 @@ public class FLRegionManager : FLLocationManager {
         self.regionMonitorStatus.removeValueForKey(region.identifier)
         self.configuredRegions.removeValueForKey(region.identifier)
         self.clLocationManager.stopMonitoringForRegion(region.clRegion)
+        self.updateIsMonitoring(false)
     }
 
     public func stopMonitoringAllRegions() {
@@ -120,14 +127,33 @@ public class FLRegionManager : FLLocationManager {
         if let region = region, flRegion = self.configuredRegions[region.identifier] {
             FLLogger.debug("region identifier '\(region.identifier)'")
             self.regionMonitorStatus[region.identifier] = false
+            self.updateIsMonitoring(false)
             flRegion.regionPromise.failure(error)
         }
     }
 
     public func didStartMonitoringForRegion(region: CLRegion) {
         FLLogger.debug("region identifier \(region.identifier)")
+        self.updateIsMonitoring(true)
         self.regionMonitorStatus[region.identifier] = true
         self.configuredRegions[region.identifier]?.regionPromise.success(.Start)
     }
+
+    // MARK: Utilies
+    func updateIsMonitoring(value: Bool) {
+        let regionCount = self.regionMonitorStatus.values.filter{$0}.count
+        if value {
+            self.willChangeValueForKey("isMonitoring")
+            self.isMonitoring = true
+            self.didChangeValueForKey("isMonitoring")
+        } else {
+            if regionCount == 0 {
+                self.willChangeValueForKey("isMonitoring")
+                self.isMonitoring = false
+                self.didChangeValueForKey("isMonitoring")
+            }
+        }
+    }
+
 }
 

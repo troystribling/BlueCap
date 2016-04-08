@@ -210,17 +210,13 @@ public class BCMutableCharacteristic : NSObject {
 
     // MARK: CBPeripheralManagerDelegate Shims
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
-        self.willChangeValueForKey("isUpdating")
-        self.isUpdating = true
-        self.didChangeValueForKey("isUpdating")
+        self.updateIsUpdating(true)
         self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
-        self.willChangeValueForKey("isUpdating")
-        self.isUpdating = true
-        self.didChangeValueForKey("isUpdating")
+        self.updateIsUpdating(true)
         self.centrals[central.identifier] = central
         self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
@@ -229,9 +225,7 @@ public class BCMutableCharacteristic : NSObject {
     internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
         self.centrals.removeValueForKey(central.identifier)
         if self.centrals.keys.count == 0 {
-            self.willChangeValueForKey("isUpdating")
-            self.isUpdating = false
-            self.didChangeValueForKey("isUpdating")
+            self.updateIsUpdating(false)
         }
     }
 
@@ -243,20 +237,22 @@ public class BCMutableCharacteristic : NSObject {
         self.value = value
         if let peripheralManager = self.service?.peripheralManager where self.isUpdating && self.canNotify {
             for value in values {
-                self.willChangeValueForKey("isUpdating")
-                self.isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
-                self.didChangeValueForKey("isUpdating")
+                self.updateIsUpdating(peripheralManager.updateValue(value, forCharacteristic:self))
                 if !self.isUpdating {
                     self.queuedUpdates.append(value)
                 }
             }
         } else {
-            self.willChangeValueForKey("isUpdating")
-            self.isUpdating = false
-            self.didChangeValueForKey("isUpdating")
+            self.updateIsUpdating(false)
             self.queuedUpdates.append(value)
         }
         return self.isUpdating
+    }
+
+    func updateIsUpdating(value: Bool) {
+        self.willChangeValueForKey("isUpdating")
+        self.isUpdating = value
+        self.didChangeValueForKey("isUpdating")
     }
 
 }
