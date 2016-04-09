@@ -43,8 +43,8 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     internal var _afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
     internal var discoveredPeripherals = BCSerialIODictionary<NSUUID, BCPeripheral>(BCCentralManager.ioQueue)
 
-    public var cbCentralManager: CBCentralManagerInjectable!
-    public let centralQueue: Queue
+    internal let centralQueue: Queue
+    public private(set) var cbCentralManager: CBCentralManagerInjectable!
 
     private var afterPowerOnPromise: Promise<Void> {
         get {

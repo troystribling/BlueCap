@@ -89,7 +89,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     private var _isUpdating = false
 
-    internal var clLocationManager: CLLocationManagerInjectable
+    internal private(set) var clLocationManager: CLLocationManagerInjectable
 
     public private(set) var isUpdating: Bool {
         get {

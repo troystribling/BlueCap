@@ -16,6 +16,8 @@ public class FLBeaconManager : FLRegionManager {
     private var regionRangingStatus = FLSerialIODictionary<String, Bool>(FLLocationManager.ioQueue)
     internal var configuredBeaconRegions = FLSerialIODictionary<String, FLBeaconRegion>(FLLocationManager.ioQueue)
 
+    private var _isRanging = false
+
     public func isRangingAvailable() -> Bool {
         return CLLocationManager.isRangingAvailable()
     }
@@ -38,8 +40,13 @@ public class FLBeaconManager : FLRegionManager {
     }
 
     // MARK: Control
-    public var isRanging: Bool {
-        return Array(self.regionRangingStatus.values).filter{$0}.count > 0
+    public private(set) var isRanging : Bool {
+        get {
+            return FLLocationManager.ioQueue.sync { return self._isRanging}
+        }
+        set {
+            FLLocationManager.ioQueue.sync { self._isRanging = newValue }
+        }
     }
 
     public func isRangingRegion(identifier:String) -> Bool {
@@ -54,6 +61,7 @@ public class FLBeaconManager : FLRegionManager {
             self.configuredBeaconRegions[beaconRegion.identifier] = beaconRegion
             self.configuredRegions[beaconRegion.identifier] = beaconRegion
             self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
+            self.updateIsRanging(true)
         }
         authoriztaionFuture.onFailure(context) {error in
             beaconRegion.beaconPromise.failure(error)
@@ -67,6 +75,7 @@ public class FLBeaconManager : FLRegionManager {
         self.regionRangingStatus[beaconRegion.identifier] = false
         self.configuredRegions.removeValueForKey(beaconRegion.identifier)
         self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
+        self.updateIsRanging(false)
     }
 
     public func stopRangingAllBeacons() {
@@ -97,6 +106,23 @@ public class FLBeaconManager : FLRegionManager {
         FLLogger.debug("region identifier \(region.identifier)")
         self.regionRangingStatus[region.identifier] = false
         self.configuredBeaconRegions[region.identifier]?.beaconPromise.failure(error)
+        self.updateIsRanging(false)
     }
-    
+
+    // MARK: Utilies
+    func updateIsRanging(value: Bool) {
+        let regionCount = self.regionRangingStatus.values.filter{$0}.count
+        if value {
+            self.willChangeValueForKey("isRanging")
+            self.isRanging = true
+            self.didChangeValueForKey("isRanging")
+        } else {
+            if regionCount == 0 {
+                self.willChangeValueForKey("isRanging")
+                self.isRanging = false
+                self.didChangeValueForKey("isRanging")
+            }
+        }
+    }
+
 }
