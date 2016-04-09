@@ -108,15 +108,15 @@ class ViewController: UITableViewController {
     }
     
     func activate() {
-        let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
-        let dataUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
-        let enabledUUID = CBUUID(string: TISensorTag.AccelerometerService.Enabled.uuid)
-        let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.uuid)
+        let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+        let dataUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.UUID)
+        let enabledUUID = CBUUID(string: TISensorTag.AccelerometerService.Enabled.UUID)
+        let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.UUID)
 
         // on power, start scanning. when peripoheral is discovered connect and stop scanning
         let peripheraConnectFuture = self.manager.whenPowerOn().flatmap { [unowned self] _ -> FutureStream<BCPeripheral> in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
-            }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
+        }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(10, timeoutRetries: 5, disconnectRetries: 5)
@@ -133,9 +133,6 @@ class ViewController: UITableViewController {
                 self.updateUIStatus()
             case .ForceDisconnect:
                 self.updateUIStatus()
-            case .Failed:
-                self.updateUIStatus()
-                self.presentViewController(UIAlertController.alertWithMessage("Connection Failed"), animated: true, completion :nil)
             case .GiveUp:
                 peripheral.terminate()
                 self.updateUIStatus()
@@ -205,7 +202,7 @@ class ViewController: UITableViewController {
             }
         }
         dataSubscriptionFuture.flatmap { characteristic -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
-            return characteristic.recieveNotificationUpdates(10)
+            return characteristic.receiveNotificationUpdates(10)
         }.onSuccess { (_, data) in
             self.updateData(data)
         }

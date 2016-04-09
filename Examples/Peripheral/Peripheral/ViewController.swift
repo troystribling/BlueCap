@@ -31,17 +31,17 @@ class ViewController: UITableViewController {
     let manager = BCPeripheralManager()
     let accelerometer = Accelerometer()
 
-    let accelerometerService                    = BCMutableService(uuid: TISensorTag.AccelerometerService.uuid)
+    let accelerometerService                    = BCMutableService(UUID: TISensorTag.AccelerometerService.UUID)
 
-    let accelerometerDataCharacteristic         = BCMutableCharacteristic(uuid: TISensorTag.AccelerometerService.Data.uuid,
+    let accelerometerDataCharacteristic         = BCMutableCharacteristic(UUID: TISensorTag.AccelerometerService.Data.UUID,
                                                     properties: [.Read, .Notify],
                                                     permissions: [.Readable, .Writeable],
                                                     value: BCSerDe.serialize(TISensorTag.AccelerometerService.Data(x: 1.0, y: 0.5, z: -1.5)!))
-    let accelerometerEnabledCharacteristic      = BCMutableCharacteristic(uuid:TISensorTag.AccelerometerService.Enabled.uuid,
+    let accelerometerEnabledCharacteristic      = BCMutableCharacteristic(UUID:TISensorTag.AccelerometerService.Enabled.UUID,
                                                     properties: [.Read, .Write],
                                                     permissions: [.Readable, .Writeable],
                                                     value: BCSerDe.serialize(TISensorTag.AccelerometerService.Enabled.No.rawValue))
-    let accelerometerUpdatePeriodCharacteristic = BCMutableCharacteristic(uuid: TISensorTag.AccelerometerService.UpdatePeriod.uuid,
+    let accelerometerUpdatePeriodCharacteristic = BCMutableCharacteristic(UUID: TISensorTag.AccelerometerService.UpdatePeriod.UUID,
                                                     properties: [.Read, .Write],
                                                     permissions: [.Readable, .Writeable],
                                                     value: BCSerDe.serialize(UInt8(100)))
@@ -104,7 +104,7 @@ class ViewController: UITableViewController {
     }
     
     func startAdvertising() {
-        let uuid = CBUUID(string: TISensorTag.AccelerometerService.uuid)
+        let uuid = CBUUID(string: TISensorTag.AccelerometerService.UUID)
         // on power on remove all services add service and start advertising
         let startAdvertiseFuture = self.manager.whenPowerOn().flatmap { _ -> Future<Void> in
             self.manager.removeAllServices()
@@ -193,7 +193,7 @@ class ViewController: UITableViewController {
             self.xRawAccelerationLabel.text = "\(xRaw)"
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
-            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) where self.accelerometerDataCharacteristic.hasSubscriber {
+            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) where self.accelerometerDataCharacteristic.isUpdating {
                 self.accelerometerDataCharacteristic.updateValue(data)
             }
         }

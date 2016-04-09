@@ -94,7 +94,7 @@ class ViewController: UITableViewController {
     }
     
     func startAdvertising() {
-        let uuid = CBUUID(string:TISensorTag.AccelerometerService.uuid)
+        let uuid = CBUUID(string:TISensorTag.AccelerometerService.UUID)
         // on power on remove all services add service and start advertising
         let startAdvertiseFuture = self.manager.whenPowerOn().flatmap { _ -> Future<Void> in
             self.manager.removeAllServices()
@@ -178,7 +178,7 @@ class ViewController: UITableViewController {
         self.xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
         self.yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
         self.zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
-        if let xRaw = Int8(doubleValue:(-64.0*data.x)), yRaw = Int8(doubleValue:(-64.0*data.y)), zRaw = Int8(doubleValue: (64.0*data.z)) where self.accelerometerDataCharacteristic.hasSubscriber {
+        if let xRaw = Int8(doubleValue:(-64.0*data.x)), yRaw = Int8(doubleValue:(-64.0*data.y)), zRaw = Int8(doubleValue: (64.0*data.z)) where self.accelerometerDataCharacteristic.isUpdating {
             self.xRawAccelerationLabel.text = "\(xRaw)"
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
