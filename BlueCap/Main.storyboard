@@ -799,9 +799,10 @@
                         <outlet property="advertiseSwitch" destination="b2G-oo-ufi" id="6nj-yr-nU7"/>
                         <outlet property="advertisedBeaconLabel" destination="dAO-KR-e1W" id="Mex-Eb-85N"/>
                         <outlet property="advertisedBeaconSwitch" destination="RTN-J3-zhq" id="qNo-kj-K4D"/>
+                        <outlet property="advertisedLabel" destination="eVO-L6-T7V" id="yXC-kL-eEe"/>
                         <outlet property="advertisedServicesCountLabel" destination="zOl-mR-A3m" id="gDP-PI-Hki"/>
                         <outlet property="advertisedServicesLabel" destination="Nl4-1O-xwR" id="eQY-aK-LBr"/>
-                        <outlet property="beaconLabel" destination="eVO-L6-T7V" id="cTO-dH-TQn"/>
+                        <outlet property="beaconLabel" destination="gEl-EU-rnd" id="qWB-tg-qMO"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
                         <outlet property="servicesCountLabel" destination="6Hh-xT-SkR" id="bQx-a3-vbj"/>
                         <outlet property="servicesLabel" destination="wDR-Ed-JgW" id="qYb-vj-2Ei"/>
@@ -4661,7 +4662,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceCharacteristicProfileValueCell" rowHeight="80" id="2uV-za-o9g" customClass="CharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServiceCharacteristicProfileValueCell" rowHeight="80" id="2uV-za-o9g" customClass="CharacteristicValueCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="22" width="600" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2uV-za-o9g" id="eBW-mR-pp7">

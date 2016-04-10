@@ -299,7 +299,6 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
             self.locationUpdatePromise = StreamPromise<[CLLocation]>(capacity:capacity)
             let authoriztaionFuture = self.authorize(authorization)
             authoriztaionFuture.onSuccess(context) {status in
-                self.updateIsUpdating(true)
                 self.clLocationManager.startUpdatingLocation()
             }
             authoriztaionFuture.onFailure(context) {error in
@@ -328,7 +327,6 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         self.requestLocationPromise = Promise<[CLLocation]>()
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess(context) {status in
-            self.updateIsUpdating(true)
             clLocationManager.requestLocation()
         }
         authoriztaionFuture.onFailure(context) {error in
@@ -347,7 +345,6 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         self.locationUpdatePromise = StreamPromise<[CLLocation]>(capacity:capacity)
         let authoriztaionFuture = self.authorize(authorization)
         authoriztaionFuture.onSuccess(context) {status in
-            self.updateIsUpdating(true)
             self.clLocationManager.startMonitoringSignificantLocationChanges()
         }
         authoriztaionFuture.onFailure(context) {error in
@@ -393,6 +390,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     public func didUpdateLocations(locations:[CLLocation]) {
         FLLogger.debug()
+        self.updateIsUpdating(true)
         if let requestLocationPromise = self.requestLocationPromise {
             requestLocationPromise.success(locations)
             self.requestLocationPromise = nil
@@ -402,6 +400,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     public func didFailWithError(error: NSError) {
         FLLogger.debug("error \(error.localizedDescription)")
+        self.updateIsUpdating(false)
         if let requestLocationPromise = self.requestLocationPromise {
             requestLocationPromise.failure(error)
             self.requestLocationPromise = nil

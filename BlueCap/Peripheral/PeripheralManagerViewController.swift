@@ -21,6 +21,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBOutlet var servicesLabel: UILabel!
     @IBOutlet var servicesCountLabel: UILabel!
     @IBOutlet var beaconLabel: UILabel!
+    @IBOutlet var advertisedLabel: UILabel!
 
     struct MainStoryboard {
         static let peripheralManagerServicesSegue = "PeripheralManagerServices"
@@ -204,19 +205,25 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             self.advertiseSwitch.on = true
             self.nameTextField.enabled = false
             self.beaconLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
+            self.advertisedLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
             self.advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
+            self.advertisedBeaconSwitch.enabled = false
         } else if PeripheralStore.getPeripheralServicesForPeripheral(peripheral).count == 0 {
             self.advertiseSwitch.on = false
             self.beaconLabel.textColor = UIColor.blackColor()
+            self.advertisedLabel.textColor = UIColor.blackColor()
             self.advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
             self.navigationItem.setHidesBackButton(false, animated:true)
             self.nameTextField.enabled = true
+            self.advertisedBeaconSwitch.enabled = true
         } else {
             self.advertiseSwitch.on = false
             self.beaconLabel.textColor = UIColor.blackColor()
+            self.advertisedLabel.textColor = UIColor.blackColor()
             self.advertisedServicesLabel.textColor = UIColor.blackColor()
             self.navigationItem.setHidesBackButton(false, animated:true)
             self.nameTextField.enabled = true
+            self.advertisedBeaconSwitch.enabled = true
         }
     }
     

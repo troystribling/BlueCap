@@ -58,7 +58,6 @@ public class FLBeaconManager : FLRegionManager {
         authoriztaionFuture.onSuccess(context) {status in
             FLLogger.debug("authorization status: \(status)")
             self.configuredBeaconRegions[beaconRegion.identifier] = beaconRegion
-            self.configuredRegions[beaconRegion.identifier] = beaconRegion
             self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
         }
         authoriztaionFuture.onFailure(context) {error in
@@ -70,7 +69,6 @@ public class FLBeaconManager : FLRegionManager {
 
     public func stopRangingBeaconsInRegion(beaconRegion: FLBeaconRegion) {
         self.configuredBeaconRegions.removeValueForKey(beaconRegion.identifier)
-        self.configuredRegions.removeValueForKey(beaconRegion.identifier)
         self.regionRangingStatus.removeValueForKey(beaconRegion.identifier)
         self.updateIsRanging(false)
         self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.clBeaconRegion)

@@ -67,7 +67,7 @@ class BeaconRegionsViewController: UITableViewController {
     
     func toggleMonitoring(sender:AnyObject) {
         if !Singletons.centralManager.isScanning {
-            if Singletons.beaconManager.isRanging {
+            if Singletons.beaconManager.isMonitoring {
                 Singletons.beaconManager.stopRangingAllBeacons()
                 Singletons.beaconManager.stopMonitoringAllRegions()
                 self.beaconRegions.removeAll(keepCapacity:false)
@@ -93,7 +93,7 @@ class BeaconRegionsViewController: UITableViewController {
         for (name, uuid) in BeaconStore.getBeacons() {
             let beacon = FLBeaconRegion(proximityUUID: uuid, identifier: name)
             let regionFuture = Singletons.beaconManager.startMonitoringForRegion(beacon, authorization: .AuthorizedAlways)
-            let beaconFuture = regionFuture.flatmap {status -> FutureStream<[FLBeacon]> in
+            let beaconFuture = regionFuture.flatmap { status -> FutureStream<[FLBeacon]> in
                 switch status {
                 case .Inside:
                     if !Singletons.beaconManager.isRangingRegion(beacon.identifier) {
