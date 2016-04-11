@@ -61,6 +61,7 @@ class PeripheralViewController : UITableViewController {
         self.discoverPeripheral()
         self.setConnectionStateLabel()
         self.toggleRSSIUpdates()
+        self.updatePeripheralProperties()
         let options = NSKeyValueObservingOptions([.New])
         self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: UIApplicationWillResignActiveNotification, object :nil)
