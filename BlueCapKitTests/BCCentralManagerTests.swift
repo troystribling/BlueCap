@@ -24,7 +24,7 @@ class BCCentralManagerTests: XCTestCase {
     }
 
     // MARK: Power on
-    func testPowerOnWhenPoweredOn() {
+    func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -40,7 +40,7 @@ class BCCentralManagerTests: XCTestCase {
         }
     }
 
-    func testPowerOnWhenPoweredOff() {
+    func testWhenPowerOn_WhenPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -59,7 +59,7 @@ class BCCentralManagerTests: XCTestCase {
     }
 
     // MARK: Power off
-    func testPowerOffWhenPoweredOn() {
+    func testWhenPowerOff_WhenPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -77,7 +77,7 @@ class BCCentralManagerTests: XCTestCase {
         }
     }
 
-    func testPowerOffWhenPoweredOff() {
+    func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -94,7 +94,7 @@ class BCCentralManagerTests: XCTestCase {
     }
 
     // MARK: Peripheral discovery
-    func testPeripheralDiscoverWhenPoweredOn() {
+    func testStartScanning_WhenPoweredOnAndPeripheralDiscovered_CompletesSuccessfully() {
         let centralMock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: centralMock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
@@ -120,7 +120,7 @@ class BCCentralManagerTests: XCTestCase {
         }
     }
     
-    func testPeripheralDiscoveredWhenPoweredOff() {
+    func testStartScanning_WhenPoweredOff_CompletesWithError() {
         let centralMock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: centralMock)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
@@ -139,8 +139,8 @@ class BCCentralManagerTests: XCTestCase {
     }
 
     // MARK: State Restoration
-    func testStateRestorationSuccess() {
-        let mock = CBCentralManagerMock(state: .PoweredOff)
+    func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
+        let mock = CBCentralManagerMock()
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let testPeripherals : [CBPeripheralInjectable] =
@@ -166,6 +166,21 @@ class BCCentralManagerTests: XCTestCase {
         }
     }
 
-    func testStateRestorationFailure() {
+    func testWhenStateRestored_WithPreviousInvalidState_CompletesWithError() {
+        let mock = CBCentralManagerMock()
+        let centralManager = BCCentralManager(centralManager: mock)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = centralManager.whenStateRestored()
+        future.onSuccess { (peripherals, scannedServices, options) in
+            XCTAssert(false, "onFailure called")
+        }
+        future.onFailure { error in
+            expectation.fulfill()
+            XCTAssert(error.code == BCError.centralRestoreFailed.code, "Error code invalid")
+        }
+        centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 }
