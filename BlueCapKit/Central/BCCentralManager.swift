@@ -15,13 +15,34 @@ public protocol CBCentralManagerInjectable {
     var delegate: CBCentralManagerDelegate? { get set }
     func scanForPeripheralsWithServices(uuids: [CBUUID]?, options: [String: AnyObject]?)
     func stopScan()
-    func connectPeripheral(peripheral: CBPeripheral, options: [String: AnyObject]?)
-    func cancelPeripheralConnection(peripheral: CBPeripheral)
-    func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheral]
-    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheral]
+    func connectPeripheral(peripheral: CBPeripheralInjectable, options: [String: AnyObject]?)
+    func cancelPeripheralConnection(peripheral: CBPeripheralInjectable)
+    func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable]
+    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheralInjectable]
 }
 
-extension CBCentralManager : CBCentralManagerInjectable {}
+extension CBCentralManager : CBCentralManagerInjectable {
+
+    public func connectPeripheral(peripheral: CBPeripheralInjectable, options: [String: AnyObject]?) {
+        if let peripheral = peripheral as? CBPeripheral {
+            self.connectPeripheral(peripheral, options: options)
+        }
+    }
+
+    public func cancelPeripheralConnection(peripheral: CBPeripheralInjectable) {
+        if let peripheral = peripheral as? CBPeripheral {
+            self.cancelPeripheralConnection(peripheral)
+        }
+    }
+
+    public func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
+        return self.retrieveConnectedPeripheralsWithServices(serviceUUIDs)
+    }
+
+    public func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheralInjectable] {
+        return self.retrievePeripheralsWithIdentifiers(identifiers)
+    }
+}
 
 // MARK: - BCCentralManager -
 public class BCCentralManager : NSObject, CBCentralManagerDelegate {
@@ -208,15 +229,11 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Manage Peripherals
     public func connectPeripheral(peripheral: BCPeripheral, options: [String:AnyObject]? = nil) {
-        if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
-            self.cbCentralManager.connectPeripheral(cbPeripheral, options: options)
-        }
+        self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options: options)
     }
     
     public func cancelPeripheralConnection(peripheral: BCPeripheral) {
-        if let cbPeripheral = peripheral.cbPeripheral as? CBPeripheral {
-            self.cbCentralManager.cancelPeripheralConnection(cbPeripheral)
-        }
+        self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
 
     public func disconnectAllPeripherals() {

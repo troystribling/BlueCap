@@ -40,7 +40,7 @@ public class BCCharacteristicProfile {
         self.init(UUID:UUID, name:"Unknown")
     }
     
-    public func afterDiscovered(capacity: Int?) -> FutureStream<BCCharacteristic> {
+    public func afterDiscovered(capacity: Int? = nil) -> FutureStream<BCCharacteristic> {
         guard let afterDiscoveredPromise = self.afterDiscoveredPromise else {
             self.afterDiscoveredPromise = StreamPromise<BCCharacteristic>(capacity:capacity)
             return self.afterDiscoveredPromise.future

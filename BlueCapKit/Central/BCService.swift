@@ -98,15 +98,19 @@ public class BCService {
     // MARK: CBPeripheralDelegate Shim
     internal func didDiscoverCharacteristics(discoveredCharacteristics: [CBCharacteristic], error: NSError?) {
         self.characteristicDiscoveryInProgress = false
+        self.discoveredCharacteristics.removeAll()
         if let error = error {
             BCLogger.debug("discover failed")
             self.characteristicsDiscoveredPromise?.failure(error)
+            for cbCharacteristic in discoveredCharacteristics {
+                let bcCharacteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: self)
+                bcCharacteristic.afterDiscoveredPromise?.failure(error)
+                BCLogger.debug("Error discovering uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
+            }
         } else {
-            self.discoveredCharacteristics.removeAll()
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: self)
                 self.discoveredCharacteristics[bcCharacteristic.UUID] = bcCharacteristic
-                BCLogger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
                 bcCharacteristic.afterDiscoveredPromise?.success(bcCharacteristic)
                 BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             }

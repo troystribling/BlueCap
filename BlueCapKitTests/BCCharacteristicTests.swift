@@ -9,7 +9,6 @@
 import UIKit
 import XCTest
 import CoreBluetooth
-import CoreLocation
 @testable import BlueCapKit
 
 // MARK: - BCCharacteristicTests -
@@ -23,7 +22,6 @@ class BCCharacteristicTests: XCTestCase {
     let RSSI = -45
 
     override func setUp() {
-        GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
         self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)
@@ -39,25 +37,6 @@ class BCCharacteristicTests: XCTestCase {
         let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, permissions: [.Readable, .Writeable], isNotifying: isNotifying)
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
-    }
-
-    // MARK: After discovered
-    func testAfterDiscovered() {
-        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
-        let service  = ServiceUT(cbService: self.mockService, peripheral: peripheral, mockCharacteristics: [mockCharacteristic], error: nil)
-        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]
-        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]
-        characteristicProfile?.afterDiscovered(nil).onSuccess { _ in
-            onSuccessExpectation.fulfill()
-        }
-        characteristicProfile?.afterDiscovered(nil).onFailure { error in
-            XCTAssert(false, "onFailure called")
-        }
-        service.didDiscoverCharacteristics([mockCharacteristic], error: nil)
-        waitForExpectationsWithTimeout(2) { error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     // MARK: Write data

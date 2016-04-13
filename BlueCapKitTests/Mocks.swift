@@ -221,9 +221,6 @@ class CBCharacteristicMock: CBMutableCharacteristic {
         get {
             return self._isNotifying
         }
-        set {
-            self._isNotifying = newValue
-        }
     }
 
     init (UUID: CBUUID, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, isNotifying: Bool) {

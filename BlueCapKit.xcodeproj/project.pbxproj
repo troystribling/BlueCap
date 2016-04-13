@@ -58,6 +58,7 @@
 		0565EC7A1A89B88200CA8B6E /* BCRawArrayDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC791A89B88200CA8B6E /* BCRawArrayDeserializableTests.swift */; };
 		0565EC7C1A89CDA500CA8B6E /* BCRawPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC7B1A89CDA500CA8B6E /* BCRawPairDeserializableTests.swift */; };
 		0565EC7E1A8B1D4800CA8B6E /* BCRawArrayPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC7D1A8B1D4800CA8B6E /* BCRawArrayPairDeserializableTests.swift */; };
+		056D13851CBD408D001B5A51 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056D13841CBD408D001B5A51 /* CharacteristicProfile.swift */; };
 		0586F1291C387A06002DB160 /* BCMutableServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0586F1281C387A06002DB160 /* BCMutableServiceTests.swift */; };
 		058BA8BD1B139135005CF0FE /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058BA8BC1B139135005CF0FE /* SimpleFutures.swift */; };
 		05A648EE1A90203500633EED /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
@@ -135,6 +136,7 @@
 		0565EC791A89B88200CA8B6E /* BCRawArrayDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawArrayDeserializableTests.swift; sourceTree = "<group>"; };
 		0565EC7B1A89CDA500CA8B6E /* BCRawPairDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawPairDeserializableTests.swift; sourceTree = "<group>"; };
 		0565EC7D1A8B1D4800CA8B6E /* BCRawArrayPairDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawArrayPairDeserializableTests.swift; sourceTree = "<group>"; };
+		056D13841CBD408D001B5A51 /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
 		0586F1281C387A06002DB160 /* BCMutableServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCMutableServiceTests.swift; sourceTree = "<group>"; };
 		058BA8BC1B139135005CF0FE /* SimpleFutures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFutures.swift; sourceTree = "<group>"; };
 		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 				0562D3211A5D83F1001013C9 /* Central */,
 				053139AC1AC1AD44002B4B36 /* Peripheral */,
 				0562D3241A5D8585001013C9 /* SerDe */,
+				056D13831CBD4020001B5A51 /* Service Profiles */,
 				0551208F19F5506000ED3B74 /* Supporting Files */,
 				05E2D0231AF5ECF100B34637 /* Mocks.swift */,
 			);
@@ -349,6 +352,14 @@
 				0565EC701A87D14600CA8B6E /* BCSerializableTests.swift */,
 			);
 			name = SerDe;
+			sourceTree = "<group>";
+		};
+		056D13831CBD4020001B5A51 /* Service Profiles */ = {
+			isa = PBXGroup;
+			children = (
+				056D13841CBD408D001B5A51 /* CharacteristicProfile.swift */,
+			);
+			name = "Service Profiles";
 			sourceTree = "<group>";
 		};
 		05D3B9191A2B8C4E008E794E /* External */ = {
@@ -532,6 +543,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				056D13851CBD408D001B5A51 /* CharacteristicProfile.swift in Sources */,
 				0565EC781A891AA400CA8B6E /* BCRawDeserializableTests.swift in Sources */,
 				0562D3231A5D8503001013C9 /* BCCharacteristicTests.swift in Sources */,
 				0565EC7A1A89B88200CA8B6E /* BCRawArrayDeserializableTests.swift in Sources */,
