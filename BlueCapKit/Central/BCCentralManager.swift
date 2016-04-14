@@ -24,23 +24,19 @@ public protocol CBCentralManagerInjectable {
 extension CBCentralManager : CBCentralManagerInjectable {
 
     public func connectPeripheral(peripheral: CBPeripheralInjectable, options: [String: AnyObject]?) {
-        if let peripheral = peripheral as? CBPeripheral {
-            self.connectPeripheral(peripheral, options: options)
-        }
+        self.connectPeripheral(peripheral as! CBPeripheral, options: options)
     }
 
     public func cancelPeripheralConnection(peripheral: CBPeripheralInjectable) {
-        if let peripheral = peripheral as? CBPeripheral {
-            self.cancelPeripheralConnection(peripheral)
-        }
+        self.cancelPeripheralConnection(peripheral as! CBPeripheral)
     }
 
     public func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
-        return self.retrieveConnectedPeripheralsWithServices(serviceUUIDs)
+        return (self.retrieveConnectedPeripheralsWithServices(serviceUUIDs) as [CBPeripheral]) as [CBPeripheralInjectable]
     }
 
     public func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheralInjectable] {
-        return self.retrievePeripheralsWithIdentifiers(identifiers)
+        return (self.retrievePeripheralsWithIdentifiers(identifiers) as [CBPeripheral]) as [CBPeripheralInjectable]
     }
 }
 

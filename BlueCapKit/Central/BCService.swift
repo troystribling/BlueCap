@@ -9,6 +9,13 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - CBServiceInjectable -
+public protocol CBServiceInjectable {
+    var UUID: CBUUID { get }
+}
+
+extension CBService : CBServiceInjectable {}
+
 // MARK: - BCService -
 public class BCService {
 
@@ -47,13 +54,12 @@ public class BCService {
         }
     }
 
-
     // MARK: Properties
     private let profile: BCServiceProfile?
 
     internal var discoveredCharacteristics = [CBUUID:BCCharacteristic]()
 
-    public let cbService: CBService
+    public let cbService: CBServiceInjectable
 
     public var name: String {
         if let profile = self.profile {

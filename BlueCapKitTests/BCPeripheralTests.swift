@@ -19,7 +19,9 @@ class BCPeripheralTests: XCTestCase {
     let updatedRSSI1 = -50
     let updatedRSSI2 = -75
 
-    var centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
+    var centralManagerMock = CBCentralManagerMock(state: .PoweredOn)
+    var centralManager: BCCentralManager!
+
     let mockServices = [CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
                                CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))]
 
@@ -33,6 +35,7 @@ class BCPeripheralTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        self.centralManager = CentralManagerUT(centralManager: self.centralManagerMock)
     }
     
     override func tearDown() {
@@ -238,7 +241,7 @@ class BCPeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssert(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure { error in
             XCTAssert(false, "onFailure called")
@@ -268,7 +271,7 @@ class BCPeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssert(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure { error in
             onFailureExpectation.fulfill()
@@ -299,7 +302,7 @@ class BCPeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssert(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure { error in
             XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
@@ -330,7 +333,7 @@ class BCPeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssertFalse(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssertFalse(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure { error in
             XCTAssert(false, "onFailure called")
@@ -360,7 +363,7 @@ class BCPeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssertFalse(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssertFalse(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure { error in
             XCTAssert(false, "onFailure called")
@@ -390,7 +393,7 @@ class BCPeripheralTests: XCTestCase {
             case .GiveUp:
                 XCTAssert(false, "onSuccess GiveUp invalid")
             }
-            XCTAssert(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure { error in
             XCTAssert(false, "onFailure called")
@@ -421,7 +424,7 @@ class BCPeripheralTests: XCTestCase {
             case .GiveUp:
                 giveUpExpectation.fulfill()
             }
-            XCTAssert(self.centralManager.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+            XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
         }
         future.onFailure { error in
             XCTAssert(false, "onFailure called")

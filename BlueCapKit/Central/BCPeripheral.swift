@@ -27,14 +27,38 @@ public protocol CBPeripheralInjectable {
     var services: [CBService]? { get }
 
     func readRSSI()
-    func discoverServices(services:[CBUUID]?)
-    func discoverCharacteristics(characteristics:[CBUUID]?, forService:CBService)
-    func setNotifyValue(state:Bool, forCharacteristic:CBCharacteristic)
-    func readValueForCharacteristic(characteristic:CBCharacteristic)
-    func writeValue(data:NSData, forCharacteristic:CBCharacteristic, type:CBCharacteristicWriteType)
+    func discoverServices(services: [CBUUID]?)
+    func discoverCharacteristics(characteristics: [CBUUID]?, forService service: CBServiceInjectable)
+    func setNotifyValue(enabled:Bool, forCharacteristic characteristic: CBCharacteristicInjectable)
+    func readValueForCharacteristic(characteristic: CBCharacteristicInjectable)
+    func writeValue(data:NSData, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType)
 }
 
-extension CBPeripheral : CBPeripheralInjectable {}
+extension CBPeripheral : CBPeripheralInjectable {
+
+    public func discoverCharacteristics(characteristics:[CBUUID]?, forService service: CBServiceInjectable) {
+        self.discoverCharacteristics(characteristics, forService: service as! CBService)
+    }
+
+    public func setNotifyValue(enabled: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
+        if let characteristic = characteristic as? CBCharacteristic {
+            self.setNotifyValue(enabled, forCharacteristic: characteristic)
+        }
+    }
+
+    public func readValueForCharacteristic(characteristic: CBCharacteristicInjectable) {
+        if let characteristic = characteristic as? CBCharacteristic {
+            self.readValueForCharacteristic(characteristic)
+        }
+    }
+
+    public func writeValue(data: NSData, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
+        if let characteristic = characteristic as? CBCharacteristic {
+            self.writeValue(data, forCharacteristic: characteristic, type: type)
+        }
+    }
+
+}
 
 // MARK: - BCPeripheralAdvertisements -
 public struct BCPeripheralAdvertisements {

@@ -22,12 +22,15 @@ let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral
 
 // MARK: - CBCentralManagerMock -
 class CBCentralManagerMock: CBCentralManagerInjectable {
-    
-    var state: CBCentralManagerState
+
+    var connectPeripheralCalled     = false
+    var cancelPeripheralConnection  = false
     var scanForPeripheralsWithServicesCalled = false
+
+    var state: CBCentralManagerState
     var stopScanCalled = false
     var delegate: CBCentralManagerDelegate?
-    
+
     init(state: CBCentralManagerState = .PoweredOn) {
         self.state = state
     }
@@ -40,41 +43,34 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
         self.stopScanCalled = true
     }
     
-    func connectPeripheral(peripheral: CBPeripheral, options: [String:AnyObject]?) {
-    }
-    
-    func cancelPeripheralConnection(peripheral: CBPeripheral) {
+    func connectPeripheral(peripheral: CBPeripheralInjectable, options: [String: AnyObject]?) {
+        self.connectPeripheralCalled = true
     }
 
-    func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheral] {
-        return []
+    func cancelPeripheralConnection(peripheral: CBPeripheralInjectable) {
+        self.cancelPeripheralConnection = true
     }
 
-    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheral] {
-        return []
+    func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
+        return self.retrieveConnectedPeripheralsWithServices(serviceUUIDs)
+    }
+
+    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheralInjectable] {
+        return self.retrievePeripheralsWithIdentifiers(identifiers)
     }
 
 }
 
 // MARK: - CentralManagerUT -
 class CentralManagerUT: BCCentralManager {
-    
-    var connectPeripheralCalled     = false
-    var cancelPeripheralConnection  = false
 
     override init(centralManager: CBCentralManagerInjectable) {
         super.init(centralManager: centralManager)
     }
 
-    override func connectPeripheral(peripheral: BCPeripheral, options: [String: AnyObject]? = nil) {
-        self.connectPeripheralCalled = true
-    }
-    
     override func cancelPeripheralConnection(peripheral: BCPeripheral) {
         peripheral.didDisconnectPeripheral(nil)
-        self.cancelPeripheralConnection = true
     }
-    
 }
 
 // MARK: - CBPeripheralMock -
@@ -137,23 +133,23 @@ class CBPeripheralMock: CBPeripheralInjectable {
         self.discoverServicesCalledCount += 1
     }
     
-    func discoverCharacteristics(characteristics: [CBUUID]?, forService: CBService) {
+    func discoverCharacteristics(characteristics: [CBUUID]?, forService service: CBServiceInjectable) {
         self.discoverCharacteristicsCalled = true
         self.discoverCharacteristicsCalledCount += 1
     }
     
-    func setNotifyValue(state: Bool, forCharacteristic: CBCharacteristic) {
+    func setNotifyValue(state: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
         self.setNotifyValueCalled = true
         self.setNotifyValueCount += 1
         self.notifyingState = state
     }
     
-    func readValueForCharacteristic(characteristic: CBCharacteristic) {
+    func readValueForCharacteristic(characteristic: CBCharacteristicInjectable) {
         self.readValueForCharacteristicCount += 1
         self.readValueForCharacteristicCalled = true
     }
     
-    func writeValue(data:NSData, forCharacteristic: CBCharacteristic, type: CBCharacteristicWriteType) {
+    func writeValue(data:NSData, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
         self.writeValueCount += 1
         self.writeValueCalled = true
         self.writtenData = data

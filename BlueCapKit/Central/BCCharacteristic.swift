@@ -20,6 +20,16 @@ struct ReadParameters {
     let timeout : Double
 }
 
+// MARK: - CBCharacteristicInjectable -
+public protocol CBCharacteristicInjectable {
+    var UUID: CBUUID { get }
+    var value: NSData? { get }
+    var properties: CBCharacteristicProperties { get }
+    var isNotifying: Bool { get }
+}
+
+extension CBCharacteristic : CBCharacteristicInjectable {}
+
 // MARK: - BCCharacteristic -
 public class BCCharacteristic : NSObject {
 
@@ -48,7 +58,7 @@ public class BCCharacteristic : NSObject {
     private var _isNotifying = false
     private let defaultTimeout  = 10.0
 
-    public let cbCharacteristic: CBCharacteristic
+    public let cbCharacteristic: CBCharacteristicInjectable
 
     private var notificationStateChangedPromise: Promise<BCCharacteristic>? {
         get {
