@@ -180,10 +180,12 @@ class PeripheralUT: BCPeripheral {
 }
 
 // MARK: - CBServiceMock -
-class CBServiceMock: CBMutableService {
-    
+class CBServiceMock: CBServiceInjectable {
+
+    var UUID: CBUUID
+
     init(UUID:CBUUID = CBUUID(string: "2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
-        super.init(type: UUID, primary: true)
+        self.UUID = UUID
     }
     
 }
@@ -197,7 +199,7 @@ class ServiceUT: BCService {
     init(cbService: CBServiceMock, peripheral: BCPeripheral, mockCharacteristics: [CBCharacteristic], error: NSError?) {
         self.error = error
         self.mockCharacteristics = mockCharacteristics
-        cbService.characteristics = mockCharacteristics
+        cbService.addCharacteristics(mockCharacteristics)
         super.init(cbService:cbService, peripheral:peripheral)
     }
     
@@ -209,19 +211,17 @@ class ServiceUT: BCService {
 }
 
 // MARK: - CBCharacteristicMock -
-class CBCharacteristicMock: CBMutableCharacteristic {
+class CBCharacteristicMock: CBCharacteristicInjectable {
     
-    var _isNotifying = false
-    
-    override var isNotifying: Bool {
-        get {
-            return self._isNotifying
-        }
-    }
+    var UUID: CBUUID
+    var value: NSData?
+    var properties: CBCharacteristicProperties
+    var isNotifying = false
 
-    init (UUID: CBUUID, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, isNotifying: Bool) {
-        super.init(type: UUID, properties: properties, value: nil, permissions: permissions)
-        self._isNotifying = isNotifying
+    init (UUID: CBUUID, properties: CBCharacteristicProperties, isNotifying: Bool) {
+        self.UUID = UUID
+        self.properties = properties
+        self.isNotifying = isNotifying
     }
     
 }
@@ -242,8 +242,8 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var advertisementData: [String:AnyObject]?
     dynamic var isAdvertising : Bool
     dynamic var state: CBPeripheralManagerState
-    var addedService: CBMutableService?
-    var removedService: CBMutableService?
+    var addedService: CBMutableServiceInjectable?
+    var removedService: CBMutableServiceInjectable?
     var delegate: CBPeripheralManagerDelegate?
     
     var removeServiceCount = 0
@@ -266,13 +266,13 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
         self.isAdvertising = false
     }
     
-    func addService(service: CBMutableService) {
+    func addService(service: CBMutableServiceInjectable) {
         self.addServiceCalled = true
         self.addedService = service
         self.addServiceCount += 1
     }
     
-    func removeService(service: CBMutableService) {
+    func removeService(service: CBMutableServiceInjectable) {
         self.removeServiceCalled = true
         self.removedService = service
         self.removeServiceCount += 1
@@ -293,8 +293,28 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     }
 }
 
+// MARK: - CBMutableServiceMock
+class CBMutableServiceMock : CBServiceMock, CBMutableServiceInjectable {
+
+    var characteristics: [CBMutableCharacteristicInjectable]?
+
+    func addCharacteristics(characteristics: [CBMutableCharacteristicInjectable]?) {
+        self.characteristics = characteristics
+    }
+}
+
+// MARK: - CBMutableCharacteristicMock
+class CBMutableCharacteristicsMock : CBCharacteristicMock, CBMutableCharacteristicInjectable {
+    var permissions: CBAttributePermissions
+
+    init (UUID: CBUUID, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, isNotifying: Bool) {
+        self.permissions = permissions
+        super.init(UUID: UUID, properties: properties, isNotifying: isNotifying)
+    }
+}
+
 // MARK: - PeripheralManagerUT -
-class PeripheralManagerUT: BCPeripheralManager {
+class PeripheralManagerUT : BCPeripheralManager {
     
     var respondToRequestCalled = false
 

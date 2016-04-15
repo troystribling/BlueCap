@@ -11,13 +11,13 @@ import CoreBluetooth
 
 // MARK: - IO Parameters -
 struct WriteParameters {
-    let value : NSData
-    let timeout : Double
-    let type : CBCharacteristicWriteType
+    let value: NSData
+    let timeout: Double
+    let type: CBCharacteristicWriteType
 }
 
 struct ReadParameters {
-    let timeout : Double
+    let timeout: Double
 }
 
 // MARK: - CBCharacteristicInjectable -
@@ -171,7 +171,7 @@ public class BCCharacteristic : NSObject {
     }
 
     // MARK: Initializers
-    internal init(cbCharacteristic: CBCharacteristic, service: BCService) {
+    internal init(cbCharacteristic: CBCharacteristicInjectable, service: BCService) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         if let serviceProfile = BCProfileManager.sharedInstance.services[service.UUID] {

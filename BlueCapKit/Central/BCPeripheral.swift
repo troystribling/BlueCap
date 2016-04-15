@@ -24,7 +24,6 @@ public protocol CBPeripheralInjectable {
     var state: CBPeripheralState { get }
     var identifier: NSUUID { get }
     var delegate: CBPeripheralDelegate? { get set }
-    var services: [CBService]? { get }
 
     func readRSSI()
     func discoverServices(services: [CBUUID]?)
@@ -32,30 +31,31 @@ public protocol CBPeripheralInjectable {
     func setNotifyValue(enabled:Bool, forCharacteristic characteristic: CBCharacteristicInjectable)
     func readValueForCharacteristic(characteristic: CBCharacteristicInjectable)
     func writeValue(data:NSData, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType)
+
+    func allServices() -> [CBServiceInjectable]?
 }
 
 extension CBPeripheral : CBPeripheralInjectable {
 
-    public func discoverCharacteristics(characteristics:[CBUUID]?, forService service: CBServiceInjectable) {
+   public func discoverCharacteristics(characteristics:[CBUUID]?, forService service: CBServiceInjectable) {
         self.discoverCharacteristics(characteristics, forService: service as! CBService)
     }
 
     public func setNotifyValue(enabled: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
-        if let characteristic = characteristic as? CBCharacteristic {
-            self.setNotifyValue(enabled, forCharacteristic: characteristic)
-        }
+        self.setNotifyValue(enabled, forCharacteristic: characteristic as! CBCharacteristic)
     }
 
     public func readValueForCharacteristic(characteristic: CBCharacteristicInjectable) {
-        if let characteristic = characteristic as? CBCharacteristic {
-            self.readValueForCharacteristic(characteristic)
-        }
+        self.readValueForCharacteristic(characteristic as! CBCharacteristic)
     }
 
     public func writeValue(data: NSData, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
-        if let characteristic = characteristic as? CBCharacteristic {
-            self.writeValue(data, forCharacteristic: characteristic, type: type)
-        }
+        self.writeValue(data, forCharacteristic: characteristic as! CBCharacteristic, type: type)
+    }
+
+    public func allServices() -> [CBServiceInjectable]? {
+        guard let services = self.services else { return nil }
+        return services.map{ $0 as CBServiceInjectable }
     }
 
 }
@@ -601,7 +601,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func peripheral(_: CBPeripheral, didDiscoverServices error: NSError?) {
-        if let services = self.cbPeripheral.services {
+        if let services = self.cbPeripheral.allServices() {
             self.didDiscoverServices(services, error:error)
         }
     }
@@ -611,7 +611,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func peripheral(_: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-        guard let characteristics = service.characteristics else {
+        guard let characteristics = service.allCharacteristics() else {
             return
         }
         self.didDiscoverCharacteristicsForService(service, characteristics: characteristics, error: error)
@@ -642,7 +642,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: CBPeripheralDelegate Shims
-    internal func didDiscoverCharacteristicsForService(service: CBService, characteristics: [CBCharacteristic], error: NSError?) {
+    internal func didDiscoverCharacteristicsForService(service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: NSError?) {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         if let bcService = self.discoveredServices[service.UUID] {
             bcService.didDiscoverCharacteristics(characteristics, error:error)
@@ -654,7 +654,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didDiscoverServices(discoveredServices: [CBService], error: NSError?) {
+    internal func didDiscoverServices(discoveredServices: [CBServiceInjectable], error: NSError?) {
         BCLogger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         self.clearAll()
         self.serviceDiscoveryInProgress = false
@@ -670,7 +670,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didUpdateNotificationStateForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
+    internal func didUpdateNotificationStateForCharacteristic(characteristic: CBCharacteristicInjectable, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
@@ -678,7 +678,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didUpdateValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
+    internal func didUpdateValueForCharacteristic(characteristic: CBCharacteristicInjectable, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
@@ -686,7 +686,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didWriteValueForCharacteristic(characteristic: CBCharacteristic, error: NSError?) {
+    internal func didWriteValueForCharacteristic(characteristic: CBCharacteristicInjectable, error: NSError?) {
         BCLogger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")

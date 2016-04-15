@@ -16,14 +16,32 @@ public protocol CBPeripheralManagerInjectable {
     var state: CBPeripheralManagerState { get }
     func startAdvertising(advertisementData:[String:AnyObject]?)
     func stopAdvertising()
-    func addService(service: CBMutableService)
-    func removeService(service: CBMutableService)
+    func addService(service: CBMutableServiceInjectable)
+    func removeService(service: CBMutableServiceInjectable)
     func removeAllServices()
-    func respondToRequest(request: CBATTRequest, withResult result: CBATTError)
-    func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool
+    func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError)
+    func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool
 }
 
-extension CBPeripheralManager: CBPeripheralManagerInjectable {}
+extension CBPeripheralManager: CBPeripheralManagerInjectable {
+
+    public func addService(service: CBMutableServiceInjectable) {
+        self.addService(service as! CBMutableService)
+    }
+
+    public func removeService(service: CBMutableServiceInjectable) {
+        self.addService(service as! CBMutableService)
+    }
+
+    public func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError) {
+        self.respondToRequest(request as! CBATTRequest, withResult: result)
+    }
+
+    public func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool {
+        return self.updateValue(value, forCharacteristic: characteristic as! CBMutableCharacteristic, onSubscribedCentrals: centrals as! [CBCentral]?)
+    }
+
+}
 
 // MARK: - CBATTRequestInjectable -
 public protocol CBATTRequestInjectable {
@@ -509,7 +527,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    internal func didAddService(service: CBService, error: NSError?) {
+    internal func didAddService(service: CBServiceInjectable, error: NSError?) {
         if let error = error {
             BCLogger.debug("failed '\(error.localizedDescription)'")
             self.configuredServices.removeValueForKey(service.UUID)

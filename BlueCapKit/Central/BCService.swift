@@ -12,9 +12,15 @@ import CoreBluetooth
 // MARK: - CBServiceInjectable -
 public protocol CBServiceInjectable {
     var UUID: CBUUID { get }
+    func allCharacteristics() -> [CBCharacteristicInjectable]?
 }
 
-extension CBService : CBServiceInjectable {}
+extension CBService : CBServiceInjectable {
+    public func allCharacteristics() -> [CBCharacteristicInjectable]? {
+        guard let characteristics = self.characteristics else { return nil }
+        return characteristics.map{ $0 as CBCharacteristicInjectable }
+    }
+}
 
 // MARK: - BCService -
 public class BCService {
@@ -57,7 +63,7 @@ public class BCService {
     // MARK: Properties
     private let profile: BCServiceProfile?
 
-    internal var discoveredCharacteristics = [CBUUID:BCCharacteristic]()
+    internal var discoveredCharacteristics = [CBUUID : BCCharacteristic]()
 
     public let cbService: CBServiceInjectable
 
@@ -80,7 +86,7 @@ public class BCService {
     public private(set) weak var peripheral: BCPeripheral?
 
     // MARK: Initializer
-    internal init(cbService: CBService, peripheral: BCPeripheral) {
+    internal init(cbService: CBServiceInjectable, peripheral: BCPeripheral) {
         self.cbService = cbService
         self.peripheral = peripheral
         self.profile = BCProfileManager.sharedInstance.services[cbService.UUID]
@@ -102,7 +108,7 @@ public class BCService {
     }
 
     // MARK: CBPeripheralDelegate Shim
-    internal func didDiscoverCharacteristics(discoveredCharacteristics: [CBCharacteristic], error: NSError?) {
+    internal func didDiscoverCharacteristics(discoveredCharacteristics: [CBCharacteristicInjectable], error: NSError?) {
         self.characteristicDiscoveryInProgress = false
         self.discoveredCharacteristics.removeAll()
         if let error = error {

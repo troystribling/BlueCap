@@ -10,14 +10,11 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - CBMutableCharacteristicInjectable -
-public protocol CBMutableCharacteristicInjectable {
-    var UUID: CBUUID { get }
-    var value: NSData? { get }
-    var properties: CBCharacteristicProperties { get }
+public protocol CBMutableCharacteristicInjectable : CBCharacteristicInjectable {
     var permissions: CBAttributePermissions { get }
 }
 
-extension BCMutableCharacteristic : CBMutableCharacteristicInjectable {}
+extension CBMutableCharacteristic : CBMutableCharacteristicInjectable {}
 
 // MARK: - BCMutableCharacteristic -
 public class BCMutableCharacteristic : NSObject {
@@ -35,7 +32,7 @@ public class BCMutableCharacteristic : NSObject {
     internal var _processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
     internal weak var _service: BCMutableService?
     
-    public let cbMutableChracteristic: CBMutableCharacteristic
+    public let cbMutableChracteristic: CBMutableCharacteristicInjectable
     public var value: NSData?
 
     private var queuedUpdates: [NSData] {
