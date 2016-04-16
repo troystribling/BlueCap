@@ -22,15 +22,15 @@ class BCPeripheralTests: XCTestCase {
     var centralManagerMock = CBCentralManagerMock(state: .PoweredOn)
     var centralManager: BCCentralManager!
 
-    let mockServices = [CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
-                               CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))]
+    let mockServices = [
+        CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
+        CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))
+    ]
 
-    var mockCharateristics = [CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.Read, .Write],
-                                                   permissions:[.Readable, .Writeable], isNotifying:false),
-                              CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.Read, .Write],
-                                                   permissions:[.Readable, .Writeable], isNotifying:false),
-                              CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.Read, .Write],
-                                                   permissions:[.Readable, .Writeable], isNotifying:false)
+    var mockCharateristics = [
+        CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.Read, .Write], isNotifying:false),
+        CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.Read, .Write], isNotifying:false),
+        CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.Read, .Write], isNotifying:false)
     ]
     
     override func setUp() {
@@ -59,7 +59,7 @@ class BCPeripheralTests: XCTestCase {
         future.onFailure { error in
             XCTAssert(false, "onFailure called")
         }
-        peripheral.didDiscoverServices(self.mockServices, error:nil)
+        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
         waitForExpectationsWithTimeout(2) { error in
             XCTAssertNil(error, "\(error)")
         }
@@ -120,7 +120,7 @@ class BCPeripheralTests: XCTestCase {
         future.onFailure { error in
             XCTAssert(false, "onFailure called")
         }
-        peripheral.didDiscoverServices(self.mockServices, error:nil)
+        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
         waitForExpectationsWithTimeout(20) { error in
             XCTAssertNil(error, "\(error)")
         }
@@ -139,7 +139,7 @@ class BCPeripheralTests: XCTestCase {
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
         }
-        peripheral.didDiscoverServices(self.mockServices, error: TestFailure.error)
+        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error: TestFailure.error)
         waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -158,7 +158,7 @@ class BCPeripheralTests: XCTestCase {
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
         }
-        peripheral.didDiscoverServices(self.mockServices, error:nil)
+        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
         waitForExpectationsWithTimeout(20) { error in
             XCTAssertNil(error, "\(error)")
         }
@@ -194,7 +194,7 @@ class BCPeripheralTests: XCTestCase {
             onSuccessExpectation.fulfill()
         }
         promise.future.onFailure { error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         peripheral.discoverService(bcServices[0], tail:[bcServices[1]], promise:promise)
         waitForExpectationsWithTimeout(20) { error in
@@ -210,7 +210,7 @@ class BCPeripheralTests: XCTestCase {
                           ServiceUT(cbService: self.mockServices[1], peripheral: peripheral, mockCharacteristics: [self.mockCharateristics[1], self.mockCharateristics[2]], error: nil)]
         let promise = Promise<BCPeripheral>()
         promise.future.onSuccess { _ in
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         promise.future.onFailure { error in
             onFailureExpectation.fulfill()

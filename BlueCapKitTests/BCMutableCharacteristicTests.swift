@@ -259,7 +259,7 @@ class BCMutableCharacteristicTests: XCTestCase {
                 expectation.fulfill()
                 characteristic.respondToRequest(request, withResult: CBATTError.Success)
                 XCTAssertEqual(centralMock.identifier, central.identifier, "invalid central identifier")
-                XCTAssertEqual(request.characteristic.UUID, characteristic.UUID, "characteristic UUID invalid")
+                XCTAssertEqual(request.getCharacteristic().UUID, characteristic.UUID, "characteristic UUID invalid")
                 XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
                 XCTAssertEqual(request.value, value, "request value is invalid")
                 XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
@@ -289,7 +289,7 @@ class BCMutableCharacteristicTests: XCTestCase {
                 }
                 characteristic.respondToRequest(request, withResult: CBATTError.Success)
                 XCTAssertEqual(centralMock.identifier, central.identifier, "invalid central identifier")
-                XCTAssertEqual(request.characteristic.UUID, characteristic.UUID, "characteristic UUID invalid")
+                XCTAssertEqual(request.getCharacteristic().UUID, characteristic.UUID, "characteristic UUID invalid")
                 XCTAssertEqual(peripheralManager.result, CBATTError.Success, "result is invalid")
                 XCTAssertEqual(request.value, values[writeCount], "request value is invalid")
                 XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")

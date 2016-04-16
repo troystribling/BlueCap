@@ -156,6 +156,11 @@ class CBPeripheralMock: CBPeripheralInjectable {
         self.writtenType = type
     }
 
+    func allServices() -> [CBServiceInjectable]? {
+        guard let services = self.services else { return nil }
+        return services.map{ $0 as CBServiceInjectable }
+    }
+
 }
 
 // MARK: - PeripheralUT -
@@ -183,29 +188,36 @@ class PeripheralUT: BCPeripheral {
 class CBServiceMock: CBServiceInjectable {
 
     var UUID: CBUUID
+    var characteristics: [CBCharacteristicMock]?
 
     init(UUID:CBUUID = CBUUID(string: "2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
         self.UUID = UUID
     }
-    
+
+    func allCharacteristics() -> [CBCharacteristicInjectable]? {
+        guard let characteristics = self.characteristics else { return nil }
+        return characteristics.map{ $0 as CBCharacteristicInjectable }
+    }
+
 }
 
 // MARK: - ServiceUT -
 class ServiceUT: BCService {
     
     let error: NSError?
-    let mockCharacteristics: [CBCharacteristic]
-    
-    init(cbService: CBServiceMock, peripheral: BCPeripheral, mockCharacteristics: [CBCharacteristic], error: NSError?) {
+
+    init(cbService: CBServiceMock, peripheral: BCPeripheral, mockCharacteristics: [CBCharacteristicMock], error: NSError?) {
         self.error = error
-        self.mockCharacteristics = mockCharacteristics
-        cbService.addCharacteristics(mockCharacteristics)
+        cbService.characteristics = mockCharacteristics
         super.init(cbService:cbService, peripheral:peripheral)
     }
     
     override func discoverAllCharacteristics(timout: NSTimeInterval? = nil) -> Future<BCService> {
         self.characteristicsDiscoveredPromise = Promise<BCService>()
-        self.didDiscoverCharacteristics(self.mockCharacteristics, error: self.error)
+        guard let characteristics = self.cbService.allCharacteristics() else {
+            return self.characteristicsDiscoveredPromise!.future
+        }
+        self.didDiscoverCharacteristics(characteristics, error: self.error)
         return self.characteristicsDiscoveredPromise!.future
     }
 }
@@ -229,6 +241,8 @@ class CBCharacteristicMock: CBCharacteristicInjectable {
 // MARK: - CBPeripheralManagerMock -
 class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
 
+    var services: [CBServiceMock]?
+
     var updateValueReturn = true
     
     var startAdvertisingCalled = false
@@ -249,7 +263,7 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var removeServiceCount = 0
     var addServiceCount = 0
     var updateValueCount = 0
-    
+
     init(isAdvertising: Bool, state: CBPeripheralManagerState) {
         self.isAdvertising = isAdvertising
         self.state = state
@@ -282,29 +296,28 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
         self.removeAllServicesCalled = true
     }
     
-    func respondToRequest(request: CBATTRequest, withResult result: CBATTError) {
+    func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError) {
         self.respondToRequestCalled = true
     }
     
-    func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristic, onSubscribedCentrals centrals: [CBCentral]?) -> Bool {
+    func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool {
         self.updateValueCalled = true
         self.updateValueCount += 1
         return self.updateValueReturn
     }
+
 }
 
 // MARK: - CBMutableServiceMock
 class CBMutableServiceMock : CBServiceMock, CBMutableServiceInjectable {
 
-    var characteristics: [CBMutableCharacteristicInjectable]?
-
-    func addCharacteristics(characteristics: [CBMutableCharacteristicInjectable]?) {
-        self.characteristics = characteristics
+    func addCharacteristics(characteristics: [CBCharacteristicInjectable]?) {
+        self.characteristics = characteristics as! [CBCharacteristicMock]?
     }
 }
 
 // MARK: - CBMutableCharacteristicMock
-class CBMutableCharacteristicsMock : CBCharacteristicMock, CBMutableCharacteristicInjectable {
+class CBMutableCharacteristicMock : CBCharacteristicMock, CBMutableCharacteristicInjectable {
     var permissions: CBAttributePermissions
 
     init (UUID: CBUUID, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, isNotifying: Bool) {
@@ -357,16 +370,20 @@ class PeripheralManagerUT : BCPeripheralManager {
 // MARK: - CBATTRequestMock -
 class CBATTRequestMock : CBATTRequestInjectable {
 
-    let characteristic: CBCharacteristic
+    let characteristic: CBMutableCharacteristicInjectable
     let offset: Int
     var value: NSData?
     
-    init(characteristic: CBMutableCharacteristic, offset: Int, value: NSData? = nil) {
+    init(characteristic: CBMutableCharacteristicInjectable, offset: Int, value: NSData? = nil) {
         self.value = value
         self.characteristic = characteristic
         self.offset = offset
     }
-    
+
+    func getCharacteristic() -> CBCharacteristicInjectable {
+        return self.characteristic
+    }
+
 }
 
 // MARK: - CBCentralMock -

@@ -34,7 +34,7 @@ class BCCharacteristicTests: XCTestCase {
     }
     
     func createCharacteristic(properties: CBCharacteristicProperties, isNotifying:Bool) -> (BCCharacteristic, CBCharacteristicMock) {
-        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, permissions: [.Readable, .Writeable], isNotifying: isNotifying)
+        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, isNotifying: isNotifying)
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
     }
@@ -146,7 +146,7 @@ class BCCharacteristicTests: XCTestCase {
             }
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         waitForExpectationsWithTimeout(2) {error in

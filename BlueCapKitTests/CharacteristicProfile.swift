@@ -17,7 +17,7 @@ class CharacteristicProfile: XCTestCase {
     var service: BCService!
     let mockPerpheral = CBPeripheralMock(state: .Connected)
     let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))
-    let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
+    let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.Read, .Write], isNotifying: false)
 
     var peripheral: BCPeripheral!
     let RSSI = -45

@@ -45,12 +45,16 @@ extension CBPeripheralManager: CBPeripheralManagerInjectable {
 
 // MARK: - CBATTRequestInjectable -
 public protocol CBATTRequestInjectable {
-    var characteristic: CBCharacteristic { get }
     var offset: Int { get }
     var value: NSData? { get set }
+    func getCharacteristic() -> CBCharacteristicInjectable
 }
 
-extension CBATTRequest: CBATTRequestInjectable {}
+extension CBATTRequest: CBATTRequestInjectable {
+    public func getCharacteristic() -> CBCharacteristicInjectable {
+        return self.characteristic
+    }
+}
 
 // MARK: - CBCentralInjectable -
 public protocol CBCentralInjectable {
@@ -446,12 +450,12 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: CBPeripheralManagerDelegate Shims
-    internal func didSubscribeToCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
+    internal func didSubscribeToCharacteristic(characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
         BCLogger.debug()
         self.configuredCharcteristics[characteristic.UUID]?.didSubscribeToCharacteristic(central)
     }
     
-    internal func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristic, central: CBCentralInjectable) {
+    internal func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
         BCLogger.debug()
         self.configuredCharcteristics[characteristic.UUID]?.didUnsubscribeFromCharacteristic(central)
     }
@@ -466,7 +470,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     internal func didReceiveWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
-        if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
+        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
             BCLogger.debug("characteristic write request received for \(characteristic.UUID.UUIDString)")
             if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic.value = request.value
@@ -480,8 +484,8 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     internal func didReceiveReadRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
         var request = request
-        BCLogger.debug("chracteracteristic \(request.characteristic.UUID)")
-        if let characteristic = self.configuredCharcteristics[request.characteristic.UUID] {
+        BCLogger.debug("chracteracteristic \(request.getCharacteristic().UUID)")
+        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
             BCLogger.debug("responding with data: \(characteristic.stringValue)")
             request.value = characteristic.value
             self.respondToRequest(request, withResult:CBATTError.Success)
