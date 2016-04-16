@@ -43,7 +43,7 @@ class CharacteristicProfile: XCTestCase {
             onSuccessExpectation.fulfill()
         }
         characteristicProfile?.afterDiscovered().onFailure { error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         service.didDiscoverCharacteristics([self.mockCharacteristic], error: nil)
         waitForExpectationsWithTimeout(2) { error in
@@ -56,7 +56,7 @@ class CharacteristicProfile: XCTestCase {
         let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]
         let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]
         characteristicProfile?.afterDiscovered().onSuccess { _ in
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         characteristicProfile?.afterDiscovered().onFailure { error in
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code is invalid")

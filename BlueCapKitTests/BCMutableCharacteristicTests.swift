@@ -35,7 +35,7 @@ class BCMutableCharacteristicTests: XCTestCase {
             onSuccess(mock: mock, peripheralManager: peripheralManager, service: services[0])
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         peripheralManager.didAddService(services[0].cbMutableService, error: nil)
     }
@@ -265,7 +265,7 @@ class BCMutableCharacteristicTests: XCTestCase {
                 XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")
             }
             future.onFailure {error in
-                XCTAssert(false, "onFailure called")
+                XCTFail("onFailure called")
             }
             peripheralManager.didReceiveWriteRequest(requestMock, central: centralMock)
         }
@@ -296,7 +296,7 @@ class BCMutableCharacteristicTests: XCTestCase {
                 writeCount += 1
             }
             future.onFailure {error in
-                XCTAssert(false, "onFailure called")
+                XCTFail("onFailure called")
             }
             for requestMock in requestMocks {
                 peripheralManager.didReceiveWriteRequest(requestMock, central: centralMock)
@@ -341,10 +341,10 @@ class BCMutableCharacteristicTests: XCTestCase {
             let future = characteristic.startRespondingToWriteRequests()
             characteristic.stopRespondingToWriteRequests()
             future.onSuccess {_ in
-                XCTAssert(false, "onSuccess called")
+                XCTFail("onSuccess called")
             }
             future.onFailure {error in
-                XCTAssert(false, "onFailure called")
+                XCTFail("onFailure called")
             }
             peripheralManager.didReceiveWriteRequest(request, central: centralMock)
             XCTAssert(peripheralManager.respondToRequestCalled, "respondToRequest not called")

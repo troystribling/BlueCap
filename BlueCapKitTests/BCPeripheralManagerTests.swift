@@ -36,7 +36,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -51,7 +51,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         mock.state = .PoweredOn
         peripheralManager.didUpdateState()
@@ -69,7 +69,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         mock.state = .PoweredOff
         peripheralManager.didUpdateState()
@@ -86,7 +86,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -108,11 +108,11 @@ class BCPeripheralManagerTests: XCTestCase {
                 XCTAssertEqual(name, self.peripheralName, "peripheralName invalid")
                 XCTAssertEqual(uuids[0], self.advertisedUUIDs, "advertised UUIDs invalid")
             } else {
-                XCTAssert(false, "advertisementData not found")
+                XCTFail("advertisementData not found")
             }
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         peripheralManager.didStartAdvertising(nil)
         waitForExpectationsWithTimeout(2) {error in
@@ -125,7 +125,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -137,7 +137,7 @@ class BCPeripheralManagerTests: XCTestCase {
                     XCTAssertEqual(name, self.peripheralName, "peripheralName invalid")
                     XCTAssertEqual(uuids[0], self.advertisedUUIDs, "advertised UUIDs invalid")
             } else {
-                XCTAssert(false, "advertisementData not found")
+                XCTFail("advertisementData not found")
             }
         }
         peripheralManager.didStartAdvertising(TestFailure.error)
@@ -151,7 +151,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure { error in
             expectation.fulfill()
@@ -174,7 +174,7 @@ class BCPeripheralManagerTests: XCTestCase {
             XCTAssert(peripheralManager.isAdvertising, "isAdvertising invalid value")
         }
         future.onFailure { error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         peripheralManager.didStartAdvertising(nil)
         waitForExpectationsWithTimeout(2) {error in
@@ -187,7 +187,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure { error in
             expectation.fulfill()
@@ -205,7 +205,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -227,7 +227,7 @@ class BCPeripheralManagerTests: XCTestCase {
             XCTAssert(mock.stopAdvertisingCalled, "stopAdvertisingCalled not called")
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         mock.isAdvertising = false
         waitForExpectationsWithTimeout(2) {error in
@@ -240,7 +240,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.stopAdvertising()
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsNotAdvertising.rawValue, "Error code is invalid")

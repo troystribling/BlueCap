@@ -61,7 +61,7 @@ public class BCCharacteristicProfile {
     }
     
     public func dataFromStringValue(data: [String: String]) -> NSData? {
-        return data[self.name].map{$0.dataFromHexString()}
+        return data[self.name].map{ $0.dataFromHexString() }
     }
     
 }

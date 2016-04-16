@@ -36,7 +36,7 @@ class BCTimedScanneratorTests: XCTestCase {
             onSuccessExpectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         self.centralManager.didDiscoverPeripheral(self.mockPerpheral, advertisementData:peripheralAdvertisements, RSSI:NSNumber(integer: -45))
         waitForExpectationsWithTimeout(5) {error in
@@ -49,7 +49,7 @@ class BCTimedScanneratorTests: XCTestCase {
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = scannerator.startScanning(1)
         future.onSuccess {_ in
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()

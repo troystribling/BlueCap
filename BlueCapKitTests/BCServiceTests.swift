@@ -43,7 +43,7 @@ class BCServiceTests: XCTestCase {
             XCTAssert(service.characteristics.count == 3, "Characteristic count wroung")
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -56,7 +56,7 @@ class BCServiceTests: XCTestCase {
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()
         future.onSuccess {_ in
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()
@@ -72,7 +72,7 @@ class BCServiceTests: XCTestCase {
         let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()
         future.onSuccess {_ in
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             onFailureExpectation.fulfill()

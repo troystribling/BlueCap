@@ -40,11 +40,11 @@ class BCMutableServiceTests: XCTestCase {
             if let addedService = mock.addedService {
                 XCTAssertEqual(services[0].UUID, addedService.UUID, "addedService UUID invalid")
             } else {
-                XCTAssert(false, "addService not found")
+                XCTFail("addService not found")
             }
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         peripheralManager.didAddService(services[0].cbMutableService, error: nil)
         waitForExpectationsWithTimeout(2) {error in
@@ -66,7 +66,7 @@ class BCMutableServiceTests: XCTestCase {
             XCTAssert(peripheralServices.contains(services[1].UUID), "addedService has invalid UUID")
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -80,7 +80,7 @@ class BCMutableServiceTests: XCTestCase {
         let future = peripheralManager.addServices(services)
         peripheralManager.error = TestFailure.error
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -100,7 +100,7 @@ class BCMutableServiceTests: XCTestCase {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.addService(services[0])
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -121,7 +121,7 @@ class BCMutableServiceTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.addService(services[0])
         future.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -153,11 +153,11 @@ class BCMutableServiceTests: XCTestCase {
             if let removedService = mock.removedService {
                 XCTAssertEqual(removedService.UUID, services[0].UUID, "addedService has invalid UUID")
             } else {
-                XCTAssert(false, "removedService not found")
+                XCTFail("removedService not found")
             }
         }
         removeServiceFuture.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -174,7 +174,7 @@ class BCMutableServiceTests: XCTestCase {
             return peripheralManager.removeService(services[0])
         }
         removeServiceFuture.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         removeServiceFuture.onFailure {error in
             expectation.fulfill()
@@ -203,7 +203,7 @@ class BCMutableServiceTests: XCTestCase {
             XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
         }
         removeServiceFuture.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -220,7 +220,7 @@ class BCMutableServiceTests: XCTestCase {
             return peripheralManager.removeAllServices()
         }
         removeServiceFuture.onSuccess {
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         removeServiceFuture.onFailure {error in
             expectation.fulfill()

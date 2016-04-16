@@ -32,7 +32,7 @@ class BCCentralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -48,7 +48,7 @@ class BCCentralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         mock.state = .PoweredOn
         centralManager.didUpdateState()
@@ -67,7 +67,7 @@ class BCCentralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         mock.state = .PoweredOff
         centralManager.didUpdateState()
@@ -85,7 +85,7 @@ class BCCentralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -107,11 +107,11 @@ class BCCentralManagerTests: XCTestCase {
                 XCTAssertEqual(peripheral.name, peripheralMock.name, "Peripheral name is invalid")
                 XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier is invalid")
             } else {
-                XCTAssert(false, "Discovered peripheral missing")
+                XCTFail("Discovered peripheral missing")
             }
         }
         future.onFailure {error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
         waitForExpectationsWithTimeout(2) {error in
@@ -125,7 +125,7 @@ class BCCentralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = centralManager.startScanning()
         future.onSuccess {_ in
-            XCTAssert(false, "onSuccess called")
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -157,7 +157,7 @@ class BCCentralManagerTests: XCTestCase {
             XCTAssertEqual(scannedServices, testScannedServices, "Scanned services invalid")
         }
         future.onFailure { error in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         centralManager.willRestoreState(testPeripherals, scannedServices: testScannedServices, options: testOptions)
         waitForExpectationsWithTimeout(2) {error in
@@ -171,7 +171,7 @@ class BCCentralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = centralManager.whenStateRestored()
         future.onSuccess { (peripherals, scannedServices, options) in
-            XCTAssert(false, "onFailure called")
+            XCTFail("onFailure called")
         }
         future.onFailure { error in
             expectation.fulfill()
