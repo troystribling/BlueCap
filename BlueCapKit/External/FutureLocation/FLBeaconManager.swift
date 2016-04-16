@@ -82,7 +82,7 @@ public class FLBeaconManager : FLRegionManager {
     
     // MARK: CLLocationManagerDelegate
     public func locationManager(_: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
-        self.didRangeBeacons(beacons.map{$0 as CLBeaconInjectable}, inRegion: region)
+        self.didRangeBeacons(beacons.map { $0 as CLBeaconInjectable }, inRegion: region)
     }
     
     public func locationManager(_: CLLocationManager, rangingBeaconsDidFailForRegion region: CLBeaconRegion, withError error: NSError) {
@@ -94,7 +94,7 @@ public class FLBeaconManager : FLRegionManager {
         if let beaconRegion = self.configuredBeaconRegions[region.identifier] {
             self.regionRangingStatus[beaconRegion.identifier] = true
             self.updateIsRanging(true)
-            let flBeacons = beacons.map{FLBeacon(clBeacon:$0)}
+            let flBeacons = beacons.map { FLBeacon(clBeacon:$0) }
             beaconRegion._beacons = flBeacons
             beaconRegion.beaconPromise.success(flBeacons)
         }

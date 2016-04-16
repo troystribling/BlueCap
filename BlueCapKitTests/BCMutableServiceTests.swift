@@ -59,7 +59,7 @@ class BCMutableServiceTests: XCTestCase {
         let future = peripheralManager.addServices(services)
         future.onSuccess {
             expectation.fulfill()
-            let peripheralServices = peripheralManager.services.map{$0.UUID}
+            let peripheralServices = peripheralManager.services.map { $0.UUID }
             XCTAssert(mock.addServiceCalled, "addService not called")
             XCTAssertEqual(peripheralServices.count, 2, "peripheralManager service count invalid")
             XCTAssert(peripheralServices.contains(services[0].UUID), "addedService has invalid UUID")

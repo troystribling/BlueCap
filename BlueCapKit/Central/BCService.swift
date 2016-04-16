@@ -65,7 +65,7 @@ public class BCService {
 
     internal var discoveredCharacteristics = [CBUUID : BCCharacteristic]()
 
-    public let cbService: CBServiceInjectable
+    internal let cbService: CBServiceInjectable
 
     public var name: String {
         if let profile = self.profile {

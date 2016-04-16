@@ -28,9 +28,9 @@ class BCPeripheralTests: XCTestCase {
     ]
 
     var mockCharateristics = [
-        CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.Read, .Write], isNotifying:false),
-        CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.Read, .Write], isNotifying:false),
-        CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.Read, .Write], isNotifying:false)
+        CBCharacteristicMock(UUID: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties: [.Read, .Write], isNotifying: false),
+        CBCharacteristicMock(UUID: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties: [.Read, .Write], isNotifying: false),
+        CBCharacteristicMock(UUID: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties: [.Read, .Write], isNotifying: false)
     ]
     
     override func setUp() {

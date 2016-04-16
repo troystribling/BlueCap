@@ -58,7 +58,7 @@ public class BCCharacteristic : NSObject {
     private var _isNotifying = false
     private let defaultTimeout  = 10.0
 
-    public let cbCharacteristic: CBCharacteristicInjectable
+    internal let cbCharacteristic: CBCharacteristicInjectable
 
     private var notificationStateChangedPromise: Promise<BCCharacteristic>? {
         get {
@@ -188,9 +188,6 @@ public class BCCharacteristic : NSObject {
             self.profile = BCCharacteristicProfile(UUID: service.UUID.UUIDString)
         }
         super.init()
-    }
-
-    deinit {
     }
 
     // MARK: Data Access

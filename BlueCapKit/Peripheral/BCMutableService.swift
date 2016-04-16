@@ -16,7 +16,7 @@ public protocol CBMutableServiceInjectable : CBServiceInjectable {
 
 extension CBMutableService : CBMutableServiceInjectable {
     public func setCharacteristics(characteristics: [CBCharacteristicInjectable]?) {
-        self.characteristics = characteristics?.map{ $0 as! CBCharacteristic }
+        self.characteristics = characteristics?.map { $0 as! CBCharacteristic }
     }
 }
 
@@ -27,11 +27,11 @@ public class BCMutableService : NSObject {
 
     private var _characteristics = BCSerialIOArray<BCMutableCharacteristic>(BCMutableService.ioQueue)
 
-    private let profile: BCServiceProfile
+    internal let profile: BCServiceProfile
 
     internal weak var peripheralManager: BCPeripheralManager?
 
-    public var cbMutableService: CBMutableServiceInjectable
+    internal let cbMutableService: CBMutableServiceInjectable
 
     public var UUID: CBUUID {
         return self.profile.UUID
@@ -47,7 +47,7 @@ public class BCMutableService : NSObject {
         }
         set {
             self._characteristics.data = newValue
-            let cbCharacteristics = self._characteristics.map {characteristic -> CBCharacteristicInjectable in
+            let cbCharacteristics = self._characteristics.map { characteristic -> CBCharacteristicInjectable in
                 characteristic._service = self
                 return characteristic.cbMutableChracteristic
             }
@@ -82,7 +82,7 @@ public class BCMutableService : NSObject {
 
 
     public func characteristicsFromProfiles() {
-        self.characteristics = self.profile.characteristics.map{ BCMutableCharacteristic(profile: $0) }
+        self.characteristics = self.profile.characteristics.map { BCMutableCharacteristic(profile: $0) }
     }
     
 }

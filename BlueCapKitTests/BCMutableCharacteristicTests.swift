@@ -28,7 +28,10 @@ class BCMutableCharacteristicTests: XCTestCase {
     func addCharacteristics(onSuccess: (mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void) {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
-        services[0].characteristicsFromProfiles()
+        services[0].characteristics = services[0].profile.characteristics.map { profile in
+            let characteristic = CBMutableCharacteristicMock(UUID:profile.UUID, properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
+            return BCMutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
+        }
         let future = peripheralManager.addService(services[0])
         future.onSuccess {
             mock.isAdvertising = true
@@ -44,7 +47,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
-            let chracteristics = peripheralManager.characteristics.map{$0.UUID}
+            let chracteristics = peripheralManager.characteristics.map { $0.UUID }
             XCTAssertEqual(chracteristics.count, 2, "characteristic count invalid")
             XCTAssert(chracteristics.contains(CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)), "characteristic uuid is invalid")
             XCTAssert(chracteristics.contains(CBUUID(string: Gnosus.HelloWorldService.UpdatePeriod.UUID)), "characteristic uuid is invalid")
@@ -101,7 +104,7 @@ class BCMutableCharacteristicTests: XCTestCase {
             peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock1)
             peripheralManager.didSubscribeToCharacteristic(characteristic.cbMutableChracteristic, central: centralMock2)
             let centrals = characteristic.subscribers
-            let centralIDs = centrals.map{$0.identifier}
+            let centralIDs = centrals.map { $0.identifier }
             XCTAssert(characteristic.isUpdating, "isUpdating value invalid")
             XCTAssert(characteristic.updateValueWithData(value), "updateValueWithData invalid return status")
             XCTAssertEqual(characteristic.value, value, "characteristic value is invalid")
@@ -281,7 +284,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
             let values = ["aa".dataFromHexString(), "a1".dataFromHexString(), "a2".dataFromHexString(), "a3".dataFromHexString(), "a4".dataFromHexString(), "a5".dataFromHexString()]
-            let requestMocks = values.map{CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: $0)}
+            let requestMocks = values.map { CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: $0) }
             let future = characteristic.startRespondingToWriteRequests()
             future.onSuccess {(request, central) in
                 if writeCount == 0 {

@@ -32,7 +32,7 @@ public class BCMutableCharacteristic : NSObject {
     internal var _processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
     internal weak var _service: BCMutableService?
     
-    public let cbMutableChracteristic: CBMutableCharacteristicInjectable
+    internal let cbMutableChracteristic: CBMutableCharacteristicInjectable
     public var value: NSData?
 
     private var queuedUpdates: [NSData] {
@@ -112,16 +112,16 @@ public class BCMutableCharacteristic : NSObject {
     // MARK: Initializers
     public convenience init(profile: BCCharacteristicProfile) {
         let cbMutableChracteristic = CBMutableCharacteristic(type: profile.UUID, properties: profile.properties, value: nil, permissions: profile.permissions)
-        self.init(profile: profile, cbMutableCharacteristic:  cbMutableChracteristic)
+        self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
     }
 
-    internal init(profile: BCCharacteristicProfile, cbMutableCharacteristic: CBMutableCharacteristic) {
+    internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable, profile: BCCharacteristicProfile) {
         self.profile = profile
         self.value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
     }
 
-    internal init(cbMutableCharacteristic: CBMutableCharacteristic) {
+    internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable) {
         self.profile = BCCharacteristicProfile(UUID: cbMutableCharacteristic.UUID.UUIDString)
         self.value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic

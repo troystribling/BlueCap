@@ -312,7 +312,7 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
 class CBMutableServiceMock : CBServiceMock, CBMutableServiceInjectable {
 
     func setCharacteristics(characteristics: [CBCharacteristicInjectable]?) {
-        self.characteristics = characteristics as! [CBCharacteristicMock]?
+        self.characteristics = characteristics?.map { $0 as! CBMutableCharacteristicMock }
     }
 }
 
@@ -408,8 +408,8 @@ func createPeripheralManagerServices(peripheral: BCPeripheralManager) -> [BCMuta
     let profileManager = BCProfileManager.sharedInstance
     if let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)],
            locationService = profileManager.services[CBUUID(string: Gnosus.LocationService.UUID)] {
-        return [BCMutableService(profile: helloWoroldService),
-                BCMutableService(profile: locationService)]
+        return [BCMutableService(cbMutableService:CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService),
+                BCMutableService(cbMutableService:CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: locationService)]
     } else {
         return []
     }

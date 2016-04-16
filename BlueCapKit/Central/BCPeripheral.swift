@@ -174,7 +174,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     
     internal private(set) weak var centralManager: BCCentralManager?
     
-    public var cbPeripheral: CBPeripheralInjectable
+    internal private(set) var cbPeripheral: CBPeripheralInjectable
     public let advertisements: BCPeripheralAdvertisements?
     public let discoveredAt = NSDate()
 
