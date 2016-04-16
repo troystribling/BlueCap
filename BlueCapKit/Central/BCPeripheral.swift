@@ -611,7 +611,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func peripheral(_: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-        guard let characteristics = service.allCharacteristics() else {
+        guard let characteristics = service.getCharacteristics() else {
             return
         }
         self.didDiscoverCharacteristicsForService(service, characteristics: characteristics, error: error)

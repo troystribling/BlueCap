@@ -11,11 +11,11 @@ import CoreBluetooth
 
 // MARK: - CBMutableServiceInjectable -
 public protocol CBMutableServiceInjectable : CBServiceInjectable {
-    func addCharacteristics(characteristics: [CBCharacteristicInjectable]?)
+    func setCharacteristics(characteristics: [CBCharacteristicInjectable]?)
 }
 
 extension CBMutableService : CBMutableServiceInjectable {
-    public func addCharacteristics(characteristics: [CBCharacteristicInjectable]?) {
+    public func setCharacteristics(characteristics: [CBCharacteristicInjectable]?) {
         self.characteristics = characteristics?.map{ $0 as! CBCharacteristic }
     }
 }
@@ -51,7 +51,7 @@ public class BCMutableService : NSObject {
                 characteristic._service = self
                 return characteristic.cbMutableChracteristic
             }
-            self.cbMutableService.addCharacteristics(cbCharacteristics)
+            self.cbMutableService.setCharacteristics(cbCharacteristics)
         }
     }
     

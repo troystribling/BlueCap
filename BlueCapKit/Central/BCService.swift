@@ -12,11 +12,11 @@ import CoreBluetooth
 // MARK: - CBServiceInjectable -
 public protocol CBServiceInjectable {
     var UUID: CBUUID { get }
-    func allCharacteristics() -> [CBCharacteristicInjectable]?
+    func getCharacteristics() -> [CBCharacteristicInjectable]?
 }
 
 extension CBService : CBServiceInjectable {
-    public func allCharacteristics() -> [CBCharacteristicInjectable]? {
+    public func getCharacteristics() -> [CBCharacteristicInjectable]? {
         guard let characteristics = self.characteristics else { return nil }
         return characteristics.map{ $0 as CBCharacteristicInjectable }
     }

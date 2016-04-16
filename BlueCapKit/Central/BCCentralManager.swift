@@ -382,7 +382,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
                     for cbService in cbServices {
                         let service = BCService(cbService: cbService, peripheral: peripheral)
                         peripheral.discoveredServices[service.UUID] = service
-                        if let cbCharacteristics = cbService.allCharacteristics() {
+                        if let cbCharacteristics = cbService.getCharacteristics() {
                             for cbCharacteristic in cbCharacteristics {
                                 let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
                                 peripheral.discoveredCharacteristics[characteristic.UUID] = characteristic

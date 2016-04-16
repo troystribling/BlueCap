@@ -194,7 +194,7 @@ class CBServiceMock: CBServiceInjectable {
         self.UUID = UUID
     }
 
-    func allCharacteristics() -> [CBCharacteristicInjectable]? {
+    func getCharacteristics() -> [CBCharacteristicInjectable]? {
         guard let characteristics = self.characteristics else { return nil }
         return characteristics.map{ $0 as CBCharacteristicInjectable }
     }
@@ -214,7 +214,7 @@ class ServiceUT: BCService {
     
     override func discoverAllCharacteristics(timout: NSTimeInterval? = nil) -> Future<BCService> {
         self.characteristicsDiscoveredPromise = Promise<BCService>()
-        guard let characteristics = self.cbService.allCharacteristics() else {
+        guard let characteristics = self.cbService.getCharacteristics() else {
             return self.characteristicsDiscoveredPromise!.future
         }
         self.didDiscoverCharacteristics(characteristics, error: self.error)
@@ -311,7 +311,7 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
 // MARK: - CBMutableServiceMock
 class CBMutableServiceMock : CBServiceMock, CBMutableServiceInjectable {
 
-    func addCharacteristics(characteristics: [CBCharacteristicInjectable]?) {
+    func setCharacteristics(characteristics: [CBCharacteristicInjectable]?) {
         self.characteristics = characteristics as! [CBCharacteristicMock]?
     }
 }
