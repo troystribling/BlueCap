@@ -29,7 +29,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
         services[0].characteristics = services[0].profile.characteristics.map { profile in
-            let characteristic = CBMutableCharacteristicMock(UUID:profile.UUID, properties: [.Read, .Write], permissions: [.Readable, .Writeable], isNotifying: false)
+            let characteristic = CBMutableCharacteristicMock(UUID:profile.UUID, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
             return BCMutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
         }
         let future = peripheralManager.addService(services[0])

@@ -22,6 +22,7 @@ class BCCharacteristicTests: XCTestCase {
     let RSSI = -45
 
     override func setUp() {
+        GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
         self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)
