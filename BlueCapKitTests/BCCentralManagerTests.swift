@@ -49,6 +49,7 @@ class BCCentralManagerTests: XCTestCase {
         }
         future.onFailure {error in
             XCTFail("onFailure called")
+            expectation.fulfill()
         }
         mock.state = .PoweredOn
         centralManager.didUpdateState()
@@ -68,6 +69,7 @@ class BCCentralManagerTests: XCTestCase {
         }
         future.onFailure {error in
             XCTFail("onFailure called")
+            expectation.fulfill()
         }
         mock.state = .PoweredOff
         centralManager.didUpdateState()
@@ -86,6 +88,7 @@ class BCCentralManagerTests: XCTestCase {
         }
         future.onFailure {error in
             XCTFail("onFailure called")
+            expectation.fulfill()
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -112,6 +115,7 @@ class BCCentralManagerTests: XCTestCase {
         }
         future.onFailure {error in
             XCTFail("onFailure called")
+            expectation.fulfill()
         }
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
         waitForExpectationsWithTimeout(2) {error in
@@ -126,6 +130,7 @@ class BCCentralManagerTests: XCTestCase {
         let future = centralManager.startScanning()
         future.onSuccess {_ in
             XCTFail("onSuccess called")
+            expectation.fulfill()
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -158,6 +163,7 @@ class BCCentralManagerTests: XCTestCase {
         }
         future.onFailure { error in
             XCTFail("onFailure called")
+            expectation.fulfill()
         }
         centralManager.willRestoreState(testPeripherals, scannedServices: testScannedServices, options: testOptions)
         waitForExpectationsWithTimeout(2) {error in
@@ -172,6 +178,7 @@ class BCCentralManagerTests: XCTestCase {
         let future = centralManager.whenStateRestored()
         future.onSuccess { (peripherals, scannedServices, options) in
             XCTFail("onFailure called")
+            expectation.fulfill()
         }
         future.onFailure { error in
             expectation.fulfill()
