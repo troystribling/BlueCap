@@ -32,11 +32,13 @@ extension CBCentralManager : CBCentralManagerInjectable {
     }
 
     public func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
-        return (self.retrieveConnectedPeripheralsWithServices(serviceUUIDs) as [CBPeripheral]) as [CBPeripheralInjectable]
+        let peripherals = self.retrieveConnectedPeripheralsWithServices(serviceUUIDs) as [CBPeripheral]
+        return  peripherals.map { $0 as CBPeripheralInjectable }
     }
 
     public func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheralInjectable] {
-        return (self.retrievePeripheralsWithIdentifiers(identifiers) as [CBPeripheral]) as [CBPeripheralInjectable]
+        let peripherals = self.retrievePeripheralsWithIdentifiers(identifiers) as [CBPeripheral]
+        return  peripherals.map { $0 as CBPeripheralInjectable }
     }
 }
 

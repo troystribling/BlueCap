@@ -66,7 +66,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testWriteData_WhenWritableAndErrorInAck_CompletesWithReturnedError() {
+    func testWriteData_WhenWritableAndErrorInAck_CompletesWithAckError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString())
@@ -177,7 +177,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
     
-    func testWriteData_WhenTypeIsWithoutResponseAndNoError_CompletesSuccessfilly() {
+    func testWriteData_WhenWriteTypeIsWithoutResponseAndNoError_CompletesSuccessfilly() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString(), type: .WithoutResponse)
@@ -265,7 +265,7 @@ class BCCharacteristicTests: XCTestCase {
     }
 
     // MARK: Read data
-    func testRead_WhenReadableAndReturnSuccess() {
+    func testRead_WhenReadableAndNoErrorInResponse_CompletesSuccessfully() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.read()
@@ -284,7 +284,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
     
-    func testReadFailure() {
+    func testRead_WhenReadableAnResponseHasError_CompletesWithResponseError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.read()
@@ -303,7 +303,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
     
-    func testReadTimeout() {
+    func testRead_WhenReadableAndNoResponsdeReceivedBeforeTimeout_CompletesWithTimeoutError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.read(2.0)
@@ -322,7 +322,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
     
-    func testReadNotReadable() {
+    func testRead_WhenNotReadable_CompletesWithReadNotSupported() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, _) = self.createCharacteristic([.Write], isNotifying: false)
         let future = characteristic.read()
@@ -339,7 +339,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
     
-    func testMultipleReadSuccess() {
+    func testRead_WhenMultipleReadsAreMadeBeforeFirstResponseIsReceived_AllCompleteSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let expectation1 = expectationWithDescription("expectation fulfilled for future 1")
         let expectation2 = expectationWithDescription("expectation fulfilled for future 2")
@@ -384,7 +384,7 @@ class BCCharacteristicTests: XCTestCase {
     }
 
     // MARK: Notifications
-    func testStartNotifyingSuccess() {
+    func testStartNotifying_WhenNotifiableAndNoErrorOnAck_CompletesSuccessfully() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: false)
         let future = characteristic.startNotifying()
@@ -408,7 +408,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testStartNotifyingFailure() {
+    func testStartNotifying_WhenNotifiableAndErrorInAck_CompletesWithAckError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: false)
         let future = characteristic.startNotifying()
@@ -433,7 +433,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testStartIndicateSuccess() {
+    func startNotifying_WhenIndicatableAndNoErrorOnAck_CompletesSuccessfully() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Indicate], isNotifying: false)
         let future = characteristic.startNotifying()
@@ -457,7 +457,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testStartNotifyEncryptionRequiredSuccess() {
+    func testStartNotify_WhenNotifyEncryptionRequiredAndNoErrorOnAck_CompletesSuccessfully() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.NotifyEncryptionRequired], isNotifying: false)
         let future = characteristic.startNotifying()
@@ -481,7 +481,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testStartIndicateEncryptionRequiredSuccess() {
+    func testStartNotify_WhenIndicateEncryptionRequiredAndNoErrorOnAck_CompletesSuccessfully() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying: false)
         let future = characteristic.startNotifying()
@@ -500,6 +500,27 @@ class BCCharacteristicTests: XCTestCase {
             XCTFail("onFailure called")
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testStartNotifying_WhenNoNotifiable_CompletesWithNotifyNotSupportedError() {
+        let expectation = expectationWithDescription("expectation fulfilled for future")
+        let (characteristic, _) = self.createCharacteristic([], isNotifying: false)
+        let future = characteristic.startNotifying()
+        future.onSuccess {_ in
+            expectation.fulfill()
+            XCTFail("onSuccess called")
+        }
+        future.onFailure {error in
+            expectation.fulfill()
+            XCTAssertFalse(self.mockPerpheral.setNotifyValueCalled, "setNotifyValue not called")
+            XCTAssertEqual(error.code, BCError.characteristicNotifyNotSupported.code, "Error code invalid")
+            if let state = self.mockPerpheral.notifyingState {
+                XCTAssertFalse(state, "setNotifyValue state not true")
+            }
+        }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
