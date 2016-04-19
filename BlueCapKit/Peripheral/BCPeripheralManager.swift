@@ -30,7 +30,7 @@ extension CBPeripheralManager: CBPeripheralManagerInjectable {
     }
 
     public func removeService(service: CBMutableServiceInjectable) {
-        self.addService(service as! CBMutableService)
+        self.removeService(service as! CBMutableService)
     }
 
     public func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError) {
