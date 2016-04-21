@@ -24,7 +24,7 @@ class BCDeserilaizableTests: XCTestCase {
     }
 
     // MARK: UInt8
-    func testSuccessfulDeserializeUInt8() {
+    func testDeserialize_WhenGivenSerializedUInt8_ReturnsUInt8() {
         let data = BCSerDe.serialize(UInt8(100))
         if let value: UInt8 = BCSerDe.deserialize(data) {
             XCTAssert(value == 100, "UInt8 deserialization value invalid: \(value)")
@@ -33,14 +33,14 @@ class BCDeserilaizableTests: XCTestCase {
         }
     }
 
-    func testFailedDeserializeUInt8() {
+    func testDeserialize_WhenGivenInvalidSerializedUInt8_ReturnsNil() {
         let data = NSData()
         if let value: UInt8 = BCSerDe.deserialize(data) {
             XCTFail("UInt8 deserialization succeded: \(value)")
         }
     }
 
-    func testDeserializeUInt8Array() {
+    func testDeserialize_WhenGivenSerializedUInt8Array_ReturnsUInt8() {
         let value: [UInt8] = [100, 10]
         let data = BCSerDe.serialize(value)
         let des: [UInt8] = UInt8.deserialize(data)

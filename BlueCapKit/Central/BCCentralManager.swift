@@ -9,39 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - CBCentralManagerInjectable -
-public protocol CBCentralManagerInjectable {
-    var state : CBCentralManagerState { get }
-    var delegate: CBCentralManagerDelegate? { get set }
-    func scanForPeripheralsWithServices(uuids: [CBUUID]?, options: [String: AnyObject]?)
-    func stopScan()
-    func connectPeripheral(peripheral: CBPeripheralInjectable, options: [String: AnyObject]?)
-    func cancelPeripheralConnection(peripheral: CBPeripheralInjectable)
-    func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable]
-    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheralInjectable]
-}
-
-extension CBCentralManager : CBCentralManagerInjectable {
-
-    public func connectPeripheral(peripheral: CBPeripheralInjectable, options: [String: AnyObject]?) {
-        self.connectPeripheral(peripheral as! CBPeripheral, options: options)
-    }
-
-    public func cancelPeripheralConnection(peripheral: CBPeripheralInjectable) {
-        self.cancelPeripheralConnection(peripheral as! CBPeripheral)
-    }
-
-    public func retrieveConnectedPeripheralsWithServices(serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
-        let peripherals = self.retrieveConnectedPeripheralsWithServices(serviceUUIDs) as [CBPeripheral]
-        return  peripherals.map { $0 as CBPeripheralInjectable }
-    }
-
-    public func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [CBPeripheralInjectable] {
-        let peripherals = self.retrievePeripheralsWithIdentifiers(identifiers) as [CBPeripheral]
-        return  peripherals.map { $0 as CBPeripheralInjectable }
-    }
-}
-
 // MARK: - BCCentralManager -
 public class BCCentralManager : NSObject, CBCentralManagerDelegate {
 
@@ -380,7 +347,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
             let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
                 let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
                 self.discoveredPeripherals[peripheral.identifier] = peripheral
-                if let cbServices = cbPeripheral.allServices() {
+                if let cbServices = cbPeripheral.getServices() {
                     for cbService in cbServices {
                         let service = BCService(cbService: cbService, peripheral: peripheral)
                         peripheral.discoveredServices[service.UUID] = service

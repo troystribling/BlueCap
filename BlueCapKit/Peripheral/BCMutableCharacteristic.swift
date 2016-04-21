@@ -9,13 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - CBMutableCharacteristicInjectable -
-public protocol CBMutableCharacteristicInjectable : CBCharacteristicInjectable {
-    var permissions: CBAttributePermissions { get }
-}
-
-extension CBMutableCharacteristic : CBMutableCharacteristicInjectable {}
-
 // MARK: - BCMutableCharacteristic -
 public class BCMutableCharacteristic : NSObject {
 

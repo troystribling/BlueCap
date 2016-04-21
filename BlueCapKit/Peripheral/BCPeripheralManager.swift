@@ -9,61 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - CBPeripheralManagerInjectable -
-public protocol CBPeripheralManagerInjectable {
-    var delegate: CBPeripheralManagerDelegate? { get set }
-    var isAdvertising: Bool { get }
-    var state: CBPeripheralManagerState { get }
-    func startAdvertising(advertisementData:[String:AnyObject]?)
-    func stopAdvertising()
-    func addService(service: CBMutableServiceInjectable)
-    func removeService(service: CBMutableServiceInjectable)
-    func removeAllServices()
-    func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError)
-    func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool
-}
-
-extension CBPeripheralManager: CBPeripheralManagerInjectable {
-
-    public func addService(service: CBMutableServiceInjectable) {
-        self.addService(service as! CBMutableService)
-    }
-
-    public func removeService(service: CBMutableServiceInjectable) {
-        self.removeService(service as! CBMutableService)
-    }
-
-    public func respondToRequest(request: CBATTRequestInjectable, withResult result: CBATTError) {
-        self.respondToRequest(request as! CBATTRequest, withResult: result)
-    }
-
-    public func updateValue(value: NSData, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool {
-        return self.updateValue(value, forCharacteristic: characteristic as! CBMutableCharacteristic, onSubscribedCentrals: centrals as! [CBCentral]?)
-    }
-
-}
-
-// MARK: - CBATTRequestInjectable -
-public protocol CBATTRequestInjectable {
-    var offset: Int { get }
-    var value: NSData? { get set }
-    func getCharacteristic() -> CBCharacteristicInjectable
-}
-
-extension CBATTRequest: CBATTRequestInjectable {
-    public func getCharacteristic() -> CBCharacteristicInjectable {
-        return self.characteristic
-    }
-}
-
-// MARK: - CBCentralInjectable -
-public protocol CBCentralInjectable {
-    var identifier: NSUUID { get }
-    var maximumUpdateValueLength: Int { get }
-}
-
-extension CBCentral: CBCentralInjectable {}
-
 // MARK: - BCPeripheralManager -
 public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 

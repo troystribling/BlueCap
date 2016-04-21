@@ -156,7 +156,7 @@ class CBPeripheralMock: CBPeripheralInjectable {
         self.writtenType = type
     }
 
-    func allServices() -> [CBServiceInjectable]? {
+    func getServices() -> [CBServiceInjectable]? {
         guard let services = self.services else { return nil }
         return services.map{ $0 as CBServiceInjectable }
     }

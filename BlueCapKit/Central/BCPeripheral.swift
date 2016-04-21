@@ -18,48 +18,6 @@ public enum BCConnectionEvent {
     case Connect, Timeout, Disconnect, ForceDisconnect, GiveUp
 }
 
-// MARK: - CBPeripheralInjectable -
-public protocol CBPeripheralInjectable {
-    var name: String? { get }
-    var state: CBPeripheralState { get }
-    var identifier: NSUUID { get }
-    var delegate: CBPeripheralDelegate? { get set }
-
-    func readRSSI()
-    func discoverServices(services: [CBUUID]?)
-    func discoverCharacteristics(characteristics: [CBUUID]?, forService service: CBServiceInjectable)
-    func setNotifyValue(enabled:Bool, forCharacteristic characteristic: CBCharacteristicInjectable)
-    func readValueForCharacteristic(characteristic: CBCharacteristicInjectable)
-    func writeValue(data:NSData, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType)
-
-    func allServices() -> [CBServiceInjectable]?
-}
-
-extension CBPeripheral : CBPeripheralInjectable {
-
-   public func discoverCharacteristics(characteristics:[CBUUID]?, forService service: CBServiceInjectable) {
-        self.discoverCharacteristics(characteristics, forService: service as! CBService)
-    }
-
-    public func setNotifyValue(enabled: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
-        self.setNotifyValue(enabled, forCharacteristic: characteristic as! CBCharacteristic)
-    }
-
-    public func readValueForCharacteristic(characteristic: CBCharacteristicInjectable) {
-        self.readValueForCharacteristic(characteristic as! CBCharacteristic)
-    }
-
-    public func writeValue(data: NSData, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
-        self.writeValue(data, forCharacteristic: characteristic as! CBCharacteristic, type: type)
-    }
-
-    public func allServices() -> [CBServiceInjectable]? {
-        guard let services = self.services else { return nil }
-        return services.map{ $0 as CBServiceInjectable }
-    }
-
-}
-
 // MARK: - BCPeripheralAdvertisements -
 public struct BCPeripheralAdvertisements {
     
@@ -601,7 +559,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     }
     
     public func peripheral(_: CBPeripheral, didDiscoverServices error: NSError?) {
-        if let services = self.cbPeripheral.allServices() {
+        if let services = self.cbPeripheral.getServices() {
             self.didDiscoverServices(services, error:error)
         }
     }

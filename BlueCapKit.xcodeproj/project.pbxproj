@@ -66,6 +66,7 @@
 		05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* DoubleExtensions.swift */; };
 		05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* StringExtensions.swift */; };
 		05E2D0241AF5ECF100B34637 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0231AF5ECF100B34637 /* Mocks.swift */; };
+		05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */; };
 		4ED105C01C315C420034D5D2 /* UInt32Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED105BF1C315C420034D5D2 /* UInt32Extensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -142,6 +143,7 @@
 		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		05D3B9441A2BA162008E794E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		05E2D0231AF5ECF100B34637 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
+		05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Injectables.swift; sourceTree = "<group>"; };
 		4ED105BF1C315C420034D5D2 /* UInt32Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt32Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -219,13 +221,14 @@
 			isa = PBXGroup;
 			children = (
 				0551208719F5506000ED3B74 /* BlueCapKit.h */,
+				05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */,
 				0551209C19F5513700ED3B74 /* Central */,
 				05D3B9421A2BA162008E794E /* Extensions */,
 				05D3B9191A2B8C4E008E794E /* External */,
 				055120AE19F5513700ED3B74 /* Peripheral */,
 				055120B219F5513700ED3B74 /* SerDe */,
-				055120B919F5513700ED3B74 /* Service Profiles */,
 				055120C219F5513700ED3B74 /* Service Profile Definitions */,
+				055120B919F5513700ED3B74 /* Service Profiles */,
 				0551208519F5506000ED3B74 /* Supporting Files */,
 				055120C819F5513700ED3B74 /* Utilities */,
 			);
@@ -521,6 +524,7 @@
 				055120DE19F5513700ED3B74 /* BCPeripheralManager.swift in Sources */,
 				055120F219F5513700ED3B74 /* BCLogger.swift in Sources */,
 				05415F031C5929670005B68E /* FLRegion.swift in Sources */,
+				05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */,
 				05415F041C5929670005B68E /* FLRegionManager.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
 				05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */,
