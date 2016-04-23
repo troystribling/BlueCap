@@ -167,21 +167,19 @@ public class BCMutableCharacteristic : NSObject {
     }
 
     internal func didRespondToWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) -> Bool  {
-        if let processWriteRequestPromise = self.processWriteRequestPromise {
-            processWriteRequestPromise.success((request, central))
-            return true
-        } else {
+        guard let processWriteRequestPromise = self.processWriteRequestPromise else {
             return false
         }
+        processWriteRequestPromise.success((request, central))
+        return true
     }
 
     // MARK: Manage Notification Updates
     public func updateValueWithString(value: [String:String]) -> Bool {
-        if let data = self.profile.dataFromStringValue(value) {
-            return self.updateValueWithData(data)
-        } else {
+        guard let data = self.profile.dataFromStringValue(value) else {
             return false
         }
+        return self.updateValueWithData(data)
     }
 
     public func updateValueWithData(value: NSData) -> Bool  {
