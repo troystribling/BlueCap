@@ -43,7 +43,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         peripheralManager.didAddService(services[0].cbMutableService, error: nil)
     }
     
-    func testAddCharacteristicsSuccess() {
+    func testAddCharacteristics_WhenPoweredOn_CompletesSuccessfully() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
@@ -58,7 +58,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     // MARK: Subscribe to charcteristic updates
-    func testNotSubscribedToUpdates() {
+    func testUpdateValueWithData_WithNoSubscribers_IsNotSendingUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
@@ -74,7 +74,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
-    func testSubscribeToUpdates() {
+    func testUpdateValueWithData_WithSubscriber_IsSendingUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
@@ -93,7 +93,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
-    func testMultipleSubscribersToUpdates() {
+    func testUpdateValueWithData_WithSubscribers_IsSendingUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
@@ -119,7 +119,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
-    func testUnsubscribeToUpdates() {
+    func testupdateValueWithData_WithSubscriberOnUnsubscribe_IsNotSendingUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
@@ -141,7 +141,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
-    func testMultipleSubscribersUnsubscribeToUpdates() {
+    func testupdateValueWithData_WithSubscribersWhenOneUnsubscribes_IsSendingUpdates() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
@@ -167,7 +167,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
-    func testSubscriberUpdateFailed() {
+    func testupdateValueWithData_WithSubscriberWhenUpdateFailes_UpdatesAreSavedToPendingQueue() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
@@ -192,7 +192,7 @@ class BCMutableCharacteristicTests: XCTestCase {
         }
     }
 
-    func testResumeSubscriberUpdates() {
+    func testupdateValueWithData_WithSubscriberWithPendingUpdatesThatResume_PendingUpdatesAreSent() {
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
