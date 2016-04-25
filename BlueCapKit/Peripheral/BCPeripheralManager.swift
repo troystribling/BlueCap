@@ -274,13 +274,9 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         service.peripheralManager = self
         self.addConfiguredCharacteristics(service.characteristics)
         self.afterSeriviceAddPromise = Promise<Void>()
-        if !self.isAdvertising {
-            self.configuredServices[service.UUID] = service
-            self.cbPeripheralManager.addService(service.cbMutableService)
-            BCLogger.debug("service name=\(service.name), uuid=\(service.UUID)")
-        } else {
-            self.afterSeriviceAddPromise.failure(BCError.peripheralManagerIsAdvertising)
-        }
+        self.configuredServices[service.UUID] = service
+        self.cbPeripheralManager.addService(service.cbMutableService)
+        BCLogger.debug("service name=\(service.name), uuid=\(service.UUID)")
         return self.afterSeriviceAddPromise.future
     }
     
@@ -294,28 +290,14 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return promise.future
     }
 
-    public func removeService(service: BCMutableService) -> Future<Void> {
-        let promise = Promise<Void>()
-        if !self.isAdvertising {
-            BCLogger.debug("removing service \(service.UUID.UUIDString)")
-            self.removeServiceAndCharacteristics(service)
-            promise.success()
-        } else {
-            promise.failure(BCError.peripheralManagerIsAdvertising)
-        }
-        return promise.future
+    public func removeService(service: BCMutableService) {
+        BCLogger.debug("removing service \(service.UUID.UUIDString)")
+        self.removeServiceAndCharacteristics(service)
     }
     
-    public func removeAllServices() -> Future<Void> {
-        let promise = Promise<Void>()
-        if !self.isAdvertising {
-            BCLogger.debug()
-            self.removeAllServiceAndCharacteristics()
-            promise.success()
-        } else {
-            promise.failure(BCError.peripheralManagerIsAdvertising)
-        }
-        return promise.future
+    public func removeAllServices() {
+        BCLogger.debug()
+        self.removeAllServiceAndCharacteristics()
     }
 
     // MARK: Characteristic IO
@@ -502,11 +484,9 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 }
             }
             future.onFailure {(error) in
-                let future = self.removeAllServices()
-                future.onSuccess {
-                    BCLogger.debug("failed '\(error.localizedDescription)'")
-                    promise.failure(error)
-                }
+                self.removeAllServices()
+                BCLogger.debug("failed '\(error.localizedDescription)'")
+                promise.failure(error)
             }
         }
     }

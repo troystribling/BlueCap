@@ -252,6 +252,150 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
+    // MARK: Add Service
+    func testAddService_WhenNoErrorInAck_CompletesSuccess() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let services = createPeripheralManagerServices(peripheralManager)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = peripheralManager.addService(services[0])
+        future.onSuccess {
+            expectation.fulfill()
+            let peripheralServices = peripheralManager.services
+            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssertEqual(peripheralServices.count, 1, "peripheralManager service count invalid")
+            XCTAssertEqual(peripheralServices[0].UUID, services[0].UUID, "addedService has invalid UUID")
+            if let addedService = mock.addedService {
+                XCTAssertEqual(services[0].UUID, addedService.UUID, "addedService UUID invalid")
+            } else {
+                XCTFail("addService not found")
+            }
+        }
+        future.onFailure {error in
+            XCTFail("onFailure called")
+        }
+        peripheralManager.didAddService(services[0].cbMutableService, error: nil)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testAddService_WhenErrorOnAck_CompletesWithAckError() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let services = createPeripheralManagerServices(peripheralManager)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = peripheralManager.addService(services[0])
+        future.onSuccess {
+            XCTFail("onSuccess called")
+        }
+        future.onFailure {error in
+            expectation.fulfill()
+            let peripheralServices = peripheralManager.services
+            XCTAssertEqual(TestFailure.error.code, error.code, "error code is invalid")
+            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
+        }
+        peripheralManager.didAddService(services[0].cbMutableService, error: TestFailure.error)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testAddServices_WhenNoErrorInAck_CompletesSuccessfully() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let services = createPeripheralManagerServices(peripheralManager)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = peripheralManager.addServices(services)
+        future.onSuccess {
+            expectation.fulfill()
+            let peripheralServices = peripheralManager.services.map { $0.UUID }
+            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssertEqual(peripheralServices.count, 2, "peripheralManager service count invalid")
+            XCTAssert(peripheralServices.contains(services[0].UUID), "addedService has invalid UUID")
+            XCTAssert(peripheralServices.contains(services[1].UUID), "addedService has invalid UUID")
+        }
+        future.onFailure {error in
+            XCTFail("onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testAddServices_WhenErrorInAck_CompletesWithAckError() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let services = createPeripheralManagerServices(peripheralManager)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let future = peripheralManager.addServices(services)
+        peripheralManager.error = TestFailure.error
+        future.onSuccess {
+            XCTFail("onSuccess called")
+        }
+        future.onFailure {error in
+            expectation.fulfill()
+            let peripheralServices = peripheralManager.services
+            XCTAssertEqual(TestFailure.error.code, error.code, "error code is invalid")
+            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    // MARK: Remove Service
+    func testRemovedService_WhenServiceIsPresent_RemovesService() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let services = createPeripheralManagerServices(peripheralManager)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let addServicesFuture = peripheralManager.addServices(services)
+        addServicesFuture.onSuccess {
+            expectation.fulfill()
+            peripheralManager.removeService(services[0])
+            let peripheralServices = peripheralManager.services
+            XCTAssert(mock.removeServiceCalled, "removeService not called")
+            XCTAssertEqual(peripheralServices.count, 1, "peripheralManager service count invalid")
+            XCTAssertEqual(peripheralServices[0].UUID, services[1].UUID, "addedService has invalid UUID")
+            if let removedService = mock.removedService {
+                XCTAssertEqual(removedService.UUID, services[0].UUID, "removeService has invalid UUID")
+            } else {
+                XCTFail("removedService not found")
+            }
+        }
+        addServicesFuture.onFailure {error in
+            XCTFail("onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testRemovedService_WhenSNoerviceIsPresent_DoesNothing() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let services = createPeripheralManagerServices(peripheralManager)
+        peripheralManager.removeService(services[0])
+        XCTAssert(mock.removeServiceCalled, "removeService not called")
+    }
+
+    func testRemovedAllServices_WhenServicesArePresent_RemovesAllServices() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let services = createPeripheralManagerServices(peripheralManager)
+        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let addServicesFuture = peripheralManager.addServices(services)
+        addServicesFuture.onSuccess {
+            expectation.fulfill()
+            peripheralManager.removeAllServices()
+            let peripheralServices = peripheralManager.services
+            XCTAssert(mock.removeAllServicesCalled, "removeAllServices not called")
+            XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
+        }
+        addServicesFuture.onFailure {error in
+            XCTFail("onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
     // MARK: State Restoration
     func testStateRestoration() {
 

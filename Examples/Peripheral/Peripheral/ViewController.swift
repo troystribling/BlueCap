@@ -108,8 +108,7 @@ class ViewController: UITableViewController {
         // on power on remove all services add service and start advertising
         let startAdvertiseFuture = self.manager.whenPowerOn().flatmap { _ -> Future<Void> in
             self.manager.removeAllServices()
-        }.flatmap { _ -> Future<Void> in
-                self.manager.addService(self.accelerometerService)
+            return self.manager.addService(self.accelerometerService)
         }.flatmap {_ -> Future<Void> in
                 self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
         }

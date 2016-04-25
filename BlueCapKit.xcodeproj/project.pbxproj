@@ -21,7 +21,6 @@
 		05415F041C5929670005B68E /* FLRegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EFA1C5929670005B68E /* FLRegionManager.swift */; };
 		05415F051C5929670005B68E /* FLSerialIODictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EFB1C5929670005B68E /* FLSerialIODictionary.swift */; };
 		0551208819F5506000ED3B74 /* BlueCapKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0551208719F5506000ED3B74 /* BlueCapKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209D19F5513700ED3B74 /* BCErrors.swift */; };
 		055120CD19F5513700ED3B74 /* BCCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209E19F5513700ED3B74 /* BCCentralManager.swift */; };
 		055120CE19F5513700ED3B74 /* BCCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209F19F5513700ED3B74 /* BCCharacteristic.swift */; };
 		055120D019F5513700ED3B74 /* BCPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A119F5513700ED3B74 /* BCPeripheral.swift */; };
@@ -47,6 +46,7 @@
 		055120F219F5513700ED3B74 /* BCLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C919F5513700ED3B74 /* BCLogger.swift */; };
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
+		056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* BCErrors.swift */; };
 		0562D3181A5D7FE1001013C9 /* BCCentralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3171A5D7FE1001013C9 /* BCCentralManagerTests.swift */; };
 		0562D31A1A5D8308001013C9 /* BCPeripheralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D3191A5D8308001013C9 /* BCPeripheralTests.swift */; };
 		0562D31E1A5D8378001013C9 /* BCTimedScanneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562D31D1A5D8378001013C9 /* BCTimedScanneratorTests.swift */; };
@@ -59,7 +59,6 @@
 		0565EC7C1A89CDA500CA8B6E /* BCRawPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC7B1A89CDA500CA8B6E /* BCRawPairDeserializableTests.swift */; };
 		0565EC7E1A8B1D4800CA8B6E /* BCRawArrayPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565EC7D1A8B1D4800CA8B6E /* BCRawArrayPairDeserializableTests.swift */; };
 		056D13851CBD408D001B5A51 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056D13841CBD408D001B5A51 /* CharacteristicProfile.swift */; };
-		0586F1291C387A06002DB160 /* BCMutableServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0586F1281C387A06002DB160 /* BCMutableServiceTests.swift */; };
 		058BA8BD1B139135005CF0FE /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058BA8BC1B139135005CF0FE /* SimpleFutures.swift */; };
 		05A648EE1A90203500633EED /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
 		05A648EF1A90204000633EED /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
@@ -100,7 +99,6 @@
 		0551208719F5506000ED3B74 /* BlueCapKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlueCapKit.h; sourceTree = "<group>"; };
 		0551208D19F5506000ED3B74 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551209019F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0551209D19F5513700ED3B74 /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		0551209E19F5513700ED3B74 /* BCCentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCCentralManager.swift; sourceTree = "<group>"; };
 		0551209F19F5513700ED3B74 /* BCCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCCharacteristic.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		055120A119F5513700ED3B74 /* BCPeripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCPeripheral.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -126,6 +124,7 @@
 		055120C919F5513700ED3B74 /* BCLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCLogger.swift; sourceTree = "<group>"; };
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		056276081CCD3F0A00F955D7 /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		0562D3171A5D7FE1001013C9 /* BCCentralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCCentralManagerTests.swift; sourceTree = "<group>"; };
 		0562D3191A5D8308001013C9 /* BCPeripheralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCPeripheralTests.swift; sourceTree = "<group>"; };
 		0562D31D1A5D8378001013C9 /* BCTimedScanneratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCTimedScanneratorTests.swift; sourceTree = "<group>"; };
@@ -138,7 +137,6 @@
 		0565EC7B1A89CDA500CA8B6E /* BCRawPairDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawPairDeserializableTests.swift; sourceTree = "<group>"; };
 		0565EC7D1A8B1D4800CA8B6E /* BCRawArrayPairDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawArrayPairDeserializableTests.swift; sourceTree = "<group>"; };
 		056D13841CBD408D001B5A51 /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
-		0586F1281C387A06002DB160 /* BCMutableServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCMutableServiceTests.swift; sourceTree = "<group>"; };
 		058BA8BC1B139135005CF0FE /* SimpleFutures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFutures.swift; sourceTree = "<group>"; };
 		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		05D3B9441A2BA162008E794E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
@@ -173,7 +171,6 @@
 			isa = PBXGroup;
 			children = (
 				053139AF1AC1ADC4002B4B36 /* BCMutableCharacteristicTests.swift */,
-				0586F1281C387A06002DB160 /* BCMutableServiceTests.swift */,
 				053139B31AC2CE23002B4B36 /* BCPeripheralManagerTests.swift */,
 			);
 			name = Peripheral;
@@ -221,6 +218,7 @@
 			isa = PBXGroup;
 			children = (
 				0551208719F5506000ED3B74 /* BlueCapKit.h */,
+				056276081CCD3F0A00F955D7 /* BCErrors.swift */,
 				05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */,
 				0551209C19F5513700ED3B74 /* Central */,
 				05D3B9421A2BA162008E794E /* Extensions */,
@@ -267,7 +265,6 @@
 		0551209C19F5513700ED3B74 /* Central */ = {
 			isa = PBXGroup;
 			children = (
-				0551209D19F5513700ED3B74 /* BCErrors.swift */,
 				0551209E19F5513700ED3B74 /* BCCentralManager.swift */,
 				0551209F19F5513700ED3B74 /* BCCharacteristic.swift */,
 				055120A119F5513700ED3B74 /* BCPeripheral.swift */,
@@ -511,12 +508,12 @@
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
 				05415EFE1C5929670005B68E /* FLBeaconManager.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
+				056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */,
 				05415F001C5929670005B68E /* FLCircularRegion.swift in Sources */,
 				055120DD19F5513700ED3B74 /* BCMutableService.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
 				05415EFF1C5929670005B68E /* FLBeaconRegion.swift in Sources */,
-				055120CC19F5513700ED3B74 /* BCErrors.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */,
 				05415EFC1C5929670005B68E /* CLProximityExtension.swift in Sources */,
 				05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */,
@@ -558,7 +555,6 @@
 				0562D3181A5D7FE1001013C9 /* BCCentralManagerTests.swift in Sources */,
 				0565EC711A87D14600CA8B6E /* BCSerializableTests.swift in Sources */,
 				0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */,
-				0586F1291C387A06002DB160 /* BCMutableServiceTests.swift in Sources */,
 				0565EC7C1A89CDA500CA8B6E /* BCRawPairDeserializableTests.swift in Sources */,
 				05E2D0241AF5ECF100B34637 /* Mocks.swift in Sources */,
 				053139B01AC1ADC4002B4B36 /* BCMutableCharacteristicTests.swift in Sources */,
