@@ -171,7 +171,7 @@ class BCCentralManagerTests: XCTestCase {
         }
     }
 
-    func testWhenStateRestored_WithPreviousInvalidState_CompletesWithError() {
+    func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
         let mock = CBCentralManagerMock()
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onFailure fulfilled for future")

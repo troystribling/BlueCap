@@ -29,7 +29,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     private var _afterPowerOnPromise = Promise<Void>()
     private var _afterPowerOffPromise = Promise<Void>()
     private var _afterSeriviceAddPromise = Promise<Void>()
-    private var _afterStateRestoredPromise = Promise<([BCMutableService], BCPeripheralAdvertisements)>()
+    private var _afterStateRestoredPromise = Promise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
 
     private var _state = CBPeripheralManagerState.Unknown
     private var _poweredOn = false
@@ -85,7 +85,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    private var afterStateRestoredPromise: Promise<([BCMutableService], BCPeripheralAdvertisements)> {
+    private var afterStateRestoredPromise: Promise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
         get {
             return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
         }
@@ -312,8 +312,8 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: State Restoration
-    public func whenStateRestored() -> Future<([BCMutableService], BCPeripheralAdvertisements)> {
-        self.afterStateRestoredPromise = Promise<([BCMutableService], BCPeripheralAdvertisements)>()
+    public func whenStateRestored() -> Future<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
+        self.afterStateRestoredPromise = Promise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
         return self.afterStateRestoredPromise.future
     }
 
@@ -466,6 +466,28 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         } else {
             BCLogger.debug("success")
             self.afterSeriviceAddPromise.success()
+        }
+    }
+
+    public func willRestoreState(cbServices: [CBMutableService]?, advertisements: [String: AnyObject]?) {
+        if let cbServices = cbServices, let advertisements = advertisements {
+            let services = cbServices.map { cbService -> BCMutableService in
+                let service = BCMutableService(cbMutableService: cbService)
+                self.configuredServices[service.UUID] = service
+                var characteristics = [BCMutableCharacteristic]()
+                if let cbCharacteristics = cbService.characteristics as? [CBMutableCharacteristic] {
+                    characteristics = cbCharacteristics.map { bcChracteristic in
+                        let characteristic = BCMutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
+                        self.configuredCharcteristics[characteristic.UUID] = characteristic
+                        return characteristic
+                    }
+                }
+                service.characteristics = characteristics
+                return service
+            }
+            self.afterStateRestoredPromise.success((services, BCPeripheralAdvertisements(advertisements: advertisements)))
+        } else {
+            self.afterStateRestoredPromise.failure(BCError.peripheralManagerRestoreFailed)
         }
     }
 

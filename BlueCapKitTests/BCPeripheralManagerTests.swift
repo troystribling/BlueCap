@@ -28,7 +28,7 @@ class BCPeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Power on
-    func testPowerOnWhenPoweredOn() {
+    func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.whenPowerOn()
@@ -43,7 +43,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testPowerOnWhenPoweredOff() {
+    func testWhenPowerOn_WhenInitiallyPoweredOff_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.whenPowerOn()
@@ -61,7 +61,7 @@ class BCPeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Power off
-    func testPowerOffWhenPoweredOn() {
+    func testWhenPowerOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.whenPowerOff()
@@ -78,7 +78,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testPowerOffWhenPoweredOff() {
+    func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.whenPowerOff()
@@ -94,7 +94,7 @@ class BCPeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Start advertising
-    func testStartAdvertisingSuccess() {
+    func testStartAdvertising_WhenNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
@@ -120,7 +120,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testStartAdvertisingFailure() {
+    func testStartAdvertising_WhenErrorInAckAndNotAdvertising_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
@@ -146,7 +146,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testStartAdvertisingWhenAdvertising() {
+    func testStartAdvertising_WhenAdvertising_CompletesWithErrorPeripheralManagerIsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
@@ -164,7 +164,7 @@ class BCPeripheralManagerTests: XCTestCase {
     }
 
     // MARK: iBeacon
-    func testStartAdvertisingBeaconSuccess() {
+    func testStartAdvertising_WheniBeaconAndNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
@@ -182,7 +182,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testStartAdvertisingBeaconFailure() {
+    func testStartAdvertising_WheniBeaconAndErrorInAckAndNotAdvertising_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
@@ -200,7 +200,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testStartAdvertisingBeaconWhenAdvertising() {
+    func testStartAdvertising_WheniBeaconAdvertising_CompletesWithErrorPeripheralManagerIsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
@@ -218,7 +218,7 @@ class BCPeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Stop advertising
-    func testStopAdvertising() {
+    func testStopAdvertising_WhenAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheralManager.stopAdvertising()
@@ -235,7 +235,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testStopAdvertisingWhenNotAdvertsing() {
+    func testStopAdvertising_WhenNotAdvertising_CompletesWithPeripheralManagerIsNotAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
         let future = peripheralManager.stopAdvertising()
@@ -397,8 +397,35 @@ class BCPeripheralManagerTests: XCTestCase {
     }
 
     // MARK: State Restoration
-    func testStateRestoration() {
-
+    func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let services = [CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)),
+                        CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))]
+        let future = peripheralManager.whenStateRestored()
+        future.onSuccess { (services, advertisements) in
+            expectation.fulfill()
+        }
+        future.onFailure { error in
+            XCTFail("onFailure called")
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
+    func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let future = peripheralManager.whenStateRestored()
+        future.onSuccess { (services, advertisements) in
+            XCTFail("onFailure called")
+        }
+        future.onFailure { error in
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 }
