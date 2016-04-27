@@ -297,7 +297,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
-        var injectablePeripherals: [CBPeripheralInjectable]? = nil
+        var injectablePeripherals: [CBPeripheralInjectable]?
         if let cbPeripherals: [CBPeripheral] = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
             injectablePeripherals = cbPeripherals.map { $0 as CBPeripheralInjectable }
         }

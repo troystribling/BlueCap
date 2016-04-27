@@ -323,26 +323,12 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {
-        if let cbServices = dict[CBPeripheralManagerRestoredStateServicesKey] as? [CBMutableService],
-           let cbAdvertisements = dict[CBPeripheralManagerRestoredStateAdvertisementDataKey] as? [String: AnyObject] {
-            let services = cbServices.map { cbService -> BCMutableService in
-                let service = BCMutableService(cbMutableService: cbService)
-                self.configuredServices[service.UUID] = service
-                var characteristics = [BCMutableCharacteristic]()
-                if let cbCharacteristics = cbService.characteristics as? [CBMutableCharacteristic] {
-                    characteristics = cbCharacteristics.map { bcChracteristic in
-                        let characteristic = BCMutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
-                        self.configuredCharcteristics[characteristic.UUID] = characteristic
-                        return characteristic
-                    }
-                }
-                service.characteristics = characteristics
-                return service
-            }
-            self.afterStateRestoredPromise.success((services, BCPeripheralAdvertisements(advertisements: cbAdvertisements)))
-        } else {
-            self.afterStateRestoredPromise.failure(BCError.peripheralManagerRestoreFailed)
+        var injectableServices: [CBMutableServiceInjectable]?
+        if let cbServices = dict[CBPeripheralManagerRestoredStateServicesKey] as? [CBMutableService] {
+            injectableServices = cbServices.map { $0 as CBMutableServiceInjectable }
         }
+        let advertisements =  dict[CBPeripheralManagerRestoredStateAdvertisementDataKey] as? [String: AnyObject]
+        self.willRestoreState(injectableServices, advertisements: advertisements)
     }
     
     public func peripheralManagerDidStartAdvertising(_: CBPeripheralManager, error: NSError?) {
@@ -469,13 +455,13 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    public func willRestoreState(cbServices: [CBMutableService]?, advertisements: [String: AnyObject]?) {
+    public func willRestoreState(cbServices: [CBMutableServiceInjectable]?, advertisements: [String: AnyObject]?) {
         if let cbServices = cbServices, let advertisements = advertisements {
             let services = cbServices.map { cbService -> BCMutableService in
                 let service = BCMutableService(cbMutableService: cbService)
                 self.configuredServices[service.UUID] = service
                 var characteristics = [BCMutableCharacteristic]()
-                if let cbCharacteristics = cbService.characteristics as? [CBMutableCharacteristic] {
+                if let cbCharacteristics = cbService.getCharacteristics() as? [CBMutableCharacteristic] {
                     characteristics = cbCharacteristics.map { bcChracteristic in
                         let characteristic = BCMutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
                         self.configuredCharcteristics[characteristic.UUID] = characteristic
