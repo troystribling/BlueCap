@@ -95,9 +95,8 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     internal static let DefaultServiceScanTimeout: NSTimeInterval = 10.0
 
     // MARK: Serialize Property IO
-    static let ioQueue = Queue("us.gnos.blueCap.peripheral.io")
-    static let timeoutQueue = Queue("us.gnos.blueCap.peripheral.timeout")
-    static let rssiQueue = Queue("us.gnos.blueCap.peripheral.rssi")
+    static let ioQueue = Queue("us.gnos.blueCap.peripheral")
+    static let pollQueue = Queue("us.gnos.blueCap.peripheral.poll")
 
     private var _servicesDiscoveredPromise: Promise<BCPeripheral>?
     private var _readRSSIPromise: Promise<Int>?
@@ -795,7 +794,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             return
         }
         BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
-        BCPeripheral.timeoutQueue.delay(self.connectionTimeout) {
+        BCPeripheral.pollQueue.delay(self.connectionTimeout) {
             if self.state != .Connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 BCLogger.debug("connection timing out name = \(self.name), UUID = \(self.identifier.UUIDString), sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .Timeout
@@ -811,7 +810,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             return
         }
         BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), timeout = \(timeout)")
-        BCPeripheral.timeoutQueue.delay(timeout) {
+        BCPeripheral.pollQueue.delay(timeout) {
             if sequence == self.serviceDiscoverySequence && self.serviceDiscoveryInProgress {
                 BCLogger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.UUIDString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(self)
@@ -829,7 +828,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
             BCLogger.debug("exiting: name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
             return
         }
-        BCPeripheral.rssiQueue.delay(period) {
+        BCPeripheral.pollQueue.delay(period) {
             BCLogger.debug("trigger: name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
             if self.state == .Connected {
                 self.cbPeripheral.readRSSI()

@@ -101,6 +101,8 @@ class CBPeripheralMock: CBPeripheralInjectable {
     
     let identifier: NSUUID
 
+    var services: [CBServiceMock]?
+
     init(state: CBPeripheralState = .Disconnected, identifier: NSUUID = NSUUID()) {
         self.state = state
         self.identifier = identifier
@@ -118,10 +120,6 @@ class CBPeripheralMock: CBPeripheralInjectable {
     
     var name: String? {
         return "Test Peripheral"
-    }
-
-    var services: [CBService]? {
-        return nil
     }
 
     func readRSSI() {
@@ -190,7 +188,7 @@ class CBServiceMock: CBServiceInjectable {
     var UUID: CBUUID
     var characteristics: [CBCharacteristicMock]?
 
-    init(UUID:CBUUID = CBUUID(string: "2f0a0017-69aa-f316-3e78-4194989a6ccc")) {
+    init(UUID:CBUUID = CBUUID(string: NSUUID().UUIDString)) {
         self.UUID = UUID
     }
 
@@ -230,7 +228,7 @@ class CBCharacteristicMock: CBCharacteristicInjectable {
     var properties: CBCharacteristicProperties
     var isNotifying = false
 
-    init (UUID: CBUUID, properties: CBCharacteristicProperties, isNotifying: Bool) {
+    init (UUID: CBUUID = CBUUID(string: NSUUID().UUIDString), properties: CBCharacteristicProperties = [.Read, .Write], isNotifying: Bool = false) {
         self.UUID = UUID
         self.properties = properties
         self.isNotifying = isNotifying

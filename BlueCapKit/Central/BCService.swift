@@ -147,7 +147,7 @@ public class BCService {
             return
         }
         BCLogger.debug("name = \(self.name), uuid = \(peripheral.identifier.UUIDString), sequence = \(sequence), timeout = \(timeout)")
-        BCPeripheral.timeoutQueue.delay(timeout) {
+        BCPeripheral.pollQueue.delay(timeout) {
             if sequence == self.characteristicDiscoverySequence && self.characteristicDiscoveryInProgress {
                 BCLogger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.UUIDString), peripheral UUID = \(peripheral.identifier.UUIDString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(peripheral)

@@ -147,9 +147,15 @@ class BCCentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock()
         let centralManager = BCCentralManager(centralManager: mock)
         let expectation = expectationWithDescription("onSuccess fulfilled for future")
-        let testPeripherals : [CBPeripheralInjectable] =
-            [CBPeripheralMock(state: .Connected, identifier: NSUUID()),
-             CBPeripheralMock(state: .Connected, identifier: NSUUID())].map { $0 as CBPeripheralInjectable }
+        let testPeripherals = [CBPeripheralMock(state: .Connected, identifier: NSUUID()), CBPeripheralMock(state: .Connected, identifier: NSUUID())]
+        for testPeripheral in testPeripherals {
+            let testServices = [CBServiceMock(), CBServiceMock()]
+            for testService in testServices {
+                let testCharacteristics = [CBCharacteristicMock(), CBCharacteristicMock()]
+                testService.characteristics = testCharacteristics
+            }
+            testPeripheral.services = testServices
+        }
         let testScannedServices = [CBUUID(string: NSUUID().UUIDString), CBUUID(string: NSUUID().UUIDString)]
         let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(bool: true),
                                                 CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test"]
@@ -157,15 +163,34 @@ class BCCentralManagerTests: XCTestCase {
         future.onSuccess { (peripherals, scannedServices, options) in
             expectation.fulfill()
             XCTAssertEqual(peripherals.count, 2, "Restored peripherals count invalid")
-            XCTAssertEqual(peripherals[0].identifier, testPeripherals[0].identifier, "Restored peripherals identofier invalid")
-            XCTAssertEqual(peripherals[1].identifier, testPeripherals[1].identifier, "Restored peripherals identofier invalid")
             XCTAssertEqual(scannedServices, testScannedServices, "Scanned services invalid")
+//            XCTAssertEqual(options, testOptions, "Central manager options invalid")
+            XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }), "Restored peripherals identifier invalid")
+            for testPeripheral in testPeripherals {
+                let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
+                XCTAssertNotNil(peripheral, "Restored peripheral not found")
+                let services = peripheral!.services
+                let testServices = testPeripheral.services!
+                XCTAssertEqual(services.count, testServices.count, "Restored services count invalid")
+                XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }), "Restored services identifier invalid")
+//                for testService in testServices {
+//                    let service = peripheral!.discoverServices[testService.UUID]
+//                    let characteristics = services[j].characteristics
+//                    let testCharacteristics = testServices[i].characteristics!
+//                    XCTAssertEqual(characteristics.count, testCharacteristics.count, "Restored characteristics count invalid")
+//                    XCTAssertEqual(services[j].UUID, testServices[j].UUID, "Restored services UUID invalid")
+//                    for k in (0...1) {
+//                        XCTAssertEqual(characteristics[k].UUID, testCharacteristics[k].UUID, "Restored characteristic UUID invalid")
+//                    }
+//                }
+            }
         }
         future.onFailure { error in
             XCTFail("onFailure called")
             expectation.fulfill()
         }
-        centralManager.willRestoreState(testPeripherals, scannedServices: testScannedServices, options: testOptions)
+        centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
+                                        scannedServices: testScannedServices, options: testOptions)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
