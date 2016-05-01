@@ -416,19 +416,34 @@ class BCPeripheralManagerTests: XCTestCase {
 
     // MARK: State Restoration
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
+        let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let expectation = expectationWithDescription("onFailure fulfilled for future")
-        let services = [CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)),
-            CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))].map { $0 as CBMutableServiceInjectable }
+        let testServices = [CBMutableServiceMock(), CBMutableServiceMock()]
+        for testService in testServices {
+            let testCharacteristics = [CBMutableCharacteristicMock(), CBMutableCharacteristicMock()]
+            testService.characteristics = testCharacteristics
+        }
         let future = peripheralManager.whenStateRestored()
         future.onSuccess { (services, advertisements) in
             expectation.fulfill()
+            XCTAssertEqual(advertisements.localName, peripheralAdvertisements[CBAdvertisementDataLocalNameKey], "Restored advertisement invalid")
+            XCTAssertEqual(advertisements.txPower, peripheralAdvertisements[CBAdvertisementDataTxPowerLevelKey], "Restored advertisement invalid")
+            XCTAssertEqual(services.count, testServices.count, "Restored service count invalid")
+            XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }), "Restored services identifier invalid")
+            for testService in testServices {
+                let testCharacteristics = testService.characteristics!
+                let service = peripheralManager.configuredServices[testService.UUID]
+                let characteristics = service!.characteristics
+                XCTAssertEqual(characteristics.count, testCharacteristics.count, "Restored characteristics count invalid")
+                XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }), "Restored characteristics identifier invalid")
+            }
+
         }
         future.onFailure { error in
             expectation.fulfill()
             XCTFail("onFailure called")
         }
-        peripheralManager.willRestoreState(services, advertisements: peripheralAdvertisements)
+        peripheralManager.willRestoreState(testServices.map { $0 as CBMutableServiceInjectable }, advertisements: peripheralAdvertisements)
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
@@ -440,7 +455,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let future = peripheralManager.whenStateRestored()
         future.onSuccess { (services, advertisements) in
             expectation.fulfill()
-            XCTFail("onFailure called")
+            XCTFail("onSuccess called")
         }
         future.onFailure { error in
             expectation.fulfill()

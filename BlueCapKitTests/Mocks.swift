@@ -318,7 +318,7 @@ class CBMutableServiceMock : CBServiceMock, CBMutableServiceInjectable {
 class CBMutableCharacteristicMock : CBCharacteristicMock, CBMutableCharacteristicInjectable {
     var permissions: CBAttributePermissions
 
-    init (UUID: CBUUID, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, isNotifying: Bool) {
+    init (UUID: CBUUID = CBUUID(string: NSUUID().UUIDString), properties: CBCharacteristicProperties = [.Read, .Write], permissions: CBAttributePermissions = [.Readable, .Writeable], isNotifying: Bool = false) {
         self.permissions = permissions
         super.init(UUID: UUID, properties: properties, isNotifying: isNotifying)
     }
