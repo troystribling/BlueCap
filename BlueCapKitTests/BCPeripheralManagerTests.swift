@@ -30,7 +30,7 @@ class BCPeripheralManagerTests: XCTestCase {
     // MARK: Power on
     func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOn()
         future.onSuccess {
             expectation.fulfill()
@@ -46,7 +46,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testWhenPowerOn_WhenInitiallyPoweredOff_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOn()
         future.onSuccess {
             expectation.fulfill()
@@ -65,7 +65,7 @@ class BCPeripheralManagerTests: XCTestCase {
     // MARK: Power off
     func testWhenPowerOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOff()
         future.onSuccess {
             expectation.fulfill()
@@ -83,7 +83,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOff()
         future.onSuccess {
             expectation.fulfill()
@@ -100,7 +100,7 @@ class BCPeripheralManagerTests: XCTestCase {
     // MARK: Start advertising
     func testStartAdvertising_WhenNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
         future.onSuccess {
             expectation.fulfill()
@@ -127,7 +127,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testStartAdvertising_WhenErrorInAckAndNotAdvertising_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
         future.onSuccess {
             expectation.fulfill()
@@ -154,7 +154,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testStartAdvertising_WhenAdvertising_CompletesWithErrorPeripheralManagerIsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
         future.onSuccess {
             expectation.fulfill()
@@ -173,7 +173,7 @@ class BCPeripheralManagerTests: XCTestCase {
     // MARK: iBeacon
     func testStartAdvertising_WheniBeaconAndNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
         future.onSuccess {
             expectation.fulfill()
@@ -192,7 +192,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testStartAdvertising_WheniBeaconAndErrorInAckAndNotAdvertising_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
         future.onSuccess {
             expectation.fulfill()
@@ -211,7 +211,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testStartAdvertising_WheniBeaconAdvertising_CompletesWithErrorPeripheralManagerIsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
         future.onSuccess {
             expectation.fulfill()
@@ -230,7 +230,7 @@ class BCPeripheralManagerTests: XCTestCase {
     // MARK: Stop advertising
     func testStopAdvertising_WhenAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.stopAdvertising()
         future.onSuccess {
             expectation.fulfill()
@@ -248,7 +248,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testStopAdvertising_WhenNotAdvertising_CompletesWithPeripheralManagerIsNotAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.stopAdvertising()
         future.onSuccess {
             expectation.fulfill()
@@ -268,7 +268,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testAddService_WhenNoErrorInAck_CompletesSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.addService(services[0])
         future.onSuccess {
             expectation.fulfill()
@@ -295,7 +295,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testAddService_WhenErrorOnAck_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.addService(services[0])
         future.onSuccess {
             expectation.fulfill()
@@ -317,7 +317,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testAddServices_WhenNoErrorInAck_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.addServices(services)
         future.onSuccess {
             expectation.fulfill()
@@ -339,7 +339,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testAddServices_WhenErrorInAck_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.addServices(services)
         peripheralManager.error = TestFailure.error
         future.onSuccess {
@@ -362,7 +362,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testRemovedService_WhenServiceIsPresent_RemovesService() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let addServicesFuture = peripheralManager.addServices(services)
         addServicesFuture.onSuccess {
             expectation.fulfill()
@@ -386,7 +386,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testRemovedService_WhenSNoerviceIsPresent_DoesNothing() {
+    func testRemovedService_WhenNoServiceIsPresent_DoesNothing() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
         peripheralManager.removeService(services[0])
@@ -396,7 +396,7 @@ class BCPeripheralManagerTests: XCTestCase {
     func testRemovedAllServices_WhenServicesArePresent_RemovesAllServices() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let addServicesFuture = peripheralManager.addServices(services)
         addServicesFuture.onSuccess {
             expectation.fulfill()
@@ -417,7 +417,7 @@ class BCPeripheralManagerTests: XCTestCase {
     // MARK: State Restoration
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let testServices = [CBMutableServiceMock(), CBMutableServiceMock()]
         for testService in testServices {
             let testCharacteristics = [CBMutableCharacteristicMock(), CBMutableCharacteristicMock()]
@@ -451,7 +451,7 @@ class BCPeripheralManagerTests: XCTestCase {
 
     func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenStateRestored()
         future.onSuccess { (services, advertisements) in
             expectation.fulfill()

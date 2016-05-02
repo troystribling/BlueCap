@@ -25,7 +25,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func addCharacteristics(onSuccess: (mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void) {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
         services[0].characteristics = services[0].profile.characteristics.map { profile in
@@ -49,7 +49,7 @@ class BCMutableCharacteristicTests: XCTestCase {
 
     // MARK: Add characteristics
     func testAddCharacteristics_WhenServiceAddWasSuccessfull_CompletesSuccessfully() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let chracteristics = peripheralManager.characteristics.map { $0.UUID }
@@ -61,7 +61,7 @@ class BCMutableCharacteristicTests: XCTestCase {
 
     // MARK: Subscribe to charcteristic updates
     func testUpdateValueWithData_WithNoSubscribers_AddsUpdateToPengingQueue() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
             let characteristic = peripheralManager.characteristics[0]
@@ -74,7 +74,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func testUpdateValueWithData_WithSubscriber_IsSendingUpdates() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
@@ -92,7 +92,7 @@ class BCMutableCharacteristicTests: XCTestCase {
 
 
     func testUpdateValueWithData_WithSubscribers_IsSendingUpdates() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
@@ -115,7 +115,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func testupdateValueWithData_WithSubscriberOnUnsubscribe_IsNotSendingUpdates() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
@@ -134,7 +134,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func testupdateValueWithData_WithSubscribersWhenOneUnsubscribes_IsSendingUpdates() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock1 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         let centralMock2 = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
@@ -157,7 +157,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func testupdateValueWithData_WithSubscriberWhenUpdateFailes_UpdatesAreSavedToPendingQueue() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
@@ -179,7 +179,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func testupdateValueWithData_WithSubscriberWithPendingUpdatesThatResume_PendingUpdatesAreSent() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
@@ -207,7 +207,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func testupdateValueWithData_WithPendingUpdatesPriorToSubscriber_SEndPensingUpdates() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             expectation.fulfill()
@@ -231,7 +231,7 @@ class BCMutableCharacteristicTests: XCTestCase {
 
     // MARK: Respond to write requests
     func testStartRespondingToWriteRequests_WhenRequestIsRecieved_CompletesSuccessfullyAndResponds() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
             let characteristic = peripheralManager.characteristics[0]
@@ -255,7 +255,7 @@ class BCMutableCharacteristicTests: XCTestCase {
     }
 
     func testStartRespondingToWriteRequests_WhenMultipleRequestsAreReceived_CompletesSuccessfullyAndRespondstoAll() {
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let centralMock = CBCentralMock(identifier: NSUUID(), maximumUpdateValueLength: 20)
         var writeCount = 0
         self.addCharacteristics {(mock: CBPeripheralManagerMock, peripheralManager: PeripheralManagerUT, service: BCMutableService) -> Void in
