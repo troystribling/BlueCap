@@ -44,7 +44,7 @@ class BCCharacteristicTests: XCTestCase {
     func testWriteData_WhenWritableAndNoErrorInAck_CompletesSuccessfilly() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.writeData("aa".dataFromHexString())
+        let future = characteristic.writeData("aa".dataFromHexString(), timeout: 120.0)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
@@ -69,7 +69,7 @@ class BCCharacteristicTests: XCTestCase {
     func testWriteData_WhenWritableAndErrorInAck_CompletesWithAckError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.writeData("aa".dataFromHexString())
+        let future = characteristic.writeData("aa".dataFromHexString(), timeout: 120.0)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTFail("onSuccess called")
@@ -95,7 +95,7 @@ class BCCharacteristicTests: XCTestCase {
     func testWriteData_WhenWritableAndNoAckReceivedBeforeTimeout_CompletesWithTimeoutError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.writeData("aa".dataFromHexString(), timeout:2.0)
+        let future = characteristic.writeData("aa".dataFromHexString(), timeout:1.0)
         future.onSuccess { _ in
             XCTFail("onFailure called")
         }
@@ -119,7 +119,7 @@ class BCCharacteristicTests: XCTestCase {
     func testWriteData_WhenNotWriteable_CompletesWithErrorWriteNotSupported() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, _) = self.createCharacteristic([.Read], isNotifying: false)
-        let future = characteristic.writeData("aa".dataFromHexString())
+        let future = characteristic.writeData("aa".dataFromHexString(), timeout: 120.0)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTFail("onSuccess called")
@@ -137,7 +137,7 @@ class BCCharacteristicTests: XCTestCase {
     func testWriteString_WhenWritableAndNoErrorOnAck_CompletesSuccessfully() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.writeString(["Hello World Greeting":"Good bye"])
+        let future = characteristic.writeString(["Hello World Greeting":"Good bye"], timeout: 120.0)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
@@ -162,7 +162,7 @@ class BCCharacteristicTests: XCTestCase {
     func testWriteString_WhenStringIsNotSerializable_CompletesWithErrorNotSerailizable() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying:  false)
-        let future = characteristic.writeString(["bad name":"Invalid"])
+        let future = characteristic.writeString(["bad name":"Invalid"], timeout: 120.0)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTFail("onSuccess called")
@@ -180,7 +180,7 @@ class BCCharacteristicTests: XCTestCase {
     func testWriteData_WhenWriteTypeIsWithoutResponseAndNoError_CompletesSuccessfilly() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.writeData("aa".dataFromHexString(), type: .WithoutResponse)
+        let future = characteristic.writeData("aa".dataFromHexString(), timeout: 120.0, type: .WithoutResponse)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTAssert(self.mockPerpheral.writeValueCalled, "writeValue not called")
@@ -207,9 +207,9 @@ class BCCharacteristicTests: XCTestCase {
         let expectation1 = expectationWithDescription("expectation fulfilled for future 1")
         let expectation2 = expectationWithDescription("expectation fulfilled for future 2")
         let expectation3 = expectationWithDescription("expectation fulfilled for future 3")
-        let future1 = characteristic.writeData("aa".dataFromHexString())
-        let future2 = characteristic.writeData("bb".dataFromHexString())
-        let future3 = characteristic.writeData("cc".dataFromHexString())
+        let future1 = characteristic.writeData("aa".dataFromHexString(), timeout: 120.0)
+        let future2 = characteristic.writeData("bb".dataFromHexString(), timeout: 120.0)
+        let future3 = characteristic.writeData("cc".dataFromHexString(), timeout: 120.0)
         let context = ImmediateContext()
         future1.onSuccess(context) { _ in
             expectation1.fulfill()
@@ -268,7 +268,7 @@ class BCCharacteristicTests: XCTestCase {
     func testRead_WhenReadableAndNoErrorInResponse_CompletesSuccessfully() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.read()
+        let future = characteristic.read(120.0)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
@@ -287,7 +287,7 @@ class BCCharacteristicTests: XCTestCase {
     func testRead_WhenReadableAnResponseHasError_CompletesWithResponseError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.read()
+        let future = characteristic.read(120.0)
         future.onSuccess { _ in
             expectation.fulfill()
             XCTFail("onSuccess called")
@@ -306,7 +306,7 @@ class BCCharacteristicTests: XCTestCase {
     func testRead_WhenReadableAndNoResponsdeReceivedBeforeTimeout_CompletesWithTimeoutError() {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.read(2.0)
+        let future = characteristic.read(1.0)
         future.onSuccess { _ in
             XCTFail("onSuccess called")
             expectation.fulfill()

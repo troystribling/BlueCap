@@ -90,7 +90,7 @@ class BCCentralManagerTests: XCTestCase {
             XCTFail("onFailure called")
             expectation.fulfill()
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -118,7 +118,7 @@ class BCCentralManagerTests: XCTestCase {
             expectation.fulfill()
         }
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -129,15 +129,15 @@ class BCCentralManagerTests: XCTestCase {
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = centralManager.startScanning()
         future.onSuccess {_ in
-            XCTFail("onSuccess called")
             expectation.fulfill()
+            XCTFail("onSuccess called")
         }
         future.onFailure {error in
             expectation.fulfill()
             XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices is called")
             XCTAssert(error.code == BCError.centralIsPoweredOff.code, "Error code invalid")
         }
-        waitForExpectationsWithTimeout(2) {error in
+        waitForExpectationsWithTimeout(20) {error in
             XCTAssertNil(error, "\(error)")
         }
     }

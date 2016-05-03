@@ -30,12 +30,13 @@ class BCTimedScanneratorTests: XCTestCase {
     // MARK: Scan timeout
     func testScanSuccessful() {
         let scannerator = BCTimedScannerator(centralManager: self.centralManager)
-        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = scannerator.startScanning(2)
         future.onSuccess {_ in
-            onSuccessExpectation.fulfill()
+            expectation.fulfill()
         }
         future.onFailure {error in
+            expectation.fulfill()
             XCTFail("onFailure called")
         }
         self.centralManager.didDiscoverPeripheral(self.mockPerpheral, advertisementData:peripheralAdvertisements, RSSI:NSNumber(integer: -45))
@@ -46,13 +47,14 @@ class BCTimedScanneratorTests: XCTestCase {
     
     func testScanTimeout() {
         let scannerator = BCTimedScannerator(centralManager :self.centralManager)
-        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
+        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = scannerator.startScanning(1)
         future.onSuccess {_ in
+            expectation.fulfill()
             XCTFail("onSuccess called")
         }
         future.onFailure {error in
-            onFailureExpectation.fulfill()
+            expectation.fulfill()
             XCTAssertEqual(BCError.centralPeripheralScanTimeout.code, error.code, "onFailure error invalid")
         }
         waitForExpectationsWithTimeout(30) {error in

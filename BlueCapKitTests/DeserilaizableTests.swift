@@ -131,7 +131,7 @@ class BCDeserilaizableTests: XCTestCase {
     }
 
     func testDeserialize_WhenGivenInvalidSerializedUInt32_ReturnsNil() {
-        let data = BCSerDe.serialize(UInt32(100))
+        let data = BCSerDe.serialize(UInt16(100))
         if let value: UInt32 = UInt32.deserialize(data) {
             XCTFail("UInt32 deserialization succeded: \(value)")
         }
