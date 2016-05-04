@@ -341,46 +341,34 @@ class BCCharacteristicTests: XCTestCase {
     
     func testRead_WhenMultipleReadsAreMadeBeforeFirstResponseIsReceived_AllCompleteSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let expectation1 = expectationWithDescription("expectation fulfilled for future 1")
-        let expectation2 = expectationWithDescription("expectation fulfilled for future 2")
-        let expectation3 = expectationWithDescription("expectation fulfilled for future 3")
         let future1 = characteristic.read()
         let future2 = characteristic.read()
         let future3 = characteristic.read()
         let context = ImmediateContext()
         future1.onSuccess(context) { _ in
-            expectation1.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "readValue not called 2 times")
         }
         future1.onFailure(context) { error in
-            expectation1.fulfill()
             XCTFail("onFailure called")
         }
         future2.onSuccess(context) { _ in
-            expectation2.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2, "readValue not called 3 times")
         }
         future2.onFailure(context) {error in
-            expectation2.fulfill()
             XCTFail("onFailure called")
         }
         future3.onSuccess(context) { _ in
-            expectation3.fulfill()
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3, "readValue not called 3 times")
         }
         future3.onFailure(context) { error in
-            expectation3.fulfill()
             XCTFail("onFailure called")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     // MARK: Notifications

@@ -17,6 +17,7 @@ class BCTimedScanneratorTests: XCTestCase {
     
     var centralManager: BCCentralManager!
     let mockPerpheral = CBPeripheralMock(state:.Connected)
+    let context = ImmediateContext()
 
     override func setUp() {
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
@@ -32,10 +33,10 @@ class BCTimedScanneratorTests: XCTestCase {
         let scannerator = BCTimedScannerator(centralManager: self.centralManager)
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = scannerator.startScanning(2)
-        future.onSuccess {_ in
+        future.onSuccess(self.context) {_ in
             expectation.fulfill()
         }
-        future.onFailure {error in
+        future.onFailure(self.context) {error in
             expectation.fulfill()
             XCTFail("onFailure called")
         }
@@ -45,11 +46,11 @@ class BCTimedScanneratorTests: XCTestCase {
         }
     }
     
-    func testScanTimeout() {
+    func testStartScanning_OnScanTimeout_CompletesWithPeripheralScanTimeout() {
         let scannerator = BCTimedScannerator(centralManager :self.centralManager)
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = scannerator.startScanning(1)
-        future.onSuccess {_ in
+        future.onSuccess(self.context) {_ in
             expectation.fulfill()
             XCTFail("onSuccess called")
         }

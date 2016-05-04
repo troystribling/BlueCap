@@ -21,6 +21,7 @@ class BCPeripheralTests: XCTestCase {
 
     var centralManagerMock = CBCentralManagerMock(state: .PoweredOn)
     var centralManager: BCCentralManager!
+    let immediateContext = ImmediateContext()
 
     let mockServices = [
         CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
@@ -278,7 +279,7 @@ class BCPeripheralTests: XCTestCase {
             XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
         }
         peripheral.didFailToConnectPeripheral(TestFailure.error)
-        waitForExpectationsWithTimeout(20) {error in
+        waitForExpectationsWithTimeout(120) {error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -492,33 +493,26 @@ class BCPeripheralTests: XCTestCase {
     func testDisconnectedPollRSSISuccess() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation1 = expectationWithDescription("expectation1 fulfilled for future")
-        let expectation2 = expectationWithDescription("expectation2 fulfilled for future")
         var count = 0
         let future = peripheral.startPollingRSSI()
-        future.onSuccess { rssi in
+        future.onSuccess(self.immediateContext) { rssi in
             switch count {
             case 0:
-                expectation1.fulfill()
                 XCTAssertEqual(rssi, self.updatedRSSI1, "RSSI invalid")
                 XCTAssertEqual(peripheral.RSSI, self.updatedRSSI1, "RSSI invalid")
                 peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI2)), error: nil)
             case 1:
                 XCTAssertEqual(rssi, self.updatedRSSI2, "RSSI invalid")
                 XCTAssertEqual(peripheral.RSSI, self.updatedRSSI2, "RSSI invalid")
-                expectation2.fulfill()
             default:
                 XCTFail("onSuccess called too many times")
             }
             count += 1
         }
-        future.onFailure { error in
+        future.onFailure(self.immediateContext) { error in
             XCTFail("onFailure called")
         }
         peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI1)), error: nil)
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testConnectedPollRSSISuccess() {
