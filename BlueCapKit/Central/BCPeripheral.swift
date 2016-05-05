@@ -329,7 +329,7 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         return self.discoveredServices[uuid]
     }
 
-    public private(set) var state: CBPeripheralState {
+    public internal(set) var state: CBPeripheralState {
         get {
             return BCPeripheral.ioQueue.sync { return self._state }
         }
@@ -416,18 +416,14 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
     public func readRSSI() -> Future<Int> {
         BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString)")
         self.readRSSIPromise = Promise<Int>()
-        if self.state == .Connected {
-            self.cbPeripheral.readRSSI()
-        } else {
-            self.readRSSIPromise?.failure(BCError.peripheralDisconnected)
-        }
+        self.readRSSIIfConnected()
         return self.readRSSIPromise!.future
     }
 
     public func startPollingRSSI(period: NSTimeInterval = 10.0, capacity: Int? = nil) -> FutureStream<Int> {
         BCLogger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period)")
         self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
-        self.cbPeripheral.readRSSI()
+        self.readRSSIIfConnected()
         self.RSSISequence += 1
         self.pollRSSI(period, sequence: self.RSSISequence)
         return pollRSSIPromise!.future
@@ -830,13 +826,19 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
         }
         BCPeripheral.pollQueue.delay(period) {
             BCLogger.debug("trigger: name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
-            if self.state == .Connected {
-                self.cbPeripheral.readRSSI()
-            } else {
-                self.pollRSSIPromise?.failure(BCError.peripheralDisconnected)
-            }
+            self.readRSSIIfConnected()
             self.pollRSSI(period, sequence: sequence)
         }
     }
-    
+
+    private func readRSSIIfConnected() {
+        if self.state == .Connected {
+            self.cbPeripheral.readRSSI()
+        } else {
+            self.readRSSIPromise?.failure(BCError.peripheralDisconnected)
+            self.pollRSSIPromise?.failure(BCError.peripheralDisconnected)
+        }
+    }
+
+
 }

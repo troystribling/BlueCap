@@ -103,6 +103,10 @@ class CBPeripheralMock: CBPeripheralInjectable {
 
     var services: [CBServiceMock]?
 
+    var bcPeripheral: BCPeripheral?
+    var error: NSError?
+    var RSSI: Int = -44
+
     init(state: CBPeripheralState = .Disconnected, identifier: NSUUID = NSUUID()) {
         self.state = state
         self.identifier = identifier
@@ -124,6 +128,8 @@ class CBPeripheralMock: CBPeripheralInjectable {
 
     func readRSSI() {
         self.readRSSICalled = true
+        self.readRSSICalledCount += 1
+        self.bcPeripheral?.didReadRSSI(NSNumber(long: self.RSSI), error: self.error)
     }
 
     func discoverServices(services: [CBUUID]?) {
@@ -257,7 +263,7 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var addedService: CBMutableServiceInjectable?
     var removedService: CBMutableServiceInjectable?
     var delegate: CBPeripheralManagerDelegate?
-    
+
     var removeServiceCount = 0
     var addServiceCount = 0
     var updateValueCount = 0
