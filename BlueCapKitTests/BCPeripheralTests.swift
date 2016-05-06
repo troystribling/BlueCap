@@ -47,59 +47,64 @@ class BCPeripheralTests: XCTestCase {
     func testDiscoverAllServices_WhenConnectedAndNoErrorInResponse_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.discoverAllServices()
-        future.onSuccess { _ in
-            expectation.fulfill()
+        future.onSuccess(self.immediateContext) { _ in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 2, "Peripheral service count invalid")
             XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1, "CBPeripheral#discoverServices called more than once")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
-        future.onFailure { error in
+        future.onFailure(self.immediateContext) { error in
             XCTFail("onFailure called")
         }
         peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
-        waitForExpectationsWithTimeout(2) { error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testDiscoverAllServices_WhenConnectedAndErrorInResponse_CompletesWithResponseError() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.discoverAllServices()
-        future.onSuccess { _ in
+        future.onSuccess(self.immediateContext) { _ in
             XCTFail("onSuccess called")
         }
-        future.onFailure { error in
-            expectation.fulfill()
+        future.onFailure(self.immediateContext) { error in
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1, "CBPeripheral#discoverServices called more than once")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
         peripheral.didDiscoverServices([], error: TestFailure.error)
-        waitForExpectationsWithTimeout(2) { error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testDiscoverAllServices_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.discoverAllServices()
+        future.onSuccess(self.immediateContext) { _ in
+            XCTFail("onSuccess called")
+        }
+        future.onFailure(self.immediateContext) { error in
+            XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
+            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 0, "CBPeripheral#discoverServices called more than once")
+            XCTAssertFalse(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices called")
+            XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
+        }
+    }
+
+    func testDiscoverAllServices_WhenConnectedOnTimeout_CompletesWithServiceDiscoveryTimeout() {
+        let mockPeripheral = CBPeripheralMock(state: .Connected)
+        let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let expectation = expectationWithDescription("expectation fulfilled for future")
+        let future = peripheral.discoverAllServices(1.0)
         future.onSuccess { _ in
             XCTFail("onSuccess called")
         }
         future.onFailure { error in
             expectation.fulfill()
-            XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
-            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 0, "CBPeripheral#discoverServices called more than once")
-            XCTAssertFalse(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices called")
+            XCTAssertEqual(error.code, BCError.peripheralServiceDiscoveryTimeout.code, "Error code invalid")
+            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1, "CBPeripheral#discoverServices called more than once")
+            XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
         waitForExpectationsWithTimeout(2) { error in
@@ -107,10 +112,7 @@ class BCPeripheralTests: XCTestCase {
         }
     }
 
-    func testDiscoverAllServices_OnTimeout_CompletesWithPeripheralDisconnected() {
-    }
-
-    func testDiscoverPeripheralServicesSuccess() {
+    func testDiscoverAllPeripheralServicesSuccess() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
         let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi: self.RSSI, error:nil)
         let expectation = expectationWithDescription("expectation fulfilled for future")

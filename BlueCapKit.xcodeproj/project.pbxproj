@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		053139B01AC1ADC4002B4B36 /* BCMutableCharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139AF1AC1ADC4002B4B36 /* BCMutableCharacteristicTests.swift */; };
 		053139B41AC2CE23002B4B36 /* BCPeripheralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053139B31AC2CE23002B4B36 /* BCPeripheralManagerTests.swift */; };
+		053C1AAA1CDB9E86005811A6 /* XCTTestCase+SimpleFuturesAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053C1AA91CDB9E86005811A6 /* XCTTestCase+SimpleFuturesAssertions.swift */; };
 		05415EEC1C57D6FD0005B68E /* BCSerialIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */; };
 		05415EFC1C5929670005B68E /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF21C5929670005B68E /* CLProximityExtension.swift */; };
 		05415EFD1C5929670005B68E /* FLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EF31C5929670005B68E /* FLBeacon.swift */; };
@@ -82,6 +83,7 @@
 /* Begin PBXFileReference section */
 		053139AF1AC1ADC4002B4B36 /* BCMutableCharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCMutableCharacteristicTests.swift; sourceTree = "<group>"; };
 		053139B31AC2CE23002B4B36 /* BCPeripheralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCPeripheralManagerTests.swift; sourceTree = "<group>"; };
+		053C1AA91CDB9E86005811A6 /* XCTTestCase+SimpleFuturesAssertions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTTestCase+SimpleFuturesAssertions.swift"; sourceTree = "<group>"; };
 		05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCSerialIO.swift; sourceTree = "<group>"; };
 		05415EF21C5929670005B68E /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CLProximityExtension.swift; path = FutureLocation/CLProximityExtension.swift; sourceTree = "<group>"; };
 		05415EF31C5929670005B68E /* FLBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLBeacon.swift; path = FutureLocation/FLBeacon.swift; sourceTree = "<group>"; };
@@ -244,12 +246,13 @@
 		0551208E19F5506000ED3B74 /* BlueCapKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				05E2D0231AF5ECF100B34637 /* Mocks.swift */,
+				053C1AA91CDB9E86005811A6 /* XCTTestCase+SimpleFuturesAssertions.swift */,
 				0562D3211A5D83F1001013C9 /* Central */,
 				053139AC1AC1AD44002B4B36 /* Peripheral */,
 				0562D3241A5D8585001013C9 /* SerDe */,
 				056D13831CBD4020001B5A51 /* Service Profiles */,
 				0551208F19F5506000ED3B74 /* Supporting Files */,
-				05E2D0231AF5ECF100B34637 /* Mocks.swift */,
 			);
 			path = BlueCapKitTests;
 			sourceTree = "<group>";
@@ -552,6 +555,7 @@
 				0565EC7E1A8B1D4800CA8B6E /* BCRawArrayPairDeserializableTests.swift in Sources */,
 				053139B41AC2CE23002B4B36 /* BCPeripheralManagerTests.swift in Sources */,
 				0562D31A1A5D8308001013C9 /* BCPeripheralTests.swift in Sources */,
+				053C1AAA1CDB9E86005811A6 /* XCTTestCase+SimpleFuturesAssertions.swift in Sources */,
 				0562D3181A5D7FE1001013C9 /* BCCentralManagerTests.swift in Sources */,
 				0565EC711A87D14600CA8B6E /* BCSerializableTests.swift in Sources */,
 				0565EC6F1A87D0C600CA8B6E /* DeserilaizableTests.swift in Sources */,
