@@ -24,75 +24,48 @@ class BCCentralManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: Power on
+    // MARK: whenPowerOn
     func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
-        var success = false
-        future.onSuccess(self.immediateContext) {
-            success = true
-        }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        XCTAssert(success, "future did not complete successfully")
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOn_WhenPoweredOff_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .PoweredOn)
+        let mock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
-        var success = false
-        future.onSuccess(self.immediateContext) {
-            success = true
-        }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
         mock.state = .PoweredOn
         centralManager.didUpdateState()
-        XCTAssert(success, "future did not complete successfully")
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
-    // MARK: Power off
+    // MARK: whenPowerOff
     func testWhenPowerOff_WhenPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
-        var success = false
-        future.onSuccess(self.immediateContext) {
-            success = true
-        }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
         mock.state = .PoweredOff
         centralManager.didUpdateState()
-        XCTAssert(success, "future did not complete successfully")
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
-        var success = false
-        future.onSuccess(self.immediateContext) {
-            success = true
-        }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        XCTAssert(success, "future did not complete successfully")
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     // MARK: Peripheral discovery
     func testStartScanning_WhenPoweredOnAndPeripheralDiscovered_CompletesSuccessfully() {
         let centralMock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = BCCentralManager(centralManager: centralMock)
-        let future = centralManager.startScanning()
         let peripheralMock = CBPeripheralMock()
-        future.onSuccess(self.immediateContext) { _ in
+        let future = centralManager.startScanning()
+        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
+        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [{ _ in
             XCTAssert(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices not called")
             if let peripheral = centralManager.peripherals.first where centralManager.peripherals.count == 1 {
                 XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
@@ -101,24 +74,17 @@ class BCCentralManagerTests: XCTestCase {
             } else {
                 XCTFail("Discovered peripheral missing")
             }
-        }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
+        }])
     }
     
     func testStartScanning_WhenPoweredOff_CompletesWithError() {
         let centralMock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: centralMock)
         let future = centralManager.startScanning()
-        future.onSuccess(self.immediateContext) { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure(self.immediateContext) {error in
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [{ error in
             XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices is called")
             XCTAssert(error.code == BCError.centralIsPoweredOff.code, "Error code invalid")
-        }
+        }])
     }
 
     // MARK: State Restoration
@@ -138,7 +104,9 @@ class BCCentralManagerTests: XCTestCase {
         let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(bool: true),
                                                 CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test"]
         let future = centralManager.whenStateRestored()
-        future.onSuccess(self.immediateContext) { (peripherals, scannedServices, options) in
+        centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
+                                        scannedServices: testScannedServices, options: testOptions)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { (peripherals, scannedServices, options) in
             XCTAssertEqual(peripherals.count, testPeripherals.count, "Restored peripherals count invalid")
             XCTAssertEqual(scannedServices, testScannedServices, "Scanned services invalid")
             XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, "Restored option invalid")
@@ -160,23 +128,13 @@ class BCCentralManagerTests: XCTestCase {
                 }
             }
         }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
-                                        scannedServices: testScannedServices, options: testOptions)
     }
 
     func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
         let mock = CBCentralManagerMock()
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenStateRestored()
-        future.onSuccess(self.immediateContext) { (peripherals, scannedServices, options) in
-            XCTFail("onFailure called")
-        }
-        future.onFailure(self.immediateContext) { error in
-            XCTAssert(error.code == BCError.centralRestoreFailed.code, "Error code invalid")
-        }
         centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
+        XCTAssertFutureFails(future, context: self.immediateContext)
     }
 }

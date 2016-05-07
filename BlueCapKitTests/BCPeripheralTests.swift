@@ -48,48 +48,40 @@ class BCPeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices()
-        future.onSuccess(self.immediateContext) { _ in
+        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 2, "Peripheral service count invalid")
             XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1, "CBPeripheral#discoverServices called more than once")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
     }
 
     func testDiscoverAllServices_WhenConnectedAndErrorInResponse_CompletesWithResponseError() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices()
-        future.onSuccess(self.immediateContext) { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure(self.immediateContext) { error in
+        peripheral.didDiscoverServices([], error: TestFailure.error)
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1, "CBPeripheral#discoverServices called more than once")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
-        peripheral.didDiscoverServices([], error: TestFailure.error)
     }
 
     func testDiscoverAllServices_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices()
-        future.onSuccess(self.immediateContext) { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure(self.immediateContext) { error in
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
             XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 0, "CBPeripheral#discoverServices called more than once")
             XCTAssertFalse(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
+
     }
 
     func testDiscoverAllServices_WhenConnectedOnTimeout_CompletesWithServiceDiscoveryTimeout() {
@@ -445,24 +437,18 @@ class BCPeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
-        future.onSuccess(self.immediateContext) { rssi in
+        peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI1)), error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { rssi in
             XCTAssertEqual(rssi, self.updatedRSSI1, "RSSI invalid")
             XCTAssertEqual(peripheral.RSSI, self.updatedRSSI1, "RSSI invalid")
         }
-        future.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI1)), error: nil)
     }
 
     func testReadRSSI_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
-        future.onSuccess(self.immediateContext) { rssi in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure(self.immediateContext) { error in
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
         }
     }
@@ -471,59 +457,40 @@ class BCPeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
-        future.onSuccess(self.immediateContext) { rssi in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure(self.immediateContext) { error in
+        peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI1)), error: TestFailure.error)
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
         }
-        peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI1)), error: TestFailure.error)
     }
 
     func testStartPollingRSSI_WhenConnectedAndNoErrorInAck_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         mockPeripheral.bcPeripheral = peripheral
-        let expectation = expectationWithDescription("expectation fulfilled for future")
-        var count = 0
         let future = peripheral.startPollingRSSI(1.0)
-        future.onSuccess { rssi in
-            switch count {
-            case 0:
+        let validations: [(Int -> Void)] = [
+            { (rssi: Int) -> Void in
                 XCTAssertEqual(rssi, mockPeripheral.RSSI, "Recieved RSSI invalid")
                 XCTAssertEqual(peripheral.RSSI, mockPeripheral.RSSI, "Peripheral RSSI invalid")
                 XCTAssertEqual(mockPeripheral.readRSSICalledCount, 1, "readRSSICalled count invalid")
-            case 1:
+            },
+            { (rssi: Int) -> Void in
                 XCTAssertEqual(rssi, mockPeripheral.RSSI, "Recieved RSSI invalid")
                 XCTAssertEqual(peripheral.RSSI, mockPeripheral.RSSI, "Peripheral RSSI invalid")
                 XCTAssertEqual(mockPeripheral.readRSSICalledCount, 2, "readRSSICalled count invalid")
                 peripheral.stopPollingRSSI()
-                expectation.fulfill()
-            default:
-                XCTFail("onSuccess called too many times")
-            }
-            count += 1
-        }
-        future.onFailure { error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
-        waitForExpectationsWithTimeout(120) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+            }]
+        XCTAssertFutureStreamSucceeds(future, timeout: 120, validations: validations)
     }
 
     func testStartPollingRSSI_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.startPollingRSSI()
-        future.onSuccess(self.immediateContext) { rssi in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure(self.immediateContext) { error in
+        XCTAssertFutureStreamFails(future, context:self.immediateContext, validations: [{ error in
             peripheral.stopPollingRSSI()
             XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
-        }
+        }])
     }
 
 
@@ -556,47 +523,34 @@ class BCPeripheralTests: XCTestCase {
         }
     }
 
-    func testConnectedPollRSSIFailure() {
+    func testStartPollingRSSI_WhenConnectedAndErrorInResponse_CompletedWithResponceError() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let expectation = expectationWithDescription("expectation fulfilled for future")
-        let future = peripheral.startPollingRSSI()
-        future.onSuccess { rssi in
-            expectation.fulfill()
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
+        let future = peripheral.startPollingRSSI(1.0)
+        mockPeripheral.error = TestFailure.error
+        mockPeripheral.bcPeripheral = peripheral
+        XCTAssertFutureStreamFails(future, validations: [{ error in
+            peripheral.stopPollingRSSI()
             expectation.fulfill()
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
-        }
-        peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI2)), error: TestFailure.error)
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        }])
     }
 
-    func testStopPollingRSSI() {
+    func testStopPollingRSSI_WhenConnected_StopsRSSIUpdates() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let expectation = expectationWithDescription("expectation fulfilled for future")
         var count = 0
-        let future = peripheral.startPollingRSSI()
-        future.onSuccess { rssi in
+        let future = peripheral.startPollingRSSI(1.0)
+        XCTAssertFutureStreamSucceeds(future, validations: [{ rssi in
             XCTAssertEqual(0, count, "onSuccess called too many times")
             XCTAssertEqual(rssi, self.updatedRSSI1, "RSSI invalid")
             XCTAssertEqual(peripheral.RSSI, self.updatedRSSI1, "RSSI invalid")
             expectation.fulfill()
             peripheral.stopPollingRSSI()
-            peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI2)), error: nil)
             count += 1
-        }
-        future.onFailure { error in
-            XCTFail("onFailure called")
-        }
-        peripheral.didReadRSSI(NSNumber(int: Int32(self.updatedRSSI1)), error: nil)
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        }])
     }
 
 }
