@@ -436,20 +436,22 @@ public class BCPeripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Connection
     public func reconnect() {
-        if let centralManager = self.centralManager where self.state == .Disconnected {
-            BCLogger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.UUIDString)")
-            centralManager.connectPeripheral(self)
-            self.forcedDisconnect = false
-            self.connectionSequence += 1
-            self.currentError = .None
-            self.timeoutConnection(self.connectionSequence)
-        } else {
+        guard let centralManager = self.centralManager where self.state == .Disconnected  else {
             BCLogger.debug("peripheral not disconnected \(self.name), \(self.identifier.UUIDString)")
+            return
         }
+        BCLogger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.UUIDString)")
+        centralManager.connectPeripheral(self)
+        self.forcedDisconnect = false
+        self.connectionSequence += 1
+        self.currentError = .None
+        self.timeoutConnection(self.connectionSequence)
     }
      
     public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> {
-        self.connectionPromise = StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>(capacity:capacity)
+        if self.connectionPromise == nil {
+            self.connectionPromise = StreamPromise<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)>(capacity:capacity)
+        }
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         self.connectionTimeout = connectionTimeout

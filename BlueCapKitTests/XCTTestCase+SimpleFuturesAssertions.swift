@@ -24,7 +24,7 @@ extension XCTestCase  {
             expectation?.fulfill()
             validate?(result)
         }
-        future.onFailure(context) { error in
+        future.onFailure(context) { _ in
             XCTFail("onFailure called")
         }
         if context is QueueContext {
@@ -67,7 +67,7 @@ extension XCTestCase  {
                 }
             }
         }
-        future.onFailure(context) { error in
+        future.onFailure(context) { _ in
             XCTFail("onFailure called")
         }
         if context is QueueContext {

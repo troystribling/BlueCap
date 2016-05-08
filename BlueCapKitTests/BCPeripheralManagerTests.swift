@@ -104,7 +104,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
         future.onSuccess {
             expectation.fulfill()
-            XCTAssert(mock.startAdvertisingCalled, "startAdvertising not called")
+            XCTAssert(mock.startAdvertisingCalled, "CBPeripheralManager#startAdvertising not called")
             XCTAssert(peripheralManager.isAdvertising, "isAdvertising invalid value")
             if let advertisedData = mock.advertisementData,
                    name = advertisedData[CBAdvertisementDataLocalNameKey] as? String,
@@ -136,7 +136,7 @@ class BCPeripheralManagerTests: XCTestCase {
         future.onFailure {error in
             expectation.fulfill()
             XCTAssertEqual(error.code, TestFailure.error.code, "error code invalid")
-            XCTAssert(mock.startAdvertisingCalled, "startAdvertising not called")
+            XCTAssert(mock.startAdvertisingCalled, "CBPeripheralManager#startAdvertising not called")
             if let advertisedData = mock.advertisementData,
                 name = advertisedData[CBAdvertisementDataLocalNameKey] as? String,
                 uuids = advertisedData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
@@ -177,7 +177,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
         future.onSuccess {
             expectation.fulfill()
-            XCTAssert(mock.startAdvertisingCalled, "startAdvertising not called")
+            XCTAssert(mock.startAdvertisingCalled, "CBPeripheralManager#startAdvertising not called")
             XCTAssert(peripheralManager.isAdvertising, "isAdvertising invalid value")
         }
         future.onFailure { error in
@@ -201,7 +201,7 @@ class BCPeripheralManagerTests: XCTestCase {
         future.onFailure { error in
             expectation.fulfill()
             XCTAssertEqual(error.code, TestFailure.error.code, "error code invalid")
-            XCTAssert(mock.startAdvertisingCalled, "startAdvertising not called")
+            XCTAssert(mock.startAdvertisingCalled, "CBPeripheralManager#startAdvertising not called")
         }
         peripheralManager.didStartAdvertising(TestFailure.error)
         waitForExpectationsWithTimeout(2) {error in
@@ -220,7 +220,7 @@ class BCPeripheralManagerTests: XCTestCase {
         future.onFailure {error in
             expectation.fulfill()
             XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "Error code is invalid \(error.code)")
-            XCTAssertFalse(mock.startAdvertisingCalled, "startAdvertising not called")
+            XCTAssertFalse(mock.startAdvertisingCalled, "CBPeripheralManager#startAdvertising not called")
         }
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
@@ -234,7 +234,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let future = peripheralManager.stopAdvertising()
         future.onSuccess {
             expectation.fulfill()
-            XCTAssert(mock.stopAdvertisingCalled, "stopAdvertisingCalled not called")
+            XCTAssert(mock.stopAdvertisingCalled, "CBPeripheralManager#stopAdvertisingCalled not called")
         }
         future.onFailure {error in
             expectation.fulfill()
@@ -256,7 +256,7 @@ class BCPeripheralManagerTests: XCTestCase {
         }
         future.onFailure {error in
             XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsNotAdvertising.rawValue, "Error code is invalid")
-            XCTAssertFalse(mock.stopAdvertisingCalled, "stopAdvertisingCalled called")
+            XCTAssertFalse(mock.stopAdvertisingCalled, "CBPeripheralManager#stopAdvertisingCalled called")
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(2) {error in
@@ -273,7 +273,7 @@ class BCPeripheralManagerTests: XCTestCase {
         future.onSuccess {
             expectation.fulfill()
             let peripheralServices = peripheralManager.services
-            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssert(mock.addServiceCalled, "CBPeripheralManager#addService not called")
             XCTAssertEqual(peripheralServices.count, 1, "peripheralManager service count invalid")
             XCTAssertEqual(peripheralServices[0].UUID, services[0].UUID, "addedService has invalid UUID")
             if let addedService = mock.addedService {
@@ -305,7 +305,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
             let peripheralServices = peripheralManager.services
             XCTAssertEqual(TestFailure.error.code, error.code, "error code is invalid")
-            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssert(mock.addServiceCalled, "CBPeripheralManager#addService not called")
             XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
         }
         peripheralManager.didAddService(services[0].cbMutableService, error: TestFailure.error)
@@ -322,7 +322,7 @@ class BCPeripheralManagerTests: XCTestCase {
         future.onSuccess {
             expectation.fulfill()
             let peripheralServices = peripheralManager.services.map { $0.UUID }
-            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssert(mock.addServiceCalled, "CBPeripheralManager#addService not called")
             XCTAssertEqual(peripheralServices.count, 2, "peripheralManager service count invalid")
             XCTAssert(peripheralServices.contains(services[0].UUID), "addedService has invalid UUID")
             XCTAssert(peripheralServices.contains(services[1].UUID), "addedService has invalid UUID")
@@ -350,7 +350,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
             let peripheralServices = peripheralManager.services
             XCTAssertEqual(TestFailure.error.code, error.code, "error code is invalid")
-            XCTAssert(mock.addServiceCalled, "addService not called")
+            XCTAssert(mock.addServiceCalled, "CBPeripheralManager#addService not called")
             XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
         }
         waitForExpectationsWithTimeout(2) {error in
@@ -368,7 +368,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
             peripheralManager.removeService(services[0])
             let peripheralServices = peripheralManager.services
-            XCTAssert(mock.removeServiceCalled, "removeService not called")
+            XCTAssert(mock.removeServiceCalled, "CBPeripheralManager#removeService not called")
             XCTAssertEqual(peripheralServices.count, 1, "peripheralManager service count invalid")
             XCTAssertEqual(peripheralServices[0].UUID, services[1].UUID, "addedService has invalid UUID")
             if let removedService = mock.removedService {
@@ -390,7 +390,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let services = createPeripheralManagerServices(peripheralManager)
         peripheralManager.removeService(services[0])
-        XCTAssert(mock.removeServiceCalled, "removeService not called")
+        XCTAssert(mock.removeServiceCalled, "CBPeripheralManager#removeService not called")
     }
 
     func testRemovedAllServices_WhenServicesArePresent_RemovesAllServices() {
@@ -402,7 +402,7 @@ class BCPeripheralManagerTests: XCTestCase {
             expectation.fulfill()
             peripheralManager.removeAllServices()
             let peripheralServices = peripheralManager.services
-            XCTAssert(mock.removeAllServicesCalled, "removeAllServices not called")
+            XCTAssert(mock.removeAllServicesCalled, "CBPeripheralManager#removeAllServices not called")
             XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
         }
         addServicesFuture.onFailure {error in

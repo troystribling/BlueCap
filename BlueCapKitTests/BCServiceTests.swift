@@ -83,4 +83,10 @@ class BCServiceTests: XCTestCase {
         }
     }
 
+    func testDiscoverAllCharacteristics_WhenConnectedWithTimeout_CompletesServiceCharacteristicDiscoveryTimeout() {
+    }
+
+    func testDiscoverAllCharacteristics_WhenDiscoveryInProgress_CompletesServiceCharacteristicDiscoveryInProgress() {
+    }
+
 }
