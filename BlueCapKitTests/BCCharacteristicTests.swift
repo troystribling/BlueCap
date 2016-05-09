@@ -20,6 +20,7 @@ class BCCharacteristicTests: XCTestCase {
     let mockPerpheral = CBPeripheralMock(state: .Connected)
     let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))
     let RSSI = -45
+    let immediateContext = ImmediateContext()
 
     override func setUp() {
         GnosusProfiles.create()
@@ -42,11 +43,10 @@ class BCCharacteristicTests: XCTestCase {
 
     // MARK: Write data
     func testWriteData_WhenWritableAndNoErrorInAck_CompletesSuccessfilly() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString(), timeout: 120.0)
-        future.onSuccess { _ in
-            expectation.fulfill()
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error :nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue not called 1 time")
             XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
@@ -56,26 +56,13 @@ class BCCharacteristicTests: XCTestCase {
                 XCTFail("writeValue no data available")
             }
         }
-        future.onFailure { error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
-        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error :nil)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testWriteData_WhenWritableAndErrorInAck_CompletesWithAckError() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString(), timeout: 120.0)
-        future.onSuccess { _ in
-            expectation.fulfill()
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
-            expectation.fulfill()
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called more than once")
@@ -86,21 +73,12 @@ class BCCharacteristicTests: XCTestCase {
                 XCTFail("writeValue no data available")
             }
         }
-        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
-    func testWriteData_WhenWritableAndNoAckReceivedBeforeTimeout_CompletesWithTimeoutError() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
+    func testWriteData_WhenWritableAndOnTimeout_CompletesWithTimeoutError() {
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString(), timeout:1.0)
-        future.onSuccess { _ in
-            XCTFail("onFailure called")
-        }
-        future.onFailure { error in
-            expectation.fulfill()
+        XCTAssertFutureFails(future) { error in
             XCTAssertEqual(error.code, BCCharacteristicErrorCode.WriteTimeout.rawValue, "Error code invalid")
             XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called more than once")
@@ -110,9 +88,6 @@ class BCCharacteristicTests: XCTestCase {
             } else {
                 XCTFail("writeValue no data available")
             }
-        }
-        waitForExpectationsWithTimeout(20) {error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 

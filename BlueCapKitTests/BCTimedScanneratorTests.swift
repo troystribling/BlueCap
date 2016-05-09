@@ -16,7 +16,7 @@ import CoreLocation
 class BCTimedScanneratorTests: XCTestCase {
     
     var centralManager: BCCentralManager!
-    let mockPerpheral = CBPeripheralMock(state:.Connected)
+    let mockPerpheral = CBPeripheralMock()
     let context = ImmediateContext()
 
     override func setUp() {
@@ -29,19 +29,20 @@ class BCTimedScanneratorTests: XCTestCase {
     }
 
     // MARK: Scan timeout
-    func testScanSuccessful() {
+    func testStartScanning_WhenPeripeharlDiscovered_CompeletesSuccessfully() {
         let scannerator = BCTimedScannerator(centralManager: self.centralManager)
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = scannerator.startScanning(2)
-        future.onSuccess(self.context) {_ in
+        future.onSuccess(self.context) { peripheral in
             expectation.fulfill()
+            XCTAssertEqual(peripheral.identifier, self.mockPerpheral.identifier, "Peripheral identifier timeout")
         }
         future.onFailure(self.context) {error in
             expectation.fulfill()
             XCTFail("onFailure called")
         }
         self.centralManager.didDiscoverPeripheral(self.mockPerpheral, advertisementData:peripheralAdvertisements, RSSI:NSNumber(integer: -45))
-        waitForExpectationsWithTimeout(5) {error in
+        waitForExpectationsWithTimeout(5) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -50,7 +51,7 @@ class BCTimedScanneratorTests: XCTestCase {
         let scannerator = BCTimedScannerator(centralManager :self.centralManager)
         let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = scannerator.startScanning(1)
-        future.onSuccess(self.context) {_ in
+        future.onSuccess(self.context) { _ in
             expectation.fulfill()
             XCTFail("onSuccess called")
         }
@@ -58,7 +59,7 @@ class BCTimedScanneratorTests: XCTestCase {
             expectation.fulfill()
             XCTAssertEqual(BCError.centralPeripheralScanTimeout.code, error.code, "onFailure error invalid")
         }
-        waitForExpectationsWithTimeout(30) {error in
+        waitForExpectationsWithTimeout(30) { error in
             XCTAssertNil(error, "\(error)")
         }
     }

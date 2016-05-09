@@ -205,27 +205,6 @@ class CBServiceMock: CBServiceInjectable {
 
 }
 
-// MARK: - ServiceUT -
-class ServiceUT: BCService {
-    
-    let error: NSError?
-
-    init(cbService: CBServiceMock, peripheral: BCPeripheral, mockCharacteristics: [CBCharacteristicMock], error: NSError?) {
-        self.error = error
-        cbService.characteristics = mockCharacteristics
-        super.init(cbService:cbService, peripheral:peripheral)
-    }
-    
-    override func discoverAllCharacteristics(timout: NSTimeInterval? = nil) -> Future<BCService> {
-        self.characteristicsDiscoveredPromise = Promise<BCService>()
-        guard let characteristics = self.cbService.getCharacteristics() else {
-            return self.characteristicsDiscoveredPromise!.future
-        }
-        self.didDiscoverCharacteristics(characteristics, error: self.error)
-        return self.characteristicsDiscoveredPromise!.future
-    }
-}
-
 // MARK: - CBCharacteristicMock -
 class CBCharacteristicMock: CBCharacteristicInjectable {
     

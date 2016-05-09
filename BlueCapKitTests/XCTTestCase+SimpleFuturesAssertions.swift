@@ -129,13 +129,13 @@ extension XCTestCase  {
                     self.recordFailureWithDescription(message, inFile: file, atLine: line, expected: true)
                 } else {
                     if !onFailureCalled {
-                        self.recordFailureWithDescription("onSuccess not called", inFile: file, atLine: line, expected: true)
+                        self.recordFailureWithDescription("onFailure not called", inFile: file, atLine: line, expected: true)
                     }
                 }
             }
         } else {
             if !onFailureCalled {
-                self.recordFailureWithDescription("onSuccess not called", inFile: file, atLine: line, expected: true)
+                self.recordFailureWithDescription("onFailure not called", inFile: file, atLine: line, expected: true)
             }
         }
     }

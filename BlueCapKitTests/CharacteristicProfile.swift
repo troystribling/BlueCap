@@ -27,7 +27,7 @@ class CharacteristicProfile: XCTestCase {
         GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
         self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        self.service  = ServiceUT(cbService: self.mockService, peripheral: self.peripheral, mockCharacteristics: [self.mockCharacteristic], error: nil)
+        self.service  = BCService(cbService: self.mockService, peripheral: self.peripheral)
     }
     
     override func tearDown() {
