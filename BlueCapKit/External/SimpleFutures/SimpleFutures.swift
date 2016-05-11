@@ -496,28 +496,24 @@ public class Future<T> {
 
     typealias OnComplete        = Try<T> -> Void
     private var saveCompletes   = [OnComplete]()
-    private let futureQueue     = Queue.simpleFutures
-    
+
     public var completed: Bool {
-        return Queue.simpleFutures.sync { Void -> Bool in
-            return self.result != nil
-        }
+        return self.result != nil
     }
     
-    public init() {}
+    public init() {
+    }
 
     // MARK: Complete
     internal func complete(result: Try<T>) {
-        self.futureQueue.sync {
-            if self.result != nil {
-                SimpleFuturesException.futureCompleted.raise()
-            }
-            self.result = result
-            for complete in self.saveCompletes {
-                complete(result)
-            }
-            self.saveCompletes.removeAll()
+        if self.result != nil {
+            SimpleFuturesException.futureCompleted.raise()
         }
+        self.result = result
+        for complete in self.saveCompletes {
+            complete(result)
+        }
+        self.saveCompletes.removeAll()
     }
 
     internal func completeWith(future: Future<T>) {
@@ -552,17 +548,15 @@ public class Future<T> {
 
     // MARK: Callbacks
     public func onComplete(executionContext: ExecutionContext, complete: Try<T> -> Void) -> Void {
-        self.futureQueue.sync {
-            let savedCompletion : OnComplete = { result in
-                executionContext.execute {
-                    complete(result)
-                }
+        let savedCompletion : OnComplete = { result in
+            executionContext.execute {
+                complete(result)
             }
-            if let result = self.result {
-                savedCompletion(result)
-            } else {
-                self.saveCompletes.append(savedCompletion)
-            }
+        }
+        if let result = self.result {
+            savedCompletion(result)
+        } else {
+            self.saveCompletes.append(savedCompletion)
         }
     }
     
@@ -928,7 +922,6 @@ public class FutureStream<T> {
     private typealias InFuture = Future<T> -> Void
 
     private var saveCompletes = [InFuture]()
-    private let futureQueue = Queue.simpleFutureStreams
     private var capacity: Int?
     
     internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
@@ -945,11 +938,9 @@ public class FutureStream<T> {
     internal func complete(result: Try<T>) {
         let future = Future<T>()
         future.complete(result)
-        self.futureQueue.sync {
-            self.addFuture(future)
-            for complete in self.saveCompletes {
-                complete(future)
-            }
+        self.addFuture(future)
+        for complete in self.saveCompletes {
+            complete(future)
         }
     }
 
@@ -992,14 +983,12 @@ public class FutureStream<T> {
 
     // MARK: Callbacks
     public func onComplete(executionContext: ExecutionContext, complete: Try<T> -> Void) {
-        self.futureQueue.sync {
-            let futureComplete : InFuture = { future in
-                future.onComplete(executionContext, complete: complete)
-            }
-            self.saveCompletes.append(futureComplete)
-            for future in self.futures {
-                futureComplete(future)
-            }
+        let futureComplete : InFuture = { future in
+            future.onComplete(executionContext, complete: complete)
+        }
+        self.saveCompletes.append(futureComplete)
+        for future in self.futures {
+            futureComplete(future)
         }
     }
     
