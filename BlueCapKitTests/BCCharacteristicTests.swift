@@ -232,31 +232,39 @@ class BCCharacteristicTests: XCTestCase {
         let future1 = characteristic.read()
         let future2 = characteristic.read()
         let future3 = characteristic.read()
-        let context = ImmediateContext()
-        future1.onSuccess(context) { _ in
+        var onSuccess1Called = false
+        var onSuccess2Called = false
+        var onSuccess3Called = false
+        future1.onSuccess(self.immediateContext) { _ in
+            onSuccess1Called = true
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "CBPeripheral#readValue not called 1 times")
         }
-        future1.onFailure(context) { error in
+        future1.onFailure(self.immediateContext) { error in
             XCTFail("onFailure called")
         }
-        future2.onSuccess(context) { _ in
+        future2.onSuccess(self.immediateContext) { _ in
+            onSuccess2Called = true
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2, "CBPeripheral#readValue not called 1 times")
         }
-        future2.onFailure(context) {error in
+        future2.onFailure(self.immediateContext) {error in
             XCTFail("onFailure called")
         }
-        future3.onSuccess(context) { _ in
+        future3.onSuccess(self.immediateContext) { _ in
+            onSuccess3Called = true
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3, "CBPeripheral#readValue not called 3 times")
         }
-        future3.onFailure(context) { error in
+        future3.onFailure(self.immediateContext) { error in
             XCTFail("onFailure called")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+        XCTAssert(onSuccess1Called, "onSuccess not called")
+        XCTAssert(onSuccess2Called, "onSuccess not called")
+        XCTAssert(onSuccess3Called, "onSuccess not called")
     }
 
     // MARK: Notifications
@@ -276,15 +284,10 @@ class BCCharacteristicTests: XCTestCase {
     }
 
     func testStartNotifying_WhenNotifiableAndErrorInAck_CompletesWithAckError() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: false)
         let future = characteristic.startNotifying()
-        future.onSuccess { _ in
-            expectation.fulfill()
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
-            expectation.fulfill()
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: TestFailure.error)
+        XCTAssertFutureFails(future, context:self.immediateContext) { error in
             XCTAssert(self.mockPerpheral.setNotifyValueCalled, "CBPeripheral#setNotifyValue not called")
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssertEqual(self.mockPerpheral.setNotifyValueCount, 1, "CBPeripheral#setNotifyValueCount not called 1 time")
@@ -294,18 +297,13 @@ class BCCharacteristicTests: XCTestCase {
                 XCTFail("setNotifyValue state not set")
             }
         }
-        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: TestFailure.error)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testStartNotifying_WhenIndicatableAndNoErrorOnAck_CompletesSuccessfully() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Indicate], isNotifying: false)
         let future = characteristic.startNotifying()
-        future.onSuccess { _ in
-            expectation.fulfill()
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(self.mockPerpheral.setNotifyValueCalled, "setNotifyValue not called")
             XCTAssertEqual(self.mockPerpheral.setNotifyValueCount, 1, "CBPeripheral#setNotifyValueCount not called 1 time")
             if let state = self.mockPerpheral.notifyingState {
@@ -314,22 +312,13 @@ class BCCharacteristicTests: XCTestCase {
                 XCTFail("setNotifyValue state not set")
             }
         }
-        future.onFailure { error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
-        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testStartNotify_WhenNotifyEncryptionRequiredAndNoErrorOnAck_CompletesSuccessfully() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.NotifyEncryptionRequired], isNotifying: false)
         let future = characteristic.startNotifying()
-        future.onSuccess { _ in
-            expectation.fulfill()
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(self.mockPerpheral.setNotifyValueCalled, "CBPeripheral#setNotifyValue not called")
             XCTAssertEqual(self.mockPerpheral.setNotifyValueCount, 1, "CBPeripheral#setNotifyValueCount not called 1 time")
             if let state = self.mockPerpheral.notifyingState {
@@ -337,23 +326,14 @@ class BCCharacteristicTests: XCTestCase {
             } else {
                 XCTFail("setNotifyValue state not set")
             }
-        }
-        future.onFailure { error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
-        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
     func testStartNotify_WhenIndicateEncryptionRequiredAndNoErrorOnAck_CompletesSuccessfully() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.IndicateEncryptionRequired], isNotifying: false)
         let future = characteristic.startNotifying()
-        future.onSuccess { _ in
-            expectation.fulfill()
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(self.mockPerpheral.setNotifyValueCalled, "CBPeripheral#setNotifyValue not called")
             XCTAssertEqual(self.mockPerpheral.setNotifyValueCount, 1, "CBPeripheral#setNotifyValueCount not called 1 time")
             if let state = self.mockPerpheral.notifyingState {
@@ -362,73 +342,51 @@ class BCCharacteristicTests: XCTestCase {
                 XCTFail("setNotifyValue state not set")
             }
         }
-        future.onFailure { error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
-        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testStartNotifying_WhenNotNotifiable_CompletesWithNotifyNotSupportedError() {
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let (characteristic, _) = self.createCharacteristic([], isNotifying: false)
         let future = characteristic.startNotifying()
-        future.onSuccess { _ in
-            expectation.fulfill()
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
-            expectation.fulfill()
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertFalse(self.mockPerpheral.setNotifyValueCalled, "CBPeripheral#setNotifyValue not called")
             XCTAssertEqual(error.code, BCError.characteristicNotifyNotSupported.code, "Error code invalid")
             if let state = self.mockPerpheral.notifyingState {
                 XCTAssertFalse(state, "setNotifyValue state not true")
             }
         }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
-        let expectation1 = expectationWithDescription("expectation fulfilled for future 1")
-        let expectation2 = expectationWithDescription("expectation fulfilled for future 2")
+        var startNotifyingOnSuccessCalled = false
 
         let startNotifyingFuture = characteristic.startNotifying()
-        startNotifyingFuture.onSuccess{_ in
-            expectation1.fulfill()
+        startNotifyingFuture.onSuccess(self.immediateContext) { _ in
+            startNotifyingOnSuccessCalled = true
         }
-        startNotifyingFuture.onFailure {_ in
-            expectation1.fulfill()
+        startNotifyingFuture.onFailure(self.immediateContext) { _ in
             XCTFail("start notifying onFailure called")
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
 
-        let updateFuture = startNotifyingFuture.flatmap{ _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.receiveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
-            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
             return future
         }
-        updateFuture.onSuccess { (_, data) in
-            expectation2.fulfill()
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
+        updateFuture.onSuccess(self.immediateContext) { (_, data) in
             if let data = data {
                 XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
             } else {
                 XCTFail("characteristic value not set")
             }
         }
-        updateFuture.onFailure {error in
-            expectation2.fulfill()
+        updateFuture.onFailure(self.immediateContext) {error in
             XCTFail("update onFailure called")
         }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssert(startNotifyingOnSuccessCalled, "startNotifying onSuccess not called")
+        sleep(100)
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
@@ -465,22 +423,12 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testReceiveNotificationUpdates_WhenNotNotifiableUpdateIsReceivedWitfError_CompletesWithNotifyNotSupported() {
+    func testReceiveNotificationUpdates_WhenNotNotifiableUpdateIsReceivedWithError_CompletesWithNotifyNotSupported() {
         let (characteristic, _) = self.createCharacteristic([], isNotifying: true)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
-
         let future = characteristic.receiveNotificationUpdates()
-        future.onSuccess {(_, data) in
-            expectation.fulfill()
-            XCTFail("update onFailure called")
-        }
-        future.onFailure {error in
-            expectation.fulfill()
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [{ error in
             XCTAssertEqual(error.code, BCError.characteristicNotifyNotSupported.code, "Error code invalid")
-        }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        }])
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableAndMultipleUpdatesAreReceivedWithoutErrot_CompletesSuccessfully() {
@@ -587,19 +535,10 @@ class BCCharacteristicTests: XCTestCase {
 
     func testStopNotifying_WhenNotNotifiable_CompletesWithNotifyNotSupported() {
         let (characteristic, _) = self.createCharacteristic([], isNotifying: true)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = characteristic.stopNotifying()
-        future.onSuccess { _ in
-            expectation.fulfill()
-            XCTFail("onSuccess called")
-        }
-        future.onFailure {error in
-            expectation.fulfill()
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertFalse(self.mockPerpheral.setNotifyValueCalled, "CBPeripheral#setNotifyValue not called")
             XCTAssertEqual(error.code, BCError.characteristicNotifyNotSupported.code, "Error code invalid")
-        }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
