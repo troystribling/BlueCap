@@ -359,6 +359,7 @@ class BCCharacteristicTests: XCTestCase {
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
         var startNotifyingOnSuccessCalled = false
+        let expecttation = expectationWithDescription("Test")
 
         let startNotifyingFuture = characteristic.startNotifying()
         startNotifyingFuture.onSuccess(self.immediateContext) { _ in
@@ -367,14 +368,14 @@ class BCCharacteristicTests: XCTestCase {
         startNotifyingFuture.onFailure(self.immediateContext) { _ in
             XCTFail("start notifying onFailure called")
         }
-        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
 
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
         let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.receiveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
+            expecttation.fulfill()
             return future
         }
-        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
         updateFuture.onSuccess(self.immediateContext) { (_, data) in
             if let data = data {
                 XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
@@ -385,8 +386,11 @@ class BCCharacteristicTests: XCTestCase {
         updateFuture.onFailure(self.immediateContext) {error in
             XCTFail("update onFailure called")
         }
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
         XCTAssert(startNotifyingOnSuccessCalled, "startNotifying onSuccess not called")
-        sleep(100)
+        waitForExpectationsWithTimeout(2) {error in
+            XCTAssertNil(error, "\(error)")
+        }
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
