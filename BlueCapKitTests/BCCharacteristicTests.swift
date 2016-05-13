@@ -359,7 +359,7 @@ class BCCharacteristicTests: XCTestCase {
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
         var startNotifyingOnSuccessCalled = false
-        let expecttation = expectationWithDescription("Test")
+        let expectation = expectationWithDescription("Test")
 
         let startNotifyingFuture = characteristic.startNotifying()
         startNotifyingFuture.onSuccess(self.immediateContext) { _ in
@@ -373,10 +373,10 @@ class BCCharacteristicTests: XCTestCase {
         let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.receiveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
-            expecttation.fulfill()
             return future
         }
         updateFuture.onSuccess(self.immediateContext) { (_, data) in
+            expectation.fulfill()
             if let data = data {
                 XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
             } else {
@@ -384,6 +384,7 @@ class BCCharacteristicTests: XCTestCase {
             }
         }
         updateFuture.onFailure(self.immediateContext) {error in
+            expectation.fulfill()
             XCTFail("update onFailure called")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
@@ -395,33 +396,33 @@ class BCCharacteristicTests: XCTestCase {
 
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
-        let expectation1 = expectationWithDescription("expectation fulfilled for future 1")
-        let expectation2 = expectationWithDescription("expectation fulfilled for future 2")
+        let expectation = expectationWithDescription("expectation fulfilled for future ")
+        var startNotifyingOnSuccessCalled = false
 
         let startNotifyingFuture = characteristic.startNotifying()
-        startNotifyingFuture.onSuccess{ _ in
-            expectation1.fulfill()
+        startNotifyingFuture.onSuccess(self.immediateContext) { _ in
+            startNotifyingOnSuccessCalled = true
         }
-        startNotifyingFuture.onFailure { _ in
-            expectation1.fulfill()
+        startNotifyingFuture.onFailure(self.immediateContext) { _ in
             XCTFail("start notifying onFailure called")
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
-
-        let updateFuture = startNotifyingFuture.flatmap{ _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.receiveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
-            self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: TestFailure.error)
             return future
         }
-        updateFuture.onSuccess { (_, data) in
-            expectation2.fulfill()
+        updateFuture.onSuccess(self.immediateContext) { (_, data) in
+            expectation.fulfill()
             XCTFail("update onSuccess called")
         }
         updateFuture.onFailure {error in
-            expectation2.fulfill()
+            expectation.fulfill()
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
         }
+
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: TestFailure.error)
+        XCTAssert(startNotifyingOnSuccessCalled, "startNotifying onSuccess not called")
         waitForExpectationsWithTimeout(2) {error in
             XCTAssertNil(error, "\(error)")
         }
