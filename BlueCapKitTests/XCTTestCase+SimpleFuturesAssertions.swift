@@ -57,7 +57,7 @@ extension XCTestCase  {
             if maxCount == 0 {
                 expectation?.fulfill()
             } else if count > maxCount {
-                XCTFail("onSuccess called more than maxCount \(maxCount) times")
+                XCTFail("onSuccess called more than \(maxCount) times")
             } else {
                 validations[count - 1](result)
                 if count == maxCount {
@@ -96,9 +96,9 @@ extension XCTestCase  {
                     self.recordFailureWithDescription("onSuccess not called", inFile: file, atLine: line, expected: true)
                 }
             } else {
-                // validations given onSuccess calles once for each validation
+                // validations given onSuccess called once for each validation
                 if maxCount != count {
-                    self.recordFailureWithDescription("onSuccess not called", inFile: file, atLine: line, expected: true)
+                    self.recordFailureWithDescription("onSuccess not called \(maxCount) times", inFile: file, atLine: line, expected: true)
                 }
             }
         }
@@ -190,9 +190,9 @@ extension XCTestCase  {
                     self.recordFailureWithDescription("onFailure not called", inFile: file, atLine: line, expected: true)
                 }
             } else {
-                // validations given onFailure calles once for each validation
+                // validations given onFailure called once for each validation
                 if maxCount != count {
-                    self.recordFailureWithDescription("onFailure not called", inFile: file, atLine: line, expected: true)
+                    self.recordFailureWithDescription("onFailure not called \(maxCount) times", inFile: file, atLine: line, expected: true)
                 }
             }
         }

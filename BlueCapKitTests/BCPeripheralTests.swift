@@ -467,19 +467,18 @@ class BCPeripheralTests: XCTestCase {
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         mockPeripheral.bcPeripheral = peripheral
         let future = peripheral.startPollingRSSI(0.25)
-        let validations: [(Int -> Void)] = [
-            { (rssi: Int) -> Void in
+        XCTAssertFutureStreamSucceeds(future, timeout: 120, validations: [
+            { rssi in
                 XCTAssertEqual(rssi, mockPeripheral.RSSI, "Recieved RSSI invalid")
                 XCTAssertEqual(peripheral.RSSI, mockPeripheral.RSSI, "Peripheral RSSI invalid")
                 XCTAssertEqual(mockPeripheral.readRSSICalledCount, 1, "readRSSICalled count invalid")
             },
-            { (rssi: Int) -> Void in
+            { rssi in
                 XCTAssertEqual(rssi, mockPeripheral.RSSI, "Recieved RSSI invalid")
                 XCTAssertEqual(peripheral.RSSI, mockPeripheral.RSSI, "Peripheral RSSI invalid")
                 XCTAssertEqual(mockPeripheral.readRSSICalledCount, 2, "readRSSICalled count invalid")
                 peripheral.stopPollingRSSI()
-            }]
-        XCTAssertFutureStreamSucceeds(future, timeout: 120, validations: validations)
+            }])
     }
 
     func testStartPollingRSSI_WhenDisconnected_CompletesWithPeripheralDisconnected() {
