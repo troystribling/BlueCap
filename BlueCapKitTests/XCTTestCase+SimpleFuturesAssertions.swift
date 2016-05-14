@@ -45,9 +45,7 @@ extension XCTestCase  {
         }
     }
 
-    func XCTAssertFutureStreamSucceeds<T>(future: FutureStream<T>, context: ExecutionContext = QueueContext.main,
-                                       timeout: NSTimeInterval = 10.0, line: UInt = #line, file: String = #file,
-                                       validations: [((T) -> Void)] = []) {
+    func XCTAssertFutureStreamSucceeds<T>(future: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: NSTimeInterval = 10.0, line: UInt = #line, file: String = #file, validations: [((T) -> Void)] = []) {
         var expectation: XCTestExpectation?
         let maxCount = validations.count
         var count = 0

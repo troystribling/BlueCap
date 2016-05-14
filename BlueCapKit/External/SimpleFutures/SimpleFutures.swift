@@ -702,7 +702,7 @@ public class Future<T> {
     }
     
     public func flatmap<M>(executionContext: ExecutionContext, mapping: T -> FutureStream<M>) -> FutureStream<M>  {
-        return self.flatMapStream(nil, executionContext: self.defaultExecutionContext, mapping: mapping)
+        return self.flatMapStream(nil, executionContext: executionContext, mapping: mapping)
     }
     
     public func recoverWith(recovery: NSError -> FutureStream<T>) -> FutureStream<T> {

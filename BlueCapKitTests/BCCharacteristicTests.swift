@@ -358,74 +358,38 @@ class BCCharacteristicTests: XCTestCase {
 
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
-        var startNotifyingOnSuccessCalled = false
-        let expectation = expectationWithDescription("Test")
-
         let startNotifyingFuture = characteristic.startNotifying()
-        startNotifyingFuture.onSuccess(self.immediateContext) { _ in
-            startNotifyingOnSuccessCalled = true
-        }
-        startNotifyingFuture.onFailure(self.immediateContext) { _ in
-            XCTFail("start notifying onFailure called")
-        }
-
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
         let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.receiveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
             return future
         }
-        updateFuture.onSuccess(self.immediateContext) { (_, data) in
-            expectation.fulfill()
-            if let data = data {
-                XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
-            } else {
-                XCTFail("characteristic value not set")
-            }
-        }
-        updateFuture.onFailure(self.immediateContext) {error in
-            expectation.fulfill()
-            XCTFail("update onFailure called")
-        }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
-        XCTAssert(startNotifyingOnSuccessCalled, "startNotifying onSuccess not called")
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureSucceeds(startNotifyingFuture, context: self.immediateContext)
+        XCTAssertFutureStreamSucceeds(updateFuture, context: self.immediateContext, validations: [{ (_, data) -> Void in
+                if let data = data {
+                    XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
+                } else {
+                    XCTFail("characteristic value not set")
+                }
+            }])
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
-        let expectation = expectationWithDescription("expectation fulfilled for future ")
-        var startNotifyingOnSuccessCalled = false
-
         let startNotifyingFuture = characteristic.startNotifying()
-        startNotifyingFuture.onSuccess(self.immediateContext) { _ in
-            startNotifyingOnSuccessCalled = true
-        }
-        startNotifyingFuture.onFailure(self.immediateContext) { _ in
-            XCTFail("start notifying onFailure called")
-        }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
         let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
             let future = characteristic.receiveNotificationUpdates()
             mockCharacteristic.value = "11".dataFromHexString()
             return future
         }
-        updateFuture.onSuccess(self.immediateContext) { (_, data) in
-            expectation.fulfill()
-            XCTFail("update onSuccess called")
-        }
-        updateFuture.onFailure {error in
-            expectation.fulfill()
-            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
-        }
-
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: TestFailure.error)
-        XCTAssert(startNotifyingOnSuccessCalled, "startNotifying onSuccess not called")
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureSucceeds(startNotifyingFuture, context: self.immediateContext)
+        XCTAssertFutureStreamFails(updateFuture, context: self.immediateContext, validations: [ { error in
+              XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
+        }])
     }
 
     func testReceiveNotificationUpdates_WhenNotNotifiableUpdateIsReceivedWithError_CompletesWithNotifyNotSupported() {
