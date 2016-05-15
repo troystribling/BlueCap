@@ -1,5 +1,5 @@
 //
-//  CharacteristicProfile.swift
+//  BCCharacteristicProfile.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 4/12/16.
@@ -11,7 +11,7 @@ import XCTest
 import CoreBluetooth
 @testable import BlueCapKit
 
-class CharacteristicProfile: XCTestCase {
+class BCCharacteristicProfile: XCTestCase {
 
     var centralManager: BCCentralManager!
     var service: BCService!
@@ -20,6 +20,7 @@ class CharacteristicProfile: XCTestCase {
     let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.Read, .Write], isNotifying: false)
 
     var peripheral: BCPeripheral!
+    let immediateContext = ImmediateContext()
     let RSSI = -45
 
     override func setUp() {
@@ -36,36 +37,27 @@ class CharacteristicProfile: XCTestCase {
     
     // MARK: After discovered
     func testAfterDiscovered_WhenCharacteristicIsDiscovered_CompletesSuccessfully() {
-        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
-        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]
-        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]
-        characteristicProfile?.afterDiscovered().onSuccess { _ in
-            onSuccessExpectation.fulfill()
-        }
-        characteristicProfile?.afterDiscovered().onFailure { error in
-            XCTFail("onFailure called")
-        }
+        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
+        let characteristicProfile = serviceProfile.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]!
+        let future = characteristicProfile.afterDiscovered()
         service.didDiscoverCharacteristics([self.mockCharacteristic], error: nil)
-        waitForExpectationsWithTimeout(2) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+            { characteristic in
+                XCTAssertEqual(characteristic.UUID, characteristicProfile.UUID, "Characteristic UUID invalid")
+            }
+        ])
     }
 
     func testAfterDiscovered_WhenCharacteristicDiscoveryFailes_CompletesWithFailure() {
-        let onFailureExpectation = expectationWithDescription("onFailuree fulfilled for future")
-        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]
-        let characteristicProfile = serviceProfile?.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]
-        characteristicProfile?.afterDiscovered().onSuccess { _ in
-            XCTFail("onSuccess called")
-        }
-        characteristicProfile?.afterDiscovered().onFailure { error in
-            XCTAssertEqual(error.code, TestFailure.error.code, "Error code is invalid")
-            onFailureExpectation.fulfill()
-        }
+        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
+        let characteristicProfile = serviceProfile.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]!
+        let future = characteristicProfile.afterDiscovered()
         service.didDiscoverCharacteristics([self.mockCharacteristic], error: TestFailure.error)
-        waitForExpectationsWithTimeout(2) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+            { error in
+                XCTAssertEqual(error.code, TestFailure.error.code, "Error code is invalid")
+            }
+        ])
     }
 
 }

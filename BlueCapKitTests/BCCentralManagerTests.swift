@@ -65,26 +65,30 @@ class BCCentralManagerTests: XCTestCase {
         let peripheralMock = CBPeripheralMock()
         let future = centralManager.startScanning()
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
-        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [{ _ in
-            XCTAssert(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices not called")
-            if let peripheral = centralManager.peripherals.first where centralManager.peripherals.count == 1 {
-                XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
-                XCTAssertEqual(peripheral.name, peripheralMock.name, "Peripheral name is invalid")
-                XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier is invalid")
-            } else {
-                XCTFail("Discovered peripheral missing")
+        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+            { _ in
+                XCTAssert(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices not called")
+                if let peripheral = centralManager.peripherals.first where centralManager.peripherals.count == 1 {
+                    XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
+                    XCTAssertEqual(peripheral.name, peripheralMock.name, "Peripheral name is invalid")
+                    XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier is invalid")
+                } else {
+                    XCTFail("Discovered peripheral missing")
+                }
             }
-        }])
+        ])
     }
     
     func testStartScanning_WhenPoweredOff_CompletesWithError() {
         let centralMock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = BCCentralManager(centralManager: centralMock)
         let future = centralManager.startScanning()
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [{ error in
-            XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices is called")
-            XCTAssert(error.code == BCError.centralIsPoweredOff.code, "Error code invalid")
-        }])
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+            { error in
+                XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices is called")
+                XCTAssert(error.code == BCError.centralIsPoweredOff.code, "Error code invalid")
+            }
+        ])
     }
 
     // MARK: State Restoration

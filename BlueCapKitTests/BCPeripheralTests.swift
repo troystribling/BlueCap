@@ -478,17 +478,20 @@ class BCPeripheralTests: XCTestCase {
                 XCTAssertEqual(peripheral.RSSI, mockPeripheral.RSSI, "Peripheral RSSI invalid")
                 XCTAssertEqual(mockPeripheral.readRSSICalledCount, 2, "readRSSICalled count invalid")
                 peripheral.stopPollingRSSI()
-            }])
+            }
+        ])
     }
 
     func testStartPollingRSSI_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.startPollingRSSI()
-        XCTAssertFutureStreamFails(future, context:self.immediateContext, validations: [{ error in
-            peripheral.stopPollingRSSI()
-            XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
-        }])
+        XCTAssertFutureStreamFails(future, context:self.immediateContext, validations: [
+            { error in
+                peripheral.stopPollingRSSI()
+                XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
+            }
+        ])
     }
 
 
@@ -528,11 +531,13 @@ class BCPeripheralTests: XCTestCase {
         let future = peripheral.startPollingRSSI(0.25)
         mockPeripheral.error = TestFailure.error
         mockPeripheral.bcPeripheral = peripheral
-        XCTAssertFutureStreamFails(future, validations: [{ error in
-            peripheral.stopPollingRSSI()
-            expectation.fulfill()
-            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
-        }])
+        XCTAssertFutureStreamFails(future, validations: [
+            { error in
+                peripheral.stopPollingRSSI()
+                expectation.fulfill()
+                XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
+            }
+        ])
     }
 
     func testStopPollingRSSI_WhenConnected_StopsRSSIUpdates() {
