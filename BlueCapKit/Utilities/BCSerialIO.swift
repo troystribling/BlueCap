@@ -26,6 +26,10 @@ public class BCSerialIODictionary<T, U where T: Hashable> {
         return self.queue.sync { return Array(self.data.keys) }
     }
 
+    var count: Int {
+        return self.data.count
+    }
+
     subscript(key: T) -> U? {
         get {
             return self.queue.sync { return self.data[key] }
@@ -66,6 +70,10 @@ public class BCSerialIOArray<T> {
 
     var first: T? {
         return self.queue.sync { return self._data.first }
+    }
+
+    var count: Int {
+        return self.data.count
     }
 
     subscript(i: Int) -> T {

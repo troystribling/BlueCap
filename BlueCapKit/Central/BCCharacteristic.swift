@@ -32,8 +32,8 @@ public class BCCharacteristic : NSObject {
     private var _notificationStateChangedPromise: Promise<BCCharacteristic>?
     private var _notificationUpdatePromise: StreamPromise<(characteristic: BCCharacteristic, data: NSData?)>?
 
-    private var readPromises    = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
-    private var writePromises   = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
+    internal var readPromises    = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
+    internal var writePromises   = BCSerialIOArray<Promise<BCCharacteristic>>(BCCharacteristic.ioQueue)
     private var readParameters  = BCSerialIOArray<ReadParameters>(BCCharacteristic.ioQueue)
     private var writeParameters = BCSerialIOArray<WriteParameters>(BCCharacteristic.ioQueue)
     

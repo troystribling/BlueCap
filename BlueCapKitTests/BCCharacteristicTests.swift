@@ -146,45 +146,28 @@ class BCCharacteristicTests: XCTestCase {
         let future1 = characteristic.writeData("aa".dataFromHexString())
         let future2 = characteristic.writeData("bb".dataFromHexString())
         let future3 = characteristic.writeData("cc".dataFromHexString())
-        var onSuccess1Called = false
-        var onSuccess2Called = false
-        var onSuccess3Called = false
-        future1.onSuccess(self.immediateContext) { _ in
-            onSuccess1Called = true
-            XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue not called 2 times")
-            XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
-            XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
-        }
-        future1.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        future2.onSuccess(self.immediateContext) { _ in
-            onSuccess2Called = true
-            XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 2, "CBPeripheral#writeValue not called 3 times")
-            XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
+
+        XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
+        XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called count invalid")
+        XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
+        XCTAssertEqual(characteristic.writePromises.count, 3, "CBCharateristic#writePromises count invalid")
+
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        XCTAssertFutureSucceeds(future1, context: self.immediateContext) { characteristic in
+            XCTAssertEqual(self.mockPerpheral.writeValueCount, 2, "CBPeripheral#writeValue called count invalid")
             XCTAssertEqual(self.mockPerpheral.writtenData!, "bb".dataFromHexString())
+            XCTAssertEqual(characteristic.writePromises.count, 2, "CBCharateristic#writePromises count invalid")
         }
-        future2.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        future3.onSuccess(self.immediateContext) { _ in
-            onSuccess3Called = true
-            XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 3, "CBPeripheral#writeValue not called 3 times")
-            XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        XCTAssertFutureSucceeds(future2, context: self.immediateContext) { characteristic in
+            XCTAssertEqual(self.mockPerpheral.writeValueCount, 3, "CBPeripheral#writeValue called count invalid")
             XCTAssertEqual(self.mockPerpheral.writtenData!, "cc".dataFromHexString())
-        }
-        future3.onFailure(self.immediateContext) {error in
-            XCTFail("onFailure called")
+            XCTAssertEqual(characteristic.writePromises.count, 1, "CBCharateristic#writePromises count invalid")
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssert(onSuccess1Called, "onSuccess not called")
-        XCTAssert(onSuccess2Called, "onSuccess not called")
-        XCTAssert(onSuccess3Called, "onSuccess not called")
+        XCTAssertFutureSucceeds(future3, context: self.immediateContext) { characteristic in
+            XCTAssertEqual(characteristic.writePromises.count, 0, "CBCharateristic#writePromises count invalid")
+        }
     }
 
     // MARK: Read data
@@ -232,39 +215,26 @@ class BCCharacteristicTests: XCTestCase {
         let future1 = characteristic.read()
         let future2 = characteristic.read()
         let future3 = characteristic.read()
-        var onSuccess1Called = false
-        var onSuccess2Called = false
-        var onSuccess3Called = false
-        future1.onSuccess(self.immediateContext) { _ in
-            onSuccess1Called = true
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
-            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "CBPeripheral#readValue not called 1 times")
-        }
-        future1.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
-        }
-        future2.onSuccess(self.immediateContext) { _ in
-            onSuccess2Called = true
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
-            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2, "CBPeripheral#readValue not called 1 times")
-        }
-        future2.onFailure(self.immediateContext) {error in
-            XCTFail("onFailure called")
-        }
-        future3.onSuccess(self.immediateContext) { _ in
-            onSuccess3Called = true
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
-            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3, "CBPeripheral#readValue not called 3 times")
-        }
-        future3.onFailure(self.immediateContext) { error in
-            XCTFail("onFailure called")
+
+        XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "CBPeripheral#readValue called count invalid")
+        XCTAssertEqual(characteristic.readPromises.count, 3, "CBCharateristic#readPromises count invalid")
+        XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
+
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+        XCTAssertFutureSucceeds(future1, context: self.immediateContext) { chracteristic in
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2, "CBPeripheral#readValue called count invalid")
+            XCTAssertEqual(characteristic.readPromises.count, 2, "CBCharateristic#readPromises count invalid")
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
+        XCTAssertFutureSucceeds(future2, context: self.immediateContext) { _ in
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3, "CBPeripheral#readValue called count invalid")
+            XCTAssertEqual(characteristic.readPromises.count, 1, "CBCharateristic#readPromises count invalid")
+        }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssert(onSuccess1Called, "onSuccess not called")
-        XCTAssert(onSuccess2Called, "onSuccess not called")
-        XCTAssert(onSuccess3Called, "onSuccess not called")
+        XCTAssertFutureSucceeds(future3, context: self.immediateContext) { _ in
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3, "CBPeripheral#readValue called count invalid")
+            XCTAssertEqual(characteristic.readPromises.count, 0, "CBCharateristic#readPromises count invalid")
+        }
     }
 
     // MARK: Notifications
@@ -366,13 +336,15 @@ class BCCharacteristicTests: XCTestCase {
         mockCharacteristic.value = "11".dataFromHexString()
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(startNotifyingFuture, context: self.immediateContext)
-        XCTAssertFutureStreamSucceeds(updateFuture, context: self.immediateContext, validations: [{(_, data) in
+        XCTAssertFutureStreamSucceeds(updateFuture, context: self.immediateContext, validations: [
+            { (_, data) in
                 if let data = data {
                     XCTAssertEqual(data, "11".dataFromHexString(), "characteristic value invalid")
                 } else {
                     XCTFail("characteristic value not set")
                 }
-            }])
+            }
+        ])
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
@@ -385,17 +357,21 @@ class BCCharacteristicTests: XCTestCase {
         mockCharacteristic.value = "11".dataFromHexString()
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: TestFailure.error)
         XCTAssertFutureSucceeds(startNotifyingFuture, context: self.immediateContext)
-        XCTAssertFutureStreamFails(updateFuture, context: self.immediateContext, validations: [ { error in
-              XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
-        }])
+        XCTAssertFutureStreamFails(updateFuture, context: self.immediateContext, validations: [
+            { error in
+                XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
+            }
+        ])
     }
 
     func testReceiveNotificationUpdates_WhenNotNotifiableUpdateIsReceivedWithError_CompletesWithNotifyNotSupported() {
         let (characteristic, _) = self.createCharacteristic([], isNotifying: true)
         let future = characteristic.receiveNotificationUpdates()
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [{ error in
-            XCTAssertEqual(error.code, BCError.characteristicNotifyNotSupported.code, "Error code invalid")
-        }])
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+            { error in
+                XCTAssertEqual(error.code, BCError.characteristicNotifyNotSupported.code, "Error code invalid")
+            }
+        ])
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableAndMultipleUpdatesAreReceivedWithoutErrot_CompletesSuccessfully() {
@@ -437,7 +413,8 @@ class BCCharacteristicTests: XCTestCase {
                 } else {
                     XCTFail("characteristic value not set")
                 }
-            }])
+            }
+        ])
     }
     
     func testStopNotifying_WhenNotifyingAndNoErrorOnAck_CompletesSuccessfully() {
