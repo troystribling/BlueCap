@@ -17,7 +17,8 @@ class BCPeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
     let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)
-  
+    let immediateContext = ImmediateContext()
+
     override func setUp() {
         GnosusProfiles.create()
         super.setUp()
@@ -30,71 +31,31 @@ class BCPeripheralManagerTests: XCTestCase {
     // MARK: Power on
     func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOn()
-        future.onSuccess {
-            expectation.fulfill()
-        }
-        future.onFailure {error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOn_WhenInitiallyPoweredOff_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOn()
-        future.onSuccess {
-            expectation.fulfill()
-        }
-        future.onFailure {error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
         mock.state = .PoweredOn
         peripheralManager.didUpdateState()
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     // MARK: Power off
     func testWhenPowerOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOff()
-        future.onSuccess {
-            expectation.fulfill()
-        }
-        future.onFailure {error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
         mock.state = .PoweredOff
         peripheralManager.didUpdateState()
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheralManager.whenPowerOff()
-        future.onSuccess {
-            expectation.fulfill()
-        }
-        future.onFailure {error in
-            expectation.fulfill()
-            XCTFail("onFailure called")
-        }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     // MARK: Start advertising

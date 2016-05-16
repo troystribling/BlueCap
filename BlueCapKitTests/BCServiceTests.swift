@@ -22,6 +22,7 @@ class BCServiceTests: XCTestCase {
             CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.Read, .Write], isNotifying:false)].map { $0 as CBCharacteristicInjectable }
 
     let mockService = CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"))
+    let immediateContext = ImmediateContext()
     let RSSI = -45
 
     func service(peripheral: BCPeripheral) -> BCService {
@@ -44,85 +45,45 @@ class BCServiceTests: XCTestCase {
     // MARK: Discover characteristics
     func testDiscoverAllCharacteristics_WhenConnectedAndNoErrorInResponce_CompletesSuccessfully() {
         let service = self.service(self.peripheral(.Connected))
-        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = service.discoverAllCharacteristics()
-        future.onSuccess {_ in
-            onSuccessExpectation.fulfill()
+        service.didDiscoverCharacteristics(self.mockCharateristics, error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(service.characteristics.count == 3, "Characteristic count invalid")
             XCTAssertEqual(Set(service.characteristics.map { $0.UUID }), Set(self.mockCharateristics.map { $0.UUID }), "Invalid characteristic UUIDs")
-        }
-        future.onFailure {error in
-            XCTFail("onFailure called")
-        }
-        service.didDiscoverCharacteristics(self.mockCharateristics, error: nil)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
     func testDiscoverAllCharacteristics_WhenConnectedAndErrorInResonce_CompeletesWithResponseError() {
         let service = self.service(self.peripheral(.Connected))
-        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()
-        future.onSuccess {_ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure {error in
-            onFailureExpectation.fulfill()
-            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
-        }
         service.didDiscoverCharacteristics(self.mockCharateristics, error: TestFailure.error)
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
         }
     }
 
     func testDiscoverAllCharacteristics_WhenDisconnected_CompeltesWithPeripheralDisconnected() {
         let service = self.service(self.peripheral(.Disconnected))
-        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics()
-        future.onSuccess {_ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure {error in
-            onFailureExpectation.fulfill()
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssert(error.code == BCError.peripheralDisconnected.code, "Error code invalid \(error.code)")
-        }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
     func testDiscoverAllCharacteristics_WhenConnectedOnTimeout_CompletesServiceCharacteristicDiscoveryTimeout() {
         let service = self.service(self.peripheral(.Connected))
-        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         let future = service.discoverAllCharacteristics(0.25)
-        future.onSuccess {_ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure {error in
-            onFailureExpectation.fulfill()
+        XCTAssertFutureFails(future, timeout: 5) { error in
             XCTAssert(error.code == BCError.serviceCharacteristicDiscoveryTimeout.code, "Error code invalid \(error.code)")
-        }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
     func testDiscoverAllCharacteristics_WhenDiscoveryInProgress_CompletesServiceCharacteristicDiscoveryInProgress() {
         let service = self.service(self.peripheral(.Connected))
-        let onFailureExpectation = expectationWithDescription("onFailure fulfilled for future")
         service.discoverAllCharacteristics()
         let future = service.discoverAllCharacteristics()
-        future.onSuccess {_ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure {error in
-            onFailureExpectation.fulfill()
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssert(error.code == BCError.serviceCharacteristicDiscoveryInProgress.code, "Error code invalid \(error.code)")
-        }
-        waitForExpectationsWithTimeout(2) {error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
