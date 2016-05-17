@@ -110,28 +110,30 @@ class BCCentralManagerTests: XCTestCase {
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
                                         scannedServices: testScannedServices, options: testOptions)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) { (peripherals, scannedServices, options) in
-            XCTAssertEqual(peripherals.count, testPeripherals.count, "Restored peripherals count invalid")
-            XCTAssertEqual(scannedServices, testScannedServices, "Scanned services invalid")
-            XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, "Restored option invalid")
-            XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, "Restored option invalid")
-            XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }), "Restored peripherals identifier invalid")
-            for testPeripheral in testPeripherals {
-                let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
-                XCTAssertNotNil(peripheral, "Restored peripheral not found")
-                let services = peripheral!.services
-                let testServices = testPeripheral.services!
-                XCTAssertEqual(services.count, testServices.count, "Restored services count invalid")
-                XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }), "Restored services identifier invalid")
-                for testService in testServices {
-                    let testCharacteristics = testService.characteristics!
-                    let service = peripheral!.discoveredServices[testService.UUID]
-                    let characteristics = service!.characteristics
-                    XCTAssertEqual(characteristics.count, testCharacteristics.count, "Restored characteristics count invalid")
-                    XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }), "Restored characteristics identifier invalid")
+        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations:[
+            { (peripherals, scannedServices, options) in
+                XCTAssertEqual(peripherals.count, testPeripherals.count, "Restored peripherals count invalid")
+                XCTAssertEqual(scannedServices, testScannedServices, "Scanned services invalid")
+                XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, "Restored option invalid")
+                XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, "Restored option invalid")
+                XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }), "Restored peripherals identifier invalid")
+                for testPeripheral in testPeripherals {
+                    let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
+                    XCTAssertNotNil(peripheral, "Restored peripheral not found")
+                    let services = peripheral!.services
+                    let testServices = testPeripheral.services!
+                    XCTAssertEqual(services.count, testServices.count, "Restored services count invalid")
+                    XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }), "Restored services identifier invalid")
+                    for testService in testServices {
+                        let testCharacteristics = testService.characteristics!
+                        let service = peripheral!.discoveredServices[testService.UUID]
+                        let characteristics = service!.characteristics
+                        XCTAssertEqual(characteristics.count, testCharacteristics.count, "Restored characteristics count invalid")
+                        XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }), "Restored characteristics identifier invalid")
+                    }
                 }
             }
-        }
+        ])
     }
 
     func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
@@ -139,6 +141,10 @@ class BCCentralManagerTests: XCTestCase {
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
-        XCTAssertFutureFails(future, context: self.immediateContext)
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+            { error in
+                XCTAssertEqual(error.code, BCError.centralRestoreFailed.code, "Invalid error code")
+            }
+        ])
     }
 }

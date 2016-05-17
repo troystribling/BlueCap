@@ -20,7 +20,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: Properties
     private var _afterPowerOnPromise = Promise<Void>()
     private var _afterPowerOffPromise = Promise<Void>()
-    private var _afterStateRestoredPromise = Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
+    private var _afterStateRestoredPromise = StreamPromise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
 
     private var _isScanning = false
     private var _poweredOn = false
@@ -59,7 +59,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    private var afterStateRestoredPromise: Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
+    private var afterStateRestoredPromise: StreamPromise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
         get {
             return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
         }
@@ -243,8 +243,8 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: State Restoration
-    public func whenStateRestored() -> Future<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
-        self.afterStateRestoredPromise = Promise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
+    public func whenStateRestored() -> FutureStream<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
+        self.afterStateRestoredPromise = StreamPromise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
         return self.afterStateRestoredPromise.future
     }
 

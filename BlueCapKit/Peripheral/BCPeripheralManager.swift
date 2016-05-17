@@ -29,7 +29,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     private var _afterPowerOnPromise = Promise<Void>()
     private var _afterPowerOffPromise = Promise<Void>()
     private var _afterSeriviceAddPromise = Promise<Void>()
-    private var _afterStateRestoredPromise = Promise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
+    private var _afterStateRestoredPromise = StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
 
     private var _state = CBPeripheralManagerState.Unknown
     private var _poweredOn = false
@@ -85,7 +85,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    private var afterStateRestoredPromise: Promise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
+    private var afterStateRestoredPromise: StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
         get {
             return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
         }
@@ -312,8 +312,8 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: State Restoration
-    public func whenStateRestored() -> Future<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
-        self.afterStateRestoredPromise = Promise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
+    public func whenStateRestored() -> FutureStream<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
+        self.afterStateRestoredPromise = StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
         return self.afterStateRestoredPromise.future
     }
 

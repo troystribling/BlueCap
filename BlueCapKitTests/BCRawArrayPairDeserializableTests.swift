@@ -68,7 +68,7 @@ class BCRawArrayPairDeserializableTests: XCTestCase {
         }
     }
     
-    func testSuccessfuleSerialization() {
+    func testSuccessfulSerialization() {
         if let value = Pair(rawValue1:[2, -85], rawValue2:[3, 171]) {
             let data = BCSerDe.serialize(value)
             XCTAssert(data.hexStringValue() == "02ab03ab", "RawDeserializable serialization failed: \(data.hexStringValue())")

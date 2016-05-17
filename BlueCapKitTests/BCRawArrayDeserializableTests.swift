@@ -47,7 +47,7 @@ class BCRawArrayDeserializableTests: XCTestCase {
         super.tearDown()
     }
 
-    func testSuccessfulDeserialization() {
+    func testDeserialize_ValidRawArray_Sucess() {
         let data = "02ab".dataFromHexString()
         if let value : RawArray = BCSerDe.deserialize(data) {
             XCTAssert(value.value1 == 2 && value.value2 == -85, "RawArrayDeserializable deserialization value invalid: \(value.value1), \(value.value2)")
@@ -56,14 +56,14 @@ class BCRawArrayDeserializableTests: XCTestCase {
         }
     }
     
-    func testFailedDeserialization() {
+    func testDeserialize_InvalidRawArray_Fails() {
         let data = "02ab0c".dataFromHexString()
         if let _ : RawArray = BCSerDe.deserialize(data) {
             XCTFail("RawArrayDeserializable deserialization succeeded")
         }
     }
     
-    func testSerialization() {
+    func testSerialize_ValidRawArray_Success() {
         if let value = RawArray(rawValue: [5, 100]) {
             let data = BCSerDe.serialize(value)
             XCTAssert(data.hexStringValue() == "0564", "RawArrayDeserializable serialization value invalid: \(data)")
