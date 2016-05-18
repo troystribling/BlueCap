@@ -141,11 +141,11 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
     
-    func testWriteData_WhenMultipleWritesAreMadeBeforeFirstAckIsReceived_AllCompleteSuccessfully() {
+    func testWriteData_WhenMultipleWithTypeWithResponseBeforeFirstAckReceived_QueuesRequestsAndCompleteSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future1 = characteristic.writeData("aa".dataFromHexString())
-        let future2 = characteristic.writeData("bb".dataFromHexString())
-        let future3 = characteristic.writeData("cc".dataFromHexString())
+        let future1 = characteristic.writeData("aa".dataFromHexString(), type: .WithResponse)
+        let future2 = characteristic.writeData("bb".dataFromHexString(), type: .WithResponse)
+        let future3 = characteristic.writeData("cc".dataFromHexString(), type: .WithResponse)
 
         XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
         XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called count invalid")
@@ -166,6 +166,17 @@ class BCCharacteristicTests: XCTestCase {
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future3, context: self.immediateContext) { characteristic in
+            XCTAssertEqual(characteristic.writePromises.count, 0, "CBCharateristic#writePromises count invalid")
+        }
+    }
+
+    func testWriteData_WithTypeWithoutResponse_DoesNotQueueRequestsAndCompleteSuccessfully() {
+        let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
+        let future = characteristic.writeData("aa".dataFromHexString(), type: .WithoutResponse)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { characteristic in
+            XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
+            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called count invalid")
+            XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
             XCTAssertEqual(characteristic.writePromises.count, 0, "CBCharateristic#writePromises count invalid")
         }
     }

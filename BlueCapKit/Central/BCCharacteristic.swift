@@ -291,9 +291,14 @@ public class BCCharacteristic : NSObject {
     public func writeData(value: NSData, timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<BCCharacteristic> {
         let promise = Promise<BCCharacteristic>()
         if self.canWrite {
-            self.writePromises.append(promise)
-            self.writeParameters.append(WriteParameters(value: value, timeout: timeout, type: type))
-            self.writeNext()
+            if type == .WithResponse {
+                self.writePromises.append(promise)
+                self.writeParameters.append(WriteParameters(value: value, timeout: timeout, type: type))
+                self.writeNext()
+            } else {
+                self.writeValue(value, type: type)
+                promise.success(self)
+            }
         } else {
             promise.failure(BCError.characteristicWriteNotSupported)
         }

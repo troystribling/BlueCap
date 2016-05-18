@@ -91,13 +91,8 @@ class BCPeripheralTests: XCTestCase {
     func testDiscoverAllServices_WhenConnectedOnTimeout_CompletesWithServiceDiscoveryTimeout() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
-        let future = peripheral.discoverAllServices(1.0)
-        future.onSuccess { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
-            expectation.fulfill()
+        let future = peripheral.discoverAllServices(0.25)
+        XCTAssertFutureFails(future, timeout: 5.0) { error in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 0, "Peripheral service count invalid")
             XCTAssertEqual(error.code, BCError.peripheralServiceDiscoveryTimeout.code, "Error code invalid")
@@ -105,67 +100,40 @@ class BCPeripheralTests: XCTestCase {
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled, "CBPeripheral#discoverChracteristics called")
         }
-        waitForExpectationsWithTimeout(2) { error in
-            XCTAssertNil(error, "\(error)")
-        }
     }
 
     // MARK: discoverAllPeripheralServices
     func testDiscoverAllPeripheralServices_WhenConnectedAndNoErrorInResponse_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
         let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi: self.RSSI, error:nil)
-        let onSuccessExpectation = expectationWithDescription("onSuccess fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
-        future.onSuccess { _ in
-            onSuccessExpectation.fulfill()
+        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
+        XCTAssertFutureSucceeds(future, timeout: 5.0) { _ in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 2, "Peripheral service count invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
-        }
-        future.onFailure { error in
-            XCTFail("onFailure called")
-        }
-        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
     func testDiscoverAllPeripheralServices_WhenConnectedAndErrorInServiceDiscoveryResponse_CompletesWithResponseError() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements, rssi: self.RSSI, error:TestFailure.error)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
-        future.onSuccess { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure {error in
-            expectation.fulfill()
+        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
+        XCTAssertFutureFails(future, timeout: 5.0) { error in
             XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
             XCTAssert(mockPeripheral.discoverServicesCalled, "CBPeripheral#discoverServices not called")
-        }
-        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
     func testDiscoverAllPeripheralServices_WhenConnectedAndNoServicesDiscovered_CompletesWithPeripheralNoServices() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.discoverAllPeripheralServices()
-        future.onSuccess { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure {error in
-            expectation.fulfill()
+        peripheral.didDiscoverServices([], error:nil)
+        XCTAssertFutureFails(future, timeout: 5.0) { error in
             XCTAssertEqual(error.domain, BCError.domain, "message domain invalid")
             XCTAssertEqual(error.code, BCError.peripheralNoServices.code, "message code invalid")
-        }
-        peripheral.didDiscoverServices([], error:nil)
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
         }
     }
 
@@ -173,30 +141,14 @@ class BCPeripheralTests: XCTestCase {
     func testConnect_WhenDisconnected_CompletesSuccesfullyWithEventConnect() {
         let mockPeripheral = CBPeripheralMock(state:.Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect(connectionTimeout: 120.0)
-        future.onSuccess { (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .Connect:
-                expectation.fulfill()
-            case .Timeout:
-                XCTFail("onSuccess Timeout invalid")
-            case .Disconnect:
-                XCTFail("onSuccess Disconnect invalid")
-            case .ForceDisconnect:
-                XCTFail("onSuccess ForceDisconnect invalid")
-            case .GiveUp:
-                XCTFail("onSuccess GiveUp invalid")
-            }
-        }
-        future.onFailure { error in
-            XCTFail("onFailure called")
-        }
         peripheral.didConnectPeripheral()
-        XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
-        waitForExpectationsWithTimeout(120) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+            { (peripheral, connectionEvent) in
+                XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.Connect, "Invalid connection event")
+            }
+        ])
     }
 
     func testConnect_WhenConnected_DoesNotConnect() {
@@ -209,196 +161,114 @@ class BCPeripheralTests: XCTestCase {
     func testConnect_WhenDisconnectedWithConnectionError_CompletesWithConnectionError() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect(connectionTimeout: 120.0)
-        future.onSuccess { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
-            expectation.fulfill()
-            XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
-        }
         peripheral.didFailToConnectPeripheral(TestFailure.error)
         XCTAssert(self.centralManagerMock.connectPeripheralCalled, "CentralManager#connectPeripheralCalled not called")
-        waitForExpectationsWithTimeout(120) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+            { error in
+                XCTAssert(error.code == TestFailure.error.code, "Error code invalid")
+            }
+        ])
     }
 
     func testConnect_WhenDisconnectedAndForcedDisconnect_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect()
-        future.onSuccess { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
-            XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
-            expectation.fulfill()
-        }
         peripheral.disconnect()
-        waitForExpectationsWithTimeout(120) {error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+            { error in
+                XCTAssertEqual(error.code, BCError.peripheralDisconnected.code, "Error code invalid")
+            }
+        ])
     }
     
     func testConnect_WhenConnectedAndForcedDisconnect_CompletesSuccessfullyWithEventForceDisconnect() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect()
-        future.onSuccess { (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .Connect:
-                XCTFail("onSuccess Connect invalid")
-            case .Timeout:
-                XCTFail("onSuccess Timeout invalid")
-            case .Disconnect:
-                XCTFail("onSuccess Disconnect invalid")
-            case .ForceDisconnect:
-                expectation.fulfill()
-            case .GiveUp:
-                XCTFail("onSuccess GiveUp invalid")
-            }
-        }
-        future.onFailure { error in
-            XCTFail("onFailure called")
-        }
         peripheral.disconnect()
-        waitForExpectationsWithTimeout(120) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+            { (_, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.ForceDisconnect, "Invalid connection event")
+            }
+        ])
     }
 
     func testConnect_WhenConnectedAndPeripheralDisconnectsWithoutError_CompletesSuccessfullyWithEventDisconnect() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect()
-        future.onSuccess { (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .Connect:
-                XCTFail("onSuccess Connect invalid")
-            case .Timeout:
-                XCTFail("onSuccess Timeout invalid")
-            case .Disconnect:
-                expectation.fulfill()
-            case .ForceDisconnect:
-                XCTFail("onSuccess ForceDisconnect invalid")
-            case .GiveUp:
-                XCTFail("onSuccess GiveUp invalid")
-            }
-        }
-        future.onFailure { _ in
-            XCTFail("onFailure called")
-        }
         peripheral.didDisconnectPeripheral(nil)
-        waitForExpectationsWithTimeout(120) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+            { (_, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.Disconnect, "Invalid connection event")
+            }
+        ])
     }
 
     func testConnect_WhenConnectedAndPeripheralDisconnectsWithError_CompletesDisconnectError() {
         let mockPeripheral = CBPeripheralMock(state: .Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect()
-        future.onSuccess { _ in
-            XCTFail("onSuccess called")
-        }
-        future.onFailure { error in
-            expectation.fulfill()
-            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
-        }
         peripheral.didDisconnectPeripheral(TestFailure.error)
-        waitForExpectationsWithTimeout(120) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+            { error in
+                XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
+            }
+        ])
     }
 
 
     func testConnect_WhenDisconnetedAndConnectionTimeout_CompletesSuccessfullyWithEventTimeout() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect(connectionTimeout: 0.25)
-        future.onSuccess { (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .Connect:
-                XCTFail("onSuccess Connect invalid")
-            case .Timeout:
-                expectation.fulfill()
-            case .Disconnect:
-                XCTFail("onSuccess Disconnect invalid")
-            case .ForceDisconnect:
-                XCTFail("onSuccess ForceDisconnect invalid")
-            case .GiveUp:
-                XCTFail("onSuccess GiveUp invalid")
+        XCTAssertFutureStreamSucceeds(future, timeout: 5.0, validations: [
+            { (_, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.Timeout, "Invalid connection event")
             }
-        }
-        future.onFailure { _ in
-            XCTFail("onFailure called")
-        }
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        ])
     }
     
     func testConnect_WhenDisconnetedAndExceedsTimeoutRetries_CompletesSuccessfullyWithEventGiveUp() {
         let mockPeripheral = CBPeripheralMock(state: .Disconnected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect(connectionTimeout: 0.25, timeoutRetries: 1)
-        future.onSuccess { (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .Connect:
-                XCTFail("onSuccess Connect invalid")
-            case .Timeout:
+        XCTAssertFutureStreamSucceeds(future, timeout: 5.0, validations: [
+            { (peripheral, connectionEvent) in
                 peripheral.reconnect()
-            case .Disconnect:
-                XCTFail("onSuccess Disconnect invalid")
-            case .ForceDisconnect:
-                XCTFail("onSuccess ForceDisconnect invalid")
-            case .GiveUp:
-                expectation.fulfill()
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.Timeout, "Invalid connection event")
+            },
+            { (peripheral, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.GiveUp, "Invalid connection event")
             }
-        }
-        future.onFailure { _ in
-            XCTFail("onFailure called")
-        }
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        ])
     }
 
     func testConnect_WhenDisconnectedWithNoErrorAndExceedsDisconnectRetries_CompletesSuccessfullyWithEventGiveUp() {
         let mockPeripheral = CBPeripheralMock(state:.Connected)
         let peripheral = BCPeripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = expectationWithDescription("expectation fulfilled for future")
         let future = peripheral.connect(disconnectRetries: 1)
-        future.onSuccess { (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .Connect:
+        peripheral.didConnectPeripheral()
+        XCTAssertFutureStreamSucceeds(future, timeout: 5.0, validations: [
+            { (peripheral, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.Connect, "Invalid connection event")
                 peripheral.didDisconnectPeripheral(nil)
-            case .Timeout:
-                XCTFail("onSuccess Timeout invalid")
-            case .Disconnect:
+            },
+            { (peripheral, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.Disconnect, "Invalid connection event")
                 peripheral.reconnect()
                 peripheral.didConnectPeripheral()
-            case .ForceDisconnect:
-                XCTFail("onSuccess ForceDisconnect invalid")
-            case .GiveUp:
-                expectation.fulfill()
+            },
+            { (peripheral, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.Connect, "Invalid connection event")
+                peripheral.didDisconnectPeripheral(nil)
+            },
+            { (peripheral, connectionEvent) in
+                XCTAssertEqual(connectionEvent, BCConnectionEvent.GiveUp, "Invalid connection event")
             }
-        }
-        peripheral.didDisconnectPeripheral(nil)
-        future.onFailure { _ in
-            XCTFail("onFailure called")
-        }
-        waitForExpectationsWithTimeout(20) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        ])
     }
 
     
@@ -553,7 +423,7 @@ class BCPeripheralTests: XCTestCase {
         future.onFailure(QueueContext.global) { error in
             XCTFail("onFailure called")
         }
-        sleep(5)
+        sleep(1)
         XCTAssertEqual(count, 1, "stopPollingRSSI failed")
     }
 
@@ -570,7 +440,7 @@ class BCPeripheralTests: XCTestCase {
             count += 1
             peripheral.stopPollingRSSI()
         }
-        sleep(5)
+        sleep(1)
         XCTAssertEqual(count, 1, "stopPollingRSSI failed")
    }
 }
