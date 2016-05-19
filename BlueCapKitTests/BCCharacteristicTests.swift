@@ -42,23 +42,34 @@ class BCCharacteristicTests: XCTestCase {
     }
 
     // MARK: Write data
-    func testWriteData_WhenWritableAndNoErrorInAck_CompletesSuccessfilly() {
+    func testWriteData_WithTypeWithResponseWritableAndNoErrorInAck_QueuesRequestAndCompletesSuccessfilly() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString())
+
+        XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
+        XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called count invalid")
+        XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
+        XCTAssertEqual(characteristic.writePromises.count, 1, "CBCharateristic#writePromises count invalid")
+        XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
+
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error :nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
-            XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue not called 1 time")
-            XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
-            if let data = self.mockPerpheral.writtenData {
-                XCTAssertEqual(data, "aa".dataFromHexString(), "writeValue data is invalid")
-            } else {
-                XCTFail("writeValue no data available")
-            }
+            XCTAssertEqual(characteristic.writePromises.count, 0, "CBCharateristic#writePromises count invalid")
         }
     }
 
-    func testWriteData_WhenWritableAndErrorInAck_CompletesWithAckError() {
+    func testWriteData_WithTypeWithoutResponseAndWriteable_DoesNotQueueRequestsAndCompleteSuccessfully() {
+        let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
+        let future = characteristic.writeData("aa".dataFromHexString(), type: .WithoutResponse)
+        XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
+        XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called count invalid")
+        XCTAssertEqual(self.mockPerpheral.writtenType, .WithoutResponse, "writtenType is invalid")
+        XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
+        XCTAssertEqual(characteristic.writePromises.count, 0, "CBCharateristic#writePromises count invalid")
+        XCTAssertFutureSucceeds(future, context: self.immediateContext)
+    }
+
+    func testWriteData_WithTypeWithResponseWritableAndErrorInAck_CompletesWithAckError() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString())
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
@@ -67,15 +78,10 @@ class BCCharacteristicTests: XCTestCase {
             XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called more than once")
             XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
-            if let data = self.mockPerpheral.writtenData {
-                XCTAssertEqual(data, "aa".dataFromHexString(), "writeValue data is invalid")
-            } else {
-                XCTFail("writeValue no data available")
-            }
         }
     }
 
-    func testWriteData_WhenWritableAndOnTimeout_CompletesWithTimeoutError() {
+    func testWriteData_WithTypeWithResponseWritableAndOnTimeout_CompletesWithTimeoutError() {
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString(), timeout:1.0)
         XCTAssertFutureFails(future) { error in
@@ -83,11 +89,6 @@ class BCCharacteristicTests: XCTestCase {
             XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called more than once")
             XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
-            if let data = self.mockPerpheral.writtenData {
-                XCTAssert(data.isEqualToData("aa".dataFromHexString()), "writeValue data is invalid")
-            } else {
-                XCTFail("writeValue no data available")
-            }
         }
     }
 
@@ -100,7 +101,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testWriteString_WhenWritableAndNoErrorOnAck_CompletesSuccessfully() {
+    func testWriteString_WithTypeWithResponseWritableAndNoErrorOnAck_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeString(["Hello World Greeting":"Good bye"])
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
@@ -124,23 +125,7 @@ class BCCharacteristicTests: XCTestCase {
             XCTAssertEqual(error.code, BCError.characteristicNotSerilaizable.code, "Error code invalid")
         }
     }
-    
-    func testWriteData_WhenWriteTypeIsWithoutResponseAndNoError_CompletesSuccessfilly() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.writeData("aa".dataFromHexString(), type: .WithoutResponse)
-        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
-            XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue not called 1 time")
-            XCTAssertEqual(self.mockPerpheral.writtenType, .WithoutResponse, "writtenType is invalid")
-            if let data = self.mockPerpheral.writtenData {
-                XCTAssertEqual(data, "aa".dataFromHexString(), "writeValue data is invalid")
-            } else {
-                XCTFail("writeValue no data available")
-            }
-        }
-    }
-    
+
     func testWriteData_WhenMultipleWithTypeWithResponseBeforeFirstAckReceived_QueuesRequestsAndCompleteSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future1 = characteristic.writeData("aa".dataFromHexString(), type: .WithResponse)
@@ -170,18 +155,7 @@ class BCCharacteristicTests: XCTestCase {
         }
     }
 
-    func testWriteData_WithTypeWithoutResponse_DoesNotQueueRequestsAndCompleteSuccessfully() {
-        let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
-        let future = characteristic.writeData("aa".dataFromHexString(), type: .WithoutResponse)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) { characteristic in
-            XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called count invalid")
-            XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
-            XCTAssertEqual(characteristic.writePromises.count, 0, "CBCharateristic#writePromises count invalid")
-        }
-    }
-
-    // MARK: Read data
+   // MARK: Read data
     func testRead_WhenReadableAndNoErrorInResponse_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.read()

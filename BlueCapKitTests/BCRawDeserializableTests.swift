@@ -30,7 +30,7 @@ class BCRawDeserializableTests: XCTestCase {
         super.tearDown()
     }
 
-    func testSuccessfulDeserialization() {
+    func testDeserialize_ValidRawDeserializable_Sucess() {
         let data = "02".dataFromHexString()
         if let value : Testit = BCSerDe.deserialize(data) {
             XCTAssert(value == .Maybe, "RawDeserializable deserialization value wrong: \(data)")
@@ -39,17 +39,23 @@ class BCRawDeserializableTests: XCTestCase {
         }
     }
 
-    func testFailedDeserialization() {
+    func testDeserialize_InvalidRawDeserializable_Fails() {
         let data = "03".dataFromHexString()
         if let _ : Testit = BCSerDe.deserialize(data) {
             XCTFail("RawDeserializable deserialization succeeded")
         }
     }
     
-    func testSerialization() {
+    func testSerialize_ValidRawDeserializable_Sucess() {
         let value = Testit.Yes
         let data = BCSerDe.serialize(value)
         XCTAssert(data.hexStringValue() == "01", "RawDeserializable serialization failed: \(data)")
+    }
+
+    func testCreate_InvalidRawDeserializable_Fails() {
+        if let _ = Testit(rawValue: 5) {
+            XCTFail("RawDeserializable creation succeeded")
+        }
     }
 
 }

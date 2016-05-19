@@ -100,15 +100,10 @@ class PeripheralManagerServicesViewController : UITableViewController {
         if editingStyle == UITableViewCellEditingStyle.Delete {
             if let peripheral = self.peripheral {
                 let service = Singletons.peripheralManager.services[indexPath.row]
-                let future = Singletons.peripheralManager.removeService(service)
-                future.onSuccess {
-                    PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.UUID)
-                    PeripheralStore.removePeripheralService(peripheral, service: service.UUID)
-                    self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
-                }
-                future.onFailure {error in
-                    self.presentViewController(UIAlertController.alertOnError("Remove Service Error", error: error), animated: true, completion: nil)
-                }
+                Singletons.peripheralManager.removeService(service)
+                PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.UUID)
+                PeripheralStore.removePeripheralService(peripheral, service: service.UUID)
+                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             }
         }
     }

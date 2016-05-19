@@ -156,16 +156,11 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         guard !Singletons.peripheralManager.isAdvertising else {
             return
         }
-        let future = Singletons.peripheralManager.removeAllServices()
-        future.onSuccess {
-            if self.peripheral != nil {
-                self.loadPeripheralServicesFromConfig()
-            } else {
-                self.setUIState()
-            }
-        }
-        future.onFailure {error in
-            self.presentViewController(UIAlertController.alertOnError("Remove Services Error", error: error), animated: true, completion: nil)
+        Singletons.peripheralManager.removeAllServices()
+        if self.peripheral != nil {
+            self.loadPeripheralServicesFromConfig()
+        } else {
+            self.setUIState()
         }
     }
 

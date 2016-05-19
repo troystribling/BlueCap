@@ -72,4 +72,10 @@ class BCRawArrayDeserializableTests: XCTestCase {
         }
     }
 
+    func testCreate_InValidRawPairArray_Fails() {
+        if let _ = RawArray(rawValue: [5]) {
+            XCTFail("RawArrayDeserializable creation succeeded")
+        }
+    }
+
 }
