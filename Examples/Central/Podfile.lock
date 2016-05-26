@@ -1,0 +1,16 @@
+PODS:
+  - BlueCapKit (0.1.0)
+
+DEPENDENCIES:
+  - BlueCapKit (from `../..`)
+
+EXTERNAL SOURCES:
+  BlueCapKit:
+    :path: "../.."
+
+SPEC CHECKSUMS:
+  BlueCapKit: 39571cda40299186fe63a925d0dd0c4b817fdc6f
+
+PODFILE CHECKSUM: 71f1c10239d967e8abc285d4af7cd9060211dd2a
+
+COCOAPODS: 1.0.0
