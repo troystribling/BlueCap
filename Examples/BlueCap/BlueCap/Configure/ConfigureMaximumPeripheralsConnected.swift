@@ -1,0 +1,43 @@
+//
+//  ConfigureMaximumPeripheralsConnected
+//  BlueCap
+//
+//  Created by Troy Stribling on 2/20/16.
+//  Copyright © 2016 Troy Stribling. All rights reserved.
+//
+
+import Foundation
+
+import UIKit
+
+class ConfigureMaximumPeripheralsConnected: UIViewController {
+
+    @IBOutlet var maximumPeripheralsConnectedTextField: UITextField!
+
+    required init?(coder aDecoder:NSCoder) {
+        super.init(coder:aDecoder)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.maximumPeripheralsConnectedTextField.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
+    }
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
+
+    // UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+        if let maxConnectedText = self.maximumPeripheralsConnectedTextField.text, maxConnected = Int(maxConnectedText) where !maxConnectedText.isEmpty {
+            ConfigStore.setMaximumPeripheralsConnected(maxConnected)
+            self.navigationController?.popToRootViewControllerAnimated(true)
+        }
+        return true
+    }
+    
+}
