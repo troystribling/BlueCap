@@ -1,0 +1,23 @@
+PODS:
+  - BlueCapKit (0.1.0)
+  - FutureLocation (0.1.0):
+    - SimpleFutures (~> 0.1)
+  - SimpleFutures (0.1.0)
+
+DEPENDENCIES:
+  - BlueCapKit (from `../`)
+  - FutureLocation (~> 0.1)
+  - SimpleFutures (~> 0.1)
+
+EXTERNAL SOURCES:
+  BlueCapKit:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  BlueCapKit: bc298f4fe012db1310a08907f92cc794cc61529b
+  FutureLocation: 96216f277624713e21ae720ee75d6d8ad258cf93
+  SimpleFutures: 2af2bda8562edeea932628021073d751824a6f28
+
+PODFILE CHECKSUM: ce409ffaf727bb095ac841530759edf13bb2ea48
+
+COCOAPODS: 1.0.0

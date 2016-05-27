@@ -1,0 +1,401 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		05F0EC301CF7EA9F00468FC9 /* BCCentralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC101CF7E9F000468FC9 /* BCCentralManagerTests.swift */; };
+		05F0EC311CF7EA9F00468FC9 /* BCCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC111CF7E9F000468FC9 /* BCCharacteristicProfile.swift */; };
+		05F0EC321CF7EA9F00468FC9 /* BCCharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC121CF7E9F000468FC9 /* BCCharacteristicTests.swift */; };
+		05F0EC331CF7EA9F00468FC9 /* BCMutableCharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC131CF7E9F000468FC9 /* BCMutableCharacteristicTests.swift */; };
+		05F0EC341CF7EA9F00468FC9 /* BCPeripheralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC141CF7E9F000468FC9 /* BCPeripheralManagerTests.swift */; };
+		05F0EC351CF7EA9F00468FC9 /* BCPeripheralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC151CF7E9F000468FC9 /* BCPeripheralTests.swift */; };
+		05F0EC361CF7EA9F00468FC9 /* BCRawArrayDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC161CF7E9F000468FC9 /* BCRawArrayDeserializableTests.swift */; };
+		05F0EC371CF7EA9F00468FC9 /* BCRawArrayPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC171CF7E9F000468FC9 /* BCRawArrayPairDeserializableTests.swift */; };
+		05F0EC381CF7EA9F00468FC9 /* BCRawDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC181CF7E9F000468FC9 /* BCRawDeserializableTests.swift */; };
+		05F0EC391CF7EA9F00468FC9 /* BCRawPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC191CF7E9F000468FC9 /* BCRawPairDeserializableTests.swift */; };
+		05F0EC3A1CF7EA9F00468FC9 /* BCSerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1A1CF7E9F000468FC9 /* BCSerializableTests.swift */; };
+		05F0EC3B1CF7EA9F00468FC9 /* BCServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1B1CF7E9F000468FC9 /* BCServiceTests.swift */; };
+		05F0EC3C1CF7EA9F00468FC9 /* BCTimedScanneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1C1CF7E9F000468FC9 /* BCTimedScanneratorTests.swift */; };
+		05F0EC3D1CF7EA9F00468FC9 /* DeserilaizableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */; };
+		05F0EC3E1CF7EA9F00468FC9 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1E1CF7E9F000468FC9 /* Mocks.swift */; };
+		05F0EC3F1CF7EA9F00468FC9 /* XCTTestCase+SimpleFuturesAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1F1CF7E9F000468FC9 /* XCTTestCase+SimpleFuturesAssertions.swift */; };
+		167EF42863EB43F57C936C78 /* Pods_BlueCapKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2992C5D3FBD5E553D909CF96 /* Pods_BlueCapKitTests.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		05F0EBFB1CF7E96D00468FC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		05F0EC001CF7E96D00468FC9 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		05F0EC101CF7E9F000468FC9 /* BCCentralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCCentralManagerTests.swift; sourceTree = "<group>"; };
+		05F0EC111CF7E9F000468FC9 /* BCCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCCharacteristicProfile.swift; sourceTree = "<group>"; };
+		05F0EC121CF7E9F000468FC9 /* BCCharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCCharacteristicTests.swift; sourceTree = "<group>"; };
+		05F0EC131CF7E9F000468FC9 /* BCMutableCharacteristicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCMutableCharacteristicTests.swift; sourceTree = "<group>"; };
+		05F0EC141CF7E9F000468FC9 /* BCPeripheralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCPeripheralManagerTests.swift; sourceTree = "<group>"; };
+		05F0EC151CF7E9F000468FC9 /* BCPeripheralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCPeripheralTests.swift; sourceTree = "<group>"; };
+		05F0EC161CF7E9F000468FC9 /* BCRawArrayDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawArrayDeserializableTests.swift; sourceTree = "<group>"; };
+		05F0EC171CF7E9F000468FC9 /* BCRawArrayPairDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawArrayPairDeserializableTests.swift; sourceTree = "<group>"; };
+		05F0EC181CF7E9F000468FC9 /* BCRawDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawDeserializableTests.swift; sourceTree = "<group>"; };
+		05F0EC191CF7E9F000468FC9 /* BCRawPairDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCRawPairDeserializableTests.swift; sourceTree = "<group>"; };
+		05F0EC1A1CF7E9F000468FC9 /* BCSerializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCSerializableTests.swift; sourceTree = "<group>"; };
+		05F0EC1B1CF7E9F000468FC9 /* BCServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCServiceTests.swift; sourceTree = "<group>"; };
+		05F0EC1C1CF7E9F000468FC9 /* BCTimedScanneratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCTimedScanneratorTests.swift; sourceTree = "<group>"; };
+		05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserilaizableTests.swift; sourceTree = "<group>"; };
+		05F0EC1E1CF7E9F000468FC9 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
+		05F0EC1F1CF7E9F000468FC9 /* XCTTestCase+SimpleFuturesAssertions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTTestCase+SimpleFuturesAssertions.swift"; sourceTree = "<group>"; };
+		2992C5D3FBD5E553D909CF96 /* Pods_BlueCapKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCapKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E9B22EB54C232EC878DC4DC /* Pods-BlueCapKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E2C29B567110137B1C54B2F6 /* Pods-BlueCapKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		05F0EBFD1CF7E96D00468FC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				167EF42863EB43F57C936C78 /* Pods_BlueCapKitTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05F0EBEC1CF7E96D00468FC9 = {
+			isa = PBXGroup;
+			children = (
+				05F0EBF81CF7E96D00468FC9 /* BlueCapKitTests */,
+				05F0EBF71CF7E96D00468FC9 /* Products */,
+				C0B494E3E2E2C83EB5025CF9 /* Pods */,
+				15FEEBF3DE438E42FA0ED909 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		05F0EBF71CF7E96D00468FC9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				05F0EC001CF7E96D00468FC9 /* BlueCapKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		05F0EBF81CF7E96D00468FC9 /* BlueCapKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				05F0EC101CF7E9F000468FC9 /* BCCentralManagerTests.swift */,
+				05F0EC111CF7E9F000468FC9 /* BCCharacteristicProfile.swift */,
+				05F0EC121CF7E9F000468FC9 /* BCCharacteristicTests.swift */,
+				05F0EC131CF7E9F000468FC9 /* BCMutableCharacteristicTests.swift */,
+				05F0EC141CF7E9F000468FC9 /* BCPeripheralManagerTests.swift */,
+				05F0EC151CF7E9F000468FC9 /* BCPeripheralTests.swift */,
+				05F0EC161CF7E9F000468FC9 /* BCRawArrayDeserializableTests.swift */,
+				05F0EC171CF7E9F000468FC9 /* BCRawArrayPairDeserializableTests.swift */,
+				05F0EC181CF7E9F000468FC9 /* BCRawDeserializableTests.swift */,
+				05F0EC191CF7E9F000468FC9 /* BCRawPairDeserializableTests.swift */,
+				05F0EC1A1CF7E9F000468FC9 /* BCSerializableTests.swift */,
+				05F0EC1B1CF7E9F000468FC9 /* BCServiceTests.swift */,
+				05F0EC1C1CF7E9F000468FC9 /* BCTimedScanneratorTests.swift */,
+				05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */,
+				05F0EC1E1CF7E9F000468FC9 /* Mocks.swift */,
+				05F0EC1F1CF7E9F000468FC9 /* XCTTestCase+SimpleFuturesAssertions.swift */,
+				05F0EBFB1CF7E96D00468FC9 /* Info.plist */,
+			);
+			path = BlueCapKitTests;
+			sourceTree = "<group>";
+		};
+		15FEEBF3DE438E42FA0ED909 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2992C5D3FBD5E553D909CF96 /* Pods_BlueCapKitTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C0B494E3E2E2C83EB5025CF9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9E9B22EB54C232EC878DC4DC /* Pods-BlueCapKitTests.debug.xcconfig */,
+				E2C29B567110137B1C54B2F6 /* Pods-BlueCapKitTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		05F0EBFF1CF7E96D00468FC9 /* BlueCapKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05F0EC0D1CF7E96D00468FC9 /* Build configuration list for PBXNativeTarget "BlueCapKitTests" */;
+			buildPhases = (
+				F412FDB0E75F59EB14397352 /* 📦 Check Pods Manifest.lock */,
+				05F0EBFC1CF7E96D00468FC9 /* Sources */,
+				05F0EBFD1CF7E96D00468FC9 /* Frameworks */,
+				05F0EBFE1CF7E96D00468FC9 /* Resources */,
+				8A20EFEECA16780F73D86BA3 /* 📦 Embed Pods Frameworks */,
+				D06E7265C79F20BD46AA5DFE /* 📦 Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BlueCapKitTests;
+			productName = BlueCapKitTestsTests;
+			productReference = 05F0EC001CF7E96D00468FC9 /* BlueCapKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		05F0EBED1CF7E96D00468FC9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Troy Stribling";
+				TargetAttributes = {
+					05F0EBFF1CF7E96D00468FC9 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 05F0EBF01CF7E96D00468FC9 /* Build configuration list for PBXProject "BlueCapKitTests" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 05F0EBEC1CF7E96D00468FC9;
+			productRefGroup = 05F0EBF71CF7E96D00468FC9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				05F0EBFF1CF7E96D00468FC9 /* BlueCapKitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		05F0EBFE1CF7E96D00468FC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8A20EFEECA16780F73D86BA3 /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D06E7265C79F20BD46AA5DFE /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F412FDB0E75F59EB14397352 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		05F0EBFC1CF7E96D00468FC9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05F0EC301CF7EA9F00468FC9 /* BCCentralManagerTests.swift in Sources */,
+				05F0EC311CF7EA9F00468FC9 /* BCCharacteristicProfile.swift in Sources */,
+				05F0EC321CF7EA9F00468FC9 /* BCCharacteristicTests.swift in Sources */,
+				05F0EC331CF7EA9F00468FC9 /* BCMutableCharacteristicTests.swift in Sources */,
+				05F0EC341CF7EA9F00468FC9 /* BCPeripheralManagerTests.swift in Sources */,
+				05F0EC351CF7EA9F00468FC9 /* BCPeripheralTests.swift in Sources */,
+				05F0EC361CF7EA9F00468FC9 /* BCRawArrayDeserializableTests.swift in Sources */,
+				05F0EC371CF7EA9F00468FC9 /* BCRawArrayPairDeserializableTests.swift in Sources */,
+				05F0EC381CF7EA9F00468FC9 /* BCRawDeserializableTests.swift in Sources */,
+				05F0EC391CF7EA9F00468FC9 /* BCRawPairDeserializableTests.swift in Sources */,
+				05F0EC3A1CF7EA9F00468FC9 /* BCSerializableTests.swift in Sources */,
+				05F0EC3B1CF7EA9F00468FC9 /* BCServiceTests.swift in Sources */,
+				05F0EC3C1CF7EA9F00468FC9 /* BCTimedScanneratorTests.swift in Sources */,
+				05F0EC3D1CF7EA9F00468FC9 /* DeserilaizableTests.swift in Sources */,
+				05F0EC3E1CF7EA9F00468FC9 /* Mocks.swift in Sources */,
+				05F0EC3F1CF7EA9F00468FC9 /* XCTTestCase+SimpleFuturesAssertions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		05F0EC081CF7E96D00468FC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		05F0EC091CF7E96D00468FC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		05F0EC0E1CF7E96D00468FC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9E9B22EB54C232EC878DC4DC /* Pods-BlueCapKitTests.debug.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = BlueCapKitTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.BlueCapKitTestsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		05F0EC0F1CF7E96D00468FC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E2C29B567110137B1C54B2F6 /* Pods-BlueCapKitTests.release.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = BlueCapKitTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.BlueCapKitTestsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		05F0EBF01CF7E96D00468FC9 /* Build configuration list for PBXProject "BlueCapKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05F0EC081CF7E96D00468FC9 /* Debug */,
+				05F0EC091CF7E96D00468FC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		05F0EC0D1CF7E96D00468FC9 /* Build configuration list for PBXNativeTarget "BlueCapKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05F0EC0E1CF7E96D00468FC9 /* Debug */,
+				05F0EC0F1CF7E96D00468FC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 05F0EBED1CF7E96D00468FC9 /* Project object */;
+}
