@@ -8,6 +8,7 @@
 
 import UIKit
 import BlueCapKit
+import FutureLocation
 import CoreBluetooth
 
 class PeripheralManagerViewController : UITableViewController, UITextFieldDelegate {

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FutureLocation
 import BlueCapKit
 
 class BeaconsViewController: UITableViewController {

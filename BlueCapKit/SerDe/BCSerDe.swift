@@ -35,7 +35,7 @@ func reverseBytes<T>(value:T) -> T {
 
 // MARK: SerDe Protocols
 public protocol BCDeserializable {
-    static var size : Int {get}
+    static var size : Int { get }
     static func deserialize(data:NSData) -> Self?
     static func deserialize(data:NSData, start:Int) -> Self?
     static func deserialize(data:NSData) -> [Self]
@@ -50,57 +50,57 @@ public protocol BCSerializable {
 }
 
 public protocol BCCharacteristicConfigurable {
-    static var name          : String {get}
-    static var UUID          : String {get}
-    static var permissions   : CBAttributePermissions {get}
-    static var properties    : CBCharacteristicProperties {get}
-    static var initialValue  : NSData? {get}
+    static var name          : String { get }
+    static var UUID          : String { get }
+    static var permissions   : CBAttributePermissions { get }
+    static var properties    : CBCharacteristicProperties { get }
+    static var initialValue  : NSData? { get }
 }
 
 public protocol BCServiceConfigurable {
-    static var name  : String {get}
-    static var UUID  : String {get}
-    static var tag   : String {get}
+    static var name  : String { get }
+    static var UUID  : String { get }
+    static var tag   : String { get }
 }
 
 public protocol BCStringDeserializable {
-    static var stringValues : [String] {get}
-    var stringValue         : [String:String] {get}
+    static var stringValues : [String] { get }
+    var stringValue         : [String:String] { get }
     init?(stringValue:[String:String])
 }
 
 public protocol BCRawDeserializable {
     associatedtype RawType
-    static var UUID         : String {get}
-    var rawValue            : RawType {get}
+    static var UUID         : String { get }
+    var rawValue            : RawType { get }
     init?(rawValue:RawType)
 }
 
 public protocol BCRawArrayDeserializable {
     associatedtype RawType
-    static var UUID     : String {get}
-    static var size     : Int {get}
-    var rawValue        : [RawType] {get}
+    static var UUID     : String { get }
+    static var size     : Int { get }
+    var rawValue        : [RawType] { get }
     init?(rawValue:[RawType])
 }
 
 public protocol BCRawPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
-    static var UUID     : String {get}
-    var rawValue1       : RawType1 {get}
-    var rawValue2       : RawType2 {get}
+    static var UUID     : String { get }
+    var rawValue1       : RawType1 { get }
+    var rawValue2       : RawType2 { get }
     init?(rawValue1:RawType1, rawValue2:RawType2)
 }
 
 public protocol BCRawArrayPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
-    static var UUID     : String {get}
-    static var size1    : Int {get}
-    static var size2    : Int {get}
-    var rawValue1       : [RawType1] {get}
-    var rawValue2       : [RawType2] {get}
+    static var UUID     : String { get }
+    static var size1    : Int { get }
+    static var size2    : Int { get }
+    var rawValue1       : [RawType1] { get }
+    var rawValue2       : [RawType2] { get }
     init?(rawValue1:[RawType1], rawValue2:[RawType2])
 }
 
