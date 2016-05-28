@@ -9,6 +9,7 @@
 import UIKit
 import CoreBluetooth
 import CoreLocation
+import SimpleFutures
 @testable import BlueCapKit
 
  // MARK: - Error -

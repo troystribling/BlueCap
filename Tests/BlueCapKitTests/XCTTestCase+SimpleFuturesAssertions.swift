@@ -8,7 +8,7 @@
 
 import Foundation
 import XCTest
-import BlueCapKit
+import SimpleFutures
 
 extension XCTestCase  {
 

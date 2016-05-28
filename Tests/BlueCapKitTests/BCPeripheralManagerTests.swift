@@ -10,6 +10,8 @@ import UIKit
 import XCTest
 import CoreBluetooth
 import CoreLocation
+import SimpleFutures
+import FutureLocation
 @testable import BlueCapKit
 
 // MARK: - BCPeripheralManagerTests -

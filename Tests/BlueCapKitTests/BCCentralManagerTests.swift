@@ -9,6 +9,7 @@
 import UIKit
 import XCTest
 import CoreBluetooth
+import SimpleFutures
 @testable import BlueCapKit
 
 // MARK - BCCentralManagerTests -
