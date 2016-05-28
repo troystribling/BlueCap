@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreBluetooth
+import SimpleFutures
 
 // MARK - Connection Error -
 enum PeripheralConnectionError {

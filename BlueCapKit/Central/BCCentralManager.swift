@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreBluetooth
+import SimpleFutures
 
 // MARK: - BCCentralManager -
 public class BCCentralManager : NSObject, CBCentralManagerDelegate {

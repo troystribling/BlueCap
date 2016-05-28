@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SimpleFutures
 
 // MARK: Serialize Dictionary Access
 public class BCSerialIODictionary<T, U where T: Hashable> {

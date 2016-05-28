@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreBluetooth
+import SimpleFutures
 
 // MARK: - TISensorTag SErvices -
 public struct TISensorTag {
