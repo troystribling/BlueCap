@@ -41,8 +41,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05046CF41CFA221000798ECB /* Profile.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Profile.playground; path = BlueCapKit/Profile.playground; sourceTree = "<group>"; };
-		05046CF51CFA221000798ECB /* SerDe.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = SerDe.playground; path = BlueCapKit/SerDe.playground; sourceTree = "<group>"; };
 		05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCSerialIO.swift; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -94,8 +92,6 @@
 		0551207819F5506000ED3B74 = {
 			isa = PBXGroup;
 			children = (
-				05046CF41CFA221000798ECB /* Profile.playground */,
-				05046CF51CFA221000798ECB /* SerDe.playground */,
 				055120F719F551CB00ED3B74 /* CoreBluetooth.framework */,
 				055120F519F551BB00ED3B74 /* CoreLocation.framework */,
 				0551208419F5506000ED3B74 /* BlueCapKit */,

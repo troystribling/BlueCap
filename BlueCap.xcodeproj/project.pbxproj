@@ -87,6 +87,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05046CF61CFA236F00798ECB /* Profile.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Profile.playground; sourceTree = "<group>"; };
+		05046CF71CFA236F00798ECB /* SerDe.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = SerDe.playground; sourceTree = "<group>"; };
 		0507973019C4CEEC00A4D547 /* BeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BeaconsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BeaconRegionViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -220,6 +222,8 @@
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
+				05046CF61CFA236F00798ECB /* Profile.playground */,
+				05046CF71CFA236F00798ECB /* SerDe.playground */,
 				05840F61194206F100C744E6 /* BlueCap */,
 				05840F76194206F100C744E6 /* BlueCapTests */,
 				05840F60194206F100C744E6 /* Products */,
