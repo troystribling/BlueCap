@@ -13,20 +13,9 @@
 		05C0C49A1AEC9DD200FAEBE1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05C0C4981AEC9DD200FAEBE1 /* Main.storyboard */; };
 		05C0C49C1AEC9DD200FAEBE1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05C0C49B1AEC9DD200FAEBE1 /* Images.xcassets */; };
 		05C0C49F1AEC9DD200FAEBE1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 05C0C49D1AEC9DD200FAEBE1 /* LaunchScreen.xib */; };
-		05C0C4AB1AEC9DD200FAEBE1 /* CentralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C0C4AA1AEC9DD200FAEBE1 /* CentralTests.swift */; };
 		05C0C4C81AED434900FAEBE1 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C0C4C71AED434900FAEBE1 /* UIAlertControllerExtensions.swift */; };
 		42D3D970C319AB91FA99BD44 /* Pods_Central.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D50A2C0EF10FF85F6EF4EB48 /* Pods_Central.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		05C0C4A51AEC9DD200FAEBE1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05C0C4871AEC9DD200FAEBE1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 05C0C48E1AEC9DD200FAEBE1;
-			remoteInfo = Central;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		05C0C4C31AEC9F3E00FAEBE1 /* Embed Frameworks */ = {
@@ -50,9 +39,6 @@
 		05C0C4991AEC9DD200FAEBE1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		05C0C49B1AEC9DD200FAEBE1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		05C0C49E1AEC9DD200FAEBE1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		05C0C4A41AEC9DD200FAEBE1 /* CentralTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CentralTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		05C0C4A91AEC9DD200FAEBE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		05C0C4AA1AEC9DD200FAEBE1 /* CentralTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralTests.swift; sourceTree = "<group>"; };
 		05C0C4C71AED434900FAEBE1 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 		A6BAFBDC5C49FACAB7BAA7BC /* Pods-Central.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Central.release.xcconfig"; path = "Pods/Target Support Files/Pods-Central/Pods-Central.release.xcconfig"; sourceTree = "<group>"; };
 		D4EE18A0534FC3996CEF7E7B /* Pods-Central.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Central.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Central/Pods-Central.debug.xcconfig"; sourceTree = "<group>"; };
@@ -68,13 +54,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05C0C4A11AEC9DD200FAEBE1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -82,7 +61,6 @@
 			isa = PBXGroup;
 			children = (
 				05C0C4911AEC9DD200FAEBE1 /* Central */,
-				05C0C4A71AEC9DD200FAEBE1 /* CentralTests */,
 				05C0C4901AEC9DD200FAEBE1 /* Products */,
 				CDD16B9544863AEC6979FEDD /* Pods */,
 				6368755DEC8F09D7BB812A1F /* Frameworks */,
@@ -93,7 +71,6 @@
 			isa = PBXGroup;
 			children = (
 				05C0C48F1AEC9DD200FAEBE1 /* Central.app */,
-				05C0C4A41AEC9DD200FAEBE1 /* CentralTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -117,23 +94,6 @@
 			isa = PBXGroup;
 			children = (
 				05C0C4931AEC9DD200FAEBE1 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		05C0C4A71AEC9DD200FAEBE1 /* CentralTests */ = {
-			isa = PBXGroup;
-			children = (
-				05C0C4AA1AEC9DD200FAEBE1 /* CentralTests.swift */,
-				05C0C4A81AEC9DD200FAEBE1 /* Supporting Files */,
-			);
-			path = CentralTests;
-			sourceTree = "<group>";
-		};
-		05C0C4A81AEC9DD200FAEBE1 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				05C0C4A91AEC9DD200FAEBE1 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -179,24 +139,6 @@
 			productReference = 05C0C48F1AEC9DD200FAEBE1 /* Central.app */;
 			productType = "com.apple.product-type.application";
 		};
-		05C0C4A31AEC9DD200FAEBE1 /* CentralTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 05C0C4B11AEC9DD200FAEBE1 /* Build configuration list for PBXNativeTarget "CentralTests" */;
-			buildPhases = (
-				05C0C4A01AEC9DD200FAEBE1 /* Sources */,
-				05C0C4A11AEC9DD200FAEBE1 /* Frameworks */,
-				05C0C4A21AEC9DD200FAEBE1 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				05C0C4A61AEC9DD200FAEBE1 /* PBXTargetDependency */,
-			);
-			name = CentralTests;
-			productName = CentralTests;
-			productReference = 05C0C4A41AEC9DD200FAEBE1 /* CentralTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -215,10 +157,6 @@
 							};
 						};
 					};
-					05C0C4A31AEC9DD200FAEBE1 = {
-						CreatedOnToolsVersion = 6.3.1;
-						TestTargetID = 05C0C48E1AEC9DD200FAEBE1;
-					};
 				};
 			};
 			buildConfigurationList = 05C0C48A1AEC9DD200FAEBE1 /* Build configuration list for PBXProject "Central" */;
@@ -235,7 +173,6 @@
 			projectRoot = "";
 			targets = (
 				05C0C48E1AEC9DD200FAEBE1 /* Central */,
-				05C0C4A31AEC9DD200FAEBE1 /* CentralTests */,
 			);
 		};
 /* End PBXProject section */
@@ -248,13 +185,6 @@
 				05C0C49A1AEC9DD200FAEBE1 /* Main.storyboard in Resources */,
 				05C0C49F1AEC9DD200FAEBE1 /* LaunchScreen.xib in Resources */,
 				05C0C49C1AEC9DD200FAEBE1 /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		05C0C4A21AEC9DD200FAEBE1 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,23 +250,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05C0C4A01AEC9DD200FAEBE1 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				05C0C4AB1AEC9DD200FAEBE1 /* CentralTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		05C0C4A61AEC9DD200FAEBE1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 05C0C48E1AEC9DD200FAEBE1 /* Central */;
-			targetProxy = 05C0C4A51AEC9DD200FAEBE1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		05C0C4981AEC9DD200FAEBE1 /* Main.storyboard */ = {
@@ -468,36 +382,6 @@
 			};
 			name = Release;
 		};
-		05C0C4B21AEC9DD200FAEBE1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = CentralTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Central.app/Central";
-			};
-			name = Debug;
-		};
-		05C0C4B31AEC9DD200FAEBE1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = CentralTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Central.app/Central";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -515,15 +399,6 @@
 			buildConfigurations = (
 				05C0C4AF1AEC9DD200FAEBE1 /* Debug */,
 				05C0C4B01AEC9DD200FAEBE1 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		05C0C4B11AEC9DD200FAEBE1 /* Build configuration list for PBXNativeTarget "CentralTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				05C0C4B21AEC9DD200FAEBE1 /* Debug */,
-				05C0C4B31AEC9DD200FAEBE1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
