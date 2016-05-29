@@ -3,5 +3,5 @@ use_frameworks!
 
 target 'BlueCap' do
   project 'BlueCap'
-  pod 'BlueCapKit', :path => '.'
+  pod 'BlueCapKit', :path => '../..'
 end

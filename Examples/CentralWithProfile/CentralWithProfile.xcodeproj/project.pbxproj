@@ -13,9 +13,6 @@
 		05E2D0881AF6ADDB00B34637 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05E2D0871AF6ADDB00B34637 /* Images.xcassets */; };
 		05E2D08B1AF6ADDB00B34637 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 05E2D0891AF6ADDB00B34637 /* LaunchScreen.xib */; };
 		05E2D0971AF6ADDC00B34637 /* CentralWithProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0961AF6ADDC00B34637 /* CentralWithProfileTests.swift */; };
-		05E2D0AB1AF6B1F100B34637 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05E2D0A61AF6ADEB00B34637 /* BlueCapKit.framework */; };
-		05E2D0AC1AF6B1F100B34637 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05E2D0A61AF6ADEB00B34637 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		05E2D0B11AF6B1FF00B34637 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05E2D0B01AF6B1FF00B34637 /* CoreBluetooth.framework */; };
 		05E2D0B41AF6B24E00B34637 /* SetUpdatePeriodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0B21AF6B24E00B34637 /* SetUpdatePeriodViewController.swift */; };
 		05E2D0B51AF6B24E00B34637 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0B31AF6B24E00B34637 /* UIAlertControllerExtensions.swift */; };
 /* End PBXBuildFile section */
@@ -28,34 +25,6 @@
 			remoteGlobalIDString = 05E2D07A1AF6ADDB00B34637;
 			remoteInfo = CentralWithProfile;
 		};
-		05E2D0A51AF6ADEB00B34637 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05E2D0A01AF6ADEB00B34637 /* BlueCapKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0551208219F5506000ED3B74;
-			remoteInfo = BlueCapKit;
-		};
-		05E2D0A71AF6ADEB00B34637 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05E2D0A01AF6ADEB00B34637 /* BlueCapKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0551208D19F5506000ED3B74;
-			remoteInfo = BlueCapKitTests;
-		};
-		05E2D0A91AF6B1DF00B34637 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05E2D0A01AF6ADEB00B34637 /* BlueCapKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 0551208119F5506000ED3B74;
-			remoteInfo = BlueCapKit;
-		};
-		05E2D0AD1AF6B1F100B34637 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05E2D0A01AF6ADEB00B34637 /* BlueCapKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 0551208119F5506000ED3B74;
-			remoteInfo = BlueCapKit;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -65,7 +34,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				05E2D0AC1AF6B1F100B34637 /* BlueCapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,8 +51,6 @@
 		05E2D0901AF6ADDC00B34637 /* CentralWithProfileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CentralWithProfileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05E2D0951AF6ADDC00B34637 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05E2D0961AF6ADDC00B34637 /* CentralWithProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralWithProfileTests.swift; sourceTree = "<group>"; };
-		05E2D0A01AF6ADEB00B34637 /* BlueCapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BlueCapKit.xcodeproj; path = ../../BlueCapKit.xcodeproj; sourceTree = "<group>"; };
-		05E2D0B01AF6B1FF00B34637 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		05E2D0B21AF6B24E00B34637 /* SetUpdatePeriodViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetUpdatePeriodViewController.swift; sourceTree = "<group>"; };
 		05E2D0B31AF6B24E00B34637 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,8 +60,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05E2D0B11AF6B1FF00B34637 /* CoreBluetooth.framework in Frameworks */,
-				05E2D0AB1AF6B1F100B34637 /* BlueCapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,8 +76,6 @@
 		05E2D0721AF6ADDB00B34637 = {
 			isa = PBXGroup;
 			children = (
-				05E2D0B01AF6B1FF00B34637 /* CoreBluetooth.framework */,
-				05E2D0A01AF6ADEB00B34637 /* BlueCapKit.xcodeproj */,
 				05E2D07D1AF6ADDB00B34637 /* CentralWithProfile */,
 				05E2D0931AF6ADDC00B34637 /* CentralWithProfileTests */,
 				05E2D07C1AF6ADDB00B34637 /* Products */,
@@ -169,15 +131,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		05E2D0A11AF6ADEB00B34637 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				05E2D0A61AF6ADEB00B34637 /* BlueCapKit.framework */,
-				05E2D0A81AF6ADEB00B34637 /* BlueCapKitTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -193,8 +146,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				05E2D0AA1AF6B1DF00B34637 /* PBXTargetDependency */,
-				05E2D0AE1AF6B1F100B34637 /* PBXTargetDependency */,
 			);
 			name = CentralWithProfile;
 			productName = CentralWithProfile;
@@ -249,12 +200,6 @@
 			mainGroup = 05E2D0721AF6ADDB00B34637;
 			productRefGroup = 05E2D07C1AF6ADDB00B34637 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 05E2D0A11AF6ADEB00B34637 /* Products */;
-					ProjectRef = 05E2D0A01AF6ADEB00B34637 /* BlueCapKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				05E2D07A1AF6ADDB00B34637 /* CentralWithProfile */,
@@ -262,23 +207,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		05E2D0A61AF6ADEB00B34637 /* BlueCapKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BlueCapKit.framework;
-			remoteRef = 05E2D0A51AF6ADEB00B34637 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		05E2D0A81AF6ADEB00B34637 /* BlueCapKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = BlueCapKitTests.xctest;
-			remoteRef = 05E2D0A71AF6ADEB00B34637 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		05E2D0791AF6ADDB00B34637 /* Resources */ = {
@@ -327,16 +255,6 @@
 			isa = PBXTargetDependency;
 			target = 05E2D07A1AF6ADDB00B34637 /* CentralWithProfile */;
 			targetProxy = 05E2D0911AF6ADDC00B34637 /* PBXContainerItemProxy */;
-		};
-		05E2D0AA1AF6B1DF00B34637 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BlueCapKit;
-			targetProxy = 05E2D0A91AF6B1DF00B34637 /* PBXContainerItemProxy */;
-		};
-		05E2D0AE1AF6B1F100B34637 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BlueCapKit;
-			targetProxy = 05E2D0AD1AF6B1F100B34637 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreBluetooth
+import SimpleFutures
 import BlueCapKit
 
 public enum CentralExampleError : Int {
