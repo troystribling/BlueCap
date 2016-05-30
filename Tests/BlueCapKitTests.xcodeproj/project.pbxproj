@@ -173,13 +173,13 @@
 			isa = PBXGroup;
 			children = (
 				05BF91EF1CFCA3F000B78B12 /* Info.plist */,
-				05BF91EA1CFC997F00B78B12 /* Helpers */,
 				05F0EBF81CF7E96D00468FC9 /* BlueCapKitTests */,
 				15FEEBF3DE438E42FA0ED909 /* Frameworks */,
 				05BF91AE1CFBFD8A00B78B12 /* FutureLocationTests */,
+				05BF91EA1CFC997F00B78B12 /* Helpers */,
+				7474B61C67422213E940E3B0 /* Pods */,
 				05F0EBF71CF7E96D00468FC9 /* Products */,
 				05BF91B31CFBFD8A00B78B12 /* SimpleFuturesTests */,
-				7474B61C67422213E940E3B0 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
