@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreBluetooth
-import SimpleFutures
 import BlueCapKit
 
 public enum CentralExampleError : Int {
@@ -118,7 +117,7 @@ class ViewController: UITableViewController {
         // on power, start scanning. when peripheral is discovered connect and stop scanning
         let peripheralConnectFuture = self.manager.whenPowerOn().flatmap { _ -> FutureStream<BCPeripheral> in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
-            }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
+        }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(10, timeoutRetries:5, disconnectRetries:5)
@@ -141,7 +140,13 @@ class ViewController: UITableViewController {
                 self.presentViewController(UIAlertController.alertWithMessage("Giving up"), animated:true, completion:nil)
             }
         }
-            
+
+        peripheralConnectFuture.onFailure { error in
+            self.peripheral = nil
+            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
+            self.updateUIStatus()
+        }
+
         // discover services and characteristics and enable accelerometer
         let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<BCPeripheral> in
             if peripheral.state == .Connected {
@@ -208,15 +213,10 @@ class ViewController: UITableViewController {
                 return promise.future
             }
         }
-        dataSubscriptionFuture.onFailure { error in
-            if error.domain != CentralError.domain || error.code == CentralExampleError.PeripheralNotConnected.rawValue {
-                self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
-            }
-        }
 
         dataSubscriptionFuture.flatmap { characteristic in
             return characteristic.receiveNotificationUpdates(10)
-        }.onSuccess {(_, data) in
+        }.onSuccess { (_, data) in
             self.updateData(data)
         }
             

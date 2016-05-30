@@ -1,7 +1,7 @@
 platform :ios, '8.0'
 use_frameworks!
 
-target 'BlueCap' do
+target 'Peripheral' do
   pod 'BlueCapKit', :path => '../..'
 end
 

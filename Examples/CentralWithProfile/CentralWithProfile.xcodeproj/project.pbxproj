@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05BF91FC1CFCAA3A00B78B12 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05BF91FB1CFCAA3A00B78B12 /* BlueCapKit.framework */; };
+		05BF91FD1CFCAA4B00B78B12 /* BlueCapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05BF91FB1CFCAA3A00B78B12 /* BlueCapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05E2D0811AF6ADDB00B34637 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0801AF6ADDB00B34637 /* AppDelegate.swift */; };
 		05E2D0831AF6ADDB00B34637 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0821AF6ADDB00B34637 /* ViewController.swift */; };
 		05E2D0861AF6ADDB00B34637 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05E2D0841AF6ADDB00B34637 /* Main.storyboard */; };
@@ -23,6 +25,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				05BF91FD1CFCAA4B00B78B12 /* BlueCapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -30,6 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05BF91FB1CFCAA3A00B78B12 /* BlueCapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueCapKit.framework; path = Carthage/Build/iOS/BlueCapKit.framework; sourceTree = "<group>"; };
 		05E2D07B1AF6ADDB00B34637 /* CentralWithProfile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CentralWithProfile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05E2D07F1AF6ADDB00B34637 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05E2D0801AF6ADDB00B34637 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -46,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05BF91FC1CFCAA3A00B78B12 /* BlueCapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +60,7 @@
 		05E2D0721AF6ADDB00B34637 = {
 			isa = PBXGroup;
 			children = (
+				05BF91FB1CFCAA3A00B78B12 /* BlueCapKit.framework */,
 				05E2D07D1AF6ADDB00B34637 /* CentralWithProfile */,
 				05E2D07C1AF6ADDB00B34637 /* Products */,
 			);
@@ -102,6 +108,7 @@
 				05E2D0781AF6ADDB00B34637 /* Frameworks */,
 				05E2D0791AF6ADDB00B34637 /* Resources */,
 				05E2D0AF1AF6B1F100B34637 /* Embed Frameworks */,
+				05BF91FF1CFCAA9000B78B12 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -157,6 +164,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		05BF91FF1CFCAA9000B78B12 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/BlueCapKit.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		05E2D0771AF6ADDB00B34637 /* Sources */ = {
@@ -278,6 +302,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CentralWithProfile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
@@ -289,6 +317,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CentralWithProfile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";

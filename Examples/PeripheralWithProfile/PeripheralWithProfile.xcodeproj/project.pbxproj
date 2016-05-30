@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05BF92011CFCC3B100B78B12 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05BF92001CFCC3B100B78B12 /* BlueCapKit.framework */; };
 		05E2D0381AF6A98F00B34637 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0371AF6A98F00B34637 /* AppDelegate.swift */; };
 		05E2D03A1AF6A98F00B34637 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0391AF6A98F00B34637 /* ViewController.swift */; };
 		05E2D03D1AF6A98F00B34637 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05E2D03B1AF6A98F00B34637 /* Main.storyboard */; };
@@ -15,16 +16,6 @@
 		05E2D0701AF6AD0600B34637 /* Accelerometer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D06E1AF6AD0600B34637 /* Accelerometer.swift */; };
 		05E2D0711AF6AD0600B34637 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D06F1AF6AD0600B34637 /* UIAlertControllerExtensions.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		05E2D0481AF6A98F00B34637 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05E2D02A1AF6A98F00B34637 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 05E2D0311AF6A98F00B34637;
-			remoteInfo = PeripheralWithProfile;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		05E2D0681AF6ABEA00B34637 /* Embed Frameworks */ = {
@@ -40,6 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05BF92001CFCC3B100B78B12 /* BlueCapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueCapKit.framework; path = Carthage/Build/iOS/BlueCapKit.framework; sourceTree = "<group>"; };
 		05E2D0321AF6A98F00B34637 /* PeripheralWithProfile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PeripheralWithProfile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05E2D0361AF6A98F00B34637 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05E2D0371AF6A98F00B34637 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -47,7 +39,6 @@
 		05E2D03C1AF6A98F00B34637 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		05E2D03E1AF6A98F00B34637 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		05E2D0411AF6A98F00B34637 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		05E2D0471AF6A98F00B34637 /* PeripheralWithProfileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeripheralWithProfileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05E2D06E1AF6AD0600B34637 /* Accelerometer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Accelerometer.swift; sourceTree = "<group>"; };
 		05E2D06F1AF6AD0600B34637 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -57,13 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		05E2D0441AF6A98F00B34637 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				05BF92011CFCC3B100B78B12 /* BlueCapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,6 +58,7 @@
 		05E2D0291AF6A98F00B34637 = {
 			isa = PBXGroup;
 			children = (
+				05BF92001CFCC3B100B78B12 /* BlueCapKit.framework */,
 				05E2D0341AF6A98F00B34637 /* PeripheralWithProfile */,
 				05E2D0331AF6A98F00B34637 /* Products */,
 			);
@@ -82,7 +68,6 @@
 			isa = PBXGroup;
 			children = (
 				05E2D0321AF6A98F00B34637 /* PeripheralWithProfile.app */,
-				05E2D0471AF6A98F00B34637 /* PeripheralWithProfileTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -121,6 +106,7 @@
 				05E2D02F1AF6A98F00B34637 /* Frameworks */,
 				05E2D0301AF6A98F00B34637 /* Resources */,
 				05E2D0681AF6ABEA00B34637 /* Embed Frameworks */,
+				05BF92021CFCC3F800B78B12 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -130,24 +116,6 @@
 			productName = PeripheralWithProfile;
 			productReference = 05E2D0321AF6A98F00B34637 /* PeripheralWithProfile.app */;
 			productType = "com.apple.product-type.application";
-		};
-		05E2D0461AF6A98F00B34637 /* PeripheralWithProfileTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 05E2D0541AF6A98F00B34637 /* Build configuration list for PBXNativeTarget "PeripheralWithProfileTests" */;
-			buildPhases = (
-				05E2D0431AF6A98F00B34637 /* Sources */,
-				05E2D0441AF6A98F00B34637 /* Frameworks */,
-				05E2D0451AF6A98F00B34637 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				05E2D0491AF6A98F00B34637 /* PBXTargetDependency */,
-			);
-			name = PeripheralWithProfileTests;
-			productName = PeripheralWithProfileTests;
-			productReference = 05E2D0471AF6A98F00B34637 /* PeripheralWithProfileTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -161,10 +129,6 @@
 				TargetAttributes = {
 					05E2D0311AF6A98F00B34637 = {
 						CreatedOnToolsVersion = 6.3.1;
-					};
-					05E2D0461AF6A98F00B34637 = {
-						CreatedOnToolsVersion = 6.3.1;
-						TestTargetID = 05E2D0311AF6A98F00B34637;
 					};
 				};
 			};
@@ -182,7 +146,6 @@
 			projectRoot = "";
 			targets = (
 				05E2D0311AF6A98F00B34637 /* PeripheralWithProfile */,
-				05E2D0461AF6A98F00B34637 /* PeripheralWithProfileTests */,
 			);
 		};
 /* End PBXProject section */
@@ -198,14 +161,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E2D0451AF6A98F00B34637 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		05BF92021CFCC3F800B78B12 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/BlueCapKit.framework",
+			);
+			outputPaths = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
-/* End PBXResourcesBuildPhase section */
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		05E2D02E1AF6A98F00B34637 /* Sources */ = {
@@ -219,22 +192,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05E2D0431AF6A98F00B34637 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		05E2D0491AF6A98F00B34637 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 05E2D0311AF6A98F00B34637 /* PeripheralWithProfile */;
-			targetProxy = 05E2D0481AF6A98F00B34637 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		05E2D03B1AF6A98F00B34637 /* Main.storyboard */ = {
@@ -342,6 +300,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = PeripheralWithProfile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
@@ -353,40 +315,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = PeripheralWithProfile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		05E2D0551AF6A98F00B34637 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = PeripheralWithProfileTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PeripheralWithProfile.app/PeripheralWithProfile";
-			};
-			name = Debug;
-		};
-		05E2D0561AF6A98F00B34637 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = PeripheralWithProfileTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PeripheralWithProfile.app/PeripheralWithProfile";
 			};
 			name = Release;
 		};
@@ -407,15 +343,6 @@
 			buildConfigurations = (
 				05E2D0521AF6A98F00B34637 /* Debug */,
 				05E2D0531AF6A98F00B34637 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		05E2D0541AF6A98F00B34637 /* Build configuration list for PBXNativeTarget "PeripheralWithProfileTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				05E2D0551AF6A98F00B34637 /* Debug */,
-				05E2D0561AF6A98F00B34637 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
