@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import SimpleFutures
 
 public class BCTimedScannerator {
     

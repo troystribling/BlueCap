@@ -1,5 +1,5 @@
 //
-//  Mocks.swift
+//  BCMocks.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 5/2/15.
@@ -9,13 +9,7 @@
 import UIKit
 import CoreBluetooth
 import CoreLocation
-import SimpleFutures
 @testable import BlueCapKit
-
- // MARK: - Error -
-struct TestFailure {
-    static let error = NSError(domain:"BlueCapKit Tests", code:100, userInfo:[NSLocalizedDescriptionKey:"Testing"])
-}
 
 // MARK: - Advertisements -
 let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral",

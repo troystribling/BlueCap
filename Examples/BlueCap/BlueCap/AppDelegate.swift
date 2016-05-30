@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FutureLocation
 import BlueCapKit
 
 struct BlueCapNotification {

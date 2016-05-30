@@ -1,13 +1,11 @@
 //
 //  BCSerialIODictionary.swift
-//  FutureLocation
 //
 //  Created by Troy Stribling on 1/24/16.
 //  Copyright © 2016 Troy Stribling. All rights reserved.
 //
 
 import Foundation
-import SimpleFutures
 
 // MARK: Serialize Dictionary Access
 public class BCSerialIODictionary<T, U where T: Hashable> {

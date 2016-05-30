@@ -34,6 +34,17 @@
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
 		056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* BCErrors.swift */; };
+		05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */; };
+		05BF91A41CFBF62700B78B12 /* FLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91981CFBF62700B78B12 /* FLBeacon.swift */; };
+		05BF91A51CFBF62700B78B12 /* FLBeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91991CFBF62700B78B12 /* FLBeaconManager.swift */; };
+		05BF91A61CFBF62700B78B12 /* FLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919A1CFBF62700B78B12 /* FLBeaconRegion.swift */; };
+		05BF91A71CFBF62700B78B12 /* FLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919B1CFBF62700B78B12 /* FLCircularRegion.swift */; };
+		05BF91A81CFBF62700B78B12 /* FLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919C1CFBF62700B78B12 /* FLLocationManager.swift */; };
+		05BF91A91CFBF62700B78B12 /* FLLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919D1CFBF62700B78B12 /* FLLogger.swift */; };
+		05BF91AA1CFBF62700B78B12 /* FLRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919E1CFBF62700B78B12 /* FLRegion.swift */; };
+		05BF91AB1CFBF62700B78B12 /* FLRegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */; };
+		05BF91AC1CFBF62700B78B12 /* FLSerialIODictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */; };
+		05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */; };
 		05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* DoubleExtensions.swift */; };
 		05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* StringExtensions.swift */; };
 		05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */; };
@@ -70,6 +81,17 @@
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		056276081CCD3F0A00F955D7 /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
+		05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
+		05BF91981CFBF62700B78B12 /* FLBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeacon.swift; sourceTree = "<group>"; };
+		05BF91991CFBF62700B78B12 /* FLBeaconManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeaconManager.swift; sourceTree = "<group>"; };
+		05BF919A1CFBF62700B78B12 /* FLBeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeaconRegion.swift; sourceTree = "<group>"; };
+		05BF919B1CFBF62700B78B12 /* FLCircularRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLCircularRegion.swift; sourceTree = "<group>"; };
+		05BF919C1CFBF62700B78B12 /* FLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLLocationManager.swift; sourceTree = "<group>"; };
+		05BF919D1CFBF62700B78B12 /* FLLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLLogger.swift; sourceTree = "<group>"; };
+		05BF919E1CFBF62700B78B12 /* FLRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLRegion.swift; sourceTree = "<group>"; };
+		05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLRegionManager.swift; sourceTree = "<group>"; };
+		05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLSerialIODictionary.swift; sourceTree = "<group>"; };
+		05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFutures.swift; sourceTree = "<group>"; };
 		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
 		05D3B9441A2BA162008E794E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Injectables.swift; sourceTree = "<group>"; };
@@ -114,6 +136,7 @@
 				05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */,
 				0551209C19F5513700ED3B74 /* Central */,
 				05D3B9421A2BA162008E794E /* Extensions */,
+				05BF91951CFBF62700B78B12 /* External */,
 				055120AE19F5513700ED3B74 /* Peripheral */,
 				055120B219F5513700ED3B74 /* SerDe */,
 				055120C219F5513700ED3B74 /* Service Profile Definitions */,
@@ -197,6 +220,40 @@
 				05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		05BF91951CFBF62700B78B12 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				05BF91961CFBF62700B78B12 /* FutureLocation */,
+				05BF91A11CFBF62700B78B12 /* SimpleFutures */,
+			);
+			path = External;
+			sourceTree = "<group>";
+		};
+		05BF91961CFBF62700B78B12 /* FutureLocation */ = {
+			isa = PBXGroup;
+			children = (
+				05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */,
+				05BF91981CFBF62700B78B12 /* FLBeacon.swift */,
+				05BF91991CFBF62700B78B12 /* FLBeaconManager.swift */,
+				05BF919A1CFBF62700B78B12 /* FLBeaconRegion.swift */,
+				05BF919B1CFBF62700B78B12 /* FLCircularRegion.swift */,
+				05BF919C1CFBF62700B78B12 /* FLLocationManager.swift */,
+				05BF919D1CFBF62700B78B12 /* FLLogger.swift */,
+				05BF919E1CFBF62700B78B12 /* FLRegion.swift */,
+				05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */,
+				05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */,
+			);
+			path = FutureLocation;
+			sourceTree = "<group>";
+		};
+		05BF91A11CFBF62700B78B12 /* SimpleFutures */ = {
+			isa = PBXGroup;
+			children = (
+				05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */,
+			);
+			path = SimpleFutures;
 			sourceTree = "<group>";
 		};
 		05D3B9421A2BA162008E794E /* Extensions */ = {
@@ -292,29 +349,40 @@
 				055120D219F5513700ED3B74 /* BCService.swift in Sources */,
 				055120CE19F5513700ED3B74 /* BCCharacteristic.swift in Sources */,
 				05415EEC1C57D6FD0005B68E /* BCSerialIO.swift in Sources */,
+				05BF91A51CFBF62700B78B12 /* FLBeaconManager.swift in Sources */,
 				055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */,
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
 				056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */,
 				055120DD19F5513700ED3B74 /* BCMutableService.swift in Sources */,
+				05BF91AB1CFBF62700B78B12 /* FLRegionManager.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
+				05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */,
 				05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */,
+				05BF91A91CFBF62700B78B12 /* FLLogger.swift in Sources */,
+				05BF91AA1CFBF62700B78B12 /* FLRegion.swift in Sources */,
 				055120D319F5513700ED3B74 /* BCTimedScannerator.swift in Sources */,
 				055120DE19F5513700ED3B74 /* BCPeripheralManager.swift in Sources */,
 				055120F219F5513700ED3B74 /* BCLogger.swift in Sources */,
 				05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
 				05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */,
+				05BF91AC1CFBF62700B78B12 /* FLSerialIODictionary.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
 				055120EA19F5513700ED3B74 /* BCServiceProfile.swift in Sources */,
 				4ED105C01C315C420034D5D2 /* UInt32Extensions.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
+				05BF91A41CFBF62700B78B12 /* FLBeacon.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
 				055120E519F5513700ED3B74 /* BCCharacteristicProfile.swift in Sources */,
 				055120CD19F5513700ED3B74 /* BCCentralManager.swift in Sources */,
+				05BF91A81CFBF62700B78B12 /* FLLocationManager.swift in Sources */,
+				05BF91A61CFBF62700B78B12 /* FLBeaconRegion.swift in Sources */,
+				05BF91A71CFBF62700B78B12 /* FLCircularRegion.swift in Sources */,
 				055120DC19F5513700ED3B74 /* BCMutableCharacteristic.swift in Sources */,
+				05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */,
 				055120E219F5513700ED3B74 /* BCSerDe.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

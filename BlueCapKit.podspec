@@ -19,6 +19,4 @@ Pod::Spec.new do |spec|
   spec.source_files       = "BlueCapKit/**/*.swift"
   spec.frameworks         = "CoreBluetooth", "CoreLocation"
 
-  spec.dependency "SimpleFutures", "~> 0.1"
-  spec.dependency "FutureLocation", "~> 0.1"
 end

@@ -8,8 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import SimpleFutures
-import FutureLocation
 
 // MARK: - BCPeripheralManager -
 public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {

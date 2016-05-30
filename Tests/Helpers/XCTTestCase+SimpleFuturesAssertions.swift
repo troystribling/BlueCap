@@ -8,7 +8,7 @@
 
 import Foundation
 import XCTest
-import SimpleFutures
+@testable import BlueCapKit
 
 extension XCTestCase  {
 
@@ -194,6 +194,19 @@ extension XCTestCase  {
                 if maxCount != count {
                     self.recordFailureWithDescription("onFailure not called \(maxCount) times", inFile: file, atLine: line, expected: true)
                 }
+            }
+        }
+    }
+
+    func XCTExpectFullfilledCountTimes(maxCount:Int, message:String) -> Void -> Void {
+        let expectation = self.expectationWithDescription("\(message) fulfilled")
+        var count = 0
+        return {
+            count += 1
+            if count == maxCount {
+                expectation.fulfill()
+            } else if count > maxCount {
+                XCTAssert(false, "\(message) called more than \(maxCount) times")
             }
         }
     }

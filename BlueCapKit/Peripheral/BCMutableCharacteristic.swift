@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import SimpleFutures
 
 // MARK: - BCMutableCharacteristic -
 public class BCMutableCharacteristic : NSObject {

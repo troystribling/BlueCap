@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreBluetooth
-import SimpleFutures
 import BlueCapKit
 
 class PeripheralsViewController : UITableViewController {
