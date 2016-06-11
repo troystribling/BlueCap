@@ -1,5 +1,5 @@
 //
-//  BCCharacteristicTests.swift
+//  CharacteristicTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -11,12 +11,12 @@ import XCTest
 import CoreBluetooth
 @testable import BlueCapKit
 
-// MARK: - BCCharacteristicTests -
-class BCCharacteristicTests: XCTestCase {
+// MARK: - CharacteristicTests -
+class CharacteristicTests: XCTestCase {
     
-    var centralManager: BCCentralManager!
-    var peripheral: BCPeripheral!
-    var service: BCService!
+    var centralManager: CentralManager!
+    var peripheral: Peripheral!
+    var service: Service!
     let mockPerpheral = CBPeripheralMock(state: .Connected)
     let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))
     let RSSI = -45
@@ -25,7 +25,7 @@ class BCCharacteristicTests: XCTestCase {
     override func setUp() {
         GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
-        self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)
         self.service = self.peripheral.services.first!
         super.setUp()
@@ -35,7 +35,7 @@ class BCCharacteristicTests: XCTestCase {
         super.tearDown()
     }
     
-    func createCharacteristic(properties: CBCharacteristicProperties, isNotifying:Bool) -> (BCCharacteristic, CBCharacteristicMock) {
+    func createCharacteristic(properties: CBCharacteristicProperties, isNotifying:Bool) -> (Characteristic, CBCharacteristicMock) {
         let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, isNotifying: isNotifying)
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
@@ -85,7 +85,7 @@ class BCCharacteristicTests: XCTestCase {
         let (characteristic, _) = self.createCharacteristic([.Read, .Write], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString(), timeout:1.0)
         XCTAssertFutureFails(future) { error in
-            XCTAssertEqual(error.code, BCCharacteristicErrorCode.WriteTimeout.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, CharacteristicErrorCode.WriteTimeout.rawValue, "Error code invalid")
             XCTAssert(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue not called")
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1, "CBPeripheral#writeValue called more than once")
             XCTAssertEqual(self.mockPerpheral.writtenType, .WithResponse, "writtenType is invalid")
@@ -96,7 +96,7 @@ class BCCharacteristicTests: XCTestCase {
         let (characteristic, _) = self.createCharacteristic([.Read], isNotifying: false)
         let future = characteristic.writeData("aa".dataFromHexString())
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqual(error.code, BCCharacteristicErrorCode.WriteNotSupported.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, CharacteristicErrorCode.WriteNotSupported.rawValue, "Error code invalid")
             XCTAssertFalse(self.mockPerpheral.writeValueCalled, "CBPeripheral#writeValue called")
         }
     }
@@ -181,7 +181,7 @@ class BCCharacteristicTests: XCTestCase {
         let future = characteristic.read(1.0)
         XCTAssertFutureFails(future) { error in
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic not called")
-            XCTAssertEqual(error.code, BCCharacteristicErrorCode.ReadTimeout.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, CharacteristicErrorCode.ReadTimeout.rawValue, "Error code invalid")
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1, "CBPeripheral#readValue not called 1 time")
         }
     }
@@ -191,7 +191,7 @@ class BCCharacteristicTests: XCTestCase {
         let future = characteristic.read()
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertFalse(self.mockPerpheral.readValueForCharacteristicCalled, "CBPeripheral#readValueForCharacteristic called")
-            XCTAssertEqual(error.code, BCCharacteristicErrorCode.ReadNotSupported.rawValue, "Error code invalid")
+            XCTAssertEqual(error.code, CharacteristicErrorCode.ReadNotSupported.rawValue, "Error code invalid")
         }
     }
     
@@ -314,7 +314,7 @@ class BCCharacteristicTests: XCTestCase {
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
         let startNotifyingFuture = characteristic.startNotifying()
-        let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: Characteristic, data: NSData?)> in
             characteristic.receiveNotificationUpdates()
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
@@ -335,7 +335,7 @@ class BCCharacteristicTests: XCTestCase {
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.Notify], isNotifying: true)
         let startNotifyingFuture = characteristic.startNotifying()
-        let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap(self.immediateContext) { _ -> FutureStream<(characteristic: Characteristic, data: NSData?)> in
             characteristic.receiveNotificationUpdates()
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
@@ -364,7 +364,7 @@ class BCCharacteristicTests: XCTestCase {
 
         let startNotifyingFuture = characteristic.startNotifying()
 
-        let updateFuture = startNotifyingFuture.flatmap (self.immediateContext) { _ -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        let updateFuture = startNotifyingFuture.flatmap (self.immediateContext) { _ -> FutureStream<(characteristic: Characteristic, data: NSData?)> in
             characteristic.receiveNotificationUpdates()
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)

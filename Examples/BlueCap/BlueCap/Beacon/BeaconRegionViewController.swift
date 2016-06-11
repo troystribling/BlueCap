@@ -42,7 +42,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     

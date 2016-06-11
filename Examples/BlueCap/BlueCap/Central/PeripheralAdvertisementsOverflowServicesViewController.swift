@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralAdvertisementsOverflowServicesViewController: UITableViewController {
 
-    weak var peripheral: BCPeripheral?
+    weak var peripheral: Peripheral?
     
     struct MainStoryboard {
         static let peripheralAdvertisementsOverflowServiceCell = "PeripheralAdvertisementsOverflowServiceCell"
@@ -37,7 +37,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     
     func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
+        Logger.debug()
     }
     
     // UITableViewDataSource

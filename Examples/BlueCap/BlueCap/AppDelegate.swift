@@ -25,11 +25,11 @@ struct BCAppError {
 }
 
 struct Singletons {
-    static let centralManager = BCCentralManager()
-    static let peripheralManager = BCPeripheralManager()
-    static let timedScannerator = BCTimedScannerator(centralManager:Singletons.centralManager)
+    static let centralManager = CentralManager()
+    static let peripheralManager = PeripheralManager()
+    static let timedScannerator = TimedScannerator(centralManager:Singletons.centralManager)
     static let beaconManager = FLBeaconManager()
-    static let profileManager = BCProfileManager.sharedInstance
+    static let profileManager = ProfileManager.sharedInstance
 }
 
 struct Params {
@@ -64,11 +64,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(application: UIApplication) {
-        BCLogger.debug()
+        Logger.debug()
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
-        BCLogger.debug()
+        Logger.debug()
         NSUserDefaults.standardUserDefaults().synchronize()
         if Singletons.centralManager.isScanning {
             Singletons.centralManager.stopScanning()
@@ -80,16 +80,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(application: UIApplication) {
-        BCLogger.debug()
+        Logger.debug()
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
-        BCLogger.debug()
+        Logger.debug()
         Notify.resetEventCount()
     }
 
     func applicationWillTerminate(application: UIApplication) {
-        BCLogger.debug()
+        Logger.debug()
         NSUserDefaults.standardUserDefaults().synchronize()
     }
 

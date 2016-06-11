@@ -11,7 +11,7 @@ import BlueCapKit
 
 class ServiceCharacteristicProfilesViewController : UITableViewController {
 
-    var serviceProfile: BCServiceProfile?
+    var serviceProfile: ServiceProfile?
     
     struct MainStoryboard {
         static let serviceCharacteristicProfileCell = "ServiceCharacteristicProfileCell"

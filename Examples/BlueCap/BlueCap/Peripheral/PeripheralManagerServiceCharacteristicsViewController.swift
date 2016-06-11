@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicsViewController : UITableViewController {
  
-    var service: BCMutableService?
+    var service: MutableService?
     var peripheralManagerViewController : PeripheralManagerViewController?
 
     
@@ -57,7 +57,7 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }

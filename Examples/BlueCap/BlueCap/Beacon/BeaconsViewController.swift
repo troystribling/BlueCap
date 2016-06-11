@@ -47,7 +47,7 @@ class BeaconsViewController: UITableViewController {
     }
 
     func updateBeacons() {
-        BCLogger.debug()
+        Logger.debug()
         self.tableView.reloadData()
     }
     
@@ -64,7 +64,7 @@ class BeaconsViewController: UITableViewController {
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     

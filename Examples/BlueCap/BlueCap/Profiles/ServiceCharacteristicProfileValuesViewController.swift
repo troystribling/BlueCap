@@ -12,7 +12,7 @@ import BlueCapKit
 
 class ServiceCharacteristicProfileValuesViewController : UITableViewController {
     
-    var characteristicProfile : BCCharacteristicProfile?
+    var characteristicProfile : CharacteristicProfile?
     
     var  values : [String:String]? {
         if let characteristicProfile = self.characteristicProfile {

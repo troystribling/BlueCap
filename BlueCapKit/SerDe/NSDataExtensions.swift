@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension NSData: BCSerializable {
+extension NSData: Serializable {
     
     public class func fromString(value: String, encoding: NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
         return value.dataUsingEncoding(encoding).map{ NSData(data:$0) }

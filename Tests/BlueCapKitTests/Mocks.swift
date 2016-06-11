@@ -1,5 +1,5 @@
 //
-//  BCMocks.swift
+//  Mocks.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 5/2/15.
@@ -57,13 +57,13 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
 }
 
 // MARK: - CentralManagerUT -
-class CentralManagerUT: BCCentralManager {
+class CentralManagerUT: CentralManager {
 
     override init(centralManager: CBCentralManagerInjectable) {
         super.init(centralManager: centralManager)
     }
 
-    override func cancelPeripheralConnection(peripheral: BCPeripheral) {
+    override func cancelPeripheralConnection(peripheral: Peripheral) {
         peripheral.didDisconnectPeripheral(nil)
     }
 }
@@ -98,7 +98,7 @@ class CBPeripheralMock: CBPeripheralInjectable {
 
     var services: [CBServiceMock]?
 
-    var bcPeripheral: BCPeripheral?
+    var bcPeripheral: Peripheral?
     var error: NSError?
     var RSSI: Int = -44
 
@@ -163,16 +163,16 @@ class CBPeripheralMock: CBPeripheralInjectable {
 }
 
 // MARK: - PeripheralUT -
-class PeripheralUT: BCPeripheral {
+class PeripheralUT: Peripheral {
     
     let error:NSError?
     
-    init(cbPeripheral: CBPeripheralInjectable, centralManager: BCCentralManager, advertisements: [String: AnyObject], rssi: Int, error: NSError?) {
+    init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String: AnyObject], rssi: Int, error: NSError?) {
         self.error = error
         super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, RSSI: rssi)
     }
     
-    override func discoverService(head: BCService, tail: [BCService], promise: Promise<BCPeripheral>) {
+    override func discoverService(head: Service, tail: [Service], promise: Promise<Peripheral>) {
         if let error = self.error {
             promise.failure(error)
         } else {
@@ -305,7 +305,7 @@ class CBMutableCharacteristicMock : CBCharacteristicMock, CBMutableCharacteristi
 }
 
 // MARK: - PeripheralManagerUT -
-class PeripheralManagerUT : BCPeripheralManager {
+class PeripheralManagerUT : PeripheralManager {
     
     var respondToRequestCalled = false
 
@@ -313,7 +313,7 @@ class PeripheralManagerUT : BCPeripheralManager {
     var result: CBATTError?
     var request: CBATTRequestInjectable?
     
-    override func addServices(promise: Promise<Void>, services: [BCMutableService]) {
+    override func addServices(promise: Promise<Void>, services: [MutableService]) {
         super.addServices(promise, services: services)
         if let service = services.first {
             self.didAddService(service.cbMutableService, error: self.error)
@@ -331,16 +331,16 @@ class PeripheralManagerUT : BCPeripheralManager {
             return
         }
         let options = NSKeyValueObservingOptions([.New, .Old])
-        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
     }
 
     override internal func stopObserving() {
         guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManagerMock else {
             return
         }
-        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
     }
 
 }
@@ -382,12 +382,12 @@ func createPeripheralManager(isAdvertising: Bool, state: CBPeripheralManagerStat
     return (mock, PeripheralManagerUT(peripheralManager:mock))
 }
 
-func createPeripheralManagerServices(peripheral: BCPeripheralManager) -> [BCMutableService] {
-    let profileManager = BCProfileManager.sharedInstance
+func createPeripheralManagerServices(peripheral: PeripheralManager) -> [MutableService] {
+    let profileManager = ProfileManager.sharedInstance
     if let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)],
            locationService = profileManager.services[CBUUID(string: Gnosus.LocationService.UUID)] {
-        return [BCMutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService),
-                BCMutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: locationService)]
+        return [MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService),
+                MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: locationService)]
     } else {
         return []
     }

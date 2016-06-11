@@ -1,5 +1,5 @@
 //
-//  BCServiceTests.swift
+//  ServiceTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -12,10 +12,10 @@ import CoreBluetooth
 import CoreLocation
 @testable import BlueCapKit
 
-// MARK: - BCServiceTests -
-class BCServiceTests: XCTestCase {
+// MARK: - ServiceTests -
+class ServiceTests: XCTestCase {
     
-    var centralManager: BCCentralManager!
+    var centralManager: CentralManager!
     var mockCharateristics = [
             CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.Read, .Write], isNotifying:false),
             CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.Read, .Write], isNotifying:false),
@@ -25,12 +25,12 @@ class BCServiceTests: XCTestCase {
     let immediateContext = ImmediateContext()
     let RSSI = -45
 
-    func service(peripheral: BCPeripheral) -> BCService {
-        return BCService(cbService:self.mockService, peripheral: peripheral)
+    func service(peripheral: Peripheral) -> Service {
+        return Service(cbService:self.mockService, peripheral: peripheral)
     }
 
-    func peripheral(state: CBPeripheralState) -> BCPeripheral {
-        return BCPeripheral(cbPeripheral: CBPeripheralMock(state: state), centralManager: self.centralManager,    advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+    func peripheral(state: CBPeripheralState) -> Peripheral {
+        return Peripheral(cbPeripheral: CBPeripheralMock(state: state), centralManager: self.centralManager,    advertisements: peripheralAdvertisements, RSSI: self.RSSI)
     }
 
     override func setUp() {

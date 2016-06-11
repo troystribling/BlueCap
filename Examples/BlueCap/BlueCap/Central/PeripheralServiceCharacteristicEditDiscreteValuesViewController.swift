@@ -14,7 +14,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     private static var BCPeripheralStateKVOContext = UInt8()
 
-    weak var characteristic: BCCharacteristic!
+    weak var characteristic: Characteristic!
     var peripheralViewController: PeripheralViewController?
 
     var progressView = ProgressView()
@@ -50,7 +50,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
 
     func peripheralDisconnected() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripheralConnected {
                 self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
@@ -63,7 +63,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
+        Logger.debug()
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {

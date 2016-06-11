@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension UInt32: BCDeserializable {
+extension UInt32: Deserializable {
     
     public static var size : Int {
         return sizeof(UInt32)

@@ -1,5 +1,5 @@
 //
-//  BCCentralManagerTests.swift
+//  CentralManagerTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -11,8 +11,8 @@ import XCTest
 import CoreBluetooth
 @testable import BlueCapKit
 
-// MARK - BCCentralManagerTests -
-class BCCentralManagerTests: XCTestCase {
+// MARK - CentralManagerTests -
+class CentralManagerTests: XCTestCase {
 
     let immediateContext = ImmediateContext()
 
@@ -27,14 +27,14 @@ class BCCentralManagerTests: XCTestCase {
     // MARK: whenPowerOn
     func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
-        let centralManager = BCCentralManager(centralManager: mock)
+        let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOn_WhenPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOff)
-        let centralManager = BCCentralManager(centralManager: mock)
+        let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
         mock.state = .PoweredOn
         centralManager.didUpdateState()
@@ -44,7 +44,7 @@ class BCCentralManagerTests: XCTestCase {
     // MARK: whenPowerOff
     func testWhenPowerOff_WhenPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
-        let centralManager = BCCentralManager(centralManager: mock)
+        let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
         mock.state = .PoweredOff
         centralManager.didUpdateState()
@@ -53,7 +53,7 @@ class BCCentralManagerTests: XCTestCase {
 
     func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOff)
-        let centralManager = BCCentralManager(centralManager: mock)
+        let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
@@ -61,7 +61,7 @@ class BCCentralManagerTests: XCTestCase {
     // MARK: Peripheral discovery
     func testStartScanning_WhenPoweredOnAndPeripheralDiscovered_CompletesSuccessfully() {
         let centralMock = CBCentralManagerMock(state: .PoweredOn)
-        let centralManager = BCCentralManager(centralManager: centralMock)
+        let centralManager = CentralManager(centralManager: centralMock)
         let peripheralMock = CBPeripheralMock()
         let future = centralManager.startScanning()
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
@@ -81,7 +81,7 @@ class BCCentralManagerTests: XCTestCase {
     
     func testStartScanning_WhenPoweredOff_CompletesWithError() {
         let centralMock = CBCentralManagerMock(state: .PoweredOff)
-        let centralManager = BCCentralManager(centralManager: centralMock)
+        let centralManager = CentralManager(centralManager: centralMock)
         let future = centralManager.startScanning()
         XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
             { error in
@@ -94,7 +94,7 @@ class BCCentralManagerTests: XCTestCase {
     // MARK: State Restoration
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let mock = CBCentralManagerMock()
-        let centralManager = BCCentralManager(centralManager: mock)
+        let centralManager = CentralManager(centralManager: mock)
         let testPeripherals = [CBPeripheralMock(state: .Connected, identifier: NSUUID()), CBPeripheralMock(state: .Connected, identifier: NSUUID())]
         for testPeripheral in testPeripherals {
             let testServices = [CBServiceMock(), CBServiceMock()]
@@ -138,7 +138,7 @@ class BCCentralManagerTests: XCTestCase {
 
     func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
         let mock = CBCentralManagerMock()
-        let centralManager = BCCentralManager(centralManager: mock)
+        let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
         XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [

@@ -1,5 +1,5 @@
 //
-//  BCCharacteristicProfile.swift
+//  CharacteristicProfile.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 4/12/16.
@@ -11,15 +11,15 @@ import XCTest
 import CoreBluetooth
 @testable import BlueCapKit
 
-class BCCharacteristicProfile: XCTestCase {
+class CharacteristicProfileTests: XCTestCase {
 
-    var centralManager: BCCentralManager!
-    var service: BCService!
+    var centralManager: CentralManager!
+    var service: Service!
     let mockPerpheral = CBPeripheralMock(state: .Connected)
     let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))
     let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.Read, .Write], isNotifying: false)
 
-    var peripheral: BCPeripheral!
+    var peripheral: Peripheral!
     let immediateContext = ImmediateContext()
     let RSSI = -45
 
@@ -27,8 +27,8 @@ class BCCharacteristicProfile: XCTestCase {
         super.setUp()
         GnosusProfiles.create()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
-        self.peripheral = BCPeripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        self.service  = BCService(cbService: self.mockService, peripheral: self.peripheral)
+        self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        self.service  = Service(cbService: self.mockService, peripheral: self.peripheral)
     }
     
     override func tearDown() {
@@ -37,7 +37,7 @@ class BCCharacteristicProfile: XCTestCase {
     
     // MARK: After discovered
     func testAfterDiscovered_WhenCharacteristicIsDiscovered_CompletesSuccessfully() {
-        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
+        let serviceProfile = ProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
         let characteristicProfile = serviceProfile.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]!
         let future = characteristicProfile.afterDiscovered()
         service.didDiscoverCharacteristics([self.mockCharacteristic], error: nil)
@@ -49,7 +49,7 @@ class BCCharacteristicProfile: XCTestCase {
     }
 
     func testAfterDiscovered_WhenCharacteristicDiscoveryFailes_CompletesWithFailure() {
-        let serviceProfile = BCProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
+        let serviceProfile = ProfileManager.sharedInstance.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
         let characteristicProfile = serviceProfile.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]!
         let future = characteristicProfile.afterDiscovered()
         service.didDiscoverCharacteristics([self.mockCharacteristic], error: TestFailure.error)

@@ -15,7 +15,7 @@ class PeripheralViewController : UITableViewController {
 
     private static var BCPeripheralStateKVOContext = UInt8()
 
-    weak var peripheral: BCPeripheral!
+    weak var peripheral: Peripheral!
     var peripheralConnected = true
     var peripheralDiscovered = false
 

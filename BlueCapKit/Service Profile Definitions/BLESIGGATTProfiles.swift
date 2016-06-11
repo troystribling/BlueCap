@@ -13,89 +13,89 @@ import CoreBluetooth
 public struct BLESIGGATT {
 
     // MARK: - Device Information Service -
-    public struct DeviceInformationService: BCServiceConfigurable {
+    public struct DeviceInformationService: ServiceConfigurable {
 
         // ServiceConfigurable
         public static let UUID = "180a"
         public static let name = "Device Information"
         public static let tag  = "BLESIGGATT"
         
-        public struct ModelNumber: BCCharacteristicConfigurable {
+        public struct ModelNumber: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
             public static let UUID                                     = "2a24"
             public static let name                                     = "Device Model Number"
             public static let permissions: CBAttributePermissions      = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties   = .Read
-            public static let initialValue                             = BCSerDe.serialize("Model A")
+            public static let initialValue                             = SerDe.serialize("Model A")
             
         }
         
-        public struct SerialNumber: BCCharacteristicConfigurable {
+        public struct SerialNumber: CharacteristicConfigurable {
 
             // CharacteristicConfigurable
             public static let UUID                                      = "2a25"
             public static let name                                      = "Device Serial Number"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = .Read
-            public static let initialValue                              = BCSerDe.serialize("AAA11")
+            public static let initialValue                              = SerDe.serialize("AAA11")
             
         }
         
-        public struct FirmwareRevision: BCCharacteristicConfigurable {
+        public struct FirmwareRevision: CharacteristicConfigurable {
 
             // CharacteristicConfigurable
             public static let UUID                                      = "2a26"
             public static let name                                      = "Device Firmware Revision"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = .Read
-            public static let initialValue                              = BCSerDe.serialize("1.0")
+            public static let initialValue                              = SerDe.serialize("1.0")
 
         }
         
-        public struct HardwareRevision: BCCharacteristicConfigurable {
+        public struct HardwareRevision: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
             public static let UUID = "2a27"
             public static let name = "Device Hardware Revision"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = .Read
-            public static let initialValue = BCSerDe.serialize("1.0")
+            public static let initialValue = SerDe.serialize("1.0")
             
         }
         
-        public struct SoftwareRevision: BCCharacteristicConfigurable {
+        public struct SoftwareRevision: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
             public static let UUID = "2a28"
             public static let name = "Device Software Revision"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = .Read
-            public static let initialValue = BCSerDe.serialize("1.0")
+            public static let initialValue = SerDe.serialize("1.0")
 
         }
         
-        public struct ManufacturerName: BCCharacteristicConfigurable {
+        public struct ManufacturerName: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
             public static let UUID                                      = "2a29"
             public static let name                                      = "Device Manufacturer Name"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = .Read
-            public static let initialValue = BCSerDe.serialize("gnos.us")
+            public static let initialValue = SerDe.serialize("gnos.us")
             
         }
     }
     
     // MARK: - Battery Service -
-    public struct BatteryService: BCServiceConfigurable {
+    public struct BatteryService: ServiceConfigurable {
 
         // ServiceConfigurable
         public static let UUID = "180f"
         public static let name = "Battery"
         public static let tag  = "BLESIGGATT"
         
-        public struct Level: BCRawDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
+        public struct Level: RawDeserializable, CharacteristicConfigurable, StringDeserializable {
             
             public let value: UInt8
             
@@ -104,7 +104,7 @@ public struct BLESIGGATT {
             public static let name                                      = "Battery Level"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = [.Notify, .Read]
-            public static let initialValue: NSData?                     = BCSerDe.serialize(UInt8(100))
+            public static let initialValue: NSData?                     = SerDe.serialize(UInt8(100))
 
             // RawDeserializable
             public var rawValue: UInt8 {
@@ -133,14 +133,14 @@ public struct BLESIGGATT {
     }
 
     // MARK: - Tx Power Service -
-    public struct TxPowerService: BCServiceConfigurable {
+    public struct TxPowerService: ServiceConfigurable {
 
         // ServiceConfigurable
         public static let UUID = "1804"
         public static let name = "Tx Power Level"
         public static let tag  = "BLESIGGATT"
 
-        public struct Level: BCRawDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
+        public struct Level: RawDeserializable, CharacteristicConfigurable, StringDeserializable {
             
             public let value : Int8
             
@@ -149,7 +149,7 @@ public struct BLESIGGATT {
             public static let name                                      = "Tx Power Level"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = [.Notify, .Read]
-            public static let initialValue: NSData?                     = BCSerDe.serialize(Int8(-40))
+            public static let initialValue: NSData?                     = SerDe.serialize(Int8(-40))
             
             // RawDeserializable
             public var rawValue : Int8 {
@@ -184,16 +184,16 @@ public class BLESIGGATTProfiles {
     
     public class func create () {
         
-        let profileManager = BCProfileManager.sharedInstance
+        let profileManager = ProfileManager.sharedInstance
         
         // Device Information Service
-        let deviceInformationService = BCConfiguredServiceProfile<BLESIGGATT.DeviceInformationService>()
-        let deviceModelNumberCharacteristic = BCStringCharacteristicProfile<BLESIGGATT.DeviceInformationService.ModelNumber>()
-        let deviceSerialNumberCharacteristic = BCStringCharacteristicProfile<BLESIGGATT.DeviceInformationService.SerialNumber>()
-        let deviceFirmwareVersion = BCStringCharacteristicProfile<BLESIGGATT.DeviceInformationService.FirmwareRevision>()
-        let deviceHardwareRevision = BCStringCharacteristicProfile<BLESIGGATT.DeviceInformationService.HardwareRevision>()
-        let deviceSoftwareRevision = BCStringCharacteristicProfile<BLESIGGATT.DeviceInformationService.SoftwareRevision>()
-        let deviceManufactureName = BCStringCharacteristicProfile<BLESIGGATT.DeviceInformationService.ManufacturerName>()
+        let deviceInformationService = ConfiguredServiceProfile<BLESIGGATT.DeviceInformationService>()
+        let deviceModelNumberCharacteristic = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.ModelNumber>()
+        let deviceSerialNumberCharacteristic = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.SerialNumber>()
+        let deviceFirmwareVersion = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.FirmwareRevision>()
+        let deviceHardwareRevision = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.HardwareRevision>()
+        let deviceSoftwareRevision = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.SoftwareRevision>()
+        let deviceManufactureName = StringCharacteristicProfile<BLESIGGATT.DeviceInformationService.ManufacturerName>()
         
         deviceInformationService.addCharacteristic(deviceModelNumberCharacteristic)
         deviceInformationService.addCharacteristic(deviceSerialNumberCharacteristic)
@@ -205,15 +205,15 @@ public class BLESIGGATTProfiles {
         
 
         // Battery Service
-        let batteryService = BCConfiguredServiceProfile<BLESIGGATT.BatteryService>()
-        let batteryLevelCharcteristic = BCRawCharacteristicProfile<BLESIGGATT.BatteryService.Level>()
+        let batteryService = ConfiguredServiceProfile<BLESIGGATT.BatteryService>()
+        let batteryLevelCharcteristic = RawCharacteristicProfile<BLESIGGATT.BatteryService.Level>()
         
         batteryService.addCharacteristic(batteryLevelCharcteristic)
         profileManager.addService(batteryService)
 
         // Tx Power Service
-        let txPowerService = BCConfiguredServiceProfile<BLESIGGATT.TxPowerService>()
-        let txPowerLevel = BCRawCharacteristicProfile<BLESIGGATT.TxPowerService.Level>()
+        let txPowerService = ConfiguredServiceProfile<BLESIGGATT.TxPowerService>()
+        let txPowerLevel = RawCharacteristicProfile<BLESIGGATT.TxPowerService.Level>()
         
         txPowerService.addCharacteristic(txPowerLevel)
         profileManager.addService(txPowerService)

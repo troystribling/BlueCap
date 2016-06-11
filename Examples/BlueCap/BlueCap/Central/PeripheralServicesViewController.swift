@@ -15,7 +15,7 @@ class PeripheralServicesViewController : UITableViewController {
 
     private static var BCPeripheralStateKVOContext = UInt8()
 
-    weak var peripheral: BCPeripheral!
+    weak var peripheral: Peripheral!
     var peripheralViewController: PeripheralViewController!
     var progressView  = ProgressView()
     
@@ -65,7 +65,7 @@ class PeripheralServicesViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {
-        BCLogger.debug()
+        Logger.debug()
         if self.peripheralViewController.peripheralConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
             self.peripheralViewController.peripheralConnected = false
@@ -91,7 +91,7 @@ class PeripheralServicesViewController : UITableViewController {
     }
 
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         self.navigationController?.popToRootViewControllerAnimated(false)
     }
     

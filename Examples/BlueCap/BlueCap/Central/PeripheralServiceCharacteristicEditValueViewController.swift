@@ -15,7 +15,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     private static var BCPeripheralStateKVOContext = UInt8()
 
     @IBOutlet var valueTextField: UITextField!
-    var characteristic: BCCharacteristic!
+    var characteristic: Characteristic!
     var peripheralViewController: PeripheralViewController?
     var valueName: String?
     
@@ -50,7 +50,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     }
     
     func peripheralDisconnected() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripheralConnected {
                 self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
@@ -63,7 +63,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
 
     func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
+        Logger.debug()
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
@@ -86,7 +86,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if let newValue = self.valueTextField.text {
-            let afterWriteSuceses = { (characteristic: BCCharacteristic) -> Void in
+            let afterWriteSuceses = { (characteristic: Characteristic) -> Void in
                 self.progressView.remove()
                 self.navigationController?.popViewControllerAnimated(true)
                 return
@@ -111,7 +111,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                     write.onFailure(afterWriteFailed)
                 }
             } else {
-                BCLogger.debug("VALUE: \(newValue.dataFromHexString())")
+                Logger.debug("VALUE: \(newValue.dataFromHexString())")
                 let write = characteristic.writeData(newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 write.onSuccess(afterWriteSuceses)
                 write.onFailure(afterWriteFailed)

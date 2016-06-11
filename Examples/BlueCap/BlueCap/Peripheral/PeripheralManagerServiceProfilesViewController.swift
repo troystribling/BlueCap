@@ -45,7 +45,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
@@ -56,7 +56,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
         let tags = Array(self.serviceProfiles.keys)
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let serviceProfile = profiles[indexPath.row]
-            let service = BCMutableService(profile:serviceProfile)
+            let service = MutableService(profile:serviceProfile)
             service.characteristicsFromProfiles()
             self.progressView.show()
             let future = Singletons.peripheralManager.addService(service)

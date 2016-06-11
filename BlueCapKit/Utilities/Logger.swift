@@ -1,5 +1,5 @@
 //
-//  BCLogger.swift
+//  Logger.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/8/14.
@@ -69,7 +69,7 @@ func amIBeingDebugged() -> Bool {
     return (info.kp_proc.p_flag & P_TRACED) != 0
 }
 
-public class BCLogger {
+public class Logger {
     private static let stream = StderrOutputStream()
 
     public class func debug(message:String? = nil, function: String = #function, file: String = #file, line: Int = #line) {

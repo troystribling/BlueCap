@@ -1,5 +1,5 @@
 //
-//  BCPeripheralManager.swift
+//  PeripheralManager.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/9/14.
@@ -9,8 +9,8 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - BCPeripheralManager -
-public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
+// MARK: - PeripheralManager -
+public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     internal static var CBPeripheralManagerStateKVOContext = UInt8()
     internal static var CBPeripheralManagerIsAdvertisingKVOContext = UInt8()
@@ -29,107 +29,107 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     private var _afterPowerOnPromise = Promise<Void>()
     private var _afterPowerOffPromise = Promise<Void>()
     private var _afterSeriviceAddPromise = Promise<Void>()
-    private var _afterStateRestoredPromise = StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
+    private var _afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
 
     private var _state = CBPeripheralManagerState.Unknown
     private var _poweredOn = false
     private var _isAdvertising = false
 
-    internal var configuredServices  = BCSerialIODictionary<CBUUID, BCMutableService>(BCPeripheralManager.ioQueue)
-    internal var configuredCharcteristics = BCSerialIODictionary<CBUUID, BCMutableCharacteristic>(BCPeripheralManager.ioQueue)
+    internal var configuredServices  = SerialIODictionary<CBUUID, MutableService>(PeripheralManager.ioQueue)
+    internal var configuredCharcteristics = SerialIODictionary<CBUUID, MutableCharacteristic>(PeripheralManager.ioQueue)
 
     public let peripheralQueue: Queue
 
     private var afterAdvertisingStartedPromise: Promise<Void> {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._afterAdvertisingStartedPromise }
+            return PeripheralManager.ioQueue.sync { return self._afterAdvertisingStartedPromise }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._afterAdvertisingStartedPromise = newValue }
+            PeripheralManager.ioQueue.sync { self._afterAdvertisingStartedPromise = newValue }
         }
     }
 
     private var afterAdvertsingStoppedPromise: Promise<Void> {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._afterAdvertsingStoppedPromise }
+            return PeripheralManager.ioQueue.sync { return self._afterAdvertsingStoppedPromise }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._afterAdvertsingStoppedPromise = newValue }
+            PeripheralManager.ioQueue.sync { self._afterAdvertsingStoppedPromise = newValue }
         }
     }
 
     private var afterPowerOnPromise: Promise<Void> {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._afterPowerOnPromise }
+            return PeripheralManager.ioQueue.sync { return self._afterPowerOnPromise }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._afterPowerOnPromise = newValue }
+            PeripheralManager.ioQueue.sync { self._afterPowerOnPromise = newValue }
         }
     }
 
     private var afterPowerOffPromise: Promise<Void> {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._afterPowerOffPromise }
+            return PeripheralManager.ioQueue.sync { return self._afterPowerOffPromise }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._afterPowerOffPromise = newValue }
+            PeripheralManager.ioQueue.sync { self._afterPowerOffPromise = newValue }
         }
     }
 
     private var afterSeriviceAddPromise: Promise<Void> {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._afterSeriviceAddPromise }
+            return PeripheralManager.ioQueue.sync { return self._afterSeriviceAddPromise }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._afterSeriviceAddPromise = newValue }
+            PeripheralManager.ioQueue.sync { self._afterSeriviceAddPromise = newValue }
         }
     }
 
-    private var afterStateRestoredPromise: StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
+    private var afterStateRestoredPromise: StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)> {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
+            return PeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._afterStateRestoredPromise = newValue }
+            PeripheralManager.ioQueue.sync { self._afterStateRestoredPromise = newValue }
         }
     }
 
     public private(set) var isAdvertising: Bool {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._isAdvertising }
+            return PeripheralManager.ioQueue.sync { return self._isAdvertising }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._isAdvertising = newValue }
+            PeripheralManager.ioQueue.sync { self._isAdvertising = newValue }
         }
     }
 
     public private(set) var poweredOn: Bool {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._poweredOn }
+            return PeripheralManager.ioQueue.sync { return self._poweredOn }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._poweredOn = newValue }
+            PeripheralManager.ioQueue.sync { self._poweredOn = newValue }
         }
     }
 
     public var state: CBPeripheralManagerState {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._state }
+            return PeripheralManager.ioQueue.sync { return self._state }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._state = newValue }
+            PeripheralManager.ioQueue.sync { self._state = newValue }
         }
     }
     
-    public var services: [BCMutableService] {
+    public var services: [MutableService] {
         return Array(self.configuredServices.values)
     }
 
-    public func service(uuid: CBUUID) -> BCMutableService? {
+    public func service(uuid: CBUUID) -> MutableService? {
         return self.configuredServices[uuid]
     }
 
-    public var characteristics: [BCMutableCharacteristic] {
+    public var characteristics: [MutableCharacteristic] {
         return Array(self.configuredCharcteristics.values)
     }
 
@@ -172,16 +172,16 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
             return
         }
         let options = NSKeyValueObservingOptions([.New, .Old])
-        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
     }
 
     internal func stopObserving() {
         guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
             return
         }
-        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &BCPeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
+        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
+        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
     }
 
     override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
@@ -190,7 +190,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
             return
         }
         switch (keyPath!, context) {
-        case("state", &BCPeripheralManager.CBPeripheralManagerStateKVOContext):
+        case("state", &PeripheralManager.CBPeripheralManagerStateKVOContext):
             if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralManagerState(rawValue: newRawState) {
                 if newRawState != oldRawState {
                     self.willChangeValueForKey("state")
@@ -198,7 +198,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
                     self.didChangeValueForKey("state")
                 }
             }
-        case ("isAdvertising", &BCPeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext):
+        case ("isAdvertising", &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext):
             if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newIsAdvertising = newValue as? Bool, oldIsAdvertising = oldValue as? Bool {
                 if newIsAdvertising != oldIsAdvertising {
                     self.willChangeValueForKey("isAdvertising")
@@ -213,7 +213,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     // MARK: Power ON/OFF
     public func whenPowerOn() -> Future<Void> {
-        BCLogger.debug()
+        Logger.debug()
         self.afterPowerOnPromise = Promise<Void>()
         if self.poweredOn {
             self.afterPowerOnPromise.success()
@@ -222,7 +222,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     public func whenPowerOff() -> Future<Void> {
-        BCLogger.debug()
+        Logger.debug()
         self.afterPowerOffPromise = Promise<Void>()
         if !self.poweredOn {
             self.afterPowerOffPromise.success()
@@ -270,18 +270,18 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Manage Services
-    public func addService(service: BCMutableService) -> Future<Void> {
+    public func addService(service: MutableService) -> Future<Void> {
         service.peripheralManager = self
         self.addConfiguredCharacteristics(service.characteristics)
         self.afterSeriviceAddPromise = Promise<Void>()
         self.configuredServices[service.UUID] = service
         self.cbPeripheralManager.addService(service.cbMutableService)
-        BCLogger.debug("service name=\(service.name), uuid=\(service.UUID)")
+        Logger.debug("service name=\(service.name), uuid=\(service.UUID)")
         return self.afterSeriviceAddPromise.future
     }
     
-    public func addServices(services: [BCMutableService]) -> Future<Void> {
-        BCLogger.debug("service count \(services.count)")
+    public func addServices(services: [MutableService]) -> Future<Void> {
+        Logger.debug("service count \(services.count)")
         for service in services {
             self.addConfiguredCharacteristics(service.characteristics)
         }
@@ -290,18 +290,18 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return promise.future
     }
 
-    public func removeService(service: BCMutableService) {
-        BCLogger.debug("removing service \(service.UUID.UUIDString)")
+    public func removeService(service: MutableService) {
+        Logger.debug("removing service \(service.UUID.UUIDString)")
         self.removeServiceAndCharacteristics(service)
     }
     
     public func removeAllServices() {
-        BCLogger.debug()
+        Logger.debug()
         self.removeAllServiceAndCharacteristics()
     }
 
     // MARK: Characteristic IO
-    public func updateValue(value: NSData, forCharacteristic characteristic: BCMutableCharacteristic) -> Bool  {
+    public func updateValue(value: NSData, forCharacteristic characteristic: MutableCharacteristic) -> Bool  {
         return self.cbPeripheralManager.updateValue(value, forCharacteristic:characteristic.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
@@ -312,8 +312,8 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: State Restoration
-    public func whenStateRestored() -> FutureStream<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
-        self.afterStateRestoredPromise = StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
+    public func whenStateRestored() -> FutureStream<(services: [MutableService], advertisements: PeripheralAdvertisements)> {
+        self.afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
         return self.afterStateRestoredPromise.future
     }
 
@@ -356,7 +356,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     public func peripheralManager(_: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
-        BCLogger.debug()
+        Logger.debug()
         for request in requests {
             self.didReceiveWriteRequest(request, central: request.central)
         }
@@ -364,17 +364,17 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: CBPeripheralManagerDelegate Shims
     internal func didSubscribeToCharacteristic(characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
-        BCLogger.debug()
+        Logger.debug()
         self.configuredCharcteristics[characteristic.UUID]?.didSubscribeToCharacteristic(central)
     }
     
     internal func didUnsubscribeFromCharacteristic(characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
-        BCLogger.debug()
+        Logger.debug()
         self.configuredCharcteristics[characteristic.UUID]?.didUnsubscribeFromCharacteristic(central)
     }
     
     internal func isReadyToUpdateSubscribers() {
-        BCLogger.debug()
+        Logger.debug()
         for characteristic in self.configuredCharcteristics.values {
             if !characteristic.isUpdating {
                 characteristic.peripheralManagerIsReadyToUpdateSubscribers()
@@ -384,7 +384,7 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     internal func didReceiveWriteRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
         if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
-            BCLogger.debug("characteristic write request received for \(characteristic.UUID.UUIDString)")
+            Logger.debug("characteristic write request received for \(characteristic.UUID.UUIDString)")
             if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic.value = request.value
             } else {
@@ -397,13 +397,13 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     internal func didReceiveReadRequest(request: CBATTRequestInjectable, central: CBCentralInjectable) {
         var request = request
-        BCLogger.debug("chracteracteristic \(request.getCharacteristic().UUID)")
+        Logger.debug("chracteracteristic \(request.getCharacteristic().UUID)")
         if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
-            BCLogger.debug("responding with data: \(characteristic.stringValue)")
+            Logger.debug("responding with data: \(characteristic.stringValue)")
             request.value = characteristic.value
             self.respondToRequest(request, withResult:CBATTError.Success)
         } else {
-            BCLogger.debug("characteristic not found")
+            Logger.debug("characteristic not found")
             self.respondToRequest(request, withResult:CBATTError.UnlikelyError)
         }
     }
@@ -412,13 +412,13 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
         switch self.cbPeripheralManager.state {
         case .PoweredOn:
-            BCLogger.debug("poweredOn")
+            Logger.debug("poweredOn")
             if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }
             break
         case .PoweredOff:
-            BCLogger.debug("poweredOff")
+            Logger.debug("poweredOff")
             if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
@@ -436,34 +436,34 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     internal func didStartAdvertising(error: NSError?) {
         if let error = error {
-            BCLogger.debug("failed '\(error.localizedDescription)'")
+            Logger.debug("failed '\(error.localizedDescription)'")
             self.afterAdvertisingStartedPromise.failure(error)
         } else {
-            BCLogger.debug("success")
+            Logger.debug("success")
             self.afterAdvertisingStartedPromise.success()
         }
     }
     
     internal func didAddService(service: CBServiceInjectable, error: NSError?) {
         if let error = error {
-            BCLogger.debug("failed '\(error.localizedDescription)'")
+            Logger.debug("failed '\(error.localizedDescription)'")
             self.configuredServices.removeValueForKey(service.UUID)
             self.afterSeriviceAddPromise.failure(error)
         } else {
-            BCLogger.debug("success")
+            Logger.debug("success")
             self.afterSeriviceAddPromise.success()
         }
     }
 
     public func willRestoreState(cbServices: [CBMutableServiceInjectable]?, advertisements: [String: AnyObject]?) {
         if let cbServices = cbServices, let advertisements = advertisements {
-            let services = cbServices.map { cbService -> BCMutableService in
-                let service = BCMutableService(cbMutableService: cbService)
+            let services = cbServices.map { cbService -> MutableService in
+                let service = MutableService(cbMutableService: cbService)
                 self.configuredServices[service.UUID] = service
-                var characteristics = [BCMutableCharacteristic]()
+                var characteristics = [MutableCharacteristic]()
                 if let cbCharacteristics = cbService.getCharacteristics() as? [CBMutableCharacteristic] {
                     characteristics = cbCharacteristics.map { bcChracteristic in
-                        let characteristic = BCMutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
+                        let characteristic = MutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
                         self.configuredCharcteristics[characteristic.UUID] = characteristic
                         return characteristic
                     }
@@ -471,29 +471,29 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 service.characteristics = characteristics
                 return service
             }
-            self.afterStateRestoredPromise.success((services, BCPeripheralAdvertisements(advertisements: advertisements)))
+            self.afterStateRestoredPromise.success((services, PeripheralAdvertisements(advertisements: advertisements)))
         } else {
             self.afterStateRestoredPromise.failure(BCError.peripheralManagerRestoreFailed)
         }
     }
 
     // MARK: Utils
-    public func addServices(promise: Promise<Void>, services: [BCMutableService]) {
+    public func addServices(promise: Promise<Void>, services: [MutableService]) {
         if services.count > 0 {
             let future = self.addService(services[0])
             future.onSuccess {
                 if services.count > 1 {
                     let servicesTail = Array(services[1...services.count-1])
-                    BCLogger.debug("services remaining \(servicesTail.count)")
+                    Logger.debug("services remaining \(servicesTail.count)")
                     self.addServices(promise, services:servicesTail)
                 } else {
-                    BCLogger.debug("completed")
+                    Logger.debug("completed")
                     promise.success()
                 }
             }
             future.onFailure {(error) in
                 self.removeAllServices()
-                BCLogger.debug("failed '\(error.localizedDescription)'")
+                Logger.debug("failed '\(error.localizedDescription)'")
                 promise.failure(error)
             }
         }
@@ -505,18 +505,18 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 self.lookForAdvertisingToStop()
             }
         } else {
-            BCLogger.debug("advertising stopped")
+            Logger.debug("advertising stopped")
             self.afterAdvertsingStoppedPromise.success()
         }
     }
 
-    private func addConfiguredCharacteristics(characteristics: [BCMutableCharacteristic]) {
+    private func addConfiguredCharacteristics(characteristics: [MutableCharacteristic]) {
         for characteristic in characteristics {
             self.configuredCharcteristics[characteristic.cbMutableChracteristic.UUID] = characteristic
         }
     }
 
-    private func removeServiceAndCharacteristics(service: BCMutableService) {
+    private func removeServiceAndCharacteristics(service: MutableService) {
         let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
             for bcCharacteristic in service.characteristics {
                 if uuid == bcCharacteristic.UUID {

@@ -14,7 +14,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
 
     private static var BCPeripheralStateKVOContext = UInt8()
 
-    weak var service: BCService?
+    weak var service: Service?
     var peripheralViewController: PeripheralViewController?
 
     var dataValid = false
@@ -64,7 +64,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {
-        BCLogger.debug()
+        Logger.debug()
         self.tableView.reloadData()
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripheralConnected {
@@ -78,7 +78,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
+        Logger.debug()
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {

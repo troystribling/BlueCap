@@ -51,7 +51,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }

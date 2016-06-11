@@ -1,5 +1,5 @@
 //
-//  BCSerialIODictionary.swift
+//  SerialIODictionary.swift
 //
 //  Created by Troy Stribling on 1/24/16.
 //  Copyright © 2016 Troy Stribling. All rights reserved.
@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: Serialize Dictionary Access
-public class BCSerialIODictionary<T, U where T: Hashable> {
+public class SerialIODictionary<T, U where T: Hashable> {
 
     private var data = [T: U]()
     let queue: Queue
@@ -49,7 +49,7 @@ public class BCSerialIODictionary<T, U where T: Hashable> {
 }
 
 // MARK: Serialize Array Access
-public class BCSerialIOArray<T> {
+public class SerialIOArray<T> {
 
     private var _data = [T]()
     let queue: Queue

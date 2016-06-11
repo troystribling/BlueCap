@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralAdvertisementsViewController : UITableViewController {
 
-    weak var peripheral: BCPeripheral?
+    weak var peripheral: Peripheral?
 
     @IBOutlet var localNameLabel                : UILabel!
     @IBOutlet var localNameValueLabel           : UILabel!
@@ -93,7 +93,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
 
     func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
+        Logger.debug()
     }
     
     override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {

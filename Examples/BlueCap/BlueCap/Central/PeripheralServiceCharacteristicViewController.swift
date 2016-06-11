@@ -20,7 +20,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         static let peripheralServiceCharacteristicEditWriteOnlyValueSeque = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
-    weak var characteristic: BCCharacteristic!
+    weak var characteristic: Characteristic!
     var peripheralViewController: PeripheralViewController!
     
     @IBOutlet var valuesLabel: UILabel!
@@ -156,7 +156,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func peripheralDisconnected() {
-        BCLogger.debug()
+        Logger.debug()
         if self.peripheralViewController.peripheralConnected {
             self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
                     self.peripheralViewController.peripheralConnected = false
@@ -167,7 +167,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
 
     func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
+        Logger.debug()
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {

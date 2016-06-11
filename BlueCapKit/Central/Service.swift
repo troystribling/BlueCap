@@ -1,5 +1,5 @@
 //
-//  BCService.swift
+//  Service.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/11/14.
@@ -9,8 +9,8 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - BCService -
-public class BCService {
+// MARK: - Service -
+public class Service {
 
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.service.io")
@@ -18,39 +18,39 @@ public class BCService {
 
     private var _characteristicDiscoverySequence = 0
     private var _characteristicDiscoveryInProgress = false
-    private var _characteristicsDiscoveredPromise: Promise<BCService>?
+    private var _characteristicsDiscoveredPromise: Promise<Service>?
 
     private var characteristicDiscoverySequence: Int {
         get {
-            return BCService.ioQueue.sync { return self._characteristicDiscoverySequence }
+            return Service.ioQueue.sync { return self._characteristicDiscoverySequence }
         }
         set {
-            BCService.ioQueue.sync { self._characteristicDiscoverySequence = newValue }
+            Service.ioQueue.sync { self._characteristicDiscoverySequence = newValue }
         }
     }
 
     private var characteristicDiscoveryInProgress: Bool {
         get {
-            return BCService.ioQueue.sync { return self._characteristicDiscoveryInProgress }
+            return Service.ioQueue.sync { return self._characteristicDiscoveryInProgress }
         }
         set {
-            BCService.ioQueue.sync { self._characteristicDiscoveryInProgress = newValue }
+            Service.ioQueue.sync { self._characteristicDiscoveryInProgress = newValue }
         }
     }
 
-     internal var characteristicsDiscoveredPromise: Promise<BCService>? {
+     internal var characteristicsDiscoveredPromise: Promise<Service>? {
         get {
-            return BCService.ioQueue.sync { return self._characteristicsDiscoveredPromise }
+            return Service.ioQueue.sync { return self._characteristicsDiscoveredPromise }
         }
         set {
-            BCService.ioQueue.sync { self._characteristicsDiscoveredPromise = newValue }
+            Service.ioQueue.sync { self._characteristicsDiscoveredPromise = newValue }
         }
     }
 
     // MARK: Properties
-    private let profile: BCServiceProfile?
+    private let profile: ServiceProfile?
 
-    internal var discoveredCharacteristics = [CBUUID : BCCharacteristic]()
+    internal var discoveredCharacteristics = [CBUUID : Characteristic]()
 
     internal let cbService: CBServiceInjectable
 
@@ -66,31 +66,31 @@ public class BCService {
         return self.cbService.UUID
     }
     
-    public var characteristics: [BCCharacteristic] {
+    public var characteristics: [Characteristic] {
         return Array(self.discoveredCharacteristics.values)
     }
     
-    public private(set) weak var peripheral: BCPeripheral?
+    public private(set) weak var peripheral: Peripheral?
 
     // MARK: Initializer
-    internal init(cbService: CBServiceInjectable, peripheral: BCPeripheral) {
+    internal init(cbService: CBServiceInjectable, peripheral: Peripheral) {
         self.cbService = cbService
         self.peripheral = peripheral
-        self.profile = BCProfileManager.sharedInstance.services[cbService.UUID]
+        self.profile = ProfileManager.sharedInstance.services[cbService.UUID]
     }
 
     // MARK: Discover Characteristics
-    public func discoverAllCharacteristics(timeout: NSTimeInterval? = nil) -> Future<BCService> {
-        BCLogger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
+    public func discoverAllCharacteristics(timeout: NSTimeInterval? = nil) -> Future<Service> {
+        Logger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
         return self.discoverIfConnected(nil, timeout: timeout)
     }
     
-    public func discoverCharacteristics(characteristics: [CBUUID], timeout: NSTimeInterval? = nil) -> Future<BCService> {
-        BCLogger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
+    public func discoverCharacteristics(characteristics: [CBUUID], timeout: NSTimeInterval? = nil) -> Future<Service> {
+        Logger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
         return self.discoverIfConnected(characteristics, timeout: timeout)
     }
     
-    public func characteristic(uuid: CBUUID) -> BCCharacteristic? {
+    public func characteristic(uuid: CBUUID) -> Characteristic? {
         return self.discoveredCharacteristics[uuid]
     }
 
@@ -99,21 +99,21 @@ public class BCService {
         self.characteristicDiscoveryInProgress = false
         self.discoveredCharacteristics.removeAll()
         if let error = error {
-            BCLogger.debug("discover failed")
+            Logger.debug("discover failed")
             self.characteristicsDiscoveredPromise?.failure(error)
             for cbCharacteristic in discoveredCharacteristics {
-                let bcCharacteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: self)
+                let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 bcCharacteristic.afterDiscoveredPromise?.failure(error)
-                BCLogger.debug("Error discovering uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
+                Logger.debug("Error discovering uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             }
         } else {
             for cbCharacteristic in discoveredCharacteristics {
-                let bcCharacteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: self)
+                let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 self.discoveredCharacteristics[bcCharacteristic.UUID] = bcCharacteristic
                 bcCharacteristic.afterDiscoveredPromise?.success(bcCharacteristic)
-                BCLogger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
+                Logger.debug("uuid=\(bcCharacteristic.UUID.UUIDString), name=\(bcCharacteristic.name)")
             }
-            BCLogger.debug("discover success")
+            Logger.debug("discover success")
             self.characteristicsDiscoveredPromise?.success(self)
         }
     }
@@ -123,9 +123,9 @@ public class BCService {
     }
 
     // MARK: Utils
-    private func discoverIfConnected(characteristics: [CBUUID]?, timeout: NSTimeInterval?) -> Future<BCService> {
+    private func discoverIfConnected(characteristics: [CBUUID]?, timeout: NSTimeInterval?) -> Future<Service> {
         if !self.characteristicDiscoveryInProgress {
-            self.characteristicsDiscoveredPromise = Promise<BCService>()
+            self.characteristicsDiscoveredPromise = Promise<Service>()
             if self.peripheral?.state == .Connected {
                 self.characteristicDiscoveryInProgress = true
                 self.characteristicDiscoverySequence += 1
@@ -136,7 +136,7 @@ public class BCService {
             }
             return self.characteristicsDiscoveredPromise!.future
         } else {
-            let promise = Promise<BCService>()
+            let promise = Promise<Service>()
             promise.failure(BCError.serviceCharacteristicDiscoveryInProgress)
             return promise.future
         }
@@ -146,15 +146,15 @@ public class BCService {
         guard let peripheral = peripheral, centralManager = peripheral.centralManager, timeout = timeout else {
             return
         }
-        BCLogger.debug("name = \(self.name), uuid = \(peripheral.identifier.UUIDString), sequence = \(sequence), timeout = \(timeout)")
-        BCPeripheral.pollQueue.delay(timeout) {
+        Logger.debug("name = \(self.name), uuid = \(peripheral.identifier.UUIDString), sequence = \(sequence), timeout = \(timeout)")
+        Peripheral.pollQueue.delay(timeout) {
             if sequence == self.characteristicDiscoverySequence && self.characteristicDiscoveryInProgress {
-                BCLogger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.UUIDString), peripheral UUID = \(peripheral.identifier.UUIDString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
+                Logger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.UUIDString), peripheral UUID = \(peripheral.identifier.UUIDString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(peripheral)
                 self.characteristicDiscoveryInProgress = false
                 self.characteristicsDiscoveredPromise?.failure(BCError.serviceCharacteristicDiscoveryTimeout)
             } else {
-                BCLogger.debug("characteristic scan timeout expired name = \(self.name), UUID = \(self.UUID.UUIDString), peripheral UUID = \(peripheral.identifier.UUIDString), sequence = \(sequence), current connectionSequence=\(self.characteristicDiscoverySequence)")
+                Logger.debug("characteristic scan timeout expired name = \(self.name), UUID = \(self.UUID.UUIDString), peripheral UUID = \(peripheral.identifier.UUIDString), sequence = \(sequence), current connectionSequence=\(self.characteristicDiscoverySequence)")
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  BCRawDeserializableTests.swift
+//  RawDeserializableTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 2/9/15.
@@ -12,10 +12,10 @@ import CoreBluetooth
 import CoreLocation
 @testable import BlueCapKit
 
-// MARK: - BCRawDeserializableTests -
-class BCRawDeserializableTests: XCTestCase {
+// MARK: - RawDeserializableTests -
+class RawDeserializableTests: XCTestCase {
 
-    enum Testit: UInt8, BCRawDeserializable {
+    enum Testit: UInt8, RawDeserializable {
         case No     = 0
         case Yes    = 1
         case Maybe  = 2        
@@ -32,7 +32,7 @@ class BCRawDeserializableTests: XCTestCase {
 
     func testDeserialize_ValidRawDeserializable_Sucess() {
         let data = "02".dataFromHexString()
-        if let value : Testit = BCSerDe.deserialize(data) {
+        if let value : Testit = SerDe.deserialize(data) {
             XCTAssert(value == .Maybe, "RawDeserializable deserialization value wrong: \(data)")
         } else {
             XCTFail("RawDeserializable deserialization failed")
@@ -41,14 +41,14 @@ class BCRawDeserializableTests: XCTestCase {
 
     func testDeserialize_InvalidRawDeserializable_Fails() {
         let data = "03".dataFromHexString()
-        if let _ : Testit = BCSerDe.deserialize(data) {
+        if let _ : Testit = SerDe.deserialize(data) {
             XCTFail("RawDeserializable deserialization succeeded")
         }
     }
     
     func testSerialize_ValidRawDeserializable_Sucess() {
         let value = Testit.Yes
-        let data = BCSerDe.serialize(value)
+        let data = SerDe.serialize(value)
         XCTAssert(data.hexStringValue() == "01", "RawDeserializable serialization failed: \(data)")
     }
 

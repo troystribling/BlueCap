@@ -12,7 +12,7 @@ import BlueCapKit
 class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewController, UITextViewDelegate {
   
     @IBOutlet var valueTextField: UITextField!
-    var characteristic: BCMutableCharacteristic?
+    var characteristic: MutableCharacteristic?
     var valueName: String?
     var peripheralManagerViewController: PeripheralManagerViewController?
 
@@ -42,7 +42,7 @@ class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewContr
     }
 
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }

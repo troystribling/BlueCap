@@ -13,25 +13,25 @@ import CoreBluetooth
 public struct Gnosus {
 
     // MARK: - Hello World Service -
-    public struct HelloWorldService: BCServiceConfigurable {
+    public struct HelloWorldService: ServiceConfigurable {
         
         // ServiceConfigurable
         public static let UUID = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
         public static let name = "Hello World"
         public static let tag  = "gnos.us"
         
-        public struct Greeting : BCCharacteristicConfigurable {
+        public struct Greeting : CharacteristicConfigurable {
 
             // BLEConfigurable
             public static let UUID                                     = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
             public static let name                                     = "Hello World Greeting"
             public static let permissions: CBAttributePermissions      = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties   = [.Read, .Notify]
-            public static let initialValue                             = BCSerDe.serialize("Hello")
+            public static let initialValue                             = SerDe.serialize("Hello")
             
         }
         
-        public struct UpdatePeriod: BCRawDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
+        public struct UpdatePeriod: RawDeserializable, CharacteristicConfigurable, StringDeserializable {
 
             public let period : UInt16
 
@@ -40,7 +40,7 @@ public struct Gnosus {
             public static let name                                      = "Update Period"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = [.Read, .Write]
-            public static let initialValue: NSData?                     = BCSerDe.serialize(UInt16(5000))
+            public static let initialValue: NSData?                     = SerDe.serialize(UInt16(5000))
             
             // RawDeserializable
             public var rawValue: UInt16 {
@@ -71,14 +71,14 @@ public struct Gnosus {
     }
 
     // MARK: - Location Service -
-    public struct LocationService: BCServiceConfigurable {
+    public struct LocationService: ServiceConfigurable {
 
         // ServiceConfigurable
         public static let UUID  = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
         public static let name  = "Location"
         public static let tag   = "gnos.us"
         
-        public struct LatitudeAndLongitude : BCRawArrayDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
+        public struct LatitudeAndLongitude : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
 
             private let latitudeRaw: Int16
             private let longitudeRaw: Int16
@@ -114,7 +114,7 @@ public struct Gnosus {
             public static let name                                      = "Lattitude and Longitude"
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
             public static let properties: CBCharacteristicProperties    = [.Read, .Write]
-            public static let initialValue: NSData?                     = BCSerDe.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
+            public static let initialValue: NSData?                     = SerDe.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
 
             // RawArrayDeserializable
             public static let size = 4
@@ -167,19 +167,19 @@ public struct GnosusProfiles {
 
     public static func create() {
         
-        let profileManager = BCProfileManager.sharedInstance
+        let profileManager = ProfileManager.sharedInstance
         
         // Hello World Service
-        let helloWorldService = BCConfiguredServiceProfile<Gnosus.HelloWorldService>()
-        let greetingCharacteristic = BCStringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>()
-        let updateCharacteristic = BCRawCharacteristicProfile<Gnosus.HelloWorldService.UpdatePeriod>()
+        let helloWorldService = ConfiguredServiceProfile<Gnosus.HelloWorldService>()
+        let greetingCharacteristic = StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>()
+        let updateCharacteristic = RawCharacteristicProfile<Gnosus.HelloWorldService.UpdatePeriod>()
         helloWorldService.addCharacteristic(greetingCharacteristic)
         helloWorldService.addCharacteristic(updateCharacteristic)
         profileManager.addService(helloWorldService)
 
         // Location Service
-        let locationService = BCConfiguredServiceProfile<Gnosus.LocationService>()
-        let latlonCharacteristic = BCRawArrayCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude>()
+        let locationService = ConfiguredServiceProfile<Gnosus.LocationService>()
+        let latlonCharacteristic = RawArrayCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude>()
         locationService.addCharacteristic(latlonCharacteristic)
         profileManager.addService(locationService)
 

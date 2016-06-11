@@ -1,5 +1,5 @@
 //
-//  BCRawArrayPairDeserializableTests.swift
+//  RawArrayPairDeserializableTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 2/10/15.
@@ -12,10 +12,10 @@ import CoreBluetooth
 import CoreLocation
 @testable import BlueCapKit
 
-// MARK: - BCRawArrayPairDeserializableTests -
-class BCRawArrayPairDeserializableTests: XCTestCase {
+// MARK: - RawArrayPairDeserializableTests -
+class RawArrayPairDeserializableTests: XCTestCase {
 
-    struct Pair: BCRawArrayPairDeserializable {
+    struct Pair: RawArrayPairDeserializable {
         
         let value1: [Int8]
         let value2: [UInt8]
@@ -54,7 +54,7 @@ class BCRawArrayPairDeserializableTests: XCTestCase {
 
     func testDeserialize_ValidRawPairArray_Sucess() {
         let data = "02ab03ab".dataFromHexString()
-        if let value : Pair = BCSerDe.deserialize(data) {
+        if let value : Pair = SerDe.deserialize(data) {
             XCTAssert(value.value1 == [Int8]([2, -85]) && value.value2 == [UInt8]([3, 171]), "RawPairDeserializableTests deserialization value invalid: \(value.value1), \(value.value2)")
         } else {
             XCTFail("RawArrayPair deserialization failed")
@@ -63,14 +63,14 @@ class BCRawArrayPairDeserializableTests: XCTestCase {
     
     func testDeserialize_InvalidRawPairArray_Fails() {
         let data = "020103".dataFromHexString()
-        if let _ : Pair = BCSerDe.deserialize(data) {
+        if let _ : Pair = SerDe.deserialize(data) {
             XCTFail("RawArrayPair deserialization succeeded")
         }
     }
     
     func testSerialize_ValidRawPairArray_Sucess() {
         if let value = Pair(rawValue1:[2, -85], rawValue2:[3, 171]) {
-            let data = BCSerDe.serialize(value)
+            let data = SerDe.serialize(value)
             XCTAssert(data.hexStringValue() == "02ab03ab", "RawDeserializable serialization failed: \(data.hexStringValue())")
         } else {
             XCTFail("RawArrayPair creation failed")

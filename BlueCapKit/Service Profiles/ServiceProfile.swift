@@ -1,5 +1,5 @@
 //
-//  BCServiceProfile.swift
+//  ServiceProfile.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/21/14.
@@ -9,20 +9,20 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - BCServiceProfile -
-public class BCServiceProfile {
+// MARK: - ServiceProfile -
+public class ServiceProfile {
     
-    internal var characteristicProfiles = [CBUUID: BCCharacteristicProfile]()
+    internal var characteristicProfiles = [CBUUID: CharacteristicProfile]()
 
     public let UUID: CBUUID
     public let name: String
     public let tag: String
     
-    public var characteristics: [BCCharacteristicProfile] {
+    public var characteristics: [CharacteristicProfile] {
         return Array(self.characteristicProfiles.values)
     }
     
-    public var characteristic: [CBUUID: BCCharacteristicProfile] {
+    public var characteristic: [CBUUID: CharacteristicProfile] {
         return self.characteristicProfiles
     }
     
@@ -36,14 +36,14 @@ public class BCServiceProfile {
         self.init(UUID:UUID, name:"Unknown")
     }
 
-    public func addCharacteristic(characteristicProfile: BCCharacteristicProfile) {
-        BCLogger.debug("name=\(characteristicProfile.name), uuid=\(characteristicProfile.UUID.UUIDString)")
+    public func addCharacteristic(characteristicProfile: CharacteristicProfile) {
+        Logger.debug("name=\(characteristicProfile.name), uuid=\(characteristicProfile.UUID.UUIDString)")
         self.characteristicProfiles[characteristicProfile.UUID] = characteristicProfile
     }
     
 }
 
-public class BCConfiguredServiceProfile<Config: BCServiceConfigurable>: BCServiceProfile {
+public class ConfiguredServiceProfile<Config: ServiceConfigurable>: ServiceProfile {
     
     public init() {
         super.init(UUID: Config.UUID, name: Config.name, tag: Config.tag)

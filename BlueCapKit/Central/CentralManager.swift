@@ -1,5 +1,5 @@
 //
-//  BCCentralManager.swift
+//  CentralManager.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/4/14.
@@ -9,8 +9,8 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - BCCentralManager -
-public class BCCentralManager : NSObject, CBCentralManagerDelegate {
+// MARK: - CentralManager -
+public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     internal static var CBCentralManagerStateKVOContext = UInt8()
 
@@ -20,56 +20,56 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: Properties
     private var _afterPowerOnPromise = Promise<Void>()
     private var _afterPowerOffPromise = Promise<Void>()
-    private var _afterStateRestoredPromise = StreamPromise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
+    private var _afterStateRestoredPromise = StreamPromise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
 
     private var _isScanning = false
     private var _poweredOn = false
     private var _state = CBCentralManagerState.Unknown
 
-    internal var _afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
-    internal var discoveredPeripherals = BCSerialIODictionary<NSUUID, BCPeripheral>(BCCentralManager.ioQueue)
+    internal var _afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
+    internal var discoveredPeripherals = SerialIODictionary<NSUUID, Peripheral>(CentralManager.ioQueue)
 
     internal let centralQueue: Queue
     public private(set) var cbCentralManager: CBCentralManagerInjectable!
 
     private var afterPowerOnPromise: Promise<Void> {
         get {
-            return BCCentralManager.ioQueue.sync { return self._afterPowerOnPromise }
+            return CentralManager.ioQueue.sync { return self._afterPowerOnPromise }
         }
         set {
-            BCCentralManager.ioQueue.sync { self._afterPowerOnPromise = newValue }
+            CentralManager.ioQueue.sync { self._afterPowerOnPromise = newValue }
         }
     }
 
     private var afterPowerOffPromise: Promise<Void> {
         get {
-            return BCCentralManager.ioQueue.sync { return self._afterPowerOffPromise }
+            return CentralManager.ioQueue.sync { return self._afterPowerOffPromise }
         }
         set {
-            BCCentralManager.ioQueue.sync { self._afterPowerOffPromise = newValue }
+            CentralManager.ioQueue.sync { self._afterPowerOffPromise = newValue }
         }
     }
 
-    internal var afterPeripheralDiscoveredPromise: StreamPromise<BCPeripheral> {
+    internal var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral> {
         get {
-            return BCCentralManager.ioQueue.sync { return self._afterPeripheralDiscoveredPromise }
+            return CentralManager.ioQueue.sync { return self._afterPeripheralDiscoveredPromise }
         }
         set {
-            BCCentralManager.ioQueue.sync { self._afterPeripheralDiscoveredPromise = newValue }
+            CentralManager.ioQueue.sync { self._afterPeripheralDiscoveredPromise = newValue }
         }
     }
 
-    private var afterStateRestoredPromise: StreamPromise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
+    private var afterStateRestoredPromise: StreamPromise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
+            return PeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._afterStateRestoredPromise = newValue }
+            PeripheralManager.ioQueue.sync { self._afterStateRestoredPromise = newValue }
         }
     }
 
-    public var peripherals: [BCPeripheral] {
-        return Array(self.discoveredPeripherals.values).sort() {(p1: BCPeripheral, p2: BCPeripheral) -> Bool in
+    public var peripherals: [Peripheral] {
+        return Array(self.discoveredPeripherals.values).sort() {(p1: Peripheral, p2: Peripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
             case .OrderedSame:
                 return true
@@ -84,28 +84,28 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     // TODO: should be updated in IO queue
     public private(set) var isScanning: Bool {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._isScanning }
+            return PeripheralManager.ioQueue.sync { return self._isScanning }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._isScanning = newValue }
+            PeripheralManager.ioQueue.sync { self._isScanning = newValue }
         }
     }
 
     public private(set) var poweredOn: Bool {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._poweredOn }
+            return PeripheralManager.ioQueue.sync { return self._poweredOn }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._poweredOn = newValue }
+            PeripheralManager.ioQueue.sync { self._poweredOn = newValue }
         }
     }
 
     public private(set) var state: CBCentralManagerState {
         get {
-            return BCPeripheralManager.ioQueue.sync { return self._state }
+            return PeripheralManager.ioQueue.sync { return self._state }
         }
         set {
-            BCPeripheralManager.ioQueue.sync { self._state = newValue }
+            PeripheralManager.ioQueue.sync { self._state = newValue }
         }
     }
 
@@ -145,14 +145,14 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
             return
         }
         let options = NSKeyValueObservingOptions([.New, .Old])
-        cbCentralManager.addObserver(self, forKeyPath: "state", options: options, context: &BCCentralManager.CBCentralManagerStateKVOContext)
+        cbCentralManager.addObserver(self, forKeyPath: "state", options: options, context: &CentralManager.CBCentralManagerStateKVOContext)
     }
 
     internal func stopObserving() {
         guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
             return
         }
-        cbCentralManager.removeObserver(self, forKeyPath: "state", context: &BCCentralManager.CBCentralManagerStateKVOContext)
+        cbCentralManager.removeObserver(self, forKeyPath: "state", context: &CentralManager.CBCentralManagerStateKVOContext)
     }
 
     override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
@@ -161,7 +161,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
             return
         }
         switch (keyPath!, context) {
-        case("state", &BCCentralManager.CBCentralManagerStateKVOContext):
+        case("state", &CentralManager.CBCentralManagerStateKVOContext):
             if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBCentralManagerState(rawValue: newRawState) {
                 if newRawState != oldRawState {
                     self.willChangeValueForKey("state")
@@ -178,7 +178,7 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     public func whenPowerOn() -> Future<Void> {
         self.afterPowerOnPromise = Promise<Void>()
         if self.poweredOn {
-            BCLogger.debug("Central already powered on")
+            Logger.debug("Central already powered on")
             self.afterPowerOnPromise.success()
         }
         return self.afterPowerOnPromise.future
@@ -193,11 +193,11 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Manage Peripherals
-    public func connectPeripheral(peripheral: BCPeripheral, options: [String:AnyObject]? = nil) {
+    public func connectPeripheral(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
         self.cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options: options)
     }
     
-    public func cancelPeripheralConnection(peripheral: BCPeripheral) {
+    public func cancelPeripheralConnection(peripheral: Peripheral) {
         self.cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
 
@@ -212,18 +212,18 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Scan
-    public func startScanning(capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<BCPeripheral> {
+    public func startScanning(capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         return self.startScanningForServiceUUIDs(nil, capacity: capacity)
     }
     
-    public func startScanningForServiceUUIDs(uuids: [CBUUID]?, capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<BCPeripheral> {
+    public func startScanningForServiceUUIDs(uuids: [CBUUID]?, capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         if !self.isScanning {
-            BCLogger.debug("UUIDs \(uuids)")
+            Logger.debug("UUIDs \(uuids)")
             self.isScanning = true
             if let capacity = capacity {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>(capacity: capacity)
+                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
             } else {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
+                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
             }
             if self.poweredOn {
                 self.cbCentralManager.scanForPeripheralsWithServices(uuids, options: options)
@@ -238,44 +238,44 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         if self.isScanning {
             self.isScanning = false
             self.cbCentralManager.stopScan()
-            self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
+            self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
         }
     }
 
     // MARK: State Restoration
-    public func whenStateRestored() -> FutureStream<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
-        self.afterStateRestoredPromise = StreamPromise<(peripherals: [BCPeripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
+    public func whenStateRestored() -> FutureStream<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
+        self.afterStateRestoredPromise = StreamPromise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
         return self.afterStateRestoredPromise.future
     }
 
     // MARK: Retrieve Peripherals
-    public func retrieveConnectedPeripheralsWithServices(services: [CBUUID]) -> [BCPeripheral] {
+    public func retrieveConnectedPeripheralsWithServices(services: [CBUUID]) -> [Peripheral] {
         return self.cbCentralManager.retrieveConnectedPeripheralsWithServices(services).map { cbPeripheral in
-            let newBCPeripheral: BCPeripheral
+            let newBCPeripheral: Peripheral
             if let oldBCPeripheral = self.discoveredPeripherals[cbPeripheral.identifier] {
-                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)
+                newBCPeripheral = Peripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)
             } else {
-                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
+                newBCPeripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
             }
             self.discoveredPeripherals[cbPeripheral.identifier] = newBCPeripheral
             return newBCPeripheral
         }
     }
 
-    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [BCPeripheral] {
+    func retrievePeripheralsWithIdentifiers(identifiers: [NSUUID]) -> [Peripheral] {
         return self.cbCentralManager.retrievePeripheralsWithIdentifiers(identifiers).map { cbPeripheral in
-            let newBCPeripheral: BCPeripheral
+            let newBCPeripheral: Peripheral
             if let oldBCPeripheral = self.discoveredPeripherals[cbPeripheral.identifier] {
-                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)
+                newBCPeripheral = Peripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)
             } else {
-                newBCPeripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
+                newBCPeripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
             }
             self.discoveredPeripherals[cbPeripheral.identifier] = newBCPeripheral
             return newBCPeripheral
         }
     }
 
-    func retrievePeripherals() -> [BCPeripheral] {
+    func retrievePeripherals() -> [Peripheral] {
         return self.retrievePeripheralsWithIdentifiers(self.discoveredPeripherals.keys)
     }
 
@@ -312,14 +312,14 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: CBCentralManagerDelegate Shims
     internal func didConnectPeripheral(peripheral: CBPeripheralInjectable) {
-        BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name)")
+        Logger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     internal func didDisconnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
-        BCLogger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name), error=\(error)")
+        Logger.debug("uuid=\(peripheral.identifier.UUIDString), name=\(peripheral.name), error=\(error)")
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral(error)
         }
@@ -327,33 +327,33 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     
     internal func didDiscoverPeripheral(peripheral: CBPeripheralInjectable, advertisementData: [String:AnyObject], RSSI: NSNumber) {
         if self.discoveredPeripherals[peripheral.identifier] == nil {
-            let bcPeripheral = BCPeripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.integerValue)
-            BCLogger.debug("uuid=\(bcPeripheral.identifier.UUIDString), name=\(bcPeripheral.name)")
+            let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.integerValue)
+            Logger.debug("uuid=\(bcPeripheral.identifier.UUIDString), name=\(bcPeripheral.name)")
             self.discoveredPeripherals[peripheral.identifier] = bcPeripheral
             self.afterPeripheralDiscoveredPromise.success(bcPeripheral)
         }
     }
     
     internal func didFailToConnectPeripheral(peripheral: CBPeripheralInjectable, error: NSError?) {
-        BCLogger.debug()
+        Logger.debug()
         if let bcPeripheral = self.discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didFailToConnectPeripheral(error)
         }
     }
 
     internal func willRestoreState(cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
-        BCLogger.debug()
+        Logger.debug()
         if let cbPeripherals = cbPeripherals, scannedServices = scannedServices, options = options {
-            let peripherals = cbPeripherals.map { cbPeripheral -> BCPeripheral in
-                let peripheral = BCPeripheral(cbPeripheral: cbPeripheral, centralManager: self)
+            let peripherals = cbPeripherals.map { cbPeripheral -> Peripheral in
+                let peripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
                 self.discoveredPeripherals[peripheral.identifier] = peripheral
                 if let cbServices = cbPeripheral.getServices() {
                     for cbService in cbServices {
-                        let service = BCService(cbService: cbService, peripheral: peripheral)
+                        let service = Service(cbService: cbService, peripheral: peripheral)
                         peripheral.discoveredServices[service.UUID] = service
                         if let cbCharacteristics = cbService.getCharacteristics() {
                             for cbCharacteristic in cbCharacteristics {
-                                let characteristic = BCCharacteristic(cbCharacteristic: cbCharacteristic, service: service)
+                                let characteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: service)
                                 service.discoveredCharacteristics[characteristic.UUID] = characteristic
                                 peripheral.discoveredCharacteristics[characteristic.UUID] = characteristic
                             }
@@ -372,25 +372,25 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.poweredOn = self.cbCentralManager.state == .PoweredOn
         switch(self.cbCentralManager.state) {
         case .Unauthorized:
-            BCLogger.debug("Unauthorized")
+            Logger.debug("Unauthorized")
             break
         case .Unknown:
-            BCLogger.debug("Unknown")
+            Logger.debug("Unknown")
             break
         case .Unsupported:
-            BCLogger.debug("Unsupported")
+            Logger.debug("Unsupported")
             break
         case .Resetting:
-            BCLogger.debug("Resetting")
+            Logger.debug("Resetting")
             break
         case .PoweredOff:
-            BCLogger.debug("PoweredOff")
+            Logger.debug("PoweredOff")
             if !self.afterPowerOffPromise.completed {
                 self.afterPowerOffPromise.success()
             }
             break
         case .PoweredOn:
-            BCLogger.debug("PoweredOn")
+            Logger.debug("PoweredOn")
             if !self.afterPowerOnPromise.completed {
                 self.afterPowerOnPromise.success()
             }

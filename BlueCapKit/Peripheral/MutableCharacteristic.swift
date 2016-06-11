@@ -1,5 +1,5 @@
 //
-//  BCMutableCharacteristic.swift
+//  MutableCharacteristic.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/9/14.
@@ -9,49 +9,49 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - BCMutableCharacteristic -
-public class BCMutableCharacteristic : NSObject {
+// MARK: - MutableCharacteristic -
+public class MutableCharacteristic : NSObject {
 
     // MARK: Properties
     static let ioQueue = Queue("us.gnos.blueCap.mutable-characteristic.io")
 
-    private let profile: BCCharacteristicProfile
+    private let profile: CharacteristicProfile
 
-    private var centrals = BCSerialIODictionary<NSUUID, CBCentralInjectable>(BCMutableCharacteristic.ioQueue)
+    private var centrals = SerialIODictionary<NSUUID, CBCentralInjectable>(MutableCharacteristic.ioQueue)
 
     private var _queuedUpdates = [NSData]()
     private var _isUpdating = false
 
     internal var _processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
-    internal weak var _service: BCMutableService?
+    internal weak var _service: MutableService?
     
     internal let cbMutableChracteristic: CBMutableCharacteristicInjectable
     public var value: NSData?
 
     private var queuedUpdates: [NSData] {
         get {
-            return BCMutableCharacteristic.ioQueue.sync { return self._queuedUpdates }
+            return MutableCharacteristic.ioQueue.sync { return self._queuedUpdates }
         }
         set {
-            BCMutableCharacteristic.ioQueue.sync { self._queuedUpdates = newValue }
+            MutableCharacteristic.ioQueue.sync { self._queuedUpdates = newValue }
         }
     }
 
     private var processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>? {
         get {
-            return BCMutableCharacteristic.ioQueue.sync { return self._processWriteRequestPromise }
+            return MutableCharacteristic.ioQueue.sync { return self._processWriteRequestPromise }
         }
         set {
-            BCMutableCharacteristic.ioQueue.sync { self._processWriteRequestPromise = newValue }
+            MutableCharacteristic.ioQueue.sync { self._processWriteRequestPromise = newValue }
         }
     }
 
     public private(set) var isUpdating: Bool {
         get {
-            return BCMutableCharacteristic.ioQueue.sync { return self._isUpdating }
+            return MutableCharacteristic.ioQueue.sync { return self._isUpdating }
         }
         set {
-            BCMutableCharacteristic.ioQueue.sync { self._isUpdating = newValue }
+            MutableCharacteristic.ioQueue.sync { self._isUpdating = newValue }
         }
     }
 
@@ -83,7 +83,7 @@ public class BCMutableCharacteristic : NSObject {
         return Array(self.queuedUpdates)
     }
 
-    public var service: BCMutableService? {
+    public var service: MutableService? {
         return self._service
     }
 
@@ -103,39 +103,39 @@ public class BCMutableCharacteristic : NSObject {
     }
 
     // MARK: Initializers
-    public convenience init(profile: BCCharacteristicProfile) {
+    public convenience init(profile: CharacteristicProfile) {
         let cbMutableChracteristic = CBMutableCharacteristic(type: profile.UUID, properties: profile.properties, value: nil, permissions: profile.permissions)
         self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
     }
 
-    internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable, profile: BCCharacteristicProfile) {
+    internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable, profile: CharacteristicProfile) {
         self.profile = profile
         self.value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
     }
 
     internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable) {
-        self.profile = BCCharacteristicProfile(UUID: cbMutableCharacteristic.UUID.UUIDString)
+        self.profile = CharacteristicProfile(UUID: cbMutableCharacteristic.UUID.UUIDString)
         self.value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
     }
 
     public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: NSData?) {
-        self.profile = BCCharacteristicProfile(UUID: UUID)
+        self.profile = CharacteristicProfile(UUID: UUID)
         self.value = value
         self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.UUID, properties:properties, value:nil, permissions:permissions)
     }
 
     public convenience init(UUID: String) {
-        self.init(profile: BCCharacteristicProfile(UUID: UUID))
+        self.init(profile: CharacteristicProfile(UUID: UUID))
     }
 
-    public class func withProfiles(profiles: [BCCharacteristicProfile]) -> [BCMutableCharacteristic] {
-        return profiles.map{ BCMutableCharacteristic(profile: $0) }
+    public class func withProfiles(profiles: [CharacteristicProfile]) -> [MutableCharacteristic] {
+        return profiles.map{ MutableCharacteristic(profile: $0) }
     }
 
-    public class func withProfiles(profiles: [BCCharacteristicProfile], cbCharacteristics: [CBMutableCharacteristic]) -> [BCMutableCharacteristic] {
-        return profiles.map{ BCMutableCharacteristic(profile: $0) }
+    public class func withProfiles(profiles: [CharacteristicProfile], cbCharacteristics: [CBMutableCharacteristic]) -> [MutableCharacteristic] {
+        return profiles.map{ MutableCharacteristic(profile: $0) }
     }
 
     // MARK: Properties & Permissions
@@ -186,24 +186,24 @@ public class BCMutableCharacteristic : NSObject {
         return self.updateValuesWithData([value])
     }
 
-    public func updateValue<T: BCDeserializable>(value: T) -> Bool {
-        return self.updateValueWithData(BCSerDe.serialize(value))
+    public func updateValue<T: Deserializable>(value: T) -> Bool {
+        return self.updateValueWithData(SerDe.serialize(value))
     }
 
-    public func updateValue<T: BCRawDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(BCSerDe.serialize(value))
+    public func updateValue<T: RawDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(SerDe.serialize(value))
     }
 
-    public func updateValue<T: BCRawArrayDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(BCSerDe.serialize(value))
+    public func updateValue<T: RawArrayDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(SerDe.serialize(value))
     }
 
-    public func updateValue<T: BCRawPairDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(BCSerDe.serialize(value))
+    public func updateValue<T: RawPairDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(SerDe.serialize(value))
     }
 
-    public func updateValue<T: BCRawArrayPairDeserializable>(value: T) -> Bool  {
-        return self.updateValueWithData(BCSerDe.serialize(value))
+    public func updateValue<T: RawArrayPairDeserializable>(value: T) -> Bool  {
+        return self.updateValueWithData(SerDe.serialize(value))
     }
 
     // MARK: CBPeripheralManagerDelegate Shims

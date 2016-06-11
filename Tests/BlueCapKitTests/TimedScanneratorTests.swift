@@ -1,5 +1,5 @@
 //
-//  BCTimedScanneratorTests.swift
+//  TimedScanneratorTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 1/7/15.
@@ -9,13 +9,12 @@
 import UIKit
 import XCTest
 import CoreBluetooth
-import CoreLocation
 @testable import BlueCapKit
 
-// MARK: - BCTimedScanneratorTests -
-class BCTimedScanneratorTests: XCTestCase {
+// MARK: - TimedScanneratorTests -
+class TimedScanneratorTests: XCTestCase {
     
-    var centralManager: BCCentralManager!
+    var centralManager: CentralManager!
     let mockPerpheral = CBPeripheralMock()
     let immediateContext = ImmediateContext()
 
@@ -30,7 +29,7 @@ class BCTimedScanneratorTests: XCTestCase {
 
     // MARK: Scan timeout
     func testStartScanning_WhenPeripeharlDiscovered_CompeletesSuccessfully() {
-        let scannerator = BCTimedScannerator(centralManager: self.centralManager)
+        let scannerator = TimedScannerator(centralManager: self.centralManager)
         let future = scannerator.startScanning(2)
         self.centralManager.didDiscoverPeripheral(self.mockPerpheral, advertisementData:peripheralAdvertisements, RSSI:NSNumber(integer: -45))
         XCTAssertFutureStreamSucceeds(future, context:self.immediateContext, validations: [
@@ -41,7 +40,7 @@ class BCTimedScanneratorTests: XCTestCase {
     }
     
     func testStartScanning_OnScanTimeout_CompletesWithPeripheralScanTimeout() {
-        let scannerator = BCTimedScannerator(centralManager :self.centralManager)
+        let scannerator = TimedScannerator(centralManager :self.centralManager)
         let future = scannerator.startScanning(1)
         XCTAssertFutureStreamFails(future, validations: [
             {error in

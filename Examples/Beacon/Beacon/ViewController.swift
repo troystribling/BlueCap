@@ -20,7 +20,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var startAdvertisingSwitch: UISwitch!
     @IBOutlet var startAdvertisingLabel: UILabel!
 
-    let manager = BCPeripheralManager()
+    let manager = PeripheralManager()
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

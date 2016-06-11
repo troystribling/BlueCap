@@ -1,5 +1,5 @@
 //
-//  BCPeripheralManagerTests.swift
+//  PeripheralManagerTests.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 3/25/15.
@@ -12,8 +12,8 @@ import CoreBluetooth
 import CoreLocation
 @testable import BlueCapKit
 
-// MARK: - BCPeripheralManagerTests -
-class BCPeripheralManagerTests: XCTestCase {
+// MARK: - PeripheralManagerTests -
+class PeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
     let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)
@@ -99,7 +99,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "Error code is invalid")
+            XCTAssertEqual(error.code, PeripheralManagerErrorCode.IsAdvertising.rawValue, "Error code is invalid")
             XCTAssert(mock.advertisementData == nil, "advertisementData found")
         }
     }
@@ -129,7 +129,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
         let future = peripheralManager.startAdvertising(FLBeaconRegion(proximityUUID: NSUUID(), identifier: "Beacon Regin"))
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsAdvertising.rawValue, "Error code is invalid \(error.code)")
+            XCTAssertEqual(error.code, PeripheralManagerErrorCode.IsAdvertising.rawValue, "Error code is invalid \(error.code)")
             XCTAssertFalse(mock.startAdvertisingCalled, "CBPeripheralManager#startAdvertising not called")
         }
     }
@@ -148,7 +148,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let future = peripheralManager.stopAdvertising()
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqual(error.code, BCPeripheralManagerErrorCode.IsNotAdvertising.rawValue, "Error code is invalid")
+            XCTAssertEqual(error.code, PeripheralManagerErrorCode.IsNotAdvertising.rawValue, "Error code is invalid")
             XCTAssertFalse(mock.stopAdvertisingCalled, "CBPeripheralManager#stopAdvertisingCalled called")
         }
     }

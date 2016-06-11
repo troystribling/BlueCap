@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
     
-    var characteristic: BCMutableCharacteristic!
+    var characteristic: MutableCharacteristic!
     var peripheralManagerViewController: PeripheralManagerViewController?
 
     struct MainStoryboard {
@@ -38,7 +38,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }

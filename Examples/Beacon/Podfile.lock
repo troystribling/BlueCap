@@ -1,5 +1,5 @@
 PODS:
-  - BlueCapKit (0.1.0)
+  - BlueCapKit (0.2.0)
 
 DEPENDENCIES:
   - BlueCapKit (from `../..`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../.."
 
 SPEC CHECKSUMS:
-  BlueCapKit: bc298f4fe012db1310a08907f92cc794cc61529b
+  BlueCapKit: 88b9efa46fd16d74c3461705392a1326ac4f9781
 
 PODFILE CHECKSUM: 3426d3144046f09be5fbb544aa46ae3e46d2764f
 

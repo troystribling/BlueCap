@@ -1,5 +1,5 @@
 //
-//  BCCharacteristicProfile.swift
+//  CharacteristicProfile.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/21/14.
@@ -9,8 +9,8 @@
 import Foundation
 import CoreBluetooth
 
-// MARK:  - BCCharacteristicProfile -
-public class BCCharacteristicProfile {
+// MARK:  - CharacteristicProfile -
+public class CharacteristicProfile {
     
     public let UUID: CBUUID
     public let name: String
@@ -18,7 +18,7 @@ public class BCCharacteristicProfile {
     public let properties: CBCharacteristicProperties
     public let initialValue: NSData?
 
-    internal var afterDiscoveredPromise: StreamPromise<BCCharacteristic>!
+    internal var afterDiscoveredPromise: StreamPromise<Characteristic>!
 
     public var stringValues: [String] {
         return []
@@ -40,9 +40,9 @@ public class BCCharacteristicProfile {
         self.init(UUID:UUID, name:"Unknown")
     }
     
-    public func afterDiscovered(capacity: Int? = nil) -> FutureStream<BCCharacteristic> {
+    public func afterDiscovered(capacity: Int? = nil) -> FutureStream<Characteristic> {
         guard let afterDiscoveredPromise = self.afterDiscoveredPromise else {
-            self.afterDiscoveredPromise = StreamPromise<BCCharacteristic>(capacity:capacity)
+            self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity:capacity)
             return self.afterDiscoveredPromise.future
         }
         return afterDiscoveredPromise.future
@@ -66,12 +66,12 @@ public class BCCharacteristicProfile {
     
 }
 
-// MARK: - BCRawCharacteristicProfile -
-public final class BCRawCharacteristicProfile<DeserializedType where
-                                              DeserializedType: BCRawDeserializable,
-                                              DeserializedType: BCStringDeserializable,
-                                              DeserializedType: BCCharacteristicConfigurable,
-                                              DeserializedType.RawType: BCDeserializable>: BCCharacteristicProfile {
+// MARK: - RawCharacteristicProfile -
+public final class RawCharacteristicProfile<DeserializedType where
+                                            DeserializedType: RawDeserializable,
+                                            DeserializedType: StringDeserializable,
+                                            DeserializedType: CharacteristicConfigurable,
+                                            DeserializedType.RawType: Deserializable>: CharacteristicProfile {
     
     public init() {
         super.init(UUID: DeserializedType.UUID,
@@ -86,22 +86,22 @@ public final class BCRawCharacteristicProfile<DeserializedType where
     }
     
     public override func stringValue(data: NSData) -> [String:String]? {
-        let value: DeserializedType? = BCSerDe.deserialize(data)
+        let value: DeserializedType? = SerDe.deserialize(data)
         return value.map{$0.stringValue}
     }
     
     public override func dataFromStringValue(data: Dictionary<String, String>) -> NSData? {
-        return DeserializedType(stringValue: data).flatmap{ BCSerDe.serialize($0) }
+        return DeserializedType(stringValue: data).flatmap{ SerDe.serialize($0) }
     }
     
 }
 
-// MARK: - BCRawArrayCharacteristicProfile -
-public final class BCRawArrayCharacteristicProfile<DeserializedType where
-                                                   DeserializedType: BCRawArrayDeserializable,
-                                                   DeserializedType: BCStringDeserializable,
-                                                   DeserializedType: BCCharacteristicConfigurable,
-                                                   DeserializedType.RawType: BCDeserializable>: BCCharacteristicProfile {
+// MARK: - RawArrayCharacteristicProfile -
+public final class RawArrayCharacteristicProfile<DeserializedType where
+                                                 DeserializedType: RawArrayDeserializable,
+                                                 DeserializedType: StringDeserializable,
+                                                 DeserializedType: CharacteristicConfigurable,
+                                                 DeserializedType.RawType: Deserializable>: CharacteristicProfile {
     
     public init() {
         super.init(UUID: DeserializedType.UUID,
@@ -116,23 +116,23 @@ public final class BCRawArrayCharacteristicProfile<DeserializedType where
     }
     
     public override func stringValue(data: NSData) -> [String: String]? {
-        let value : DeserializedType? = BCSerDe.deserialize(data)
+        let value : DeserializedType? = SerDe.deserialize(data)
         return value.map{$0.stringValue}
     }
     
     public override func dataFromStringValue(data: [String: String]) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{ BCSerDe.serialize($0) }
+        return DeserializedType(stringValue:data).flatmap{ SerDe.serialize($0) }
     }
     
 }
 
-// MARK: - BCRawPairCharacteristicProfile -
-public final class BCRawPairCharacteristicProfile<DeserializedType where
-                                                  DeserializedType: BCRawPairDeserializable,
-                                                  DeserializedType: BCStringDeserializable,
-                                                  DeserializedType: BCCharacteristicConfigurable,
-                                                  DeserializedType.RawType1: BCDeserializable,
-                                                  DeserializedType.RawType2: BCDeserializable>: BCCharacteristicProfile {
+// MARK: - RawPairCharacteristicProfile -
+public final class RawPairCharacteristicProfile<DeserializedType where
+                                                DeserializedType: RawPairDeserializable,
+                                                DeserializedType: StringDeserializable,
+                                                DeserializedType: CharacteristicConfigurable,
+                                                DeserializedType.RawType1: Deserializable,
+                                                DeserializedType.RawType2: Deserializable>: CharacteristicProfile {
     
     public init() {
         super.init(UUID:  DeserializedType.UUID,
@@ -147,24 +147,24 @@ public final class BCRawPairCharacteristicProfile<DeserializedType where
     }
     
     public override func stringValue(data: NSData) -> [String:String]? {
-        let value : DeserializedType? = BCSerDe.deserialize(data)
+        let value : DeserializedType? = SerDe.deserialize(data)
         return value.map{ $0.stringValue }
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{ BCSerDe.serialize($0) }
+        return DeserializedType(stringValue:data).flatmap{ SerDe.serialize($0) }
     }
     
 }
 
 
-// MARK: - BCRawArrayPairCharacteristicProfile -
-public final class BCRawArrayPairCharacteristicProfile<DeserializedType where
-                                                       DeserializedType: BCRawArrayPairDeserializable,
-                                                       DeserializedType: BCStringDeserializable,
-                                                       DeserializedType: BCCharacteristicConfigurable,
-                                                       DeserializedType.RawType1: BCDeserializable,
-                                                       DeserializedType.RawType2: BCDeserializable>: BCCharacteristicProfile {
+// MARK: - RawArrayPairCharacteristicProfile -
+public final class RawArrayPairCharacteristicProfile<DeserializedType where
+                                                     DeserializedType: RawArrayPairDeserializable,
+                                                     DeserializedType: StringDeserializable,
+                                                     DeserializedType: CharacteristicConfigurable,
+                                                     DeserializedType.RawType1: Deserializable,
+                                                     DeserializedType.RawType2: Deserializable>: CharacteristicProfile {
     
     public init() {
         super.init(UUID: DeserializedType.UUID,
@@ -179,18 +179,18 @@ public final class BCRawArrayPairCharacteristicProfile<DeserializedType where
     }
     
     public override func stringValue(data:NSData) -> [String: String]? {
-        let value : DeserializedType? = BCSerDe.deserialize(data)
+        let value : DeserializedType? = SerDe.deserialize(data)
         return value.map{ $0.stringValue }
     }
     
     public override func dataFromStringValue(data:[String:String]) -> NSData? {
-        return DeserializedType(stringValue:data).flatmap{ BCSerDe.serialize($0)}
+        return DeserializedType(stringValue:data).flatmap{ SerDe.serialize($0)}
     }
     
 }
 
-// MARK: - BCStringCharacteristicProfile -
-public final class BCStringCharacteristicProfile<T: BCCharacteristicConfigurable>: BCCharacteristicProfile {
+// MARK: - StringCharacteristicProfile -
+public final class StringCharacteristicProfile<T: CharacteristicConfigurable>: CharacteristicProfile {
     
     public var encoding : NSStringEncoding
     
@@ -209,12 +209,12 @@ public final class BCStringCharacteristicProfile<T: BCCharacteristicConfigurable
     }
     
     public override func stringValue(data: NSData) -> [String: String]? {
-        let value: String? = BCSerDe.deserialize(data, encoding: self.encoding)
+        let value: String? = SerDe.deserialize(data, encoding: self.encoding)
         return value.map{ [self.name: $0] }
     }
     
     public override func dataFromStringValue(data:[String: String]) -> NSData? {
-        return data[self.name].flatmap{ BCSerDe.serialize($0, encoding:self.encoding) }
+        return data[self.name].flatmap{ SerDe.serialize($0, encoding:self.encoding) }
     }
 
 }

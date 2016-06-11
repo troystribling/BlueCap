@@ -113,7 +113,7 @@ class BeaconRegionsViewController: UITableViewController {
                     errorPromise.failure(BCAppError.outOfRegion)
                     return errorPromise.future
                 case .Start:
-                    BCLogger.debug("started monitoring region \(name)")
+                    Logger.debug("started monitoring region \(name)")
                     self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated: false)
                     return Singletons.beaconManager.startRangingBeaconsInRegion(beacon)
                 }
@@ -121,7 +121,7 @@ class BeaconRegionsViewController: UITableViewController {
             beaconFuture.onSuccess {beacons in
                 self.setScanButton()
                 for beacon in beacons {
-                    BCLogger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
+                    Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
                 }
                 self.updateWhenActive()
                 if UIApplication.sharedApplication().applicationState == .Active && beacons.count > 0 {
@@ -145,7 +145,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
 
     func didBecomeActive() {
-        BCLogger.debug()
+        Logger.debug()
         self.updateWhenActive()
     }
 

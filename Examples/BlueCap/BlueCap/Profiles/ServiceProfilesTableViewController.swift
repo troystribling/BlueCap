@@ -12,7 +12,7 @@ import CoreBluetooth
 
 class ServiceProfilesTableViewController : UITableViewController {
     
-    var serviceProfiles = [String: [BCServiceProfile]]()
+    var serviceProfiles = [String: [ServiceProfile]]()
 
     var excludedServices : [CBUUID] {
         return []

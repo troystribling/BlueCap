@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name              = "BlueCapKit"
-  spec.version           = "0.1.0"
+  spec.version           = "0.2.0"
   spec.summary           = "BlueCap is Swift  CoreBluetooth and much more."
 
   spec.homepage          = "https://github.com/troystribling/BlueCap"

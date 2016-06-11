@@ -13,14 +13,14 @@ import CoreBluetooth
 public struct Nordic {
 
     // MARK - Nordic Device Temperature Service -
-    public struct DeviceTemperatureService : BCServiceConfigurable {
+    public struct DeviceTemperatureService : ServiceConfigurable {
         
         // ServiceConfigurable
         public static let UUID  = "2f0a0003-69aa-f316-3e78-4194989a6c1a"
         public static let name  = "Nordic Device Temperature"
         public static let tag   = "Nordic"
         
-        public struct Data : BCRawDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
+        public struct Data : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
 
             private let temperatureRaw: Int16
             public let temperature: Double
@@ -34,7 +34,7 @@ public struct Nordic {
             public static let name                                      = "Device Temperature Data"
             public static let properties: CBCharacteristicProperties    = [.Read, .Notify]
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let initialValue: NSData?                     = BCSerDe.serialize(Int16(100))
+            public static let initialValue: NSData?                     = SerDe.serialize(Int16(100))
 
             // RawDeserializable
             public var rawValue: Int16 {
@@ -65,14 +65,14 @@ public struct Nordic {
     }
 
     // MARK: - Nordic BLE Address Service -
-    public struct BLEAddressService: BCServiceConfigurable {
+    public struct BLEAddressService: ServiceConfigurable {
         
         // ServiceConfigurable
         public static let UUID = "2f0a0005-69aa-f316-3e78-4194989a6c1a"
         public static let name = "Nordic BLE Address"
         public static let tag   = "Nordic"
 
-        public struct Address: BCRawArrayDeserializable, BCCharacteristicConfigurable, BCStringDeserializable {
+        public struct Address: RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
             
             public let addr1: UInt8
             public let addr2: UInt8
@@ -86,7 +86,7 @@ public struct Nordic {
             public static let name                                      = "BLE Addresss"
             public static let properties: CBCharacteristicProperties    = [.Read, .Notify]
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let initialValue: NSData?                     = BCSerDe.serialize(Int16(100))
+            public static let initialValue: NSData?                     = SerDe.serialize(Int16(100))
 
             // RawArrayDeserializable
             public static let size = 6
@@ -136,7 +136,7 @@ public struct Nordic {
 
         }
         
-        public enum AddressType: UInt8, BCRawDeserializable, BCStringDeserializable, BCCharacteristicConfigurable  {
+        public enum AddressType: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable  {
             
             case Unknown                    = 0
             case Public                     = 1
@@ -149,7 +149,7 @@ public struct Nordic {
             public static let name                                      = "BLE Address Type"
             public static let properties: CBCharacteristicProperties    = [.Read]
             public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let initialValue: NSData?                     = BCSerDe.serialize(AddressType.Public)
+            public static let initialValue: NSData?                     = SerDe.serialize(AddressType.Public)
 
 
             // StringDeserializable
@@ -201,19 +201,19 @@ public class NordicProfiles {
     
     public class func create() {
         
-        let profileManager = BCProfileManager.sharedInstance
+        let profileManager = ProfileManager.sharedInstance
         
         // Nordic Device Temperature Service
-        let temperatureService = BCConfiguredServiceProfile<Nordic.DeviceTemperatureService>()
-        let temperatureDataCharcteristic = BCRawCharacteristicProfile<Nordic.DeviceTemperatureService.Data>()
+        let temperatureService = ConfiguredServiceProfile<Nordic.DeviceTemperatureService>()
+        let temperatureDataCharcteristic = RawCharacteristicProfile<Nordic.DeviceTemperatureService.Data>()
 
         temperatureService.addCharacteristic(temperatureDataCharcteristic)
         profileManager.addService(temperatureService)
 
         // Nordic BLE Address Service
-        let bleAddressService = BCConfiguredServiceProfile<Nordic.BLEAddressService>()
-        let bleAddressCharacteristic = BCRawArrayCharacteristicProfile<Nordic.BLEAddressService.Address>()
-        let bleAddressTypeCharacteristic = BCRawCharacteristicProfile<Nordic.BLEAddressService.AddressType>()
+        let bleAddressService = ConfiguredServiceProfile<Nordic.BLEAddressService>()
+        let bleAddressCharacteristic = RawArrayCharacteristicProfile<Nordic.BLEAddressService.Address>()
+        let bleAddressTypeCharacteristic = RawCharacteristicProfile<Nordic.BLEAddressService.AddressType>()
         
         bleAddressService.addCharacteristic(bleAddressCharacteristic)
         bleAddressService.addCharacteristic(bleAddressTypeCharacteristic)

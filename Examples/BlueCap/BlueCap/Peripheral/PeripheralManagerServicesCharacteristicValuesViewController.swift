@@ -12,7 +12,7 @@ import CoreBluetooth
 
 class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewController {
     
-    var characteristic: BCMutableCharacteristic!
+    var characteristic: MutableCharacteristic!
     var peripheralManagerViewController: PeripheralManagerViewController?
 
     
@@ -78,7 +78,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }

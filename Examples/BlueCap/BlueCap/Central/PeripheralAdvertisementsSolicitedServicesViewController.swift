@@ -11,7 +11,7 @@ import BlueCapKit
 
 class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewController {
 
-    weak var peripheral: BCPeripheral?
+    weak var peripheral: Peripheral?
     
     struct MainStoryboard {
         static let peripheralAdvertisementsSolicitedServiceCell = "PeripheralAdvertisementsSolicitedServiceCell"
@@ -37,7 +37,7 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
     
     func didEnterBackground() {
         self.navigationController?.popToRootViewControllerAnimated(false)
-        BCLogger.debug()
+        Logger.debug()
     }
     
     // UITableViewDataSource

@@ -49,12 +49,12 @@ class ViewController: UITableViewController {
     @IBOutlet var enabledLabel: UILabel!
     @IBOutlet var statusLabel: UILabel!
     
-    var peripheral: BCPeripheral?
-    var accelerometerDataCharacteristic: BCCharacteristic?
-    var accelerometerEnabledCharacteristic: BCCharacteristic?
-    var accelerometerUpdatePeriodCharacteristic: BCCharacteristic?
+    var peripheral: Peripheral?
+    var accelerometerDataCharacteristic: Characteristic?
+    var accelerometerEnabledCharacteristic: Characteristic?
+    var accelerometerUpdatePeriodCharacteristic: Characteristic?
 
-    let manager = BCCentralManager()
+    let manager = CentralManager()
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -115,9 +115,9 @@ class ViewController: UITableViewController {
 
             
         // on power, start scanning. when peripheral is discovered connect and stop scanning
-        let peripheralConnectFuture = self.manager.whenPowerOn().flatmap { _ -> FutureStream<BCPeripheral> in
+        let peripheralConnectFuture = self.manager.whenPowerOn().flatmap { _ -> FutureStream<Peripheral> in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
-        }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
+        }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(10, timeoutRetries:5, disconnectRetries:5)
@@ -148,15 +148,15 @@ class ViewController: UITableViewController {
         }
 
         // discover services and characteristics and enable accelerometer
-        let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<BCPeripheral> in
+        let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
             if peripheral.state == .Connected {
                 return peripheral.discoverPeripheralServices([serviceUUID])
             } else {
-                let promise = Promise<BCPeripheral>()
+                let promise = Promise<Peripheral>()
                 promise.failure(CentralError.peripheralNotConnected)
                 return promise.future
             }
-        }.flatmap { peripheral -> Future<BCCharacteristic> in
+        }.flatmap { peripheral -> Future<Characteristic> in
             if let service = peripheral.service(serviceUUID) {
                 self.accelerometerDataCharacteristic = service.characteristic(dataUUID)
                 self.accelerometerEnabledCharacteristic = service.characteristic(enabledUUID)
@@ -164,23 +164,23 @@ class ViewController: UITableViewController {
                 if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
                     return accelerometerEnabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.Yes)
                 } else {
-                    let promise = Promise<BCCharacteristic>()
+                    let promise = Promise<Characteristic>()
                     promise.failure(CentralError.enabledCharacteristicNotFound)
                     return promise.future
                 }
             } else {
-                let promise = Promise<BCCharacteristic>()
+                let promise = Promise<Characteristic>()
                 promise.failure(CentralError.serviceNotFound)
                 return promise.future
             }
         }
 
         // get enabled value
-        let readEnabledFuture = peripheralDiscoveredFuture.flatmap { _ -> Future<BCCharacteristic> in
+        let readEnabledFuture = peripheralDiscoveredFuture.flatmap { _ -> Future<Characteristic> in
             if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
                 return accelerometerEnabledCharacteristic.read(10.0)
             } else {
-                let promise = Promise<BCCharacteristic>()
+                let promise = Promise<Characteristic>()
                 promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
@@ -190,11 +190,11 @@ class ViewController: UITableViewController {
         }
         
         // get update period value
-        let readUpdatePeriodFuture = readEnabledFuture.flatmap { _ -> Future<BCCharacteristic> in
+        let readUpdatePeriodFuture = readEnabledFuture.flatmap { _ -> Future<Characteristic> in
             if let accelerometerUpdatePeriodCharacteristic = self.accelerometerUpdatePeriodCharacteristic {
                 return accelerometerUpdatePeriodCharacteristic.read(10.0)
             } else {
-                let promise = Promise<BCCharacteristic>()
+                let promise = Promise<Characteristic>()
                 promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
@@ -204,11 +204,11 @@ class ViewController: UITableViewController {
         }
 
         // subscribe to acceleration data updates
-        let dataSubscriptionFuture = readUpdatePeriodFuture.flatmap { _ -> Future<BCCharacteristic> in
+        let dataSubscriptionFuture = readUpdatePeriodFuture.flatmap { _ -> Future<Characteristic> in
             if let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic {
                 return accelerometerDataCharacteristic.startNotifying()
             } else {
-                let promise = Promise<BCCharacteristic>()
+                let promise = Promise<Characteristic>()
                 promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
@@ -279,13 +279,13 @@ class ViewController: UITableViewController {
         }
     }
     
-    func updateEnabled(characteristic: BCCharacteristic) {
+    func updateEnabled(characteristic: Characteristic) {
         if let value : TISensorTag.AccelerometerService.Enabled = characteristic.value() {
             self.enabledSwitch.on = value.boolValue
         }
     }
 
-    func updatePeriod(characteristic: BCCharacteristic) {
+    func updatePeriod(characteristic: Characteristic) {
         if let value : TISensorTag.AccelerometerService.UpdatePeriod = characteristic.value() {
             self.updatePeriodLabel.text = "\(value.period)"
             self.rawUpdatePeriodlabel.text = "\(value.rawValue)"
@@ -303,7 +303,7 @@ class ViewController: UITableViewController {
     }
 
     func updateData(data:NSData?) {
-        if let data = data, accelerometerData: TISensorTag.AccelerometerService.Data = BCSerDe.deserialize(data) {
+        if let data = data, accelerometerData: TISensorTag.AccelerometerService.Data = SerDe.deserialize(data) {
             self.xAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.x) as String
             self.yAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.y) as String
             self.zAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.z) as String

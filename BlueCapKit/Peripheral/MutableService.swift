@@ -1,5 +1,5 @@
 //
-//  BCMutableService.swift
+//  MutableService.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 8/9/14.
@@ -9,16 +9,16 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - BCMutableService -
-public class BCMutableService : NSObject {
+// MARK: - MutableService -
+public class MutableService : NSObject {
 
     static let ioQueue = Queue("us.gnos.blueCap.mutable-service")
 
-    private var _characteristics = BCSerialIOArray<BCMutableCharacteristic>(BCMutableService.ioQueue)
+    private var _characteristics = SerialIOArray<MutableCharacteristic>(MutableService.ioQueue)
 
-    internal let profile: BCServiceProfile
+    internal let profile: ServiceProfile
 
-    internal weak var peripheralManager: BCPeripheralManager?
+    internal weak var peripheralManager: PeripheralManager?
 
     internal let cbMutableService: CBMutableServiceInjectable
 
@@ -30,7 +30,7 @@ public class BCMutableService : NSObject {
         return self.profile.name
     }
     
-    public var characteristics: [BCMutableCharacteristic] {
+    public var characteristics: [MutableCharacteristic] {
         get {
             return self._characteristics.data
         }
@@ -44,15 +44,15 @@ public class BCMutableService : NSObject {
         }
     }
     
-    public convenience init(profile: BCServiceProfile) {
+    public convenience init(profile: ServiceProfile) {
         self.init(cbMutableService: CBMutableService(type: profile.UUID, primary: true), profile: profile)
     }
 
     public convenience init(UUID: String) {
-        self.init(profile: BCServiceProfile(UUID: UUID))
+        self.init(profile: ServiceProfile(UUID: UUID))
     }
 
-    internal init(cbMutableService: CBMutableServiceInjectable, profile: BCServiceProfile) {
+    internal init(cbMutableService: CBMutableServiceInjectable, profile: ServiceProfile) {
         self.cbMutableService = cbMutableService
         self.profile = profile
         super.init()
@@ -61,17 +61,17 @@ public class BCMutableService : NSObject {
     internal init(cbMutableService: CBMutableServiceInjectable) {
         self.cbMutableService = cbMutableService
         let uuid = cbMutableService.UUID
-        if let profile = BCProfileManager.sharedInstance.services[uuid] {
+        if let profile = ProfileManager.sharedInstance.services[uuid] {
             self.profile = profile
         } else {
-            self.profile = BCServiceProfile(UUID: uuid.UUIDString)
+            self.profile = ServiceProfile(UUID: uuid.UUIDString)
         }
         super.init()
     }
 
 
     public func characteristicsFromProfiles() {
-        self.characteristics = self.profile.characteristics.map { BCMutableCharacteristic(profile: $0) }
+        self.characteristics = self.profile.characteristics.map { MutableCharacteristic(profile: $0) }
     }
     
 }

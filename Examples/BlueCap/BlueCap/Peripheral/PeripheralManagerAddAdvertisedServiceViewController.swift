@@ -19,7 +19,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     var peripheralManagerViewController : PeripheralManagerViewController?
 
 
-    var services: [BCMutableService] {
+    var services: [MutableService] {
         if let peripheral = self.peripheral {
             let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
             return Singletons.peripheralManager.services.filter{!serviceUUIDs.contains($0.UUID)}
@@ -52,7 +52,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     }
     
     func didEnterBackground() {
-        BCLogger.debug()
+        Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }
