@@ -7,32 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		05415EEC1C57D6FD0005B68E /* BCSerialIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */; };
-		055120CD19F5513700ED3B74 /* BCCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209E19F5513700ED3B74 /* BCCentralManager.swift */; };
-		055120CE19F5513700ED3B74 /* BCCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551209F19F5513700ED3B74 /* BCCharacteristic.swift */; };
-		055120D019F5513700ED3B74 /* BCPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A119F5513700ED3B74 /* BCPeripheral.swift */; };
-		055120D219F5513700ED3B74 /* BCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A319F5513700ED3B74 /* BCService.swift */; };
-		055120D319F5513700ED3B74 /* BCTimedScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120A419F5513700ED3B74 /* BCTimedScannerator.swift */; };
-		055120DC19F5513700ED3B74 /* BCMutableCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120AF19F5513700ED3B74 /* BCMutableCharacteristic.swift */; };
-		055120DD19F5513700ED3B74 /* BCMutableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B019F5513700ED3B74 /* BCMutableService.swift */; };
-		055120DE19F5513700ED3B74 /* BCPeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B119F5513700ED3B74 /* BCPeripheralManager.swift */; };
 		055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B319F5513700ED3B74 /* Int16Extensions.swift */; };
 		055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B419F5513700ED3B74 /* Int8Extensions.swift */; };
 		055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B519F5513700ED3B74 /* NSDataExtensions.swift */; };
-		055120E219F5513700ED3B74 /* BCSerDe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B619F5513700ED3B74 /* BCSerDe.swift */; };
 		055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B719F5513700ED3B74 /* UInt16Extensions.swift */; };
 		055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B819F5513700ED3B74 /* Uint8Extensions.swift */; };
-		055120E519F5513700ED3B74 /* BCCharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BA19F5513700ED3B74 /* BCCharacteristicProfile.swift */; };
-		055120E919F5513700ED3B74 /* BCProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BE19F5513700ED3B74 /* BCProfileManager.swift */; };
-		055120EA19F5513700ED3B74 /* BCServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120BF19F5513700ED3B74 /* BCServiceProfile.swift */; };
 		055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */; };
 		055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C419F5513700ED3B74 /* GnosusProfiles.swift */; };
 		055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C519F5513700ED3B74 /* NordicProfiles.swift */; };
 		055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */; };
 		055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */; };
-		055120F219F5513700ED3B74 /* BCLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C919F5513700ED3B74 /* BCLogger.swift */; };
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
+		05585BCF1D0CA437000F5307 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCA1D0CA437000F5307 /* CentralManager.swift */; };
+		05585BD01D0CA437000F5307 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCB1D0CA437000F5307 /* Characteristic.swift */; };
+		05585BD11D0CA437000F5307 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCC1D0CA437000F5307 /* Peripheral.swift */; };
+		05585BD21D0CA437000F5307 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCD1D0CA437000F5307 /* Service.swift */; };
+		05585BD31D0CA437000F5307 /* TimedScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCE1D0CA437000F5307 /* TimedScannerator.swift */; };
+		05585BD71D0CA441000F5307 /* MutableCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */; };
+		05585BD81D0CA441000F5307 /* MutableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD51D0CA441000F5307 /* MutableService.swift */; };
+		05585BD91D0CA441000F5307 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD61D0CA441000F5307 /* PeripheralManager.swift */; };
+		05585BDB1D0CA459000F5307 /* SerDe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDA1D0CA459000F5307 /* SerDe.swift */; };
+		05585BDF1D0CA475000F5307 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDC1D0CA475000F5307 /* CharacteristicProfile.swift */; };
+		05585BE01D0CA475000F5307 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDD1D0CA475000F5307 /* ProfileManager.swift */; };
+		05585BE11D0CA475000F5307 /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDE1D0CA475000F5307 /* ServiceProfile.swift */; };
+		05585BE41D0CA4AB000F5307 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BE21D0CA4AB000F5307 /* Logger.swift */; };
+		05585BE51D0CA4AB000F5307 /* SerialIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BE31D0CA4AB000F5307 /* SerialIO.swift */; };
 		056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* BCErrors.swift */; };
 		05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */; };
 		05BF91A41CFBF62700B78B12 /* FLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91981CFBF62700B78B12 /* FLBeacon.swift */; };
@@ -52,34 +52,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCSerialIO.swift; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0551209E19F5513700ED3B74 /* BCCentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCCentralManager.swift; sourceTree = "<group>"; };
-		0551209F19F5513700ED3B74 /* BCCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCCharacteristic.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		055120A119F5513700ED3B74 /* BCPeripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCPeripheral.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		055120A319F5513700ED3B74 /* BCService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		055120A419F5513700ED3B74 /* BCTimedScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCTimedScannerator.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		055120AF19F5513700ED3B74 /* BCMutableCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCMutableCharacteristic.swift; sourceTree = "<group>"; };
-		055120B019F5513700ED3B74 /* BCMutableService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCMutableService.swift; sourceTree = "<group>"; };
-		055120B119F5513700ED3B74 /* BCPeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCPeripheralManager.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		055120B319F5513700ED3B74 /* Int16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int16Extensions.swift; sourceTree = "<group>"; };
 		055120B419F5513700ED3B74 /* Int8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int8Extensions.swift; sourceTree = "<group>"; };
 		055120B519F5513700ED3B74 /* NSDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataExtensions.swift; sourceTree = "<group>"; };
-		055120B619F5513700ED3B74 /* BCSerDe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCSerDe.swift; sourceTree = "<group>"; };
 		055120B719F5513700ED3B74 /* UInt16Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UInt16Extensions.swift; sourceTree = "<group>"; };
 		055120B819F5513700ED3B74 /* Uint8Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uint8Extensions.swift; sourceTree = "<group>"; };
-		055120BA19F5513700ED3B74 /* BCCharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCCharacteristicProfile.swift; sourceTree = "<group>"; };
-		055120BE19F5513700ED3B74 /* BCProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCProfileManager.swift; sourceTree = "<group>"; };
-		055120BF19F5513700ED3B74 /* BCServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BCServiceProfile.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLESIGGATTProfiles.swift; sourceTree = "<group>"; };
 		055120C419F5513700ED3B74 /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		055120C519F5513700ED3B74 /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
 		055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfileUtils.swift; sourceTree = "<group>"; };
 		055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TISensorTagServiceProfiles.swift; sourceTree = "<group>"; };
-		055120C919F5513700ED3B74 /* BCLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCLogger.swift; sourceTree = "<group>"; };
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		05585BCA1D0CA437000F5307 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
+		05585BCB1D0CA437000F5307 /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
+		05585BCC1D0CA437000F5307 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
+		05585BCD1D0CA437000F5307 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		05585BCE1D0CA437000F5307 /* TimedScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScannerator.swift; sourceTree = "<group>"; };
+		05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableCharacteristic.swift; sourceTree = "<group>"; };
+		05585BD51D0CA441000F5307 /* MutableService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableService.swift; sourceTree = "<group>"; };
+		05585BD61D0CA441000F5307 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
+		05585BDA1D0CA459000F5307 /* SerDe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerDe.swift; sourceTree = "<group>"; };
+		05585BDC1D0CA475000F5307 /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
+		05585BDD1D0CA475000F5307 /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
+		05585BDE1D0CA475000F5307 /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
+		05585BE21D0CA4AB000F5307 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		05585BE31D0CA4AB000F5307 /* SerialIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialIO.swift; sourceTree = "<group>"; };
 		056276081CCD3F0A00F955D7 /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
 		05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
 		05BF91981CFBF62700B78B12 /* FLBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeacon.swift; sourceTree = "<group>"; };
@@ -158,11 +158,11 @@
 		0551209C19F5513700ED3B74 /* Central */ = {
 			isa = PBXGroup;
 			children = (
-				0551209E19F5513700ED3B74 /* BCCentralManager.swift */,
-				0551209F19F5513700ED3B74 /* BCCharacteristic.swift */,
-				055120A119F5513700ED3B74 /* BCPeripheral.swift */,
-				055120A319F5513700ED3B74 /* BCService.swift */,
-				055120A419F5513700ED3B74 /* BCTimedScannerator.swift */,
+				05585BCA1D0CA437000F5307 /* CentralManager.swift */,
+				05585BCB1D0CA437000F5307 /* Characteristic.swift */,
+				05585BCC1D0CA437000F5307 /* Peripheral.swift */,
+				05585BCD1D0CA437000F5307 /* Service.swift */,
+				05585BCE1D0CA437000F5307 /* TimedScannerator.swift */,
 			);
 			path = Central;
 			sourceTree = "<group>";
@@ -170,9 +170,9 @@
 		055120AE19F5513700ED3B74 /* Peripheral */ = {
 			isa = PBXGroup;
 			children = (
-				055120AF19F5513700ED3B74 /* BCMutableCharacteristic.swift */,
-				055120B019F5513700ED3B74 /* BCMutableService.swift */,
-				055120B119F5513700ED3B74 /* BCPeripheralManager.swift */,
+				05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */,
+				05585BD51D0CA441000F5307 /* MutableService.swift */,
+				05585BD61D0CA441000F5307 /* PeripheralManager.swift */,
 			);
 			path = Peripheral;
 			sourceTree = "<group>";
@@ -180,10 +180,10 @@
 		055120B219F5513700ED3B74 /* SerDe */ = {
 			isa = PBXGroup;
 			children = (
+				05585BDA1D0CA459000F5307 /* SerDe.swift */,
 				055120B419F5513700ED3B74 /* Int8Extensions.swift */,
 				055120B319F5513700ED3B74 /* Int16Extensions.swift */,
 				055120B519F5513700ED3B74 /* NSDataExtensions.swift */,
-				055120B619F5513700ED3B74 /* BCSerDe.swift */,
 				055120B819F5513700ED3B74 /* Uint8Extensions.swift */,
 				055120B719F5513700ED3B74 /* UInt16Extensions.swift */,
 				4ED105BF1C315C420034D5D2 /* UInt32Extensions.swift */,
@@ -194,9 +194,9 @@
 		055120B919F5513700ED3B74 /* Service Profiles */ = {
 			isa = PBXGroup;
 			children = (
-				055120BA19F5513700ED3B74 /* BCCharacteristicProfile.swift */,
-				055120BE19F5513700ED3B74 /* BCProfileManager.swift */,
-				055120BF19F5513700ED3B74 /* BCServiceProfile.swift */,
+				05585BDC1D0CA475000F5307 /* CharacteristicProfile.swift */,
+				05585BDD1D0CA475000F5307 /* ProfileManager.swift */,
+				05585BDE1D0CA475000F5307 /* ServiceProfile.swift */,
 			);
 			path = "Service Profiles";
 			sourceTree = "<group>";
@@ -216,8 +216,8 @@
 		055120C819F5513700ED3B74 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				055120C919F5513700ED3B74 /* BCLogger.swift */,
-				05415EEB1C57D6FD0005B68E /* BCSerialIO.swift */,
+				05585BE21D0CA4AB000F5307 /* Logger.swift */,
+				05585BE31D0CA4AB000F5307 /* SerialIO.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -344,46 +344,46 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				055120D019F5513700ED3B74 /* BCPeripheral.swift in Sources */,
-				055120E919F5513700ED3B74 /* BCProfileManager.swift in Sources */,
-				055120D219F5513700ED3B74 /* BCService.swift in Sources */,
-				055120CE19F5513700ED3B74 /* BCCharacteristic.swift in Sources */,
-				05415EEC1C57D6FD0005B68E /* BCSerialIO.swift in Sources */,
 				05BF91A51CFBF62700B78B12 /* FLBeaconManager.swift in Sources */,
+				05585BD11D0CA437000F5307 /* Peripheral.swift in Sources */,
 				055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */,
+				05585BDB1D0CA459000F5307 /* SerDe.swift in Sources */,
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8Extensions.swift in Sources */,
 				056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */,
-				055120DD19F5513700ED3B74 /* BCMutableService.swift in Sources */,
 				05BF91AB1CFBF62700B78B12 /* FLRegionManager.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSDataExtensions.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16Extensions.swift in Sources */,
+				05585BD91D0CA441000F5307 /* PeripheralManager.swift in Sources */,
 				05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */,
+				05585BD31D0CA437000F5307 /* TimedScannerator.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8Extensions.swift in Sources */,
+				05585BDF1D0CA475000F5307 /* CharacteristicProfile.swift in Sources */,
+				05585BD21D0CA437000F5307 /* Service.swift in Sources */,
 				05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */,
 				05BF91A91CFBF62700B78B12 /* FLLogger.swift in Sources */,
 				05BF91AA1CFBF62700B78B12 /* FLRegion.swift in Sources */,
-				055120D319F5513700ED3B74 /* BCTimedScannerator.swift in Sources */,
-				055120DE19F5513700ED3B74 /* BCPeripheralManager.swift in Sources */,
-				055120F219F5513700ED3B74 /* BCLogger.swift in Sources */,
+				05585BCF1D0CA437000F5307 /* CentralManager.swift in Sources */,
+				05585BD71D0CA441000F5307 /* MutableCharacteristic.swift in Sources */,
 				05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */,
+				05585BE41D0CA4AB000F5307 /* Logger.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
+				05585BE11D0CA475000F5307 /* ServiceProfile.swift in Sources */,
 				05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */,
+				05585BD81D0CA441000F5307 /* MutableService.swift in Sources */,
 				05BF91AC1CFBF62700B78B12 /* FLSerialIODictionary.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16Extensions.swift in Sources */,
-				055120EA19F5513700ED3B74 /* BCServiceProfile.swift in Sources */,
 				4ED105C01C315C420034D5D2 /* UInt32Extensions.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
 				05BF91A41CFBF62700B78B12 /* FLBeacon.swift in Sources */,
+				05585BD01D0CA437000F5307 /* Characteristic.swift in Sources */,
+				05585BE51D0CA4AB000F5307 /* SerialIO.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
-				055120E519F5513700ED3B74 /* BCCharacteristicProfile.swift in Sources */,
-				055120CD19F5513700ED3B74 /* BCCentralManager.swift in Sources */,
 				05BF91A81CFBF62700B78B12 /* FLLocationManager.swift in Sources */,
 				05BF91A61CFBF62700B78B12 /* FLBeaconRegion.swift in Sources */,
 				05BF91A71CFBF62700B78B12 /* FLCircularRegion.swift in Sources */,
-				055120DC19F5513700ED3B74 /* BCMutableCharacteristic.swift in Sources */,
 				05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */,
-				055120E219F5513700ED3B74 /* BCSerDe.swift in Sources */,
+				05585BE01D0CA475000F5307 /* ProfileManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
