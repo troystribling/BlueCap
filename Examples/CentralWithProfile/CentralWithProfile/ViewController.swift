@@ -49,12 +49,12 @@ class ViewController: UITableViewController {
     @IBOutlet var enabledLabel: UILabel!
     @IBOutlet var statusLabel: UILabel!
     
-    var peripheral: BCPeripheral?
-    var accelerometerDataCharacteristic: BCCharacteristic?
-    var accelerometerEnabledCharacteristic: BCCharacteristic?
-    var accelerometerUpdatePeriodCharacteristic: BCCharacteristic?
+    var peripheral: Peripheral?
+    var accelerometerDataCharacteristic: Characteristic?
+    var accelerometerEnabledCharacteristic: Characteristic?
+    var accelerometerUpdatePeriodCharacteristic: Characteristic?
 
-    let manager = BCCentralManager()
+    let manager = CentralManager()
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -114,9 +114,9 @@ class ViewController: UITableViewController {
         let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.UUID)
 
         // on power, start scanning. when peripoheral is discovered connect and stop scanning
-        let peripheraConnectFuture = self.manager.whenPowerOn().flatmap { [unowned self] _ -> FutureStream<BCPeripheral> in
+        let peripheraConnectFuture = self.manager.whenPowerOn().flatmap { [unowned self] _ -> FutureStream<Peripheral> in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
-        }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
+        }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(10, timeoutRetries: 5, disconnectRetries: 5)
@@ -141,11 +141,11 @@ class ViewController: UITableViewController {
         }
             
         // discover sevices and characteristics and enable acclerometer
-        let peripheralDiscoveredFuture = peripheraConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<BCPeripheral> in
+        let peripheralDiscoveredFuture = peripheraConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
             if peripheral.state == .Connected {
                 return peripheral.discoverPeripheralServices([serviceUUID])
             } else {
-                let promise = Promise<BCPeripheral>()
+                let promise = Promise<Peripheral>()
                 promise.failure(CentralError.peripheralNotConnected)
                 return promise.future
             }
@@ -159,11 +159,11 @@ class ViewController: UITableViewController {
         }
 
         // get enabled value
-        let readEnabledFuture = peripheralDiscoveredFuture.flatmap { _ -> Future<BCCharacteristic> in
+        let readEnabledFuture = peripheralDiscoveredFuture.flatmap { _ -> Future<Characteristic> in
             if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
                 return accelerometerEnabledCharacteristic.read(10.0)
             } else {
-                let promise = Promise<BCCharacteristic>()
+                let promise = Promise<Characteristic>()
                 promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
@@ -173,11 +173,11 @@ class ViewController: UITableViewController {
         }
         
         // get update period value
-        let readUpdatePeriodFuture = readEnabledFuture.flatmap { _ -> Future<BCCharacteristic> in
+        let readUpdatePeriodFuture = readEnabledFuture.flatmap { _ -> Future<Characteristic> in
             if let accelerometerUpdatePeriodCharacteristic = self.accelerometerUpdatePeriodCharacteristic {
                 return accelerometerUpdatePeriodCharacteristic.read(10.0)
             } else {
-                let promise = Promise<BCCharacteristic>()
+                let promise = Promise<Characteristic>()
                 promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
@@ -187,11 +187,11 @@ class ViewController: UITableViewController {
         }
 
         // subscribe to acceleration data updates
-        let dataSubscriptionFuture = readUpdatePeriodFuture.flatmap { _ -> Future<BCCharacteristic> in
+        let dataSubscriptionFuture = readUpdatePeriodFuture.flatmap { _ -> Future<Characteristic> in
             if let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic {
                 return accelerometerDataCharacteristic.startNotifying()
             } else {
-                let promise = Promise<BCCharacteristic>()
+                let promise = Promise<Characteristic>()
                 promise.failure(CentralError.characteristicNotFound)
                 return promise.future
             }
@@ -201,7 +201,7 @@ class ViewController: UITableViewController {
                 self.presentViewController(UIAlertController.alertOnError(error), animated: true, completion: nil)
             }
         }
-        dataSubscriptionFuture.flatmap { characteristic -> FutureStream<(characteristic: BCCharacteristic, data: NSData?)> in
+        dataSubscriptionFuture.flatmap { characteristic -> FutureStream<(characteristic: Characteristic, data: NSData?)> in
             return characteristic.receiveNotificationUpdates(10)
         }.onSuccess { (_, data) in
             self.updateData(data)
@@ -213,7 +213,7 @@ class ViewController: UITableViewController {
             self.deactivate()
         }
         powerOffFuture.onFailure { error in
-            BCLogger.debug("powerOffFuture failure")
+            Logger.debug("powerOffFuture failure")
         }
 
         // enable controls when bluetooth is powered on again after stop advertising is successul
@@ -269,13 +269,13 @@ class ViewController: UITableViewController {
         }
     }
     
-    func updateEnabled(characteristic: BCCharacteristic) {
+    func updateEnabled(characteristic: Characteristic) {
         if let data = characteristic.stringValue, value = data.values.first {
             self.enabledSwitch.on = value == "Yes"
         }
     }
 
-    func updatePeriod(characteristic: BCCharacteristic) {
+    func updatePeriod(characteristic: Characteristic) {
         if let data = characteristic.stringValue, period = data["period"], rawPeriod = data["periodRaw"] {
             self.updatePeriodLabel.text = period
             self.rawUpdatePeriodlabel.text = rawPeriod

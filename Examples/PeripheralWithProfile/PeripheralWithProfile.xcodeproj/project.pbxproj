@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		05BF92011CFCC3B100B78B12 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05BF92001CFCC3B100B78B12 /* BlueCapKit.framework */; };
+		05585BE91D0CA6C7000F5307 /* BlueCapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05585BE81D0CA6C7000F5307 /* BlueCapKit.framework */; };
 		05E2D0381AF6A98F00B34637 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0371AF6A98F00B34637 /* AppDelegate.swift */; };
 		05E2D03A1AF6A98F00B34637 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E2D0391AF6A98F00B34637 /* ViewController.swift */; };
 		05E2D03D1AF6A98F00B34637 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05E2D03B1AF6A98F00B34637 /* Main.storyboard */; };
@@ -31,7 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		05BF92001CFCC3B100B78B12 /* BlueCapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueCapKit.framework; path = Carthage/Build/iOS/BlueCapKit.framework; sourceTree = "<group>"; };
+		05585BE81D0CA6C7000F5307 /* BlueCapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueCapKit.framework; path = Carthage/Build/iOS/BlueCapKit.framework; sourceTree = "<group>"; };
 		05E2D0321AF6A98F00B34637 /* PeripheralWithProfile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PeripheralWithProfile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05E2D0361AF6A98F00B34637 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05E2D0371AF6A98F00B34637 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -48,7 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05BF92011CFCC3B100B78B12 /* BlueCapKit.framework in Frameworks */,
+				05585BE91D0CA6C7000F5307 /* BlueCapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,7 +58,7 @@
 		05E2D0291AF6A98F00B34637 = {
 			isa = PBXGroup;
 			children = (
-				05BF92001CFCC3B100B78B12 /* BlueCapKit.framework */,
+				05585BE81D0CA6C7000F5307 /* BlueCapKit.framework */,
 				05E2D0341AF6A98F00B34637 /* PeripheralWithProfile */,
 				05E2D0331AF6A98F00B34637 /* Products */,
 			);

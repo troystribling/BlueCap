@@ -28,13 +28,13 @@ class ViewController: UITableViewController {
     @IBOutlet var enableLabel: UILabel!
     @IBOutlet var enabledSwitch: UISwitch!
 
-    let manager         = BCPeripheralManager()
+    let manager         = PeripheralManager()
     let accelerometer   = Accelerometer()
     
-    let accelerometerService                    = BCMutableService(profile: BCConfiguredServiceProfile<TISensorTag.AccelerometerService>())
-    let accelerometerDataCharacteristic         = BCMutableCharacteristic(profile: BCRawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
-    let accelerometerEnabledCharacteristic      = BCMutableCharacteristic(profile: BCRawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
-    let accelerometerUpdatePeriodCharacteristic = BCMutableCharacteristic(profile: BCRawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
+    let accelerometerService                    = MutableService(profile: ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
+    let accelerometerDataCharacteristic         = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+    let accelerometerEnabledCharacteristic      = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
