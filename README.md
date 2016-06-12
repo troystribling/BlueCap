@@ -12,6 +12,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 - Characteristic profile types encapsulating serialization and deserialization.
 - [Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications implementing Central and Peripheral.
 - A full featured extendable Central scanner and Peripheral emulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
+- Thread safe.
 - Comprehensive test coverage.
 
 # Requirements
@@ -21,102 +22,150 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 # Installation
 
+## CocoaPods
+[CocoaPods](https://cocoapods.org) is an Xcode dependency manager. It is installed with the following command,
+
+```bash
+$ gem install cocoapods
+```
+
+> Requires CocoaPods 1.0+
+
+Add `BluCapKit` to your to your projects `Podfile`,
+
+```ruby
+platform :ios, '8.0'
+use_frameworks!
+
+target 'Your Target Name' do
+  pod 'BlueCapKit', '~> 0.1'
+end
+```
+
+To enable `DBUG` output add the `post_install` hook,
+
+```ruby
+post_install do |installer|
+    installer.pods_project.targets.each do |target|
+        if target.name == 'BlueCapKit'
+            target.build_configurations.each do |config|
+                if config.name == 'Debug'
+                    config.build_settings['OTHER_SWIFT_FLAGS'] = '-DDEBUG'
+                    else
+                    config.build_settings['OTHER_SWIFT_FLAGS'] = ''
+                end
+            end
+        end
+    end
+end
+```
+
+To install run the command,
+
+```bash
+$ pod install
+```
+
+## Carthage
+[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager for Xcode projects.
+It can be installed using [Homebrew](http://brew.sh/),
+
+```bash
+$ brew update
+$ brew install carthage
+```
+
+To add `BlueCapKit` to your `Cartfile`
+
+```ogdl
+github "troystribling/BlueCap" ~> 0.1
+```
+
+To download and build `BlueCapKit.framework` run the command,
+
+```bash
+carthage update
+```
+
+then add `BlueCapKit.framework` to your project.
+
+If desired use the `--no-build` option,
+
+```bash
+carthage update --no-build
+```
+
+This will only download the `BlueCapKit` project. Then follow the steps in [Manual](#manual) to add it to a project.
+
+## <a name="manual">Manual</a>
+
 1. Place the BlueCap somewhere in your project directory. You can either copy it or add it as a git submodule.
 2. Open the BlueCap project folder and drag BlueCapKit.xcodeproj into the project navigator of your applications Xcode project.
 3. Under your Projects *Info* tab set the *iOS Deployment Target* to 8.0 and verify that the BlueCapKit.xcodeproj *iOS Deployment Target* is also 8.0.
 4. Under the *General* tab for your project target add the top BlueCapKit.framework as an *Embedded Binary*.
 5. Under the *Build Phases* tab add BlueCapKit.framework as a *Target Dependency* and under *Link Binary With Libraries* add CoreLocation.framework and CoreBluetooth.framework.
-6. To enable debug log output select your project target and the Build Settings tab. Under *Other Swift Flags* and *Debug* add -D DEBUG.
 
 # Getting Started
 
-With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. This section will provide a short overview of the BLE model and simple application implementations. [Following sections](#usage) will describe all use cases supported in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
+With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
  
-## BLE Model
+## Central Implementation
 
-Communication in BLE uses the Client-Server model. The Client is  called a Central and the server a Peripheral. The Peripheral presents structured data to the Central organized into Services that have Characteristics. This called is a Generic Attribute Table (GATT) Profile. Characteristics contain the data values as well as attributes describing permissions and properties. At a high level Central and Peripheral use cases are,
+A simple Central implementation that scans for Peripherals advertising a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) and connects on peripheral discovery will be constructed. 
 
-<table>
-  <tr>
-    <th>Central</th>
-    <th>Peripheral</th>
-  </tr>
-	<tr>
-		<td>Scans for Services</td>
-		<td>Advertises Services</td>
-	</tr>
-	<tr>
-		<td>Discovers Services and Characteristics</td>
-		<td>Supports GATT Profile</td>
-	</tr>
-	<tr>
-		<td>Data Read/Write/Notifications</td>
-		<td>Data Read/Write/Notifications</td>
-	</tr>
-</table>
-
-## Simple Central Implementation
-
-A simple Central implementation that scans for Peripherals advertising a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217), connects on peripheral discovery and then discovers the service characteristics is listed below,
+All applications begin by calling `CentralManager#whenPowerOn` which returns a `Future<Void>` completed when the `CBCentralManager` state is set to `CBCentralManagerState.PoweredOn`.
 
 ```swift
-public enum CentralExampleError : Int {
-    case PeripheralNotConnected = 1
-}
+let manager = CentralManager()
+let powerOnFuture = manager.whenPowerOn()
+```
 
-public struct CentralError {
-    public static let domain = "Central Example"
-    public static let peripheralNotConnected = NSError(domain:domain, code:CentralExampleError.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
-}
-    
+To start scanning for peripherals advertising the [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) `powerOnFuture` will chained to `CentralManager#startScanningForServiceUUIDs` using the `Future#flatmap` combinator.
+
+```swift
+let manager = CentralManager()
 let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid)!
-                                
-// on power, start scanning. when peripheral is discovered connect and stop scanning
-let manager = CentralManager.sharedInstance
-let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
-	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
-}.flatmap {peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
-	manager.stopScanning()
-	return peripheral.connect(capacity:10, timeoutRetries:5, disconnectRetries:5)
-}
 
-// on .Timeout and .Disconnect try to reconnect on .Giveup terminate connection
-peripheralConnectFuture.onSuccess{(peripheral, connectionEvent) in
-	switch connectionEvent {
-	case .Connect:
-		…
-	case .Timeout:
-		peripheral.reconnect()
-	case .Disconnect:
-		peripheral.reconnect()
-	case .ForceDisconnect:
-		…
-	case .Failed:
-		…
-	case .GiveUp:
-		peripheral.terminate()
-	}
-}
-                
-// discover services and characteristics
-let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap {(peripheral, connectionEvent) -> Future<Peripheral> in
-	if peripheral.state == .Connected {
-		return peripheral.discoverPeripheralServices([serviceUUID])
-	} else {
-		let promise = Promise<Peripheral>()
-		promise.failure(CentralError.peripheralNotConnected)
-		return promise.future
-	}
-}
-peripheralDiscoveredFuture.onSuccess {peripheral in
-	…
-}
-peripheralDiscoveredFuture.onFailure {error in
-	…
+let scanningFuture = manager.whenPowerOn().flatmap {
+	manager.startScanningForServiceUUIDs([serviceUUID])
 }
 ```
 
-## Simple Peripheral Implementation
+`CentralManager#startScanningForServiceUUIDs` returns `FutureStream<Peripheral>`. `scanningFuture` will be completed once for each peripheral discovered.
+
+To connect a discovered peripheral use `FutureStream#flatmap` to call `Peripheral#connect()` which returns  `FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>`.
+
+```swift
+let manager = CentralManager()
+let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid)!
+
+let connectionFuture = manager.whenPowerOn().flatmap {
+	manager.startScanningForServiceUUIDs([serviceUUID])
+}.flatmap {peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
+	peripheral.connect()
+}
+
+connectionFuture.onSuccess{ (peripheral, connectionEvent) in
+    switch connectionEvent {
+    case .Connect:
+	    break
+    case .Timeout:
+	    peripheral.reconnect()
+    case .Disconnect:
+	    peripheral.reconnect()
+    case .ForceDisconnect:
+	    break
+    case .GiveUp:
+	    peripheral.terminate()
+	 }
+}
+```
+
+Here on `.Timeout` and `.Disconnect` try to reconnect and on `.Giveup` terminate connection
+
+See the [Central Example](https://github.com/troystribling/BlueCap/tree/remove_prefix/Examples/Central) application for a more detailed implementation that additionally discovers the peripheral and subscribed to accelerometer update notifications.
+
+## Peripheral Implementation
 
 A simple Peripheral application that emulates a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and responds to characteristic writes is listed below,
 
@@ -169,6 +218,8 @@ startAdvertiseFuture.onFailure {error in
 }
 ```
 
+## Examples
+
 # <a name="usage">Usage</a>
 
 BlueCap supports many features that simplify writing Bluetooth LE applications. This section will describe all features in detail and provide code examples.
@@ -180,6 +231,7 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
  * [RawArrayDeserializable Protocol](#serde_rawarraydeserializable): Deserialize messages with multiple values of single Deserializable type.
  * [RawPairDeserializable Protocol](#serde_rawpairdeserializable): Deserialize messages with two values of two different Deserializable types.
  * [RawArrayPairDeserializable Protocol](#serde_rawarraypairdeserializable): Deserialize messages with multiple values of two different Deserializable types.
+
 2. [GATT Profile Definition](#gatt): Define reusable GATT profiles and add profiles to the BlueCap app.
   * [ServiceConfigurable Protocol](#gatt_serviceconfigurable): Define a service configuration.
   * [CharacteristicConfigurable Protocol](#gatt_characteristicconfigurable): Define a characteristic configuration.
@@ -193,6 +245,7 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
   * [StringCharacteristicProfile](#gatt_stringcharacteristicprofile): Define a characteristic profile for String messages.
   * [ProfileManager](#gatt_profilemanager): How the BlueCap app manages GATT profiles.
   * [Add Profile to BlueCap App](#gatt_add_profile): Add a GATT profile to the BlueCap app.
+
 3. [CentralManager](#central): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
   * [PowerOn/PowerOff](#central_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
   * [Service Scanning](#central_service_scanning): Scan for services.
@@ -203,6 +256,7 @@ BlueCap supports many features that simplify writing Bluetooth LE applications. 
   * [Characteristic Write](#central_characteristic_write): Write a characteristic value to a connected Peripheral.
   * [Characteristic Read](#central_characteristic_read): Read a characteristic value from a connected Peripheral.
   * [Characteristic Update Notifications](#central_characteristic_update): Subscribe to characteristic value updates on a connected Peripheral.
+
 4. [PeripheralManager](#peripheral): The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
   * [PowerOn/PowerOff](#peripheral_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
   * [Add Services and Characteristics](#peripheral_add_characteristics): Add services and characteristics to a Peripheral application.

@@ -114,7 +114,7 @@ class ViewController: UITableViewController {
         let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.UUID)
 
         // on power, start scanning. when peripoheral is discovered connect and stop scanning
-        let peripheraConnectFuture = self.manager.whenPowerOn().flatmap { [unowned self] _ -> FutureStream<BCPeripheral> in
+        let peripheraConnectFuture = self.manager.whenPowerOn().flatmap { [unowned self] _ in
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
         }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
             self.manager.stopScanning()

@@ -1,1 +1,1 @@
-github "troystribling/BlueCap" "cocoapods" 
+github "troystribling/BlueCap" ~> 0.1

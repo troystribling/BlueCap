@@ -115,7 +115,7 @@ class ViewController: UITableViewController {
 
             
         // on power, start scanning. when peripheral is discovered connect and stop scanning
-        let peripheralConnectFuture = self.manager.whenPowerOn().flatmap { _ -> FutureStream<BCPeripheral> in
+        let peripheralConnectFuture = self.manager.whenPowerOn().flatmap {
             self.manager.startScanningForServiceUUIDs([serviceUUID], capacity: 10)
         }.flatmap { [unowned self] peripheral -> FutureStream<(peripheral: BCPeripheral, connectionEvent: BCConnectionEvent)> in
             self.manager.stopScanning()
