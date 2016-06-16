@@ -51,11 +51,10 @@
 		05F0EC3C1CF7EA9F00468FC9 /* BCTimedScanneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1C1CF7E9F000468FC9 /* BCTimedScanneratorTests.swift */; };
 		05F0EC3D1CF7EA9F00468FC9 /* DeserilaizableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */; };
 		05F0EC3E1CF7EA9F00468FC9 /* BCMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1E1CF7E9F000468FC9 /* BCMocks.swift */; };
-		A910B4541C033D04DA8959AD /* Pods_BlueCapKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8654F62A61BC728EDB248A9F /* Pods_BlueCapKitTests.framework */; };
+		4562A8891EF9F92EDD48572F /* Pods_BlueCapKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD52346DE8275D56C573E0FC /* Pods_BlueCapKitTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		02D661A97AE245FD7DCEF3D0 /* Pods-BlueCapKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		05BF91AF1CFBFD8A00B78B12 /* BeaconManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconManagerTests.swift; sourceTree = "<group>"; };
 		05BF91B01CFBFD8A00B78B12 /* LocationManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManagerTests.swift; sourceTree = "<group>"; };
 		05BF91B11CFBFD8A00B78B12 /* FLMocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLMocks.swift; sourceTree = "<group>"; };
@@ -103,8 +102,9 @@
 		05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserilaizableTests.swift; sourceTree = "<group>"; };
 		05F0EC1E1CF7E9F000468FC9 /* BCMocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCMocks.swift; sourceTree = "<group>"; };
 		05F0EC401CF8162900468FC9 /* BlueCapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueCapKit.framework; path = "../../../../Library/Developer/Xcode/DerivedData/BlueCapKitTests-bpwlfhcbwcejkqaviyzweisiyaow/Build/Products/Debug-iphonesimulator/BlueCapKit/BlueCapKit.framework"; sourceTree = "<group>"; };
-		7AEB5FF774AD9E9654B7046E /* Pods-BlueCapKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.release.xcconfig"; sourceTree = "<group>"; };
-		8654F62A61BC728EDB248A9F /* Pods_BlueCapKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCapKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A983828E54514391F3B5475 /* Pods-BlueCapKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.debug.xcconfig"; sourceTree = "<group>"; };
+		6C07D8E7E6FDF1EF9AFB77CF /* Pods-BlueCapKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		FD52346DE8275D56C573E0FC /* Pods_BlueCapKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCapKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A910B4541C033D04DA8959AD /* Pods_BlueCapKitTests.framework in Frameworks */,
+				4562A8891EF9F92EDD48572F /* Pods_BlueCapKitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,9 +177,9 @@
 				15FEEBF3DE438E42FA0ED909 /* Frameworks */,
 				05BF91AE1CFBFD8A00B78B12 /* FutureLocationTests */,
 				05BF91EA1CFC997F00B78B12 /* Helpers */,
-				7474B61C67422213E940E3B0 /* Pods */,
 				05F0EBF71CF7E96D00468FC9 /* Products */,
 				05BF91B31CFBFD8A00B78B12 /* SimpleFuturesTests */,
+				6B93ABBAC274135FC72FF668 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -217,16 +217,16 @@
 			isa = PBXGroup;
 			children = (
 				05F0EC401CF8162900468FC9 /* BlueCapKit.framework */,
-				8654F62A61BC728EDB248A9F /* Pods_BlueCapKitTests.framework */,
+				FD52346DE8275D56C573E0FC /* Pods_BlueCapKitTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		7474B61C67422213E940E3B0 /* Pods */ = {
+		6B93ABBAC274135FC72FF668 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				02D661A97AE245FD7DCEF3D0 /* Pods-BlueCapKitTests.debug.xcconfig */,
-				7AEB5FF774AD9E9654B7046E /* Pods-BlueCapKitTests.release.xcconfig */,
+				0A983828E54514391F3B5475 /* Pods-BlueCapKitTests.debug.xcconfig */,
+				6C07D8E7E6FDF1EF9AFB77CF /* Pods-BlueCapKitTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -238,12 +238,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 05F0EC0D1CF7E96D00468FC9 /* Build configuration list for PBXNativeTarget "BlueCapKitTests" */;
 			buildPhases = (
-				9904C8A01D4CDB9468B0C480 /* 📦 Check Pods Manifest.lock */,
+				9D78B6EFD954F2932E38A6CA /* 📦 Check Pods Manifest.lock */,
 				05F0EBFC1CF7E96D00468FC9 /* Sources */,
 				05F0EBFD1CF7E96D00468FC9 /* Frameworks */,
 				05F0EBFE1CF7E96D00468FC9 /* Resources */,
-				23BA4E6495B984313D77E89E /* 📦 Embed Pods Frameworks */,
-				60199D694BDF5FEC8EBEC402 /* 📦 Copy Pods Resources */,
+				4C8B184172C0B309F7DC3E30 /* 📦 Embed Pods Frameworks */,
+				8A6713E83A0314C3DADCC4EB /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -297,7 +297,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		23BA4E6495B984313D77E89E /* 📦 Embed Pods Frameworks */ = {
+		4C8B184172C0B309F7DC3E30 /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -312,7 +312,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		60199D694BDF5FEC8EBEC402 /* 📦 Copy Pods Resources */ = {
+		8A6713E83A0314C3DADCC4EB /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -327,7 +327,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9904C8A01D4CDB9468B0C480 /* 📦 Check Pods Manifest.lock */ = {
+		9D78B6EFD954F2932E38A6CA /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -492,7 +492,7 @@
 		};
 		05F0EC0E1CF7E96D00468FC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 02D661A97AE245FD7DCEF3D0 /* Pods-BlueCapKitTests.debug.xcconfig */;
+			baseConfigurationReference = 0A983828E54514391F3B5475 /* Pods-BlueCapKitTests.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -504,7 +504,7 @@
 		};
 		05F0EC0F1CF7E96D00468FC9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AEB5FF774AD9E9654B7046E /* Pods-BlueCapKitTests.release.xcconfig */;
+			baseConfigurationReference = 6C07D8E7E6FDF1EF9AFB77CF /* Pods-BlueCapKitTests.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
