@@ -185,7 +185,7 @@ accelerometerService.characteristics = [accelerometerDataCharacteristic, acceler
 ```
 
 
-Next respond to write events on the enabled characteristic,
+Next respond to write events on the Enabled characteristic,
 
 ```swift
 let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity:2)
@@ -199,7 +199,7 @@ accelerometerEnabledFuture.onSuccess {request in
 }
 ```
 
-and respond to write events on the update period characteristic,
+and respond to write events on the Update Period characteristic,
 
 ```swift
 let accelerometerUpdatePeriodFuture = accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
@@ -213,6 +213,7 @@ accelerometerUpdatePeriodFuture.onSuccess {request in
 }
 ```
 
+Next add services to the peripheral and start advertising
 ```swift
 // power on remove all services add service and start advertising
 let manager = PeripheralManager.sharedInstance
