@@ -39,7 +39,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'Your Target Name' do
-  pod 'BlueCapKit', '~> 0.1'
+  pod 'BlueCapKit', '~> 0.2'
 end
 ```
 
@@ -80,7 +80,7 @@ $ brew install carthage
 To add `BlueCapKit` to your `Cartfile`
 
 ```ogdl
-github "troystribling/BlueCap" ~> 0.1
+github "troystribling/BlueCap" ~> 0.2
 ```
 
 To download and build `BlueCapKit.framework` run the command,
@@ -169,7 +169,9 @@ See the [Central Example](https://github.com/troystribling/BlueCap/tree/remove_p
 
 ## Peripheral Implementation
 
-A simple Peripheral application that emulates a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and responds to characteristic writes is listed below,
+A simple Peripheral application that emulates a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and services will be described. It will advertise the service and respond to characteristic write request.
+
+First the Characteristics and Service are created,
 
 ```swift
 // create service and characteristics using profile definitions
@@ -180,19 +182,12 @@ let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile:RawC
 
 // add characteristics to service
 accelerometerService.characteristics = [accelerometerDataCharacteristic, accelerometerEnabledCharacteristic, accelerometerUpdatePeriodCharacteristic]
+```
 
-// respond to update period write requests
-let accelerometerUpdatePeriodFuture = accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(capacity:2)
-accelerometerUpdatePeriodFuture.onSuccess {request in
-	if request.value.length > 0 &&  request.value.length <= 8 {
-		accelerometerUpdatePeriodCharacteristic.value = request.value
-		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
-	} else {
-		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
-	}
-}
 
-// respond to enabled write requests
+Next respond to write events on the enabled characteristic,
+
+```swift
 let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity:2)
 accelerometerEnabledFuture.onSuccess {request in  
 	if request.value.length == 1 {
@@ -202,7 +197,23 @@ accelerometerEnabledFuture.onSuccess {request in
 		accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
 	}
 }
+```
 
+and respond to write events on the update period characteristic,
+
+```swift
+let accelerometerUpdatePeriodFuture = accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
+accelerometerUpdatePeriodFuture.onSuccess {request in
+	if request.value.length > 0 &&  request.value.length <= 8 {
+		accelerometerUpdatePeriodCharacteristic.value = request.value
+		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
+	} else {
+		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+	}
+}
+```
+
+```swift
 // power on remove all services add service and start advertising
 let manager = PeripheralManager.sharedInstance
 let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
@@ -211,12 +222,6 @@ let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
 	manager.addService(accelerometerService)
 }.flatmap {_ -> Future<Void> in
 	manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
-}
-startAdvertiseFuture.onSuccess {
-	…
-}
-startAdvertiseFuture.onFailure {error in
-	…
 }
 ```
 
