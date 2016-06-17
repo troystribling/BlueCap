@@ -26,7 +26,7 @@ env:
     - pwd
 
     # Build Framework in Debug
-    xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+    - xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
 
     # Run `pod lib lint` if specified
     - if [ $POD_LINT == "YES" ]; then
