@@ -10,19 +10,20 @@ env:
     - IOS_SDK=iphonesimulator9.3
     - APP_SCHEME="BlueCap"
     - APP_WORKSPACE=BlueCap.xcworkspace
-  matrix:
-    - DESTINATION="OS=9.3,name=iPhone 6S Plus"     SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     POD_LINT="NO"
-  script:
-    - set -o pipefail
-    - xcodebuild -version
-    - xcodebuild -showsdks
+    matrix:
+      - DESTINATION="OS=9.3,name=iPhone 6S Plus"     SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     POD_LINT="NO"
+script:
+  - set -o pipefail
+  - xcodebuild -version
+  - xcodebuild -showsdks
+  - pwd
 
     # Build Framework in Debug
-    - xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+  - xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
 
     # Run `pod lib lint` if specified
-    - if [ $POD_LINT == "YES" ]; then
-        pod lib lint;
-      fi
+  - if [ $POD_LINT == "YES" ]; then
+      pod lib lint;
+    fi
 
 
