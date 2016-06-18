@@ -10,8 +10,10 @@ env:
     - IOS_SDK=iphonesimulator9.3
     - APP_SCHEME="BlueCap"
     - APP_WORKSPACE=BlueCap.xcworkspace
-    matrix:
-      - DESTINATION="OS=9.3,name=iPhone 6S Plus"     SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     POD_LINT="NO"
+    - DESTINATION="OS=9.3,name=iPhone 6S Plus"
+    - SCHEME="$IOS_FRAMEWORK_SCHEME"
+    - SDK="$IOS_SDK"
+    - POD_LINT="NO"
 script:
   - set -o pipefail
   - xcodebuild -version
