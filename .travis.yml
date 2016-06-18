@@ -7,16 +7,28 @@ env:
     - IOS_FRAMEWORK_SCHEME="BlueCapKit"
     - OSX_FRAMEWORK_SCHEME="BlueCapKit"
     - FRAMEWORK_PROJECT="BlueCapKit.xcodeproj"
-    - IOS_SDK=iphonesimulator9.3
+    - IOS_SIMULATOR_SDK=iphonesimulator9.3
+    - IOS_SDK=iphoneos9.3
     - APP_SCHEME="BlueCap"
     - APP_WORKSPACE=BlueCap.xcworkspace
   matrix:
-    - DESTINATION="OS=9.3,name=iPhone 6S Plus"          SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"    POD_LINT="YES"
+    - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SDK"            TEST="NO"  
+    - DESTINATION="OS=8.2,name=iPhone 5"          POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=8.3,name=iPhone 5S"         POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=8.4,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=9.0,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=9.1,name=iPhone 6 Plus"     POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=9.2,name=iPhone 6S"         POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=9.3,name=iPhone 6S Plus"    POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=8.4,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
+    - DESTINATION="OS=9.3,name=iPhone 6S Plus"    POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
 script:
   - set -o pipefail
   - xcodebuild -version
   - xcodebuild -showsdks
   - pwd
+  - pod --version
+  - xctool --version
 
     # Build Framework in Debug
   - xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
