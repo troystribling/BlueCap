@@ -45,7 +45,7 @@ script:
   - if [ $TEST == "YES" ]; then
       cd `pwd`/Tests;
       pod install;
-      xctool -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests test -test-sdk iphonesimulator9.3;
+      xctool -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests -configuration Debug test -test-sdk iphonesimulator9.3;
     fi
 
 
