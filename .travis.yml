@@ -12,16 +12,14 @@ env:
     - IOS_APP_SCHEME="BlueCap"
     - APP_WORKSPACE=BlueCap.xcworkspace
   matrix:
-    - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SDK"            TEST="NO"  
-    - DESTINATION="OS=8.2,name=iPhone 5"          POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
-    - DESTINATION="OS=8.3,name=iPhone 5S"         POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
-    - DESTINATION="OS=8.4,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
-    - DESTINATION="OS=9.0,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
-    - DESTINATION="OS=9.1,name=iPhone 6 Plus"     POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
-    - DESTINATION="OS=9.2,name=iPhone 6S"         POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
-    - DESTINATION="OS=9.3,name=iPhone 6S Plus"    POD_LINT="NO"   $SDK="$IOS_SDK"            TEST="NO"
+    - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"  
+    - DESTINATION="OS=8.2,name=iPhone 5"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
+    - DESTINATION="OS=8.3,name=iPhone 5S"         POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"
     - DESTINATION="OS=8.4,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=9.3,name=iPhone 6S Plus"    POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
+    - DESTINATION="OS=9.0,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
+    - DESTINATION="OS=9.1,name=iPhone 6 Plus"     POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
+    - DESTINATION="OS=9.2,name=iPhone 6S"         POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
+    - DESTINATION="OS=9.3,name=iPhone 6S Plus"    POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"
 before_install:
     - gem install cocoapods -v '1.0.0'
 script:
@@ -38,6 +36,13 @@ script:
     # Run `pod lib lint` if specified
   - if [ $POD_LINT == "YES" ]; then
       pod lib lint;
+    fi
+
+    # Run tests if specified
+  - if [ $TEST == "YEES" ]; then
+      cd `pwd`/Tests;
+      pod install;
+      xctool -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests test -test-sdk iphonesimulator9.3;
     fi
 
 
