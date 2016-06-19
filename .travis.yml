@@ -13,6 +13,18 @@ env:
     - TEST_SCHEME=BlueCapKitTests
     - EXAMPLE_BLUECAP_WORKSPACE=BlueCap.xcworkspace
     - EXAMPLE_BLUECAP_SCHEME=BlueCap
+    - EXAMPLE_BEACON_WORKSPACE=Beacon.xcworkspace
+    - EXAMPLE_BEACON_SCHEME=Beacon
+    - EXAMPLE_CENTRAL_WORKSPACE=Central.xcworkspace
+    - EXAMPLE_CENTRAL_SCHEME=Central
+    - EXAMPLE_CENTRAL_WITH_PROFILE_PROJECT=CentralWithProfile.xcodeproj
+    - EXAMPLE_CENTRAL_WITH_PROFILE_SCHEME=CentralWithProfile
+    - EXAMPLE_PERIPHERAL_WORKSPACE=Peripheral.xcworkspace
+    - EXAMPLE_PERIPHERAL_SCHEME=Peripheral
+    - EXAMPLE_PERIPHERAL_WITH_INDICATION_WORKSPACE=PeripheralWithIndication.xcworkspace
+    - EXAMPLE_PERIPHERAL_WITH_INDICATION_SCHEME=PeripheralWithIndication
+    - EXAMPLE_PERIPHERAL_WITH_PROFILE_PROJECT=PeripheralWithProfile.xcodeproj
+    - EXAMPLE_PERIPHERAL_WITH_PROFILE_SCHEME=PeripheralWithProfile
     - PROJECT_DIR=`pwd`
   matrix:
     - DESTINATION="OS=8.1,name=iPhone 4S"       POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
@@ -47,15 +59,16 @@ script:
     # Run tests if specified
   - if [ $TEST == "YES" ]; then
       cd $PROJECT_DIR/Tests;
-      pwd
+      pwd;
       pod install;
       xcodebuild -workspace "$TEST_WORKSPACE" -scheme "$TEST_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
     fi
 
     # Build Examples if specified
   - if [ $EXAMPLE == "YES" ]; then
+      # Build BlueCap
       cd $PROJECT_DIR/Examples/BlueCap;
-      pwd
+      pwd;
       pod install;
       xcodebuild -workspace "$EXAMPLE_BLUECAP_WORKSPACE" -scheme "$EXAMPLE_BLUECAP_SCHEME" -sdk "$SDK" -destination "$DESTINATION"     -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
