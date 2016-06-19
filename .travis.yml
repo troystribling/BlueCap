@@ -7,7 +7,7 @@ env:
     - IOS_FRAMEWORK_SCHEME="BlueCapKit"
     - OSX_FRAMEWORK_SCHEME="BlueCapKit"
     - FRAMEWORK_PROJECT="BlueCapKit.xcodeproj"
-    - IOS_SIMULATOR_SDK=iphonesimulator9.2
+    - IOS_SIMULATOR_SDK=iphonesimulator9.3
     - IOS_SDK=iphoneos9.3
     - PROJECT_DIR=`pwd`
   matrix:
