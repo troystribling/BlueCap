@@ -9,20 +9,20 @@ env:
     - FRAMEWORK_PROJECT="BlueCapKit.xcodeproj"
     - IOS_SIMULATOR_SDK=iphonesimulator9.3
     - IOS_SDK=iphoneos9.3
-    - IOS_APP_SCHEME="BlueCap"
-    - APP_WORKSPACE=BlueCap.xcworkspace
     - TEST_WORKSPACE=BlueCapKitTests.xcworkspace
     - TEST_SCHEME=BlueCapKitTests
-    - APP_DIR=`pwd`
+    - EXAMPLE_BLUECAP_WORKSPACE=BlueCap.xcworkspace
+    - EXAMPLE_BLUECAP_SCHEME=BlueCap
+    - PROJECT_DIR=`pwd`
   matrix:
-    - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"  
-    - DESTINATION="OS=8.2,name=iPhone 5"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=8.3,name=iPhone 5S"         POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=8.4,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=9.0,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=9.1,name=iPhone 6 Plus"     POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=9.2,name=iPhone 6S"         POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=9.3,name=iPhone 6S Plus"    POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"
+    - DESTINATION="OS=8.1,name=iPhone 4S"       POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
+    - DESTINATION="OS=8.2,name=iPhone 5"        POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
+    - DESTINATION="OS=8.3,name=iPhone 5S"       POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
+    - DESTINATION="OS=8.4,name=iPhone 6"        POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
+    - DESTINATION="OS=9.0,name=iPhone 6"        POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
+    - DESTINATION="OS=9.1,name=iPhone 6 Plus"   POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
+    - DESTINATION="OS=9.2,name=iPhone 6S"       POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
+    - DESTINATION="OS=9.3,name=iPhone 6S Plus"  POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"  EXAMPLE="YES"
 before_install:
   - gem install cocoapods -v '1.0.0' --no-document
 script:
@@ -46,9 +46,16 @@ script:
 
     # Run tests if specified
   - if [ $TEST == "YES" ]; then
-      cd `pwd`/Tests;
+      cd $PROJECT_DIR/Tests;
       pod install;
       xcodebuild -workspace "$TEST_WORKSPACE" -scheme "$TEST_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
+    fi
+
+    # Build Examples if specified
+  - if [ EXAMPLE == "YES" ]; then
+      cd $PROJECT_DIR/Examples/BlueCap;
+      pod install;
+      xcodebuild -workspace "$EXAMPLE_BLUECAP_WORKSPACE" -scheme "$EXAMPLE_BLUECAP_SCHEME" -sdk "$SDK" -destination "$DESTINATION"     -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
 
