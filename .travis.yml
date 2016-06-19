@@ -16,7 +16,7 @@ env:
   matrix:
     - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"  
     - DESTINATION="OS=8.2,name=iPhone 5"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
-    - DESTINATION="OS=8.3,name=iPhone 5S"         POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"
+    - DESTINATION="OS=8.3,name=iPhone 5S"         POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
     - DESTINATION="OS=8.4,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
     - DESTINATION="OS=9.0,name=iPhone 6"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
     - DESTINATION="OS=9.1,name=iPhone 6 Plus"     POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
