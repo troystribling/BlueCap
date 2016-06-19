@@ -13,6 +13,7 @@ env:
     - APP_WORKSPACE=BlueCap.xcworkspace
     - TEST_WORKSPACE=BlueCapKitTests.xcworkspace
     - TEST_SCHEME=BlueCapKitTests
+    - APP_DIR=`pwd`
   matrix:
     - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"  
     - DESTINATION="OS=8.2,name=iPhone 5"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
