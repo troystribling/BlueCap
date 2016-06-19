@@ -494,6 +494,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 910885AE6B33C9907BC55C73 /* Pods-BlueCapKitTests.debug.xcconfig */;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.BlueCapKitTestsTests;
@@ -506,6 +507,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1F511A49E6ACD3DCDE95CE93 /* Pods-BlueCapKitTests.release.xcconfig */;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = gnos.us.BlueCapKitTestsTests;
