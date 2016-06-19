@@ -7,7 +7,7 @@ env:
     - IOS_FRAMEWORK_SCHEME="BlueCapKit"
     - OSX_FRAMEWORK_SCHEME="BlueCapKit"
     - FRAMEWORK_PROJECT="BlueCapKit.xcodeproj"
-    - IOS_SIMULATOR_SDK=iphonesimulator9.3
+    - IOS_SIMULATOR_SDK=iphonesimulator9.2
     - IOS_SDK=iphoneos9.3
     - PROJECT_DIR=`pwd`
   matrix:
@@ -22,7 +22,7 @@ env:
 before_install:
   - rvm install 2.2.3
   - gem install cocoapods -v '1.0.0' --no-document
-  - gem install xcpretty
+  - gem install xcpretty --no-document
 script:
   - set -o pipefail
   - xcodebuild -version
