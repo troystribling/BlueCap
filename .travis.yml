@@ -11,6 +11,8 @@ env:
     - IOS_SDK=iphoneos9.3
     - IOS_APP_SCHEME="BlueCap"
     - APP_WORKSPACE=BlueCap.xcworkspace
+    - TEST_WORKSPACE=BlueCapKitiTest.xcworkspace
+    - TEST_SCHEME=BlueCapKitTests
   matrix:
     - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"  
     - DESTINATION="OS=8.2,name=iPhone 5"          POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"
@@ -45,7 +47,7 @@ script:
   - if [ $TEST == "YES" ]; then
       cd `pwd`/Tests;
       pod install;
-      xctool -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests -configuration Debug test -test-sdk iphonesimulator9.3;
+      xcodebuild -workspace "$TEST_WORKSPACE" -scheme "$TEST_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
     fi
 
 
