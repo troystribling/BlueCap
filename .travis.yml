@@ -22,13 +22,13 @@ env:
 before_install:
   - rvm install 2.2.3
   - gem install cocoapods -v '1.0.0' --no-document
+  - gem install xcpretty
 script:
   - set -o pipefail
   - xcodebuild -version
   - xcodebuild -showsdks
-  - pwd
   - pod --version
-  - xctool --version
+  - pwd
 
     # Build iOS Framework in Debug
   - xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$IOS_FRAMEWORK_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
