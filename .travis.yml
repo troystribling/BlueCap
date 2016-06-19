@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode7.3:w
+osx_image: xcode7.3
 env:
   global:
     - LC_CTYPE=en_US.UTF-8
@@ -9,6 +9,22 @@ env:
     - FRAMEWORK_PROJECT="BlueCapKit.xcodeproj"
     - IOS_SIMULATOR_SDK=iphonesimulator9.3
     - IOS_SDK=iphoneos9.3
+    - TEST_WORKSPACE=BlueCapKitTests.xcworkspace
+    - TEST_SCHEME=BlueCapKitTests
+    - EXAMPLE_BLUECAP_WORKSPACE=BlueCap.xcworkspace
+    - EXAMPLE_BLUECAP_SCHEME=BlueCap
+    - EXAMPLE_BEACON_WORKSPACE=Beacon.xcworkspace
+    - EXAMPLE_BEACON_SCHEME=Beacon
+    - EXAMPLE_CENTRAL_WORKSPACE=Central.xcworkspace
+    - EXAMPLE_CENTRAL_SCHEME=Central
+    - EXAMPLE_CENTRAL_WITH_PROFILE_PROJECT=CentralWithProfile.xcodeproj
+    - EXAMPLE_CENTRAL_WITH_PROFILE_SCHEME=CentralWithProfile
+    - EXAMPLE_PERIPHERAL_WORKSPACE=Peripheral.xcworkspace
+    - EXAMPLE_PERIPHERAL_SCHEME=Peripheral
+    - EXAMPLE_PERIPHERAL_WITH_INDICATION_WORKSPACE=PeripheralWithIndication.xcworkspace
+    - EXAMPLE_PERIPHERAL_WITH_INDICATION_SCHEME=PeripheralWithIndication
+    - EXAMPLE_PERIPHERAL_WITH_PROFILE_PROJECT=PeripheralWithProfile.xcodeproj
+    - EXAMPLE_PERIPHERAL_WITH_PROFILE_SCHEME=PeripheralWithProfile
     - PROJECT_DIR=`pwd`
   matrix:
     - DESTINATION="OS=8.1,name=iPhone 4S"       POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
@@ -20,15 +36,14 @@ env:
     - DESTINATION="OS=9.2,name=iPhone 6S"       POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
     - DESTINATION="OS=9.3,name=iPhone 6S Plus"  POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"  EXAMPLE="YES"
 before_install:
-  - rvm install 2.2.3
   - gem install cocoapods -v '1.0.0' --no-document
-  - gem install xcpretty --no-document
 script:
   - set -o pipefail
   - xcodebuild -version
   - xcodebuild -showsdks
-  - pod --version
   - pwd
+  - pod --version
+  - xctool --version
 
     # Build iOS Framework in Debug
   - xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$IOS_FRAMEWORK_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
@@ -46,7 +61,7 @@ script:
       cd $PROJECT_DIR/Tests;
       pwd;
       pod install;
-      xcodebuild -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
+      xcodebuild -workspace "$TEST_WORKSPACE" -scheme "$TEST_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
     fi
 
     # Build BlueCap Example if specified
@@ -54,53 +69,6 @@ script:
       cd $PROJECT_DIR/Examples/BlueCap;
       pwd;
       pod install;
-      xcodebuild -workspace BlueCap.xcworkspace -scheme BlueCap -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+      xcodebuild -workspace "$EXAMPLE_BLUECAP_WORKSPACE" -scheme "$EXAMPLE_BLUECAP_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
-    # Build Beacon Example if specified
-  - if [ $EXAMPLE == "YES" ]; then
-      cd $PROJECT_DIR/Examples/Beacon;
-      pwd;
-      pod install;
-      xcodebuild -workspace Beacon.xcworkspace -scheme Beacon -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
-    fi
-
-    # Build Central Example if specified
-  - if [ $EXAMPLE == "YES" ]; then
-      cd $PROJECT_DIR/Examples/Central;
-      pwd;
-      pod install;
-      xcodebuild -workspace Central.xcworkspace -scheme Central -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
-    fi
-    
-    # Build Peripheral Example if specified
-  - if [ $EXAMPLE == "YES" ]; then
-      cd $PROJECT_DIR/Examples/Peripheral;
-      pwd;
-      pod install;
-      xcodebuild -workspace Peripheral.xcworkspace -scheme Peripheral -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
-    fi
-
-    # Build PeripheralWithIndication Example if specified
-  - if [ $EXAMPLE == "YES" ]; then
-      cd $PROJECT_DIR/Examples/PeripheralWithIndication;
-      pwd;
-      pod install;
-      xcodebuild -workspace PeripheralWithIndication.xcworkspace -scheme PeripheralWithIndication -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
-    fi
-
-    # Build CentralWithProfile Example if specified
-  - if [ $EXAMPLE == "YES" ]; then
-      cd $PROJECT_DIR/Examples/CentralWithProfile;
-      pwd;
-      pod install;
-      xcodebuild -project CentralWithProfile.xcodeproj -scheme CentralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
-    fi
-
-    # Build PeripheralWithProfile Example if specified
-  - if [ $EXAMPLE == "YES" ]; then
-      cd $PROJECT_DIR/Examples/PeripheralWithProfile;
-      pwd;
-      pod install;
-      xcodebuild -project PeripheralWithProfile.xcodeproj -scheme PeripheralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
-    fi
