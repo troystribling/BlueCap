@@ -21,6 +21,7 @@ env:
     - DESTINATION="OS=9.3,name=iPhone 6S Plus"  POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"  EXAMPLE="YES"
 before_install:
   - gem install cocoapods -v '1.0.0' --no-document
+  - rvm use system
 script:
   - set -o pipefail
   - xcodebuild -version
