@@ -11,7 +11,7 @@ env:
     - IOS_SDK=iphoneos9.3
     - IOS_APP_SCHEME="BlueCap"
     - APP_WORKSPACE=BlueCap.xcworkspace
-    - TEST_WORKSPACE=BlueCapKitiTest.xcworkspace
+    - TEST_WORKSPACE=BlueCapKitTest.xcworkspace
     - TEST_SCHEME=BlueCapKitTests
   matrix:
     - DESTINATION="OS=8.1,name=iPhone 4S"         POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"  
