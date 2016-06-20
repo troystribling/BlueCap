@@ -91,6 +91,7 @@ script:
   - if [ $EXAMPLE == "YES" ]; then
       cd $PROJECT_DIR/Examples/CentralWithProfile;
       pwd;
+      carthage update;
       xcodebuild -project CentralWithProfile.xcodeproj -scheme CentralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
@@ -98,6 +99,7 @@ script:
   - if [ $EXAMPLE == "YES" ]; then
       cd $PROJECT_DIR/Examples/PeripheralWithProfile;
       pwd;
+      carthage update;
       xcodebuild -project PeripheralWithProfile.xcodeproj -scheme PeripheralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
