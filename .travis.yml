@@ -41,9 +41,8 @@ script:
   - set -o pipefail
   - xcodebuild -version
   - xcodebuild -showsdks
-  - pwd
   - pod --version
-  - xctool --version
+  - pwd
 
     # Build iOS Framework in Debug
   - xcodebuild -project "$FRAMEWORK_PROJECT" -scheme "$IOS_FRAMEWORK_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
@@ -61,7 +60,7 @@ script:
       cd $PROJECT_DIR/Tests;
       pwd;
       pod install;
-      xcodebuild -workspace "$TEST_WORKSPACE" -scheme "$TEST_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
+      xcodebuild -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
     fi
 
     # Build BlueCap Example if specified
@@ -69,6 +68,6 @@ script:
       cd $PROJECT_DIR/Examples/BlueCap;
       pwd;
       pod install;
-      xcodebuild -workspace "$EXAMPLE_BLUECAP_WORKSPACE" -scheme "$EXAMPLE_BLUECAP_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+      xcodebuild -workspace BlueCap.xcworkspace -scheme BlueCap -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
