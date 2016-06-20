@@ -55,3 +55,11 @@ script:
       xcodebuild -workspace BlueCap.xcworkspace -scheme BlueCap -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
+    # Build Beacon Example if specified
+  - if [ $EXAMPLE == "YES" ]; then
+      cd $PROJECT_DIR/Examples/Beacon;
+      pwd;
+      pod install;
+      xcodebuild -workspace Beacon.xcworkspace -scheme Beacon -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+    fi
+
