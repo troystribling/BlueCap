@@ -23,7 +23,7 @@ before_install:
   - rvm install 2.2.3
   - rvm use 2.2.3
   - gem install cocoapods -v '1.0.0' --no-document
-  - gen install xcpretty - v '0.2.1' --no-document
+  - gem install xcpretty - v '0.2.1' --no-document
 script:
   - set -o pipefail
   - xcodebuild -version
