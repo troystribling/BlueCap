@@ -63,3 +63,43 @@ script:
       xcodebuild -workspace Beacon.xcworkspace -scheme Beacon -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
+    # Build Central Example if specified
+  - if [ $EXAMPLE == "YES" ]; then
+      cd $PROJECT_DIR/Examples/Central;
+      pwd;
+      pod install;
+      xcodebuild -workspace Central.xcworkspace -scheme Central -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+    fi
+
+    # Build Peripheral Example if specified
+  - if [ $EXAMPLE == "YES" ]; then
+      cd $PROJECT_DIR/Examples/Peripheral;
+      pwd;
+      pod install;
+      xcodebuild -workspace Peripheral.xcworkspace -scheme Peripheral -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+    fi
+    
+    # Build PeripheralWithIndication Example if specified
+  - if [ $EXAMPLE == "YES" ]; then
+      cd $PROJECT_DIR/Examples/PeripheralWithIndication;
+      pwd;
+      pod install;
+      xcodebuild -workspace PeripheralWithIndication.xcworkspace -scheme PeripheralWithIndication -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+    fi
+
+    # Build CentralWithProfile Example if specified
+  - if [ $EXAMPLE == "YES" ]; then
+      cd $PROJECT_DIR/Examples/CentralWithProfile;
+      pwd;
+      pod install;
+      xcodebuild -project CentralWithProfile.xcodeproj -scheme CentralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+    fi
+
+    # Build PeripheralWithProfile Example if specified
+  - if [ $EXAMPLE == "YES" ]; then
+      cd $PROJECT_DIR/Examples/PeripheralWithProfile;
+      pwd;
+      pod install;
+      xcodebuild -project PeripheralWithProfile.xcodeproj -scheme PeripheralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
+    fi
+
