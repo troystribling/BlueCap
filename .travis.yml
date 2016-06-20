@@ -91,7 +91,6 @@ script:
   - if [ $EXAMPLE == "YES" ]; then
       cd $PROJECT_DIR/Examples/CentralWithProfile;
       pwd;
-      pod install;
       xcodebuild -project CentralWithProfile.xcodeproj -scheme CentralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
@@ -99,7 +98,6 @@ script:
   - if [ $EXAMPLE == "YES" ]; then
       cd $PROJECT_DIR/Examples/PeripheralWithProfile;
       pwd;
-      pod install;
       xcodebuild -project PeripheralWithProfile.xcodeproj -scheme PeripheralWithProfile -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
