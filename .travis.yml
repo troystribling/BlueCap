@@ -20,11 +20,15 @@ env:
     - DESTINATION="OS=9.2,name=iPhone 6S"       POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"  TEST="NO"   EXAMPLE="NO"
     - DESTINATION="OS=9.3,name=iPhone 6S Plus"  POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"  TEST="YES"  EXAMPLE="YES"
 before_install:
+  - rvm install 2.2.3
+  - rvm use 2.2.3
   - gem install cocoapods -v '1.0.0' --no-document
+  - gen install xcpretty - v '0.2.1' --no-document
 script:
   - set -o pipefail
   - xcodebuild -version
   - xcodebuild -showsdks
+  - ruby --version
   - pod --version
   - pwd
 
