@@ -16,7 +16,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 - Characteristic read/write timeout.
 - A DSL for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
-- [Example](https://github.com/troystribling/BlueCap/tree/master/Examples) applications implementing Central and Peripheral.
+- [Example](Examples) applications implementing Central and Peripheral.
 - A full featured extendable Central scanner and Peripheral emulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
 - Thread safe.
 - Comprehensive test coverage.
@@ -33,7 +33,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 [CocoaPods](https://cocoapods.org) is an Xcode dependency manager. It is installed with the following command,
 
 ```bash
-$ gem install cocoapods
+gem install cocoapods
 ```
 
 > Requires CocoaPods 1.0+
@@ -70,7 +70,7 @@ end
 To install run the command,
 
 ```bash
-$ pod install
+pod install
 ```
 
 ## Carthage
@@ -79,8 +79,8 @@ $ pod install
 It can be installed using [Homebrew](http://brew.sh/),
 
 ```bash
-$ brew update
-$ brew install carthage
+brew update
+brew install carthage
 ```
 
 To add `BlueCapKit` to your `Cartfile`
@@ -190,11 +190,10 @@ let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile:RawC
 accelerometerService.characteristics = [accelerometerDataCharacteristic, accelerometerEnabledCharacteristic, accelerometerUpdatePeriodCharacteristic]
 ```
 
-
 Next respond to write events on the Enabled characteristic,
 
 ```swift
-let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity:2)
+let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests()
 accelerometerEnabledFuture.onSuccess { request in  
 	if request.value.length == 1 {
 		accelerometerEnabledCharacteristic.value = request.value
@@ -214,7 +213,7 @@ accelerometerUpdatePeriodFuture.onSuccess { request in
 		accelerometerUpdatePeriodCharacteristic.value = request.value
 		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
 	} else {
-  accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+      accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
@@ -228,19 +227,62 @@ let startAdvertiseFuture = manager.powerOn().flatmap { _ -> Future<Void> in
 	manager.removeAllServices()
 	manager.addService(accelerometerService)
 }.flatmap { _ -> Future<Void> in
-  manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [uuid])
+    manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [uuid])
 }
 ```
 
 ## Examples
 
+[Examples](Examples) are available that implement both Central and Peripheral roles. The [BluCap app](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require that,
+
+```bash
+pod install
+```
+
+be run before building the project and that the application be built using and the Carthage projects require,
+
+```bash
+carthage update
+```
+
+<table>
+	<tr>
+		<td>BlueCap</td>
+		<td>BlueCap provides Central, Peripheral and iBeacon Ranging Bluetooth LE functions and implementations of GATT profiles. In Central mode a scanner for Bluetooth LE peripherals is provided. In peripheral mode an emulation of any of the included GATT profiles or an iBeacon is supported. In iBeacon Ranging mode beacon regions can be configured and monitored.</td>
+	</tr>
+	<tr>
+		<td>Central</td>
+		<td>Central implements the BLE Central role scanning for services advertising TI Sensor Tag Accelerometer Service. When a peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
+	</tr>
+	<tr>
+		<td>CentralWithProfile</td>
+		<td>A version of Central that uses GATT profiles defined in the Bluecoat to create services.</td>
+	</tr>
+	<tr>
+		<td>Peripheral</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>PeripheralWithIndication</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>PeripheralWithProfile</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Beacon</td>
+		<td></td>
+	</tr>
+</table>
+
 # <a name="usage">Usage</a>
 
 BlueCap supports many features that simplify writing Bluetooth LE applications. Use cases with example implementations are described in each of the following sections.
 
-1. [Serialization/Deserialization](Documentation/GATTProfileDefinition.md): Serialization and deserialization of device messages.
+1. [Serialization/Deserialization](Documentation/SerializationDeserialization.md): Serialization and deserialization of device messages.
  
-2. [GATT Profile Definition](Documentation/SerializationDeserialization.md): Define reusable GATT profiles and add profiles to the BlueCap app.
+2. [GATT Profile Definition](Documentation/GATTProfileDefinition.md): Define reusable GATT profiles and add profiles to the BlueCap app.
 
 3. [CentralManager](Documentation/CentralManager.md): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
 

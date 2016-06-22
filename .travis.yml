@@ -8,7 +8,6 @@ env:
     - IOS_SDK=iphoneos9.3
     - PROJECT_DIR=`pwd`
   matrix:
-    - DESTINATION="OS=8.4,name=iPhone 6"        POD_LINT="NO"   $SDK="$IOS_SIMULATOR_SDK"
     - DESTINATION="OS=9.3,name=iPhone 6S Plus"  POD_LINT="YES"  $SDK="$IOS_SIMULATOR_SDK"
 before_install:
   - gem install cocoapods -v '1.0.0' --no-document
