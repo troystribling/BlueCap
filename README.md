@@ -24,7 +24,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 # Requirements
 
 - iOS 8.0+
-- Xcode 7.3+
+- Xcode 7.3
 
 # Installation
 
@@ -38,7 +38,7 @@ gem install cocoapods
 
 > Requires CocoaPods 1.0+
 
-Add `BluCapKit` to your to your projects `Podfile`,
+Add `BluCapKit` to your to your project `Podfile`,
 
 ```ruby
 platform :ios, '8.0'
@@ -115,11 +115,11 @@ This will only download the `BlueCapKit` project. Then follow the steps in [Manu
 
 # Getting Started
 
-With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported in some detail. [Example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) are also available.
+With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported in some detail. [Example applications](Examples) are also available.
  
 ## Central
 
-A simple Central implementation that scans for Peripherals advertising a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) and connects on peripheral discovery will be described. 
+A simple Central implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) and connects on peripheral discovery will be described. 
 
 All applications begin by calling `CentralManager#whenPowerOn` which returns a `Future<Void>` completed when the `CBCentralManager` state is set to `CBCentralManagerState.PoweredOn`.
 
@@ -128,7 +128,7 @@ let manager = CentralManager()
 let powerOnFuture = manager.whenPowerOn()
 ```
 
-To start scanning for peripherals advertising the [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) `powerOnFuture` will chained to `CentralManager#startScanningForServiceUUIDs` using the `Future#flatmap` combinator.
+To start scanning for peripherals advertising the [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) `powerOnFuture` will chained to `CentralManager#startScanningForServiceUUIDs` using the `Future#flatmap` combinator.
 
 ```swift
 let manager = CentralManager()
@@ -171,11 +171,11 @@ connectionFuture.onSuccess{ (peripheral, connectionEvent) in
 
 Here on `.Timeout` and `.Disconnect` try to reconnect and on `.Giveup` terminate connection
 
-See the [Central Example](https://github.com/troystribling/BlueCap/tree/remove_prefix/Examples/Central) application for a more detailed implementation that additionally discovers the peripheral and subscribed to accelerometer update notifications.
+See the [Central Example](Examples/Central) application for a more detailed implementation that additionally discovers the peripheral and subscribed to accelerometer update notifications.
 
 ## Peripheral
 
-A simple Peripheral application that emulates a [TI SensorTag Accelerometer Service](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and services will be described. It will advertise the service and respond to characteristic write request.
+A simple Peripheral application that emulates a [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and services will be described. It will advertise the service and respond to characteristic write request.
 
 First the Characteristics and Service are created,
 
@@ -247,32 +247,32 @@ carthage update
 
 <table>
 	<tr>
-		<td>BlueCap</td>
+		<td><a href="Examples/BlueCap">BlueCap</a></td>
 		<td>BlueCap provides Central, Peripheral and iBeacon Ranging Bluetooth LE functions and implementations of GATT profiles. In Central mode a scanner for Bluetooth LE peripherals is provided. In peripheral mode an emulation of any of the included GATT profiles or an iBeacon is supported. In iBeacon Ranging mode beacon regions can be configured and monitored.</td>
 	</tr>
 	<tr>
-		<td>Central</td>
-		<td>Central implements the BLE Central role scanning for services advertising TI Sensor Tag Accelerometer Service. When a peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
+		<td><a href="Examples/Central">Central</a></td>
+		<td>Central implements the BLE Central role scanning for services advertising [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-110). When a peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
 	</tr>
 	<tr>
-		<td>CentralWithProfile</td>
-		<td>A version of Central that uses GATT profiles defined in the Bluecoat to create services.</td>
+		<td><a href="Examples/CentralWithProfile">CentralWithProfile</a></td>
+		<td>A version of Central that uses GATT Profile Definitions to create services.</td>
 	</tr>
 	<tr>
-		<td>Peripheral</td>
-		<td></td>
+		<td><a href="Examples/Peripheral">Peripheral</a></td>
+		<td>Peripheral implements the BLE Peripheral role advertising a (TiSensorTag Accelerometer Service)[BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-110). Peripheral uses the onboard accelerometer to provide data notification updates.</td>
 	</tr>
 	<tr>
-		<td>PeripheralWithIndication</td>
-		<td></td>
+		<td><a href="Examples/PeripheralWithIndication">PeripheralWithIndication</a></td>
+		<td>A version of Peripheral that uses indications instead of notifications.</td>
 	</tr>
 	<tr>
-		<td>PeripheralWithProfile</td>
-		<td></td>
+		<td><a href="Examples/PeripheralWithProfile">PeripheralWithProfile</a></td>
+		<td>A version of Peripheral that uses GATT Profile Definitions to create services.</td>
 	</tr>
 	<tr>
-		<td>Beacon</td>
-		<td></td>
+		<td><a href="Examples/Beacon">Beacon</a></td>
+		<td>iBean implements a Peripheral role emulating an iBeacon.</td>
 	</tr>
 </table>
 
