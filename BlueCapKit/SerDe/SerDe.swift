@@ -9,102 +9,105 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: Byte Swap
-func toHostByteOrder<T>(value:T) -> T {
+// MARK: - Byte Swap -
+
+func toHostByteOrder<T>(value: T) -> T {
     return value;
 }
 
-func fromHostByteOrder<T>(value:T) -> T {
+func fromHostByteOrder<T>(value: T) -> T {
     return value;
 }
 
-func byteArrayValue<T>(value:T) -> [UInt8] {
+func byteArrayValue<T>(value: T) -> [UInt8] {
     let values = [value]
     let data = NSData(bytes:values, length:sizeof(T))
-    var byteArray = [UInt8](count:sizeof(T), repeatedValue:0)
+    var byteArray = [UInt8](count: sizeof(T), repeatedValue: 0)
     data.getBytes(&byteArray, length:sizeof(T))
     return byteArray
 }
 
-func reverseBytes<T>(value:T) -> T {
+func reverseBytes<T>(value: T) -> T {
     var result = value
-    let swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length:sizeof(T))
-    swappedBytes.getBytes(&result, length:sizeof(T))
+    let swappedBytes = NSData(bytes:byteArrayValue(value).reverse(), length: sizeof(T))
+    swappedBytes.getBytes(&result, length: sizeof(T))
     return result
 }
 
-// MARK: SerDe Protocols
+// MARK: - SerDe Protocols -
+
 public protocol Deserializable {
     static var size : Int { get }
-    static func deserialize(data:NSData) -> Self?
-    static func deserialize(data:NSData, start:Int) -> Self?
-    static func deserialize(data:NSData) -> [Self]
+    static func deserialize(data: NSData) -> Self?
+    static func deserialize(data: NSData, start:Int) -> Self?
+    static func deserialize(data: NSData) -> [Self]
 }
 
 public protocol Serializable {
-    static func fromString(value:String, encoding:NSStringEncoding) -> NSData?
-    static func serialize<T>(value:T) -> NSData
-    static func serialize<T>(values:[T]) -> NSData
-    static func serialize<T1, T2>(value1:T1, value2:T2) -> NSData
-    static func serialize<T1, T2>(value1:[T1], value2:[T2]) -> NSData
+    static func fromString(value: String, encoding: NSStringEncoding) -> NSData?
+    static func serialize<T>(value: T) -> NSData
+    static func serialize<T>(values: [T]) -> NSData
+    static func serialize<T1, T2>(value1: T1, value2: T2) -> NSData
+    static func serialize<T1, T2>(value1: [T1], value2: [T2]) -> NSData
 }
 
 public protocol CharacteristicConfigurable {
-    static var name          : String { get }
-    static var UUID          : String { get }
-    static var permissions   : CBAttributePermissions { get }
-    static var properties    : CBCharacteristicProperties { get }
-    static var initialValue  : NSData? { get }
+    static var name: String { get }
+    static var UUID: String { get }
+    static var permissions: CBAttributePermissions { get }
+    static var properties: CBCharacteristicProperties { get }
+    static var initialValue: NSData? { get }
 }
 
 public protocol ServiceConfigurable {
-    static var name  : String { get }
-    static var UUID  : String { get }
-    static var tag   : String { get }
+    static var name: String { get }
+    static var UUID: String { get }
+    static var tag: String { get }
 }
 
 public protocol StringDeserializable {
-    static var stringValues : [String] { get }
-    var stringValue         : [String:String] { get }
+    static var stringValues: [String] { get }
+    var stringValue: [String:String] { get }
     init?(stringValue:[String:String])
 }
 
 public protocol RawDeserializable {
     associatedtype RawType
-    static var UUID         : String { get }
-    var rawValue            : RawType { get }
-    init?(rawValue:RawType)
+    static var UUID: String { get }
+    var rawValue: RawType { get }
+    init?(rawValue: RawType)
 }
 
 public protocol RawArrayDeserializable {
     associatedtype RawType
-    static var UUID     : String { get }
-    static var size     : Int { get }
-    var rawValue        : [RawType] { get }
-    init?(rawValue:[RawType])
+    static var UUID: String { get }
+    static var size: Int { get }
+    var rawValue: [RawType] { get }
+    init?(rawValue: [RawType])
 }
 
 public protocol RawPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
-    static var UUID     : String { get }
-    var rawValue1       : RawType1 { get }
-    var rawValue2       : RawType2 { get }
-    init?(rawValue1:RawType1, rawValue2:RawType2)
+    static var UUID: String { get }
+    var rawValue1: RawType1 { get }
+    var rawValue2: RawType2 { get }
+    init?(rawValue1: RawType1, rawValue2: RawType2)
 }
 
 public protocol RawArrayPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
-    static var UUID     : String { get }
-    static var size1    : Int { get }
-    static var size2    : Int { get }
-    var rawValue1       : [RawType1] { get }
-    var rawValue2       : [RawType2] { get }
-    init?(rawValue1:[RawType1], rawValue2:[RawType2])
+    static var UUID: String { get }
+    static var size1: Int { get }
+    static var size2: Int { get }
+    var rawValue1: [RawType1] { get }
+    var rawValue2: [RawType2] { get }
+    init?(rawValue1: [RawType1], rawValue2: [RawType2])
 }
 
-// MARK: SerDe
+// MARK: - SerDe -
+
 public struct SerDe {
     
     public static func serialize(value: String, encoding: NSStringEncoding = NSUTF8StringEncoding) -> NSData? {
@@ -175,7 +178,7 @@ public struct SerDe {
         }
     }
 
-    public static func serialize<T: RawArrayPairDeserializable>(value:T) -> NSData {
+    public static func serialize<T: RawArrayPairDeserializable>(value: T) -> NSData {
         return NSData.serializeArrays(value.rawValue1, values2: value.rawValue2)
     }
 }

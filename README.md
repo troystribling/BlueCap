@@ -199,7 +199,7 @@ accelerometerEnabledFuture.onSuccess { request in
 		accelerometerEnabledCharacteristic.value = request.value
 		accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
 	} else {
-		accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+		  accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```

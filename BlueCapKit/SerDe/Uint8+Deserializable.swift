@@ -1,5 +1,5 @@
 //
-//  ByteExtensions.swift
+//  UInt8+Deserializable.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/8/14.

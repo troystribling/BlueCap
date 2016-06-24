@@ -1,5 +1,5 @@
 //
-//  Int8Extensions.swift
+//  Int8+Deserializable.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/8/14.
@@ -38,7 +38,7 @@ extension Int8: Deserializable {
         }
     }
 
-    public static func deserialize(data :NSData) -> Int8? {
+    public static func deserialize(data: NSData) -> Int8? {
         if data.length >= sizeof(Int8) {
             var value : Int8 = 0
             data.getBytes(&value, length:sizeof(Int8))

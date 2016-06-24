@@ -120,6 +120,30 @@ class DeserilaizableTests: XCTestCase {
         XCTAssert(des == value, "Int16 array deserialization value invalid: \(des)")
     }
 
+    // MARK: Int32
+    func testDeserialize_WhenGivenSerializedInt32_ReturnsInt32() {
+        let data = SerDe.serialize(Int32(1000))
+        if let value: Int32 = Int32.deserialize(data) {
+            XCTAssert(value == 1000, "Int32 deserialization value invalid: \(value)")
+        } else {
+            XCTFail("Int32 deserializaion failed")
+        }
+    }
+
+    func testDeserialize_WhenGivenInvalidSerializedInt32_ReturnsNil() {
+        let data = SerDe.serialize(Int16(100))
+        if let value: Int32 = Int32.deserialize(data) {
+            XCTFail("Int32 deserialization succeded: \(value)")
+        }
+    }
+
+    func testDeserialize_WhenGivenSerializedUIntInt32_ReturnsInt32() {
+        let value: [UInt32] = [1000, 100]
+        let data = SerDe.serialize(value)
+        let des : [UInt32] = UInt32.deserialize(data)
+        XCTAssert(des == value, "UInt32 array deserialization value invalid: \(des)")
+    }
+
     // MARK: UInt32
     func testDeserialize_WhenGivenSerializedUInt32_ReturnsUInt32() {
         let data = SerDe.serialize(UInt32(1000))
@@ -137,7 +161,7 @@ class DeserilaizableTests: XCTestCase {
         }
     }
 
-    func testDeserialize_WhenGivenSerializedUIntUInt32_ReturnsUUInt32() {
+    func testDeserialize_WhenGivenSerializedUIntUInt32_ReturnsUInt32() {
         let value: [UInt32] = [1000, 100]
         let data = SerDe.serialize(value)
         let des : [UInt32] = UInt32.deserialize(data)

@@ -1,5 +1,5 @@
 //
-//  UInt32Extensions.swift
+//  UInt32+Deserializable.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/8/14.
@@ -14,7 +14,7 @@ extension UInt32: Deserializable {
         return sizeof(UInt32)
     }
 
-    public init?(doubleValue:Double) {
+    public init?(doubleValue: Double) {
         if doubleValue > 0xFFFFFFFF || doubleValue < 0.0 {
             return nil
         } else {
@@ -22,7 +22,7 @@ extension UInt32: Deserializable {
         }
     }
 
-    public static func deserialize(data:NSData) -> UInt32? {
+    public static func deserialize(data: NSData) -> UInt32? {
         if data.length >= sizeof(UInt32) {
             var value : UInt32 = 0
             data.getBytes(&value, length:sizeof(UInt32))
@@ -32,7 +32,7 @@ extension UInt32: Deserializable {
         }
     }
     
-    public static func deserialize(data:NSData, start:Int) -> UInt32? {
+    public static func deserialize(data: NSData, start: Int) -> UInt32? {
         if data.length >= start + sizeof(UInt32) {
             var value : UInt32 = 0
             data.getBytes(&value, range:NSMakeRange(start, sizeof(UInt32)))
@@ -42,7 +42,7 @@ extension UInt32: Deserializable {
         }
     }
 
-    public static func deserialize(data:NSData) -> [UInt32] {
+    public static func deserialize(data: NSData) -> [UInt32] {
         let size = sizeof(UInt32)
         let count = data.length / size
         return [Int](0..<count).reduce([]) {(result, idx) in
