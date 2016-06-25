@@ -182,16 +182,20 @@ First the Characteristics and Service are created,
 ```swift
 // create service and characteristics using profile definitions
 let accelerometerService = 
-  MutableService(profile:  ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
+  MutableService(
+    profile:  ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
 
 let accelerometerDataCharacteristic =
-  MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+  MutableCharacteristic(
+    profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
   
 let accelerometerEnabledCharacteristic = 
-  MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+  MutableCharacteristic(
+    profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
   
 let accelerometerUpdatePeriodCharacteristic = 
-  MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
+  MutableCharacteristic(
+    profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
 
 // add characteristics to service
 accelerometerService.characteristics = 
@@ -203,15 +207,17 @@ accelerometerService.characteristics =
 Next respond to write events on the Enabled characteristic,
 
 ```swift
-let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests()
+let accelerometerEnabledFuture = 
+  self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests()
+  
 accelerometerEnabledFuture.onSuccess { request in  
 	if request.value.length == 1 {
 		accelerometerEnabledCharacteristic.value = request.value
 		accelerometerEnabledCharacteristic.respondToRequest(
 		  request, withResult: CBATTError.Success)
 	} else {
-	      accelerometerEnabledCharacteristic.respondToRequest(
-	        request, withResult: CBATTError.InvalidAttributeValueLength)
+	  accelerometerEnabledCharacteristic.respondToRequest(
+	    request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
