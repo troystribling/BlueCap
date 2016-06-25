@@ -238,7 +238,7 @@ accelerometerUpdatePeriodFuture.onSuccess { request in
 		  request, withResult: CBATTError.Success)
 	} else {
 	    accelerometerUpdatePeriodCharacteristic.respondToRequest(
-        request, withResult: CBATTError.InvalidAttributeValueLength)
+          request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
