@@ -71,7 +71,7 @@
 		05F2A8DC199271FA00004260 /* ServiceCharacteristicProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */; };
 		05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */; };
 		05FAFC3519D30247003725B0 /* Notify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FAFC3419D30247003725B0 /* Notify.swift */; };
-		720FB2D0FC3352B9413D317C /* Pods_BlueCap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 453EFA76F4B349434FAE16B8 /* Pods_BlueCap.framework */; };
+		9D28752C7C5B02C4F8BF5F39 /* Pods_BlueCap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0984818B75529189FD6A9F33 /* Pods_BlueCap.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -154,9 +154,9 @@
 		05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileViewController.swift; sourceTree = "<group>"; };
 		05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05FAFC3419D30247003725B0 /* Notify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notify.swift; sourceTree = "<group>"; };
-		1B2BC31A80D2148E643037CF /* Pods-BlueCap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.release.xcconfig"; sourceTree = "<group>"; };
-		453EFA76F4B349434FAE16B8 /* Pods_BlueCap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BD17D75E6109231B9EE940C /* Pods-BlueCap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.debug.xcconfig"; sourceTree = "<group>"; };
+		0984818B75529189FD6A9F33 /* Pods_BlueCap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		48CED32044E78453631A5B0F /* Pods-BlueCap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.release.xcconfig"; sourceTree = "<group>"; };
+		636DEA923865E473D934990E /* Pods-BlueCap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,7 +164,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				720FB2D0FC3352B9413D317C /* Pods_BlueCap.framework in Frameworks */,
+				9D28752C7C5B02C4F8BF5F39 /* Pods_BlueCap.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,8 +225,8 @@
 			children = (
 				05840F61194206F100C744E6 /* BlueCap */,
 				05840F60194206F100C744E6 /* Products */,
-				9209B9E0D7BEABC3F956B30A /* Pods */,
-				87EDE06ED21FCD852214E4B9 /* Frameworks */,
+				F5EB4CEAF782F81065651526 /* Pods */,
+				DA7194FFC65B00B087B52F7D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -317,19 +317,19 @@
 			path = Profiles;
 			sourceTree = "<group>";
 		};
-		87EDE06ED21FCD852214E4B9 /* Frameworks */ = {
+		DA7194FFC65B00B087B52F7D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				453EFA76F4B349434FAE16B8 /* Pods_BlueCap.framework */,
+				0984818B75529189FD6A9F33 /* Pods_BlueCap.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		9209B9E0D7BEABC3F956B30A /* Pods */ = {
+		F5EB4CEAF782F81065651526 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				5BD17D75E6109231B9EE940C /* Pods-BlueCap.debug.xcconfig */,
-				1B2BC31A80D2148E643037CF /* Pods-BlueCap.release.xcconfig */,
+				636DEA923865E473D934990E /* Pods-BlueCap.debug.xcconfig */,
+				48CED32044E78453631A5B0F /* Pods-BlueCap.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -341,13 +341,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 05840F7D194206F100C744E6 /* Build configuration list for PBXNativeTarget "BlueCap" */;
 			buildPhases = (
-				3048E3768D6CFCDB9F7A682B /* 📦 Check Pods Manifest.lock */,
+				E959DC4B6AC3A7361ADA97F2 /* 📦 Check Pods Manifest.lock */,
 				05840F5B194206F100C744E6 /* Sources */,
 				05840F5C194206F100C744E6 /* Frameworks */,
 				05840F5D194206F100C744E6 /* Resources */,
 				05840FAC19420B0000C744E6 /* Embed Frameworks */,
-				8FD7E6C87E6BE70CAC4171E6 /* 📦 Embed Pods Frameworks */,
-				290A261D875B892BD9511635 /* 📦 Copy Pods Resources */,
+				A1B1E8E91B1D50DF9CCE3C74 /* 📦 Embed Pods Frameworks */,
+				D9DE04603E7A4C4C033625AA /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -406,7 +406,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		290A261D875B892BD9511635 /* 📦 Copy Pods Resources */ = {
+		A1B1E8E91B1D50DF9CCE3C74 /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D9DE04603E7A4C4C033625AA /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -421,7 +436,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3048E3768D6CFCDB9F7A682B /* 📦 Check Pods Manifest.lock */ = {
+		E959DC4B6AC3A7361ADA97F2 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -434,21 +449,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		8FD7E6C87E6BE70CAC4171E6 /* 📦 Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -606,7 +606,7 @@
 		};
 		05840F7E194206F100C744E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5BD17D75E6109231B9EE940C /* Pods-BlueCap.debug.xcconfig */;
+			baseConfigurationReference = 636DEA923865E473D934990E /* Pods-BlueCap.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -626,7 +626,7 @@
 		};
 		05840F7F194206F100C744E6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1B2BC31A80D2148E643037CF /* Pods-BlueCap.release.xcconfig */;
+			baseConfigurationReference = 48CED32044E78453631A5B0F /* Pods-BlueCap.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

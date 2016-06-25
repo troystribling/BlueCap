@@ -1,5 +1,5 @@
 //
-//  DoubleExtensions.swift
+//  Double+BlueCap.swift
 //  BlueCapKit
 //
 //  Created by Troy Stribling on 11/10/14.

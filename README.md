@@ -181,13 +181,23 @@ First the Characteristics and Service are created,
 
 ```swift
 // create service and characteristics using profile definitions
-let accelerometerService = MutableService(profile:ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
-let accelerometerDataCharacteristic = MutableCharacteristic(profile:RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
-let accelerometerEnabledCharacteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
-let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
+let accelerometerService = 
+  MutableService(profile:  ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
+
+let accelerometerDataCharacteristic =
+  MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+  
+let accelerometerEnabledCharacteristic = 
+  MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+  
+let accelerometerUpdatePeriodCharacteristic = 
+  MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
 
 // add characteristics to service
-accelerometerService.characteristics = [accelerometerDataCharacteristic, accelerometerEnabledCharacteristic, accelerometerUpdatePeriodCharacteristic]
+accelerometerService.characteristics = 
+  [accelerometerDataCharacteristic,
+   accelerometerEnabledCharacteristic,
+   accelerometerUpdatePeriodCharacteristic]
 ```
 
 Next respond to write events on the Enabled characteristic,
@@ -197,9 +207,9 @@ let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRe
 accelerometerEnabledFuture.onSuccess { request in  
 	if request.value.length == 1 {
 		accelerometerEnabledCharacteristic.value = request.value
-		accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
+		accelerometerEnabledCharacteristic.respondToRequest(request, withResult: CBATTError.Success)
 	} else {
-		  accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+	    accelerometerEnabledCharacteristic.respondToRequest(request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
@@ -209,11 +219,11 @@ and respond to write events on the Update Period characteristic,
 ```swift
 let accelerometerUpdatePeriodFuture = accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
 accelerometerUpdatePeriodFuture.onSuccess { request in
-	if request.value.length > 0 &&  request.value.length <= 8 {
+	if request.value.length > 0 && request.value.length <= 8 {
 		accelerometerUpdatePeriodCharacteristic.value = request.value
-		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
+		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult: CBATTError.Success)
 	} else {
-      accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+    accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
@@ -239,7 +249,7 @@ let startAdvertiseFuture = manager.powerOn().flatmap { _ -> Future<Void> in
 pod install
 ```
 
-be run before building the project and that the application be built using and the Carthage projects require,
+be run before building the project and Carthage projects require,
 
 ```bash
 carthage update

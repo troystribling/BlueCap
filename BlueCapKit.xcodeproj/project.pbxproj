@@ -46,8 +46,8 @@
 		05BF91AB1CFBF62700B78B12 /* FLRegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */; };
 		05BF91AC1CFBF62700B78B12 /* FLSerialIODictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */; };
 		05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */; };
-		05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* DoubleExtensions.swift */; };
-		05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* StringExtensions.swift */; };
+		05D3B9451A2BA162008E794E /* Double+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* Double+BlueCap.swift */; };
+		05D3B9461A2BA162008E794E /* String+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* String+BlueCap.swift */; };
 		05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */; };
 		4ED105C01C315C420034D5D2 /* UInt32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */; };
 /* End PBXBuildFile section */
@@ -94,8 +94,8 @@
 		05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLRegionManager.swift; sourceTree = "<group>"; };
 		05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLSerialIODictionary.swift; sourceTree = "<group>"; };
 		05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFutures.swift; sourceTree = "<group>"; };
-		05D3B9431A2BA162008E794E /* DoubleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtensions.swift; sourceTree = "<group>"; };
-		05D3B9441A2BA162008E794E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		05D3B9431A2BA162008E794E /* Double+BlueCap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+BlueCap.swift"; sourceTree = "<group>"; };
+		05D3B9441A2BA162008E794E /* String+BlueCap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+BlueCap.swift"; sourceTree = "<group>"; };
 		05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Injectables.swift; sourceTree = "<group>"; };
 		4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UInt32+Deserializable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -262,8 +262,8 @@
 		05D3B9421A2BA162008E794E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				05D3B9431A2BA162008E794E /* DoubleExtensions.swift */,
-				05D3B9441A2BA162008E794E /* StringExtensions.swift */,
+				05D3B9431A2BA162008E794E /* Double+BlueCap.swift */,
+				05D3B9441A2BA162008E794E /* String+BlueCap.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -363,7 +363,7 @@
 				055120E019F5513700ED3B74 /* Int8+Deserializable.swift in Sources */,
 				05585BDF1D0CA475000F5307 /* CharacteristicProfile.swift in Sources */,
 				05585BD21D0CA437000F5307 /* Service.swift in Sources */,
-				05D3B9461A2BA162008E794E /* StringExtensions.swift in Sources */,
+				05D3B9461A2BA162008E794E /* String+BlueCap.swift in Sources */,
 				05BF91A91CFBF62700B78B12 /* FLLogger.swift in Sources */,
 				05BF91AA1CFBF62700B78B12 /* FLRegion.swift in Sources */,
 				05585BCF1D0CA437000F5307 /* CentralManager.swift in Sources */,
@@ -372,7 +372,7 @@
 				05585BE41D0CA4AB000F5307 /* Logger.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
 				05585BE11D0CA475000F5307 /* ServiceProfile.swift in Sources */,
-				05D3B9451A2BA162008E794E /* DoubleExtensions.swift in Sources */,
+				05D3B9451A2BA162008E794E /* Double+BlueCap.swift in Sources */,
 				05585BD81D0CA441000F5307 /* MutableService.swift in Sources */,
 				05BF91AC1CFBF62700B78B12 /* FLSerialIODictionary.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16+Deserializable.swift in Sources */,
