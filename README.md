@@ -277,7 +277,7 @@ carthage update
 	</tr>
 	<tr>
 		<td><a href="Examples/Central">Central</a></td>
-		<td>Central implements the BLE Central role scanning for services advertising [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-110). When a peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
+		<td>Central implements the BLE Central role scanning for services advertising TiSensorTag Accelerometer Service. When a peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
 	</tr>
 	<tr>
 		<td><a href="Examples/CentralWithProfile">CentralWithProfile</a></td>
@@ -285,7 +285,7 @@ carthage update
 	</tr>
 	<tr>
 		<td><a href="Examples/Peripheral">Peripheral</a></td>
-		<td>Peripheral implements the BLE Peripheral role advertising a (TiSensorTag Accelerometer Service)[BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-110). Peripheral uses the onboard accelerometer to provide data notification updates.</td>
+		<td>Peripheral implements the BLE Peripheral role advertising a TiSensorTag Accelerometer Service. Peripheral uses the onboard accelerometer to provide data notification updates.</td>
 	</tr>
 	<tr>
 		<td><a href="Examples/PeripheralWithIndication">PeripheralWithIndication</a></td>
