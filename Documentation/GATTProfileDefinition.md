@@ -1,6 +1,6 @@
 # <a name="gatt">GATT Profile Definition</a>
 
-GATT profile definitions are required to add support for a device to the BlueCap app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure Services and Characteristics and provides serialization and deserialization of Characteristic values to and from Strings. The examples in this section are also available in a BlueCap [Playground](https://github.com/troystribling/BlueCap/tree/master/BlueCap/Profile.playground)
+GATT profile definitions are required to add support for a device to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure Services and Characteristics and provides serialization and deserialization of Characteristic values to and from Strings. The examples in this section are also available in a [Playground project](/Playgrounds).
 
 ## Use Cases
 

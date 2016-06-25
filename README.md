@@ -182,29 +182,29 @@ First the Characteristics and Service are created,
 ```swift
 // create accelerometer service
 let accelerometerService = 
-  MutableService(
-    profile:  ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
+    MutableService(
+      profile:  ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
 
 // create accelerometer data characteristic
 let accelerometerDataCharacteristic =
-  MutableCharacteristic(
-    profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+    MutableCharacteristic(
+      profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
   
 // create accelerometer enabled characteristic
 let accelerometerEnabledCharacteristic = 
-  MutableCharacteristic(
-    profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+    MutableCharacteristic(
+      profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
   
 // create accelerometer update period characteristic
 let accelerometerUpdatePeriodCharacteristic = 
-  MutableCharacteristic(
-    profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
+    MutableCharacteristic(
+      profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
 
 // add characteristics to service
 accelerometerService.characteristics = 
-  [accelerometerDataCharacteristic,
-   accelerometerEnabledCharacteristic,
-   accelerometerUpdatePeriodCharacteristic]
+    [accelerometerDataCharacteristic,
+     accelerometerEnabledCharacteristic,
+     accelerometerUpdatePeriodCharacteristic]
 ```
 
 Next respond to write events on the Enabled characteristic,
@@ -217,10 +217,10 @@ accelerometerEnabledFuture.onSuccess { request in
 	if request.value.length == 1 {
 		accelerometerEnabledCharacteristic.value = request.value
 		accelerometerEnabledCharacteristic.respondToRequest(
-		  request, withResult: CBATTError.Success)
+		    request, withResult: CBATTError.Success)
 	} else {
 	    accelerometerEnabledCharacteristic.respondToRequest(
-	      request, withResult: CBATTError.InvalidAttributeValueLength)
+	        request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
@@ -229,13 +229,13 @@ and respond to write events on the Update Period characteristic,
 
 ```swift
 let accelerometerUpdatePeriodFuture =
-  accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
+    accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
   
 accelerometerUpdatePeriodFuture.onSuccess { request in
 	if request.value.length > 0 && request.value.length <= 8 {
-		accelerometerUpdatePeriodCharacteristic.value = request.value
-		accelerometerUpdatePeriodCharacteristic.respondToRequest(
-		  request, withResult: CBATTError.Success)
+		  accelerometerUpdatePeriodCharacteristic.value = request.value
+		  accelerometerUpdatePeriodCharacteristic.respondToRequest(
+		      request, withResult: CBATTError.Success)
 	} else {
 	    accelerometerUpdatePeriodCharacteristic.respondToRequest(
           request, withResult: CBATTError.InvalidAttributeValueLength)

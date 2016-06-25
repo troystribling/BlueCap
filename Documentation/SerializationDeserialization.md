@@ -1,6 +1,6 @@
 ## <a name="serde">Serialization/Deserialization</a>
 
-Serialization and deserialization of device messages to and from `NSData` objects requires `protocol` implementations that structurally define the message objects. Example implementations of each `protocol` can be found in the [TiSensorTag GATT Profile](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift). Methods used for serialization and deserialization are class methods on the `SerDe`. In the following sections an example for each `protocol` will be discussed. All of the examples shown here are available in a [Playground Project](Playgrounds).
+Serialization and deserialization of device messages to and from `NSData` objects requires `protocol` implementations that structurally define the message objects. Example implementations of each `protocol` can be found in the [TiSensorTag GATT Profile](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift). Methods used for serialization and deserialization are class methods on the `SerDe`. In the following sections an example for each `protocol` will be discussed. All of the examples shown here are available in a [Playground project](/Playgrounds).
 
 ## Use Cases
 
