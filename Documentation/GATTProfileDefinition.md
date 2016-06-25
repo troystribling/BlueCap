@@ -10,10 +10,10 @@ GATT profile definitions are required to add support for a device to the [BluCap
 * [ServiceProfile](#gatt_serviceprofile): Define an unconfigured `ServiceProfile`.
 * [ConfiguredServiceProfile](#gatt_configuredserviceprofile): Define a `ServiceProfile` with configuration.
 * [CharacteristicProfile](#gatt_characteristicprofile): `CharacteristicProfile` base class.
-* [RawCharacteristicProfile](#gatt_rawcharacteristicprofile): Define a `CharacteristicProfile` for messages supporting `RawDeserializable`.
-* [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile): Define a `CharacteristicProfile `for messages supporting RawArrayDeserializable.
-* [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a `CharacteristicProfile` for messages supporting `RawPairDeserializable`.
-* [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a 'CharacteristicProfile` for messages supporting `RawArrayPairDeserializable`.
+* [RawCharacteristicProfile](#gatt_rawcharacteristicprofile): Define a `CharacteristicProfile` for messages supporting (/[`RawDeserializable`](Documentation/SerializationDeserialization.md/#serde_rawdeserializable).
+* [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile): Define a `CharacteristicProfile `for messages supporting [`RawArrayDeserializable`](/Documentation/SerializationDeserialization.md/#serde_rawarraydeserializable).
+* [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a `CharacteristicProfile` for messages supporting [`RawPairDeserializable`](Documentation/SerializationDeserialization.md/#serde_rawpairdeserializable).
+* [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a `CharacteristicProfile` for messages supporting [`RawArrayPairDeserializable`](Documentation/SerializationDeserialization.md/#serde_rawarraypairdeserializable).
 * [StringCharacteristicProfile](#gatt_stringcharacteristicprofile): Define a `CharacteristicProfile` for `String` messages.
 * [ProfileManager](#gatt_profilemanager): Manage access to profiles in a application.
 * [Add Profile to BlueCap App](#gatt_add_profile): How t add a GATT profile to the BlueCap app.

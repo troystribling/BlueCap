@@ -72,7 +72,7 @@ public protocol Deserializable {
 	</tr>
 </table>
 
-BlueCalKit provides implementation of Deserializable for [UInt8](BlueCapKit/SerDe/Uint8Extensions.swift), [Int8](BlueCapKit/SerDe/Int8Extensions.swift), [UInt16](BlueCapKit/SerDe/UInt16Extensions.swift), [Int16](BlueCapKit/SerDe/Int16Extensions.swift), [Int32](BlueCapKit/SerDe/Int32Extensions.swift) and [UInt32](BlueCapKit/SerDe/UInt32Extensions.swift). The`SerDe` serialize and deserialize are defined by,
+BlueCalKit provides implementation of `Deserializable` for [UInt8](BlueCapKit/SerDe/Uint8Extensions.swift), [Int8](BlueCapKit/SerDe/Int8Extensions.swift), [UInt16](BlueCapKit/SerDe/UInt16Extensions.swift), [Int16](BlueCapKit/SerDe/Int16Extensions.swift), [Int32](BlueCapKit/SerDe/Int32Extensions.swift) and [UInt32](BlueCapKit/SerDe/UInt32Extensions.swift). The`SerDe` serialize and deserialize are defined by,
 
 ```swift
 // Deserialize objects supporting Deserializable
@@ -130,7 +130,7 @@ public static func deserialize<T: RawDeserializable where T.RawType: Deserializa
 public static func serialize<T: RawDeserializable>(value: T) -> NSData
 ```
 
-Note that `RawType` is required to be `Deserializable`. An Enum partially supports RawDeserializable, so,
+Note that `RawType` is required to be `Deserializable`. An Enum partially supports `RawDeserializable`, so,
 
 ```swift
 enum Enabled : UInt8, RawDeserializable {
@@ -292,7 +292,7 @@ public static func deserialize<T: RawPairDeserializable where T.RawType1: Deseri
 public static func serialize<T: RawPairDeserializable>(value: T) -> NSData
 ```
 
-Note that `RawType1` and `RawType2` are required to be `Deserializable` to be deserialized. 1RawPairDeserializable` can be implemented in a struct or class.
+Note that `RawType1` and `RawType2` are required to be `Deserializable`. `RawPairDeserializable` can be implemented in a struct or class.
 
 ```swift
 struct RawPairValue : RawPairDeserializable {
@@ -375,7 +375,7 @@ public static func deserialize<T: RawArrayPairDeserializable where T.RawType1: D
 public static func serialize<T: RawArrayPairDeserializable>(value:T) -> NSData
 ```
 
-Note that `RawType1` and `RawType2` are required to be `Deserializable` to be deserialized. `RawArrayPairDeserializable` can be implemented in a struct or class.
+Note that `RawType1` and `RawType2` are required to be `Deserializable`. `RawArrayPairDeserializable` can be implemented in a struct or class.
 
 ```swift
 struct RawArrayPairValue : RawArrayPairDeserializable {
