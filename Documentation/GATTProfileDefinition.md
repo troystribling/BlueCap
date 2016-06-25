@@ -1,31 +1,32 @@
 # <a name="gatt">GATT Profile Definition</a>
 
-GATT profile definitions are required to add support for a device to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure Services and Characteristics and provides serialization and deserialization of Characteristic values to and from Strings. The examples in this section are also available in a [Playground project](/Playgrounds).
+GATT profile definitions are required to add support for a device to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure `Services` and `Characteristics` as the are created and provides serialization and deserialization of `Characteristic` values to and from Strings. The examples in this section are also available in a [Playground project](/Playgrounds).
 
 ## Use Cases
 
-* [ServiceConfigurable Protocol](#gatt_serviceconfigurable): Define a service configuration.
-* [CharacteristicConfigurable Protocol](#gatt_characteristicconfigurable): Define a characteristic configuration.
-* [StringDeserializable Protocol](#gatt_stringdeserializable): Convert characteristic values to strings.
-* [ConfiguredServiceProfile](#gatt_configuredserviceprofile): Define a service profile.
-* [CharacteristicProfile](#gatt_characteristicprofile): Characteristic profile base class.
-* [RawCharacteristicProfile](#gatt_rawcharacteristicprofile): Define a characteristic profile for messages supporting RawDeserializable. 
-* [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile): Define a characteristic profile for messages supporting RawArrayDeserializable.
-* [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic profile for messages supporting RawPairDeserializable.
-* [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a characteristic profile for messages supporting RawArrayPairDeserializable.
-* [StringCharacteristicProfile](#gatt_stringcharacteristicprofile): Define a characteristic profile for String messages.
-* [ProfileManager](#gatt_profilemanager): How the BlueCap app manages GATT profiles.
-* [Add Profile to BlueCap App](#gatt_add_profile): Add a GATT profile to the BlueCap app.
+* [ServiceConfigurable Protocol](#gatt_serviceconfigurable): Define a `ServiceProfile` configuration.
+* [CharacteristicConfigurable Protocol](#gatt_characteristicconfigurable): Define a `CharacteristicProfile` configuration.
+* [StringDeserializable Protocol](#gatt_stringdeserializable): Convert `Characteristic` values to `Strings`.
+* [ServiceProfile](#gatt_serviceprofile): Define an unconfigured `ServiceProfile`.
+* [ConfiguredServiceProfile](#gatt_configuredserviceprofile): Define a `ServiceProfile` with configuration.
+* [CharacteristicProfile](#gatt_characteristicprofile): `CharacteristicProfile` base class.
+* [RawCharacteristicProfile](#gatt_rawcharacteristicprofile): Define a `CharacteristicProfile` for messages supporting `RawDeserializable`.
+* [RawArrayCharacteristicProfile](#gatt_rawarraycharacteristicprofile): Define a `CharacteristicProfile `for messages supporting RawArrayDeserializable.
+* [RawPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a `CharacteristicProfile` for messages supporting `RawPairDeserializable`.
+* [RawArrayPairCharacteristicProfile](#gatt_rawpaircharacteristicprofile): Define a 'CharacteristicProfile` for messages supporting `RawArrayPairDeserializable`.
+* [StringCharacteristicProfile](#gatt_stringcharacteristicprofile): Define a `CharacteristicProfile` for `String` messages.
+* [ProfileManager](#gatt_profilemanager): Manage access to profiles in a application.
+* [Add Profile to BlueCap App](#gatt_add_profile): How t add a GATT profile to the BlueCap app.
 
 ## <a name="gatt_serviceconfigurable">ServiceConfigurable Protocol</a>
 
-The ServiceConfigurable protocol is used to specify Service configuration and is defined by,
+The `ServiceConfigurable` `protocol` is used to specify `Service` configuration and defined by,
 
 ```swift
 public protocol ServiceConfigurable {
-    static var name  : String {get}
-    static var uuid  : String {get}
-    static var tag   : String {get}
+    static var name: String {get}
+    static var UUID: String {get}
+    static var tag: String {get}
 }
 ```
 
@@ -37,7 +38,7 @@ public protocol ServiceConfigurable {
 		<td>Service name</td>
 	</tr>
   <tr>
-		<td>uuid</td>
+		<td>UUID</td>
 		<td>Service UUID</td>
   </tr>
   <tr>
@@ -48,15 +49,15 @@ public protocol ServiceConfigurable {
 
 ## <a name="gatt_characteristicconfigurable">CharacteristicConfigurable Protocol</a>
 
-The CharacteristicConfigurable is used to specify Characteristic configuration and is defined by,
+The `CharacteristicConfigurable` `protocol` is used to specify `Characteristic` configuration and defined by,
 
 ```swift
 public protocol CharacteristicConfigurable {
-    static var name          : String {get}
-    static var uuid          : String {get}
-    static var permissions   : CBAttributePermissions {get}
-    static var properties    : CBCharacteristicProperties {get}
-    static var initialValue  : NSData? {get}
+    static var name: String {get}
+    static var UUID: String {get}
+    static var permissions: CBAttributePermissions {get}
+    static var properties: CBCharacteristicProperties {get}
+    static var initialValue: NSData? {get}
 }
 ```
 
@@ -68,7 +69,7 @@ public protocol CharacteristicConfigurable {
 		<td>Characteristic name</td>
 	</tr>
   <tr>
-		<td>uuid</td>
+		<td>UUID</td>
 		<td>Characteristic UUID</td>
   </tr>
   <tr>
@@ -87,13 +88,13 @@ public protocol CharacteristicConfigurable {
 
 ## <a name="gatt_stringdeserializable">StringDeserializable Protocol</a>
 
-The StringDeserializable protocol is used to specify conversion of rawValues to Strings and is defined by,
+The `StringDeserializable` `protocol` is used to specify conversion of rawValues to `Strings` and is defined by,
 
 ```swift
 public protocol StringDeserializable {
-    static var stringValues : [String] {get}
-    var stringValue         : [String:String] {get}
-    init?(stringValue:[String:String])
+    static var stringValues: [String] {get}
+    var stringValue: [String:String] {get}
+    init?(stringValue: [String:String])
 }
 ```
 
@@ -109,46 +110,56 @@ public protocol StringDeserializable {
 		<td>The String values of the rawType</td>
   </tr>
   <tr>
-		<td>init?(stringValue:[String:String])</td>
+		<td>init?(stringValue: [String:String])</td>
 		<td>Create object from stringValue</td>
   </tr>
 </table>
 
+## <a name="gatt_serviceprofile">ServiceProfile</a>
+
+A `ServiceProfile` is used to define `Service` configuration. It can be used to instantiate either `Service` or `MutableService` objects. 
+
+```swift
+let serviceProfile = ServiceProfile(UUID: "F000AA10-0451-4000-B000-000000000000", name: "Cool Service", rage) 
+```
+
+The `CharacteristicProfiles` belonging to a `ServiceProfile` are added using a method defined on `ServiceProfile`,
+
+```swift
+public func addCharacteristic(characteristicProfile: CharacteristicProfile)
+```
+
 ## <a name="gatt_configuredserviceprofile">ConfiguredServiceProfile</a>
 
-A ConfiguredServiceProfile object encapsulates a service configuration and can be used to instantiate either Service or MutableService objects. 
+A `ConfiguredServiceProfile` object encapsulates a `Service` configuration and is a subclass of `ServiceProfile`. It can be used to instantiate either `Service` or `MutableService` objects. 
 
 ```swift
 struct AccelerometerService : ServiceConfigurable  {
-  static let uuid  = "F000AA10-0451-4000-B000-000000000000"
-  static let name  = "TI Accelerometer"
-  static let tag   = "TI Sensor Tag"
+  static let UUID = "F000AA10-0451-4000-B000-000000000000"
+  static let name = "TI Accelerometer"
+  static let tag = "TI Sensor Tag"
 }
 ```
 
 ```swift
 let serviceProfile = ConfiguredServiceProfile<AccelerometerService>() 
 ```
-
-The CharacteristicProfiles belonging to a ServiceProfile are added using the method,
-
-```swift
-public func addCharacteristic(characteristicProfile:CharacteristicProfile)
-```
  
 ## <a name="gatt_characteristicprofile">CharacteristicProfile</a>
 
-CharacteristicProfile is the base class for each of the following profile types and is instantiated as the characteristic profile if a profile is not explicitly defined for a discovered Characteristic. In this case, with no String conversions implemented in a GATT Profile definition, a Characteristic will support String conversions to a from hexadecimal Strings.
+`CharacteristicProfile` is the base class for `CharacteristicProfile` types and is instantiated as the default Characteristic profile if one has not explicitly defined for a discovered `Characteristic`. In this case, with no `String` conversions implemented in a GATT Profile definition, a `Characteristic` will support the default `String` conversions to and from `NSData` using hexadecimal Strings. It can be used to instantiate either `Characteristic` or `MutableCharacteristic` objects.
 
-When defining a GATT profile it is sometimes convenient to specify that something be done after a Characteristic is discovered by a Central.
+When defining a GATT profile it is sometimes convenient to specify that something be done after a `Characteristic` is discovered by a `Central`. This can be accomplished using the `CharacteristicProfile` method,
 
 ```swift
-public func afterDiscovered(capacity:Int?) -> FutureStream<Characteristic>
+public func afterDiscovered(capacity: Int?) -> FutureStream<Characteristic>
 ```
 
 ## <a name="gatt_rawcharacteristicprofile">RawCharacteristicProfile</a>
 
-A RawCharacteristicProfile object encapsulates configuration and String conversions for a Characteristic implementing [RawDeserializable](#serde_rawdeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
+A `RawCharacteristicProfile` object encapsulates configuration and serialization/desserialization for a `Characteristic` implementing [RawDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects and is a subclass of `CharacteristicProfile`
+
+The `CharacteristicProfile` type for the [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) Enabled `Characteristic` implementing `RawDeserializable`, `StringDeserializable`, `CharacteristicConfigurable` is given by,
 
 ```swift
 enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
@@ -156,7 +167,7 @@ enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicCon
   case Yes    = 1
 
   // CharacteristicConfigurable
-  static let uuid = "F000AA12-0451-4000-B000-000000000000"
+  static let UUID = "F000AA12-0451-4000-B000-000000000000"
   static let name = "Accelerometer Enabled"
   static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
   static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
@@ -199,12 +210,12 @@ let profile = RawCharacteristicProfile<Enabled>()
 
 ## <a name="gatt_rawarraycharacteristicprofile">RawArrayCharacteristicProfile</a>
 
-A RawArrayCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing [RawArrayDeserializable](#serde_rawarraydeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
+A RawArrayCharacteristicProfile object encapsulates configuration and serialization/deserialization for a characteristic implementing [RawArrayDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawarraydeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects. An example profile for an `[Int8]` raw value implementing `RawArrayDeserializable`, `CharacteristicConfigurable` and `StringDeserializable` is given by,
 
 ```swift
 struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
   // CharacteristicConfigurable
-  static let uuid = "F000AA11-0451-4000-B000-000000000000"
+  static let UUID = "F000AA11-0451-4000-B000-000000000000"
   static let name = "Accelerometer Data"
   static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
   static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
@@ -251,12 +262,12 @@ let profile = RawArrayCharacteristicProfile<ArrayData>()
 
 ## <a name="gatt_rawpaircharacteristicprofile">RawPairCharacteristicProfile</a>
 
-A RawPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing [RawPairDeserializable](#serde_rawpairdeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
+A RawPairCharacteristicProfile object encapsulates configuration and serialization/deserialization for a characteristic implementing [RawPairDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawpairdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects. An example profile for `UInt8` and `Int8` raw values implementing `RawPairDeserializable`, `CharacteristicConfigurable` and `StringDeserializable` is given by,
 
 ```swift
 struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
   // CharacteristicConfigurable
-  static let uuid = "F000AA30-0451-4000-B000-000000000000"
+  static let UUID = "F000AA30-0451-4000-B000-000000000000"
   static let name = "Magnetometer Data"
   static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
   static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
@@ -300,12 +311,12 @@ let profile = RawPairCharacteristicProfile<PairData>()
 
 ## <a name="gatt_rawarraypaircharacteristicprofile">RawArrayPairCharacteristicProfile</a>
 
-A RawArrayPairCharacteristicProfile object encapsulates configuration and String conversions for a characteristic implementing [RawArrayPairDeserializable](#serde_rawarraypairdeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects.
+A `RawArrayPairCharacteristicProfile` object encapsulates configuration and serialization/deserialization for a characteristic implementing [RawArrayPairDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawarraypairdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects. An example profile for `[UInt8]` and `[Int8]` raw values implementing `RawArrayPairDeserializable`, `CharacteristicConfigurable` and `StringDeserializable` is given by,
 
 ```swift
 struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
   // CharacteristicConfigurable
-  static let uuid = "F000AA11-0451-4000-B000-000000000000"
+  static let UUID = "F000AA11-0451-4000-B000-000000000000"
   static let name = "Accelerometer Data"
   static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
   static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
@@ -314,7 +325,7 @@ static let initialValue : NSData? = Serde.serialize()
 	// RawArrayPairDeserializable
 	let rawValue1 : [UInt8]
 	let rawValue2 : [Int8]
-	static let uuid = "F000AA13-0451-4000-B000-000000000000"
+	static let UUID = "F000AA13-0451-4000-B000-000000000000"
 	static let size1 = 2
 	static let size2 = 2
 
@@ -362,12 +373,12 @@ let profile = RawArrayPairCharacteristicProfile<ArrayPairData>()
 
 ## <a name="gatt_stringcharacteristicprofile">StringCharacteristicProfile</a>
 
-A String Profile only requires the implementation of CharacteristicConfigurable
+A `StringCharacteristicProfile` only requires the implementation of CharacteristicConfigurable
 
 ```swift
 struct SerialNumber : CharacteristicConfigurable {
   // CharacteristicConfigurable
-  static let uuid = "2a25"
+  static let UUID = "2a25"
   static let name = "Device Serial Number"
   static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
   static let properties   = CBCharacteristicProperties.Read
@@ -383,34 +394,45 @@ let profile = StringCharacteristicProfile<SerialNumber>()
 
 ## <a name="gatt_profilemanager">ProfileManager</a>
 
-ProfileManager is used by the BlueCap app as a repository of GATT profiles to be used to instantiate Services and Characteristics. ProfileManager can be used in an implementation but is not required.
+`ProfileManager` is used by the `BlueCap` app as a repository of GATT profiles to be used to instantiate `Services` and `Characteristics`. `ProfileManager` can be used in any application but is not required the framework.
 
-To add ServiceProfiles and CharacteristicProfiles to ProfileManager,
+A `ServiceProfile` is added to `ProfileManager` using a method defined on `ProfileManager`,
+
+```swift
+public func addService(serviceProfile: ServiceProfile) -> ServiceProfile 
+```
+
+To add `ServiceProfiles` and `CharacteristicProfiles` to `ProfileManager`,
 
 ```swift
 let profileManager = ProfileManager.sharedInstance
 
+// create service profile
 let serviceProfile = ConfiguredServiceProfile<AccelerometerService>()
 
+// create characteristic profiles
 let enabledProfile = RawCharacteristicProfile<Enabled>()
 let rawArrayProfile = RawArrayCharacteristicProfile<ArrayData>()
 
+// add characteristic profiles to service profile
 serviceProfile.addCharacteristic(enabledProfile)
 serviceProfile.addCharacteristic(rawArrayProfile)
 
+// add service profile too profile manager
 profileManager.addService(serviceProfile)
 ```
 
 ## <a name="gatt_add_profile">Add Profile to BlueCap App</a>
 
-To add a GATT Profile to the BlueCap app you need to add a file to the project containing all Service and Characteristic profile definitions with public access level. See [GnosusProfiles](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/GnosusProfiles.swift) in the BlueCap Project fro an example. A very simple but illustrative example is to consider a Service with a single Characteristic.
+To add a GATT Profile to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app you need to add a file to the project containing all `ServiceProfiles` and `CharacteristicProfiles`  with public access level. See [GnosusProfiles](/BlueCapKit/Service%20Profile%20Definitions/GnosusProfiles.swift) in the BlueCap Project for an example. A very example is to consider a Service with a single Characteristic.
+
 
 ```swift
 public struct MyServices {
     
     // Service
     public struct NumberService : ServiceConfigurable  {
-        public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
+        public static let UUID  = "F000AA10-0451-4000-B000-000000000000"
         public static let name  = "NumberService"
         public static let tag   = "My Services"
     }
@@ -424,7 +446,7 @@ public struct MyServices {
             self.rawValue = rawValue
         }
         
-        public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+        public static let UUID = "F000AA12-0451-4000-B000-000000000000"
         public static let name = "Number"
         public static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
         public static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
@@ -463,5 +485,4 @@ Next place,
 MyServices.create()
 ```
 
-in the BlueCap [AppDelegate.swift](https://github.com/troystribling/BlueCap/blob/master/BlueCap/AppDelegate.swift#L37-40) and rebuild the app.
-
+in the BlueCap [AppDelegate.swift](/Examples/BlueCap/BlueCap/AppDelegate.swift#L57-60) and rebuild the app.

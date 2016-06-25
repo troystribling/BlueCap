@@ -90,6 +90,10 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     }
 }
 
+if let value = ArrayData(rawValue: [1, 100]) {
+    print(value.rawValue)
+}
+
 if let value = ArrayData(stringValue:["value1":"1", "value2":"100"]) {
     print(value.stringValue)
 }
