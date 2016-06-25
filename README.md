@@ -229,8 +229,8 @@ and respond to write events on the Update Period characteristic,
 
 ```swift
 let accelerometerUpdatePeriodFuture =
-
   accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
+  
 accelerometerUpdatePeriodFuture.onSuccess { request in
 	if request.value.length > 0 && request.value.length <= 8 {
 		accelerometerUpdatePeriodCharacteristic.value = request.value
