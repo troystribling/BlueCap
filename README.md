@@ -180,19 +180,22 @@ A simple Peripheral application that emulates a [TiSensorTag Accelerometer Servi
 First the Characteristics and Service are created,
 
 ```swift
-// create service and characteristics using profile definitions
+// create accelerometer service
 let accelerometerService = 
   MutableService(
     profile:  ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
 
+// create accelerometer data characteristic
 let accelerometerDataCharacteristic =
   MutableCharacteristic(
     profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
   
+// create accelerometer enabled characteristic
 let accelerometerEnabledCharacteristic = 
   MutableCharacteristic(
     profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
   
+// create accelerometer update period characteristic
 let accelerometerUpdatePeriodCharacteristic = 
   MutableCharacteristic(
     profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
@@ -216,8 +219,8 @@ accelerometerEnabledFuture.onSuccess { request in
 		accelerometerEnabledCharacteristic.respondToRequest(
 		  request, withResult: CBATTError.Success)
 	} else {
-	  accelerometerEnabledCharacteristic.respondToRequest(
-	    request, withResult: CBATTError.InvalidAttributeValueLength)
+	    accelerometerEnabledCharacteristic.respondToRequest(
+	      request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
