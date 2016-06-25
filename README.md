@@ -258,7 +258,7 @@ let startAdvertiseFuture = manager.powerOn().flatmap { _ -> Future<Void> in
 
 ## Examples
 
-[Examples](Examples) are available that implement both Central and Peripheral roles. The [BluCap app](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require that,
+[Examples](Examples) are available that implement both Central and Peripheral roles. The [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require that,
 
 ```bash
 pod install
