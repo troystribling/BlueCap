@@ -225,13 +225,17 @@ accelerometerEnabledFuture.onSuccess { request in
 and respond to write events on the Update Period characteristic,
 
 ```swift
-let accelerometerUpdatePeriodFuture = accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
+let accelerometerUpdatePeriodFuture =
+
+  accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
 accelerometerUpdatePeriodFuture.onSuccess { request in
 	if request.value.length > 0 && request.value.length <= 8 {
 		accelerometerUpdatePeriodCharacteristic.value = request.value
-		accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult: CBATTError.Success)
+		accelerometerUpdatePeriodCharacteristic.respondToRequest(
+		  request, withResult: CBATTError.Success)
 	} else {
-    accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult: CBATTError.InvalidAttributeValueLength)
+    accelerometerUpdatePeriodCharacteristic.respondToRequest(
+      request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
 ```
