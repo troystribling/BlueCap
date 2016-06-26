@@ -16,7 +16,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 - Characteristic read/write timeout.
 - A DSL for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
-- [Example](Examples) applications implementing Central and Peripheral.
+- [Example](/Examples) applications implementing Central and Peripheral roles.
 - A full featured extendable Central scanner and Peripheral emulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
 - Thread safe.
 - Comprehensive test coverage.
@@ -217,12 +217,12 @@ let accelerometerEnabledFuture =
   self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests()
   
 accelerometerEnabledFuture.onSuccess { request in  
-	if request.value.length == 1 {
-		accelerometerEnabledCharacteristic.value = request.value
-		accelerometerEnabledCharacteristic.respondToRequest(
-		    request, withResult: CBATTError.Success)
-	} else {
-	    accelerometerEnabledCharacteristic.respondToRequest(
+    if request.value.length == 1 {
+        accelerometerEnabledCharacteristic.value = request.value
+        accelerometerEnabledCharacteristic.respondToRequest(
+		      request, withResult: CBATTError.Success)
+    } else {
+        accelerometerEnabledCharacteristic.respondToRequest(
 	        request, withResult: CBATTError.InvalidAttributeValueLength)
 	}
 }
@@ -235,9 +235,9 @@ let accelerometerUpdatePeriodFuture =
     accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
   
 accelerometerUpdatePeriodFuture.onSuccess { request in
-	if request.value.length > 0 && request.value.length <= 8 {
-		  accelerometerUpdatePeriodCharacteristic.value = request.value
-		  accelerometerUpdatePeriodCharacteristic.respondToRequest(
+    if request.value.length > 0 && request.value.length <= 8 {
+        accelerometerUpdatePeriodCharacteristic.value = request.value
+        accelerometerUpdatePeriodCharacteristic.respondToRequest(
 		      request, withResult: CBATTError.Success)
 	} else {
 	    accelerometerUpdatePeriodCharacteristic.respondToRequest(
@@ -281,23 +281,23 @@ carthage update
 
 <table>
 	<tr>
-		<td><a href="Examples/BlueCap">BlueCap</a></td>
+		<td><a href="/Examples/BlueCap">BlueCap</a></td>
 		<td>BlueCap provides Central, Peripheral and iBeacon Ranging Bluetooth LE functions and implementations of GATT profiles. In Central mode a scanner for Bluetooth LE peripherals is provided. In peripheral mode an emulation of any of the included GATT profiles or an iBeacon is supported. In iBeacon Ranging mode beacon regions can be configured and monitored.</td>
 	</tr>
 	<tr>
-		<td><a href="Examples/Central">Central</a></td>
+		<td><a href="/Examples/Central">Central</a></td>
 		<td>Central implements the BLE Central role scanning for services advertising TiSensorTag Accelerometer Service. When a peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
 	</tr>
 	<tr>
-		<td><a href="Examples/CentralWithProfile">CentralWithProfile</a></td>
+		<td><a href="/Examples/CentralWithProfile">CentralWithProfile</a></td>
 		<td>A version of Central that uses GATT Profile Definitions to create services.</td>
 	</tr>
 	<tr>
-		<td><a href="Examples/Peripheral">Peripheral</a></td>
+		<td><a href="/Examples/Peripheral">Peripheral</a></td>
 		<td>Peripheral implements the BLE Peripheral role advertising a TiSensorTag Accelerometer Service. Peripheral uses the onboard accelerometer to provide data notification updates.</td>
 	</tr>
 	<tr>
-		<td><a href="Examples/PeripheralWithIndication">PeripheralWithIndication</a></td>
+		<td><a href="/Examples/PeripheralWithIndication">PeripheralWithIndication</a></td>
 		<td>A version of Peripheral that uses indications instead of notifications.</td>
 	</tr>
 	<tr>
@@ -305,7 +305,7 @@ carthage update
 		<td>A version of Peripheral that uses GATT Profile Definitions to create services.</td>
 	</tr>
 	<tr>
-		<td><a href="Examples/Beacon">Beacon</a></td>
+		<td><a href="/Examples/Beacon">Beacon</a></td>
 		<td>iBean implements a Peripheral role emulating an iBeacon.</td>
 	</tr>
 </table>
