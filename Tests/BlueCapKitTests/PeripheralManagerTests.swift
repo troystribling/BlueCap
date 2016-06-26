@@ -43,6 +43,16 @@ class PeripheralManagerTests: XCTestCase {
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
+    func testWhenPowerOn_WithBluetoothUnsupported_CompletesWithFailure() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
+        let future = peripheralManager.whenPowerOn()
+        mock.state = .Unsupported
+        peripheralManager.didUpdateState()
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+            XCTAssertEqual(error.code, BCError.centralStateUnsupported.code)
+        }
+    }
+
     // MARK: Power off
     func testWhenPowerOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)

@@ -81,7 +81,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    // TODO: should be updated in IO queue
     public private(set) var isScanning: Bool {
         get {
             return PeripheralManager.ioQueue.sync { return self._isScanning }
@@ -379,6 +378,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .Unsupported:
             Logger.debug("Unsupported")
+            if !self.afterPowerOnPromise.completed {
+                self.afterPowerOnPromise.failure(BCError.centralStateUnsupported)
+            }
             break
         case .Resetting:
             Logger.debug("Resetting")

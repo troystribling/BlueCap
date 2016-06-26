@@ -426,6 +426,9 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         case .Resetting:
             break
         case .Unsupported:
+            if !self.afterPowerOnPromise.completed {
+                self.afterPowerOnPromise.failure(BCError.peripheralStateUnsupported)
+            }
             break
         case .Unauthorized:
             break

@@ -1,8 +1,8 @@
 # <a name="central">CentralManager</a>
 
-The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allow chaining asynchronous calls as well as error handling and recovery. Also, provided are callbacks for connection events and connection and service scan timeouts. This section will describe interfaces and give example implementations for all supported use cases.
+The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegate`](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [`CBPeripheralDelegate`](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala Futures interface using [`SimpleFutures`](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks, allow chaining asynchronous calls, error handling and error recovery. Also, provided are callbacks for connection events and connection, service discovery and service scan timeouts. This section will give example implementations for all supported use cases.
 
-## Use Cases
+## Contents
 
 * [PowerOn/PowerOff](#central_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
 * [Service Scanning](#central_service_scanning): Scan for services.
@@ -13,31 +13,35 @@ The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](ht
 * [Characteristic Write](#central_characteristic_write): Write a characteristic value to a connected Peripheral.
 * [Characteristic Read](#central_characteristic_read): Read a characteristic value from a connected Peripheral.
 * [Characteristic Update Notifications](#central_characteristic_update): Subscribe to characteristic value updates on a connected Peripheral.
+* [State Restoration](#central_state_restoration): Restore state of `CentralManager` using iOS state restoration.
+* [Errors](#central_errors): Description of all errors.
+* [KVO](#central_kvo): Properties supporting KVO.
 
 ### <a name="central_poweron_poweroff">PowerOn/PowerOff</a>
 
-The state of the Bluetooth transceiver on a device is communicated to BlueCap CentralManager by the powerOn and powerOff futures,
+The state of the Bluetooth transceiver on a device is communicated to `BlueCap` application by the `CentralManager` methods `whenPowerOn` and `whenPowerOff`, which are defined by,
 
 ```swift
-public func powerOn() -> Future<Void>
-public func powerOff() -> Future<Void>
+public func whenPowerOn() -> Future<Void>
+public func whenPowerOff() -> Future<Void>
 ```
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Void&gt;*. For an application to process events,
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>`. For an application to process events,
 
 ```swift
-let manager = CentralManager.sharedInstance
-let powerOnFuture = manager.powerOn()
+let manager = CentralManager()
+let powerOnFuture = manager.whenPowerOn()
 powerOnFuture.onSuccess {
-  …
 }
-let powerOffFuture = manager.powerOff()
-powerOffFuture.onSuccess {
-	…
+powerOnFuture.onFailure { error in
 }
-``` 
 
-When CentralManager is instantiated a message giving the current Bluetooth transceiver state is received and while the CentralManager is instantiated messages are received if the transceiver is powered or powered off.
+let powerOffFuture = manager.whenPowerOff()
+powerOffFuture.onSuccess {
+}
+```
+
+When `CentralManager` is instantiated a message giving the current Bluetooth transceiver state is received. After instantiation messages are received if the transceiver is powered on or powered off. `whenPowerOff` cannot fail. `whenPowerOn` only fails if Bluetooth is not supported.
 
 ### <a name="central_service_scanning">Service Scanning</a>
 
@@ -49,7 +53,7 @@ public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral>
 
 // Scan for peripherals advertising services with UUIDs
 public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
-``` 
+```
 
 Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *FutureStream&lt;Peripheral&gt;* yielding the discovered Peripheral and take the FutureStream capacity as input.
 
@@ -547,3 +551,9 @@ if let service = peripheral.service(serviceUUID), characteristic = service.chara
 	characteristic.stopNotifying()
 }
 ```
+
+### <a name="central_state_restoration">State Restoration</a>
+
+### <a name="central_errors">Errors</a>
+
+### <a name="central_kvo">KVO</a>

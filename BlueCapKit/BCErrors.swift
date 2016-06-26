@@ -30,6 +30,7 @@ public enum PeripheralManagerErrorCode: Int {
     case IsNotAdvertising = 41
     case AddServiceFailed = 42
     case RestoreFailed = 43
+    case PeripheralStateUnsupported = 54
 }
 
 public enum CentralErrorCode: Int {
@@ -37,6 +38,7 @@ public enum CentralErrorCode: Int {
     case IsPoweredOff = 51
     case RestoreFailed = 52
     case PeripheralScanTimeout = 53
+    case CentralStateUnsupported = 54
 }
 
 public enum ServiceErrorCode: Int {
@@ -68,12 +70,14 @@ public struct BCError {
     public static let peripheralManagerIsNotAdvertising = NSError(domain: domain, code: PeripheralManagerErrorCode.IsNotAdvertising.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral Manager is not Advertising"])
     public static let peripheralManagerAddServiceFailed = NSError(domain: domain, code: PeripheralManagerErrorCode.AddServiceFailed.rawValue, userInfo: [NSLocalizedDescriptionKey:"Add service failed because service peripheral is advertising"])
     public static let peripheralManagerRestoreFailed = NSError(domain: domain, code: PeripheralManagerErrorCode.RestoreFailed.rawValue, userInfo: [NSLocalizedDescriptionKey:"Error unpacking restored state"])
+    public static let peripheralStateUnsupported = NSError(domain: domain, code: PeripheralManagerErrorCode.PeripheralStateUnsupported.rawValue, userInfo: [NSLocalizedDescriptionKey:"Bluetooth not supported"])
 
     // MARKL=: Central
     public static let centralIsScanning = NSError(domain: domain, code: CentralErrorCode.IsScanning.rawValue, userInfo: [NSLocalizedDescriptionKey:"Central is scanning"])
     public static let centralIsPoweredOff = NSError(domain: domain, code: CentralErrorCode.IsPoweredOff.rawValue, userInfo: [NSLocalizedDescriptionKey:"Central is powered off"])
     public static let centralRestoreFailed = NSError(domain: domain, code: CentralErrorCode.RestoreFailed.rawValue, userInfo: [NSLocalizedDescriptionKey:"Error unpacking restored state"])
     public static let centralPeripheralScanTimeout = NSError(domain: domain, code: CentralErrorCode.PeripheralScanTimeout.rawValue, userInfo: [NSLocalizedDescriptionKey:"Peripheral scan timeout"])
+    public static let centralStateUnsupported = NSError(domain: domain, code: CentralErrorCode.CentralStateUnsupported.rawValue, userInfo: [NSLocalizedDescriptionKey:"Bleutooth not supported"])
 
     // MARK: Service
     public static let serviceCharacteristicDiscoveryTimeout = NSError(domain: domain, code: ServiceErrorCode.CharacteristicDiscoveryTimeout.rawValue, userInfo: [NSLocalizedDescriptionKey:"Characteristic discovery timeout"])

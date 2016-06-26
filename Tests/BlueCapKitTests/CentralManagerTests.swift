@@ -25,14 +25,14 @@ class CentralManagerTests: XCTestCase {
     }
 
     // MARK: whenPowerOn
-    func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
+    func testWhenPowerOn_AndPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
-    func testWhenPowerOn_WhenPoweredOff_CompletesSuccessfully() {
+    func testWhenPowerOn_AndPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
@@ -41,8 +41,19 @@ class CentralManagerTests: XCTestCase {
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
+    func testWhenPowerOn_WithBluetoothUnsupported_CompletesWithFailure() {
+        let mock = CBCentralManagerMock(state: .PoweredOff)
+        let centralManager = CentralManager(centralManager: mock)
+        let future = centralManager.whenPowerOn()
+        mock.state = .Unsupported
+        centralManager.didUpdateState()
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+            XCTAssertEqual(error.code, BCError.centralStateUnsupported.code)
+        }
+    }
+
     // MARK: whenPowerOff
-    func testWhenPowerOff_WhenPoweredOn_CompletesSuccessfully() {
+    func testWhenPowerOff_AndPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
@@ -51,7 +62,7 @@ class CentralManagerTests: XCTestCase {
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
-    func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
+    func testWhenPowerOff_AndPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .PoweredOff)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()

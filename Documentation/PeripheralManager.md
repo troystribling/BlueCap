@@ -2,7 +2,7 @@
 
 The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allows chaining asynchronous calls as well as error handling and recovery. This section will describe interfaces and give example implementations for all supported use cases. [Simple example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) can be found in the BlueCap github repository.
 
-## Use Cases
+## Contents
 
 * [PowerOn/PowerOff](#peripheral_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
 * [Add Services and Characteristics](#peripheral_add_characteristics): Add services and characteristics to a Peripheral application.
@@ -11,32 +11,37 @@ The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelega
 * [Update Characteristic Value](#peripheral_update_characteristic_value): Send characteristic value update notifications to Centrals.
 * [Respond to Characteristic Write](#peripheral_respond_characteristic_write): Respond to characterize value writes from a Central.
 * [iBeacon Emulation](#peripheral_ibeacon_emulation): Emulate an iBeacon with a Peripheral application.
+* [State Restoration](#peripheral_state_restoration): Restore state of `PeripheralManager` using iOS state restoration.
+* [Errors](#peripheral_errors): Description of all errors.
+* [KVO](#peripheral_kvo): Properties supporting KVO.
 
-## <a name="peripheral_poweron_poweroff">PowerOn/PowerOff</a>
+### <a name="peripheral_poweron_poweroff">PowerOn/PowerOff</a>
 
-The state of the Bluetooth transceiver on a device is communicated to BlueCap PeripheralManager by the powerOn and powerOff futures,
+The state of the Bluetooth transceiver on a device is communicated to `BlueCap` application by the `PeripheralManager` methods `whenPowerOn` and `whenPowerOff`, which are defined by,
 
 ```swift
-public func powerOn() -> Future<Void>
-public func powerOff() -> Future<Void>
+public func whenPowerOn() -> Future<Void>
+public func whenPowerOff() -> Future<Void>
 ```
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future<Void> yielding Void. For an application to process events,
+
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>`. For an application to process events,
 
 ```swift
-let manager = PeripheralManager.sharedInstance
-let powerOnFuture = manager.powerOn()
+let manager = PeripheralManager()
+let powerOnFuture = manager.whenPowerOn()
 powerOnFuture.onSuccess {
-  …
 }
-let powerOffFuture = manager.powerOff()
+powerOnFuture.onFailure { error in
+}
+
+let powerOffFuture = manager.whenPowerOff()
 powerOffFuture.onSuccess {
-	…
 }
 ```
 
-When PeripheralManager is instantiated a message giving the current bluetooth transceiver state is received and while the PeripheralManager is instantiated messages are received if the transceiver is powered or powered off.
+When `PeripheralManager` is instantiated a message giving the current Bluetooth transceiver state is received. After instantiation messages are received if the transceiver is powered on or powered off. `whenPowerOff` cannot fail. `whenPowerOn` only fails if Bluetooth is not supported.
 
-## <a name="peripheral_add_characteristics">Add Services and Characteristics</a>
+### <a name="peripheral_add_characteristics">Add Services and Characteristics</a>
 
 Services and characteristics are added to a peripheral application before advertising. The BlueCap PeripheralManager methods used for managing services are,
 
@@ -111,7 +116,7 @@ let characteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISe
 
 Here the BlueCap the [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) was used.
 
-## <a name="peripheral_advertising">Advertising</a>
+### <a name="peripheral_advertising">Advertising</a>
 
 After services and characteristics have been added the peripheral is ready to begin advertising using the methods,
 
@@ -149,7 +154,7 @@ startAdvertiseFuture.onFailure {error in
 
 Here the addServiceFuture of the previous section is flatmapped to *startAdvertising(name:String, uuids:[CBUUID]?) -> Future&lt;Void&gt;* ensuring that services and characteristics are available before advertising begins.
 
-## <a name="peripheral_set_characteristic_value">Set Characteristic Value</a>
+### <a name="peripheral_set_characteristic_value">Set Characteristic Value</a>
 
 A BlueCap Characteristic value can be set any time after creation of the Characteristic. The BlueCap MutableCharacteristic methods used are,
 
@@ -166,7 +171,7 @@ A peripheral application can set a characteristic value using,
 characteristic.value = Serde.serialize(Enabled.Yes)
 ```
 
-## <a name="peripheral_update_characteristic_value">Updating Characteristic Value</a>
+### <a name="peripheral_update_characteristic_value">Updating Characteristic Value</a>
 
 If a Characteristic value supports the property CBCharacteristicProperties.Notify a Central can subscribe to value updates. In addition to setting the new value an update notification must be sent. The BlueCap MutableCharacteristic methods used are,
 
@@ -202,7 +207,7 @@ Peripheral applications would send notification updates using,
 characteristic.updateValue(Enabled.No)
 ```
 
-## <a name="peripheral_respond_characteristic_write">Respond to Characteristic Write</a>
+### <a name="peripheral_respond_characteristic_write">Respond to Characteristic Write</a>
 
 If a Characteristic value supports the property CBCharacteristicProperties.Write a Central can change the Characteristic value. The BlueCap MutableCharacteristic methods used are,
 
@@ -239,7 +244,7 @@ Peripheral applications would stop responding to write requests using,
 characteristic.stopProcessingWriteRequests()
 ```
 
-## <a name="peripheral_ibeacon_emulation">iBeacon Emulation</a>
+### <a name="peripheral_ibeacon_emulation">iBeacon Emulation</a>
 
 iBeacon emulation does not require Services and Characteristics. Only advertising is required. The BlueCap PeripheralManager methods used are, 
 
@@ -295,4 +300,10 @@ startAdvertiseFuture.onFailure {error in
 ```
 
 Here the powerOn() -> Future&lt;Void&gt; flatmapped to startAdvertising(region:BeaconRegion) -> Future&lt;Void&gt; ensuring that the bluetooth transceiver is powered on before advertising begins.
+
+### <a name="peripheral_state_restoration">State Restoration</a>
+
+### <a name="peripheral_errors">Errors</a>
+
+### <a name="peripheral_kvo">KVO</a>
 
