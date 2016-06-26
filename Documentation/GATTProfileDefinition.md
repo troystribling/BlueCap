@@ -169,8 +169,8 @@ enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicCon
   // CharacteristicConfigurable
   static let UUID = "F000AA12-0451-4000-B000-000000000000"
   static let name = "Accelerometer Enabled"
-  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+  static let properties: CBCharacteristicProperties = [.Read, .Write]
+  static let permissions: CBAttributePermissions = [.Readable, .Writeable]
   static let initialValue : NSData? = Serde.serialize(Enabled.No.rawValue)
     
   // StringDeserializable
@@ -217,8 +217,8 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
   // CharacteristicConfigurable
   static let UUID = "F000AA11-0451-4000-B000-000000000000"
   static let name = "Accelerometer Data"
-  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+  static let properties: CBCharacteristicProperties = [.Read, .Write]
+  static let permissions: CBAttributePermissions = [.Readable, .Writeable]
   static let initialValue : NSData? = Serde.serialize(ArrayData(rawValue:[1,2])!)
     
   // RawArrayDeserializable
@@ -269,8 +269,8 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
   // CharacteristicConfigurable
   static let UUID = "F000AA30-0451-4000-B000-000000000000"
   static let name = "Magnetometer Data"
-  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+  static let properties: CBCharacteristicProperties = [.Read, .Write]
+  static let permissions: CBAttributePermissions = [.Readable, .Writeable]
   static let initialValue : NSData? = Serde.serialize(PairData(rawValue1:10, rawValue2:-10)!)
     
   // RawPairDeserializable
@@ -318,9 +318,9 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
   // CharacteristicConfigurable
   static let UUID = "F000AA11-0451-4000-B000-000000000000"
   static let name = "Accelerometer Data"
-  static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Notify
-  static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-static let initialValue : NSData? = Serde.serialize()
+  static let properties: CBCharacteristicProperties = [.Read, .Write]
+  static let permissions: CBAttributePermissions = [.Readable, .Writeable]
+  static let initialValue : NSData? = Serde.serialize()
             
 	// RawArrayPairDeserializable
 	let rawValue1 : [UInt8]
@@ -328,8 +328,8 @@ static let initialValue : NSData? = Serde.serialize()
 	static let UUID = "F000AA13-0451-4000-B000-000000000000"
 	static let size1 = 2
 	static let size2 = 2
-
-	init?(rawValue1:[UInt8], rawValue2:[Int8]) {
+	
+  init?(rawValue1:[UInt8], rawValue2:[Int8]) {
 	  if rawValue1.count == 2 && rawValue2.count == 2 {
 	     self.rawValue1 = rawValue1
 	     self.rawValue2 = rawValue2
@@ -380,8 +380,8 @@ struct SerialNumber : CharacteristicConfigurable {
   // CharacteristicConfigurable
   static let UUID = "2a25"
   static let name = "Device Serial Number"
-  static let permissions  = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
-  static let properties   = CBCharacteristicProperties.Read
+  static let permissions: CBAttributePermissions = [.Readable, .Writeable]
+  static let properties: CBCharacteristicProperties = [.Read]
   static let initialValue = Serde.serialize("AAA11")          
 }
 ```
@@ -448,8 +448,8 @@ public struct MyServices {
         
         public static let UUID = "F000AA12-0451-4000-B000-000000000000"
         public static let name = "Number"
-        public static let properties = CBCharacteristicProperties.Read | CBCharacteristicProperties.Write
-        public static let permissions = CBAttributePermissions.Readable | CBAttributePermissions.Writeable
+        public static let properties: CBCharacteristicProperties = [.Read, .Notify]
+        public static let permissions: CBAttributePermissions = [.Readable, .Writeable]
         public static let initialValue : NSData? = Serde.serialize(Int16(22))
         
         public static let stringValues = [String]()

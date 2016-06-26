@@ -22,6 +22,7 @@ The state of the Bluetooth transceiver on a device is communicated to BlueCap Ce
 public func powerOn() -> Future<Void>
 public func powerOff() -> Future<Void>
 ```
+
 Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Void&gt;*. For an application to process events,
 
 ```swift
