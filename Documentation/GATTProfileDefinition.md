@@ -2,7 +2,7 @@
 
 GATT profile definitions are required to add support for a device to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure `Services` and `Characteristics` as the are created and provides serialization and deserialization of `Characteristic` values to and from Strings. The examples in this section are also available in a [Playground project](/Playgrounds).
 
-## Content
+##  Content
 
 * [ServiceConfigurable Protocol](#gatt_serviceconfigurable): Define a `ServiceProfile` configuration.
 * [CharacteristicConfigurable Protocol](#gatt_characteristicconfigurable): Define a `CharacteristicProfile` configuration.
@@ -157,7 +157,7 @@ public func afterDiscovered(capacity: Int?) -> FutureStream<Characteristic>
 
 ### <a name="gatt_rawcharacteristicprofile">RawCharacteristicProfile</a>
 
-A `RawCharacteristicProfile` object encapsulates configuration and serialization/desserialization for a `Characteristic` implementing [RawDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects and is a subclass of `CharacteristicProfile`
+A `RawCharacteristicProfile` object encapsulates configuration and serialization/desserialization for a `Characteristic` implementing [RawDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects and is a subclass of `CharacteristicProfile`.
 
 The `CharacteristicProfile` type for the [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) Enabled `Characteristic` implementing `RawDeserializable`, `StringDeserializable`, `CharacteristicConfigurable` is given by,
 
@@ -244,8 +244,8 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     init?(stringValue:[String:String]) {
         if  let stringValue1 = stringValue["value1"],
                 stringValue2 = stringValue["value2"],
-                value1 = Int8(stringValue:stringValue1),
-                value2 = Int8(stringValue:stringValue2) {
+                value1 = Int8(stringValue: stringValue1),
+                value2 = Int8(stringValue: stringValue2) {
             self.rawValue = [value1, value2]
         } else {
             return nil
@@ -292,8 +292,8 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
     init?(stringValue:[String:String]) {
         if  let stringValue1 = stringValue["value1"],
                 stringValue2 = stringValue["value2"],
-                value1 = UInt8(stringValue:stringValue1),
-                value2 = Int8(stringValue:stringValue2) {
+                value1 = UInt8(stringValue: stringValue1),
+                value2 = Int8(stringValue: stringValue2) {
             self.rawValue1 = value1
             self.rawValue2 = value2
         } else {
@@ -350,12 +350,12 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
     init?(stringValue:[String:String]) {
 	      if  let stringValue11 = stringValue["value11"], 
                    stringValue12 = stringValue["value12"],
-                   value11 = Int8(stringValue:stringValue11),
-                   value12 = Int8(stringValue:stringValue12),
+                   value11 = Int8(stringValue: stringValue11),
+                   value12 = Int8(stringValue: stringValue12),
                    stringValue21 = stringValue["value21"], 
                    stringValue22 = stringValue["value22"]
-                   value21 = Int8(stringValue:stringValue21),
-                   value22 = Int8(stringValue:stringValue22) {
+                   value21 = Int8(stringValue: stringValue21),
+                   value22 = Int8(stringValue: stringValue22) {
             self.rawValue1 = [value11, value12]
             self.rawValue2 = [value21, value22]
         } else {

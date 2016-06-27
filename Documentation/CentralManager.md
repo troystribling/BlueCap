@@ -45,50 +45,49 @@ When `CentralManager` is instantiated a message giving the current Bluetooth tra
 
 ### <a name="central_service_scanning">Service Scanning</a>
 
-Central scans for advertising peripherals are initiated by calling the BlueCap CentralManager methods,
+Scans for advertising peripherals are initiated by calling the BlueCap `CentralManager` methods,
 
 ```swift
 // Scan promiscuously for all advertising peripherals
-public func startScanning(capacity:Int? = nil) -> FutureStream<Peripheral>
+public func startScanning(capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
 
 // Scan for peripherals advertising services with UUIDs
-public func startScanningForServiceUUIDs(uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
+public func startScanningForServiceUUIDs(uuids: [CBUUID]?, capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
 ```
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *FutureStream&lt;Peripheral&gt;* yielding the discovered Peripheral and take the FutureStream capacity as input.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the discovered BlueCap `Peripheral`. Arguments include the `FutureStream` capacity and `CBPripheral` scanning [options](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/#//apple_ref/doc/constant_group/Peripheral_Scanning_Options).
 
-For an application to scan for Peripherals advertising Services with uuids after powerOn,
+An application would start scanning for `Peripherals` advertising `Services` with `UUIDs` after power on with the following,
 
 ```swift
-let manager = CentralManager.sharedInstance
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
+let manager = CentralManager()
+let serviceUUID = CBUUID(string: "F000AA10-0451-4000-B000-000000000000")!
 
-let peripheraDiscoveredFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
-	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
+let peripheraDiscoveredFuture = manager.whenPowerOn().flatmap {
+	manager.startScanningForServiceUUIDs([serviceUUID])
 }
-peripheraDiscoveredFuture.onSuccess {peripheral in
-	…
+peripheraDiscoveredFuture.onSuccess { peripheral in
+}
+peripheraDiscoveredFuture.onFailure { error in
 }
 ```
 
-Here the powerOn future has been flatmapped to *startScanning(capacity:Int?) -> FutureStream&lt;Peripheral&gt;* to ensure that the service scan starts after the bluetooth transceiver is powered on.
-
-To stop a peripheral scan use the CentralManager method,
+To stop a peripheral scan use the `CentralManager` method,
 
 ```swift
 public func stopScanning()
 ```
 
-and in an application,
+In an application,
 
 ```swift
-let manager = CentralManager.sharedInstance
+let manager = CentralManager()
 manager.stopScanning()
 ```
 
 ### <a name="central_service_scan_timeout">Service Scanning with Timeout</a>
 
-BlueCap CentralManager can scan for advertising peripherals with a timeout. TimedScannerator methods are used to start a scan instead ob the CentralManager methods. The declarations include a timeout parameter but are otherwise the same,
+BlueCap `CentralManager` can scan for advertising peripherals with a timeout. `TimedScannerator` methods are used to start a scan instead ob the CentralManager methods. The declarations include a timeout parameter but are otherwise the same,
 
 ```swift
 // Scan promiscuously for all advertising peripherals
