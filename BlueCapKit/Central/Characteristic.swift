@@ -275,7 +275,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Read Data
-    public func read(timeout: NSTimeInterval = 10.0) -> Future<Characteristic> {
+    public func read(timeout: Double = 10.0) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canRead {
             self.readPromises.append(promise)
@@ -288,7 +288,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Write Data
-    public func writeData(value: NSData, timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func writeData(value: NSData, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canWrite {
             if type == .WithResponse {
@@ -305,7 +305,7 @@ public class Characteristic : NSObject {
         return promise.future
     }
 
-    public func writeString(stringValue: [String: String], timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func writeString(stringValue: [String: String], timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         if let value = self.dataFromStringValue(stringValue) {
             return self.writeData(value, timeout: timeout, type: type)
         } else {
@@ -315,23 +315,23 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func write<T: Deserializable>(value:T, timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: Deserializable>(value:T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawDeserializable>(value:T, timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawDeserializable>(value:T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawArrayDeserializable>(value: T, timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayDeserializable>(value: T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawPairDeserializable>(value: T, timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawPairDeserializable>(value: T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawArrayPairDeserializable>(value: T, timeout: NSTimeInterval = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayPairDeserializable>(value: T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
@@ -395,7 +395,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: IO Timeout
-    private func timeoutRead(sequence: Int, timeout: NSTimeInterval) {
+    private func timeoutRead(sequence: Int, timeout: Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
         Characteristic.timeoutQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
@@ -407,7 +407,7 @@ public class Characteristic : NSObject {
         }
     }
     
-    private func timeoutWrite(sequence: Int, timeout: NSTimeInterval) {
+    private func timeoutWrite(sequence: Int, timeout: Double) {
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
         Characteristic.timeoutQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {

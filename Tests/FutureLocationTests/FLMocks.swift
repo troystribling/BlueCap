@@ -33,7 +33,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
     var requestStateForRegionCalled = false
 
     var allowDeferredLocationUpdatesUntilTraveledDistance: CLLocationDistance?
-    var allowDeferredLocationUpdatesUntilTraveledTimeout: NSTimeInterval?
+    var allowDeferredLocationUpdatesUntilTraveledTimeout: Double?
     var startMonitoringForRegionRegion: CLRegion?
     var stopMonitoringForRegionRegion: CLRegion?
     var requestStateForRegionRegion: CLRegion?
@@ -82,7 +82,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
         return self._deferredLocationUpdatesAvailable
     }
 
-    func allowDeferredLocationUpdatesUntilTraveled(distance: CLLocationDistance, timeout: NSTimeInterval) {
+    func allowDeferredLocationUpdatesUntilTraveled(distance: CLLocationDistance, timeout: Double) {
         self.allowDeferredLocationUpdatesUntilTraveledCalled = true
         self.allowDeferredLocationUpdatesUntilTraveledDistance = distance
         self.allowDeferredLocationUpdatesUntilTraveledTimeout = timeout

@@ -12,7 +12,7 @@ import XCTest
 
 extension XCTestCase  {
 
-    func XCTAssertFutureSucceeds<T>(future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: NSTimeInterval = 10.0,
+    func XCTAssertFutureSucceeds<T>(future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0,
                                  line: UInt = #line, file: String = #file, validate: ((T) -> Void)? = nil) {
         var expectation: XCTestExpectation?
         var onSuccessCalled = false
@@ -45,7 +45,7 @@ extension XCTestCase  {
         }
     }
 
-    func XCTAssertFutureStreamSucceeds<T>(future: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: NSTimeInterval = 10.0, line: UInt = #line, file: String = #file, validations: [((T) -> Void)] = []) {
+    func XCTAssertFutureStreamSucceeds<T>(future: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0, line: UInt = #line, file: String = #file, validations: [((T) -> Void)] = []) {
         var expectation: XCTestExpectation?
         let maxCount = validations.count
         var count = 0
@@ -105,7 +105,7 @@ extension XCTestCase  {
     }
 
 
-    func XCTAssertFutureFails<T>(future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: NSTimeInterval = 10.0,
+    func XCTAssertFutureFails<T>(future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0,
                               line: UInt = #line, file: String = #file, validate: ((NSError) -> Void)? = nil) {
         var expectation: XCTestExpectation?
         var onFailureCalled = false
@@ -138,7 +138,7 @@ extension XCTestCase  {
         }
     }
 
-    func XCTAssertFutureStreamFails<T>(future: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: NSTimeInterval = 10.0,
+    func XCTAssertFutureStreamFails<T>(future: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0,
                                     line: UInt = #line, file: String = #file, validations: [((NSError) -> Void)] = []) {
         var expectation: XCTestExpectation?
         let maxCount = validations.count

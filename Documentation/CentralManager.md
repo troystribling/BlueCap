@@ -6,7 +6,6 @@ The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegat
 
 * [PowerOn/PowerOff](#central_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
 * [Service Scanning](#central_service_scanning): Scan for services.
-* [Service Scanning with Timeout](#central_service_scan_timeout): Scan for services with timeout.
 * [Peripheral Advertisements](#central_peripheral_advertisements): Access Advertisements of discovered Peripherals.
 * [Peripheral Connection](#central_peripheral_connection): Connect to discovered Peripherals.
 * [Service and Characteristic Discovery](#central_characteristic_discovery): Discover Services and Characteristics of connected Peripherals.
@@ -49,13 +48,34 @@ Scans for advertising peripherals are initiated by calling the BlueCap `CentralM
 
 ```swift
 // Scan promiscuously for all advertising peripherals
-public func startScanning(capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
+public func startScanning(capacity: Int? = nil, timeout: Double? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
 
 // Scan for peripherals advertising services with UUIDs
-public func startScanningForServiceUUIDs(uuids: [CBUUID]?, capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
+public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil, timeout: Double? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
 ```
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the discovered BlueCap `Peripheral`. Arguments include the `FutureStream` capacity and `CBPripheral` scanning [options](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/#//apple_ref/doc/constant_group/Peripheral_Scanning_Options).
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the discovered BlueCap `Peripheral`.
+
+<table>
+  <tr>
+    <th>UUIDs</th>
+    <th></th>
+  </tr>
+	<tr>
+		<td>capacity</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>timeout</td>
+		<td>Scan timeout in seconds.</td>
+	</tr>
+	<tr>
+		<td>options</td>
+		<td></td>
+	</tr>
+</table>
+
+ Arguments include the `FutureStream` capacity, scanned service `UUIDs` and `CBCentralManager` scanning [options](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/#//apple_ref/doc/constant_group/Peripheral_Scanning_Options).
 
 An application would start scanning for `Peripherals` advertising `Services` with `UUIDs` after power on with the following,
 
@@ -83,51 +103,6 @@ In an application,
 ```swift
 let manager = CentralManager()
 manager.stopScanning()
-```
-
-### <a name="central_service_scan_timeout">Service Scanning with Timeout</a>
-
-BlueCap `CentralManager` can scan for advertising peripherals with a timeout. `TimedScannerator` methods are used to start a scan instead ob the CentralManager methods. The declarations include a timeout parameter but are otherwise the same,
-
-```swift
-// Scan promiscuously for all advertising peripherals
-public func startScanning(timeoutSeconds:Double, capacity:Int? = nil) -> FutureStream<Peripheral>
-
-// Scan for peripherals advertising services with UUIDs
-public func startScanningForServiceUUIDs(timeoutSeconds:Double, uuids:[CBUUID]!, capacity:Int? = nil) -> FutureStream<Peripheral>
-``` 
-
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *FutureStream&lt;Peripheral&gt;* yielding the discovered peripheral and take the FutureStream capacity as input.
-
-For an application to scan for Peripherals advertising Services  with UUIDs and a specified timeout after powerOn,
-
-```swift
-let manager = CentralManager.sharedInstance
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
-
-let peripheraDiscoveredFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
-	TimedScannerator.sharedinstance.startScanningForServiceUUIDs(10.0, uuids:[serviceUUID], capacity:10)
-}
-peripheraDiscoveredFuture.onSuccess {peripheral in
-	…
-}
-peripheraDiscoveredFuture.onFailure {error in
-	…
-}
-```
-
-Here the powerOn future has been flatmapped to *startScanning(capacity:Int?) -> FutureStream&lt;Peripheral&gt;* to ensure that the service scan starts after the bluetooth transceiver is powered on. On timeout peripheraDiscoveredFuture will complete with error BCError.peripheralDiscoveryTimeout.
-
-To stop a peripheral scan use the TimedScannerator method,
-
-```swift
-public func stopScanning()
-```
-
-and in an application,
-
-```swift
-TimedScannerator.sharedInstance.stopScanning()
 ```
 
 ### <a name="central_peripheral_advertisements">Peripheral Advertisements</a>

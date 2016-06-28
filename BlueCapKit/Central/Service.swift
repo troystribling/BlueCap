@@ -80,12 +80,12 @@ public class Service {
     }
 
     // MARK: Discover Characteristics
-    public func discoverAllCharacteristics(timeout: NSTimeInterval? = nil) -> Future<Service> {
+    public func discoverAllCharacteristics(timeout: Double? = nil) -> Future<Service> {
         Logger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
         return self.discoverIfConnected(nil, timeout: timeout)
     }
     
-    public func discoverCharacteristics(characteristics: [CBUUID], timeout: NSTimeInterval? = nil) -> Future<Service> {
+    public func discoverCharacteristics(characteristics: [CBUUID], timeout: Double? = nil) -> Future<Service> {
         Logger.debug("uuid=\(self.UUID.UUIDString), name=\(self.name)")
         return self.discoverIfConnected(characteristics, timeout: timeout)
     }
@@ -123,7 +123,7 @@ public class Service {
     }
 
     // MARK: Utils
-    private func discoverIfConnected(characteristics: [CBUUID]?, timeout: NSTimeInterval?) -> Future<Service> {
+    private func discoverIfConnected(characteristics: [CBUUID]?, timeout: Double?) -> Future<Service> {
         if !self.characteristicDiscoveryInProgress {
             self.characteristicsDiscoveredPromise = Promise<Service>()
             if self.peripheral?.state == .Connected {
@@ -142,7 +142,7 @@ public class Service {
         }
     }
 
-    private func timeoutCharacteristicDiscovery(sequence: Int, timeout: NSTimeInterval?) {
+    private func timeoutCharacteristicDiscovery(sequence: Int, timeout: Double?) {
         guard let peripheral = peripheral, centralManager = peripheral.centralManager, timeout = timeout else {
             return
         }

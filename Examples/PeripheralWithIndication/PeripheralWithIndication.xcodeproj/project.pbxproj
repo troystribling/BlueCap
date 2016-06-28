@@ -14,7 +14,7 @@
 		054CF8331BD8852800BF534C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 054CF8311BD8852800BF534C /* LaunchScreen.storyboard */; };
 		054CF8571BD8854500BF534C /* Accelerometer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF8561BD8854500BF534C /* Accelerometer.swift */; };
 		054CF8591BD886A300BF534C /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CF8581BD886A300BF534C /* UIAlertControllerExtensions.swift */; };
-		FF6B366F26CA815901606B3B /* Pods_PeripheralWithIndication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332B109F2C2CE67E3B35B621 /* Pods_PeripheralWithIndication.framework */; };
+		15B52861B0606AE74A8B1758 /* Pods_PeripheralWithIndication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0E100B18C179C15F3067E1 /* Pods_PeripheralWithIndication.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,9 +40,9 @@
 		054CF8341BD8852800BF534C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		054CF8561BD8854500BF534C /* Accelerometer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Accelerometer.swift; sourceTree = "<group>"; };
 		054CF8581BD886A300BF534C /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
-		332B109F2C2CE67E3B35B621 /* Pods_PeripheralWithIndication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PeripheralWithIndication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD048373D037B83B668D152B /* Pods-PeripheralWithIndication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralWithIndication.release.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralWithIndication/Pods-PeripheralWithIndication.release.xcconfig"; sourceTree = "<group>"; };
-		DAE0CAD623EAD61A85D45A15 /* Pods-PeripheralWithIndication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralWithIndication.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralWithIndication/Pods-PeripheralWithIndication.debug.xcconfig"; sourceTree = "<group>"; };
+		121BC7FF196005583511AE58 /* Pods-PeripheralWithIndication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralWithIndication.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralWithIndication/Pods-PeripheralWithIndication.debug.xcconfig"; sourceTree = "<group>"; };
+		13B97FB19DC53512A3E5E075 /* Pods-PeripheralWithIndication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralWithIndication.release.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralWithIndication/Pods-PeripheralWithIndication.release.xcconfig"; sourceTree = "<group>"; };
+		8A0E100B18C179C15F3067E1 /* Pods_PeripheralWithIndication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PeripheralWithIndication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF6B366F26CA815901606B3B /* Pods_PeripheralWithIndication.framework in Frameworks */,
+				15B52861B0606AE74A8B1758 /* Pods_PeripheralWithIndication.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,8 +62,8 @@
 			children = (
 				054CF8271BD8852800BF534C /* PeripheralWithIndication */,
 				054CF8261BD8852800BF534C /* Products */,
-				126DD3B47A7898D550FE2083 /* Pods */,
-				555CFAD257ECA6710838837D /* Frameworks */,
+				3DEB1F5642C6F6B6ECE984DB /* Pods */,
+				BF62651BE7749CA9CC4B6180 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,19 +90,19 @@
 			path = PeripheralWithIndication;
 			sourceTree = "<group>";
 		};
-		126DD3B47A7898D550FE2083 /* Pods */ = {
+		3DEB1F5642C6F6B6ECE984DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				DAE0CAD623EAD61A85D45A15 /* Pods-PeripheralWithIndication.debug.xcconfig */,
-				BD048373D037B83B668D152B /* Pods-PeripheralWithIndication.release.xcconfig */,
+				121BC7FF196005583511AE58 /* Pods-PeripheralWithIndication.debug.xcconfig */,
+				13B97FB19DC53512A3E5E075 /* Pods-PeripheralWithIndication.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		555CFAD257ECA6710838837D /* Frameworks */ = {
+		BF62651BE7749CA9CC4B6180 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				332B109F2C2CE67E3B35B621 /* Pods_PeripheralWithIndication.framework */,
+				8A0E100B18C179C15F3067E1 /* Pods_PeripheralWithIndication.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -114,13 +114,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 054CF84D1BD8852800BF534C /* Build configuration list for PBXNativeTarget "PeripheralWithIndication" */;
 			buildPhases = (
-				9B9E93BE97A5DF58C4173812 /* 📦 Check Pods Manifest.lock */,
+				D07A016A4287FD77906ED0F0 /* 📦 Check Pods Manifest.lock */,
 				054CF8211BD8852800BF534C /* Sources */,
 				054CF8221BD8852800BF534C /* Frameworks */,
 				054CF8231BD8852800BF534C /* Resources */,
 				054CF86F1BD8892300BF534C /* Embed Frameworks */,
-				C971AFBD0A1CA8E6EBB24C54 /* 📦 Embed Pods Frameworks */,
-				BAC0572CEE45554DE0278893 /* 📦 Copy Pods Resources */,
+				87FF73FA65208DF33788E154 /* 📦 Embed Pods Frameworks */,
+				509C75819886A3ED2DCB5C4D /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -177,22 +177,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9B9E93BE97A5DF58C4173812 /* 📦 Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		BAC0572CEE45554DE0278893 /* 📦 Copy Pods Resources */ = {
+		509C75819886A3ED2DCB5C4D /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -207,7 +192,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralWithIndication/Pods-PeripheralWithIndication-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C971AFBD0A1CA8E6EBB24C54 /* 📦 Embed Pods Frameworks */ = {
+		87FF73FA65208DF33788E154 /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -220,6 +205,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralWithIndication/Pods-PeripheralWithIndication-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D07A016A4287FD77906ED0F0 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -341,7 +341,7 @@
 		};
 		054CF84E1BD8852800BF534C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DAE0CAD623EAD61A85D45A15 /* Pods-PeripheralWithIndication.debug.xcconfig */;
+			baseConfigurationReference = 121BC7FF196005583511AE58 /* Pods-PeripheralWithIndication.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PeripheralWithIndication/Info.plist;
@@ -353,7 +353,7 @@
 		};
 		054CF84F1BD8852800BF534C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD048373D037B83B668D152B /* Pods-PeripheralWithIndication.release.xcconfig */;
+			baseConfigurationReference = 13B97FB19DC53512A3E5E075 /* Pods-PeripheralWithIndication.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PeripheralWithIndication/Info.plist;

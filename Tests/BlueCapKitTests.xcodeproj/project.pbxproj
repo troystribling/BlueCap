@@ -48,10 +48,9 @@
 		05F0EC391CF7EA9F00468FC9 /* RawPairDeserializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC191CF7E9F000468FC9 /* RawPairDeserializableTests.swift */; };
 		05F0EC3A1CF7EA9F00468FC9 /* SerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1A1CF7E9F000468FC9 /* SerializableTests.swift */; };
 		05F0EC3B1CF7EA9F00468FC9 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1B1CF7E9F000468FC9 /* ServiceTests.swift */; };
-		05F0EC3C1CF7EA9F00468FC9 /* TimedScanneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1C1CF7E9F000468FC9 /* TimedScanneratorTests.swift */; };
 		05F0EC3D1CF7EA9F00468FC9 /* DeserilaizableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */; };
 		05F0EC3E1CF7EA9F00468FC9 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC1E1CF7E9F000468FC9 /* Mocks.swift */; };
-		4277AAA51B3CA5EA28238614 /* Pods_BlueCapKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3952302A31271B4D4CBBA0DF /* Pods_BlueCapKitTests.framework */; };
+		9D3597F8E3A065BEB630738F /* Pods_BlueCapKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845ED1E241771FE8C4DD2889 /* Pods_BlueCapKitTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,13 +97,12 @@
 		05F0EC191CF7E9F000468FC9 /* RawPairDeserializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawPairDeserializableTests.swift; sourceTree = "<group>"; };
 		05F0EC1A1CF7E9F000468FC9 /* SerializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializableTests.swift; sourceTree = "<group>"; };
 		05F0EC1B1CF7E9F000468FC9 /* ServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
-		05F0EC1C1CF7E9F000468FC9 /* TimedScanneratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScanneratorTests.swift; sourceTree = "<group>"; };
 		05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserilaizableTests.swift; sourceTree = "<group>"; };
 		05F0EC1E1CF7E9F000468FC9 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		05F0EC401CF8162900468FC9 /* BlueCapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueCapKit.framework; path = "../../../../Library/Developer/Xcode/DerivedData/BlueCapKitTests-bpwlfhcbwcejkqaviyzweisiyaow/Build/Products/Debug-iphonesimulator/BlueCapKit/BlueCapKit.framework"; sourceTree = "<group>"; };
-		3952302A31271B4D4CBBA0DF /* Pods_BlueCapKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCapKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B7CE0D50ADDA003498355E92 /* Pods-BlueCapKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.debug.xcconfig"; sourceTree = "<group>"; };
-		C73F09A0508FAED0BF29DEAB /* Pods-BlueCapKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		62D344915BC43CD8CF3BE047 /* Pods-BlueCapKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		78B545F044EEA286BFCCBEC7 /* Pods-BlueCapKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCapKitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.debug.xcconfig"; sourceTree = "<group>"; };
+		845ED1E241771FE8C4DD2889 /* Pods_BlueCapKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCapKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4277AAA51B3CA5EA28238614 /* Pods_BlueCapKitTests.framework in Frameworks */,
+				9D3597F8E3A065BEB630738F /* Pods_BlueCapKitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,7 +177,7 @@
 				05BF91EA1CFC997F00B78B12 /* Helpers */,
 				05F0EBF71CF7E96D00468FC9 /* Products */,
 				05BF91B31CFBFD8A00B78B12 /* SimpleFuturesTests */,
-				C3529B5A8410E1966A0DBAE1 /* Pods */,
+				5BE161F2EF3C8982B0D20CFA /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -206,7 +204,6 @@
 				05F0EC191CF7E9F000468FC9 /* RawPairDeserializableTests.swift */,
 				05F0EC1A1CF7E9F000468FC9 /* SerializableTests.swift */,
 				05F0EC1B1CF7E9F000468FC9 /* ServiceTests.swift */,
-				05F0EC1C1CF7E9F000468FC9 /* TimedScanneratorTests.swift */,
 				05F0EC1D1CF7E9F000468FC9 /* DeserilaizableTests.swift */,
 				05F0EC1E1CF7E9F000468FC9 /* Mocks.swift */,
 			);
@@ -217,16 +214,16 @@
 			isa = PBXGroup;
 			children = (
 				05F0EC401CF8162900468FC9 /* BlueCapKit.framework */,
-				3952302A31271B4D4CBBA0DF /* Pods_BlueCapKitTests.framework */,
+				845ED1E241771FE8C4DD2889 /* Pods_BlueCapKitTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		C3529B5A8410E1966A0DBAE1 /* Pods */ = {
+		5BE161F2EF3C8982B0D20CFA /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B7CE0D50ADDA003498355E92 /* Pods-BlueCapKitTests.debug.xcconfig */,
-				C73F09A0508FAED0BF29DEAB /* Pods-BlueCapKitTests.release.xcconfig */,
+				78B545F044EEA286BFCCBEC7 /* Pods-BlueCapKitTests.debug.xcconfig */,
+				62D344915BC43CD8CF3BE047 /* Pods-BlueCapKitTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -238,12 +235,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 05F0EC0D1CF7E96D00468FC9 /* Build configuration list for PBXNativeTarget "BlueCapKitTests" */;
 			buildPhases = (
-				A65E1C438E8FF1E2C2CC2DBD /* 📦 Check Pods Manifest.lock */,
+				FD4D40293196019B682E27FE /* 📦 Check Pods Manifest.lock */,
 				05F0EBFC1CF7E96D00468FC9 /* Sources */,
 				05F0EBFD1CF7E96D00468FC9 /* Frameworks */,
 				05F0EBFE1CF7E96D00468FC9 /* Resources */,
-				56B7272C21A78383F45308E7 /* 📦 Embed Pods Frameworks */,
-				F0F6A842760D24489FC1D291 /* 📦 Copy Pods Resources */,
+				4A0D2EAD55E7D5FECD9403FA /* 📦 Embed Pods Frameworks */,
+				65ABF783B0AE3E70EFAB2B29 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -297,7 +294,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		56B7272C21A78383F45308E7 /* 📦 Embed Pods Frameworks */ = {
+		4A0D2EAD55E7D5FECD9403FA /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -312,22 +309,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A65E1C438E8FF1E2C2CC2DBD /* 📦 Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		F0F6A842760D24489FC1D291 /* 📦 Copy Pods Resources */ = {
+		65ABF783B0AE3E70EFAB2B29 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -340,6 +322,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FD4D40293196019B682E27FE /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -381,7 +378,6 @@
 				05BF91D11CFBFD8A00B78B12 /* FutureAndThenTests.swift in Sources */,
 				05BF91CE1CFBFD8A00B78B12 /* LocationManagerTests.swift in Sources */,
 				05F0EC3B1CF7EA9F00468FC9 /* ServiceTests.swift in Sources */,
-				05F0EC3C1CF7EA9F00468FC9 /* TimedScanneratorTests.swift in Sources */,
 				05F0EC3D1CF7EA9F00468FC9 /* DeserilaizableTests.swift in Sources */,
 				05BF91DD1CFBFD8A00B78B12 /* StreamAndThenTests.swift in Sources */,
 				05BF91D01CFBFD8A00B78B12 /* RegionManagerTests.swift in Sources */,
@@ -492,7 +488,7 @@
 		};
 		05F0EC0E1CF7E96D00468FC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7CE0D50ADDA003498355E92 /* Pods-BlueCapKitTests.debug.xcconfig */;
+			baseConfigurationReference = 78B545F044EEA286BFCCBEC7 /* Pods-BlueCapKitTests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -506,7 +502,7 @@
 		};
 		05F0EC0F1CF7E96D00468FC9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C73F09A0508FAED0BF29DEAB /* Pods-BlueCapKitTests.release.xcconfig */;
+			baseConfigurationReference = 62D344915BC43CD8CF3BE047 /* Pods-BlueCapKitTests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";

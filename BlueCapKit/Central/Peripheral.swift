@@ -60,7 +60,7 @@ public struct PeripheralAdvertisements {
 public class Peripheral: NSObject, CBPeripheralDelegate {
 
     internal static var CBPeripheralStateKVOContext = UInt8()
-    internal static let DefaultServiceScanTimeout: NSTimeInterval = 10.0
+    internal static let DefaultServiceScanTimeout: Double = 10.0
 
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral")
@@ -203,7 +203,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private private(set) var totalSecondsConnected: NSTimeInterval {
+    private private(set) var totalSecondsConnected: Double {
         get {
             return Peripheral.ioQueue.sync { return self._totalSecondsConnected }
         }
@@ -255,7 +255,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var secondsConnected: NSTimeInterval {
+    public var secondsConnected: Double {
         if let disconnectedAt = self.disconnectedAt, connectedAt = self.connectedAt {
             return disconnectedAt.timeIntervalSinceDate(connectedAt)
         } else if let connectedAt = self.connectedAt {
@@ -265,7 +265,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var cumlativeSecondsConnected: NSTimeInterval {
+    public var cumlativeSecondsConnected: Double {
         if self.disconnectedAt != nil {
             return self.totalSecondsConnected
         } else {
@@ -273,7 +273,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public var cumlativeSecondsDisconnected: NSTimeInterval {
+    public var cumlativeSecondsDisconnected: Double {
         return NSDate().timeIntervalSinceDate(self.discoveredAt) - self.cumlativeSecondsConnected
     }
 
@@ -388,7 +388,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         return self.readRSSIPromise!.future
     }
 
-    public func startPollingRSSI(period: NSTimeInterval = 10.0, capacity: Int? = nil) -> FutureStream<Int> {
+    public func startPollingRSSI(period: Double = 10.0, capacity: Int? = nil) -> FutureStream<Int> {
         Logger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period)")
         self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
         self.readRSSIIfConnected()
@@ -452,21 +452,21 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Discover Services
-    public func discoverAllServices(timeout: NSTimeInterval = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
+    public func discoverAllServices(timeout: Double = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
         Logger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         return self.discoverServices(nil, timeout: timeout)
     }
 
-    public func discoverServices(services: [CBUUID]?, timeout: NSTimeInterval? = nil) -> Future<Peripheral> {
+    public func discoverServices(services: [CBUUID]?, timeout: Double? = nil) -> Future<Peripheral> {
         Logger.debug(" \(self.name)")
         return self.discoverIfConnected(services, timeout: timeout)
     }
     
-    public func discoverAllPeripheralServices(timeout: NSTimeInterval = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
+    public func discoverAllPeripheralServices(timeout: Double = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
         return self.discoverPeripheralServices(nil)
     }
 
-    public func discoverPeripheralServices(services: [CBUUID]?, timeout: NSTimeInterval = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
+    public func discoverPeripheralServices(services: [CBUUID]?, timeout: Double = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
         let peripheralDiscoveredPromise = Promise<Peripheral>()
         Logger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         let servicesDiscoveredFuture = self.discoverServices(services, timeout: timeout)
@@ -731,7 +731,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private func discoverIfConnected(services: [CBUUID]?, timeout: NSTimeInterval? = nil)  -> Future<Peripheral> {
+    private func discoverIfConnected(services: [CBUUID]?, timeout: Double? = nil)  -> Future<Peripheral> {
         if !self.serviceDiscoveryInProgress {
             self.servicesDiscoveredPromise = Promise<Peripheral>()
             if self.state == .Connected {
@@ -771,7 +771,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private func timeoutServiceDiscovery(sequence: Int, timeout: NSTimeInterval?) {
+    private func timeoutServiceDiscovery(sequence: Int, timeout: Double?) {
         guard let centralManager = self.centralManager, timeout = timeout else {
             return
         }
@@ -788,7 +788,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private func pollRSSI(period: NSTimeInterval, sequence: Int) {
+    private func pollRSSI(period: Double, sequence: Int) {
         Logger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), period = \(period), sequence = \(sequence), current sequence = \(self.RSSISequence)")
         guard self.pollRSSIPromise != nil && sequence == self.RSSISequence else {
             Logger.debug("exiting: name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), current sequence = \(self.RSSISequence)")

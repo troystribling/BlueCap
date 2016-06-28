@@ -102,6 +102,30 @@ class CentralManagerTests: XCTestCase {
         ])
     }
 
+    func testStartScanning_WithTimeoutPeripeharlDiscovered_CompeletesSuccessfully() {
+        let mock = CBCentralManagerMock(state: .PoweredOn)
+        let centralManager = CentralManager(centralManager: mock)
+        let peripheralMock = CBPeripheralMock()
+        let future = centralManager.startScanning(timeout: 1.0)
+        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI:NSNumber(integer: -45))
+        XCTAssertFutureStreamSucceeds(future, context:self.immediateContext, validations: [
+            { peripheral in
+                XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier timeout")
+            }
+        ])
+    }
+
+    func testStartScanning_OnScanTimeout_CompletesWithPeripheralScanTimeout() {
+        let mock = CBCentralManagerMock(state: .PoweredOn)
+        let centralManager = CentralManager(centralManager: mock)
+        let future = centralManager.startScanning(timeout: 0.1)
+        XCTAssertFutureStreamFails(future, validations: [
+            {error in
+                XCTAssertEqual(BCError.centralPeripheralScanTimeout.code, error.code, "onFailure error invalid")
+            }
+        ])
+    }
+
     // MARK: State Restoration
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let mock = CBCentralManagerMock()

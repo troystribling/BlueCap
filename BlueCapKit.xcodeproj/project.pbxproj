@@ -23,7 +23,6 @@
 		05585BD01D0CA437000F5307 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCB1D0CA437000F5307 /* Characteristic.swift */; };
 		05585BD11D0CA437000F5307 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCC1D0CA437000F5307 /* Peripheral.swift */; };
 		05585BD21D0CA437000F5307 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCD1D0CA437000F5307 /* Service.swift */; };
-		05585BD31D0CA437000F5307 /* TimedScannerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCE1D0CA437000F5307 /* TimedScannerator.swift */; };
 		05585BD71D0CA441000F5307 /* MutableCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */; };
 		05585BD81D0CA441000F5307 /* MutableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD51D0CA441000F5307 /* MutableService.swift */; };
 		05585BD91D0CA441000F5307 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD61D0CA441000F5307 /* PeripheralManager.swift */; };
@@ -71,7 +70,6 @@
 		05585BCB1D0CA437000F5307 /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		05585BCC1D0CA437000F5307 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		05585BCD1D0CA437000F5307 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
-		05585BCE1D0CA437000F5307 /* TimedScannerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScannerator.swift; sourceTree = "<group>"; };
 		05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableCharacteristic.swift; sourceTree = "<group>"; };
 		05585BD51D0CA441000F5307 /* MutableService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableService.swift; sourceTree = "<group>"; };
 		05585BD61D0CA441000F5307 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
@@ -164,7 +162,6 @@
 				05585BCB1D0CA437000F5307 /* Characteristic.swift */,
 				05585BCC1D0CA437000F5307 /* Peripheral.swift */,
 				05585BCD1D0CA437000F5307 /* Service.swift */,
-				05585BCE1D0CA437000F5307 /* TimedScannerator.swift */,
 			);
 			path = Central;
 			sourceTree = "<group>";
@@ -359,7 +356,6 @@
 				055120DF19F5513700ED3B74 /* Int16+Deserializable.swift in Sources */,
 				05585BD91D0CA441000F5307 /* PeripheralManager.swift in Sources */,
 				05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */,
-				05585BD31D0CA437000F5307 /* TimedScannerator.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8+Deserializable.swift in Sources */,
 				05585BDF1D0CA475000F5307 /* CharacteristicProfile.swift in Sources */,
 				05585BD21D0CA437000F5307 /* Service.swift in Sources */,
