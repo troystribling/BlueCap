@@ -52,23 +52,23 @@ public protocol Deserializable {
 <table>
 	<tr>
 		<td>size</td>
-		<td>Size of object in bytes</td>
+		<td>Size of object in bytes.</td>
 	</tr>
 	<tr>
 		<td>deserialize(data: NSData) -> Self?</td>
-		<td>Deserialize entire message to object</td>
+		<td>Deserialize entire message to object.</td>
 	</tr>
 	<tr>
 		<td>deserialize(data: NSData, start:Int) -> Self?</td>
-		<td>Deserialize message starting at offset to object</td>
+		<td>Deserialize message starting at offset to object.</td>
 	</tr>
 	<tr>
 		<td>deserialize(data: NSData) -> [Self]</td>
-		<td>Deserialize entire message to array of objects</td>
+		<td>Deserialize entire message to array of objects.</td>
 	</tr>
 	<tr>
 		<td>init?(stringValue: String)</td>
-		<td>Create object from string</td>
+		<td>Create object from string.</td>
 	</tr>
 </table>
 
@@ -108,15 +108,15 @@ public protocol RawDeserializable {
 <table>
 	<tr>
 		<td>uuid</td>
-		<td>Characteristic UUID</td>
+		<td>Characteristic UUID.</td>
 	</tr>
 	<tr>
 		<td>rawValue</td>
-		<td>Characteristic RawType value</td>
+		<td>Characteristic RawType value.</td>
 	</tr>
 	<tr>
 		<td>init?(rawValue:RawType)</td>
-		<td>Create object from rawValue</td>
+		<td>Create object from rawValue.</td>
 	</tr>
 </table>
 
@@ -191,19 +191,19 @@ public protocol RawArrayDeserializable {
 <table>
 	<tr>
 		<td>uuid</td>
-		<td>Characteristic UUID</td>
+		<td>Characteristic UUID.</td>
 	</tr>
 	<tr>
 		<td>size</td>
-		<td>Size of array</td>
+		<td>Size of array.</td>
 	</tr>
 	<tr>
 		<td>rawValue</td>
-		<td>Characteristic RawType values</td>
+		<td>Characteristic RawType values.</td>
 	</tr>
 	<tr>
 		<td>init?(rawValue: [RawType])</td>
-		<td>Create object from rawValues</td>
+		<td>Create object from rawValues.</td>
 	</tr>
 </table>
 
@@ -266,19 +266,19 @@ public protocol RawPairDeserializable {
 <table>
 	<tr>
 		<td>uuid</td>
-		<td>Characteristic UUID</td>
+		<td>Characteristic UUID.</td>
 	</tr>
 	<tr>
 		<td>rawValue1</td>
-		<td>Characteristic RawType1 value</td>
+		<td>Characteristic RawType1 value.</td>
 	</tr>
 	<tr>
 		<td>rawValue2</td>
-		<td>Characteristic RawType2 value</td>
+		<td>Characteristic RawType2 value.</td>
 	</tr>
 	<tr>
 		<td>init?(rawValue1: RawType1, rawValue2: RawType2)</td>
-		<td>Create object from rawValues</td>
+		<td>Create object from rawValues.</td>
 	</tr>
 </table>
 
@@ -341,27 +341,27 @@ public protocol RawArrayPairDeserializable {
 <table>
 	<tr>
 		<td>uuid</td>
-		<td>Characteristic UUID</td>
+		<td>Characteristic UUID.</td>
 	</tr>
   <tr>
 		<td>size1</td>
-		<td>Size of RawType1 array</td>
+		<td>Size of RawType1 array.</td>
   </tr>
   <tr>
 		<td>size2</td>
-		<td>Size of RawType2 array</td>
+		<td>Size of RawType2 array.</td>
   </tr>
 	<tr>
 		<td>rawValue1</td>
-		<td>Characteristic RawType1 value</td>
+		<td>Characteristic RawType1 value.</td>
 	</tr>
 	<tr>
 		<td>rawValue2</td>
-		<td>Characteristic RawType2 value</td>
+		<td>Characteristic RawType2 value.</td>
 	</tr>
 	<tr>
 		<td>init?(rawValue1: [RawType1], rawValue2: [RawType2])</td>
-		<td>Create object from rawValues</td>
+		<td>Create object from rawValues.</td>
 	</tr>
 </table>
 

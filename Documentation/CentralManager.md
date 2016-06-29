@@ -13,9 +13,10 @@ The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegat
 * [Characteristic Read](#central_characteristic_read): Read a characteristic value from a connected Peripheral.
 * [Characteristic Update Notifications](#central_characteristic_update): Subscribe to characteristic value updates on a connected Peripheral.
 * [State Restoration](#central_state_restoration): Restore state of `CentralManager` using iOS state restoration.
-* [Errors](#central_errors): Description of all errors.
 * [KVO](#central_kvo): Properties supporting KVO.
-
+* [Errors](#central_errors): Description of all errors.
+* [Statistics](#central_errors): Peripheral connection statistics.
+ 
 ### <a name="central_poweron_poweroff">PowerOn/PowerOff</a>
 
 The state of the Bluetooth transceiver on a device is communicated to `BlueCap` application by the `CentralManager` methods `whenPowerOn` and `whenPowerOff`, which are defined by,
@@ -58,12 +59,12 @@ Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFut
 
 <table>
   <tr>
-    <th>UUIDs</th>
-    <th></th>
+    <td>UUIDs</td>
+    <td>Scanned service UUIDs.</td>
   </tr>
 	<tr>
 		<td>capacity</td>
-		<td></td>
+		<td>FutureStream capacity.</td>
 	</tr>
 	<tr>
 		<td>timeout</td>
@@ -71,13 +72,11 @@ Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFut
 	</tr>
 	<tr>
 		<td>options</td>
-		<td></td>
+		<td> `CBCentralManager` scanning <a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/#//apple_ref/doc/constant_group/Peripheral_Scanning_Options">options</a>.</td>
 	</tr>
 </table>
 
- Arguments include the `FutureStream` capacity, scanned service `UUIDs` and `CBCentralManager` scanning [options](https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/#//apple_ref/doc/constant_group/Peripheral_Scanning_Options).
-
-An application would start scanning for `Peripherals` advertising `Services` with `UUIDs` after power on with the following,
+An application starts scanning for `Peripherals` advertising `Services` with `UUIDs` after power on with the following,
 
 ```swift
 let manager = CentralManager()
@@ -98,7 +97,7 @@ To stop a peripheral scan use the `CentralManager` method,
 public func stopScanning()
 ```
 
-In an application,
+to use in an application call,
 
 ```swift
 let manager = CentralManager()
@@ -107,38 +106,46 @@ manager.stopScanning()
 
 ### <a name="central_peripheral_advertisements">Peripheral Advertisements</a>
 
-Peripheral advertisements are can be obtained using the following Peripheral properties,
+`Peripheral` advertisements are encapsulated by the  `PeripheralAdvertisements` `struct` defined by,
 
 ```swift
+public struct PeripheralAdvertisements {
+    // Local peripheral name with key CBAdvertisementDataLocalNameKey
+    public var advertisedLocalName : String? 
 
-// Local peripheral name with key CBAdvertisementDataLocalNameKey
-public var advertisedLocalName : String? 
+    // Manufacture data with key CBAdvertisementDataManufacturerDataKey    
+    public var advertisedManufactuereData : NSData? 
 
-// Manufacture data with key CBAdvertisementDataManufacturerDataKey    
-public var advertisedManufactuereData : NSData? 
+    // Tx power with with key CBAdvertisementDataTxPowerLevelKey
+    public var advertisedTxPower : NSNumber? 
 
-// Tx power with with key CBAdvertisementDataTxPowerLevelKey
-public var advertisedTxPower : NSNumber? 
-
-// Is connectable with key CBAdvertisementDataIsConnectable
-public var advertisedIsConnectable : NSNumber? 
+    // Is connectable with key CBAdvertisementDataIsConnectable
+    public var advertisedIsConnectable : NSNumber? 
     
-// Advertised service UUIDs with key CBAdvertisementDataServiceUUIDsKey
-public var advertisedServiceUUIDs : [CBUUID]? 
+    // Advertised service UUIDs with key CBAdvertisementDataServiceUUIDsKey
+    public var advertisedServiceUUIDs : [CBUUID]? 
 
-// Advertised service data with key CBAdvertisementDataServiceDataKey
-public var advertisedServiceData : [CBUUID:NSData]? 
+    // Advertised service data with key CBAdvertisementDataServiceDataKey
+    public var advertisedServiceData : [CBUUID:NSData]? 
 
-// Advertised overflow services with key CBAdvertisementDataOverflowServiceUUIDsKey
-public var advertisedOverflowServiceUUIDs : [CBUUID]? 
+    // Advertised overflow services with key CBAdvertisementDataOverflowServiceUUIDsKey
+    public var advertisedOverflowServiceUUIDs : [CBUUID]? 
 
-// Advertised solicited services with key CBAdvertisementDataSolicitedServiceUUIDsKey
-public var advertisedSolicitedServiceUUIDs : [CBUUID]? 
+    // Advertised solicited services with key CBAdvertisementDataSolicitedServiceUUIDsKey
+    public var advertisedSolicitedServiceUUIDs : [CBUUID]?
+}
 ```
+
+The `PeripheralAdvertisements` `struct` is accessible through the `Peripheral` property `advertisements`.
+
+```swift
+public let advertisements: PeripheralAdvertisements
+```
+
 
 ### <a name="central_peripheral_connection">Peripheral Connection</a>
 
-After discovering a peripheral a connection must be established to begin messaging. Connecting and maintaining a connection to a bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. ConnectionEvent is an enum with values,
+After discovering a `Peripheral` a connection must be established to begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. `ConnectionEvent` is an enum with values,
 
 <table>
   <tr>
@@ -162,10 +169,6 @@ After discovering a peripheral a connection must be established to begin messagi
 		<td>Peripheral disconnected by application</td>
 	</tr>
 	<tr>
-		<td>Failed</td>
-		<td>Connection failed without error</td>
-	</tr>
-	<tr>
 		<td>GiveUp</td>
 		<td>Give-up trying to connect.</td>
 	</tr>
@@ -174,12 +177,10 @@ After discovering a peripheral a connection must be established to begin messagi
 To connect to a peripheral use The BlueCap Peripheral method,
 
 ```swift
-public func connect(capacity:Int? = nil, timeoutRetries:UInt? = nil, disconnectRetries:UInt? = nil, connectionTimeout:Double = 10.0) -> FutureStream<(Peripheral, ConnectionEvent)>
+public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>
 ```
 
-**Discussion**
-
-BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *FutureStream&lt;(Peripheral, ConnectionEvent)&gt;* yielding a tuple containing the connected Peripheral and the ConnectionEvent.
+BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream(peripheral: Peripheral, connectionEvent: ConnectionEvent)>` yielding a tuple containing the connected Peripheral and the ConnectionEvent.
 
 <table>
 	<tr>
@@ -188,11 +189,11 @@ BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystri
 	</tr>
 	<tr>
 		<td>timeoutRetries</td>
-		<td>Number of connection retries on timeout. Equals 0 if nil.</td>
+		<td>Number of connection retries on timeout. Default value is 0.</td>
 	</tr>
 	<tr>
 		<td>disconnectRetries</td>
-		<td>Number of connection retries on disconnect. Equals 0 if nil.</td>
+		<td>Number of connection retries on disconnect. Default value is 0.</td>
 	</tr>
 	<tr>
 		<td>connectionTimeout</td>
@@ -230,17 +231,14 @@ peripheralConnectFuture.onSuccess {(peripheral, connectionEvent) in
 	  …
   case .Timeout:
     peripheral.reconnect()
-		…
   case .Disconnect:
     peripheral.reconnect()
-		…
   case .ForceDisconnect:
 	  …
   case .Failed:
 	  …
   case .GiveUp:
 	  peripheral.terminate()
-		…
   }
 }
 peripheralConnectFuture.onFailure {error in
@@ -528,6 +526,8 @@ if let service = peripheral.service(serviceUUID), characteristic = service.chara
 
 ### <a name="central_state_restoration">State Restoration</a>
 
+### <a name="central_kvo">KVO</a>
+
 ### <a name="central_errors">Errors</a>
 
-### <a name="central_kvo">KVO</a>
+### <a name="central_stats">Statistics</a>

@@ -35,15 +35,15 @@ public protocol ServiceConfigurable {
 <table>
 	<tr>
 		<td>name</td>
-		<td>Service name</td>
+		<td>Service name.</td>
 	</tr>
   <tr>
 		<td>UUID</td>
-		<td>Service UUID</td>
+		<td>Service UUID.</td>
   </tr>
   <tr>
 		<td>tag</td>
-		<td>Used to organize services in the BlueCap app profile browser</td>
+		<td>Used to organize services in the BlueCap app profile browser.</td>
   </tr>
 </table>
 
@@ -66,23 +66,23 @@ public protocol CharacteristicConfigurable {
 <table>
 	<tr>
 		<td>name</td>
-		<td>Characteristic name</td>
+		<td>Characteristic name.</td>
 	</tr>
   <tr>
 		<td>UUID</td>
-		<td>Characteristic UUID</td>
+		<td>Characteristic UUID.</td>
   </tr>
   <tr>
 		<td>permissions</td>
-		<td><a href="https://developer.apple.com/library/mac/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/swift/struct/CBAttributePermissions">CBAttributePermissions</a></td>
+		<td><a href="https://developer.apple.com/library/mac/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/swift/struct/CBAttributePermissions">CBAttributePermissions</a>.</td>
   </tr>
   <tr>
 		<td>properties</td>
-		<td><a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/#//apple_ref/swift/struct/CBCharacteristicProperties">CBCharacteristicProperties</a></td>
+		<td><a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/#//apple_ref/swift/struct/CBCharacteristicProperties">CBCharacteristicProperties</a>.</td>
   </tr>
   <tr>
 		<td>initialValue</td>
-		<td>Characteristic initial value</td>
+		<td>Characteristic initial value.</td>
   </tr>
 </table>
 
@@ -103,15 +103,15 @@ public protocol StringDeserializable {
 <table>
 	<tr>
 		<td>stringValues</td>
-		<td>Used for enums to specify Strings for values but ignored for other types</td>
+		<td>Used for enums to specify Strings for values but ignored for other types.</td>
 	</tr>
   <tr>
 		<td>stringValue</td>
-		<td>The String values of the rawType</td>
+		<td>The String values of the rawType.</td>
   </tr>
   <tr>
 		<td>init?(stringValue: [String:String])</td>
-		<td>Create object from stringValue</td>
+		<td>Create object from stringValue.</td>
   </tr>
 </table>
 

@@ -306,7 +306,7 @@ carthage update
 	</tr>
 	<tr>
 		<td><a href="/Examples/Beacon">Beacon</a></td>
-		<td>iBean implements a Peripheral role emulating an iBeacon.</td>
+		<td>Peripheral emulating an iBeacon.</td>
 	</tr>
 </table>
 
