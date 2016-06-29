@@ -20,5 +20,5 @@ script:
   - cd $PROJECT_DIR/Tests;
   - pwd;
   - pod install;
-  - xcodebuild -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
+  - xcodebuild -workspace BlueCapKitTests.xcworkspace -scheme BlueCapKitTests -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES build test | xcpretty -c;
 
