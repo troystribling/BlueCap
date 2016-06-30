@@ -115,12 +115,8 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func stopScanning() {
-        if Singletons.centralManager.isScanning || Singletons.timedScannerator.isScanning {
-            if  ConfigStore.getScanTimeoutEnabled() {
-                Singletons.timedScannerator.stopScanning()
-            } else {
-                Singletons.centralManager.stopScanning()
-            }
+        if Singletons.centralManager.isScanning {
+            Singletons.centralManager.stopScanning()
         }
         self.scanStatus = false
         self.stopPollingRSSIForPeripherals()
@@ -275,7 +271,7 @@ class PeripheralsViewController : UITableViewController {
         let afterTimeout = { (error: NSError) -> Void in
             if error.domain == BCError.domain && error.code == BCError.centralPeripheralScanTimeout.code {
                 Logger.debug("timeoutScan: timing out")
-                Singletons.timedScannerator.stopScanning()
+                Singletons.centralManager.stopScanning()
                 self.setScanButton()
             }
         }
@@ -286,7 +282,7 @@ class PeripheralsViewController : UITableViewController {
         case .Promiscuous:
             // Promiscuous Scan with Timeout Enabled
             if ConfigStore.getScanTimeoutEnabled() {
-                future = Singletons.timedScannerator.startScanning(Double(ConfigStore.getScanTimeout()), capacity: 10)
+                future = Singletons.centralManager.startScanning(10, timeout: Double(ConfigStore.getScanTimeout()))
                 
             } else {
                 future = Singletons.centralManager.startScanning(10)
@@ -300,7 +296,7 @@ class PeripheralsViewController : UITableViewController {
             } else {
                 // Service Scan with Timeout Enabled
                 if ConfigStore.getScanTimeoutEnabled() {
-                    future = Singletons.timedScannerator.startScanningForServiceUUIDs(Double(ConfigStore.getScanTimeout()), uuids: scannedServices, capacity: 10)
+                    future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10, timeout: Double(ConfigStore.getScanTimeout()))
                 } else {
                     future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10)
                 }

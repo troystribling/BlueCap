@@ -100,7 +100,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal private(set) weak var centralManager: CentralManager?
     
     internal private(set) var cbPeripheral: CBPeripheralInjectable
-    public let advertisements: PeripheralAdvertisements?
+    public let advertisements: PeripheralAdvertisements
     public let discoveredAt = NSDate()
 
     // MARK: Serial Properties
@@ -321,7 +321,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
-        self.advertisements = nil
+        self.advertisements = PeripheralAdvertisements(advertisements: [String: AnyObject]())
         super.init()
         self.RSSI = 0
         self.state = cbPeripheral.state

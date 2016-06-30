@@ -27,7 +27,6 @@ struct BCAppError {
 struct Singletons {
     static let centralManager = CentralManager()
     static let peripheralManager = PeripheralManager()
-    static let timedScannerator = TimedScannerator(centralManager:Singletons.centralManager)
     static let beaconManager = FLBeaconManager()
     static let profileManager = ProfileManager.sharedInstance
 }
