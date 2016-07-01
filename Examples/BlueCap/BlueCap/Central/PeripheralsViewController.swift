@@ -206,7 +206,7 @@ class PeripheralsViewController : UITableViewController {
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.UUIDString)")
         let maxTimeouts = ConfigStore.getMaximumTimeouts()
         let maxDisconnections = ConfigStore.getMaximumDisconnections()
-        let future = peripheral.connect(10, timeoutRetries: maxTimeouts == 0 ? nil : maxTimeouts, disconnectRetries: maxDisconnections == 0 ? nil : maxDisconnections, connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
+        let future = peripheral.connect(10, timeoutRetries: maxTimeouts == 0 ? UInt.max : maxTimeouts, disconnectRetries: maxDisconnections == 0 ? UInt.max : maxDisconnections, connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
         future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:

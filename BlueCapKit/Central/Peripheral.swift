@@ -93,9 +93,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal var discoveredServices = SerialIODictionary<CBUUID, Service>(Peripheral.ioQueue)
     internal var discoveredCharacteristics = SerialIODictionary<CBUUID, Characteristic>(Peripheral.ioQueue)
 
-    private var connectionTimeout = 10.0
-    private var timeoutRetries: UInt?
-    private var disconnectRetries: UInt?
+    private var connectionTimeout = Double.infinity
+    private var timeoutRetries = UInt.max
+    private var disconnectRetries = UInt.max
     
     internal private(set) weak var centralManager: CentralManager?
     
@@ -416,7 +416,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.timeoutConnection(self.connectionSequence)
     }
      
-    public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
+    public func connect(capacity: Int? = nil, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
         if self.connectionPromise == nil {
             self.connectionPromise = StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>(capacity:capacity)
         }
@@ -688,7 +688,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     // MARK: Utilities
     private func shouldFailOrGiveUp(error: NSError) {
         Logger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
-        if let disconnectRetries = self.disconnectRetries {
             if self.disconnectionCount < disconnectRetries {
                 self.disconnectionCount += 1
                 self.connectionPromise?.failure(error)
@@ -696,38 +695,27 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 self.disconnectionCount = 0
                 self.connectionPromise?.success((self, ConnectionEvent.GiveUp))
             }
-        } else {
-            self.connectionPromise?.failure(error)
-        }
     }
 
     private func shouldTimeoutOrGiveup() {
         Logger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), timeoutCount=\(self.timeoutCount), timeoutRetries=\(self.timeoutRetries)")
-        if let timeoutRetries = self.timeoutRetries {
-            if self.timeoutCount < timeoutRetries {
-                self.connectionPromise?.success((self, .Timeout))
-                self.timeoutCount += 1
-            } else {
-                self.timeoutCount = 0
-                self.connectionPromise?.success((self, .GiveUp))
-            }
-        } else {
+        if self.timeoutCount < timeoutRetries {
             self.connectionPromise?.success((self, .Timeout))
+            self.timeoutCount += 1
+        } else {
+            self.timeoutCount = 0
+            self.connectionPromise?.success((self, .GiveUp))
         }
     }
 
     private func shouldDisconnectOrGiveup() {
         Logger.debug("name=\(self.name), uuid=\(self.identifier.UUIDString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
-        if let disconnectRetries = self.disconnectRetries {
-            if self.disconnectionCount < disconnectRetries {
-                self.disconnectionCount += 1
-                self.connectionPromise?.success((self, .Disconnect))
-            } else {
-                self.disconnectionCount = 0
-                self.connectionPromise?.success((self, .GiveUp))
-            }
-        } else {
+        if self.disconnectionCount < disconnectRetries {
+            self.disconnectionCount += 1
             self.connectionPromise?.success((self, .Disconnect))
+        } else {
+            self.disconnectionCount = 0
+            self.connectionPromise?.success((self, .GiveUp))
         }
     }
 
@@ -756,7 +744,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     private func timeoutConnection(sequence: Int) {
-        guard let centralManager = self.centralManager else {
+        guard let centralManager = self.centralManager where connectionTimeout < Double.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), timeout = \(self.connectionTimeout)")

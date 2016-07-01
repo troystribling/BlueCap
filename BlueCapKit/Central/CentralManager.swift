@@ -218,11 +218,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Scan
-    public func startScanning(capacity: Int? = nil, timeout: Double? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         return startScanningForServiceUUIDs(nil, capacity: capacity, timeout: timeout)
     }
     
-    public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil, timeout: Double? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+    public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         if !isScanning {
             Logger.debug("UUIDs \(UUIDs)")
             isScanning = true
@@ -249,8 +249,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    private func timeoutScan(timeout: Double?, sequence: Int) {
-        guard let timeout = timeout else {
+    private func timeoutScan(timeout: Double, sequence: Int) {
+        guard timeout < Double.infinity else {
             return
         }
         Logger.debug("timeout in \(timeout)s")

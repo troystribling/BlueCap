@@ -13,17 +13,29 @@ class ConfigureViewController : UITableViewController {
     
     @IBOutlet var scanModeLabel: UILabel!
     @IBOutlet var servicesLabel: UILabel!
+
     @IBOutlet var scanTimeoutLabel: UILabel!
     @IBOutlet var scanTimeoutEnabledLabel: UILabel!
+
+    @IBOutlet var peripheralConnectionTimeoutEnabledLabel: UILabel!
+    @IBOutlet var peripheralMaxTimeoutsEnabledLabel: UILabel!
+    @IBOutlet var peripheralMaxDisconnectionsEnabledLabel: UILabel!
+
     @IBOutlet var peripheralMaxDisconnectionsLabel: UILabel!
     @IBOutlet var peripheralMaxTimeoutsLabel: UILabel!
     @IBOutlet var peripheralConnectionTimeout: UILabel!
+
     @IBOutlet var characteristicReadWriteTimeout: UILabel!
+
     @IBOutlet var maximumPeripheralsConnected: UILabel!
     @IBOutlet var maximumPeripheralsDiscovered: UILabel!
+
     @IBOutlet var peripheralSortOrder: UILabel!
 
     @IBOutlet var scanTimeoutSwitch: UISwitch!
+    @IBOutlet var peripheralConnectionTimeoutSwitch: UISwitch!
+    @IBOutlet var peripheralMaxTimeoutsSwitch: UISwitch!
+    @IBOutlet var peripheralMaxDisconnectionsSwitch: UISwitch!
     @IBOutlet var notifySwitch: UISwitch!
 
     struct MainStroryboard {
@@ -91,12 +103,28 @@ class ConfigureViewController : UITableViewController {
     func configUI() {
         if  Singletons.centralManager.isScanning {
             self.scanTimeoutSwitch.enabled = false
+            self.peripheralConnectionTimeoutSwitch.enabled = false
+            self.peripheralMaxDisconnectionsSwitch.enabled = false
+            self.peripheralMaxTimeoutsSwitch.enabled = false
             self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
+            self.peripheralConnectionTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
+            self.peripheralMaxDisconnectionsEnabledLabel.textColor = UIColor.lightGrayColor()
+            self.peripheralMaxTimeoutsEnabledLabel.textColor = UIColor.lightGrayColor()
+
         } else {
             self.scanTimeoutSwitch.enabled = true
+            self.peripheralConnectionTimeoutSwitch.enabled = true
+            self.peripheralMaxDisconnectionsSwitch.enabled = true
+            self.peripheralMaxTimeoutsSwitch.enabled = true
             self.scanTimeoutEnabledLabel.textColor = UIColor.blackColor()
+            self.peripheralConnectionTimeoutEnabledLabel.textColor = UIColor.blackColor()
+            self.peripheralMaxDisconnectionsEnabledLabel.textColor = UIColor.blackColor()
+            self.peripheralMaxTimeoutsEnabledLabel.textColor = UIColor.blackColor()
         }
         self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
+        self.peripheralConnectionTimeoutSwitch.on = ConfigStore.getPeripheralConnectionTimeoutEnabled()
+        self.peripheralMaxDisconnectionsSwitch.on = ConfigStore.getMaximumDisconnectionsEnabled()
+        self.peripheralMaxTimeoutsSwitch.on = ConfigStore.getMaximumTimeoutsEnabled()
     }
 
 }

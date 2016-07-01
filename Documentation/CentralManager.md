@@ -49,10 +49,10 @@ Scans for advertising peripherals are initiated by calling the BlueCap `CentralM
 
 ```swift
 // Scan promiscuously for all advertising peripherals
-public func startScanning(capacity: Int? = nil, timeout: Double? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
+public func startScanning(capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
 
 // Scan for peripherals advertising services with UUIDs
-public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil, timeout: Double? = nil, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
+public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
 ```
 
 Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the discovered BlueCap `Peripheral`.
@@ -68,7 +68,7 @@ Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFut
 	</tr>
 	<tr>
 		<td>timeout</td>
-		<td>Scan timeout in seconds.</td>
+		<td>Scan timeout in seconds. The default value is infinite.</td>
 	</tr>
 	<tr>
 		<td>options</td>
@@ -145,7 +145,13 @@ public let advertisements: PeripheralAdvertisements
 
 ### <a name="central_peripheral_connection">Peripheral Connection</a>
 
-After discovering a `Peripheral` a connection must be established to begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. `ConnectionEvent` is an enum with values,
+After discovering a `Peripheral` a connection must be established to begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. BlueCap provides connection events to enable applications to easily handle anything that can happen. `ConnectionEvent` is defined by,
+
+```swift
+public enum ConnectionEvent {
+    case Connect, Timeout, Disconnect, ForceDisconnect, GiveUp
+}
+```
 
 <table>
   <tr>
@@ -154,30 +160,30 @@ After discovering a `Peripheral` a connection must be established to begin messa
   </tr>
 	<tr>
 		<td>Connect</td>
-		<td>Connected to peripheral</td>
+		<td>Connected to peripheral.</td>
 	</tr>
 	<tr>
 		<td>Timeout</td>
-		<td>Connection attempt timeout</td>
+		<td>Connection attempt timeout.</td>
 	</tr>
 	<tr>
 		<td>Disconnect</td>
-		<td>Peripheral disconnected</td>
+		<td>Peripheral disconnected.</td>
 	</tr>
 	<tr>
 		<td>ForceDisconnect</td>
-		<td>Peripheral disconnected by application</td>
+		<td>Peripheral disconnected by application.</td>
 	</tr>
 	<tr>
 		<td>GiveUp</td>
-		<td>Give-up trying to connect.</td>
+		<td>Give up trying to connect.</td>
 	</tr>
 </table>
 
 To connect to a peripheral use The BlueCap Peripheral method,
 
 ```swift
-public func connect(capacity: Int? = nil, timeoutRetries: UInt? = nil, disconnectRetries: UInt? = nil, connectionTimeout: Double = 10.0) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>
+public func connect(capacity: Int? = nil, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>
 ```
 
 BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream(peripheral: Peripheral, connectionEvent: ConnectionEvent)>` yielding a tuple containing the connected Peripheral and the ConnectionEvent.
@@ -189,15 +195,15 @@ BlueCap Peripheral connect returns a [SimpleFutures](https://github.com/troystri
 	</tr>
 	<tr>
 		<td>timeoutRetries</td>
-		<td>Number of connection retries on timeout. Default value is 0.</td>
+		<td>Maximum number of connection retries after timeout. The default value is infinite.</td>
 	</tr>
 	<tr>
 		<td>disconnectRetries</td>
-		<td>Number of connection retries on disconnect. Default value is 0.</td>
+		<td>Maximum number of connection retries on disconnect. The default value is infinite.</td>
 	</tr>
 	<tr>
 		<td>connectionTimeout</td>
-		<td>Connection timeout in seconds. Default is 10s.</td>
+		<td>Connection timeout in seconds. The default is infinite.</td>
 	</tr>
 </table>
 

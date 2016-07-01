@@ -267,13 +267,13 @@ startAdvertiseFuture.onFailure {error in
 
 ## Examples
 
-[Examples](/Examples) are available that implement both Central and Peripheral roles. The [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require that,
+[Examples](/Examples) are available that implement both Central and Peripheral roles. The [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require that installing the pod before building,
 
 ```bash
 pod install
 ```
 
-be run before building the project and Carthage projects require,
+and Carthage projects require,
 
 ```bash
 carthage update
@@ -310,7 +310,7 @@ carthage update
 	</tr>
 </table>
 
-# <a name="usage">Usage</a>
+# <a name="usage">Documentation</a>
 
 BlueCap supports many features that simplify writing Bluetooth LE applications. Use cases with example implementations are described in each of the following sections.
 

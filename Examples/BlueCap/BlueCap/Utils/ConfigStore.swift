@@ -139,6 +139,14 @@ class ConfigStore {
     }
     
     // MARK: Peripheral Connection Timeout
+    class func getPeripheralConnectionTimeoutEnabled() -> Bool {
+        return NSUserDefaults.standardUserDefaults().boolForKey("peripheralConnectionTimeoutEnabled")
+    }
+
+    class func setPeripheralConnectionTimeoutEnabled(timeoutEnabled: Bool) {
+        NSUserDefaults.standardUserDefaults().setBool(timeoutEnabled, forKey:"peripheralConnectionTimeoutEnabled")
+    }
+
     class func getPeripheralConnectionTimeout() -> UInt {
         let peripheralConnectionTimeout = NSUserDefaults.standardUserDefaults().integerForKey("peripheralConnectionTimeout")
         if peripheralConnectionTimeout == 0 {
@@ -167,6 +175,14 @@ class ConfigStore {
     }
 
     // MARK: Maximum Disconnections
+    class func getMaximumDisconnectionsEnabled() -> Bool {
+        return NSUserDefaults.standardUserDefaults().boolForKey("maximumDisconnectionsEnabled")
+    }
+
+    class func setMaximumDisconnectionsEnabled(timeoutEnabled: Bool) {
+        NSUserDefaults.standardUserDefaults().setBool(timeoutEnabled, forKey:"maximumDisconnectionsEnabled")
+    }
+
     class func getMaximumDisconnections() -> UInt {
         let maximumDisconnections = NSUserDefaults.standardUserDefaults().integerForKey("maximumDisconnections")
         return maximumDisconnections == 0 ? Defaults.maximumDisconnections : UInt(maximumDisconnections)
@@ -177,6 +193,15 @@ class ConfigStore {
     }
 
     // MARK: Maximum Timeouts
+    class func getMaximumTimeoutsEnabled() -> Bool {
+        return NSUserDefaults.standardUserDefaults().boolForKey("maximumTimeoutsEnabled")
+    }
+
+    class func setMaximumTimeoutsEnabled(timeoutEnabled: Bool) {
+        NSUserDefaults.standardUserDefaults().setBool(timeoutEnabled, forKey:"maximumTimeoutsEnabled")
+    }
+
+
     class func getMaximumTimeouts() -> UInt {
         let maximumTimeouts = NSUserDefaults.standardUserDefaults().integerForKey("maximumTimeouts")
         return maximumTimeouts == 0 ? Defaults.maximumTimeouts : UInt(maximumTimeouts)
