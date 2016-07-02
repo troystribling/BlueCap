@@ -20,7 +20,7 @@ class PeripheralsViewController : UITableViewController {
     var peripheralConnectionStatus = [NSUUID : Bool]()
 
     var reachedDiscoveryLimit: Bool {
-        return self.peripheralConnectionStatus.count >= ConfigStore.getMaximumPeripheralsDiscovered()
+        return Singletons.centralManager.peripherals.count >= ConfigStore.getMaximumPeripheralsDiscovered()
     }
 
     var peripheralsSortedByRSSI: [Peripheral] {
@@ -190,9 +190,10 @@ class PeripheralsViewController : UITableViewController {
 
     func startPolllingRSSIForPeripherals() {
         for peripheral in Singletons.centralManager.peripherals {
-            if let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] where connectionStatus {
-                self.startPollingRSSIForPeripheral(peripheral)
+            guard let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] where connectionStatus else {
+                continue
             }
+            self.startPollingRSSIForPeripheral(peripheral)
         }
     }
 
@@ -204,9 +205,9 @@ class PeripheralsViewController : UITableViewController {
 
     func connect(peripheral: Peripheral) {
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.UUIDString)")
-        let maxTimeouts = ConfigStore.getMaximumTimeouts()
-        let maxDisconnections = ConfigStore.getMaximumDisconnections()
-        let future = peripheral.connect(10, timeoutRetries: maxTimeouts == 0 ? UInt.max : maxTimeouts, disconnectRetries: maxDisconnections == 0 ? UInt.max : maxDisconnections, connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
+        let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
+        let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
+        let future = peripheral.connect(10, timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
         future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -249,11 +250,14 @@ class PeripheralsViewController : UITableViewController {
 
     func reconnectIfNecessary(peripheral: Peripheral) {
         if let status = self.peripheralConnectionStatus[peripheral.identifier] where status {
-            peripheral.reconnect()
+            peripheral.reconnect(1.0)
         }
     }
     
     func startScan() {
+        guard self.reachedDiscoveryLimit == false else {
+            return
+        }
         self.scanStatus = true
         let scanMode = ConfigStore.getScanMode()
         let afterPeripheralDiscovered = { (peripheral: Peripheral) -> Void in

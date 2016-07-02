@@ -96,7 +96,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     private var connectionTimeout = Double.infinity
     private var timeoutRetries = UInt.max
     private var disconnectRetries = UInt.max
-    
+
     internal private(set) weak var centralManager: CentralManager?
     
     internal private(set) var cbPeripheral: CBPeripheralInjectable
@@ -403,17 +403,19 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Connection
-    public func reconnect() {
+    public func reconnect(reconnectDelay: Double = 0.0) {
         guard let centralManager = self.centralManager where self.state == .Disconnected  else {
             Logger.debug("peripheral not disconnected \(self.name), \(self.identifier.UUIDString)")
             return
         }
         Logger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.UUIDString)")
-        centralManager.connectPeripheral(self)
-        self.forcedDisconnect = false
-        self.connectionSequence += 1
-        self.currentError = .None
-        self.timeoutConnection(self.connectionSequence)
+        centralManager.centralQueue.delay(reconnectDelay) {
+            centralManager.connectPeripheral(self)
+            self.forcedDisconnect = false
+            self.connectionSequence += 1
+            self.currentError = .None
+            self.timeoutConnection(self.connectionSequence)
+        }
     }
      
     public func connect(capacity: Int? = nil, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
@@ -448,7 +450,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
-        self.disconnect()
+        if self.state == .Connected {
+            self.disconnect()
+        }
     }
 
     // MARK: Discover Services
@@ -692,7 +696,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 self.disconnectionCount += 1
                 self.connectionPromise?.failure(error)
             } else {
-                self.disconnectionCount = 0
                 self.connectionPromise?.success((self, ConnectionEvent.GiveUp))
             }
     }
@@ -703,7 +706,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.connectionPromise?.success((self, .Timeout))
             self.timeoutCount += 1
         } else {
-            self.timeoutCount = 0
             self.connectionPromise?.success((self, .GiveUp))
         }
     }
@@ -714,7 +716,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.disconnectionCount += 1
             self.connectionPromise?.success((self, .Disconnect))
         } else {
-            self.disconnectionCount = 0
             self.connectionPromise?.success((self, .GiveUp))
         }
     }

@@ -18,7 +18,7 @@ class ConfigurePeripheralMaximumDisconnections: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.maximumDisconnectionsTextField.text = "\(ConfigStore.getMaximumDisconnections())"
+        self.maximumDisconnectionsTextField.text = "\(ConfigStore.getPeripheralMaximumDisconnections())"
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -32,7 +32,7 @@ class ConfigurePeripheralMaximumDisconnections: UIViewController {
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let maximumDisconnections = self.maximumDisconnectionsTextField.text, maximumDisconnectionsInt = UInt(maximumDisconnections) where !maximumDisconnections.isEmpty {
-            ConfigStore.setMaximumDisconnections(maximumDisconnectionsInt)
+            ConfigStore.setPeripheralMaximumDisconnections(maximumDisconnectionsInt)
             self.navigationController?.popToRootViewControllerAnimated(true)
             return true
         } else {

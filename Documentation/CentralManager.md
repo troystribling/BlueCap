@@ -12,6 +12,7 @@ The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegat
 * [Characteristic Write](#central_characteristic_write): Write a characteristic value to a connected Peripheral.
 * [Characteristic Read](#central_characteristic_read): Read a characteristic value from a connected Peripheral.
 * [Characteristic Update Notifications](#central_characteristic_update): Subscribe to characteristic value updates on a connected Peripheral.
+* [Peripheral RSSI](#central_rssi): Retrieve and poll for RSSI.
 * [State Restoration](#central_state_restoration): Restore state of `CentralManager` using iOS state restoration.
 * [KVO](#central_kvo): Properties supporting KVO.
 * [Errors](#central_errors): Description of all errors.
@@ -529,6 +530,8 @@ if let service = peripheral.service(serviceUUID), characteristic = service.chara
 	characteristic.stopNotifying()
 }
 ```
+
+### <a name="central_rssi">Peripheral RSSI</a>
 
 ### <a name="central_state_restoration">State Restoration</a>
 

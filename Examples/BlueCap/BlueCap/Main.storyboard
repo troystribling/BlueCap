@@ -1958,7 +1958,7 @@
                             <tableViewSection headerTitle="Service Scan" id="gGd-fN-SEn">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Yuz-Fm-Dje" detailTextLabel="4dU-Qj-ty3" rowHeight="50" style="IBUITableViewCellStyleValue1" id="0HI-MV-ohr">
-                                        <rect key="frame" x="0.0" y="50" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="49.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0HI-MV-ohr" id="ihf-7o-wWK">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="50"/>
@@ -1984,8 +1984,8 @@
                                             <segue destination="3GU-aY-66s" kind="show" identifier="ConfigureScanMode" id="mGS-3e-iNw"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="clG-Jf-3IE" rowHeight="50" style="IBUITableViewCellStyleDefault" id="Yfa-HA-hLd">
-                                        <rect key="frame" x="0.0" y="100" width="600" height="50"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="clG-Jf-3IE" rowHeight="50" style="IBUITableViewCellStyleDefault" id="Yfa-HA-hLd">
+                                        <rect key="frame" x="0.0" y="99.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yfa-HA-hLd" id="Fro-WM-52x">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -2009,7 +2009,7 @@
                             <tableViewSection headerTitle="Scan Timeout" id="yD7-s5-g8p">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="u42-iW-m88">
-                                        <rect key="frame" x="0.0" y="192" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="191.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u42-iW-m88" id="0VI-QY-fJa">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
@@ -2033,8 +2033,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="zZz-gK-YHp" detailTextLabel="1mj-Pi-WdG" rowHeight="50" style="IBUITableViewCellStyleValue1" id="5on-Zw-Xtl">
-                                        <rect key="frame" x="0.0" y="242" width="600" height="50"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="zZz-gK-YHp" detailTextLabel="1mj-Pi-WdG" rowHeight="50" style="IBUITableViewCellStyleValue1" id="5on-Zw-Xtl">
+                                        <rect key="frame" x="0.0" y="241.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5on-Zw-Xtl" id="geu-IR-mu5">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -2065,7 +2065,7 @@
                             <tableViewSection headerTitle="Peripheral Connection Timeout" id="hJr-a4-sy1">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="5AN-0f-aeT">
-                                        <rect key="frame" x="0.0" y="334" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="333.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5AN-0f-aeT" id="6F6-6x-3YS">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
@@ -2089,15 +2089,15 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="cCN-36-m6r" detailTextLabel="DMq-iY-0mW" rowHeight="50" style="IBUITableViewCellStyleValue1" id="YsE-Nz-Igv">
-                                        <rect key="frame" x="0.0" y="384" width="600" height="50"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="cCN-36-m6r" detailTextLabel="DMq-iY-0mW" rowHeight="50" style="IBUITableViewCellStyleValue1" id="YsE-Nz-Igv">
+                                        <rect key="frame" x="0.0" y="383.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="YsE-Nz-Igv" id="7jY-a1-mDZ">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Connection Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cCN-36-m6r">
-                                                    <rect key="frame" x="15" y="13" width="185" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Timeout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cCN-36-m6r">
+                                                    <rect key="frame" x="15" y="13" width="76" height="25"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -2113,7 +2113,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="SvA-DH-tna" kind="show" id="sZD-c7-3eV"/>
+                                            <segue destination="SvA-DH-tna" kind="show" identifier="ConfigurePeripheralConnectionTimeout" id="UtO-nt-Bpn"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -2121,7 +2121,7 @@
                             <tableViewSection headerTitle="Maximum Peripheral Connection Timeouts" id="naC-L1-rJO">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="X0a-aW-vMF">
-                                        <rect key="frame" x="0.0" y="476" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="475.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="X0a-aW-vMF" id="xgV-VG-qvr">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
@@ -2145,8 +2145,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="bt3-Pm-JzN" detailTextLabel="eXM-VF-tOE" rowHeight="50" style="IBUITableViewCellStyleValue1" id="usf-j7-Wjh">
-                                        <rect key="frame" x="0.0" y="526" width="600" height="50"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="bt3-Pm-JzN" detailTextLabel="eXM-VF-tOE" rowHeight="50" style="IBUITableViewCellStyleValue1" id="usf-j7-Wjh">
+                                        <rect key="frame" x="0.0" y="525.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="usf-j7-Wjh" id="Rls-TA-CGw">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -2169,15 +2169,15 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="qNM-jR-e9y" kind="show" id="kuI-sD-GDv"/>
+                                            <segue destination="qNM-jR-e9y" kind="show" identifier="ConfigurePeripheralMaxTimepouts" id="kuI-sD-GDv"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Maximum Periphaer Disconnections" id="8ju-Zn-yKL">
+                            <tableViewSection headerTitle="Maximum Peripheral Disconnections" id="8ju-Zn-yKL">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="QCZ-X8-bXr">
-                                        <rect key="frame" x="0.0" y="618" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="617.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QCZ-X8-bXr" id="Rlt-NY-DiR">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
@@ -2202,10 +2202,10 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="8rO-lY-WdU" detailTextLabel="f80-ez-8gP" rowHeight="50" style="IBUITableViewCellStyleValue1" id="2gH-lj-H6p">
-                                        <rect key="frame" x="0.0" y="668" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="667.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2gH-lj-H6p" id="9j6-Xh-58b">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Disconnections" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8rO-lY-WdU">
@@ -2215,7 +2215,7 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="f80-ez-8gP">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="5" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="f80-ez-8gP">
                                                     <rect key="frame" x="552" y="13" width="13" height="25"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
@@ -2232,8 +2232,8 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Charcteristic I/O" id="khN-Sv-olX">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
-                                        <rect key="frame" x="0.0" y="760" width="600" height="50"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="lQo-z4-DBP" detailTextLabel="60B-HI-lJ8" rowHeight="50" style="IBUITableViewCellStyleValue1" id="pfT-ct-Yfa">
+                                        <rect key="frame" x="0.0" y="759.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pfT-ct-Yfa" id="HnQ-CP-pw2">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -2263,8 +2263,8 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Peripheral Discovery" id="vNl-7P-Qsf">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="HAL-3Y-xgm" detailTextLabel="HVV-RC-weh" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xyn-sW-H09">
-                                        <rect key="frame" x="0.0" y="852" width="600" height="50"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="HAL-3Y-xgm" detailTextLabel="HVV-RC-weh" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xyn-sW-H09">
+                                        <rect key="frame" x="0.0" y="851.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xyn-sW-H09" id="ET7-mw-zVx">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -2290,11 +2290,11 @@
                                             <segue destination="Loh-OD-U7S" kind="show" identifier="ConfigureMaxConnections" id="0yj-rC-x8T"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="BnY-Zz-EPi" detailTextLabel="0E3-Dh-OXL" rowHeight="50" style="IBUITableViewCellStyleValue1" id="Vkq-GO-2zI">
-                                        <rect key="frame" x="0.0" y="902" width="600" height="50"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="BnY-Zz-EPi" detailTextLabel="0E3-Dh-OXL" rowHeight="50" style="IBUITableViewCellStyleValue1" id="Vkq-GO-2zI">
+                                        <rect key="frame" x="0.0" y="901.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Vkq-GO-2zI" id="DiP-ZL-kq6">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Max Discovered" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BnY-Zz-EPi">
@@ -2322,7 +2322,7 @@
                             <tableViewSection headerTitle="Periphearls Display" id="EsL-WL-l85">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Lkd-kf-40S" detailTextLabel="9UP-xy-XPA" rowHeight="50" style="IBUITableViewCellStyleValue1" id="xhJ-Gm-deP">
-                                        <rect key="frame" x="0.0" y="994" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="993.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xhJ-Gm-deP" id="ccy-xg-7Es">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="49.5"/>
@@ -2353,7 +2353,7 @@
                             <tableViewSection headerTitle="Application" id="0Nn-2E-9qr">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="50" id="2xs-Jj-nLz">
-                                        <rect key="frame" x="0.0" y="1086" width="600" height="50"/>
+                                        <rect key="frame" x="0.0" y="1085.5" width="600" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2xs-Jj-nLz" id="Aj9-a3-5ac">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
@@ -2396,7 +2396,15 @@
                         <outlet property="maximumPeripheralsConnected" destination="HVV-RC-weh" id="T2h-bN-8Tl"/>
                         <outlet property="maximumPeripheralsDiscovered" destination="0E3-Dh-OXL" id="vDR-oj-BVW"/>
                         <outlet property="notifySwitch" destination="0Qo-VB-F4m" id="Qt0-oE-hNV"/>
+                        <outlet property="peripheralConnectionTimeout" destination="DMq-iY-0mW" id="vyq-rX-rx0"/>
+                        <outlet property="peripheralConnectionTimeoutEnabledLabel" destination="Tn0-WR-O58" id="68d-Xw-xci"/>
+                        <outlet property="peripheralConnectionTimeoutSwitch" destination="fJ3-ln-Gml" id="cfJ-vM-5Xa"/>
+                        <outlet property="peripheralMaxDisconnectionsEnabledLabel" destination="uJs-W9-Puh" id="MDW-kS-gnW"/>
                         <outlet property="peripheralMaxDisconnectionsLabel" destination="f80-ez-8gP" id="BPh-v2-nhn"/>
+                        <outlet property="peripheralMaxDisconnectionsSwitch" destination="Pat-pc-YMJ" id="Uxi-Tc-c1f"/>
+                        <outlet property="peripheralMaxTimeoutsEnabledLabel" destination="Bkq-97-WYr" id="hhz-Nh-C8U"/>
+                        <outlet property="peripheralMaxTimeoutsLabel" destination="eXM-VF-tOE" id="aQP-km-y2i"/>
+                        <outlet property="peripheralMaxTimeoutsSwitch" destination="g6X-rL-Uyv" id="HjK-zM-UHe"/>
                         <outlet property="peripheralSortOrder" destination="9UP-xy-XPA" id="Ld9-pg-nYI"/>
                         <outlet property="scanModeLabel" destination="4dU-Qj-ty3" id="kpg-nU-Dp8"/>
                         <outlet property="scanTimeoutEnabledLabel" destination="WEG-8P-fl3" id="VBk-35-Xsm"/>
@@ -4963,7 +4971,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sKa-YH-bMT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1526" y="-1238"/>
+            <point key="canvasLocation" x="1518" y="-1209"/>
         </scene>
         <!--Peripheral Timeout-->
         <scene sceneID="qSy-r0-zg9">
@@ -5003,7 +5011,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="twy-aE-u6K" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2245" y="-1238"/>
+            <point key="canvasLocation" x="2247" y="-1209"/>
         </scene>
         <!--Max Timeouts-->
         <scene sceneID="0fw-zi-j5i">
@@ -5043,7 +5051,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cca-8q-tIP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3091" y="-1238"/>
+            <point key="canvasLocation" x="3086" y="-1209"/>
         </scene>
         <!--Peripheral Sort Order-->
         <scene sceneID="ajL-HY-bOd">
@@ -5201,7 +5209,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sRs-RZ-efc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3853" y="-1238"/>
+            <point key="canvasLocation" x="3856" y="-1209"/>
         </scene>
     </scenes>
     <resources>

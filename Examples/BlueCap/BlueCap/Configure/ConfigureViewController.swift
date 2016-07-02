@@ -57,8 +57,8 @@ class ConfigureViewController : UITableViewController {
     override func viewWillAppear(animated: Bool) {
         self.scanModeLabel.text = ConfigStore.getScanMode().stringValue
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
-        self.peripheralMaxDisconnectionsLabel.text = "\(ConfigStore.getMaximumDisconnections())"
-        self.peripheralMaxTimeoutsLabel.text = "\(ConfigStore.getMaximumTimeouts())"
+        self.peripheralMaxDisconnectionsLabel.text = "\(ConfigStore.getPeripheralMaximumDisconnections())"
+        self.peripheralMaxTimeoutsLabel.text = "\(ConfigStore.getPeripheralMaximumTimeouts())"
         self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
         self.characteristicReadWriteTimeout.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
         self.maximumPeripheralsConnected.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
@@ -123,8 +123,8 @@ class ConfigureViewController : UITableViewController {
         }
         self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
         self.peripheralConnectionTimeoutSwitch.on = ConfigStore.getPeripheralConnectionTimeoutEnabled()
-        self.peripheralMaxDisconnectionsSwitch.on = ConfigStore.getMaximumDisconnectionsEnabled()
-        self.peripheralMaxTimeoutsSwitch.on = ConfigStore.getMaximumTimeoutsEnabled()
+        self.peripheralMaxDisconnectionsSwitch.on = ConfigStore.getPeripheralMaximumDisconnectionsEnabled()
+        self.peripheralMaxTimeoutsSwitch.on = ConfigStore.getPeripheralMaximumTimeoutsEnabled()
     }
 
 }

@@ -871,6 +871,7 @@ public class FutureStream<T> {
     }
 
     internal func success(value: T) {
+        Logger.debug("value: \(value)")
         self.complete(Try(value))
     }
 

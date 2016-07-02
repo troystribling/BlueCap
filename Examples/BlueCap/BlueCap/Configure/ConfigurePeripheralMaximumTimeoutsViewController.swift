@@ -18,7 +18,7 @@ class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.maximumTimeoutsTextField.text = "\(ConfigStore.getMaximumTimeouts())"
+        self.maximumTimeoutsTextField.text = "\(ConfigStore.getPeripheralMaximumTimeouts())"
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -32,7 +32,7 @@ class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
     // UITextFieldDelegate
     func textFieldShouldReturn(textField: UITextField!) -> Bool {
         if let maximumTimeouts = self.maximumTimeoutsTextField.text, maximumTimeoutsInt = UInt(maximumTimeouts) where !maximumTimeouts.isEmpty {
-            ConfigStore.setMaximumTimeouts(maximumTimeoutsInt)
+            ConfigStore.setPeripheralMaximumTimeouts(maximumTimeoutsInt)
             self.navigationController?.popToRootViewControllerAnimated(true)
             return true
         } else {
