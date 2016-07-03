@@ -306,8 +306,8 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         self.willRestoreState(injectablePeripherals, scannedServices: scannedServices, options: options)
     }
     
-    public func centralManagerDidUpdateState(_: CBCentralManager) {
-        self.didUpdateState()
+    public func centralManagerDidUpdateState(centralManager: CBCentralManager) {
+        self.didUpdateState(centralManager)
     }
 
     // MARK: CBCentralManagerDelegate Shims
@@ -368,9 +368,9 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    internal func didUpdateState() {
-        self.poweredOn = self.cbCentralManager.state == .PoweredOn
-        switch(self.cbCentralManager.state) {
+    internal func didUpdateState(centralManager: CBCentralManagerInjectable) {
+        self.poweredOn = centralManager.state == .PoweredOn
+        switch(centralManager.state) {
         case .Unauthorized:
             BCLogger.debug("Unauthorized")
             break

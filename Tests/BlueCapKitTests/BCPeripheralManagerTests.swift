@@ -39,7 +39,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
         let future = peripheralManager.whenPowerOn()
         mock.state = .PoweredOn
-        peripheralManager.didUpdateState()
+        peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
@@ -48,7 +48,7 @@ class BCPeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let future = peripheralManager.whenPowerOff()
         mock.state = .PoweredOff
-        peripheralManager.didUpdateState()
+        peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 

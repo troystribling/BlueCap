@@ -318,8 +318,8 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: CBPeripheralManagerDelegate
-    public func peripheralManagerDidUpdateState(_: CBPeripheralManager) {
-        self.didUpdateState()
+    public func peripheralManagerDidUpdateState(peripheralManager: CBPeripheralManager) {
+        self.didUpdateState(peripheralManager)
     }
     
     public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:AnyObject]) {
@@ -408,9 +408,9 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    internal func didUpdateState() {
-        self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
-        switch self.cbPeripheralManager.state {
+    internal func didUpdateState(peripheralManager: CBPeripheralManagerInjectable) {
+        self.poweredOn = peripheralManager.state == .PoweredOn
+        switch peripheralManager.state {
         case .PoweredOn:
             BCLogger.debug("poweredOn")
             if !self.afterPowerOnPromise.completed {

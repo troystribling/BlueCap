@@ -37,7 +37,7 @@ class BCCentralManagerTests: XCTestCase {
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
         mock.state = .PoweredOn
-        centralManager.didUpdateState()
+        centralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
@@ -47,7 +47,7 @@ class BCCentralManagerTests: XCTestCase {
         let centralManager = BCCentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
         mock.state = .PoweredOff
-        centralManager.didUpdateState()
+        centralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
