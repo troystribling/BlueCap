@@ -37,7 +37,7 @@ class CentralManagerTests: XCTestCase {
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
         mock.state = .PoweredOn
-        centralManager.didUpdateState()
+        centralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
@@ -46,7 +46,7 @@ class CentralManagerTests: XCTestCase {
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
         mock.state = .Unsupported
-        centralManager.didUpdateState()
+        centralManager.didUpdateState(mock)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, BCError.centralStateUnsupported.code)
         }
@@ -58,7 +58,7 @@ class CentralManagerTests: XCTestCase {
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
         mock.state = .PoweredOff
-        centralManager.didUpdateState()
+        centralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 

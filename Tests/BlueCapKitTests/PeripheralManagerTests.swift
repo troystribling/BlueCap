@@ -39,7 +39,7 @@ class PeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
         let future = peripheralManager.whenPowerOn()
         mock.state = .PoweredOn
-        peripheralManager.didUpdateState()
+        peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
@@ -47,7 +47,7 @@ class PeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOff)
         let future = peripheralManager.whenPowerOn()
         mock.state = .Unsupported
-        peripheralManager.didUpdateState()
+        peripheralManager.didUpdateState(mock)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, BCError.centralStateUnsupported.code)
         }
@@ -58,7 +58,7 @@ class PeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
         let future = peripheralManager.whenPowerOff()
         mock.state = .PoweredOff
-        peripheralManager.didUpdateState()
+        peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
