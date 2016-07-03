@@ -14,15 +14,6 @@ import CoreLocation
 // MARK: Defaults
 struct Defaults {
     static let serviceScanMode: ServiceScanMode = .Promiscuous
-    static let scanTimeout: UInt = 10
-    static let connectionTimeout: UInt = 10
-    static let peripheralConnectionTimeout: UInt = 10
-    static let characteristicReadWriteTimeout: UInt = 10
-    static let peripheralMaximumTimeouts: UInt = 5
-    static let peripheralMaximumDisconnections: UInt = 5
-    static let maximumPeripheralsConnected: Int = 10
-    static let maximumPeripheralsDiscovered: Int = 10
-    static let peripheralMaximumTimeoutsEnabled = true
     static let peripheralSortOrder: PeripheralSortOrder = .DiscoveryDate
 }
 
@@ -128,11 +119,7 @@ class ConfigStore {
     
     class func getScanTimeout() -> UInt {
         let timeout = NSUserDefaults.standardUserDefaults().integerForKey("scanTimeout")
-        if timeout == 0 {
-            return Defaults.scanTimeout
-        } else {
-            return UInt(timeout)
-        }
+        return UInt(timeout)
     }
     
     class func setScanTimeout(timeout: UInt) {
@@ -149,12 +136,8 @@ class ConfigStore {
     }
 
     class func getPeripheralConnectionTimeout () -> UInt {
-        let peripheralConnectionTimeout = NSUserDefaults.standardUserDefaults().integerForKey("peripheralConnectionTimeout")
-        if peripheralConnectionTimeout == 0 {
-            return Defaults.peripheralConnectionTimeout
-        } else {
-            return UInt(peripheralConnectionTimeout)
-        }
+        let timeout = NSUserDefaults.standardUserDefaults().integerForKey("peripheralConnectionTimeout")
+        return UInt(timeout)
     }
     
     class func setPeripheralConnectionTimeout(peripheralConnectionTimeout: UInt) {
@@ -164,11 +147,7 @@ class ConfigStore {
     // MARK: Characteristic Read Write Timeout
     class func getCharacteristicReadWriteTimeout() -> UInt {
         let characteristicReadWriteTimeout = NSUserDefaults.standardUserDefaults().integerForKey("characteristicReadWriteTimeout")
-        if characteristicReadWriteTimeout == 0 {
-            return Defaults.characteristicReadWriteTimeout
-        } else {
-            return UInt(characteristicReadWriteTimeout)
-        }
+        return UInt(characteristicReadWriteTimeout)
     }
     
     class func setCharacteristicReadWriteTimeout(characteristicReadWriteTimeout: UInt) {
@@ -186,7 +165,7 @@ class ConfigStore {
 
     class func getPeripheralMaximumDisconnections() -> UInt {
         let maximumDisconnections = NSUserDefaults.standardUserDefaults().integerForKey("peripheralMaximumDisconnections")
-        return maximumDisconnections == 0 ? Defaults.peripheralMaximumDisconnections : UInt(maximumDisconnections)
+        return UInt(maximumDisconnections)
     }
     
     class func setPeripheralMaximumDisconnections(maximumDisconnections: UInt) {
@@ -205,7 +184,7 @@ class ConfigStore {
 
     class func getPeripheralMaximumTimeouts() -> UInt {
         let maximumTimeouts = NSUserDefaults.standardUserDefaults().integerForKey("peripheralMaximumTimeouts")
-        return maximumTimeouts == 0 ? Defaults.peripheralMaximumTimeouts : UInt(maximumTimeouts)
+        return UInt(maximumTimeouts)
     }
 
     class func setPeripheralMaximumTimeouts(maximumTimeouts: UInt) {
@@ -214,8 +193,7 @@ class ConfigStore {
 
     // MARK: Maximum Peripherals Connected
     class func getMaximumPeripheralsConnected() -> Int {
-        let maximumPeripheralsConnected = NSUserDefaults.standardUserDefaults().integerForKey("maximumPeripheralsConnected")
-        return maximumPeripheralsConnected == 0 ? Defaults.maximumPeripheralsConnected : maximumPeripheralsConnected
+        return NSUserDefaults.standardUserDefaults().integerForKey("maximumPeripheralsConnected")
     }
 
     class func setMaximumPeripheralsConnected(maximumConnections: Int) {
@@ -224,12 +202,7 @@ class ConfigStore {
 
     // MARK: Maximum Discovered Peripherals
     class func getMaximumPeripheralsDiscovered() -> Int {
-        let maximumPeripheralsDiscovered = NSUserDefaults.standardUserDefaults().integerForKey("maximumPeripheralsDiscovered")
-        if maximumPeripheralsDiscovered == 0 {
-            return Defaults.maximumPeripheralsDiscovered
-        } else {
-            return maximumPeripheralsDiscovered
-        }
+        return NSUserDefaults.standardUserDefaults().integerForKey("maximumPeripheralsDiscovered")
     }
 
     class func setMaximumPeripheralsDiscovered(maximumPeripherals: Int) {

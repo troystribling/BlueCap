@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>scanMode</key>
+	<integer>0</integer>
+	<key>scanTimeoutEnabled</key>
+	<false/>
+	<key>scanTimeout</key>
+	<integer>10</integer>
+	<key>peripheralConnectionTimeoutEnabled</key>
+	<true/>
+	<key>peripheralConnectionTimeout</key>
+	<integer>10</integer>
+	<key>characteristicReadWriteTimeout</key>
+	<integer>10</integer>
+	<key>peripheralMaximumDisconnectionsEnabled</key>
+	<false/>
+	<key>peripheralMaximumDisconnections</key>
+	<integer>5</integer>
+	<key>peripheralMaximumTimeoutsEnabled</key>
+	<true/>
+	<key>peripheralMaximumTimeouts</key>
+	<integer>5</integer>
+	<key>maximumPeripheralsConnected</key>
+	<integer>10</integer>
+	<key>maximumPeripheralsDiscovered</key>
+	<integer>10</integer>
+	<key>peripheralSortOrder</key>
+	<integer>0</integer>
+</dict>
+</plist>

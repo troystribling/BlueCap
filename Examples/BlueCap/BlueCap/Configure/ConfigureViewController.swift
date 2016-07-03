@@ -12,36 +12,55 @@ import BlueCapKit
 class ConfigureViewController : UITableViewController {
     
     @IBOutlet var scanModeLabel: UILabel!
+    @IBOutlet var scanModeTitleLabel: UILabel!
+
     @IBOutlet var servicesLabel: UILabel!
 
-    @IBOutlet var scanTimeoutLabel: UILabel!
-    @IBOutlet var scanTimeoutEnabledLabel: UILabel!
-
-    @IBOutlet var peripheralConnectionTimeoutEnabledLabel: UILabel!
-    @IBOutlet var peripheralMaxTimeoutsEnabledLabel: UILabel!
-    @IBOutlet var peripheralMaxDisconnectionsEnabledLabel: UILabel!
-
-    @IBOutlet var peripheralMaxDisconnectionsLabel: UILabel!
-    @IBOutlet var peripheralMaxTimeoutsLabel: UILabel!
-    @IBOutlet var peripheralConnectionTimeout: UILabel!
-
-    @IBOutlet var characteristicReadWriteTimeout: UILabel!
-
-    @IBOutlet var maximumPeripheralsConnected: UILabel!
-    @IBOutlet var maximumPeripheralsDiscovered: UILabel!
-
-    @IBOutlet var peripheralSortOrder: UILabel!
-
     @IBOutlet var scanTimeoutSwitch: UISwitch!
+    @IBOutlet var scanTimeoutEnabledLabel: UILabel!
+    @IBOutlet var scanTimeoutTitleLabel: UILabel!
+    @IBOutlet var scanTimeoutLabel: UILabel!
+
     @IBOutlet var peripheralConnectionTimeoutSwitch: UISwitch!
+    @IBOutlet var peripheralConnectionTimeoutEnabledLabel: UILabel!
+    @IBOutlet var peripheralConnectionTimeoutTitleLabel: UILabel!
+    @IBOutlet var peripheralConnectionTimeoutLabel: UILabel!
+
     @IBOutlet var peripheralMaxTimeoutsSwitch: UISwitch!
+    @IBOutlet var peripheralMaxTimeoutsEnabledLabel: UILabel!
+    @IBOutlet var peripheralMaxTimeoutsTitleLabel: UILabel!
+    @IBOutlet var peripheralMaxTimeoutsLabel: UILabel!
+
     @IBOutlet var peripheralMaxDisconnectionsSwitch: UISwitch!
+    @IBOutlet var peripheralMaxDisconnectionsEnabledLabel: UILabel!
+    @IBOutlet var peripheralMaxDisconnectionsTitleLabel: UILabel!
+    @IBOutlet var peripheralMaxDisconnectionsLabel: UILabel!
+
+    @IBOutlet var characteristicReadWriteTimeoutTitleLabel: UILabel!
+    @IBOutlet var characteristicReadWriteTimeoutLabel: UILabel!
+
+    @IBOutlet var maximumPeripheralsConnectedTitleLabel: UILabel!
+    @IBOutlet var maximumPeripheralsConnectedLabel: UILabel!
+
+    @IBOutlet var maximumPeripheralsDiscoveredTitleLabel: UILabel!
+    @IBOutlet var maximumPeripheralsDiscoveredLabel: UILabel!
+
+    @IBOutlet var peripheralSortOrderTitleLabel: UILabel!
+    @IBOutlet var peripheralSortOrderLabel: UILabel!
+
     @IBOutlet var notifySwitch: UISwitch!
 
     struct MainStroryboard {
         static let configureScanServicesSegue = "ConfigureScanServices"
         static let configureScanModeSegue = "ConfigureScanMode"
         static let configureScanTimeoutSegue = "ConfigureScanTimeout"
+        static let configurePeripheralSortOrder = "ConfigurePeripheralSortOrder"
+        static let characteristicReadWriteTimeout = "CharacteristicReadWriteTimeout"
+        static let configurePeripheralConnectionTimeout = "ConfigurePeripheralConnectionTimeout"
+        static let configurePeripheralMaxDisconnections = "ConfigurePeripheralMaxDisconnections"
+        static let configurePeripheralMaxTimeouts = "ConfigurePeripheralMaxTimeouts"
+        static let configureMaxPeripheralConnections = "ConfigureMaxPeripheralConnections"
+        static let configuredMaxPeripheralDiscovered = "ConfiguredMaxPeripheralDiscovered"
     }
     
     required init?(coder aDecoder:NSCoder) {
@@ -59,11 +78,11 @@ class ConfigureViewController : UITableViewController {
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.peripheralMaxDisconnectionsLabel.text = "\(ConfigStore.getPeripheralMaximumDisconnections())"
         self.peripheralMaxTimeoutsLabel.text = "\(ConfigStore.getPeripheralMaximumTimeouts())"
-        self.peripheralConnectionTimeout.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
-        self.characteristicReadWriteTimeout.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
-        self.maximumPeripheralsConnected.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
-        self.maximumPeripheralsDiscovered.text = "\(ConfigStore.getMaximumPeripheralsDiscovered())"
-        self.peripheralSortOrder.text = ConfigStore.getPeripheralSortOrder().stringValue
+        self.peripheralConnectionTimeoutLabel.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
+        self.characteristicReadWriteTimeoutLabel.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
+        self.maximumPeripheralsConnectedLabel.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
+        self.maximumPeripheralsDiscoveredLabel.text = "\(ConfigStore.getMaximumPeripheralsDiscovered())"
+        self.peripheralSortOrderLabel.text = ConfigStore.getPeripheralSortOrder().stringValue
         self.configUI()
         self.navigationItem.title = "Configure"
         super.viewWillAppear(animated)
@@ -78,53 +97,76 @@ class ConfigureViewController : UITableViewController {
     }
     
     override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
-        if let identifier = identifier {
-            switch(identifier) {
-            case MainStroryboard.configureScanModeSegue:
-                return true
-            case MainStroryboard.configureScanServicesSegue:
-                return true
-            default:
-                return true
-            }
-        } else {
+        guard identifier != nil  else {
             return false
         }
+        return !Singletons.centralManager.isScanning
     }
         
-    @IBAction func toggleScanTimeout(sender:AnyObject) {
+    @IBAction func toggleScanTimeout(_: AnyObject) {
         ConfigStore.setScanTimeoutEnabled(!ConfigStore.getScanTimeoutEnabled())
     }
     
-    @IBAction func toggelNotification(sender:AnyObject) {
+    @IBAction func toggelNotification(_: AnyObject) {
         Notify.setEnable(self.notifySwitch.on)
     }
- 
-    func configUI() {
-        if  Singletons.centralManager.isScanning {
-            self.scanTimeoutSwitch.enabled = false
-            self.peripheralConnectionTimeoutSwitch.enabled = false
-            self.peripheralMaxDisconnectionsSwitch.enabled = false
-            self.peripheralMaxTimeoutsSwitch.enabled = false
-            self.scanTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
-            self.peripheralConnectionTimeoutEnabledLabel.textColor = UIColor.lightGrayColor()
-            self.peripheralMaxDisconnectionsEnabledLabel.textColor = UIColor.lightGrayColor()
-            self.peripheralMaxTimeoutsEnabledLabel.textColor = UIColor.lightGrayColor()
 
-        } else {
-            self.scanTimeoutSwitch.enabled = true
-            self.peripheralConnectionTimeoutSwitch.enabled = true
-            self.peripheralMaxDisconnectionsSwitch.enabled = true
-            self.peripheralMaxTimeoutsSwitch.enabled = true
-            self.scanTimeoutEnabledLabel.textColor = UIColor.blackColor()
-            self.peripheralConnectionTimeoutEnabledLabel.textColor = UIColor.blackColor()
-            self.peripheralMaxDisconnectionsEnabledLabel.textColor = UIColor.blackColor()
-            self.peripheralMaxTimeoutsEnabledLabel.textColor = UIColor.blackColor()
-        }
+    @IBAction func toggelPeripheralConnectionTimeout(_: AnyObject) {
+        ConfigStore.setPeripheralConnectionTimeoutEnabled(self.peripheralConnectionTimeoutSwitch.on)
+    }
+
+    @IBAction func togglePeripheralMaximumTimeouts(_: AnyObject) {
+        ConfigStore.setPeripheralMaximumTimeoutsEnabled(self.peripheralMaxTimeoutsSwitch.on)
+    }
+
+    @IBAction func togglePeripheralMaximumDisconnections(_: AnyObject) {
+        ConfigStore.setPeripheralMaximumDisconnectionsEnabled(self.peripheralMaxDisconnectionsSwitch.on)
+    }
+
+    func configUI() {
+        self.scanModeTitleLabel.textColor = self.labelColorIfScanning()
+
+        self.servicesLabel.textColor = self.labelColorIfScanning()
+
         self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
+        self.scanTimeoutSwitch.enabled = self.enableIfScanning()
+        self.scanTimeoutEnabledLabel.textColor = self.labelColorIfScanning()
+        self.scanTimeoutTitleLabel.textColor = self.labelColorIfScanning()
+
         self.peripheralConnectionTimeoutSwitch.on = ConfigStore.getPeripheralConnectionTimeoutEnabled()
-        self.peripheralMaxDisconnectionsSwitch.on = ConfigStore.getPeripheralMaximumDisconnectionsEnabled()
+        self.peripheralConnectionTimeoutSwitch.enabled = self.enableIfScanning()
+        self.peripheralConnectionTimeoutEnabledLabel.textColor = self.labelColorIfScanning()
+        self.peripheralConnectionTimeoutTitleLabel.textColor = self.labelColorIfScanning()
+
         self.peripheralMaxTimeoutsSwitch.on = ConfigStore.getPeripheralMaximumTimeoutsEnabled()
+        self.peripheralMaxTimeoutsSwitch.enabled = self.enableIfScanning()
+        self.peripheralMaxTimeoutsEnabledLabel.textColor = self.labelColorIfScanning()
+        self.peripheralMaxTimeoutsTitleLabel.textColor = self.labelColorIfScanning()
+
+        self.peripheralMaxDisconnectionsSwitch.on = ConfigStore.getPeripheralMaximumDisconnectionsEnabled()
+        self.peripheralMaxDisconnectionsSwitch.enabled = self.enableIfScanning()
+        self.peripheralMaxDisconnectionsEnabledLabel.textColor = self.labelColorIfScanning()
+        self.peripheralMaxDisconnectionsTitleLabel.textColor = self.labelColorIfScanning()
+
+        self.characteristicReadWriteTimeoutTitleLabel.textColor = self.labelColorIfScanning()
+
+        self.maximumPeripheralsConnectedTitleLabel.textColor = self.labelColorIfScanning()
+
+        self.maximumPeripheralsDiscoveredTitleLabel.textColor = self.labelColorIfScanning()
+
+        self.peripheralSortOrderTitleLabel.textColor = self.labelColorIfScanning()
+    }
+
+    func labelColorIfScanning() -> UIColor {
+        if  Singletons.centralManager.isScanning {
+            return UIColor.lightGrayColor()
+        } else {
+            return UIColor.blackColor()
+        }
+    }
+
+    func enableIfScanning() -> Bool {
+        return !Singletons.centralManager.isScanning
     }
 
 }

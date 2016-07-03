@@ -27,6 +27,7 @@
 		056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 056B7C7419DE4E52001B7F95 /* Main.storyboard */; };
 		056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */; };
 		056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */; };
+		056E3B231D29843C002316FC /* DefaultConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 056E3B221D29843C002316FC /* DefaultConfiguration.plist */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
 		05840F6E194206F100C744E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6D194206F100C744E6 /* Images.xcassets */; };
@@ -108,6 +109,7 @@
 		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerAddAdvertisedServiceViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconCell.swift; sourceTree = "<group>"; };
+		056E3B221D29843C002316FC /* DefaultConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultConfiguration.plist; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05840F63194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 			isa = PBXGroup;
 			children = (
 				05840F63194206F100C744E6 /* Info.plist */,
+				056E3B221D29843C002316FC /* DefaultConfiguration.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -398,6 +401,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05840F6E194206F100C744E6 /* Images.xcassets in Resources */,
+				056E3B231D29843C002316FC /* DefaultConfiguration.plist in Resources */,
 				0543FEBE1B42E22D00363415 /* LaunchScreen.xib in Resources */,
 				056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */,
 			);

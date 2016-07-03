@@ -207,7 +207,8 @@ class PeripheralsViewController : UITableViewController {
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.UUIDString)")
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
-        let future = peripheral.connect(10, timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: Double(ConfigStore.getPeripheralConnectionTimeout()))
+        let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
+        let future = peripheral.connect(10, timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout)
         future.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
@@ -282,15 +283,11 @@ class PeripheralsViewController : UITableViewController {
 
         // Promiscuous Scan Enabled
         var future: FutureStream<Peripheral>
+        let scanTimeout = ConfigStore.getScanTimeoutEnabled() ? Double(ConfigStore.getScanTimeout()) : Double.infinity
         switch scanMode {
         case .Promiscuous:
             // Promiscuous Scan with Timeout Enabled
-            if ConfigStore.getScanTimeoutEnabled() {
-                future = Singletons.centralManager.startScanning(10, timeout: Double(ConfigStore.getScanTimeout()))
-                
-            } else {
-                future = Singletons.centralManager.startScanning(10)
-            }
+            future = Singletons.centralManager.startScanning(10, timeout: scanTimeout)
             future.onSuccess(afterPeripheralDiscovered)
             future.onFailure(afterTimeout)
         case .Service:
@@ -298,12 +295,7 @@ class PeripheralsViewController : UITableViewController {
             if scannedServices.isEmpty {
                 self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
             } else {
-                // Service Scan with Timeout Enabled
-                if ConfigStore.getScanTimeoutEnabled() {
-                    future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10, timeout: Double(ConfigStore.getScanTimeout()))
-                } else {
-                    future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10)
-                }
+                future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10, timeout: scanTimeout)
                 future.onSuccess(afterPeripheralDiscovered)
                 future.onFailure(afterTimeout)
             }

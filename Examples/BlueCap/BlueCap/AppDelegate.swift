@@ -57,6 +57,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BLESIGGATTProfiles.create()
         GnosusProfiles.create()
         NordicProfiles.create()
+        let defaultConfig = NSBundle.mainBundle().URLForResource("DefaultConfiguration", withExtension: "plist").flatMap { NSDictionary(contentsOfURL: $0) }.flatMap { $0 as? [String: AnyObject] }
+        if let defaultConfig = defaultConfig {
+            NSUserDefaults.standardUserDefaults().registerDefaults(defaultConfig)
+        }
         application.registerUserNotificationSettings(
             UIUserNotificationSettings(forTypes:[UIUserNotificationType.Sound, UIUserNotificationType.Alert, UIUserNotificationType.Badge], categories:nil))
         return true
