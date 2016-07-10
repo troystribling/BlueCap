@@ -60,7 +60,6 @@ public struct PeripheralAdvertisements {
 public class Peripheral: NSObject, CBPeripheralDelegate {
 
     internal static var CBPeripheralStateKVOContext = UInt8()
-    internal static let DefaultServiceScanTimeout: Double = 10.0
 
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral")
@@ -456,21 +455,21 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Discover Services
-    public func discoverAllServices(timeout: Double = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
+    public func discoverAllServices(timeout: Double = Double.infinity) -> Future<Peripheral> {
         Logger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         return self.discoverServices(nil, timeout: timeout)
     }
 
-    public func discoverServices(services: [CBUUID]?, timeout: Double? = nil) -> Future<Peripheral> {
+    public func discoverServices(services: [CBUUID]?, timeout: Double = Double.infinity) -> Future<Peripheral> {
         Logger.debug(" \(self.name)")
         return self.discoverIfConnected(services, timeout: timeout)
     }
     
-    public func discoverAllPeripheralServices(timeout: Double = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
+    public func discoverAllPeripheralServices(timeout: Double = Double.infinity) -> Future<Peripheral> {
         return self.discoverPeripheralServices(nil)
     }
 
-    public func discoverPeripheralServices(services: [CBUUID]?, timeout: Double = Peripheral.DefaultServiceScanTimeout) -> Future<Peripheral> {
+    public func discoverPeripheralServices(services: [CBUUID]?, timeout: Double = Double.infinity) -> Future<Peripheral> {
         let peripheralDiscoveredPromise = Promise<Peripheral>()
         Logger.debug("uuid=\(self.identifier.UUIDString), name=\(self.name)")
         let servicesDiscoveredFuture = self.discoverServices(services, timeout: timeout)
@@ -720,7 +719,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private func discoverIfConnected(services: [CBUUID]?, timeout: Double? = nil)  -> Future<Peripheral> {
+    private func discoverIfConnected(services: [CBUUID]?, timeout: Double = Double.infinity)  -> Future<Peripheral> {
         if !self.serviceDiscoveryInProgress {
             self.servicesDiscoveredPromise = Promise<Peripheral>()
             if self.state == .Connected {
@@ -760,8 +759,8 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    private func timeoutServiceDiscovery(sequence: Int, timeout: Double?) {
-        guard let centralManager = self.centralManager, timeout = timeout else {
+    private func timeoutServiceDiscovery(sequence: Int, timeout: Double) {
+        guard let centralManager = self.centralManager where timeout < Double.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.UUIDString), sequence = \(sequence), timeout = \(timeout)")
