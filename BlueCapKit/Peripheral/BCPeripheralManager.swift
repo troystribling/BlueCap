@@ -213,81 +213,117 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     // MARK: Power ON/OFF
     public func whenPowerOn() -> Future<Void> {
-        BCLogger.debug()
-        self.afterPowerOnPromise = Promise<Void>()
-        if self.poweredOn {
-            self.afterPowerOnPromise.success()
+        return self.peripheralQueue.sync {
+            BCLogger.debug()
+            self.afterPowerOnPromise = Promise<Void>()
+            if self.poweredOn {
+                self.afterPowerOnPromise.success()
+            }
+            return self.afterPowerOnPromise.future
         }
-        return self.afterPowerOnPromise.future
     }
     
     public func whenPowerOff() -> Future<Void> {
-        BCLogger.debug()
-        self.afterPowerOffPromise = Promise<Void>()
-        if !self.poweredOn {
-            self.afterPowerOffPromise.success()
+        return self.peripheralQueue.sync {
+            
+            BCLogger.debug()
+            self.afterPowerOffPromise = Promise<Void>()
+            if !self.poweredOn {
+                self.afterPowerOffPromise.success()
+            }
+            return self.afterPowerOffPromise.future
         }
-        return self.afterPowerOffPromise.future
     }
 
     // MARK: Advertising
     public func startAdvertising(name: String, uuids: [CBUUID]? = nil) -> Future<Void> {
-        self._name = name
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        if !self.isAdvertising {
-            var advertisementData : [String:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
-            if let uuids = uuids {
-                advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+        return self.peripheralQueue.sync {
+            self._name = name
+            self.afterAdvertisingStartedPromise = Promise<Void>()
+            if !self.isAdvertising {
+                var advertisementData : [String:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+                if let uuids = uuids {
+                    advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+                }
+                self.cbPeripheralManager.startAdvertising(advertisementData)
+            } else {
+                self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
             }
-            self.cbPeripheralManager.startAdvertising(advertisementData)
-        } else {
-            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+            return self.afterAdvertisingStartedPromise.future
         }
-        return self.afterAdvertisingStartedPromise.future
     }
     
     public func startAdvertising(region: FLBeaconRegion) -> Future<Void> {
-        self._name = region.identifier
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        if !self.isAdvertising {
-            self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
-        } else {
-            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+        return self.peripheralQueue.sync {
+            self._name = region.identifier
+            self.afterAdvertisingStartedPromise = Promise<Void>()
+            if !self.isAdvertising {
+                self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
+            } else {
+                self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+            }
+            return self.afterAdvertisingStartedPromise.future
         }
-        return self.afterAdvertisingStartedPromise.future
+    }
+    
+    public func startAdvertising(region: FLBeaconRegion, name: String, uuids: [CBUUID]? = nil) -> Future<Void> {
+        return self.peripheralQueue.sync {
+            self._name = name
+            self.afterAdvertisingStartedPromise = Promise<Void>()
+            if !self.isAdvertising {
+                let beaconAdvertisementData = region.peripheralDataWithMeasuredPower(nil)
+                var advertisementData : [String:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+                if let uuids = uuids {
+                    advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+                }
+                for (key, value) in beaconAdvertisementData {
+                    advertisementData[key] = value
+                }
+                self.cbPeripheralManager.startAdvertising(advertisementData)
+            } else {
+                self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+            }
+            return self.afterAdvertisingStartedPromise.future
+        }
     }
     
     public func stopAdvertising() -> Future<Void> {
-        self._name = nil
-        self.afterAdvertsingStoppedPromise = Promise<Void>()
-        if self.isAdvertising {
-             self.cbPeripheralManager.stopAdvertising()
-            self.peripheralQueue.async{self.lookForAdvertisingToStop()}
-        } else {
-            self.afterAdvertsingStoppedPromise.failure(BCError.peripheralManagerIsNotAdvertising)
+        return self.peripheralQueue.sync {
+            self._name = nil
+            self.afterAdvertsingStoppedPromise = Promise<Void>()
+            if self.isAdvertising {
+                self.cbPeripheralManager.stopAdvertising()
+                self.peripheralQueue.async{self.lookForAdvertisingToStop()}
+            } else {
+                self.afterAdvertsingStoppedPromise.failure(BCError.peripheralManagerIsNotAdvertising)
+            }
+            return self.afterAdvertsingStoppedPromise.future
         }
-        return self.afterAdvertsingStoppedPromise.future
     }
 
     // MARK: Manage Services
     public func addService(service: BCMutableService) -> Future<Void> {
-        service.peripheralManager = self
-        self.addConfiguredCharacteristics(service.characteristics)
-        self.afterSeriviceAddPromise = Promise<Void>()
-        self.configuredServices[service.UUID] = service
-        self.cbPeripheralManager.addService(service.cbMutableService)
-        BCLogger.debug("service name=\(service.name), uuid=\(service.UUID)")
-        return self.afterSeriviceAddPromise.future
+        return self.peripheralQueue.sync {
+            service.peripheralManager = self
+            self.addConfiguredCharacteristics(service.characteristics)
+            self.afterSeriviceAddPromise = Promise<Void>()
+            self.configuredServices[service.UUID] = service
+            self.cbPeripheralManager.addService(service.cbMutableService)
+            BCLogger.debug("service name=\(service.name), uuid=\(service.UUID)")
+            return self.afterSeriviceAddPromise.future
+        }
     }
     
     public func addServices(services: [BCMutableService]) -> Future<Void> {
-        BCLogger.debug("service count \(services.count)")
-        for service in services {
-            self.addConfiguredCharacteristics(service.characteristics)
+        return self.peripheralQueue.sync {
+            BCLogger.debug("service count \(services.count)")
+            for service in services {
+                self.addConfiguredCharacteristics(service.characteristics)
+            }
+            let promise = Promise<Void>()
+            self.addServices(promise, services:services)
+            return promise.future
         }
-        let promise = Promise<Void>()
-        self.addServices(promise, services:services)
-        return promise.future
     }
 
     public func removeService(service: BCMutableService) {
@@ -313,8 +349,10 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: State Restoration
     public func whenStateRestored() -> FutureStream<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)> {
-        self.afterStateRestoredPromise = StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
-        return self.afterStateRestoredPromise.future
+        return self.peripheralQueue.sync {
+            self.afterStateRestoredPromise = StreamPromise<(services: [BCMutableService], advertisements: BCPeripheralAdvertisements)>()
+            return self.afterStateRestoredPromise.future
+        }
     }
 
     // MARK: CBPeripheralManagerDelegate
@@ -437,10 +475,14 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal func didStartAdvertising(error: NSError?) {
         if let error = error {
             BCLogger.debug("failed '\(error.localizedDescription)'")
-            self.afterAdvertisingStartedPromise.failure(error)
+            if !self.afterAdvertisingStartedPromise.completed {
+                self.afterAdvertisingStartedPromise.failure(error)
+            }
         } else {
             BCLogger.debug("success")
-            self.afterAdvertisingStartedPromise.success()
+            if !self.afterAdvertisingStartedPromise.completed {
+                self.afterAdvertisingStartedPromise.success()
+            }
         }
     }
     
@@ -448,10 +490,14 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
         if let error = error {
             BCLogger.debug("failed '\(error.localizedDescription)'")
             self.configuredServices.removeValueForKey(service.UUID)
-            self.afterSeriviceAddPromise.failure(error)
+            if !self.afterSeriviceAddPromise.completed {
+                self.afterSeriviceAddPromise.failure(error)
+            }
         } else {
             BCLogger.debug("success")
-            self.afterSeriviceAddPromise.success()
+            if !self.afterSeriviceAddPromise.completed {
+                self.afterSeriviceAddPromise.success()
+            }
         }
     }
 
@@ -506,7 +552,9 @@ public class BCPeripheralManager: NSObject, CBPeripheralManagerDelegate {
             }
         } else {
             BCLogger.debug("advertising stopped")
-            self.afterAdvertsingStoppedPromise.success()
+            if !self.afterAdvertsingStoppedPromise.completed {
+                self.afterAdvertsingStoppedPromise.success()
+            }
         }
     }
 
