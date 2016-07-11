@@ -176,20 +176,25 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Power ON/OFF
     public func whenPowerOn() -> Future<Void> {
-        self.afterPowerOnPromise = Promise<Void>()
-        if self.poweredOn {
-            BCLogger.debug("Central already powered on")
-            self.afterPowerOnPromise.success()
+        return self.centralQueue.sync {
+            self.afterPowerOnPromise = Promise<Void>()
+            if self.poweredOn {
+                BCLogger.debug("Central already powered on")
+                self.afterPowerOnPromise.success()
+            }
+            return self.afterPowerOnPromise.future
+            
         }
-        return self.afterPowerOnPromise.future
     }
 
     public func whenPowerOff() -> Future<Void> {
-        self.afterPowerOffPromise = Promise<Void>()
-        if !self.poweredOn {
-            self.afterPowerOffPromise.success()
+        return self.centralQueue.sync {
+            self.afterPowerOffPromise = Promise<Void>()
+            if !self.poweredOn {
+                self.afterPowerOffPromise.success()
+            }
+            return self.afterPowerOffPromise.future
         }
-        return self.afterPowerOffPromise.future
     }
 
     // MARK: Manage Peripherals
@@ -217,21 +222,23 @@ public class BCCentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func startScanningForServiceUUIDs(uuids: [CBUUID]?, capacity: Int? = nil, options: [String:AnyObject]? = nil) -> FutureStream<BCPeripheral> {
-        if !self.isScanning {
-            BCLogger.debug("UUIDs \(uuids)")
-            self.isScanning = true
-            if let capacity = capacity {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>(capacity: capacity)
-            } else {
-                self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
+        return self.centralQueue.sync {
+            if !self.isScanning {
+                BCLogger.debug("UUIDs \(uuids)")
+                self.isScanning = true
+                if let capacity = capacity {
+                    self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>(capacity: capacity)
+                } else {
+                    self.afterPeripheralDiscoveredPromise = StreamPromise<BCPeripheral>()
+                }
+                if self.poweredOn {
+                    self.cbCentralManager.scanForPeripheralsWithServices(uuids, options: options)
+                } else {
+                    self.afterPeripheralDiscoveredPromise.failure(BCError.centralIsPoweredOff)
+                }
             }
-            if self.poweredOn {
-                self.cbCentralManager.scanForPeripheralsWithServices(uuids, options: options)
-            } else {
-                self.afterPeripheralDiscoveredPromise.failure(BCError.centralIsPoweredOff)
-            }
+            return self.afterPeripheralDiscoveredPromise.future
         }
-        return self.afterPeripheralDiscoveredPromise.future
     }
     
     public func stopScanning() {
