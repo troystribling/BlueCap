@@ -305,7 +305,7 @@ public class Characteristic : NSObject {
         return promise.future
     }
 
-    public func writeString(stringValue: [String: String], timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func writeString(stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         if let value = self.dataFromStringValue(stringValue) {
             return self.writeData(value, timeout: timeout, type: type)
         } else {
@@ -315,23 +315,23 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func write<T: Deserializable>(value:T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: Deserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawDeserializable>(value:T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawArrayDeserializable>(value: T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawPairDeserializable>(value: T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawArrayPairDeserializable>(value: T, timeout: Double = 10.0, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 

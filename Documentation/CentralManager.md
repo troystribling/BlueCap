@@ -328,46 +328,85 @@ characteristicsDiscoveredFuture.onFailure { error in
 }
 ```
 
-Here the [peripheralConnectFuture](#central_peripheralconnect) from the previous section is flatmapped to `discoverPeripheralServices(services: [CBUUID]!) -> Future<Peripheral>` to ensure that the `Peripheral` is connected before `Service` and `Characteristic` discovery starts.
+Here the peripheralConnectFuture is flatmapped to `discoverPeripheralServices(services: [CBUUID]!) -> Future<Peripheral>` to ensure that the `Peripheral` is connected before `Service` and `Characteristic` discovery starts.
 
 ### <a name="central_characteristic_write">Characteristic Write</a>
 
-After `Peripheral` `Characteristics` are discovered writing `Characteristic` values is possible. Many `Characteristic` methods are available,
+After `Peripheral` `Characteristics` are discovered writing `Characteristic` values is possible. Many `Characteristic` methods are available where each supports a value of a different type,
 
 ```swift
 // Write an NSData object to characteristic value
-public func writeData(value:NSData, timeout:Double = 10.0) -> Future<Characteristic>
+public func writeData(value: NSData, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 
 // Write a characteristic String Dictionary value
-public func writeString(stringValue:[String:String], timeout:Double = 10.0) -> Future<Characteristic>
+public func writeString(stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 
 // Write a Deserializable characteristic value
-public func write<T:Deserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+public func write<T:Deserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 
 // Write a RawDeserializable characteristic value
-public func write<T:RawDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+public func write<T:RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 
 // Write a RawArrayDeserializable characteristic value
-public func write<T:RawArrayDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+public func write<T:RawArrayDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 
 // Write a RawPairDeserializable characteristic value
-public func write<T:RawPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+public func write<T:RawPairDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 
 // Write a RawArrayPairDeserializable characteristic value
-public func write<T:RawArrayPairDeserializable>(value:T, timeout:Double = 10.0) -> Future<Characteristic>
+public func write<T:RawArrayPairDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 ```
 
-Using the [RawDeserializable enum](#serde_rawdeserializable) an application can write a `Characteristic` as follows,
+Each of the `write` methods take similar input parameters with only variation in the type and return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Characteristic>` yielding the `Characteristic`,
+
+<table>
+	<tr>
+		<td>value</td>
+		<td>The value written to the characteristic.</td>
+	</tr>
+	<tr>
+		<td>timeout</td>
+		<td>Write timeout in seconds. The default value is infinite.</td>
+	</tr>
+	<tr>
+		<td>type</td>
+		<td>Characteristic write types, see <a href="https://developer.apple.com/reference/corebluetooth/cbcharacteristicwritetype">CBCharacteristicWriteType</a>type </td>, The default value is .WithResponse.
+	</tr>
+</table>
+
+Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery,
 
 ```swift
 // errors
 public enum ApplicationErrorCode : Int {
-    case CharacteristicNotFound = 1
+    case PeripheralNotConnected = 1
 }
 
 public struct ApplicationError {
     public static let domain = "Application"
-    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
+    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
+}
+
+let manager = CentralManager()
+let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
+
+// When manager powers on start scanning for peripherals
+// and connect after peripheral is discovered
+let peripheralConnectFuture = manager.powerOn().flatmap { _ -> FutureStream<Peripheral> in
+	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
+}.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
+	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
+}
+
+// Discover all supported services and characteristics
+let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
+	  if connectionEvent == .Connect {
+		  return peripheral.discoverPeripheralServices([serviceUUID])
+    } else {
+      let promise = Promise<Peripheral>()
+      promise.failure(ApplicationError.peripheralNotConnected)
+      return promise.future
+    }
 }
 
 // RawDeserializable enum
@@ -377,36 +416,36 @@ enum Enabled : UInt8, RawDeserializable {
     public static let uuid = "F000AA12-0451-4000-B000-000000000000"
 }
 let enabledUUID = CBUUID(string:Enabled.uuid)!
-…
-// characteristicsDiscoveredFuture and serviceUUID are defined in a previous section
-…
+
 let writeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
-	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
-		return characteristic.write(Enabled.Yes, timeout:20.0)
+	if let service = peripheral.service(serviceUUID),
+	       characteristic = service.characteristic(enabledUUID) {
+		return characteristic.write(Enabled.Yes, timeout: 20.0)
 	} else {
 		let promise = Promise<Characteristic>()
 		promise.failure(ApplicationError.characteristicNotFound)
 		return promise.future
 	}
 }
-writeCharacteristicFuture.onSuccess {characteristic in
-	…
+
+writeCharacteristicFuture.onSuccess { characteristic in
 }
-writeCharacteristicFuture.onFailure {error in
-	…
+writeCharacteristicFuture.onFailure { error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *write&lt;T:RawDeserializable&gt;(value:T, timeout:Double) -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
+Here the characteristicsDiscoveredFuture is flatmapped to `write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_read">Characteristic Read</a>
 
-After a Peripherals Characteristics are discovered reading Characteristic values is possible. Many `Characteristic` methods are available,
+After a Peripherals Characteristics are discovered reading Characteristic values is possible.
 
 ```swift
 // Read a characteristic from a peripheral service
-public func read(timeout:Double = 10.0) -> Future<Characteristic>
+public func read(timeout: Double = Double.infinity) -> Future<Characteristic>
+```
 
+```swift
 // Return the characteristic value as and NSData object
 public var dataValue : NSData!
 
@@ -414,19 +453,19 @@ public var dataValue : NSData!
 public var stringValue :[String:String]?
 
 // Return a Deserializable characteristic value
-public func value<T:Deserializable>() -> T?
+public func value<T: Deserializable>() -> T?
 
 // Return a RawDeserializable characteristic value
-public func value<T:RawDeserializable where T.RawType:Deserializable>() -> T?
+public func value<T: RawDeserializable where T.RawType: Deserializable>() -> T?
 
 // Return a RawArrayDeserializable characteristic value
-public func value<T:RawArrayDeserializable where T.RawType:Deserializable>() -> T?
+public func value<T: RawArrayDeserializable where T.RawType: Deserializable>() -> T?
 
 // Return a RawPairDeserializable characteristic value
-public func value<T:RawPairDeserializable where T.RawType1:Deserializable, T.RawType2:Deserializable>() -> T?
+public func value<T: RawPairDeserializable where T.RawType1: Deserializable, T.RawType2: Deserializable>() -> T?
 ```
 
-Using the [RawDeserializable enum](#serde_rawdeserializable) an application can read a `Characteristic` as follows,
+Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can read a `Characteristic` as follows,
 
 ```swift
 // errors
