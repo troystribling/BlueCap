@@ -19,7 +19,7 @@ class PeripheralTests: XCTestCase {
     let updatedRSSI1 = -50
     let updatedRSSI2 = -75
 
-    var centralManagerMock = CBCentralManagerMock(state: .PoweredOn)
+    var centralManagerMock: CBCentralManagerMock!
     var centralManager: CentralManager!
     let immediateContext = ImmediateContext()
 
@@ -36,6 +36,7 @@ class PeripheralTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        self.centralManagerMock = CBCentralManagerMock(state: .PoweredOn)
         self.centralManager = CentralManagerUT(centralManager: self.centralManagerMock)
     }
     
