@@ -226,11 +226,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         if !isScanning {
             Logger.debug("UUIDs \(UUIDs)")
             isScanning = true
-            if let capacity = capacity {
-                afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
-            } else {
-                afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
-            }
+            afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
             if poweredOn {
                 cbCentralManager.scanForPeripheralsWithServices(UUIDs, options: options)
                 timeoutScan(timeout, sequence: timeoutSequence)

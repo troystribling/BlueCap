@@ -235,7 +235,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self._name = name
         self.afterAdvertisingStartedPromise = Promise<Void>()
         if !self.isAdvertising {
-            var advertisementData : [String:AnyObject] = [CBAdvertisementDataLocalNameKey:name]
+            var advertisementData: [String:AnyObject] = [CBAdvertisementDataLocalNameKey: name]
             if let uuids = uuids {
                 advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
             }

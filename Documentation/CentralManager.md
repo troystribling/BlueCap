@@ -332,7 +332,7 @@ Here the peripheralConnectFuture is flatmapped to `discoverPeripheralServices(se
 
 ### <a name="central_characteristic_write">Characteristic Write</a>
 
-After `Peripheral` `Characteristics` are discovered writing `Characteristic` values is possible. Many `Characteristic` methods are available where each supports a value of a different type,
+After `Peripheral` `Characteristics` are discovered writing `Characteristic` values is possible. `Characteristic` methods are available for writing, where each supports a value of a different type,
 
 ```swift
 // Write an NSData object to characteristic value
@@ -370,7 +370,8 @@ Each of the `write` methods take similar input parameters with only variation in
 	</tr>
 	<tr>
 		<td>type</td>
-		<td>Characteristic write types, see <a href="https://developer.apple.com/reference/corebluetooth/cbcharacteristicwritetype">CBCharacteristicWriteType</a>type </td>, The default value is .WithResponse.
+		<td>Characteristic write types, see <a href="https://developer.apple.com/reference/corebluetooth/cbcharacteristicwritetype">CBCharacteristicWriteType</a> type, The default value is .WithResponse.
+		</td>
 	</tr>
 </table>
 
@@ -380,11 +381,13 @@ Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.m
 // errors
 public enum ApplicationErrorCode : Int {
     case PeripheralNotConnected = 1
+    case CharacteristicNotFound = 2
 }
 
 public struct ApplicationError {
     public static let domain = "Application"
     public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
+    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
 }
 
 let manager = CentralManager()
@@ -438,12 +441,14 @@ Here the characteristicsDiscoveredFuture is flatmapped to `write<T: RawDeseriali
 
 ### <a name="central_characteristic_read">Characteristic Read</a>
 
-After a Peripherals Characteristics are discovered reading Characteristic values is possible.
+After a `Peripherals` `Characteristics` are discovered reading `Characteristic` values is possible. `Characteristic` provides the following method to retrieve values from connected `Peripherals`,
 
 ```swift
 // Read a characteristic from a peripheral service
 public func read(timeout: Double = Double.infinity) -> Future<Characteristic>
 ```
+
+The `read` method takes a single input parameter, used to specify the timeout. The default value for `timeout` is infinite. `read` returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Characteristic>` yielding the `Characteristic`. To retrieve the `Characteristic` value after a successful read the following methods are available, where each returns values a different type,
 
 ```swift
 // Return the characteristic value as and NSData object
@@ -468,14 +473,37 @@ public func value<T: RawPairDeserializable where T.RawType1: Deserializable, T.R
 Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can read a `Characteristic` as follows,
 
 ```swift
-// errors
 public enum ApplicationErrorCode : Int {
-    case CharacteristicNotFound = 1
+    case PeripheralNotConnected = 1
+    case CharacteristicNotFound = 2
 }
 
 public struct ApplicationError {
     public static let domain = "Application"
+    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
     public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
+}
+
+let manager = CentralManager()
+let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
+
+// When manager powers on start scanning for peripherals
+// and connect after peripheral is discovered
+let peripheralConnectFuture = manager.powerOn().flatmap { _ -> FutureStream<Peripheral> in
+	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
+}.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
+	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
+}
+
+// Discover all supported services and characteristics
+let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
+	  if connectionEvent == .Connect {
+		  return peripheral.discoverPeripheralServices([serviceUUID])
+    } else {
+      let promise = Promise<Peripheral>()
+      promise.failure(ApplicationError.peripheralNotConnected)
+      return promise.future
+    }
 }
 
 // RawDeserializable enum
@@ -485,30 +513,25 @@ enum Enabled : UInt8, RawDeserializable {
     public static let uuid = "F000AA12-0451-4000-B000-000000000000"
 }
 let enabledUUID = CBUUID(string:Enabled.uuid)!
-…
-// characteristicsDiscoveredFuture and serviceUUID 
-// are defined in a previous section
-…
-let readCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
+
+let readCharacteristicFuture = characteristicsDiscoveredFuture.flatmap { peripheral -> Future<Characteristic> in
 	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
-		return characteristic.read(timeout:20.0)
+		return characteristic.read(10.0)
 	} else {
 		let promise = Promise<Characteristic>()
 		promise.failure(ApplicationError.characteristicNotFound)
 		return promise.future
 	}
 }
-writeCharacteristicFuture.onSuccess {characteristic in
+readCharacteristicFuture { characteristic in
 	if let value : Enabled = characteristic.value {
-		…
 	}
 }
-writeCharacteristicFuture.onFailure {error in
-	…
+readCharacteristicFuture { error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *read(timeout:Double) -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
+Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to `read(timeout: Double) -> Future<Characteristic>` to ensure that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_update">Characteristic Update Notifications</a>
 
