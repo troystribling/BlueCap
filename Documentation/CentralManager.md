@@ -375,7 +375,7 @@ Each of the `write` methods take similar input parameters with only variation in
 	</tr>
 </table>
 
-Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery,
+Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
 // errors
@@ -437,7 +437,7 @@ writeCharacteristicFuture.onFailure { error in
 }
 ```
 
-Here the characteristicsDiscoveredFuture is flatmapped to `write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
+Here the `characteristicsDiscoveredFuture` is flatmapped to `write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_read">Characteristic Read</a>
 
@@ -470,7 +470,7 @@ public func value<T: RawArrayDeserializable where T.RawType: Deserializable>() -
 public func value<T: RawPairDeserializable where T.RawType1: Deserializable, T.RawType2: Deserializable>() -> T?
 ```
 
-Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can read a `Characteristic` as follows,
+Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can read a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
 public enum ApplicationErrorCode : Int {
@@ -531,11 +531,11 @@ readCharacteristicFuture { error in
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to `read(timeout: Double) -> Future<Characteristic>` to ensure that characteristic has been discovered before reading. An error is returned if the characteristic is not found. 
+Here the `characteristicsDiscoveredFuture` is flatmapped to `read(timeout: Double = Double.infinity) -> Future<Characteristic> to ensure that characteristic has been discovered before reading. On a successful read the value is retrieved using `public func value<T: RawDeserializable where T.RawType: Deserializable>() -> T?`. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_update">Characteristic Update Notifications</a>
 
-After a Peripherals Characteristics are discovered subscribing to Characteristic value update notifications is possible. Several `Characteristic` methods are available,
+After a `Peripherals` `Characteristics` are discovered subscribing to `Characteristic` value update notifications is possible. Several `Characteristic` methods are available,
 
 ```swift
 // subscribe to characteristic update
@@ -550,6 +550,8 @@ public func stopNotifying() -> Future<Characteristic>
 // stop receiving characteristic value updates
 public func stopNotificationUpdates()
 ```
+
+The work flow for receiving update is to first subscribe to the notifications using `startNotifying()`. The application will then start receiving notifications. To process the notifications call `receiveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>` to return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Characteristic>` yielding the `Characteristic`. from which the new value can be obtained.
 
 Using the [RawDeserializable enum](#serde_rawdeserializable) an application can receive notifications from a `Characteristic` as follows,
 
