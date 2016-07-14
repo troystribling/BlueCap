@@ -551,32 +551,47 @@ public func stopNotifying() -> Future<Characteristic>
 public func stopNotificationUpdates()
 ```
 
-The work flow for receiving update is to first subscribe to the notifications using `startNotifying()`. The application will then start receiving notifications. To process the notifications call `receiveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>` to return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Characteristic>` yielding the `Characteristic`. from which the new value can be obtained.
+The work flow for receiving notification updates is to first subscribe to the notifications using `startNotifying()`. The application will then start receiving notifications. To process the notifications call `receiveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>` which returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Characteristic>` yielding the `Characteristic` from which the updated characteristic can be obtained.
+
+To stop processing notifications call `stopNotifying()` and to unsubscribe to notifications call `stopNotificationUpdates()`.
 
 Using the [RawDeserializable enum](#serde_rawdeserializable) an application can receive notifications from a `Characteristic` as follows,
 
 ```swift
-// errors
 public enum ApplicationErrorCode : Int {
-    case CharacteristicNotFound = 1
+    case PeripheralNotConnected = 1
+    case CharacteristicNotFound = 2
 }
 
 public struct ApplicationError {
     public static let domain = "Application"
+    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
     public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
 }
 
-// RawDeserializable enum
-enum Enabled : UInt8, RawDeserializable {
-    case No  = 0
-    case Yes = 1
-    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+let manager = CentralManager()
+let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
+
+// When manager powers on start scanning for peripherals
+// and connect after peripheral is discovered
+let peripheralConnectFuture = manager.powerOn().flatmap { _ -> FutureStream<Peripheral> in
+	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
+}.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
+	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
 }
-let enabledUUID = CBUUID(string:Enabled.uuid)!
-…
-// characteristicsDiscoveredFuture and serviceUUID are defined in a previous section
-…
-let subscribeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {peripheral -> Future<Characteristic> in
+
+// Discover all supported services and characteristics
+let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
+	  if connectionEvent == .Connect {
+		  return peripheral.discoverPeripheralServices([serviceUUID])
+    } else {
+      let promise = Promise<Peripheral>()
+      promise.failure(ApplicationError.peripheralNotConnected)
+      return promise.future
+    }
+}
+
+let subscribeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap { peripheral -> Future<Characteristic> in
 	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
 		return characteristic.startNotifying()
 	} else {
@@ -585,28 +600,26 @@ let subscribeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap {per
 		return promise.future
 	}
 }
-subscribeCharacteristicFuture.onSuccess {characteristic in
-	…
+
+subscribeCharacteristicFuture.onSuccess { characteristic in
 }
-subscribeCharacteristicFuture.onFailure {error in
-	…
+subscribeCharacteristicFuture.onFailure { error in
 }
 
-let updateCharacteristicFuture = subscribeCharacteristicFuture.flatmap{characteristic -> FutureStream<Characteristic> in
-	return characteristic.receiveNotificationUpdates(capacity:10)
+let updateCharacteristicFuture = subscribeCharacteristicFuture.flatmap{ characteristic -> FutureStream<Characteristic> in
+	return characteristic.receiveNotificationUpdates()
 }
-updateCharacteristicFuture.onSuccess {characteristic in
+updateCharacteristicFuture.onSuccess { characteristic in
 	if let value : Enabled = characteristic.value {
-		…
 	}
 }
-updateCharacteristicFuture.onFailure {error in 
+updateCharacteristicFuture.onFailure { error in 
 }
 ```
 
-Here the [characteristicsDiscoveredFuture](#central_characteristicdiscovery) previously defined is flatmapped to *startNotifying() -> Future&lt;Characteristic&gt;* to ensure that characteristic has been discovered before subscribing to updates.  An error is returned if the characteristic is not found. Then updateCharacteristicFuture is flatmapped again to *receiveNotificationUpdates(capacity:Int?) -> FutureStream&lt;Characteristic&gt;* to ensure that the subsections is completed before receiving updates.
+Here the `characteristicsDiscoveredFuture` is flatmapped to `startNotifying() -> Future<Characteristic>` to ensure that characteristic has been discovered before subscribing to updates.  Then `subscribeCharacteristicFuture` is flatmapped again to `receiveNotificationUpdates(capacity: Int?) -> FutureStream<Characteristic>` to ensure that the subscription is completed before receiving updates.
 
-For an application to unsubscribe to Characteristic value updates and stop receiving updates,
+For an application to unsubscribe to `Characteristic` value notifications and stop receiving updates,
 
 ```swift
 // serviceUUID and enabledUUID are define in the example above
