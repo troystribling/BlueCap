@@ -21,7 +21,7 @@ The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegat
  
 ### <a name="central_poweron_poweroff">PowerOn/PowerOff</a>
 
-The state of the Bluetooth transceiver on a device is communicated to an application by the `CentralManager` methods `whenPowerOn` and `whenPowerOff`, which are defined by,
+The state of the Bluetooth transceiver on a device is communicated to an application by the `CentralManager` methods,
 
 ```swift
 public func whenPowerOn() -> Future<Void>
@@ -43,7 +43,7 @@ powerOffFuture.onSuccess {
 }
 ```
 
-When `CentralManager` is instantiated a message giving the current Bluetooth transceiver state is received. After instantiation messages are received if the transceiver is powered on or powered off. `whenPowerOff` cannot fail. `whenPowerOn` only fails if Bluetooth is not supported.
+When `CentralManager` is instantiated a message giving the current Bluetooth transceiver state is received. After instantiation messages are received if the transceiver is powered on or powered off. `CentralManager#whenPowerOff` cannot fail. `CentralManager#whenPowerOn` only fails if Bluetooth is not supported.
 
 ### <a name="central_service_scanning">Service Scanning</a>
 
@@ -59,6 +59,8 @@ public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil,
 
 Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the discovered `Peripheral`.
 
+The input parameters for both methods are,
+
 <table>
   <tr>
     <td>UUIDs</td>
@@ -66,7 +68,7 @@ Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFut
   </tr>
 	<tr>
 		<td>capacity</td>
-		<td>FutureStream capacity.</td>
+		<td>FutureStream capacity. The default value is infinite.</td>
 	</tr>
 	<tr>
 		<td>timeout</td>
@@ -74,7 +76,7 @@ Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFut
 	</tr>
 	<tr>
 		<td>options</td>
-		<td> `CBCentralManager` scanning <a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/#//apple_ref/doc/constant_group/Peripheral_Scanning_Options">options</a>.</td>
+		<td> See CBCentralManager scanning <a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCentralManager_Class/#//apple_ref/doc/constant_group/Peripheral_Scanning_Options">options</a>.</td>
 	</tr>
 </table>
 
@@ -138,7 +140,7 @@ public struct PeripheralAdvertisements {
 }
 ```
 
-The `PeripheralAdvertisements` `struct` is accessible through the `Peripheral` property `advertisements`.
+The `PeripheralAdvertisements` `struct` is accessible through the property `Peripheral#advertisements`.
 
 ```swift
 public let advertisements: PeripheralAdvertisements
@@ -188,7 +190,9 @@ To connect to a `Peripheral` use The `Peripheral` method,
 public func connect(capacity: Int? = nil, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>
 ```
 
-The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream(peripheral: Peripheral, connectionEvent: ConnectionEvent)>` yielding a tuple containing the connected `Peripheral` and the `ConnectionEvent`. The input parameters are,
+The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream(peripheral: Peripheral, connectionEvent: ConnectionEvent)>` yielding a tuple containing the connected `Peripheral` and the `ConnectionEvent`. 
+
+The input parameters are,
 
 <table>
 	<tr>
@@ -223,11 +227,11 @@ public func disconnect()
 public func terminate()
 ```
 
-The `reconnect()` method is used to establish a connection to a previously connected `Peripheral`. If the `Peripheral` is connected the method returns immediately. The method takes a single parameter `reconnectDelay` used to specify a delay, in seconds, before trying to reconnect. The default value is `0.0` seconds.
+The `Peripheral#reconnect` method is used to establish a connection to a previously connected `Peripheral`. If the `Peripheral` is connected the method returns immediately. The method takes a single parameter `reconnectDelay` used to specify a delay, in seconds, before trying to reconnect. The default value is `0.0` seconds.
 
-`disconnect()` preforms and immediate disconnection from the connected `Peripheral` and will generate the `ConnectionEvent` `ForceDisconnect`. If the `Peripheral` is disconnected the error `PeripheralErrorCode.Disconnected` is returned.
+`Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and will generate the `ConnectionEvent` `ForceDisconnect`. If the `Peripheral` is disconnected the `Peripheral#connect` `FutureStream#onFailure` will complete with `PeripheralErrorCode.Disconnected`.
 
-`terminate()` performs a `disconnect()` and also removed the `Peripheral` from the application cache.
+`Peripheral#terminate` performs a `Peripheral#disconnect` and also removed the `Peripheral` from the application cache.
 
 An application can connect a `Peripheral` using,
 
@@ -619,7 +623,7 @@ updateCharacteristicFuture.onFailure { error in
 
 Here the `characteristicsDiscoveredFuture` is flatmapped to `startNotifying() -> Future<Characteristic>` to ensure that characteristic has been discovered before subscribing to updates.  Then `subscribeCharacteristicFuture` is flatmapped again to `receiveNotificationUpdates(capacity: Int?) -> FutureStream<Characteristic>` to ensure that the subscription is completed before receiving updates.
 
-For an application to unsubscribe to `Characteristic` value notifications and stop receiving updates,
+An application can unsubscribe to `Characteristic` value notifications and stop receiving updates by using the following,
 
 ```swift
 // serviceUUID and enabledUUID are define in the example above

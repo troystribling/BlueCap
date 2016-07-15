@@ -49,29 +49,7 @@ target 'Your Target Name' do
 end
 ```
 
-To enable `DBUG` output add the `post_install` hook,
-
-```ruby
-post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        if target.name == 'BlueCapKit'
-            target.build_configurations.each do |config|
-                if config.name == 'Debug'
-                    config.build_settings['OTHER_SWIFT_FLAGS'] = '-DDEBUG'
-                    else
-                    config.build_settings['OTHER_SWIFT_FLAGS'] = ''
-                end
-            end
-        end
-    end
-end
-```
-
-To install run the command,
-
-```bash
-pod install
-```
+To enable `DBUG` output add this [`post_install` hook](https://gist.github.com/troystribling/2d4630200d3dd4e3fc8b6d5e14e4732a) to your `Podfile`
 
 ## Carthage
 
@@ -103,7 +81,7 @@ If desired use the `--no-build` option,
 carthage update --no-build
 ```
 
-This will only download the `BlueCapKit` project. Then follow the steps in [Manual](#manual) to add it to a project.
+This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual) to add it to a project.
 
 ## <a name="manual">Manual</a>
 
@@ -128,7 +106,7 @@ let manager = CentralManager()
 let powerOnFuture = manager.whenPowerOn()
 ```
 
-To start scanning for peripherals advertising the [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) `powerOnFuture` will chained to `CentralManager#startScanningForServiceUUIDs` using the `Future#flatmap` combinator.
+To start scanning for `Peripherals` advertising the [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) `powerOnFuture` will chained to `CentralManager#startScanningForServiceUUIDs` using the `Future#flatmap` combinator.
 
 ```swift
 let manager = CentralManager()
@@ -174,13 +152,13 @@ connectionFuture.onFailure { error in
 
 Here on `.Timeout` and `.Disconnect` try to reconnect and on `.Giveup` terminate connection
 
-See the [Central Example](/Examples/Central) application for a more detailed implementation that additionally discovers the peripheral and subscribed to accelerometer update notifications.
+See the [Central Example](/Examples/Central) application for a more detailed implementation that additionally discovers the peripheral and subscribes to accelerometer update notifications.
 
 ## Peripheral
 
 A simple Peripheral application that emulates a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and services will be described. It will advertise the service and respond to characteristic write request.
 
-First the Characteristics and Service are created,
+First the `Characteristics` and `Service` are created,
 
 ```swift
 // create accelerometer service
@@ -210,7 +188,7 @@ accelerometerService.characteristics =
      accelerometerUpdatePeriodCharacteristic]
 ```
 
-Next respond to write events on the Enabled characteristic,
+Next respond to write events on the `Enabled Characteristic`,
 
 ```swift
 let accelerometerEnabledFuture = 
@@ -228,7 +206,7 @@ accelerometerEnabledFuture.onSuccess { request in
 }
 ```
 
-and respond to write events on the Update Period characteristic,
+and respond to write events on the `Update Period Characteristic`,
 
 ```swift
 let accelerometerUpdatePeriodFuture =
@@ -246,7 +224,7 @@ accelerometerUpdatePeriodFuture.onSuccess { request in
 }
 ```
 
-Next power on the Peripheral Manager, add services and start advertising.
+Next power on the `PeripheralManager`, add services and start advertising.
 
 ```swift
 let manager = PeripheralManager()
@@ -267,7 +245,7 @@ startAdvertiseFuture.onFailure {error in
 
 ## Examples
 
-[Examples](/Examples) are available that implement both Central and Peripheral roles. The [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require that installing the pod before building,
+[Examples](/Examples) are available that implement both Central and Peripheral roles. The [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require installing the Pod before building,
 
 ```bash
 pod install

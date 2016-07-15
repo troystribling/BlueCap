@@ -97,7 +97,7 @@ The `RawDeserializable` `protocol` is used for messages that contain a single va
 
 ```swift
 public protocol RawDeserializable {
-    typealias RawType
+   associatedtype RawType
     static var uuid: String  {get}
     var rawValue: RawType {get}
     init?(rawValue:RawType)
@@ -178,7 +178,7 @@ The `RawArrayDeserializable` `protocol` is used for messages that contain multip
 
 ```swift
 public protocol RawArrayDeserializable {
-    typealias RawType
+	  associatedtype RawType
     static var uuid: String {get}
     static var size: Int {get}
     var rawValue: [RawType] {get}
@@ -252,8 +252,8 @@ The `RawPairDeserializable` `protocol` is used for messages that contain two val
 
 ```swift
 public protocol RawPairDeserializable {
-    typealias RawType1
-    typealias RawType2
+    associatedtype RawType1
+    associatedtype RawType2
     static var uuid: String {get}
     var rawValue1: RawType1 {get}
     var rawValue2: RawType2 {get}
@@ -325,8 +325,8 @@ The `RawArrayPairDeserializable` `protocol` is used to define a message that con
 
 ```swift
 public protocol RawArrayPairDeserializable {
-    typealias RawType1
-    typealias RawType2
+    associatedtype RawType1
+    associatedtype RawType2
     static var uuid: String {get}
     static var size1: Int {get}
     static var size2: Int {get}
