@@ -12,9 +12,6 @@ import CoreBluetooth
 // MARK: - PeripheralManager -
 public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
-    internal static var CBPeripheralManagerStateKVOContext = UInt8()
-    internal static var CBPeripheralManagerIsAdvertisingKVOContext = UInt8()
-
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral-manager.io")
 
@@ -25,7 +22,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal private(set) var cbPeripheralManager: CBPeripheralManagerInjectable!
     
     private var _afterAdvertisingStartedPromise = Promise<Void>()
-    private var _afterAdvertsingStoppedPromise = Promise<Void>()
     private var _afterPowerOnPromise = Promise<Void>()
     private var _afterPowerOffPromise = Promise<Void>()
     private var _afterSeriviceAddPromise = Promise<Void>()
@@ -38,7 +34,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal var configuredServices  = SerialIODictionary<CBUUID, MutableService>(PeripheralManager.ioQueue)
     internal var configuredCharcteristics = SerialIODictionary<CBUUID, MutableCharacteristic>(PeripheralManager.ioQueue)
 
-    public let peripheralQueue: Queue
+    internal let peripheralQueue: Queue
 
     private var afterAdvertisingStartedPromise: Promise<Void> {
         get {
@@ -46,15 +42,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
         set {
             PeripheralManager.ioQueue.sync { self._afterAdvertisingStartedPromise = newValue }
-        }
-    }
-
-    private var afterAdvertsingStoppedPromise: Promise<Void> {
-        get {
-            return PeripheralManager.ioQueue.sync { return self._afterAdvertsingStoppedPromise }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._afterAdvertsingStoppedPromise = newValue }
         }
     }
 
@@ -94,12 +81,9 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    public private(set) var isAdvertising: Bool {
+    public var isAdvertising: Bool {
         get {
-            return PeripheralManager.ioQueue.sync { return self._isAdvertising }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._isAdvertising = newValue }
+            return self.cbPeripheralManager.isAdvertising
         }
     }
 
@@ -114,10 +98,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     public var state: CBPeripheralManagerState {
         get {
-            return PeripheralManager.ioQueue.sync { return self._state }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._state = newValue }
+            return cbPeripheralManager.state
         }
     }
     
@@ -139,8 +120,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
-        self.isAdvertising = self.cbPeripheralManager.isAdvertising
-        self.startObserving()
     }
 
     public init(queue: dispatch_queue_t, options: [String:AnyObject]?=nil) {
@@ -148,8 +127,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
-        self.isAdvertising = self.cbPeripheralManager.isAdvertising
-        self.startObserving()
     }
 
     public init(peripheralManager: CBPeripheralManagerInjectable) {
@@ -157,60 +134,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         super.init()
         self.cbPeripheralManager = peripheralManager
         self.poweredOn = self.cbPeripheralManager.state == .PoweredOn
-        self.isAdvertising = self.cbPeripheralManager.isAdvertising
-        self.startObserving()
     }
 
     deinit {
         self.cbPeripheralManager.delegate = nil
-        self.stopObserving()
     }
 
-    // MARK: KVO
-    internal func startObserving() {
-        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
-            return
-        }
-        let options = NSKeyValueObservingOptions([.New, .Old])
-        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
-    }
-
-    internal func stopObserving() {
-        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
-            return
-        }
-        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
-    }
-
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", &PeripheralManager.CBPeripheralManagerStateKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralManagerState(rawValue: newRawState) {
-                if newRawState != oldRawState {
-                    self.willChangeValueForKey("state")
-                    self.state = newState
-                    self.didChangeValueForKey("state")
-                }
-            }
-        case ("isAdvertising", &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newIsAdvertising = newValue as? Bool, oldIsAdvertising = oldValue as? Bool {
-                if newIsAdvertising != oldIsAdvertising {
-                    self.willChangeValueForKey("isAdvertising")
-                    self.isAdvertising = newIsAdvertising
-                    self.didChangeValueForKey("isAdvertising")
-                }
-            }
-        default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-        }
-    }
-    
     // MARK: Power ON/OFF
     public func whenPowerOn() -> Future<Void> {
         Logger.debug()
@@ -257,16 +186,13 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return self.afterAdvertisingStartedPromise.future
     }
     
-    public func stopAdvertising() -> Future<Void> {
-        self._name = nil
-        self.afterAdvertsingStoppedPromise = Promise<Void>()
-        if self.isAdvertising {
-             self.cbPeripheralManager.stopAdvertising()
-            self.peripheralQueue.async{self.lookForAdvertisingToStop()}
-        } else {
-            self.afterAdvertsingStoppedPromise.failure(BCError.peripheralManagerIsNotAdvertising)
+    public func stopAdvertising() {
+        self.peripheralQueue.sync {
+            self._name = nil
+            if self.isAdvertising {
+                 self.cbPeripheralManager.stopAdvertising()
+            }
         }
-        return self.afterAdvertsingStoppedPromise.future
     }
 
     // MARK: Manage Services
@@ -499,17 +425,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 Logger.debug("failed '\(error.localizedDescription)'")
                 promise.failure(error)
             }
-        }
-    }
-
-    private func lookForAdvertisingToStop() {
-        if self.isAdvertising {
-            self.peripheralQueue.delay(WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL) {
-                self.lookForAdvertisingToStop()
-            }
-        } else {
-            Logger.debug("advertising stopped")
-            self.afterAdvertsingStoppedPromise.success()
         }
     }
 

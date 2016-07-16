@@ -147,20 +147,14 @@ class PeripheralManagerTests: XCTestCase {
     // MARK: Stop advertising
     func testStopAdvertising_WhenAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .PoweredOn)
-        let future = peripheralManager.stopAdvertising()
-        mock.isAdvertising = false
-        XCTAssertFutureSucceeds(future, timeout: 5) {
-            XCTAssert(mock.stopAdvertisingCalled, "CBPeripheralManager#stopAdvertisingCalled not called")
-        }
+        peripheralManager.stopAdvertising()
+        XCTAssert(mock.stopAdvertisingCalled, "CBPeripheralManager#stopAdvertisingCalled not called")
     }
 
     func testStopAdvertising_WhenNotAdvertising_CompletesWithPeripheralManagerIsNotAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .PoweredOn)
-        let future = peripheralManager.stopAdvertising()
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqual(error.code, PeripheralManagerErrorCode.IsNotAdvertising.rawValue, "Error code is invalid")
-            XCTAssertFalse(mock.stopAdvertisingCalled, "CBPeripheralManager#stopAdvertisingCalled called")
-        }
+        peripheralManager.stopAdvertising()
+        XCTAssertFalse(mock.stopAdvertisingCalled, "CBPeripheralManager#stopAdvertisingCalled called")
     }
 
     // MARK: Add Service

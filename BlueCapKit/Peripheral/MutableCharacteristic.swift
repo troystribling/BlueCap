@@ -208,13 +208,13 @@ public class MutableCharacteristic : NSObject {
 
     // MARK: CBPeripheralManagerDelegate Shims
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
-        self.updateIsUpdating(true)
+        self.isUpdating = true
         self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didSubscribeToCharacteristic(central: CBCentralInjectable) {
-        self.updateIsUpdating(true)
+        self.isUpdating = true
         self.centrals[central.identifier] = central
         self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
@@ -223,7 +223,7 @@ public class MutableCharacteristic : NSObject {
     internal func didUnsubscribeFromCharacteristic(central: CBCentralInjectable) {
         self.centrals.removeValueForKey(central.identifier)
         if self.centrals.keys.count == 0 {
-            self.updateIsUpdating(false)
+            self.isUpdating = false
         }
     }
 
@@ -235,22 +235,16 @@ public class MutableCharacteristic : NSObject {
         self.value = value
         if let peripheralManager = self.service?.peripheralManager where self.isUpdating && self.canNotify {
             for value in values {
-                self.updateIsUpdating(peripheralManager.updateValue(value, forCharacteristic:self))
+                self.isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
                 if !self.isUpdating {
                     self.queuedUpdates.append(value)
                 }
             }
         } else {
-            self.updateIsUpdating(false)
+            self.isUpdating = false
             self.queuedUpdates.append(value)
         }
         return self.isUpdating
-    }
-
-    func updateIsUpdating(value: Bool) {
-        self.willChangeValueForKey("isUpdating")
-        self.isUpdating = value
-        self.didChangeValueForKey("isUpdating")
     }
 
 }

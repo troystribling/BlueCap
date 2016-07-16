@@ -232,8 +232,8 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var updateValueCalled = false
 
     var advertisementData: [String:AnyObject]?
-    dynamic var isAdvertising : Bool
-    dynamic var state: CBPeripheralManagerState
+    var isAdvertising : Bool
+    var state: CBPeripheralManagerState
     var addedService: CBMutableServiceInjectable?
     var removedService: CBMutableServiceInjectable?
     var delegate: CBPeripheralManagerDelegate?
@@ -324,23 +324,6 @@ class PeripheralManagerUT : PeripheralManager {
         self.respondToRequestCalled = true
         self.result = result
         self.request = request
-    }
-
-    override internal func startObserving() {
-        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManagerMock else {
-            return
-        }
-        let options = NSKeyValueObservingOptions([.New, .Old])
-        cbPeripheralManager.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.addObserver(self, forKeyPath: "isAdvertising", options: options, context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
-    }
-
-    override internal func stopObserving() {
-        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManagerMock else {
-            return
-        }
-        cbPeripheralManager.removeObserver(self, forKeyPath: "state", context: &PeripheralManager.CBPeripheralManagerStateKVOContext)
-        cbPeripheralManager.removeObserver(self, forKeyPath: "isAdvertising", context: &PeripheralManager.CBPeripheralManagerIsAdvertisingKVOContext)
     }
 
 }

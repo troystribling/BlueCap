@@ -139,18 +139,14 @@ public class FLRegionManager : FLLocationManager {
         self.configuredRegions[region.identifier]?.regionPromise.success(.Start)
     }
 
-    // MARK: Utilies
+    // MARK: Utilities
     func updateIsMonitoring(value: Bool) {
         let regionCount = self.regionMonitorStatus.values.filter{$0}.count
         if value {
-            self.willChangeValueForKey("isMonitoring")
             self.isMonitoring = true
-            self.didChangeValueForKey("isMonitoring")
         } else {
             if regionCount == 0 {
-                self.willChangeValueForKey("isMonitoring")
                 self.isMonitoring = false
-                self.didChangeValueForKey("isMonitoring")
             }
         }
     }

@@ -13,7 +13,6 @@ The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelega
 * [iBeacon Emulation](#peripheral_ibeacon_emulation): Emulate an iBeacon with a Peripheral application.
 * [State Restoration](#peripheral_state_restoration): Restore state of `PeripheralManager` using iOS state restoration.
 * [Errors](#peripheral_errors): Description of all errors.
-* [KVO](#peripheral_kvo): Properties supporting KVO.
 
 ### <a name="peripheral_poweron_poweroff">PowerOn/PowerOff</a>
 
@@ -304,6 +303,4 @@ Here the powerOn() -> Future&lt;Void&gt; flatmapped to startAdvertising(region:B
 ### <a name="peripheral_state_restoration">State Restoration</a>
 
 ### <a name="peripheral_errors">Errors</a>
-
-### <a name="peripheral_kvo">KVO</a>
 

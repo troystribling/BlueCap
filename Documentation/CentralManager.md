@@ -15,7 +15,6 @@ The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegat
 * [Retrieve Peripherals](#central_retrieve_peripherals): Retrieve `Peripheral` objects cached by `CoreBluetooth`.
 * [Peripheral RSSI](#central_rssi): Retrieve and poll for RSSI.
 * [State Restoration](#central_state_restoration): Restore state of `CentralManager` using iOS state restoration.
-* [KVO](#central_kvo): Properties supporting KVO.
 * [Errors](#central_errors): Description of all errors.
 * [Statistics](#central_errors): Peripheral connection statistics.
  
@@ -642,8 +641,6 @@ if let service = peripheral.service(serviceUUID), characteristic = service.chara
 ### <a name="central_rssi">Peripheral RSSI</a>
 
 ### <a name="central_state_restoration">State Restoration</a>
-
-### <a name="central_kvo">KVO</a>
 
 ### <a name="central_errors">Errors</a>
 

@@ -23,8 +23,6 @@ struct ReadParameters {
 // MARK: - Characteristic -
 public class Characteristic : NSObject {
 
-    private static var CBCharacteristicIsNotifyingKVOContext = UInt8()
-
     // MARK: Properties
     static let ioQueue      = Queue("us.gnos.blueCap.characteristic.io")
     static let timeoutQueue = Queue("us.gnos.blueCap.characteristic.timeout")
@@ -112,12 +110,9 @@ public class Characteristic : NSObject {
         return self.profile.name
     }
     
-    public private(set) var isNotifying: Bool {
+    public var isNotifying: Bool {
         get {
-            return Characteristic.ioQueue.sync { return self._isNotifying }
-        }
-        set {
-            Characteristic.ioQueue.sync{ self._isNotifying = newValue }
+            return self.cbCharacteristic.isNotifying
         }
     }
     
@@ -342,9 +337,6 @@ public class Characteristic : NSObject {
             self.notificationStateChangedPromise?.failure(error)
         } else {
             Logger.debug("success:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
-            self.willChangeValueForKey("isNotifying")
-            self.isNotifying = self.cbCharacteristic.isNotifying
-            self.didChangeValueForKey("isNotifying")
             self.notificationStateChangedPromise?.success(self)
         }
     }

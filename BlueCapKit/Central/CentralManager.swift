@@ -12,8 +12,6 @@ import CoreBluetooth
 // MARK: - CentralManager -
 public class CentralManager : NSObject, CBCentralManagerDelegate {
 
-    internal static var CBCentralManagerStateKVOContext = UInt8()
-
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.central-manager.io")
 
@@ -24,7 +22,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     private var _isScanning = false
     private var _poweredOn = false
-    private var _state = CBCentralManagerState.Unknown
 
     internal var _afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
     internal var discoveredPeripherals = SerialIODictionary<NSUUID, Peripheral>(CentralManager.ioQueue)
@@ -101,12 +98,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public private(set) var state: CBCentralManagerState {
+    public var state: CBCentralManagerState {
         get {
-            return PeripheralManager.ioQueue.sync { return self._state }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._state = newValue }
+            return cbCentralManager.state
         }
     }
 
@@ -116,7 +110,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)
         self.poweredOn = self.cbCentralManager.state == .PoweredOn
-        self.startObserving()
     }
 
     public init(queue:dispatch_queue_t, options: [String:AnyObject]?=nil) {
@@ -124,7 +117,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
         self.poweredOn = self.cbCentralManager.state == .PoweredOn
-        self.startObserving()
     }
 
     public init(centralManager: CBCentralManagerInjectable) {
@@ -132,52 +124,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         super.init()
         self.cbCentralManager = centralManager
         self.poweredOn = self.cbCentralManager.state == .PoweredOn
-        self.startObserving()
     }
 
     deinit {
         cbCentralManager.delegate = nil
-        stopObserving()
-    }
-
-    // MARK: KVO
-    internal func startObserving() {
-        guard let cbCentralManager = cbCentralManager as? CBCentralManager else {
-            return
-        }
-        let options = NSKeyValueObservingOptions([.New, .Old])
-        cbCentralManager.addObserver(self, forKeyPath: "state", options: options, context: &CentralManager.CBCentralManagerStateKVOContext)
-    }
-
-    internal func stopObserving() {
-        guard let cbCentralManager = cbCentralManager as? CBCentralManager else {
-            return
-        }
-        cbCentralManager.removeObserver(self, forKeyPath: "state", context: &CentralManager.CBCentralManagerStateKVOContext)
-    }
-
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", &CentralManager.CBCentralManagerStateKVOContext):
-            if let change = change,
-                   newValue = change[NSKeyValueChangeNewKey],
-                   oldValue = change[NSKeyValueChangeOldKey],
-                   newRawState = newValue as? Int,
-                   oldRawState = oldValue as? Int,
-                   newState = CBCentralManagerState(rawValue: newRawState) {
-                if newRawState != oldRawState {
-                    willChangeValueForKey("state")
-                    state = newState
-                    didChangeValueForKey("state")
-                }
-            }
-        default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-        }
     }
 
     // MARK: Power ON/OFF

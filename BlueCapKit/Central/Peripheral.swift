@@ -59,8 +59,6 @@ public struct PeripheralAdvertisements {
 // MARK: - Peripheral -
 public class Peripheral: NSObject, CBPeripheralDelegate {
 
-    internal static var CBPeripheralStateKVOContext = UInt8()
-
     // MARK: Serialize Property IO
     static let ioQueue = Queue("us.gnos.blueCap.peripheral")
     static let pollQueue = Queue("us.gnos.blueCap.peripheral.poll")
@@ -296,12 +294,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         return self.discoveredServices[uuid]
     }
 
-    public internal(set) var state: CBPeripheralState {
+    public var state: CBPeripheralState {
         get {
-            return Peripheral.ioQueue.sync { return self._state }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._state = newValue }
+            return cbPeripheral.state
         }
     }
 
@@ -312,9 +307,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.advertisements = PeripheralAdvertisements(advertisements: advertisements)
         super.init()
         self.RSSI = RSSI
-        self.state = cbPeripheral.state
         self.cbPeripheral.delegate = self
-        self.startObserving()
     }
 
     internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager) {
@@ -323,9 +316,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.advertisements = PeripheralAdvertisements(advertisements: [String: AnyObject]())
         super.init()
         self.RSSI = 0
-        self.state = cbPeripheral.state
         self.cbPeripheral.delegate = self
-        self.startObserving()
     }
 
     internal init(cbPeripheral: CBPeripheralInjectable, bcPeripheral: Peripheral) {
@@ -334,49 +325,11 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.centralManager = bcPeripheral.centralManager
         super.init()
         self.RSSI = bcPeripheral.RSSI
-        self.state = cbPeripheral.state
         self.cbPeripheral.delegate = self
-        self.startObserving()
     }
 
     deinit {
         self.cbPeripheral.delegate = nil
-        self.stopObserving()
-    }
-
-    // MARK: KVO
-    internal func startObserving() {
-        guard let cbPeripheral = self.cbPeripheral as? CBPeripheral else {
-            return
-        }
-        let options = NSKeyValueObservingOptions([.New, .Old])
-        cbPeripheral.addObserver(self, forKeyPath: "state", options: options, context: &Peripheral.CBPeripheralStateKVOContext)
-    }
-
-    internal func stopObserving() {
-        guard let cbPeripheral = self.cbPeripheral as? CBPeripheral else {
-            return
-        }
-        cbPeripheral.removeObserver(self, forKeyPath: "state", context: &Peripheral.CBPeripheralStateKVOContext)
-    }
-    
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", &Peripheral.CBPeripheralStateKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], oldValue = change[NSKeyValueChangeOldKey], newRawState = newValue as? Int, oldRawState = oldValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
-                if newRawState != oldRawState {
-                    self.willChangeValueForKey("state")
-                    self.state = newState
-                    self.didChangeValueForKey("state")
-                }
-            }
-        default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-        }
     }
 
     // MARK: RSSI

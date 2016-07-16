@@ -302,14 +302,14 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
                 self.clLocationManager.startUpdatingLocation()
             }
             authoriztaionFuture.onFailure(context) {error in
-                self.updateIsUpdating(false)
+                self.isUpdating = false
                 self.locationUpdatePromise!.failure(error)
             }
             return self.locationUpdatePromise!.future
     }
 
     public func stopUpdatingLocation() {
-        self.updateIsUpdating(false)
+        self.isUpdating = false
         self.locationUpdatePromise = nil
         self.clLocationManager.stopUpdatingLocation()
     }
@@ -330,7 +330,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
             clLocationManager.requestLocation()
         }
         authoriztaionFuture.onFailure(context) {error in
-            self.updateIsUpdating(false)
+            self.isUpdating = false
             self.requestLocationPromise!.failure(error)
         }
         return self.requestLocationPromise!.future
@@ -348,14 +348,14 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
             self.clLocationManager.startMonitoringSignificantLocationChanges()
         }
         authoriztaionFuture.onFailure(context) {error in
-            self.updateIsUpdating(false)
+            self.isUpdating = false
             self.locationUpdatePromise!.failure(error)
         }
         return self.locationUpdatePromise!.future
     }
     
     public func stopMonitoringSignificantLocationChanges() {
-        self.updateIsUpdating(false)
+        self.isUpdating = false
         self.locationUpdatePromise  = nil
         self.clLocationManager.stopMonitoringSignificantLocationChanges()
     }
@@ -390,7 +390,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     public func didUpdateLocations(locations:[CLLocation]) {
         FLLogger.debug()
-        self.updateIsUpdating(true)
+        self.isUpdating = true
         if let requestLocationPromise = self.requestLocationPromise {
             requestLocationPromise.success(locations)
             self.requestLocationPromise = nil
@@ -400,7 +400,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     public func didFailWithError(error: NSError) {
         FLLogger.debug("error \(error.localizedDescription)")
-        self.updateIsUpdating(false)
+        self.isUpdating = false
         if let requestLocationPromise = self.requestLocationPromise {
             requestLocationPromise.failure(error)
             self.requestLocationPromise = nil
@@ -421,10 +421,4 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         self.authorizationStatusChangedPromise?.success(status)
     }
 
-    // MARK: Utilies
-    func updateIsUpdating(value: Bool) {
-        self.willChangeValueForKey("isUpdating")
-        self.isUpdating = value
-        self.didChangeValueForKey("isUpdating")
-    }
 }

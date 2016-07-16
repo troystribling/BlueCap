@@ -379,7 +379,7 @@ class PeripheralTests: XCTestCase {
                 XCTAssertEqual(rssi, mockPeripheral.RSSI, "Recieved RSSI invalid")
                 XCTAssertEqual(peripheral.RSSI, mockPeripheral.RSSI, "Peripheral RSSI invalid")
                 XCTAssertEqual(mockPeripheral.readRSSICalledCount, 1, "readRSSICalled count invalid")
-                peripheral.state = .Disconnected
+                mockPeripheral.state = .Disconnected
             } else {
                 expectation.fulfill()
                 XCTFail("onSuccess called")

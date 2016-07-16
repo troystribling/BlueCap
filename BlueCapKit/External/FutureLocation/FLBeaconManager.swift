@@ -111,14 +111,10 @@ public class FLBeaconManager : FLRegionManager {
     func updateIsRanging(value: Bool) {
         let regionCount = self.regionRangingStatus.values.filter{$0}.count
         if value {
-            self.willChangeValueForKey("isRanging")
             self.isRanging = true
-            self.didChangeValueForKey("isRanging")
         } else {
             if regionCount == 0 {
-                self.willChangeValueForKey("isRanging")
                 self.isRanging = false
-                self.didChangeValueForKey("isRanging")
             }
         }
     }
