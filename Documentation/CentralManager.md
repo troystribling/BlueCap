@@ -230,19 +230,14 @@ The `Peripheral#reconnect` method is used to establish a connection to a previou
 
 `Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and will generate the `ConnectionEvent` `ForceDisconnect`. If the `Peripheral` is disconnected the `Peripheral#connect` `FutureStream#onFailure` will complete with `PeripheralErrorCode.Disconnected`.
 
-`Peripheral#terminate` performs a `Peripheral#disconnect` and also removed the `Peripheral` from the application cache.
+`Peripheral#terminate` performs a `Peripheral#disconnect` and also removes the `Peripheral` from the application cache.
 
 An application can connect a `Peripheral` using,
 
 ```swift
-let manager = CentralManager()
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
 
-// When manager powers on start scanning for peripherals
-// and connect after peripheral is discovered
-let peripheralConnectFuture = manager.powerOn().flatmap {_ -> FutureStream<Peripheral> in
-	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
-}.flatmap{peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
+// Connect after peripheral is discovered
+let peripheralConnectFuture = peripheraDiscoveredFuture.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
 	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
 }
 
@@ -267,7 +262,7 @@ peripheralConnectFuture.onFailure { error in
 }
 ```
 
-Here the [peripheraDiscoveredFuture](#central_service_scanning) from the previous section is `flatmapped` to `connect(capacity:Int? = nil, timeoutRetries:UInt, disconnectRetries:UInt?, connectionTimeout:Double) -> FutureStream&lt;(Peripheral, ConnectionEvent)` to ensure that connections are made after `Peripherals` are discovered. When `ConnectionEvents` of `.Timeout` and `.Disconnect` are received an attempt is made to reconnect the Peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a `.GiveUp` event is received and the `Peripheral` connection is terminated ending all reconnection attempts.
+Here the [peripheraDiscoveredFuture](#central_service_scanning) is `flatmapped` to `connect(capacity:Int? = nil, timeoutRetries:UInt, disconnectRetries:UInt?, connectionTimeout:Double) -> FutureStream&lt;(Peripheral, ConnectionEvent)` to ensure that connections are made after `Peripherals` are discovered. When `ConnectionEvents` of `.Timeout` and `.Disconnect` are received an attempt is made to reconnect the Peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a `.GiveUp` event is received and the `Peripheral` connection is terminated ending all reconnection attempts.
 
 ### <a name="central_characteristic_discovery">Service and Characteristic Discovery</a>
 
@@ -297,22 +292,13 @@ An application can discover a Peripheral using,
 // errors
 public enum ApplicationErrorCode : Int {
     case PeripheralNotConnected = 1
+    case CharacteristicNotFound = 2
 }
 
 public struct ApplicationError {
     public static let domain = "Application"
     public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
-}
-
-let manager = CentralManager()
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
-
-// When manager powers on start scanning for peripherals
-// and connect after peripheral is discovered
-let peripheralConnectFuture = manager.powerOn().flatmap { _ -> FutureStream<Peripheral> in
-	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
-}.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
-	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
+    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
 }
 
 // Discover all supported services and characteristics
@@ -331,11 +317,11 @@ characteristicsDiscoveredFuture.onFailure { error in
 }
 ```
 
-Here the peripheralConnectFuture is flatmapped to `discoverPeripheralServices(services: [CBUUID]!) -> Future<Peripheral>` to ensure that the `Peripheral` is connected before `Service` and `Characteristic` discovery starts.
+Here the [`peripheralConnectFuture`](#central_peripheral_connection) is flatmapped to `discoverPeripheralServices(services: [CBUUID]!) -> Future<Peripheral>` to ensure that the `Peripheral` is connected before `Service` and `Characteristic` discovery starts.
 
 ### <a name="central_characteristic_write">Characteristic Write</a>
 
-After `Peripheral` `Characteristics` are discovered writing `Characteristic` values is possible. `Characteristic` methods are available for writing, where each supports a value of a different type,
+After `Peripheral` `Characteristics` are discovered writing `Characteristic` values is possible. `Characteristic` methods available for writing, where each supports a value of a different type,
 
 ```swift
 // Write an NSData object to characteristic value
@@ -360,7 +346,7 @@ public func write<T:RawPairDeserializable>(value:T, timeout: Double = Double.inf
 public func write<T:RawArrayPairDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic>
 ```
 
-Each of the `write` methods take similar input parameters with only variation in the type and return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Characteristic>` yielding the `Characteristic`,
+Each of the `write` methods input parameters with only variation in the type and return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Characteristic>` yielding the `Characteristic`,
 
 <table>
 	<tr>
@@ -381,40 +367,6 @@ Each of the `write` methods take similar input parameters with only variation in
 Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
-// errors
-public enum ApplicationErrorCode : Int {
-    case PeripheralNotConnected = 1
-    case CharacteristicNotFound = 2
-}
-
-public struct ApplicationError {
-    public static let domain = "Application"
-    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
-    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
-}
-
-let manager = CentralManager()
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
-
-// When manager powers on start scanning for peripherals
-// and connect after peripheral is discovered
-let peripheralConnectFuture = manager.powerOn().flatmap { _ -> FutureStream<Peripheral> in
-	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
-}.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
-	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
-}
-
-// Discover all supported services and characteristics
-let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
-	  if connectionEvent == .Connect {
-		  return peripheral.discoverPeripheralServices([serviceUUID])
-    } else {
-      let promise = Promise<Peripheral>()
-      promise.failure(ApplicationError.peripheralNotConnected)
-      return promise.future
-    }
-}
-
 // RawDeserializable enum
 enum Enabled : UInt8, RawDeserializable {
     case No  = 0
@@ -440,7 +392,7 @@ writeCharacteristicFuture.onFailure { error in
 }
 ```
 
-Here the `characteristicsDiscoveredFuture` is flatmapped to `write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
+Here the [`characteristicsDiscoveredFuture`](#central_characteristic_discovery) is flatmapped to `write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> to ensure that characteristic has been discovered before writing. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_read">Characteristic Read</a>
 
@@ -473,50 +425,9 @@ public func value<T: RawArrayDeserializable where T.RawType: Deserializable>() -
 public func value<T: RawPairDeserializable where T.RawType1: Deserializable, T.RawType2: Deserializable>() -> T?
 ```
 
-Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can read a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
+Using the [RawDeserializable enum](#central_characteristic_write) an application can read a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
-public enum ApplicationErrorCode : Int {
-    case PeripheralNotConnected = 1
-    case CharacteristicNotFound = 2
-}
-
-public struct ApplicationError {
-    public static let domain = "Application"
-    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
-    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
-}
-
-let manager = CentralManager()
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
-
-// When manager powers on start scanning for peripherals
-// and connect after peripheral is discovered
-let peripheralConnectFuture = manager.powerOn().flatmap { _ -> FutureStream<Peripheral> in
-	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
-}.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
-	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
-}
-
-// Discover all supported services and characteristics
-let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
-	  if connectionEvent == .Connect {
-		  return peripheral.discoverPeripheralServices([serviceUUID])
-    } else {
-      let promise = Promise<Peripheral>()
-      promise.failure(ApplicationError.peripheralNotConnected)
-      return promise.future
-    }
-}
-
-// RawDeserializable enum
-enum Enabled : UInt8, RawDeserializable {
-    case No  = 0
-    case Yes = 1
-    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
-}
-let enabledUUID = CBUUID(string:Enabled.uuid)!
-
 let readCharacteristicFuture = characteristicsDiscoveredFuture.flatmap { peripheral -> Future<Characteristic> in
 	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
 		return characteristic.read(10.0)
@@ -534,7 +445,7 @@ readCharacteristicFuture { error in
 }
 ```
 
-Here the `characteristicsDiscoveredFuture` is flatmapped to `read(timeout: Double = Double.infinity) -> Future<Characteristic> to ensure that characteristic has been discovered before reading. On a successful read the value is retrieved using `public func value<T: RawDeserializable where T.RawType: Deserializable>() -> T?`. An error is returned if the characteristic is not found. 
+Here the [`characteristicsDiscoveredFuture`](#central_characteristic_discovery) is flatmapped to `read(timeout: Double = Double.infinity) -> Future<Characteristic> to ensure that characteristic has been discovered before reading. On a successful read the value is retrieved using `public func value<T: RawDeserializable where T.RawType: Deserializable>() -> T?`. An error is returned if the characteristic is not found. 
 
 ### <a name="central_characteristic_update">Characteristic Update Notifications</a>
 
@@ -558,42 +469,9 @@ The work flow for receiving notification updates is to first subscribe to the no
 
 To stop processing notifications call `stopNotifying()` and to unsubscribe to notifications call `stopNotificationUpdates()`.
 
-Using the [RawDeserializable enum](#serde_rawdeserializable) an application can receive notifications from a `Characteristic` as follows,
+Using the [RawDeserializable enum](#central_characteristic_write) an application can receive notifications from a `Characteristic` as follows,
 
 ```swift
-public enum ApplicationErrorCode : Int {
-    case PeripheralNotConnected = 1
-    case CharacteristicNotFound = 2
-}
-
-public struct ApplicationError {
-    public static let domain = "Application"
-    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
-    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
-}
-
-let manager = CentralManager()
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")!
-
-// When manager powers on start scanning for peripherals
-// and connect after peripheral is discovered
-let peripheralConnectFuture = manager.powerOn().flatmap { _ -> FutureStream<Peripheral> in
-	manager.startScanningForServiceUUIDs([serviceUUID], capacity:10)
-}.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
-	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
-}
-
-// Discover all supported services and characteristics
-let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
-	  if connectionEvent == .Connect {
-		  return peripheral.discoverPeripheralServices([serviceUUID])
-    } else {
-      let promise = Promise<Peripheral>()
-      promise.failure(ApplicationError.peripheralNotConnected)
-      return promise.future
-    }
-}
-
 let subscribeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap { peripheral -> Future<Characteristic> in
 	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
 		return characteristic.startNotifying()
@@ -620,7 +498,7 @@ updateCharacteristicFuture.onFailure { error in
 }
 ```
 
-Here the `characteristicsDiscoveredFuture` is flatmapped to `startNotifying() -> Future<Characteristic>` to ensure that characteristic has been discovered before subscribing to updates.  Then `subscribeCharacteristicFuture` is flatmapped again to `receiveNotificationUpdates(capacity: Int?) -> FutureStream<Characteristic>` to ensure that the subscription is completed before receiving updates.
+Here the [`characteristicsDiscoveredFuture`](#central_characteristic_discovery) is flatmapped to `startNotifying() -> Future<Characteristic>` to ensure that characteristic has been discovered before subscribing to updates.  Then `subscribeCharacteristicFuture` is flatmapped again to `receiveNotificationUpdates(capacity: Int?) -> FutureStream<Characteristic>` to ensure that the subscription is completed before receiving updates.
 
 An application can unsubscribe to `Characteristic` value notifications and stop receiving updates by using the following,
 
