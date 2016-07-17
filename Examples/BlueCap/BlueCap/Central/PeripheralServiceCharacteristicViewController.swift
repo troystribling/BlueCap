@@ -21,6 +21,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     weak var characteristic: Characteristic!
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+
     var peripheralViewController: PeripheralViewController!
     
     @IBOutlet var valuesLabel: UILabel!
@@ -72,6 +74,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         super.viewDidAppear(animated)
         self.setUI()
         let options = NSKeyValueObservingOptions([.New])
+        // TODO: Use Future Callback
         self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }

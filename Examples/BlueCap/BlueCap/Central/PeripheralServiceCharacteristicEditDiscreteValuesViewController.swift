@@ -15,6 +15,8 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     private static var BCPeripheralStateKVOContext = UInt8()
 
     weak var characteristic: Characteristic!
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+
     var peripheralViewController: PeripheralViewController?
 
     var progressView = ProgressView()
@@ -36,6 +38,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         let options = NSKeyValueObservingOptions([.New])
+        // TODO: Use Future Callback
         self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicEditDiscreteValuesViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }

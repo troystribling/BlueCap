@@ -98,9 +98,8 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
 
     @IBAction func toggleAdvertise(sender:AnyObject) {
         if Singletons.peripheralManager.isAdvertising {
-            Singletons.peripheralManager.stopAdvertising().onSuccess {
-                self.setUIState()
-            }
+            Singletons.peripheralManager.stopAdvertising()
+            self.setUIState()
         } else {
             if let peripheral = self.peripheral {
                 let afterAdvertisingStarted = {

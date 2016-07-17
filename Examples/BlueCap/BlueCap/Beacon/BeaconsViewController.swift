@@ -30,6 +30,7 @@ class BeaconsViewController: UITableViewController {
         super.viewWillAppear(animated)
         if let beaconRegion = self.beaconRegion {
             self.navigationItem.title = beaconRegion.identifier
+            // TODO: Use Future Callback
             NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BeaconsViewController.updateBeacons), name: BlueCapNotification.didUpdateBeacon, object: beaconRegion)
         } else {
             self.navigationItem.title = "Beacons"

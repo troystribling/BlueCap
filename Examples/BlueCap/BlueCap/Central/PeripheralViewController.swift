@@ -16,6 +16,8 @@ class PeripheralViewController : UITableViewController {
     private static var BCPeripheralStateKVOContext = UInt8()
 
     weak var peripheral: Peripheral!
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+
     var peripheralConnected = true
     var peripheralDiscovered = false
 
@@ -63,6 +65,7 @@ class PeripheralViewController : UITableViewController {
         self.toggleRSSIUpdates()
         self.updatePeripheralProperties()
         let options = NSKeyValueObservingOptions([.New])
+        // TODO: Use Future Callback
         self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: UIApplicationWillResignActiveNotification, object :nil)
     }

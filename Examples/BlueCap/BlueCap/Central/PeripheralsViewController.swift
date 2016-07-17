@@ -18,6 +18,7 @@ class PeripheralsViewController : UITableViewController {
     var scanStatus = false
     var shouldUpdatePeripheralConnectionStatus = false
     var peripheralConnectionStatus = [NSUUID : Bool]()
+    var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
 
     var reachedDiscoveryLimit: Bool {
         return Singletons.centralManager.peripherals.count >= ConfigStore.getMaximumPeripheralsDiscovered()
@@ -208,8 +209,8 @@ class PeripheralsViewController : UITableViewController {
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
-        let future = peripheral.connect(10, timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout)
-        future.onSuccess { (peripheral, connectionEvent) in
+        connectionFuture = peripheral.connect(10, timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout)
+        connectionFuture.onSuccess { (peripheral, connectionEvent) in
             switch connectionEvent {
             case .Connect:
                 Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.UUIDString)")
@@ -242,7 +243,7 @@ class PeripheralsViewController : UITableViewController {
                 self.updateWhenActive()
             }
         }
-        future.onFailure { error in
+        connectionFuture.onFailure { error in
             peripheral.stopPollingRSSI()
             self.reconnectIfNecessary(peripheral)
             self.updateWhenActive()

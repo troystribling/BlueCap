@@ -16,6 +16,8 @@ class PeripheralServicesViewController : UITableViewController {
     private static var BCPeripheralStateKVOContext = UInt8()
 
     weak var peripheral: Peripheral!
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+
     var peripheralViewController: PeripheralViewController!
     var progressView  = ProgressView()
     
@@ -37,6 +39,7 @@ class PeripheralServicesViewController : UITableViewController {
         super.viewDidAppear(animated)
         self.updateWhenActive()
         let options = NSKeyValueObservingOptions([.New])
+        // TODO: Use Future Callback
         self.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServicesViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }

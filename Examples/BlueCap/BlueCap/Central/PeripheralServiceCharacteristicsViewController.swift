@@ -15,6 +15,8 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     private static var BCPeripheralStateKVOContext = UInt8()
 
     weak var service: Service?
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+
     var peripheralViewController: PeripheralViewController?
 
     var dataValid = false
@@ -37,6 +39,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         super.viewDidAppear(animated)
         self.updateWhenActive()
         let options = NSKeyValueObservingOptions([.New])
+        // TODO: Use Future Callback
         self.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicsViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }

@@ -15,7 +15,9 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     private static var BCPeripheralStateKVOContext = UInt8()
 
     @IBOutlet var valueTextField: UITextField!
-    var characteristic: Characteristic!
+    weak var characteristic: Characteristic!
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+
     var peripheralViewController: PeripheralViewController?
     var valueName: String?
     
@@ -39,6 +41,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         let options = NSKeyValueObservingOptions([.New])
+        // TODO: Use Future Callback
         self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicEditValueViewController.BCPeripheralStateKVOContext)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditValueViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
