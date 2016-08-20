@@ -16,12 +16,12 @@ extension Data: Serializable {
     
     public static func serialize<T>(_ value: T) -> Data {
         let values = [fromHostByteOrder(value)]
-        return Data(bytes: UnsafePointer<UInt8>(values), count:sizeof(T))
+        return Data(bytes: UnsafePointer<UInt8>(values), count:MemoryLayout<T>.size)
     }
     
     public static func serializeArray<T>(_ values: [T]) -> Data {
         let littleValues = values.map{fromHostByteOrder($0)}
-        return Data(bytes: UnsafePointer<UInt8>(littleValues), count: sizeof(T)*littleValues.count)
+        return Data(bytes: UnsafePointer<UInt8>(littleValues), count: MemoryLayout<T>.size*littleValues.count)
     }
 
     public static func serialize<T1, T2>(_ value1: T1, value2: T2) -> Data {

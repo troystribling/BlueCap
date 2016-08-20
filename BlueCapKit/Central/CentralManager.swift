@@ -149,11 +149,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Manage Peripherals
-    public func connectPeripheral(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
+    public func connect(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
         cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options: options)
     }
     
-    public func cancelPeripheralConnection(peripheral: Peripheral) {
+    public func cancelConnection(forPeripheral peripheral: Peripheral) {
         cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
 
@@ -168,11 +168,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Scan
-    public func startScanning(capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
-        return startScanningForServiceUUIDs(nil, capacity: capacity, timeout: timeout)
+    public func startScanning(capacity: Int = Int.max, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+        return startScanning(forServiceUUIDs: nil, capacity: capacity, timeout: timeout)
     }
     
-    public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         if !isScanning {
             Logger.debug("UUIDs \(UUIDs)")
             isScanning = true
@@ -184,7 +184,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 afterPeripheralDiscoveredPromise.failure(BCError.centralIsPoweredOff)
             }
         }
-        return afterPeripheralDiscoveredPromise.future
+        return afterPeripheralDiscoveredPromise.stream
     }
     
     public func stopScanning() {
@@ -213,11 +213,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: State Restoration
     public func whenStateRestored() -> FutureStream<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])> {
         afterStateRestoredPromise = StreamPromise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
-        return afterStateRestoredPromise.future
+        return afterStateRestoredPromise.stream
     }
 
     // MARK: Retrieve Peripherals
-    public func retrieveConnectedPeripheralsWithServices(services: [CBUUID]) -> [Peripheral] {
+    public func retrieveConnectedPeripherals(withServices services: [CBUUID]) -> [Peripheral] {
         return cbCentralManager.retrieveConnectedPeripheralsWithServices(services).map { cbPeripheral in
             let newBCPeripheral: Peripheral
             if let oldBCPeripheral = discoveredPeripherals[cbPeripheral.identifier] {
@@ -230,7 +230,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    func retrievePeripheralsWithIdentifiers(_ identifiers: [UUID]) -> [Peripheral] {
+    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [Peripheral] {
         return cbCentralManager.retrievePeripheralsWithIdentifiers(identifiers).map { cbPeripheral in
             let newBCPeripheral: Peripheral
             if let oldBCPeripheral = discoveredPeripherals[cbPeripheral.identifier] {
@@ -244,27 +244,27 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     func retrievePeripherals() -> [Peripheral] {
-        return retrievePeripheralsWithIdentifiers(discoveredPeripherals.keys)
+        return retrievePeripherals(withIdentifiers: discoveredPeripherals.keys)
     }
 
     // MARK: CBCentralManagerDelegate
-    public func centralManager(_: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+    public func centralManager(_: CBCentralManager, didConnect peripheral: CBPeripheral) {
         didConnectPeripheral(peripheral)
     }
 
-    public func centralManager(_: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-        didDisconnectPeripheral(peripheral, error:error)
+    public func centralManager(_: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        didDisconnectPeripheral(peripheral, error: error)
     }
 
-    public func centralManager(_: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String: AnyObject], RSSI: NSNumber) {
+    @nonobjc public func centralManager(_: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String: AnyObject], RSSI: NSNumber) {
         didDiscoverPeripheral(peripheral, advertisementData:advertisementData, RSSI:RSSI)
     }
 
-    public func centralManager(_: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    public func centralManager(_: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: Error?) {
         didFailToConnectPeripheral(peripheral, error:error)
     }
 
-    public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
+    @nonobjc public func centralManager(_: CBCentralManager, willRestoreState dict: [String: AnyObject]) {
         var injectablePeripherals: [CBPeripheralInjectable]?
         if let cbPeripherals: [CBPeripheral] = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
             injectablePeripherals = cbPeripherals.map { $0 as CBPeripheralInjectable }

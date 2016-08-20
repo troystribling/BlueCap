@@ -340,13 +340,13 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         return self.readRSSIPromise!.future
     }
 
-    public func startPollingRSSI(_ period: Double = 10.0, capacity: Int? = nil) -> FutureStream<Int> {
+    public func startPollingRSSI(_ period: Double = 10.0, capacity: Int = Int.max) -> FutureStream<Int> {
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), period = \(period)")
         self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
         self.readRSSIIfConnected()
         self.RSSISequence += 1
         self.pollRSSI(period, sequence: self.RSSISequence)
-        return pollRSSIPromise!.future
+        return pollRSSIPromise!.stream
     }
 
     public func stopPollingRSSI() {
@@ -362,7 +362,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
         Logger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.uuidString)")
         centralManager.centralQueue.delay(reconnectDelay) {
-            centralManager.connectPeripheral(self)
+            centralManager.connect(peripheral: self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
             self.currentError = .none
@@ -370,16 +370,16 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
      
-    public func connect(_ capacity: Int? = nil, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
+    public func connect(_ capacity: Int = Int.max, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
         if self.connectionPromise == nil {
-            self.connectionPromise = StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>(capacity:capacity)
+            self.connectionPromise = StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>(capacity: capacity)
         }
         self.timeoutRetries = timeoutRetries
         self.disconnectRetries = disconnectRetries
         self.connectionTimeout = connectionTimeout
         Logger.debug("connect peripheral \(self.name)', \(self.identifier.uuidString)")
         self.reconnect()
-        return self.connectionPromise!.future
+        return self.connectionPromise!.stream
     }
     
     public func disconnect() {
@@ -390,7 +390,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.stopPollingRSSI()
         if self.state == .connected {
             Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
-            central.cancelPeripheralConnection(self)
+            central.cancelConnection(forPeripheral: self)
         } else {
             Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
             self.didDisconnectPeripheral(BCError.peripheralDisconnected)

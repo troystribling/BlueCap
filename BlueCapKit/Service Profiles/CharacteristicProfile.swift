@@ -16,7 +16,7 @@ public class CharacteristicProfile {
     public let name: String
     public let permissions: CBAttributePermissions
     public let properties: CBCharacteristicProperties
-    public let initialValue: NSData?
+    public let initialValue: Data?
 
     internal var afterDiscoveredPromise: StreamPromise<Characteristic>!
 
@@ -28,7 +28,7 @@ public class CharacteristicProfile {
                 name: String,
                 permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable],
                 properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify],
-                initialValue:Data? = nil) {
+                initialValue: Data? = nil) {
         self.UUID = CBUUID(string: UUID)
         self.name = name
         self.permissions = permissions
@@ -40,12 +40,12 @@ public class CharacteristicProfile {
         self.init(UUID:UUID, name:"Unknown")
     }
     
-    public func afterDiscovered(capacity: Int? = nil) -> FutureStream<Characteristic> {
+    public func afterDiscovered(capacity: Int = Int.max) -> FutureStream<Characteristic> {
         guard let afterDiscoveredPromise = self.afterDiscoveredPromise else {
-            self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity:capacity)
-            return self.afterDiscoveredPromise.future
+            self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity: capacity)
+            return afterDiscoveredPromise.stream
         }
-        return afterDiscoveredPromise.future
+        return afterDiscoveredPromise.stream
     }
 
     public func propertyEnabled(property: CBCharacteristicProperties) -> Bool {
