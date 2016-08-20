@@ -13,13 +13,13 @@ public extension CLProximity {
     
     var stringValue : String {
         switch self {
-        case .Unknown:
+        case .unknown:
             return "Unknown"
-        case .Immediate:
+        case .immediate:
             return "Immediate"
-        case .Near:
+        case .near:
             return "Near"
-        case .Far:
+        case .far:
             return "Far"
         }
     }

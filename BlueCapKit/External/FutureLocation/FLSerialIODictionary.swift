@@ -35,8 +35,8 @@ public class FLSerialIODictionary<T, U where T: Hashable> {
         }
     }
 
-    func removeValueForKey(key: T) {
-        self.queue.sync { self.data.removeValueForKey(key) }
+    func removeValueForKey(_ key: T) {
+        self.queue.sync { self.data.removeValue(forKey: key) }
     }
 
     func removeAll() {

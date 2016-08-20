@@ -11,7 +11,7 @@ import Foundation
 extension UInt32: Deserializable {
     
     public static var size : Int {
-        return sizeof(UInt32)
+        return MemoryLayout<UInt32>.size
     }
 
     public init?(doubleValue: Double) {
@@ -22,29 +22,29 @@ extension UInt32: Deserializable {
         }
     }
 
-    public static func deserialize(data: NSData) -> UInt32? {
-        if data.length >= sizeof(UInt32) {
+    public static func deserialize(_ data: Data) -> UInt32? {
+        if data.count >= MemoryLayout<UInt32>.size {
             var value : UInt32 = 0
-            data.getBytes(&value, length:sizeof(UInt32))
+            (data as NSData).getBytes(&value, length:MemoryLayout<UInt32>.size)
             return toHostByteOrder(value)
         } else {
             return nil
         }
     }
     
-    public static func deserialize(data: NSData, start: Int) -> UInt32? {
-        if data.length >= start + sizeof(UInt32) {
+    public static func deserialize(_ data: Data, start: Int) -> UInt32? {
+        if data.count >= start + MemoryLayout<UInt32>.size {
             var value : UInt32 = 0
-            data.getBytes(&value, range:NSMakeRange(start, sizeof(UInt32)))
+            (data as NSData).getBytes(&value, range:NSMakeRange(start, MemoryLayout<UInt32>.size))
             return toHostByteOrder(value)
         } else {
             return nil
         }
     }
 
-    public static func deserialize(data: NSData) -> [UInt32] {
-        let size = sizeof(UInt32)
-        let count = data.length / size
+    public static func deserialize(_ data: Data) -> [UInt32] {
+        let size = MemoryLayout<UInt32>.size
+        let count = data.count / size
         return [Int](0..<count).reduce([]) {(result, idx) in
             if let value = self.deserialize(data, start:size*idx) {
                 return result + [value]

@@ -11,7 +11,7 @@ import Foundation
 extension UInt16: Deserializable {
     
     public static var size: Int {
-        return sizeof(UInt16)
+        return MemoryLayout<UInt16>.size
     }
 
     public init?(doubleValue: Double) {
@@ -22,29 +22,29 @@ extension UInt16: Deserializable {
         }
     }
 
-    public static func deserialize(data: NSData) -> UInt16? {
-        if data.length >= sizeof(UInt16) {
+    public static func deserialize(_ data: Data) -> UInt16? {
+        if data.count >= MemoryLayout<UInt16>.size {
             var value : UInt16 = 0
-            data.getBytes(&value, length: sizeof(UInt16))
+            (data as NSData).getBytes(&value, length: MemoryLayout<UInt16>.size)
             return toHostByteOrder(value)
         } else {
             return nil
         }
     }
     
-    public static func deserialize(data: NSData, start: Int) -> UInt16? {
-        if data.length >= start + sizeof(UInt16) {
+    public static func deserialize(_ data: Data, start: Int) -> UInt16? {
+        if data.count >= start + MemoryLayout<UInt16>.size {
             var value : UInt16 = 0
-            data.getBytes(&value, range: NSMakeRange(start, sizeof(UInt16)))
+            (data as NSData).getBytes(&value, range: NSMakeRange(start, MemoryLayout<UInt16>.size))
             return toHostByteOrder(value)
         } else {
             return nil
         }
     }
 
-    public static func deserialize(data: NSData) -> [UInt16] {
-        let size = sizeof(UInt16)
-        let count = data.length / size
+    public static func deserialize(_ data: Data) -> [UInt16] {
+        let size = MemoryLayout<UInt16>.size
+        let count = data.count / size
         return [Int](0..<count).reduce([]) { (result, idx) in
             if let value = self.deserialize(data, start:size*idx) {
                 return result + [value]

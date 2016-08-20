@@ -14,7 +14,7 @@ public class MutableService : NSObject {
 
     static let ioQueue = Queue("us.gnos.blueCap.mutable-service")
 
-    private var _characteristics = SerialIOArray<MutableCharacteristic>(MutableService.ioQueue)
+    fileprivate var _characteristics = SerialIOArray<MutableCharacteristic>(MutableService.ioQueue)
 
     internal let profile: ServiceProfile
 
@@ -64,7 +64,7 @@ public class MutableService : NSObject {
         if let profile = ProfileManager.sharedInstance.services[uuid] {
             self.profile = profile
         } else {
-            self.profile = ServiceProfile(UUID: uuid.UUIDString)
+            self.profile = ServiceProfile(UUID: uuid.uuidString)
         }
         super.init()
     }

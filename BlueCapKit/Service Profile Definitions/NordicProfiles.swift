@@ -22,19 +22,19 @@ public struct Nordic {
         
         public struct Data : RawDeserializable, CharacteristicConfigurable, StringDeserializable {
 
-            private let temperatureRaw: Int16
+            fileprivate let temperatureRaw: Int16
             public let temperature: Double
 
-            private static func valueFromRaw(rawValue:Int16) -> Double {
+            fileprivate static func valueFromRaw(_ rawValue:Int16) -> Double {
                 return Double(rawValue)/4.0
             }
 
             // CharacteristicConfigurable
             public static let UUID                                      = "2f0a0004-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Device Temperature Data"
-            public static let properties: CBCharacteristicProperties    = [.Read, .Notify]
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let initialValue: NSData?                     = SerDe.serialize(Int16(100))
+            public static let properties: CBCharacteristicProperties    = [.read, .notify]
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Int16(100))
 
             // RawDeserializable
             public var rawValue: Int16 {
@@ -84,9 +84,9 @@ public struct Nordic {
             // CharacteristicConfigurable
             public static let UUID                                      = "2f0a0006-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Addresss"
-            public static let properties: CBCharacteristicProperties    = [.Read, .Notify]
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let initialValue: NSData?                     = SerDe.serialize(Int16(100))
+            public static let properties: CBCharacteristicProperties    = [.read, .notify]
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let initialValue: Data?                     = SerDe.serialize(Int16(100))
 
             // RawArrayDeserializable
             public static let size = 6
@@ -118,11 +118,11 @@ public struct Nordic {
             
             public init?(stringValue: [String: String]) {
                 if let addr1Init = uint8ValueFromStringValue("addr1", values: stringValue),
-                       addr2Init = uint8ValueFromStringValue("addr2", values: stringValue),
-                       addr3Init = uint8ValueFromStringValue("addr3", values: stringValue),
-                       addr4Init = uint8ValueFromStringValue("addr4", values: stringValue),
-                       addr5Init = uint8ValueFromStringValue("addr5", values: stringValue),
-                       addr6Init = uint8ValueFromStringValue("addr6", values: stringValue) {
+                       let addr2Init = uint8ValueFromStringValue("addr2", values: stringValue),
+                       let addr3Init = uint8ValueFromStringValue("addr3", values: stringValue),
+                       let addr4Init = uint8ValueFromStringValue("addr4", values: stringValue),
+                       let addr5Init = uint8ValueFromStringValue("addr5", values: stringValue),
+                       let addr6Init = uint8ValueFromStringValue("addr6", values: stringValue) {
                     self.addr1 = addr1Init
                     self.addr2 = addr2Init
                     self.addr3 = addr3Init
@@ -138,18 +138,18 @@ public struct Nordic {
         
         public enum AddressType: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable  {
             
-            case Unknown                    = 0
-            case Public                     = 1
-            case RandomStatic               = 2
-            case RandomPrivateResolvable    = 3
-            case RandomPrivateUnresolvable  = 4
+            case unknown                    = 0
+            case `public`                     = 1
+            case randomStatic               = 2
+            case randomPrivateResolvable    = 3
+            case randomPrivateUnresolvable  = 4
             
             // CharacteristicConfigurable
             public static let UUID                                      = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Address Type"
-            public static let properties: CBCharacteristicProperties    = [.Read]
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let initialValue: NSData?                     = SerDe.serialize(AddressType.Public)
+            public static let properties: CBCharacteristicProperties    = [.read]
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let initialValue: Data?                     = SerDe.serialize(AddressType.public)
 
 
             // StringDeserializable
@@ -158,15 +158,15 @@ public struct Nordic {
 
             public var stringValue: [String: String] {
                 switch self {
-                case .Unknown:
+                case .unknown:
                     return [AddressType.name: "Unknown"]
-                case .Public:
+                case .public:
                     return [AddressType.name: "Public"]
-                case .RandomStatic:
+                case .randomStatic:
                     return [AddressType.name: "RandomStatic"]
-                case .RandomPrivateResolvable:
+                case .randomPrivateResolvable:
                     return [AddressType.name: "RandomPrivateResolvable"]
-                case .RandomPrivateUnresolvable:
+                case .randomPrivateUnresolvable:
                     return [AddressType.name: "RandomPrivateUnresolvable"]
                 }
             }
@@ -175,15 +175,15 @@ public struct Nordic {
                 if let value = stringValue[AddressType.name] {
                     switch value {
                     case "Unknown":
-                        self = AddressType.Unknown
+                        self = AddressType.unknown
                     case "Public":
-                        self = AddressType.Public
+                        self = AddressType.public
                     case "RandomStatic":
-                        self = AddressType.RandomStatic
+                        self = AddressType.randomStatic
                     case "RandomPrivateResolvable":
-                        self = AddressType.RandomPrivateResolvable
+                        self = AddressType.randomPrivateResolvable
                     case "RandomPrivateUnresolvable":
-                        self = AddressType.RandomPrivateUnresolvable
+                        self = AddressType.randomPrivateUnresolvable
                     default:
                         return nil
                    

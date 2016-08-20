@@ -25,8 +25,8 @@ public struct Gnosus {
             // BLEConfigurable
             public static let UUID                                     = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
             public static let name                                     = "Hello World Greeting"
-            public static let permissions: CBAttributePermissions      = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties   = [.Read, .Notify]
+            public static let permissions: CBAttributePermissions      = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties   = [.read, .notify]
             public static let initialValue                             = SerDe.serialize("Hello")
             
         }
@@ -38,9 +38,9 @@ public struct Gnosus {
             // CharacteristicConfigurable
             public static let UUID                                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Update Period"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = [.Read, .Write]
-            public static let initialValue: NSData?                     = SerDe.serialize(UInt16(5000))
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = [.read, .write]
+            public static let initialValue: Data?                     = SerDe.serialize(UInt16(5000))
             
             // RawDeserializable
             public var rawValue: UInt16 {
@@ -80,8 +80,8 @@ public struct Gnosus {
         
         public struct LatitudeAndLongitude : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
 
-            private let latitudeRaw: Int16
-            private let longitudeRaw: Int16
+            fileprivate let latitudeRaw: Int16
+            fileprivate let longitudeRaw: Int16
             public let latitude: Double
             public let longitude: Double
 
@@ -95,11 +95,11 @@ public struct Gnosus {
                 }
             }
             
-            private static func valuesFromRaw(rawValues: [Int16]) -> (Double, Double) {
+            fileprivate static func valuesFromRaw(_ rawValues: [Int16]) -> (Double, Double) {
                 return (100.0*Double(rawValues[0]), 100.0*Double(rawValues[1]))
             }
             
-            private static func rawFromValues(values: [Double]) -> (Int16, Int16)? {
+            fileprivate static func rawFromValues(_ values: [Double]) -> (Int16, Int16)? {
                 let latitudeRaw = Int16(doubleValue: values[0]/100.0)
                 let longitudeRaw = Int16(doubleValue: values[1]/100.0)
                 if latitudeRaw != nil && longitudeRaw != nil {
@@ -112,9 +112,9 @@ public struct Gnosus {
             // CharacteristicConfigurable
             public static let UUID                                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Lattitude and Longitude"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = [.Read, .Write]
-            public static let initialValue: NSData?                     = SerDe.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = [.read, .write]
+            public static let initialValue: Data?                     = SerDe.serialize(Gnosus.LocationService.LatitudeAndLongitude(latitude:37.752760, longitude:-122.413234)!)
 
             // RawArrayDeserializable
             public static let size = 4

@@ -8,499 +8,606 @@
 
 import Foundation
 
+// MARK: - Errors -
+
+public enum Error : Int, Swift.Error {
+    case noSuchElement
+    case invalidValue
+}
+
 // MARK: - Optional -
+
 public extension Optional {
-    
-    func flatmap<M>(mapping: Wrapped -> M?) -> M? {
+
+    func filter(_ predicate: (Wrapped) -> Bool) -> Wrapped? {
         switch self {
-        case .Some(let value):
-            return mapping(value)
-        case .None:
-            return nil
-        }
-    }
-    
-    func filter(predicate: Wrapped -> Bool) -> Wrapped? {
-        switch self {
-        case .Some(let value):
+        case .some(let value):
             return predicate(value) ? Optional(value) : nil
-        case .None:
-            return Optional()
+        case .none:
+            return Optional.none
         }
     }
     
-    func foreach(apply: Wrapped -> Void) {
+    func forEach(_ apply: (Wrapped) -> Void) {
         switch self {
-        case .Some(let value):
+        case .some(let value):
             apply(value)
-        case .None:
+        case .none:
             break
         }
     }
-    
+
 }
 
-// MARK: Functional Style
-public func flatmap<T,M>(maybe: T?, mapping: T -> M?) -> M? {
-    return maybe.flatmap(mapping)
-}
+// MARK: - Tryable -
 
-public func foreach<T>(maybe: T?, apply: T -> Void) {
-    maybe.foreach(apply)
-}
+public protocol Tryable {
+    associatedtype T
 
-public func filter<T>(maybe: T?, predicate: T -> Bool) -> T? {
-    return maybe.filter(predicate)
-}
+    var value: T? { get }
+    var error: Swift.Error? { get }
 
-// MARK: Optional for Comprehensions
-public func forcomp<T,U>(f: T?, g: U?, apply: (T,U) -> Void) {
-    f.foreach {fvalue in
-        g.foreach {gvalue in
-            apply(fvalue, gvalue)
-        }
-    }
-}
-public func flatten<T>(maybe: T??) -> T? {
-    switch maybe {
-    case .Some(let value):
-        return value
-    case .None:
-        return Optional()
-    }
+    init(_ value: T)
+    init(_ error: Swift.Error)
+
+    func map<M>(_ mapping: (T) throws -> M) -> Try<M>
 }
 
 // MARK: - Try -
-public struct TryError {
-    public static let domain = "Wrappers"
-    public static let filterFailed = NSError(domain: domain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Filter failed"])
-}
 
-public enum Try<T> {
-    
-    case Success(T)
-    case Failure(NSError)
-    
-    public init(_ value:T) {
-        self = .Success(value)
+public enum Try<T> : Tryable {
+
+    case success(T)
+    case failure(Swift.Error)
+
+    public var value: T? {
+        switch self {
+        case .success(let value):
+            return value
+        case .failure:
+            return nil
+        }
+    }
+
+    public var error: Swift.Error? {
+        switch self {
+        case .success:
+            return nil
+        case .failure(let error):
+            return error
+        }
+    }
+
+    public init(_ value: T) {
+        self = .success(value)
     }
     
-    public init(_ error: NSError) {
-        self = .Failure(error)
+    public init(_ error: Swift.Error) {
+        self = .failure(error)
+    }
+
+    public init(_ task: (Void) throws -> T) {
+        do {
+            self = try .success(task())
+        } catch {
+            self = .failure(error)
+        }
     }
     
     public func isSuccess() -> Bool {
         switch self {
-        case .Success:
+        case .success:
             return true
-        case .Failure:
+        case .failure:
             return false
         }
     }
     
     public func isFailure() -> Bool {
         switch self {
-        case .Success:
+        case .success:
             return false
-        case .Failure:
+        case .failure:
             return true
         }
     }
 
     // MARK: Combinators
-    public func map<M>(mapping: T -> M) -> Try<M> {
+
+    public func map<M>(_ mapping: (T) throws -> M) -> Try<M> {
         switch self {
-        case .Success(let value):
-            return Try<M>(mapping(value))
-        case .Failure(let error):
-            return Try<M>(error)
-        }
-    }
-    
-    public func flatmap<M>(mapping: T -> Try<M>) -> Try<M> {
-        switch self {
-        case .Success(let value):
-            return mapping(value)
-        case .Failure(let error):
-            return Try<M>(error)
-        }
-    }
-    
-    public func recover(recovery: NSError -> T) -> Try<T> {
-        switch self {
-        case .Success(let value):
-            return Try(value)
-        case .Failure(let error):
-            return Try<T>(recovery(error))
-        }
-    }
-    
-    public func recoverWith(recovery: NSError -> Try<T>) -> Try<T> {
-        switch self {
-        case .Success(let value):
-            return Try(value)
-        case .Failure(let error):
-            return recovery(error)
-        }
-    }
-    
-    public func filter(predicate: T -> Bool) -> Try<T> {
-        switch self {
-        case .Success(let value):
-            if !predicate(value) {
-                return Try<T>(TryError.filterFailed)
-            } else {
-                return Try(value)
+        case .success(let value):
+            do {
+                return try Try<M>(mapping(value))
+            } catch {
+                return Try<M>(error)
             }
-        case .Failure(_):
+        case .failure(let error):
+            return Try<M>(error)
+        }
+    }
+    
+    public func flatMap<M>(_ mapping: (T) throws -> Try<M>) -> Try<M> {
+        switch self {
+        case .success(let value):
+            do {
+                return try mapping(value)
+            } catch {
+                return Try<M>(error)
+            }
+        case .failure(let error):
+            return Try<M>(error)
+        }
+    }
+
+    public func mapError(_ mapping: (Swift.Error) -> Swift.Error) -> Try<T> {
+        switch self {
+        case .success(let value):
+            return Try(value)
+        case .failure(let error):
+            return Try(mapping(error))
+        }
+    }
+    
+    public func recover(_ recovery: (Swift.Error) throws -> T) -> Try<T> {
+        switch self {
+        case .success(let value):
+            return Try(value)
+        case .failure(let error):
+            do {
+                return try Try(recovery(error))
+            } catch {
+                return Try(error)
+            }
+        }
+    }
+
+    public func recoverWith(_ recovery: (Swift.Error) throws -> Try<T>) -> Try<T> {
+        switch self {
+        case .success(let value):
+            return Try(value)
+        case .failure(let error):
+            do {
+                return try recovery(error)
+            } catch {
+                return Try(error)
+            }
+        }
+    }
+    
+    public func filter(_ predicate: (T) throws -> Bool) -> Try<T> {
+        switch self {
+        case .success(let value):
+            do {
+                if try !predicate(value) {
+                    return Try<T>(Error.noSuchElement)
+                } else {
+                    return .success(value)
+                }
+            } catch {
+                return Try<T>(error)
+            }
+        case .failure(_):
             return self
         }
     }
     
-    public func foreach(apply: T -> Void) {
+    public func forEach(_ apply: (T) throws -> Void) {
         switch self {
-        case .Success(let value):
-            apply(value)
-        case .Failure:
+        case .success(let value):
+            do {
+                try apply(value)
+            } catch {
+                return
+            }
+        case .failure:
             return
         }
     }
 
-    public func orElse(failed: Try<T>) -> Try<T> {
+    public func orElse(_ failed: Try<T>) -> Try<T> {
         switch self {
-        case .Success(let box):
-            return Try(box)
-        case .Failure(_):
+        case .success(let value):
+            return Try(value)
+        case .failure(_):
             return failed
         }
     }
 
     // MARK: Coversion
+
     public func toOptional() -> Optional<T> {
         switch self {
-        case .Success(let value):
+        case .success(let value):
             return Optional<T>(value)
-        case .Failure(_):
-            return Optional<T>()
+        case .failure(_):
+            return Optional<T>.none
         }
     }
     
-    public func getOrElse(failed: T) -> T {
+    public func getOrElse(_ failed: T) -> T {
         switch self {
-        case .Success(let value):
+        case .success(let value):
             return value
-        case .Failure(_):
+        case .failure(_):
             return failed
         }
     }
 
 }
 
-// MARK: Functional Style
-public func flatten<T>(result: Try<Try<T>>) -> Try<T> {
-    switch result {
-    case .Success(let value):
-        return value
-    case .Failure(let error):
-        return Try<T>(error)
-    }
+public func ??<T>(left: Try<T>, right: T) -> T {
+    return left.getOrElse(right)
 }
 
-// MARK: Try for Comprehensions
-public func forcomp<T,U>(f: Try<T>, g: Try<U>, apply: (T,U) -> Void) {
-    f.foreach {fvalue in
-        g.foreach {gvalue in
-            apply(fvalue, gvalue)
-        }
-    }
-}
+// MARK: - Try SequenceType -
 
-public func forcomp<T,U,V>(f: Try<T>, g: Try<U>, h: Try<V>, apply: (T,U,V) -> Void) {
-    f.foreach {fvalue in
-        g.foreach {gvalue in
-            h.foreach {hvalue in
-                apply(fvalue, gvalue, hvalue)
+extension Sequence where Iterator.Element: Tryable {
+
+    public func sequence() -> Try<[Iterator.Element.T]> {
+        return reduce(Try([])) { accumulater, element  in
+            switch accumulater {
+            case .success(let value):
+                return element.map { value + [$0] }
+            case .failure:
+                return accumulater
             }
         }
     }
-}
-
-public func forcomp<T,U,V>(f: Try<T>, g: Try<U>, yield: (T,U) -> V) -> Try<V> {
-    return f.flatmap {fvalue in
-        g.map {gvalue in
-            yield(fvalue, gvalue)
-        }
-    }
-}
-
-public func forcomp<T,U,V,W>(f: Try<T>, g: Try<U>, h: Try<V>, yield: (T,U,V) -> W) -> Try<W> {
-    return f.flatmap {fvalue in
-        g.flatmap {gvalue in
-            h.map {hvalue in
-                yield(fvalue, gvalue, hvalue)
-            }
-        }
-    }
-}
-
-public func forcomp<T,U>(f: Try<T>, g: Try<U>, filter: (T,U) -> Bool, apply: (T,U) -> Void) {
-    f.foreach {fvalue in
-        g.filter{gvalue in
-            filter(fvalue, gvalue)
-        }.foreach {gvalue in
-            apply(fvalue, gvalue)
-        }
-    }
-}
-
-public func forcomp<T,U,V>(f: Try<T>, g: Try<U>, h: Try<V>, filter: (T,U,V) -> Bool, apply: (T,U,V) -> Void) {
-    f.foreach {fvalue in
-        g.foreach {gvalue in
-            h.filter{hvalue in
-                filter(fvalue, gvalue, hvalue)
-            }.foreach {hvalue in
-                apply(fvalue, gvalue, hvalue)
-            }
-        }
-    }
-}
-
-public func forcomp<T,U,V>(f: Try<T>, g: Try<U>, filter: (T,U) -> Bool, yield: (T,U) -> V) -> Try<V> {
-    return f.flatmap {fvalue in
-        g.filter {gvalue in
-            filter(fvalue, gvalue)
-        }.map {gvalue in
-            yield(fvalue, gvalue)
-        }
-    }
-}
-
-public func forcomp<T,U,V,W>(f: Try<T>, g: Try<U>, h: Try<V>, filter: (T,U,V) -> Bool, yield: (T,U,V) -> W) -> Try<W> {
-    return f.flatmap {fvalue in
-        g.flatmap {gvalue in
-            h.filter {hvalue in
-                filter(fvalue, gvalue, hvalue)
-            }.map {hvalue in
-                yield(fvalue, gvalue, hvalue)
-            }
-        }
-    }
-    
 }
 
 // MARK: - ExecutionContext -
+
 public protocol ExecutionContext {
 
-    func execute(task:Void->Void)
-    
+    func execute(_ task: @escaping (Void) -> Void)
+
 }
 
 public class ImmediateContext : ExecutionContext {
-    
+
     public init() {}
-    
-    public func execute(task:Void->Void) {
+    public func execute(_ task: @escaping (Void) -> Void) {
         task()
     }
 
 }
 
 public struct QueueContext : ExecutionContext {
-    
-    public static let main =  QueueContext(queue: Queue.main)
-    
+
+    public static var futuresDefault = QueueContext.main
+    public static let main = QueueContext(queue: Queue.main)
     public static let global = QueueContext(queue: Queue.global)
-    
-    public let queue:Queue
-    
+    public let queue: Queue
+
     public init(queue: Queue) {
         self.queue = queue
     }
-    
-    public func execute(task: Void -> Void) {
+
+    public func execute(_ task: @escaping (Void) -> Void) {
         queue.async(task)
     }
 
 }
 
+public struct MaxStackDepthContext : ExecutionContext {
+
+    static let taskDepthKey = "us.gnos.taskDepthKey"
+    let maxDepth: Int
+
+    init(maxDepth: Int = 20) {
+        self.maxDepth = maxDepth
+    }
+
+    public func execute(_ task: @escaping (Void) -> Void) {
+        let localThreadDictionary = Thread.current.threadDictionary
+        let previousDepth = localThreadDictionary[MaxStackDepthContext.taskDepthKey] as? Int ?? 0
+        if previousDepth < maxDepth {
+            localThreadDictionary[MaxStackDepthContext.taskDepthKey] = previousDepth + 1
+            task()
+            localThreadDictionary[MaxStackDepthContext.taskDepthKey] = previousDepth
+        } else {
+            QueueContext.global.execute(task)
+        }
+    }
+
+}
+
 // MARK: - Queue -
+
 public struct Queue {
-    
-    public static let main                  = Queue(dispatch_get_main_queue());
-    public static let global                = Queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
-    
-    internal static let simpleFutures       = Queue("us.gnos.simpleFutures.main")
-    internal static let simpleFutureStreams = Queue("us.gnos.simpleFutures.streams")
-    
-    public let queue: dispatch_queue_t
+
+    public static let main = Queue(DispatchQueue.main);
+    public static let global = Queue(DispatchQueue.global(qos: .background))
+
+    public let queue: DispatchQueue
     
     public init(_ queueName: String) {
-        self.queue = dispatch_queue_create(queueName, DISPATCH_QUEUE_SERIAL)
+        self.queue = DispatchQueue(label: queueName, qos: .background)
     }
     
-    public init(_ queue: dispatch_queue_t) {
+    public init(_ queue: DispatchQueue) {
         self.queue = queue
     }
     
-    public func sync(block: Void -> Void) {
-        dispatch_sync(self.queue, block)
+    public func sync(_ block: @escaping (Void) -> Void) {
+        queue.sync(execute: block)
     }
     
-    public func sync<T>(block: Void -> T) -> T {
-        var result:T!
-        dispatch_sync(self.queue, {
-            result = block();
-        });
-        return result;
+    public func sync<T>(_ block: @escaping (Void) -> T) -> T {
+        return queue.sync(execute: block);
     }
     
-    public func async(block: Void -> Void) {
-        dispatch_async(self.queue, block);
+    public func async(_ block:  @escaping (Void) -> Void) {
+        queue.async(execute: block);
     }
     
-    public func delay(delay: Double, request: Void -> Void) {
-        let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64(Float(delay)*Float(NSEC_PER_SEC)))
-        dispatch_after(popTime, self.queue, request)
+    public func delay(_ delay: TimeInterval, request: @escaping (Void) -> Void) {
+        let popTime = DispatchTime.now() + Double(Int64(Float(delay)*Float(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        queue.asyncAfter(deadline: popTime, execute: request)
     }
 
 }
 
-// MARK: - Errors -
-enum SimpleFuturesErrorCodes: Int {
-    case FutureCompleted    = 0
-    case FutureNotCompleted = 1
+// MARK: - CompletionId -
+
+public struct CompletionId : Hashable {
+
+    let identifier = UUID()
+
+    public var hashValue: Int {
+        return identifier.hashValue
+    }
+
 }
 
-public struct SimpleFuturesError {
-    static let domain               = "SimpleFutures"
-    static let futureCompleted      = NSError(domain: domain, code: SimpleFuturesErrorCodes.FutureCompleted.rawValue, userInfo: [NSLocalizedDescriptionKey: "Future has been completed"])
-    static let futureNotCompleted   = NSError(domain: domain, code: SimpleFuturesErrorCodes.FutureNotCompleted.rawValue, userInfo: [NSLocalizedDescriptionKey: "Future has not been completed"])
+public func ==(lhs: CompletionId, rhs: CompletionId) -> Bool {
+
+    return lhs.identifier == rhs.identifier
+
 }
 
-public struct SimpleFuturesException {
-    static let futureCompleted = NSException(name: "Future complete error", reason: "Future previously completed.", userInfo: nil)
+// MARK: - CancelToken -
+
+public struct CancelToken {
+
+    let completionId = CompletionId()
+
+}
+
+// MARK: - Futurable -
+
+public protocol Futurable {
+    associatedtype T
+
+    var result: Try<T>? { get }
+
+    init()
+    init(value: T)
+    init(error: Swift.Error)
+    init(context: ExecutionContext, dependent: Self)
+
+    func complete(_ result: Try<T>)
+    func onComplete(context: ExecutionContext, cancelToken: CancelToken, complete: @escaping (Try<T>) -> Void) -> Void
+
+}
+
+public extension Futurable {
+
+    //MARK: - Combinators -
+
+    public func map<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> M) -> Future<M> {
+        let future = Future<M>()
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            future.complete(result.map(mapping))
+        }
+        return future
+    }
+
+    public func flatMap<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> Future<M>) -> Future<M> {
+        let future = Future<M>()
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            future.completeWith(context: context, future: result.map(mapping))
+        }
+        return future
+    }
+
+    public func withFilter(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), filter: @escaping (T) throws -> Bool) -> Future<T> {
+        let future = Future<T>()
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            future.complete(result.filter(filter))
+        }
+        return future
+    }
+
+    public func forEach(context:ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), apply: @escaping (T) -> Void) {
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            result.forEach(apply)
+        }
+    }
+
+    public func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void) -> Future<T> {
+        let future = Future<T>()
+        future.onSuccess(context: context, cancelToken: cancelToken, success: success)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            future.complete(result)
+        }
+        return future
+    }
+
+    public func recover(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> T) -> Future<T> {
+        let future = Future<T>()
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            future.complete(result.recover(recovery))
+        }
+        return future
+    }
+
+    public func recoverWith(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> Future<T>) -> Future<T> {
+        let future = Future<T>()
+        self.onComplete(context: context, cancelToken: cancelToken) { result in
+            switch result {
+            case .success(let value):
+                future.success(value)
+            case .failure(let error):
+                do {
+                    try future.completeWith(context: context, future: recovery(error))
+                } catch {
+                    future.failure(error)
+                }
+            }
+        }
+        return future
+    }
+
+    public func mapError(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (Swift.Error) -> Swift.Error) -> Future<T> {
+        let future = Future<T>()
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            future.complete(result.mapError(mapping))
+        }
+        return future
+    }
+
 }
 
 // MARK: - Promise -
-public class Promise<T> {
-    
+
+public final class Promise<T> {
+
     public let future: Future<T>
     
     public var completed: Bool {
-        return self.future.completed
+        return future.completed
     }
     
     public init() {
         self.future = Future<T>()
     }
 
-    public func completeWith(future: Future<T>) {
-        self.completeWith(self.future.defaultExecutionContext, future: future)
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, future: Future<T>) {
+        self.future.completeWith(context: context, future: future)
     }
     
-    public func completeWith(executionContext: ExecutionContext, future: Future<T>) {
-        self.future.completeWith(executionContext, future: future)
+    public func complete(_ result: Try<T>) {
+        future.complete(result)
     }
     
-    public func complete(result: Try<T>) {
-        self.future.complete(result)
-    }
-    
-    public func success(value: T) {
-        self.future.success(value)
+    public func success(_ value: T) {
+        future.success(value)
     }
 
-    public func failure(error: NSError)  {
-        self.future.failure(error)
+    public func failure(_ error: Swift.Error)  {
+        future.failure(error)
     }
 
 }
 
 // MARK: - Future -
-public class Future<T> {
-    
-    internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
 
-    private var result: Try<T>?
+public final class Future<T> : Futurable {
 
-    typealias OnComplete        = Try<T> -> Void
-    private var saveCompletes   = [OnComplete]()
+    typealias OnComplete = (Try<T>) -> Void
+    private var savedCompletions = [CompletionId : [OnComplete]]()
+    private let queue = Queue("us.gnos.simpleFutures.main")
+
+    public private(set) var result: Try<T>? {
+        willSet {
+            assert(self.result == nil)
+        }
+    }
 
     public var completed: Bool {
-        return self.result != nil
+        return result != nil
     }
-    
-    public init() {
+
+    public init() {}
+
+    public init(value: T) {
+        self.result = Try(value)
+    }
+
+    public init(context: ExecutionContext = QueueContext.futuresDefault, dependent: Future<T>) {
+        completeWith(context: context, future: dependent)
+    }
+
+    public init(error: Swift.Error) {
+        self.result = Try(error)
+    }
+
+    public init(resolver: ((Try<T>) -> Void) -> Void) {
+        resolver { value in
+            self.complete(value)
+        }
     }
 
     // MARK: Complete
-    internal func complete(result: Try<T>) {
-        if self.result != nil {
-            SimpleFuturesException.futureCompleted.raise()
-        }
+
+    public func complete(_ result: Try<T>) {
         self.result = result
-        for complete in self.saveCompletes {
-            complete(result)
-        }
-        self.saveCompletes.removeAll()
-    }
-
-    internal func completeWith(future: Future<T>) {
-        self.completeWith(self.defaultExecutionContext, future: future)
-    }
-
-    internal func completeWith(executionContext: ExecutionContext, future: Future<T>) {
-        if !self.completed {
-            future.onComplete(executionContext) { result in
-                self.complete(result)
+        queue.sync {
+            self.savedCompletions.values.forEach { completions in
+                completions.forEach { $0(result) }
             }
+            self.savedCompletions.removeAll()
         }
     }
 
-    internal func success(value: T) {
-        self.complete(Try(value))
+    public func success(_ value: T) {
+        complete(Try(value))
     }
 
-    internal func failure(error: NSError) {
-        self.complete(Try<T>(error))
+    public func failure(_ error: Swift.Error) {
+        complete(Try<T>(error))
     }
 
-    internal func completeWith(stream: FutureStream<T>) {
-        self.completeWith(self.defaultExecutionContext, stream: stream)
-    }
-
-    internal func completeWith(executionContext: ExecutionContext, stream: FutureStream<T>) {
-        stream.onComplete(executionContext) { result in
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, future: Future<T>) {
+        future.onComplete(context: context) { result in
             self.complete(result)
         }
     }
 
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, stream: FutureStream<T>) {
+        stream.onComplete(context: context) { result in
+            self.complete(result)
+        }
+    }
+
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, future: Try<Future<T>>) {
+        switch future {
+        case .success(let future):
+            future.onComplete(context: context) { result in
+                self.complete(result)
+            }
+        case .failure(let error):
+            failure(error)
+        }
+    }
+
     // MARK: Callbacks
-    public func onComplete(executionContext: ExecutionContext, complete: Try<T> -> Void) -> Void {
-        let savedCompletion : OnComplete = { result in
-            executionContext.execute {
+
+    public func onComplete(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), complete: @escaping (Try<T>) -> Void) -> Void {
+        let completion : OnComplete = { result in
+            context.execute {
                 complete(result)
             }
         }
-        if let result = self.result {
-            savedCompletion(result)
+        if let result = result {
+            completion(result)
         } else {
-            self.saveCompletes.append(savedCompletion)
+            queue.sync {
+                if let completions = self.savedCompletions[cancelToken.completionId] {
+                    self.savedCompletions[cancelToken.completionId] = completions + [completion]
+                } else {
+                    self.savedCompletions[cancelToken.completionId] = [completion]
+                }
+            }
         }
     }
     
-    public func onComplete(complete: Try<T> -> Void) {
-        self.onComplete(self.defaultExecutionContext, complete:complete)
-    }
-    
-    public func onSuccess(success: T -> Void) {
-        self.onSuccess(self.defaultExecutionContext, success:success)
-    }
-    
-    public func onSuccess(executionContext: ExecutionContext, success: T -> Void){
-        self.onComplete(executionContext) { result in
+    public func onSuccess(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void){
+        onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
-            case .Success(let value):
+            case .success(let value):
                 success(value)
             default:
                 break
@@ -508,14 +615,10 @@ public class Future<T> {
         }
     }
     
-    public func onFailure(failure: NSError -> Void) -> Void {
-        return self.onFailure(self.defaultExecutionContext, failure: failure)
-    }
-    
-    public func onFailure(executionContext: ExecutionContext, failure: NSError -> Void) {
-        self.onComplete(executionContext) { result in
+    public func onFailure(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), failure: @escaping (Swift.Error) -> Void) {
+        onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
-            case .Failure(let error):
+            case .failure(let error):
                 failure(error)
             default:
                 break
@@ -523,404 +626,269 @@ public class Future<T> {
         }
     }
 
-    // MARK: Future Combinators
-    public func map<M>(mapping: T -> Try<M>) -> Future<M> {
-        return map(self.defaultExecutionContext, mapping: mapping)
-    }
-    
-    public func map<M>(executionContext: ExecutionContext, mapping: T -> Try<M>) -> Future<M> {
-        let future = Future<M>()
-        self.onComplete(executionContext) { result in
-            future.complete(result.flatmap(mapping))
-        }
-        return future
-    }
-    
-    public func flatmap<M>(mapping: T -> Future<M>) -> Future<M> {
-        return self.flatmap(self.defaultExecutionContext, mapping: mapping)
-    }
-    
-    public func flatmap<M>(executionContext: ExecutionContext, mapping: T -> Future<M>) -> Future<M> {
-        let future = Future<M>()
-        self.onComplete(executionContext) { result in
-            switch result {
-            case .Success(let value):
-                future.completeWith(executionContext, future: mapping(value))
-            case .Failure(let error):
-                future.failure(error)
+    public func cancel(_ cancelToken: CancelToken) -> Bool {
+        return queue.sync {
+            guard let _ = self.savedCompletions.removeValue(forKey: cancelToken.completionId) else {
+                return false
             }
-        }
-        return future
-    }
-    
-    public func andThen(complete: Try<T> -> Void) -> Future<T> {
-        return self.andThen(self.defaultExecutionContext, complete: complete)
-    }
-    
-    public func andThen(executionContext: ExecutionContext, complete: Try<T> -> Void) -> Future<T> {
-        let future = Future<T>()
-        future.onComplete(executionContext, complete: complete)
-        self.onComplete(executionContext) { result in
-            future.complete(result)
-        }
-        return future
-    }
-    
-    public func recover(recovery: NSError -> Try<T>) -> Future<T> {
-        return self.recover(self.defaultExecutionContext, recovery: recovery)
-    }
-    
-    public func recover(executionContext: ExecutionContext, recovery: NSError -> Try<T>) -> Future<T> {
-        let future = Future<T>()
-        self.onComplete(executionContext) { result in
-            future.complete(result.recoverWith(recovery))
-        }
-        return future
-    }
-    
-    public func recoverWith(recovery: NSError -> Future<T>) -> Future<T> {
-        return self.recoverWith(self.defaultExecutionContext, recovery: recovery)
-    }
-    
-    public func recoverWith(executionContext: ExecutionContext, recovery: NSError -> Future<T>) -> Future<T> {
-        let future = Future<T>()
-        self.onComplete(executionContext) { result in
-            switch result {
-            case .Success(let value):
-                future.success(value)
-            case .Failure(let error):
-                future.completeWith(executionContext, future: recovery(error))
-            }
-        }
-        return future
-    }
-    
-    public func withFilter(filter: T -> Bool) -> Future<T> {
-        return self.withFilter(self.defaultExecutionContext, filter: filter)
-    }
-    
-    public func withFilter(executionContext: ExecutionContext, filter: T -> Bool) -> Future<T> {
-        let future = Future<T>()
-        self.onComplete(executionContext) { result in
-            future.complete(result.filter(filter))
-        }
-        return future
-    }
-    
-    public func foreach(apply: T -> Void) {
-        self.foreach(self.defaultExecutionContext, apply: apply)
-    }
-    
-    public func foreach(executionContext:ExecutionContext, apply: T -> Void) {
-        self.onComplete(executionContext) { result in
-            result.foreach(apply)
+            return true
         }
     }
-    
+
     // MARK: FutureStream Combinators
-    public func flatmap<M>(capacity: Int, mapping: T -> FutureStream<M>) -> FutureStream<M> {
-        return self.flatMapStream(capacity, executionContext: self.defaultExecutionContext, mapping: mapping)
-    }
-    
-    public func flatmap<M>(mapping: T -> FutureStream<M>) -> FutureStream<M> {
-        return self.flatMapStream(nil, executionContext: self.defaultExecutionContext, mapping: mapping)
-    }
-    
-    public func flatmap<M>(capacity: Int, executionContext: ExecutionContext, mapping: T -> FutureStream<M>) -> FutureStream<M>  {
-        return self.flatMapStream(capacity, executionContext: self.defaultExecutionContext, mapping: mapping)
-    }
-    
-    public func flatmap<M>(executionContext: ExecutionContext, mapping: T -> FutureStream<M>) -> FutureStream<M>  {
-        return self.flatMapStream(nil, executionContext: executionContext, mapping: mapping)
-    }
-    
-    public func recoverWith(recovery: NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWithStream(nil, executionContext: self.defaultExecutionContext, recovery: recovery)
-    }
-    
-    public func recoverWith(capacity: Int, recovery: NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWithStream(capacity, executionContext: self.defaultExecutionContext, recovery: recovery)
-    }
-    
-    public func recoverWith(executionContext: ExecutionContext, recovery: NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWithStream(nil, executionContext: executionContext, recovery: recovery)
-    }
-    
-    public func recoverWith(capacity: Int, executionContext: ExecutionContext, recovery: NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWithStream(capacity, executionContext: executionContext, recovery: recovery)
-    }
-    
-    internal func flatMapStream<M>(capacity: Int?, executionContext: ExecutionContext, mapping: T -> FutureStream<M>) -> FutureStream<M> {
+
+    public func flatMap<M>(_ capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> FutureStream<M>) -> FutureStream<M> {
         let stream = FutureStream<M>(capacity: capacity)
-        self.onComplete(executionContext) { result in
-            switch result {
-            case .Success(let value):
-                stream.completeWith(executionContext, stream: mapping(value))
-            case .Failure(let error):
-                stream.failure(error)
-            }
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.completeWith(context: context, stream: result.map(mapping))
         }
         return stream
     }
     
-    internal func recoverWithStream(capacity: Int?, executionContext: ExecutionContext, recovery: NSError -> FutureStream<T>) -> FutureStream<T> {
-        let stream = FutureStream<T>(capacity:capacity)
-        self.onComplete(executionContext) { result in
+    public func recoverWith(_ capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> FutureStream<T>) -> FutureStream<T> {
+        let stream = FutureStream<T>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
-            case .Success(let value):
+            case .success(let value):
                 stream.success(value)
-            case .Failure(let error):
-                stream.completeWith(executionContext, stream: recovery(error))
+            case .failure(let error):
+                do {
+                    try stream.completeWith(context: context, stream: recovery(error))
+                } catch {
+                    stream.failure(error)
+                }
             }
         }
         return stream
     }
-    
+
 }
 
-// MARK: - Future for Comprehensions -
-public func forcomp<T,U>(f: Future<T>, g: Future<U>, apply: (T,U) -> Void) -> Void {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, apply: apply)
+// MARK: - future -
+
+public func future<T>( _ task: @autoclosure @escaping  (Void) -> T) -> Future<T> {
+    return future(context: ImmediateContext(), task)
 }
 
-public func forcomp<T,U>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, apply: (T,U) -> Void) -> Void {
-    f.foreach(executionContext) { fvalue in
-        g.foreach(executionContext) { gvalue in
-            apply(fvalue, gvalue)
+public func future<T>(context: ExecutionContext = QueueContext.futuresDefault, _ task: @escaping (Void) throws -> T) -> Future<T> {
+    let future = Future<T>()
+    context.execute {
+        future.complete(Try(task))
+    }
+    return future
+}
+
+public func future<T>(method: ((T?, Swift.Error?) -> Void) -> Void) -> Future<T> {
+    return Future(resolver: { completion in
+        method { value, error in
+            if let value = value {
+                completion(.success(value))
+            } else if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.failure(Error.invalidValue))
+            }
         }
+    })
+}
+
+
+public func future(method: ((Swift.Error?) -> Void) -> Void) -> Future<Void> {
+    return Future(resolver: { completion in
+        method { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    })
+}
+
+public func future<T>(method: ((T) -> Void) -> Void) -> Future<T> {
+    return Future(resolver: { completion in
+        method { value in
+            completion(.success(value))
+        }
+    })
+}
+
+public func ??<T>(lhs: Future<T>, rhs: @autoclosure @escaping  (Void) throws -> T) -> Future<T> {
+    return lhs.recover { _ in
+        return try rhs()
     }
 }
 
-
-public func forcomp<T,U>(f: Future<T>, g: Future<U>, filter: (T,U) -> Bool, apply: (T,U) -> Void) -> Void {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, filter: filter, apply: apply)
-}
-
-public func forcomp<T,U>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, filter: (T,U) -> Bool, apply: (T,U) -> Void) -> Void {
-    f.foreach(executionContext) { fvalue in
-        g.withFilter(executionContext) { gvalue in
-            filter(fvalue, gvalue)
-        }.foreach(executionContext) { gvalue in
-            apply(fvalue, gvalue)
-        }
+public func ??<T>(lhs: Future<T>, rhs: @autoclosure @escaping (Void) throws -> Future<T>) -> Future<T> {
+    return lhs.recoverWith { _ in
+        return try rhs()
     }
 }
 
-public func forcomp<T,U,V>(f: Future<T>, g: Future<U>, h: Future<V>, apply: (T,U,V) -> Void) -> Void {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, h: h, apply: apply)
-}
+// MARK: - Future SequenceType -
 
-public func forcomp<T,U,V>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, h: Future<V>, apply: (T,U,V) -> Void) -> Void {
-    f.foreach(executionContext) { fvalue in
-        g.foreach(executionContext) { gvalue in
-            h.foreach(executionContext) { hvalue in
-                apply(fvalue, gvalue, hvalue)
+extension Sequence where Iterator.Element : Futurable {
+
+    public func fold<R>(context: ExecutionContext = QueueContext.futuresDefault, initial: R,  combine: @escaping (R, Iterator.Element.T) throws -> R) -> Future<R> {
+        return reduce(Future<R>(value: initial)) { accumulator, element in
+            accumulator.flatMap(context: MaxStackDepthContext()) { accumulatorValue in
+                return element.map(context: context) { elementValue in
+                    return try combine(accumulatorValue, elementValue)
+                }
             }
         }
     }
-}
 
-public func forcomp<T,U,V>(f: Future<T>, g: Future<U>, h: Future<V>, filter: (T,U,V) -> Bool, apply: (T,U,V) -> Void) -> Void {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, h: h, filter: filter, apply: apply)
-}
-
-public func forcomp<T,U,V>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, h: Future<V>, filter: (T,U,V) -> Bool, apply: (T,U,V) -> Void) -> Void {
-    f.foreach(executionContext) { fvalue in
-        g.foreach(executionContext) { gvalue in
-            h.withFilter(executionContext) { hvalue in
-                filter(fvalue, gvalue, hvalue)
-            }.foreach(executionContext) { hvalue in
-                apply(fvalue, gvalue, hvalue)
-            }
-        }
+    public func sequence(context: ExecutionContext = QueueContext.futuresDefault) -> Future<[Iterator.Element.T]> {
+        return traverse(context: context) { $0 }
     }
 }
 
-public func forcomp<T,U,V>(f: Future<T>, g: Future<U>, yield: (T,U) -> Try<V>) -> Future<V> {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, yield: yield)
-}
+extension Sequence {
 
-public func forcomp<T,U,V>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, yield: (T,U) -> Try<V>) -> Future<V> {
-    return f.flatmap(executionContext) { fvalue in
-        g.map(executionContext) { gvalue in
-            yield(fvalue, gvalue)
+    public func traverse<U, F: Futurable>(context: ExecutionContext = QueueContext.futuresDefault, mapping: (Iterator.Element) -> F) -> Future<[U]> where F.T == U {
+        return map(mapping).fold(context: context, initial: [U]()) { accumulator, element in
+            return accumulator + [element]
         }
     }
-}
 
-public func forcomp<T,U,V>(f: Future<T>, g: Future<U>, filter: (T,U) -> Bool, yield: (T,U) -> Try<V>) -> Future<V> {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, filter: filter, yield: yield)
-}
-
-public func forcomp<T,U,V>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, filter: (T,U) -> Bool, yield: (T,U) -> Try<V>) -> Future<V> {
-    return f.flatmap(executionContext) { fvalue in
-        g.withFilter(executionContext) { gvalue in
-            filter(fvalue, gvalue)
-        }.map(executionContext) { gvalue in
-            yield(fvalue, gvalue)
-        }
-    }
-}
-
-public func forcomp<T,U,V,W>(f: Future<T>, g: Future<U>, h: Future<V>, yield: (T,U,V) -> Try<W>) -> Future<W> {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, h: h, yield: yield)
-}
-
-public func forcomp<T,U,V,W>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, h: Future<V>, yield: (T,U,V) -> Try<W>) -> Future<W> {
-    return f.flatmap(executionContext) { fvalue in
-        g.flatmap(executionContext) { gvalue in
-            h.map(executionContext) { hvalue in
-                yield(fvalue, gvalue, hvalue)
-            }
-        }
-    }
-}
-
-public func forcomp<T,U, V, W>(f: Future<T>, g: Future<U>, h: Future<V>, filter: (T,U,V) -> Bool, yield: (T,U,V) -> Try<W>) -> Future<W> {
-    return forcomp(f.defaultExecutionContext, f: f, g: g, h: h, filter: filter, yield: yield)
-}
-
-public func forcomp<T,U, V, W>(executionContext: ExecutionContext, f: Future<T>, g: Future<U>, h: Future<V>, filter: (T,U,V) -> Bool, yield: (T,U,V) -> Try<W>) -> Future<W> {
-    return f.flatmap(executionContext) { fvalue in
-        g.flatmap(executionContext) { gvalue in
-            h.withFilter(executionContext) { hvalue in
-                filter(fvalue, gvalue, hvalue)
-            }.map(executionContext) { hvalue in
-                yield(fvalue, gvalue, hvalue)
-            }
-        }
-    }
 }
 
 // MARK: - StreamPromise -
-public class StreamPromise<T> {
+
+public final class StreamPromise<T> {
+
+    public let stream: FutureStream<T>
     
-    public let future: FutureStream<T>
-    
-    public init(capacity: Int?=nil) {
-        self.future = FutureStream<T>(capacity: capacity)
+    public init(capacity: Int = Int.max) {
+        stream = FutureStream<T>(capacity: capacity)
     }
     
-    public func complete(result: Try<T>) {
-        self.future.complete(result)
+    public func complete(_ result: Try<T>) {
+        stream.complete(result)
     }
     
-    public func completeWith(future: Future<T>) {
-        self.completeWith(self.future.defaultExecutionContext, future: future)
+    public func success(_ value: T) {
+        stream.success(value)
     }
     
-    public func completeWith(executionContext: ExecutionContext, future: Future<T>) {
-        future.completeWith(executionContext, future: future)
+    public func failure(_ error: Swift.Error) {
+        stream.failure(error)
     }
     
-    public func success(value: T) {
-        self.future.success(value)
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, future: Future<T>) {
+        stream.completeWith(context: context, future: future)
     }
-    
-    public func failure(error: NSError) {
-        self.future.failure(error)
+
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, stream: FutureStream<T>) {
+        self.stream.completeWith(context: context, stream: stream)
     }
-    
-    public func completeWith(stream: FutureStream<T>) {
-        self.completeWith(self.future.defaultExecutionContext, stream: stream)
-    }
-    
-    public func completeWith(executionContext: ExecutionContext, stream: FutureStream<T>) {
-        future.completeWith(executionContext, stream: stream)
-    }
-    
+
 }
 
 // MARK: - FutureStream -
-public class FutureStream<T> {
-    
-    private var futures = [Future<T>]()
-    private typealias InFuture = Future<T> -> Void
 
-    private var saveCompletes = [InFuture]()
-    private var capacity: Int?
-    
-    internal let defaultExecutionContext: ExecutionContext  = QueueContext.main
-    
+public final class FutureStream<T> {
+
+    public private(set) var futures = [Future<T>]()
+
+    private typealias InFuture = (Future<T>) -> Void
+    private var savedCompletions = [CompletionId : [InFuture]]()
+    let queue = Queue("us.gnos.simpleFuturesStreams.main")
+
+    private let capacity: Int
+
     public var count: Int {
         return futures.count
     }
     
-    public init(capacity: Int?=nil) {
+    public init(capacity: Int = Int.max) {
         self.capacity = capacity
     }
 
+    public convenience init(capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault, dependent: FutureStream<T>) {
+        self.init(capacity: capacity)
+        completeWith(context: context, stream: dependent)
+    }
+
     // MARK: Callbacks
-    internal func complete(result: Try<T>) {
+
+    func complete(_ result: Try<T>) {
         let future = Future<T>()
         future.complete(result)
-        self.addFuture(future)
-        for complete in self.saveCompletes {
-            complete(future)
-        }
-    }
-
-    internal func completeWith(stream: FutureStream<T>) {
-        self.completeWith(self.defaultExecutionContext, stream: stream)
-    }
-
-    internal func completeWith(executionContext: ExecutionContext, stream: FutureStream<T>) {
-        stream.onComplete(executionContext) { result in
-            self.complete(result)
-        }
-    }
-
-    internal func success(value: T) {
-        Logger.debug("value: \(value)")
-        self.complete(Try(value))
-    }
-
-    internal func failure(error: NSError) {
-        self.complete(Try<T>(error))
-    }
-
-    internal func completeWith(future: Future<T>) {
-        self.completeWith(self.defaultExecutionContext, future: future)
-    }
-
-    internal func completeWith(executionContext: ExecutionContext, future: Future<T>) {
-        future.onComplete(executionContext) {result in
-            self.complete(result)
-        }
-    }
-
-    internal func addFuture(future: Future<T>) {
-        if let capacity = self.capacity {
-            if self.futures.count >= capacity {
-                self.futures.removeAtIndex(0)
+        queue.sync {
+            if self.futures.count >= self.capacity  {
+                self.futures.remove(at: 0)
+            }
+            self.futures.append(future)
+            self.savedCompletions.values.forEach { completions in
+                completions.forEach { $0(future) }
             }
         }
-        self.futures.append(future)
+    }
+
+    func success(_ value: T) {
+        complete(Try(value))
+    }
+
+    func failure(_ error: Swift.Error) {
+        complete(Try<T>(error))
+    }
+
+    func completeWith(context: ExecutionContext = QueueContext.futuresDefault, stream: FutureStream<T>) {
+        stream.onComplete(context: context) { result in
+            self.complete(result)
+        }
+    }
+
+    func completeWith(context: ExecutionContext = QueueContext.futuresDefault, future: Future<T>) {
+        future.onComplete(context: context) {result in
+            self.complete(result)
+        }
+    }
+
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, stream: Try<FutureStream<T>>) {
+        switch stream {
+        case .success(let stream):
+            stream.onComplete(context: context) { result in
+                self.complete(result)
+            }
+        case .failure(let error):
+            failure(error)
+        }
+    }
+
+    public func completeWith(context: ExecutionContext = QueueContext.futuresDefault, future: Try<Future<T>>) {
+        switch future {
+        case .success(let future):
+            future.onComplete(context: context) { result in
+                self.complete(result)
+            }
+        case .failure(let error):
+            failure(error)
+        }
     }
 
     // MARK: Callbacks
-    public func onComplete(executionContext: ExecutionContext, complete: Try<T> -> Void) {
+
+    public func onComplete(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), complete: @escaping (Try<T>) -> Void) {
         let futureComplete : InFuture = { future in
-            future.onComplete(executionContext, complete: complete)
+            future.onComplete(context: context, complete: complete)
         }
-        self.saveCompletes.append(futureComplete)
-        for future in self.futures {
-            futureComplete(future)
+        queue.sync {
+            if let completions = self.savedCompletions[cancelToken.completionId] {
+                self.savedCompletions[cancelToken.completionId] = completions + [futureComplete]
+            } else {
+                self.savedCompletions[cancelToken.completionId] = [futureComplete]
+            }
+            self.futures.forEach { futureComplete($0) }
         }
-    }
-    
-    public func onComplete(complete: Try<T> -> Void) {
-        self.onComplete(self.defaultExecutionContext, complete: complete)
     }
 
-    public func onSuccess(success: T -> Void) {
-        self.onSuccess(self.defaultExecutionContext, success: success)
-    }
-    
-    public func onSuccess(executionContext:ExecutionContext, success: T -> Void) {
-        self.onComplete(executionContext) { result in
+    public func onSuccess(context:ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void) {
+        onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
-            case .Success(let value):
+            case .success(let value):
                 success(value)
             default:
                 break
@@ -928,14 +896,10 @@ public class FutureStream<T> {
         }
     }
     
-    public func onFailure(failure: NSError -> Void) {
-        self.onFailure(self.defaultExecutionContext, failure: failure)
-    }
-    
-    public func onFailure(executionContext: ExecutionContext, failure: NSError -> Void) {
-        self.onComplete(executionContext) { result in
+    public func onFailure(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), failure: @escaping (Swift.Error) -> Void) {
+        onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
-            case .Failure(let error):
+            case .failure(let error):
                 failure(error)
             default:
                 break
@@ -943,133 +907,114 @@ public class FutureStream<T> {
         }
     }
 
-    // MARK: Combinators
-    public func map<M>(mapping: T -> Try<M>) -> FutureStream<M> {
-        return self.map(self.defaultExecutionContext, mapping: mapping)
-    }
-    
-    public func map<M>(executionContext: ExecutionContext, mapping: T -> Try<M>) -> FutureStream<M> {
-        let future = FutureStream<M>(capacity: self.capacity)
-        self.onComplete(executionContext) { result in
-            future.complete(result.flatmap(mapping))
-        }
-        return future
-    }
-    
-    public func flatmap<M>(mapping: T -> FutureStream<M>) -> FutureStream<M> {
-        return self.flatMap(self.defaultExecutionContext, mapping: mapping)
-    }
-    
-    public func flatMap<M>(executionContext:ExecutionContext, mapping: T -> FutureStream<M>) -> FutureStream<M> {
-        let future = FutureStream<M>(capacity: self.capacity)
-        self.onComplete(executionContext) { result in
-            switch result {
-            case .Success(let value):
-                future.completeWith(executionContext, stream:mapping(value))
-            case .Failure(let error):
-                future.failure(error)
+    public func cancel(_ cancelToken: CancelToken) -> Bool {
+        return queue.sync {
+            guard let _ = self.savedCompletions.removeValue(forKey: cancelToken.completionId) else {
+                return false
             }
-        }
-        return future
-    }
-    
-    public func andThen(complete: Try<T> -> Void) -> FutureStream<T> {
-        return self.andThen(self.defaultExecutionContext, complete: complete)
-    }
-    
-    public func andThen(executionContext: ExecutionContext, complete: Try<T> -> Void) -> FutureStream<T> {
-        let future = FutureStream<T>(capacity: self.capacity)
-        future.onComplete(executionContext, complete: complete)
-        self.onComplete(executionContext) { result in
-            future.complete(result)
-        }
-        return future
-    }
-    
-    public func recover(recovery: NSError -> Try<T>) -> FutureStream<T> {
-        return self.recover(self.defaultExecutionContext, recovery: recovery)
-    }
-    
-    public func recover(executionContext: ExecutionContext, recovery: NSError -> Try<T>) -> FutureStream<T> {
-        let future = FutureStream<T>(capacity:self.capacity)
-        self.onComplete(executionContext) { result in
-            future.complete(result.recoverWith(recovery))
-        }
-        return future
-    }
-    
-    public func recoverWith(recovery: NSError -> FutureStream<T>) -> FutureStream<T> {
-        return self.recoverWith(self.defaultExecutionContext, recovery: recovery)
-    }
-    
-    public func recoverWith(executionContext: ExecutionContext, recovery: NSError -> FutureStream<T>) -> FutureStream<T> {
-        let future = FutureStream<T>(capacity: self.capacity)
-        self.onComplete(executionContext) { result in
-            switch result {
-            case .Success(let value):
-                future.success(value)
-            case .Failure(let error):
-                future.completeWith(executionContext, stream: recovery(error))
-            }
-        }
-        return future
-    }
-    
-    public func withFilter(filter: T -> Bool) -> FutureStream<T> {
-        return self.withFilter(self.defaultExecutionContext, filter: filter)
-    }
-    
-    public func withFilter(executionContext: ExecutionContext, filter: T -> Bool) -> FutureStream<T> {
-        let future = FutureStream<T>(capacity: self.capacity)
-        self.onComplete(executionContext) { result in
-            future.complete(result.filter(filter))
-        }
-        return future
-    }
-    
-    public func foreach(apply: T -> Void) {
-        self.foreach(self.defaultExecutionContext, apply: apply)
-    }
-    
-    public func foreach(executionContext: ExecutionContext, apply: T -> Void) {
-        self.onComplete(executionContext) { result in
-            result.foreach(apply)
+            return true
         }
     }
 
+    // MARK: Combinators
+
+    public func map<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> M) -> FutureStream<M> {
+        let stream = FutureStream<M>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.complete(result.map(mapping))
+        }
+        return stream
+    }
+    
+    public func flatMap<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> FutureStream<M>) -> FutureStream<M> {
+        let stream = FutureStream<M>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.completeWith(context: context, stream: result.map(mapping))
+        }
+        return stream
+    }
+    
+    public func recover(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> T) -> FutureStream<T> {
+        let stream = FutureStream<T>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.complete(result.recover(recovery))
+        }
+        return stream
+    }
+    
+    public func recoverWith(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> FutureStream<T>) -> FutureStream<T> {
+        let stream = FutureStream<T>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            switch result {
+            case .success(let value):
+                stream.success(value)
+            case .failure(let error):
+                do {
+                    try stream.completeWith(context: context, stream: recovery(error))
+                } catch {
+                    stream.failure(error)
+                }
+            }
+        }
+        return stream
+    }
+    
+    public func withFilter(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), filter: @escaping (T) throws  -> Bool) -> FutureStream<T> {
+        let stream = FutureStream<T>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.complete(result.filter(filter))
+        }
+        return stream
+    }
+    
+    public func forEach(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), apply: @escaping (T) -> Void) {
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            result.forEach(apply)
+        }
+    }
+
+    public func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void) -> FutureStream<T> {
+        let stream = FutureStream<T>(capacity: capacity)
+        stream.onSuccess(context: context, cancelToken: cancelToken, success: success)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.complete(result)
+        }
+        return stream
+    }
+
+    public func mapError(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (Swift.Error) -> Swift.Error) -> FutureStream<T> {
+        let stream = FutureStream<T>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.complete(result.mapError(mapping))
+        }
+        return stream
+    }
+
     // MARK: Future Combinators
-    public func flatmap<M>(mapping: T -> Future<M>) -> FutureStream<M> {
-        return self.flatmap(self.defaultExecutionContext, mapping: mapping)
+
+    public func flatMap<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws  -> Future<M>) -> FutureStream<M> {
+        let stream = FutureStream<M>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
+            stream.completeWith(context: context, future: result.map(mapping))
+        }
+        return stream
     }
     
-    public func flatmap<M>(executionContext: ExecutionContext, mapping: T -> Future<M>) -> FutureStream<M> {
-        let future = FutureStream<M>(capacity: self.capacity)
-        self.onComplete(executionContext) { result in
+    public func recoverWith(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws  -> Future<T>) -> FutureStream<T> {
+        let stream = FutureStream<T>(capacity: capacity)
+        onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
-            case .Success(let value):
-                future.completeWith(executionContext, future:mapping(value))
-            case .Failure(let error):
-                future.failure(error)
+            case .success(let value):
+                stream.success(value)
+            case .failure(let error):
+                do {
+                    try stream.completeWith(context: context, future: recovery(error))
+                } catch {
+                    stream.failure(error)
+                }
             }
         }
-        return future
-    }
-    
-    public func recoverWith(recovery: NSError -> Future<T>) -> FutureStream<T> {
-        return self.recoverWith(self.defaultExecutionContext, recovery: recovery)
-    }
-    
-    public func recoverWith(executionContext: ExecutionContext, recovery: NSError -> Future<T>) -> FutureStream<T> {
-        let future = FutureStream<T>(capacity: self.capacity)
-        self.onComplete(executionContext) { result in
-            switch result {
-            case .Success(let value):
-                future.success(value)
-            case .Failure(let error):
-                future.completeWith(executionContext, future: recovery(error))
-            }
-        }
-        return future
+        return stream
     }
 
 }

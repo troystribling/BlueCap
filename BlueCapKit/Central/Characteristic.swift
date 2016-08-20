@@ -11,7 +11,7 @@ import CoreBluetooth
 
 // MARK: - IO Parameters -
 struct WriteParameters {
-    let value: NSData
+    let value: Data
     let timeout: Double
     let type: CBCharacteristicWriteType
 }
@@ -27,28 +27,28 @@ public class Characteristic : NSObject {
     static let ioQueue      = Queue("us.gnos.blueCap.characteristic.io")
     static let timeoutQueue = Queue("us.gnos.blueCap.characteristic.timeout")
 
-    private var _notificationStateChangedPromise: Promise<Characteristic>?
-    private var _notificationUpdatePromise: StreamPromise<(characteristic: Characteristic, data: NSData?)>?
+    fileprivate var _notificationStateChangedPromise: Promise<Characteristic>?
+    fileprivate var _notificationUpdatePromise: StreamPromise<(characteristic: Characteristic, data: Data?)>?
 
     internal var readPromises    = SerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
     internal var writePromises   = SerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
-    private var readParameters  = SerialIOArray<ReadParameters>(Characteristic.ioQueue)
-    private var writeParameters = SerialIOArray<WriteParameters>(Characteristic.ioQueue)
+    fileprivate var readParameters  = SerialIOArray<ReadParameters>(Characteristic.ioQueue)
+    fileprivate var writeParameters = SerialIOArray<WriteParameters>(Characteristic.ioQueue)
     
-    private weak var _service: Service?
+    fileprivate weak var _service: Service?
     
-    private let profile: CharacteristicProfile
+    fileprivate let profile: CharacteristicProfile
 
-    private var _reading = false
-    private var _writing = false
-    private var _readSequence = 0
-    private var _writeSequence = 0
-    private var _isNotifying = false
-    private let defaultTimeout  = 10.0
+    fileprivate var _reading = false
+    fileprivate var _writing = false
+    fileprivate var _readSequence = 0
+    fileprivate var _writeSequence = 0
+    fileprivate var _isNotifying = false
+    fileprivate let defaultTimeout  = 10.0
 
     internal let cbCharacteristic: CBCharacteristicInjectable
 
-    private var notificationStateChangedPromise: Promise<Characteristic>? {
+    fileprivate var notificationStateChangedPromise: Promise<Characteristic>? {
         get {
             return Characteristic.ioQueue.sync { return self._notificationStateChangedPromise }
         }
@@ -57,7 +57,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    private var notificationUpdatePromise: StreamPromise<(characteristic: Characteristic, data: NSData?)>? {
+    fileprivate var notificationUpdatePromise: StreamPromise<(characteristic: Characteristic, data: Data?)>? {
         get {
             return Characteristic.ioQueue.sync { return self._notificationUpdatePromise }
         }
@@ -66,7 +66,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    private var reading: Bool {
+    fileprivate var reading: Bool {
         get {
             return Characteristic.ioQueue.sync { return self._reading }
         }
@@ -75,7 +75,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    private var writing: Bool {
+    fileprivate var writing: Bool {
         get {
             return Characteristic.ioQueue.sync { return self._writing }
         }
@@ -84,7 +84,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    private var readSequence: Int {
+    fileprivate var readSequence: Int {
         get {
             return Characteristic.ioQueue.sync { return self._readSequence }
         }
@@ -93,7 +93,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    private var writeSequence: Int {
+    fileprivate var writeSequence: Int {
         get {
             return Characteristic.ioQueue.sync { return self._writeSequence }
         }
@@ -162,15 +162,15 @@ public class Characteristic : NSObject {
         if let serviceProfile = ProfileManager.sharedInstance.services[service.UUID] {
             Logger.debug("creating characteristic for service profile: \(service.name):\(service.UUID)")
             if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
-                Logger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.UUID.UUIDString)")
+                Logger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.UUID.uuidString)")
                 self.profile = characteristicProfile
             } else {
-                Logger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.UUID.UUIDString)")
-                self.profile = CharacteristicProfile(UUID: service.UUID.UUIDString)
+                Logger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.UUID.uuidString)")
+                self.profile = CharacteristicProfile(UUID: service.UUID.uuidString)
             }
         } else {
-            Logger.debug("no service profile found. Creating characteristic with UUID: \(service.UUID.UUIDString)")
-            self.profile = CharacteristicProfile(UUID: service.UUID.UUIDString)
+            Logger.debug("no service profile found. Creating characteristic with UUID: \(service.UUID.uuidString)")
+            self.profile = CharacteristicProfile(UUID: service.UUID.uuidString)
         }
         super.init()
     }
@@ -286,7 +286,7 @@ public class Characteristic : NSObject {
     public func writeData(value: NSData, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canWrite {
-            if type == .WithResponse {
+            if type == .withResponse {
                 self.writePromises.append(promise)
                 self.writeParameters.append(WriteParameters(value: value, timeout: timeout, type: type))
                 self.writeNext()
@@ -331,17 +331,17 @@ public class Characteristic : NSObject {
     }
 
     // MARK: CBPeripheralDelegate Shim
-    internal func didUpdateNotificationState(error: NSError?) {
+    internal func didUpdateNotificationState(_ error: NSError?) {
         if let error = error {
-            Logger.debug("failed uuid=\(self.UUID.UUIDString), name=\(self.name)")
+            Logger.debug("failed uuid=\(self.UUID.uuidString), name=\(self.name)")
             self.notificationStateChangedPromise?.failure(error)
         } else {
-            Logger.debug("success:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
+            Logger.debug("success:  uuid=\(self.UUID.uuidString), name=\(self.name)")
             self.notificationStateChangedPromise?.success(self)
         }
     }
     
-    internal func didUpdate(error: NSError?) {
+    internal func didUpdate(_ error: NSError?) {
         if self.isNotifying {
             self.didNotify(error)
         } else {
@@ -349,23 +349,23 @@ public class Characteristic : NSObject {
         }
     }
     
-    internal func didWrite(error: NSError?) {
-        guard let promise = self.shiftPromise(&self.writePromises) where !promise.completed else {
+    internal func didWrite(_ error: NSError?) {
+        guard let promise = self.shiftPromise(&self.writePromises) , !promise.completed else {
             return
         }
         if let error = error {
-            Logger.debug("failed:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
+            Logger.debug("failed:  uuid=\(self.UUID.uuidString), name=\(self.name)")
             promise.failure(error)
         } else {
-            Logger.debug("success:  uuid=\(self.UUID.UUIDString), name=\(self.name)")
+            Logger.debug("success:  uuid=\(self.UUID.uuidString), name=\(self.name)")
             promise.success(self)
         }
         self.writing = false
         self.writeNext()
     }
 
-    private func didRead(error: NSError?) {
-        guard let promise = self.shiftPromise(&self.readPromises) where !promise.completed else {
+    fileprivate func didRead(_ error: NSError?) {
+        guard let promise = self.shiftPromise(&self.readPromises) , !promise.completed else {
             return
         }
         if let error = error {
@@ -378,16 +378,16 @@ public class Characteristic : NSObject {
     }
 
 
-    private func didNotify(error: NSError?) {
+    fileprivate func didNotify(_ error: NSError?) {
         if let error = error {
             self.notificationUpdatePromise?.failure(error)
         } else {
-            self.notificationUpdatePromise?.success((self, self.dataValue.flatmap{ $0.copy() as? NSData}))
+            self.notificationUpdatePromise?.success((self, self.dataValue.flatmap{ ($0 as NSData).copy() as? Data}))
         }
     }
 
     // MARK: IO Timeout
-    private func timeoutRead(sequence: Int, timeout: Double) {
+    fileprivate func timeoutRead(_ sequence: Int, timeout: Double) {
         guard timeout < Double.infinity else {
             return
         }
@@ -402,7 +402,7 @@ public class Characteristic : NSObject {
         }
     }
     
-    private func timeoutWrite(sequence: Int, timeout: Double) {
+    fileprivate func timeoutWrite(_ sequence: Int, timeout: Double) {
         guard timeout < Double.infinity else {
             return
         }
@@ -418,24 +418,24 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Peripheral Delegation
-    private func setNotifyValue(state: Bool) {
+    fileprivate func setNotifyValue(_ state: Bool) {
         self.service?.peripheral?.setNotifyValue(state, forCharacteristic: self)
     }
     
-    private func readValueForCharacteristic() {
+    fileprivate func readValueForCharacteristic() {
         self.service?.peripheral?.readValueForCharacteristic(self)
     }
     
-    private func writeValue(value: NSData, type: CBCharacteristicWriteType = .WithResponse) {
+    fileprivate func writeValue(_ value: Data, type: CBCharacteristicWriteType = .withResponse) {
         self.service?.peripheral?.writeValue(value, forCharacteristic: self, type: type)
     }
 
     // MARK: Utilities
-    private func writeNext() {
-        guard let parameters = self.writeParameters.first where !self.writing else {
+    fileprivate func writeNext() {
+        guard let parameters = self.writeParameters.first , !self.writing else {
             return
         }
-        Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.UUID.UUIDString)")
+        Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.UUID.uuidString)")
         self.writeParameters.removeAtIndex(0)
         self.writing = true
         self.writeValue(parameters.value, type: parameters.type)
@@ -443,11 +443,11 @@ public class Characteristic : NSObject {
         self.timeoutWrite(self.writeSequence, timeout: parameters.timeout)
     }
     
-    private func readNext() {
-        guard let parameters = self.readParameters.first where !self.reading else {
+    fileprivate func readNext() {
+        guard let parameters = self.readParameters.first , !self.reading else {
             return
         }
-        Logger.debug("read characteristic \(self.UUID.UUIDString)")
+        Logger.debug("read characteristic \(self.UUID.uuidString)")
         self.readParameters.removeAtIndex(0)
         self.readValueForCharacteristic()
         self.reading = true
@@ -455,7 +455,7 @@ public class Characteristic : NSObject {
         self.timeoutRead(self.readSequence, timeout: parameters.timeout)
     }
     
-    private func shiftPromise(inout promises: SerialIOArray<Promise<Characteristic>>) -> Promise<Characteristic>? {
+    fileprivate func shiftPromise(_ promises: inout SerialIOArray<Promise<Characteristic>>) -> Promise<Characteristic>? {
         if let item = promises.first {
             promises.removeAtIndex(0)
             return item

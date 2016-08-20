@@ -8,9 +8,9 @@
 import Foundation
 
 // MARK: Serialize Dictionary Access
-public class SerialIODictionary<T, U where T: Hashable> {
+public class SerialIODictionary<T, U> where T: Hashable {
 
-    private var data = [T: U]()
+    fileprivate var data = [T: U]()
     let queue: Queue
 
     init(_ queue: Queue) {
@@ -38,8 +38,8 @@ public class SerialIODictionary<T, U where T: Hashable> {
         }
     }
 
-    func removeValueForKey(key: T) {
-        self.queue.sync { self.data.removeValueForKey(key) }
+    func removeValueForKey(_ key: T) {
+        self.queue.sync { self.data.removeValue(forKey: key) }
     }
 
     func removeAll() {
@@ -51,7 +51,7 @@ public class SerialIODictionary<T, U where T: Hashable> {
 // MARK: Serialize Array Access
 public class SerialIOArray<T> {
 
-    private var _data = [T]()
+    fileprivate var _data = [T]()
     let queue: Queue
 
     init(_ queue: Queue) {
@@ -84,15 +84,15 @@ public class SerialIOArray<T> {
         }
     }
 
-    func append(value: T) {
+    func append(_ value: T) {
         self.queue.sync { self._data.append(value) }
     }
 
-    func removeAtIndex(i: Int) {
-        self.queue.sync { self._data.removeAtIndex(i) }
+    func removeAtIndex(_ i: Int) {
+        self.queue.sync { self._data.remove(at: i) }
     }
 
-    func map<M>(transform: T -> M) -> [M] {
+    func map<M>(_ transform: (T) -> M) -> [M] {
         return self._data.map(transform)
     }
 

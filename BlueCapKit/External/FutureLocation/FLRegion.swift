@@ -12,7 +12,7 @@ import CoreLocation
 let DEFAULT_REGION_RADIUS = 100.0
 
 public enum FLRegionState {
-    case Start, Inside, Outside
+    case start, inside, outside
 }
 
 public class FLRegion {
@@ -53,7 +53,7 @@ public class FLRegion {
     }
 
     public class func isMonitoringAvailableForClass() -> Bool {
-        return CLLocationManager.isMonitoringAvailableForClass(CLRegion)
+        return CLLocationManager.isMonitoringAvailable(for: CLRegion)
     }
 
 }

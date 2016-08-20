@@ -14,7 +14,7 @@ public class FLCircularRegion : FLRegion {
     internal let clCircularRegion : CLCircularRegion
     
     public override class func isMonitoringAvailableForClass() -> Bool {
-        return CLLocationManager.isMonitoringAvailableForClass(CLCircularRegion)
+        return CLLocationManager.isMonitoringAvailable(for: CLCircularRegion)
     }
     
     public var center : CLLocationCoordinate2D {
@@ -40,8 +40,8 @@ public class FLCircularRegion : FLRegion {
         self.init(region:circularRegion, capacity:capacity)
     }
     
-    public func containsCoordinate(coordinate:CLLocationCoordinate2D) -> Bool {
-        return self.clCircularRegion.containsCoordinate(coordinate)
+    public func containsCoordinate(_ coordinate:CLLocationCoordinate2D) -> Bool {
+        return self.clCircularRegion.contains(coordinate)
     }
     
 }

@@ -13,10 +13,10 @@ import CoreLocation
 public class FLBeaconManager : FLRegionManager {
 
     // MARK: Properties
-    private var regionRangingStatus = FLSerialIODictionary<String, Bool>(FLLocationManager.ioQueue)
+    fileprivate var regionRangingStatus = FLSerialIODictionary<String, Bool>(FLLocationManager.ioQueue)
     internal var configuredBeaconRegions = FLSerialIODictionary<String, FLBeaconRegion>(FLLocationManager.ioQueue)
 
-    private var _isRanging = false
+    fileprivate var _isRanging = false
 
     public func isRangingAvailable() -> Bool {
         return CLLocationManager.isRangingAvailable()
@@ -108,7 +108,7 @@ public class FLBeaconManager : FLRegionManager {
     }
 
     // MARK: Utilies
-    func updateIsRanging(value: Bool) {
+    func updateIsRanging(_ value: Bool) {
         let regionCount = self.regionRangingStatus.values.filter{$0}.count
         if value {
             self.isRanging = true

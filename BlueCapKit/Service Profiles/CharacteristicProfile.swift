@@ -26,9 +26,9 @@ public class CharacteristicProfile {
     
     public init(UUID: String,
                 name: String,
-                permissions: CBAttributePermissions = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable],
-                properties: CBCharacteristicProperties = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write, CBCharacteristicProperties.Notify],
-                initialValue:NSData? = nil) {
+                permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable],
+                properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify],
+                initialValue:Data? = nil) {
         self.UUID = CBUUID(string: UUID)
         self.name = name
         self.permissions = permissions
@@ -67,91 +67,91 @@ public class CharacteristicProfile {
 }
 
 // MARK: - RawCharacteristicProfile -
-public final class RawCharacteristicProfile<DeserializedType where
+public final class RawCharacteristicProfile<DeserializedType>: CharacteristicProfile where
                                             DeserializedType: RawDeserializable,
                                             DeserializedType: StringDeserializable,
                                             DeserializedType: CharacteristicConfigurable,
-                                            DeserializedType.RawType: Deserializable>: CharacteristicProfile {
+                                            DeserializedType.RawType: Deserializable {
     
     public init() {
         super.init(UUID: DeserializedType.UUID,
             name: DeserializedType.name,
             permissions: DeserializedType.permissions,
             properties: DeserializedType.properties,
-            initialValue: DeserializedType.initialValue)
+            initialValue: DeserializedType.initialValue as Data?)
     }
     
     public override var stringValues: [String] {
         return DeserializedType.stringValues
     }
     
-    public override func stringValue(data: NSData) -> [String:String]? {
+    public override func stringValue(_ data: Data) -> [String:String]? {
         let value: DeserializedType? = SerDe.deserialize(data)
         return value.map{$0.stringValue}
     }
     
-    public override func dataFromStringValue(data: Dictionary<String, String>) -> NSData? {
+    public override func dataFromStringValue(_ data: Dictionary<String, String>) -> Data? {
         return DeserializedType(stringValue: data).flatmap{ SerDe.serialize($0) }
     }
     
 }
 
 // MARK: - RawArrayCharacteristicProfile -
-public final class RawArrayCharacteristicProfile<DeserializedType where
+public final class RawArrayCharacteristicProfile<DeserializedType>: CharacteristicProfile where
                                                  DeserializedType: RawArrayDeserializable,
                                                  DeserializedType: StringDeserializable,
                                                  DeserializedType: CharacteristicConfigurable,
-                                                 DeserializedType.RawType: Deserializable>: CharacteristicProfile {
+                                                 DeserializedType.RawType: Deserializable {
     
     public init() {
         super.init(UUID: DeserializedType.UUID,
                    name: DeserializedType.name,
                    permissions: DeserializedType.permissions,
                    properties: DeserializedType.properties,
-                   initialValue: DeserializedType.initialValue)
+                   initialValue: DeserializedType.initialValue as Data?)
     }
     
     public override var stringValues: [String] {
         return DeserializedType.stringValues
     }
     
-    public override func stringValue(data: NSData) -> [String: String]? {
+    public override func stringValue(_ data: Data) -> [String: String]? {
         let value : DeserializedType? = SerDe.deserialize(data)
         return value.map{$0.stringValue}
     }
     
-    public override func dataFromStringValue(data: [String: String]) -> NSData? {
+    public override func dataFromStringValue(_ data: [String: String]) -> Data? {
         return DeserializedType(stringValue:data).flatmap{ SerDe.serialize($0) }
     }
     
 }
 
 // MARK: - RawPairCharacteristicProfile -
-public final class RawPairCharacteristicProfile<DeserializedType where
+public final class RawPairCharacteristicProfile<DeserializedType>: CharacteristicProfile where
                                                 DeserializedType: RawPairDeserializable,
                                                 DeserializedType: StringDeserializable,
                                                 DeserializedType: CharacteristicConfigurable,
                                                 DeserializedType.RawType1: Deserializable,
-                                                DeserializedType.RawType2: Deserializable>: CharacteristicProfile {
+                                                DeserializedType.RawType2: Deserializable {
     
     public init() {
         super.init(UUID:  DeserializedType.UUID,
             name: DeserializedType.name,
             permissions: DeserializedType.permissions,
             properties: DeserializedType.properties,
-            initialValue: DeserializedType.initialValue)
+            initialValue: DeserializedType.initialValue as Data?)
     }
     
     public override var stringValues: [String] {
         return DeserializedType.stringValues
     }
     
-    public override func stringValue(data: NSData) -> [String:String]? {
+    public override func stringValue(_ data: Data) -> [String:String]? {
         let value : DeserializedType? = SerDe.deserialize(data)
         return value.map{ $0.stringValue }
     }
     
-    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+    public override func dataFromStringValue(_ data:[String:String]) -> Data? {
         return DeserializedType(stringValue:data).flatmap{ SerDe.serialize($0) }
     }
     
@@ -159,31 +159,31 @@ public final class RawPairCharacteristicProfile<DeserializedType where
 
 
 // MARK: - RawArrayPairCharacteristicProfile -
-public final class RawArrayPairCharacteristicProfile<DeserializedType where
+public final class RawArrayPairCharacteristicProfile<DeserializedType>: CharacteristicProfile where
                                                      DeserializedType: RawArrayPairDeserializable,
                                                      DeserializedType: StringDeserializable,
                                                      DeserializedType: CharacteristicConfigurable,
                                                      DeserializedType.RawType1: Deserializable,
-                                                     DeserializedType.RawType2: Deserializable>: CharacteristicProfile {
+                                                     DeserializedType.RawType2: Deserializable {
     
     public init() {
         super.init(UUID: DeserializedType.UUID,
             name: DeserializedType.name,
             permissions: DeserializedType.permissions,
             properties: DeserializedType.properties,
-            initialValue: DeserializedType.initialValue)
+            initialValue: DeserializedType.initialValue as Data?)
     }
     
     public override var stringValues: [String] {
         return DeserializedType.stringValues
     }
     
-    public override func stringValue(data:NSData) -> [String: String]? {
+    public override func stringValue(_ data:Data) -> [String: String]? {
         let value : DeserializedType? = SerDe.deserialize(data)
         return value.map{ $0.stringValue }
     }
     
-    public override func dataFromStringValue(data:[String:String]) -> NSData? {
+    public override func dataFromStringValue(_ data:[String:String]) -> Data? {
         return DeserializedType(stringValue:data).flatmap{ SerDe.serialize($0)}
     }
     
@@ -192,28 +192,28 @@ public final class RawArrayPairCharacteristicProfile<DeserializedType where
 // MARK: - StringCharacteristicProfile -
 public final class StringCharacteristicProfile<T: CharacteristicConfigurable>: CharacteristicProfile {
     
-    public var encoding : NSStringEncoding
+    public var encoding : String.Encoding
     
-    public convenience init(encoding: NSStringEncoding = NSUTF8StringEncoding) {
-        self.init(UUID: T.UUID, name: T.name, permissions: T.permissions, properties: T.properties, initialValue: T.initialValue, encoding: encoding)
+    public convenience init(encoding: String.Encoding = String.Encoding.utf8) {
+        self.init(UUID: T.UUID, name: T.name, permissions: T.permissions, properties: T.properties, initialValue: T.initialValue as Data?, encoding: encoding)
     }
     
     public init(UUID: String,
                 name: String,
-                permissions: CBAttributePermissions = [CBAttributePermissions.Readable, CBAttributePermissions.Writeable],
-                properties:CBCharacteristicProperties = [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write, CBCharacteristicProperties.Notify],
-                initialValue:NSData? = nil,
-                encoding:NSStringEncoding = NSUTF8StringEncoding) {
+                permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable],
+                properties:CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify],
+                initialValue:Data? = nil,
+                encoding:String.Encoding = String.Encoding.utf8) {
         self.encoding = encoding
         super.init(UUID: UUID, name: name, permissions: permissions, properties: properties)
     }
     
-    public override func stringValue(data: NSData) -> [String: String]? {
+    public override func stringValue(_ data: Data) -> [String: String]? {
         let value: String? = SerDe.deserialize(data, encoding: self.encoding)
         return value.map{ [self.name: $0] }
     }
     
-    public override func dataFromStringValue(data:[String: String]) -> NSData? {
+    public override func dataFromStringValue(_ data:[String: String]) -> Data? {
         return data[self.name].flatmap{ SerDe.serialize($0, encoding:self.encoding) }
     }
 

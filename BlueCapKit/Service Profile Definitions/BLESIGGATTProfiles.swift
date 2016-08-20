@@ -25,8 +25,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID                                     = "2a24"
             public static let name                                     = "Device Model Number"
-            public static let permissions: CBAttributePermissions      = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties   = .Read
+            public static let permissions: CBAttributePermissions      = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties   = .read
             public static let initialValue                             = SerDe.serialize("Model A")
             
         }
@@ -36,8 +36,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID                                      = "2a25"
             public static let name                                      = "Device Serial Number"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = .Read
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = .read
             public static let initialValue                              = SerDe.serialize("AAA11")
             
         }
@@ -47,8 +47,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID                                      = "2a26"
             public static let name                                      = "Device Firmware Revision"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = .Read
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = .read
             public static let initialValue                              = SerDe.serialize("1.0")
 
         }
@@ -58,8 +58,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID = "2a27"
             public static let name = "Device Hardware Revision"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = .Read
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = .read
             public static let initialValue = SerDe.serialize("1.0")
             
         }
@@ -69,8 +69,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID = "2a28"
             public static let name = "Device Software Revision"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = .Read
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = .read
             public static let initialValue = SerDe.serialize("1.0")
 
         }
@@ -80,8 +80,8 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID                                      = "2a29"
             public static let name                                      = "Device Manufacturer Name"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = .Read
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = .read
             public static let initialValue = SerDe.serialize("gnos.us")
             
         }
@@ -102,9 +102,9 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID                                      = "2a19"
             public static let name                                      = "Battery Level"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = [.Notify, .Read]
-            public static let initialValue: NSData?                     = SerDe.serialize(UInt8(100))
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = [.notify, .read]
+            public static let initialValue: Data?                     = SerDe.serialize(UInt8(100))
 
             // RawDeserializable
             public var rawValue: UInt8 {
@@ -147,9 +147,9 @@ public struct BLESIGGATT {
             // CharacteristicConfigurable
             public static let UUID                                      = "2a07"
             public static let name                                      = "Tx Power Level"
-            public static let permissions: CBAttributePermissions       = [.Readable, .Writeable]
-            public static let properties: CBCharacteristicProperties    = [.Notify, .Read]
-            public static let initialValue: NSData?                     = SerDe.serialize(Int8(-40))
+            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
+            public static let properties: CBCharacteristicProperties    = [.notify, .read]
+            public static let initialValue: Data?                     = SerDe.serialize(Int8(-40))
             
             // RawDeserializable
             public var rawValue : Int8 {

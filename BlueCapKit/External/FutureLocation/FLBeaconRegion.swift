@@ -11,31 +11,31 @@ import CoreLocation
 
 public class FLBeaconRegion : FLRegion {
     
-    public let beaconPromise: StreamPromise<[FLBeacon]>
+    internal let beaconPromise: StreamPromise<[FLBeacon]>
     
     internal var _beacons = [FLBeacon]()
     internal  let clBeaconRegion: CLBeaconRegion
     
     public var beacons: [FLBeacon] {
-        return self._beacons.sort() {(b1: FLBeacon, b2: FLBeacon) -> Bool in
-            switch b1.discoveredAt.compare(b2.discoveredAt) {
-            case .OrderedSame:
+        return self._beacons.sorted() {(b1: FLBeacon, b2: FLBeacon) -> Bool in
+            switch b1.discoveredAt.compare(b2.discoveredAt as Date) {
+            case .orderedSame:
                 return true
-            case .OrderedDescending:
+            case .orderedDescending:
                 return false
-            case .OrderedAscending:
+            case .orderedAscending:
                 return true
             }
         }
     }
     
-    public var proximityUUID: NSUUID? {
+    public var proximityUUID: UUID? {
         return self.clBeaconRegion.proximityUUID
     }
     
     public var major : Int? {
         if let _major = self.clBeaconRegion.major {
-            return _major.integerValue
+            return _major.intValue
         } else {
             return nil
         }
@@ -43,7 +43,7 @@ public class FLBeaconRegion : FLRegion {
     
     public var minor: Int? {
         if let _minor = self.clBeaconRegion.minor {
-            return _minor.integerValue
+            return _minor.intValue
         } else {
             return nil
         }
@@ -69,17 +69,17 @@ public class FLBeaconRegion : FLRegion {
         self.notifyEntryStateOnDisplay = true
     }
     
-    public convenience init(proximityUUID: NSUUID, identifier: String, capacity: Int? = nil) {
+    public convenience init(proximityUUID: UUID, identifier: String, capacity: Int? = nil) {
         self.init(region:CLBeaconRegion(proximityUUID: proximityUUID, identifier: identifier), capacity: capacity)
     }
 
-    public convenience init(proximityUUID: NSUUID, identifier: String, major: UInt16, capacity: Int? = nil) {
+    public convenience init(proximityUUID: UUID, identifier: String, major: UInt16, capacity: Int? = nil) {
         let beaconMajor : CLBeaconMajorValue = major
         let beaconRegion = CLBeaconRegion(proximityUUID: proximityUUID, major: beaconMajor, identifier: identifier)
         self.init(region: beaconRegion, capacity: capacity)
     }
 
-    public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16, capacity:Int? = nil) {
+    public convenience init(proximityUUID:UUID, identifier:String, major:UInt16, minor:UInt16, capacity:Int? = nil) {
         let beaconMinor : CLBeaconMinorValue = minor
         let beaconMajor : CLBeaconMajorValue = major
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, minor:beaconMinor, identifier:identifier)
@@ -87,20 +87,20 @@ public class FLBeaconRegion : FLRegion {
     }
     
     public override class func isMonitoringAvailableForClass() -> Bool {
-        return CLLocationManager.isMonitoringAvailableForClass(CLBeaconRegion)
+        return CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion)
     }
 
-    public func peripheralDataWithMeasuredPower(measuredPower: Int?) -> [String : AnyObject] {
+    public func peripheralDataWithMeasuredPower(_ measuredPower: Int?) -> [String : AnyObject] {
         let power: [NSObject : AnyObject]
         if let measuredPower = measuredPower {
-            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(NSNumber(integer: measuredPower)) as [NSObject:AnyObject]
+            power = self.clBeaconRegion.peripheralData(withMeasuredPower: NSNumber(value: measuredPower)) as [NSObject:AnyObject]
         } else {
-            power = self.clBeaconRegion.peripheralDataWithMeasuredPower(nil) as [NSObject : AnyObject]
+            power = self.clBeaconRegion.peripheralData(withMeasuredPower: nil) as [NSObject : AnyObject]
         }
 
         var result = [String : AnyObject]()
         for key in power.keys {
-            if let keyPower = power[key], key = key as? String {
+            if let keyPower = power[key], let key = key as? String {
                 result[key] = keyPower
             }
         }
