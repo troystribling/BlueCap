@@ -175,13 +175,13 @@ public struct GnosusProfiles {
         let updateCharacteristic = RawCharacteristicProfile<Gnosus.HelloWorldService.UpdatePeriod>()
         helloWorldService.addCharacteristic(greetingCharacteristic)
         helloWorldService.addCharacteristic(updateCharacteristic)
-        profileManager.addService(helloWorldService)
+        let _ = profileManager.addService(helloWorldService)
 
         // Location Service
         let locationService = ConfiguredServiceProfile<Gnosus.LocationService>()
         let latlonCharacteristic = RawArrayCharacteristicProfile<Gnosus.LocationService.LatitudeAndLongitude>()
         locationService.addCharacteristic(latlonCharacteristic)
-        profileManager.addService(locationService)
+        let _ = profileManager.addService(locationService)
 
     }
     

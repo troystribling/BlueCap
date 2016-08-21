@@ -240,7 +240,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     // MARK: State Restoration
     public func whenStateRestored() -> FutureStream<(services: [MutableService], advertisements: PeripheralAdvertisements)> {
         self.afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
-        return self.afterStateRestoredPromise.future
+        return self.afterStateRestoredPromise.stream
     }
 
     // MARK: CBPeripheralManagerDelegate
@@ -314,10 +314,10 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic.value = request.value
             } else {
-                self.respondToRequest(request, withResult:CBATTError.Code._ErrorType.requestNotSupported)
+                respondToRequest(request, withResult:CBATTError.Code._ErrorType.requestNotSupported)
             }
         } else {
-            self.respondToRequest(request, withResult:CBATTError.Code._ErrorType.unlikelyError)
+            respondToRequest(request, withResult:CBATTError.Code._ErrorType.unlikelyError)
         }
     }
     
@@ -327,10 +327,10 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
             Logger.debug("responding with data: \(characteristic.stringValue)")
             request.value = characteristic.value
-            self.respondToRequest(request, withResult:CBATTError.Code._ErrorType.success)
+            respondToRequest(request, withResult:CBATTError.Code._ErrorType.success)
         } else {
             Logger.debug("characteristic not found")
-            self.respondToRequest(request, withResult:CBATTError.Code._ErrorType.unlikelyError)
+            respondToRequest(request, withResult:CBATTError.Code._ErrorType.unlikelyError)
         }
     }
     

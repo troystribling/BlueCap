@@ -20,18 +20,13 @@ func fromHostByteOrder<T>(_ value: T) -> T {
 }
 
 func byteArrayValue<T>(_ value: T) -> [UInt8] {
-    let values = [value]
-    let data = Data(bytes: UnsafePointer<UInt8>(values), count:MemoryLayout<T>.size)
-    var byteArray = [UInt8](repeating: 0, count: MemoryLayout<T>.size)
-    (data as NSData).getBytes(&byteArray, length:MemoryLayout<T>.size)
-    return byteArray
-}
-
-func reverseBytes<T>(_ value: T) -> T {
-    var result = value
-    let swappedBytes = Data(bytes: UnsafePointer<UInt8>(byteArrayValue(value).reversed()), count: MemoryLayout<T>.size)
-    (swappedBytes as NSData).getBytes(&result, length: MemoryLayout<T>.size)
-    return result
+    var value = value
+    return withUnsafePointer(to: &value) { ptr in
+        ptr.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout<T>.size) { bytes in
+            let buffer = UnsafeBufferPointer(start: bytes, count:  MemoryLayout<T>.size)
+            return Array(buffer)
+        }
+    }
 }
 
 // MARK: - SerDe Protocols -
@@ -131,7 +126,7 @@ public struct SerDe {
     }
 
     public static func deserialize<T: RawDeserializable>(_ data:Data) -> T? where T.RawType: Deserializable {
-        return T.RawType.deserialize(data).flatmap{ T(rawValue:$0) }
+        return T.RawType.deserialize(data).flatMap{ T(rawValue: $0) }
     }
 
     public static func serialize<T: RawDeserializable>(_ value:T) -> Data {
@@ -152,10 +147,10 @@ public struct SerDe {
 
     public static func deserialize<T: RawPairDeserializable>(_ data:Data) -> T? where T.RawType1: Deserializable,  T.RawType2: Deserializable {
         if data.count >= (T.RawType1.size + T.RawType2.size) {
-            let rawData1 = data.subdata(in: NSMakeRange(0, T.RawType1.size))
-            let rawData2 = data.subdata(in: NSMakeRange(T.RawType1.size, T.RawType2.size))
-            return T.RawType1.deserialize(rawData1).flatmap {rawValue1 in
-                T.RawType2.deserialize(rawData2).flatmap {rawValue2 in
+            let rawData1 = data.subdata(in: 0..<T.RawType1.size)
+            let rawData2 = data.subdata(in: T.RawType1.size..<T.RawType2.size)
+            return T.RawType1.deserialize(rawData1).flatMap { rawValue1 in
+                T.RawType2.deserialize(rawData2).flatMap { rawValue2 in
                     T(rawValue1: rawValue1, rawValue2: rawValue2)
                 }
             }
@@ -170,8 +165,8 @@ public struct SerDe {
 
     public static func deserialize<T: RawArrayPairDeserializable>(_ data: Data) -> T? where T.RawType1: Deserializable,  T.RawType2: Deserializable {
         if data.count >= (T.size1 + T.size2) {
-            let rawData1 = data.subdata(in: NSMakeRange(0, T.size1))
-            let rawData2 = data.subdata(in: NSMakeRange(T.size1, T.size2))
+            let rawData1 = data.subdata(in: 0..<T.size1)
+            let rawData2 = data.subdata(in: T.size1..<T.size2)
             return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2: T.RawType2.deserialize(rawData2))
         } else {
             return nil

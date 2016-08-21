@@ -21,7 +21,7 @@ public enum ConnectionEvent {
 // MARK: - PeripheralAdvertisements -
 public struct PeripheralAdvertisements {
     
-    let advertisements: [String: AnyObject]
+    let advertisements: [String : Any]
     
     public var localName: String? {
         return self.advertisements[CBAdvertisementDataLocalNameKey].flatMap { $0 as? String }
@@ -301,7 +301,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Initializers
-    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String:AnyObject], RSSI: Int) {
+    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String : Any], RSSI: Int) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: advertisements)
@@ -313,7 +313,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
-        self.advertisements = PeripheralAdvertisements(advertisements: [String: AnyObject]())
+        self.advertisements = PeripheralAdvertisements(advertisements: [String : AnyObject]())
         super.init()
         self.RSSI = 0
         self.cbPeripheral.delegate = self
@@ -474,49 +474,49 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     public func peripheral(_: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
         Logger.debug()
     }
-    
-    public func peripheral(_: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
-        self.didReadRSSI(RSSI, error:error as NSError?)
+
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
+        didReadRSSI(RSSI, error:error)
     }
-    
-    public func peripheral(_: CBPeripheral, didDiscoverServices error: Error?) {
+
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let services = self.cbPeripheral.getServices() {
-            self.didDiscoverServices(services, error:error as NSError?)
+            didDiscoverServices(services, error:error)
         }
     }
     
-    public func peripheral(_: CBPeripheral, didDiscoverIncludedServicesFor service: CBService, error: Error?) {
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didDiscoverIncludedServicesFor service: CBService, error: Error?) {
         Logger.debug("peripheral name \(self.name)")
     }
     
-    public func peripheral(_: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.getCharacteristics() else {
             return
         }
-        self.didDiscoverCharacteristicsForService(service, characteristics: characteristics, error: error as NSError?)
+        didDiscoverCharacteristicsForService(service, characteristics: characteristics, error: error as NSError?)
     }
 
-    public func peripheral(_: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        self.didUpdateNotificationStateForCharacteristic(characteristic, error:error as NSError?)
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+        didUpdateNotificationStateForCharacteristic(characteristic, error:error)
     }
 
-    public func peripheral(_: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        self.didUpdateValueForCharacteristic(characteristic, error:error as NSError?)
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        didUpdateValueForCharacteristic(characteristic, error:error)
     }
 
-    public func peripheral(_: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        self.didWriteValueForCharacteristic(characteristic, error:error as NSError?)
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        didWriteValueForCharacteristic(characteristic, error:error)
     }
 
-    public func peripheral(_: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
         Logger.debug()
     }
     
-    public func peripheral(_: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
         Logger.debug()
     }
     
-    public func peripheral(_: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
+    @nonobjc public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
         Logger.debug()
     }
 
@@ -533,7 +533,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didDiscoverServices(_ discoveredServices: [CBServiceInjectable], error: NSError?) {
+    internal func didDiscoverServices(_ discoveredServices: [CBServiceInjectable], error: Error?) {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         self.clearAll()
         self.serviceDiscoveryInProgress = false
@@ -549,7 +549,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didUpdateNotificationStateForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: NSError?) {
+    internal func didUpdateNotificationStateForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
         Logger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
@@ -557,7 +557,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didUpdateValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: NSError?) {
+    internal func didUpdateValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
         Logger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
@@ -565,7 +565,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    internal func didWriteValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: NSError?) {
+    internal func didWriteValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
         Logger.debug()
         if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
             Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
@@ -573,7 +573,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    internal func didReadRSSI(_ RSSI: NSNumber, error: NSError?) {
+    internal func didReadRSSI(_ RSSI: NSNumber, error: Error?) {
         if let error = error {
             Logger.debug("RSSI read failed: \(error.localizedDescription)")
             self.readRSSIPromise?.failure(error)
@@ -594,7 +594,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.connectionPromise?.success((self, .connect))
     }
 
-    internal func didDisconnectPeripheral(_ error: NSError?) {
+    internal func didDisconnectPeripheral(_ error: Error?) {
         self.disconnectedAt = Date()
         self.totalSecondsConnected += self.secondsConnected
         self.serviceDiscoveryInProgress = false
@@ -620,7 +620,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    internal func didFailToConnectPeripheral(_ error: NSError?) {
+    internal func didFailToConnectPeripheral(_ error: Error?) {
         self.didDisconnectPeripheral(error)
     }
 
@@ -705,7 +705,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             if self.state != .connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("connection timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .timeout
-                centralManager.cancelPeripheralConnection(self)
+                centralManager.cancelConnection(forPeripheral: self)
             } else {
                 Logger.debug("connection timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(self.connectionSequence), state=\(self.state.rawValue)")
             }
@@ -720,7 +720,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         Peripheral.pollQueue.delay(timeout) {
             if sequence == self.serviceDiscoverySequence && self.serviceDiscoveryInProgress {
                 Logger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
-                centralManager.cancelPeripheralConnection(self)
+                centralManager.cancelConnection(forPeripheral: self)
                 self.serviceDiscoveryInProgress = false
                 self.servicesDiscoveredPromise?.failure(BCError.peripheralServiceDiscoveryTimeout)
             } else {

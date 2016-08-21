@@ -43,7 +43,7 @@ public class FLRegion {
         }
     }
     
-    public init(region:CLRegion, capacity:Int? = nil) {
+    public init(region: CLRegion, capacity:Int? = nil) {
         self.clRegion = region
         if let capacity = capacity {
             self.regionPromise = StreamPromise<FLRegionState>(capacity:capacity)
@@ -53,7 +53,7 @@ public class FLRegion {
     }
 
     public class func isMonitoringAvailableForClass() -> Bool {
-        return CLLocationManager.isMonitoringAvailable(for: CLRegion)
+        return CLLocationManager.isMonitoringAvailable(for: CLRegion.self)
     }
 
 }

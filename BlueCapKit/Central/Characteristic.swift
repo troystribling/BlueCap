@@ -103,52 +103,49 @@ public class Characteristic : NSObject {
     }
     
     public var UUID: CBUUID {
-        return self.cbCharacteristic.UUID
+        return cbCharacteristic.UUID
     }
     
     public var name: String {
-        return self.profile.name
+        return profile.name
     }
     
     public var isNotifying: Bool {
         get {
-            return self.cbCharacteristic.isNotifying
+            return cbCharacteristic.isNotifying
         }
     }
     
     public var afterDiscoveredPromise: StreamPromise<Characteristic>? {
-        return self.profile.afterDiscoveredPromise
+        return profile.afterDiscoveredPromise
     }
     
     public var canNotify: Bool {
-        return self.propertyEnabled(.Notify) ||
-               self.propertyEnabled(.Indicate) ||
-               self.propertyEnabled(.NotifyEncryptionRequired) ||
-               self.propertyEnabled(.IndicateEncryptionRequired)
+        return propertyEnabled(.notify) || propertyEnabled(.indicate) || propertyEnabled(.notifyEncryptionRequired) || propertyEnabled(.indicateEncryptionRequired)
     }
     
     public var canRead: Bool {
-        return self.propertyEnabled(.Read)
+        return propertyEnabled(.read)
     }
     
     public var canWrite: Bool {
-        return self.propertyEnabled(.Write) || self.propertyEnabled(.WriteWithoutResponse)
+        return propertyEnabled(.write) || self.propertyEnabled(.writeWithoutResponse)
     }
     
     public var service: Service? {
         return self._service
     }
     
-    public var dataValue: NSData? {
-        return self.cbCharacteristic.value
+    public var dataValue: Data? {
+        return cbCharacteristic.value
     }
     
     public var stringValues: [String] {
-        return self.profile.stringValues
+        return profile.stringValues
     }
 
     public var stringValue: [String:String]? {
-        return self.stringValue(self.dataValue)
+        return stringValue(self.dataValue)
     }
     
     public var properties: CBCharacteristicProperties {
@@ -176,19 +173,19 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Data Access
-    public func stringValue(data: NSData?) -> [String:String]? {
+    public func stringValue(_ data: Data?) -> [String:String]? {
         if let data = data {
-            return self.profile.stringValue(data)
+            return profile.stringValue(data)
         } else {
             return nil
         }
     }
     
-    public func dataFromStringValue(stringValue: [String: String]) -> NSData? {
-        return self.profile.dataFromStringValue(stringValue)
+    public func data(stringValue: [String: String]) -> NSData? {
+        return profile.dataFromStringValue(stringValue)
     }
     
-    public func propertyEnabled(property:CBCharacteristicProperties) -> Bool {
+    public func propertyEnabled(_ property:CBCharacteristicProperties) -> Bool {
         return (self.properties.rawValue & property.rawValue) > 0
     }
 
@@ -200,7 +197,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func value<T: RawDeserializable where T.RawType: Deserializable>() -> T? {
+    public func value<T: RawDeserializable>() -> T?  where T.RawType: Deserializable {
         if let data = self.dataValue {
             return SerDe.deserialize(data)
         } else {
@@ -208,7 +205,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func value<T: RawArrayDeserializable where T.RawType: Deserializable>() -> T? {
+    public func value<T: RawArrayDeserializable>() -> T? where T.RawType: Deserializable {
         if let data = self.dataValue {
             return SerDe.deserialize(data)
         } else {
@@ -216,7 +213,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func value<T: RawPairDeserializable where T.RawType1: Deserializable, T.RawType2: Deserializable>() -> T? {
+    public func value<T: RawPairDeserializable>() -> T? where T.RawType1: Deserializable, T.RawType2: Deserializable {
         if let data = self.dataValue {
             return SerDe.deserialize(data)
         } else {
@@ -224,7 +221,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func value<T: RawArrayPairDeserializable where T.RawType1: Deserializable, T.RawType2: Deserializable>() -> T? {
+    public func value<T: RawArrayPairDeserializable>() -> T? where T.RawType1: Deserializable, T.RawType2: Deserializable {
         if let data = self.dataValue {
             return SerDe.deserialize(data)
         } else {
@@ -255,14 +252,14 @@ public class Characteristic : NSObject {
         return promise.future
     }
 
-    public func receiveNotificationUpdates(capacity: Int? = nil) -> FutureStream<(characteristic: Characteristic, data: NSData?)> {
-        let promise = StreamPromise<(characteristic: Characteristic, data: NSData?)>(capacity:capacity)
+    public func receiveNotificationUpdates(capacity: Int = Int.max) -> FutureStream<(characteristic: Characteristic, data: Data?)> {
+        let promise = StreamPromise<(characteristic: Characteristic, data: Data?)>(capacity: capacity)
         if self.canNotify {
             self.notificationUpdatePromise = promise
         } else {
             promise.failure(BCError.characteristicNotifyNotSupported)
         }
-        return promise.future
+        return promise.stream
     }
     
     public func stopNotificationUpdates() {
@@ -283,7 +280,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Write Data
-    public func writeData(value: NSData, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func writeData(value: Data, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canWrite {
             if type == .withResponse {
@@ -300,7 +297,7 @@ public class Characteristic : NSObject {
         return promise.future
     }
 
-    public func writeString(stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func writeString(stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         if let value = self.dataFromStringValue(stringValue) {
             return self.writeData(value, timeout: timeout, type: type)
         } else {
@@ -310,23 +307,23 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func write<T: Deserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: Deserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawArrayDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawArrayPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .WithResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
     }
 
