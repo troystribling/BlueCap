@@ -36,8 +36,8 @@ public class CharacteristicProfile {
         self.initialValue = initialValue
     }
     
-    public convenience init(UUID:String) {
-        self.init(UUID:UUID, name:"Unknown")
+    public convenience init(UUID: String) {
+        self.init(UUID: UUID, name: "Unknown")
     }
     
     public func afterDiscovered(capacity: Int = Int.max) -> FutureStream<Characteristic> {
@@ -60,7 +60,7 @@ public class CharacteristicProfile {
         return [self.name: data.hexStringValue()]
     }
     
-    public func data(stringValue data: [String: String]) -> Data? {
+    public func data(fromString data: [String: String]) -> Data? {
         return data[self.name].map{ $0.dataFromHexString() }
     }
     
@@ -86,7 +86,7 @@ public final class RawCharacteristicProfile<DeserializedType>: CharacteristicPro
         return value.map{$0.stringValue}
     }
     
-    public override func dataFromStringValue(_ data: Dictionary<String, String>) -> Data? {
+    public override func data(fromString data: [String: String]) -> Data? {
         return DeserializedType(stringValue: data).flatMap{ SerDe.serialize($0) }
     }
     
@@ -116,7 +116,7 @@ public final class RawArrayCharacteristicProfile<DeserializedType>: Characterist
         return value.map{$0.stringValue}
     }
     
-    public override func data(stringValue data: [String: String]) -> Data? {
+    public override func data(fromString data: [String: String]) -> Data? {
         return DeserializedType(stringValue:data).flatMap{ SerDe.serialize($0) }
     }
     
@@ -142,7 +142,7 @@ public final class RawPairCharacteristicProfile<DeserializedType>: Characteristi
         return value.map{ $0.stringValue }
     }
     
-    public override func data(stringValue data: [String: String]) -> Data? {
+    public override func data(fromString data: [String: String]) -> Data? {
         return DeserializedType(stringValue: data).flatMap{ SerDe.serialize($0) }
     }
     
@@ -164,13 +164,13 @@ public final class RawArrayPairCharacteristicProfile<DeserializedType>: Characte
         return DeserializedType.stringValues
     }
     
-    public override func stringValue(_ data:Data) -> [String: String]? {
+    public override func stringValue(_ data:Data) -> [String : String]? {
         let value : DeserializedType? = SerDe.deserialize(data)
         return value.map{ $0.stringValue }
     }
     
-    public override func data(stringValue data: [String: String]) -> Data? {
-        return DeserializedType(stringValue:data).flatMap{ SerDe.serialize($0)}
+    public override func data(fromString stringValue: [String : String]) -> Data? {
+        return DeserializedType(stringValue: stringValue).flatMap{ SerDe.serialize($0) }
     }
     
 }
@@ -199,7 +199,7 @@ public final class StringCharacteristicProfile<T: CharacteristicConfigurable>: C
         return value.map{ [self.name: $0] }
     }
     
-    public override func data(stringValue data: [String: String]) -> Data? {
+    public override func data(fromString data: [String: String]) -> Data? {
         return data[self.name].flatMap{ SerDe.serialize($0, encoding:self.encoding) }
     }
 

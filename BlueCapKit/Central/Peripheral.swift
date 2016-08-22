@@ -481,7 +481,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     @nonobjc public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let services = self.cbPeripheral.getServices() {
-            didDiscoverServices(services, error:error)
+            didDiscoverServices(services, error: error)
         }
     }
     
@@ -497,15 +497,15 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     @nonobjc public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        didUpdateNotificationStateForCharacteristic(characteristic, error:error)
+        didUpdateNotificationStateForCharacteristic(characteristic, error: error)
     }
 
     @nonobjc public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        didUpdateValueForCharacteristic(characteristic, error:error)
+        didUpdateValueForCharacteristic(characteristic, error: error)
     }
 
     @nonobjc public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        didWriteValueForCharacteristic(characteristic, error:error)
+        didWriteValueForCharacteristic(characteristic, error: error)
     }
 
     @nonobjc public func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
@@ -524,7 +524,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal func didDiscoverCharacteristicsForService(_ service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: NSError?) {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         if let bcService = self.discoveredServices[service.UUID] {
-            bcService.didDiscoverCharacteristics(characteristics, error:error)
+            bcService.didDiscoverCharacteristics(characteristics, error: error)
             if error == nil {
                 for cbCharacteristic in characteristics {
                     self.discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[cbCharacteristic.UUID]

@@ -173,7 +173,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Data Access
-    public func stringValue(_ data: Data?) -> [String:String]? {
+    public func stringValue(_ data: Data?) -> [String : String]? {
         if let data = data {
             return profile.stringValue(data)
         } else {
@@ -181,11 +181,11 @@ public class Characteristic : NSObject {
         }
     }
     
-    public func data(stringValue: [String: String]) -> NSData? {
-        return profile.dataFromStringValue(stringValue)
+    public func data(fromString stringValue: [String : String]) -> Data? {
+        return profile.data(fromString: stringValue)
     }
     
-    public func propertyEnabled(_ property:CBCharacteristicProperties) -> Bool {
+    public func propertyEnabled(_ property: CBCharacteristicProperties) -> Bool {
         return (self.properties.rawValue & property.rawValue) > 0
     }
 
@@ -236,7 +236,7 @@ public class Characteristic : NSObject {
             self.notificationStateChangedPromise = promise
             self.setNotifyValue(true)
         } else {
-            promise.failure(BCError.characteristicNotifyNotSupported)
+            promise.failure(CharacteristicError.notifyNotSupported)
         }
         return promise.future
     }
@@ -247,7 +247,7 @@ public class Characteristic : NSObject {
             self.notificationStateChangedPromise = promise
             self.setNotifyValue(false)
         } else {
-            promise.failure(BCError.characteristicNotifyNotSupported)
+            promise.failure(CharacteristicError.notifyNotSupported)
         }
         return promise.future
     }
@@ -257,7 +257,7 @@ public class Characteristic : NSObject {
         if self.canNotify {
             self.notificationUpdatePromise = promise
         } else {
-            promise.failure(BCError.characteristicNotifyNotSupported)
+            promise.failure(CharacteristicError.notifyNotSupported)
         }
         return promise.stream
     }
@@ -274,13 +274,13 @@ public class Characteristic : NSObject {
             self.readParameters.append(ReadParameters(timeout:timeout))
             self.readNext()
         } else {
-            promise.failure(BCError.characteristicReadNotSupported)
+            promise.failure(CharacteristicError.readNotSupported)
         }
         return promise.future
     }
 
     // MARK: Write Data
-    public func writeData(value: Data, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write(data value: Data, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         let promise = Promise<Characteristic>()
         if self.canWrite {
             if type == .withResponse {
@@ -292,43 +292,41 @@ public class Characteristic : NSObject {
                 promise.success(self)
             }
         } else {
-            promise.failure(BCError.characteristicWriteNotSupported)
+            promise.failure(CharacteristicError.writeNotSupported)
         }
         return promise.future
     }
 
-    public func writeString(stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        if let value = self.dataFromStringValue(stringValue) {
-            return self.writeData(value, timeout: timeout, type: type)
+    public func write(string stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+        if let value = self.data(fromString: stringValue) {
+            return self.write(data: value, timeout: timeout, type: type)
         } else {
-            let promise = Promise<Characteristic>()
-            promise.failure(BCError.characteristicNotSerilaizable)
-            return promise.future
+            return Future(error: CharacteristicError.notSerializable)
         }
     }
 
-    public func write<T: Deserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
+    public func write<T: Deserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawDeserializable>(value:T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
+    public func write<T: RawDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawArrayDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
+    public func write<T: RawArrayDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
+    public func write<T: RawPairDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawArrayPairDeserializable>(value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.writeData(SerDe.serialize(value), timeout: timeout, type: type)
+    public func write<T: RawArrayPairDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
     // MARK: CBPeripheralDelegate Shim
-    internal func didUpdateNotificationState(_ error: NSError?) {
+    internal func didUpdateNotificationState(_ error: Error?) {
         if let error = error {
             Logger.debug("failed uuid=\(self.UUID.uuidString), name=\(self.name)")
             self.notificationStateChangedPromise?.failure(error)
@@ -338,7 +336,7 @@ public class Characteristic : NSObject {
         }
     }
     
-    internal func didUpdate(_ error: NSError?) {
+    internal func didUpdate(_ error: Error?) {
         if self.isNotifying {
             self.didNotify(error)
         } else {
@@ -346,7 +344,7 @@ public class Characteristic : NSObject {
         }
     }
     
-    internal func didWrite(_ error: NSError?) {
+    internal func didWrite(_ error: Error?) {
         guard let promise = self.shiftPromise(&self.writePromises) , !promise.completed else {
             return
         }
@@ -361,7 +359,7 @@ public class Characteristic : NSObject {
         self.writeNext()
     }
 
-    fileprivate func didRead(_ error: NSError?) {
+    fileprivate func didRead(_ error: Error?) {
         guard let promise = self.shiftPromise(&self.readPromises) , !promise.completed else {
             return
         }
@@ -375,11 +373,11 @@ public class Characteristic : NSObject {
     }
 
 
-    fileprivate func didNotify(_ error: NSError?) {
+    fileprivate func didNotify(_ error: Error?) {
         if let error = error {
             self.notificationUpdatePromise?.failure(error)
         } else {
-            self.notificationUpdatePromise?.success((self, self.dataValue.flatmap{ ($0 as NSData).copy() as? Data}))
+            self.notificationUpdatePromise?.success((self, self.dataValue.flatmap{ ($0 as Data).copy() as? Data}))
         }
     }
 
@@ -392,7 +390,7 @@ public class Characteristic : NSObject {
         Characteristic.timeoutQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
-                self.didUpdate(BCError.characteristicReadTimeout)
+                self.didUpdate(CharacteristicError.readTimeout)
             } else {
                 Logger.debug("timeout expired")
             }
@@ -407,7 +405,7 @@ public class Characteristic : NSObject {
         Characteristic.timeoutQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                self.didWrite(BCError.characteristicWriteTimeout)
+                self.didWrite(CharacteristicError.writeTimeout)
             } else {
                 Logger.debug("timeout expired")
             }
