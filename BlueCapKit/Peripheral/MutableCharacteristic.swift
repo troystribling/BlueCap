@@ -79,7 +79,7 @@ public class MutableCharacteristic : NSObject {
         return Array(self.centrals.values)
     }
 
-    public var pendingUpdates : [NSData] {
+    public var pendingUpdates : [Data] {
         return Array(self.queuedUpdates)
     }
 
@@ -148,14 +148,14 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: Data
-    open func dataFromStringValue(_ stringValue: [String:String]) -> Data? {
-        return self.profile.dataFromStringValue(stringValue)
+    open func data(fromString data: [String:String]) -> Data? {
+        return self.profile.data(fromString: data)
     }
 
     // MARK: Manage Writes
-    open func startRespondingToWriteRequests(_ capacity: Int? = nil) -> FutureStream<(request: CBATTRequestInjectable, central: CBCentralInjectable)> {
-        self.processWriteRequestPromise = StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>(capacity:capacity)
-        return self.processWriteRequestPromise!.future
+    open func startRespondingToWriteRequests(capacity: Int = Int.max) -> FutureStream<(request: CBATTRequestInjectable, central: CBCentralInjectable)> {
+        self.processWriteRequestPromise = StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>(capacity: capacity)
+        return self.processWriteRequestPromise!.stream
     }
     
     open func stopRespondingToWriteRequests() {
@@ -209,14 +209,14 @@ public class MutableCharacteristic : NSObject {
     // MARK: CBPeripheralManagerDelegate Shims
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
         self.isUpdating = true
-        self.updateValuesWithData(self.queuedUpdates)
+        let _ = self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didSubscribeToCharacteristic(_ central: CBCentralInjectable) {
         self.isUpdating = true
         self.centrals[central.identifier] = central
-        self.updateValuesWithData(self.queuedUpdates)
+        let _ = self.updateValuesWithData(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 

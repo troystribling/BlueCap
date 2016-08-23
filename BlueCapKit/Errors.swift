@@ -1,5 +1,5 @@
 //
-//  BCErrors.swift
+//  Errors.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 7/5/14.
@@ -30,7 +30,7 @@ public enum PeripheralManagerError: Swift.Error {
     case isNotAdvertising
     case addServiceFailed
     case restoreFailed
-    case peripheralStateUnsupported
+    case unsupported
 }
 
 public enum CentralError: Swift.Error {
@@ -38,7 +38,7 @@ public enum CentralError: Swift.Error {
     case isPoweredOff
     case restoreFailed
     case peripheralScanTimeout
-    case centralStateUnsupported
+    case unsupported
 }
 
 public enum ServiceError: Swift.Error {

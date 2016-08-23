@@ -36,10 +36,9 @@ public class ProfileManager {
         return StaticInstance.instance!
     }
     
-    public func addService(_ serviceProfile: ServiceProfile) -> ServiceProfile {
+    public func addService(_ serviceProfile: ServiceProfile) {
         Logger.debug("name=\(serviceProfile.name), UUID=\(serviceProfile.UUID.uuidString)")
         self._services[serviceProfile.UUID] = serviceProfile
-        return serviceProfile
     }
     
 }

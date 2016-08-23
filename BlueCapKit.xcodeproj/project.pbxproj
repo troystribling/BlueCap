@@ -32,7 +32,7 @@
 		05585BE11D0CA475000F5307 /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDE1D0CA475000F5307 /* ServiceProfile.swift */; };
 		05585BE41D0CA4AB000F5307 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BE21D0CA4AB000F5307 /* Logger.swift */; };
 		05585BE51D0CA4AB000F5307 /* SerialIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BE31D0CA4AB000F5307 /* SerialIO.swift */; };
-		056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* BCErrors.swift */; };
+		056276091CCD3F0A00F955D7 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* Errors.swift */; };
 		057FACF01D1C325B0006B93B /* Int32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057FACEF1D1C325B0006B93B /* Int32+Deserializable.swift */; };
 		05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */; };
 		05BF91A41CFBF62700B78B12 /* FLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91981CFBF62700B78B12 /* FLBeacon.swift */; };
@@ -79,7 +79,7 @@
 		05585BDE1D0CA475000F5307 /* ServiceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfile.swift; sourceTree = "<group>"; };
 		05585BE21D0CA4AB000F5307 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		05585BE31D0CA4AB000F5307 /* SerialIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialIO.swift; sourceTree = "<group>"; };
-		056276081CCD3F0A00F955D7 /* BCErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCErrors.swift; sourceTree = "<group>"; };
+		056276081CCD3F0A00F955D7 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		057FACEF1D1C325B0006B93B /* Int32+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int32+Deserializable.swift"; sourceTree = "<group>"; };
 		05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
 		05BF91981CFBF62700B78B12 /* FLBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeacon.swift; sourceTree = "<group>"; };
@@ -132,7 +132,7 @@
 		0551208419F5506000ED3B74 /* BlueCapKit */ = {
 			isa = PBXGroup;
 			children = (
-				056276081CCD3F0A00F955D7 /* BCErrors.swift */,
+				056276081CCD3F0A00F955D7 /* Errors.swift */,
 				05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */,
 				0551209C19F5513700ED3B74 /* Central */,
 				05D3B9421A2BA162008E794E /* Extensions */,
@@ -351,7 +351,7 @@
 				05585BDB1D0CA459000F5307 /* SerDe.swift in Sources */,
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8+Deserializable.swift in Sources */,
-				056276091CCD3F0A00F955D7 /* BCErrors.swift in Sources */,
+				056276091CCD3F0A00F955D7 /* Errors.swift in Sources */,
 				05BF91AB1CFBF62700B78B12 /* FLRegionManager.swift in Sources */,
 				055120E119F5513700ED3B74 /* NSData+Serializable.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16+Deserializable.swift in Sources */,

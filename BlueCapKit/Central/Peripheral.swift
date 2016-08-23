@@ -393,7 +393,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             central.cancelConnection(forPeripheral: self)
         } else {
             Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
-            self.didDisconnectPeripheral(BCError.peripheralDisconnected)
+            self.didDisconnectPeripheral(PeripheralError.disconnected)
         }
     }
     
@@ -439,7 +439,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                         peripheralDiscoveredPromise.failure(error)
                     }
                 } else {
-                    peripheralDiscoveredPromise.failure(BCError.peripheralNoServices)
+                    peripheralDiscoveredPromise.failure(PeripheralError.noServices)
                 }
             }
         }
@@ -594,7 +594,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.connectionPromise?.success((self, .connect))
     }
 
-    internal func didDisconnectPeripheral(_ error: Error?) {
+    internal func didDisconnectPeripheral(_ error: Swift.Error?) {
         self.disconnectedAt = Date()
         self.totalSecondsConnected += self.secondsConnected
         self.serviceDiscoveryInProgress = false
@@ -620,7 +620,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    internal func didFailToConnectPeripheral(_ error: Error?) {
+    internal func didFailToConnectPeripheral(_ error: Swift.Error?) {
         self.didDisconnectPeripheral(error)
     }
 
@@ -642,7 +642,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Utilities
-    fileprivate func shouldFailOrGiveUp(_ error: NSError) {
+    fileprivate func shouldFailOrGiveUp(_ error: Swift.Error) {
         Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
             if self.disconnectionCount < disconnectRetries {
                 self.disconnectionCount += 1
@@ -681,12 +681,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 self.timeoutServiceDiscovery(self.serviceDiscoverySequence, timeout: timeout)
                 self.cbPeripheral.discoverServices(services)
             } else {
-                self.servicesDiscoveredPromise?.failure(BCError.peripheralDisconnected)
+                self.servicesDiscoveredPromise?.failure(PeripheralError.disconnected)
             }
             return self.servicesDiscoveredPromise!.future
         } else {
             let promise = Promise<Peripheral>()
-            promise.failure(BCError.peripheralServiceDiscoveryInProgress)
+            promise.failure(PeripheralError.serviceDiscoveryInProgress)
             return promise.future
         }
     }
@@ -722,7 +722,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 Logger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
                 centralManager.cancelConnection(forPeripheral: self)
                 self.serviceDiscoveryInProgress = false
-                self.servicesDiscoveredPromise?.failure(BCError.peripheralServiceDiscoveryTimeout)
+                self.servicesDiscoveredPromise?.failure(PeripheralError.serviceDiscoveryTimeout)
             } else {
                 Logger.debug("service scan timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.serviceDiscoverySequence)")
             }
@@ -746,10 +746,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         if self.state == .connected {
             self.cbPeripheral.readRSSI()
         } else {
-            self.readRSSIPromise?.failure(BCError.peripheralDisconnected)
-            self.pollRSSIPromise?.failure(BCError.peripheralDisconnected)
+            self.readRSSIPromise?.failure(PeripheralError.disconnected)
+            self.pollRSSIPromise?.failure(PeripheralError.disconnected)
         }
     }
-
 
 }

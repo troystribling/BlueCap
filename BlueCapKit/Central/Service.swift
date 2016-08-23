@@ -118,7 +118,7 @@ public class Service {
         }
     }
 
-    internal func didDisconnectPeripheral(_ error: NSError?) {
+    internal func didDisconnectPeripheral(_ error: Error?) {
         self.characteristicDiscoveryInProgress = false
     }
 
@@ -132,12 +132,12 @@ public class Service {
                 self.timeoutCharacteristicDiscovery(self.characteristicDiscoverySequence, timeout: timeout)
                 self.peripheral?.discoverCharacteristics(characteristics, forService:self)
             } else {
-                self.characteristicsDiscoveredPromise?.failure(BCError.peripheralDisconnected)
+                self.characteristicsDiscoveredPromise?.failure(PeripheralError.disconnected)
             }
             return self.characteristicsDiscoveredPromise!.future
         } else {
             let promise = Promise<Service>()
-            promise.failure(BCError.serviceCharacteristicDiscoveryInProgress)
+            promise.failure(ServiceError.characteristicDiscoveryInProgress)
             return promise.future
         }
     }
@@ -150,9 +150,9 @@ public class Service {
         Peripheral.pollQueue.delay(timeout) {
             if sequence == self.characteristicDiscoverySequence && self.characteristicDiscoveryInProgress {
                 Logger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
-                centralManager.cancelPeripheralConnection(peripheral)
+                centralManager.cancelConnection(forPeripheral: peripheral)
                 self.characteristicDiscoveryInProgress = false
-                self.characteristicsDiscoveredPromise?.failure(BCError.serviceCharacteristicDiscoveryTimeout)
+                self.characteristicsDiscoveredPromise?.failure(ServiceError.characteristicDiscoveryTimeout)
             } else {
                 Logger.debug("characteristic scan timeout expired name = \(self.name), UUID = \(self.UUID.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(self.characteristicDiscoverySequence)")
             }

@@ -164,13 +164,13 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self._name = name
         self.afterAdvertisingStartedPromise = Promise<Void>()
         if !self.isAdvertising {
-            var advertisementData: [String:AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]
+            var advertisementData: [String : AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]
             if let uuids = uuids {
                 advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
             }
             self.cbPeripheralManager.startAdvertising(advertisementData)
         } else {
-            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+            self.afterAdvertisingStartedPromise.failure(PeripheralManagerError.isAdvertising)
         }
         return self.afterAdvertisingStartedPromise.future
     }
@@ -181,7 +181,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         if !self.isAdvertising {
             self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
         } else {
-            self.afterAdvertisingStartedPromise.failure(BCError.peripheralManagerIsAdvertising)
+            self.afterAdvertisingStartedPromise.failure(PeripheralManagerError.isAdvertising)
         }
         return self.afterAdvertisingStartedPromise.future
     }
@@ -257,11 +257,11 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.willRestoreState(injectableServices, advertisements: advertisements)
     }
     
-    public func peripheralManagerDidStartAdvertising(_: CBPeripheralManager, error: Error?) {
+    @nonobjc public func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         self.didStartAdvertising(error as NSError?)
     }
     
-    public func peripheralManager(_: CBPeripheralManager, didAdd service: CBService, error: Error?) {
+    @nonobjc public func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
         self.didAddService(service, error:error as NSError?)
     }
     
@@ -273,15 +273,15 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.didUnsubscribeFromCharacteristic(characteristic, central: central)
     }
     
-    public func peripheralManager(_: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
+    public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
         self.didReceiveReadRequest(request, central: request.central)
     }
     
-    public func peripheralManagerIsReady(toUpdateSubscribers _: CBPeripheralManager) {
+    public func peripheralManagerIsReady(toUpdateSubscribers peripheral: CBPeripheralManager) {
         self.isReadyToUpdateSubscribers()
     }
 
-    public func peripheralManager(_: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
+    public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
         Logger.debug()
         for request in requests {
             self.didReceiveWriteRequest(request, central: request.central)
@@ -353,7 +353,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             break
         case .unsupported:
             if !self.afterPowerOnPromise.completed {
-                self.afterPowerOnPromise.failure(BCError.peripheralStateUnsupported)
+                self.afterPowerOnPromise.failure(PeripheralManagerError.unsupported)
             }
             break
         case .unauthorized:
@@ -402,7 +402,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             }
             self.afterStateRestoredPromise.success((services, PeripheralAdvertisements(advertisements: advertisements)))
         } else {
-            self.afterStateRestoredPromise.failure(BCError.peripheralManagerRestoreFailed)
+            self.afterStateRestoredPromise.failure(PeripheralManagerError.restoreFailed)
         }
     }
 

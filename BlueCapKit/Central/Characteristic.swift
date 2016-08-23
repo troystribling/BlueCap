@@ -326,7 +326,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: CBPeripheralDelegate Shim
-    internal func didUpdateNotificationState(_ error: Error?) {
+    internal func didUpdateNotificationState(_ error: Swift.Error?) {
         if let error = error {
             Logger.debug("failed uuid=\(self.UUID.uuidString), name=\(self.name)")
             self.notificationStateChangedPromise?.failure(error)
@@ -336,7 +336,7 @@ public class Characteristic : NSObject {
         }
     }
     
-    internal func didUpdate(_ error: Error?) {
+    internal func didUpdate(_ error: Swift.Error?) {
         if self.isNotifying {
             self.didNotify(error)
         } else {
@@ -344,7 +344,7 @@ public class Characteristic : NSObject {
         }
     }
     
-    internal func didWrite(_ error: Error?) {
+    internal func didWrite(_ error: Swift.Error?) {
         guard let promise = self.shiftPromise(&self.writePromises) , !promise.completed else {
             return
         }
@@ -359,7 +359,7 @@ public class Characteristic : NSObject {
         self.writeNext()
     }
 
-    fileprivate func didRead(_ error: Error?) {
+    fileprivate func didRead(_ error: Swift.Error?) {
         guard let promise = self.shiftPromise(&self.readPromises) , !promise.completed else {
             return
         }
@@ -373,11 +373,11 @@ public class Characteristic : NSObject {
     }
 
 
-    fileprivate func didNotify(_ error: Error?) {
+    fileprivate func didNotify(_ error: Swift.Error?) {
         if let error = error {
             self.notificationUpdatePromise?.failure(error)
         } else {
-            self.notificationUpdatePromise?.success((self, self.dataValue.flatmap{ ($0 as Data).copy() as? Data}))
+            self.notificationUpdatePromise?.success((self, self.dataValue))
         }
     }
 
