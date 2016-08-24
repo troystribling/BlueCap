@@ -39,7 +39,7 @@ public class SerialIODictionary<T, U> where T: Hashable {
     }
 
     func removeValueForKey(_ key: T) {
-        self.queue.sync { self.data.removeValue(forKey: key) }
+        let _ = self.queue.sync { self.data.removeValue(forKey: key) }
     }
 
     func removeAll() {
@@ -89,7 +89,7 @@ public class SerialIOArray<T> {
     }
 
     func removeAtIndex(_ i: Int) {
-        self.queue.sync { self._data.remove(at: i) }
+        let _ = self.queue.sync { self._data.remove(at: i) }
     }
 
     func map<M>(_ transform: (T) -> M) -> [M] {

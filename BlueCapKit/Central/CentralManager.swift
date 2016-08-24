@@ -152,7 +152,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Manage Peripherals
 
-    func connect(peripheral: Peripheral, options: [String:AnyObject]? = nil) {
+    func connect(peripheral: Peripheral, options: [String : Any]? = nil) {
         cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options: options)
     }
     
@@ -172,7 +172,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Scan
 
-    public func startScanning(capacity: Int = Int.max, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(capacity: Int = Int.max, timeout: Double = Double.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
         return startScanning(forServiceUUIDs: nil, capacity: capacity, timeout: timeout)
     }
     
@@ -182,7 +182,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             isScanning = true
             afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
             if poweredOn {
-                cbCentralManager.scanForPeripheralsWithServices(UUIDs, options: options)
+                cbCentralManager.scanForPeripherals(withServices: UUIDs, options: options)
                 timeoutScan(timeout, sequence: timeoutSequence)
             } else {
                 afterPeripheralDiscoveredPromise.failure(CentralError.isPoweredOff)

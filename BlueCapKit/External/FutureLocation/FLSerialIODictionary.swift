@@ -9,7 +9,7 @@
 import Foundation
 
 // MARK: Serialize Dictionary Access
-public class FLSerialIODictionary<T, U where T: Hashable> {
+public class FLSerialIODictionary<T, U> where T: Hashable {
 
     var data = [T: U]()
     let queue: Queue
@@ -36,7 +36,7 @@ public class FLSerialIODictionary<T, U where T: Hashable> {
     }
 
     func removeValueForKey(_ key: T) {
-        self.queue.sync { self.data.removeValue(forKey: key) }
+        let _ = self.queue.sync { self.data.removeValue(forKey: key) }
     }
 
     func removeAll() {

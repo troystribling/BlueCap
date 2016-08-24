@@ -95,7 +95,7 @@ public class Service {
     }
 
     // MARK: CBPeripheralDelegate Shim
-    internal func didDiscoverCharacteristics(_ discoveredCharacteristics: [CBCharacteristicInjectable], error: NSError?) {
+    internal func didDiscoverCharacteristics(_ discoveredCharacteristics: [CBCharacteristicInjectable], error: Swift.Error?) {
         self.characteristicDiscoveryInProgress = false
         self.discoveredCharacteristics.removeAll()
         if let error = error {
@@ -118,7 +118,7 @@ public class Service {
         }
     }
 
-    internal func didDisconnectPeripheral(_ error: Error?) {
+    internal func didDisconnectPeripheral(_ error: Swift.Error?) {
         self.characteristicDiscoveryInProgress = false
     }
 

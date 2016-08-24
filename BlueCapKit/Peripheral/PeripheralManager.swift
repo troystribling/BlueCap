@@ -231,9 +231,9 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return self.cbPeripheralManager.updateValue(value, forCharacteristic:characteristic.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
     
-    public func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code._ErrorType) {
+    public func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
         if let request = request as? CBATTRequest {
-            self.cbPeripheralManager.respondToRequest(request, withResult:result)
+            self.cbPeripheralManager.respondToRequest(request, withResult: result)
         }
     }
 
@@ -314,10 +314,10 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic.value = request.value
             } else {
-                respondToRequest(request, withResult:CBATTError.Code._ErrorType.requestNotSupported)
+                respondToRequest(request, withResult:CBATTError.Code.requestNotSupported)
             }
         } else {
-            respondToRequest(request, withResult:CBATTError.Code._ErrorType.unlikelyError)
+            respondToRequest(request, withResult:CBATTError.Code.unlikelyError)
         }
     }
     
@@ -327,10 +327,10 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
             Logger.debug("responding with data: \(characteristic.stringValue)")
             request.value = characteristic.value
-            respondToRequest(request, withResult:CBATTError.Code._ErrorType.success)
+            respondToRequest(request, withResult:CBATTError.Code.success)
         } else {
             Logger.debug("characteristic not found")
-            respondToRequest(request, withResult:CBATTError.Code._ErrorType.unlikelyError)
+            respondToRequest(request, withResult:CBATTError.Code.unlikelyError)
         }
     }
     

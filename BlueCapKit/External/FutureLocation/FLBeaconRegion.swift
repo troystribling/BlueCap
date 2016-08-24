@@ -87,7 +87,7 @@ public class FLBeaconRegion : FLRegion {
     }
     
     public override class func isMonitoringAvailableForClass() -> Bool {
-        return CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion)
+        return CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self)
     }
 
     public func peripheralDataWithMeasuredPower(_ measuredPower: Int?) -> [String : AnyObject] {

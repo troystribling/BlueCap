@@ -13,9 +13,9 @@ import CoreBluetooth
 public protocol CBCentralManagerInjectable {
     var state : CBCentralManagerState { get }
     var delegate: CBCentralManagerDelegate? { get set }
-    func scanForPeripheralsWithServices(_ uuids: [CBUUID]?, options: [String: AnyObject]?)
+    func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?)
     func stopScan()
-    func connectPeripheral(_ peripheral: CBPeripheralInjectable, options: [String: AnyObject]?)
+    func connect(_ peripheral: CBPeripheral, options: [String : Any]?)
     func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable)
     func retrieveConnectedPeripheralsWithServices(_ serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable]
     func retrievePeripheralsWithIdentifiers(_ identifiers: [UUID]) -> [CBPeripheralInjectable]
@@ -23,7 +23,7 @@ public protocol CBCentralManagerInjectable {
 
 extension CBCentralManager : CBCentralManagerInjectable {
 
-    public func connectPeripheral(_ peripheral: CBPeripheralInjectable, options: [String: AnyObject]?) {
+    public func connectPeripheral(_ peripheral: CBPeripheralInjectable, options: [String: Any]?) {
         self.connect(peripheral as! CBPeripheral, options: options)
     }
 
@@ -117,7 +117,7 @@ public protocol CBPeripheralManagerInjectable {
     func addService(_ service: CBMutableServiceInjectable)
     func removeService(_ service: CBMutableServiceInjectable)
     func removeAllServices()
-    func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code._ErrorType)
+    func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code)
     func updateValue(_ value: Data, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool
 }
 
@@ -131,7 +131,7 @@ extension CBPeripheralManager: CBPeripheralManagerInjectable {
         self.remove(service as! CBMutableService)
     }
 
-    public func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code._ErrorType) {
+    public func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
         self.respond(to: request as! CBATTRequest, withResult: result)
     }
 
