@@ -14,7 +14,7 @@ public class FLCircularRegion : FLRegion {
     internal let clCircularRegion : CLCircularRegion
     
     public override class func isMonitoringAvailableForClass() -> Bool {
-        return CLLocationManager.isMonitoringAvailable(for: CLCircularRegion)
+        return CLLocationManager.isMonitoringAvailable(for: CLCircularRegion.self)
     }
     
     public var center : CLLocationCoordinate2D {

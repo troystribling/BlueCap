@@ -15,7 +15,7 @@ public protocol CBCentralManagerInjectable {
     var delegate: CBCentralManagerDelegate? { get set }
     func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?)
     func stopScan()
-    func connect(_ peripheral: CBPeripheral, options: [String : Any]?)
+    func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?)
     func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable)
     func retrieveConnectedPeripheralsWithServices(_ serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable]
     func retrievePeripheralsWithIdentifiers(_ identifiers: [UUID]) -> [CBPeripheralInjectable]
@@ -23,7 +23,7 @@ public protocol CBCentralManagerInjectable {
 
 extension CBCentralManager : CBCentralManagerInjectable {
 
-    public func connectPeripheral(_ peripheral: CBPeripheralInjectable, options: [String: Any]?) {
+    public func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
         self.connect(peripheral as! CBPeripheral, options: options)
     }
 

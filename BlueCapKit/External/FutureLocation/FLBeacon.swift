@@ -43,7 +43,7 @@ public class FLBeacon {
         return self.clBeacon.minor.intValue
     }
     
-    public var proximityUUID : NSUUID {
+    public var proximityUUID : UUID {
         return self.clBeacon.proximityUUID
     }
     

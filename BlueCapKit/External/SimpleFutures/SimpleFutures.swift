@@ -637,7 +637,7 @@ public final class Future<T> : Futurable {
 
     // MARK: FutureStream Combinators
 
-    public func flatMap<M>(_ capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> FutureStream<M>) -> FutureStream<M> {
+    public func flatMap<M>(capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> FutureStream<M>) -> FutureStream<M> {
         let stream = FutureStream<M>(capacity: capacity)
         onComplete(context: context, cancelToken: cancelToken) { result in
             stream.completeWith(context: context, stream: result.map(mapping))
@@ -645,7 +645,7 @@ public final class Future<T> : Futurable {
         return stream
     }
     
-    public func recoverWith(_ capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> FutureStream<T>) -> FutureStream<T> {
+    public func recoverWith(capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> FutureStream<T>) -> FutureStream<T> {
         let stream = FutureStream<T>(capacity: capacity)
         onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {

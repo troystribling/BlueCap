@@ -68,7 +68,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public var peripherals: [Peripheral] {
-        return Array(discoveredPeripherals.values).sort() {(p1: Peripheral, p2: Peripheral) -> Bool in
+        var values = Array(discoveredPeripherals.values)
+        let sorted: [Peripheral] = values.sort { (p1: Peripheral, p2: Peripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
             case .orderedSame:
                 return true
@@ -78,6 +79,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return true
             }
         }
+        return sorted
     }
 
     public private(set) var isScanning: Bool {
@@ -153,7 +155,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: Manage Peripherals
 
     func connect(peripheral: Peripheral, options: [String : Any]? = nil) {
-        cbCentralManager.connectPeripheral(peripheral.cbPeripheral, options: options)
+        cbCentralManager.connect(peripheral.cbPeripheral, options: options)
     }
     
     func cancelConnection(forPeripheral peripheral: Peripheral) {

@@ -137,9 +137,10 @@ public struct Nordic {
         }
         
         public enum AddressType: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable  {
-            
+            public typealias RawType = UInt8
+
             case unknown                    = 0
-            case `public`                     = 1
+            case `public`                   = 1
             case randomStatic               = 2
             case randomPrivateResolvable    = 3
             case randomPrivateUnresolvable  = 4

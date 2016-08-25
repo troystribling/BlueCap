@@ -162,8 +162,8 @@ public class MutableCharacteristic : NSObject {
         self.processWriteRequestPromise = nil
     }
     
-    open func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code._ErrorType) {
-        self.service?.peripheralManager?.respondToRequest(request, withResult:result)
+    open func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
+        self.service?.peripheralManager?.respondToRequest(request, withResult: result)
     }
 
     internal func didRespondToWriteRequest(_ request: CBATTRequestInjectable, central: CBCentralInjectable) -> Bool  {
@@ -175,48 +175,48 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: Manage Notification Updates
-    open func updateValueWithString(_ value: [String:String]) -> Bool {
-        guard let data = self.profile.dataFromStringValue(value) else {
+    open func updateValue(withString value: [String:String]) -> Bool {
+        guard let data = self.profile.data(fromString: value) else {
             return false
         }
-        return self.updateValueWithData(data)
+        return self.update(withData: data)
     }
 
-    open func updateValueWithData(_ value: Data) -> Bool  {
-        return self.updateValuesWithData([value])
+    open func update(withData value: Data) -> Bool  {
+        return self.updateValues([value])
     }
 
-    open func updateValue<T: Deserializable>(_ value: T) -> Bool {
-        return self.updateValueWithData(SerDe.serialize(value))
+    open func update<T: Deserializable>(_ value: T) -> Bool {
+        return self.update(withData: SerDe.serialize(value))
     }
 
-    open func updateValue<T: RawDeserializable>(_ value: T) -> Bool  {
-        return self.updateValueWithData(SerDe.serialize(value))
+    open func update<T: RawDeserializable>(_ value: T) -> Bool  {
+        return self.update(withData: SerDe.serialize(value))
     }
 
-    open func updateValue<T: RawArrayDeserializable>(_ value: T) -> Bool  {
-        return self.updateValueWithData(SerDe.serialize(value))
+    open func update<T: RawArrayDeserializable>(_ value: T) -> Bool  {
+        return self.update(withData: SerDe.serialize(value))
     }
 
-    open func updateValue<T: RawPairDeserializable>(_ value: T) -> Bool  {
-        return self.updateValueWithData(SerDe.serialize(value))
+    open func update<T: RawPairDeserializable>(_ value: T) -> Bool  {
+        return self.update(withData: SerDe.serialize(value))
     }
 
-    open func updateValue<T: RawArrayPairDeserializable>(_ value: T) -> Bool  {
-        return self.updateValueWithData(SerDe.serialize(value))
+    open func update<T: RawArrayPairDeserializable>(_ value: T) -> Bool  {
+        return self.update(withData: SerDe.serialize(value))
     }
 
     // MARK: CBPeripheralManagerDelegate Shims
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
         self.isUpdating = true
-        let _ = self.updateValuesWithData(self.queuedUpdates)
+        let _ = self.updateValues(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didSubscribeToCharacteristic(_ central: CBCentralInjectable) {
         self.isUpdating = true
         self.centrals[central.identifier] = central
-        let _ = self.updateValuesWithData(self.queuedUpdates)
+        let _ = self.updateValues(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
@@ -228,7 +228,7 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: Utils
-    fileprivate func updateValuesWithData(_ values: [Data]) -> Bool  {
+    fileprivate func updateValues(_ values: [Data]) -> Bool  {
         guard let value = values.last else {
             return self.isUpdating
         }
