@@ -13,9 +13,9 @@ import CoreLocation
 
 class BeaconManagerTests: XCTestCase {
 
-    let testCLBeaconRegion = CLBeaconRegion(proximityUUID: NSUUID(), major: 1, minor: 2, identifier: "Test Beaccon")
+    let testCLBeaconRegion = CLBeaconRegion(proximityUUID: UUID(), major: 1, minor: 2, identifier: "Test Beaccon")
     let testCLBeacons = [
-        CLBeaconMock(proximityUUID: NSUUID(), major: 1, minor: 2, proximity: .Immediate, accuracy: kCLLocationAccuracyBest, rssi: -45), CLBeaconMock(proximityUUID: NSUUID(), major: 1, minor: 2, proximity: .Far, accuracy: kCLLocationAccuracyBest, rssi: -85)]
+        CLBeaconMock(proximityUUID: UUID() as NSUUID, major: 1, minor: 2, proximity: .immediate, accuracy: kCLLocationAccuracyBest, rssi: -45), CLBeaconMock(proximityUUID: UUID() as NSUUID, major: 1, minor: 2, proximity: .far, accuracy: kCLLocationAccuracyBest, rssi: -85)]
 
     var testBeaconRegion: FLBeaconRegion!
     var mock: CLLocationManagerMock!
@@ -32,15 +32,15 @@ class BeaconManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    func waitForExpectations(timeout: Double = 2.0) {
-        waitForExpectationsWithTimeout(timeout) { error in
+    func waitForExpectations(_ timeout: Double = 2.0) {
+        waitForExpectations(timeout: timeout) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
 
     func testStartRangingRegionSuccess() {
-        CLLocationManagerMock._authorizationStatus = .AuthorizedAlways
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        CLLocationManagerMock._authorizationStatus = .authorizedAlways
+        let expectation = self.expectation(description: "onSuccess fulfilled for future")
         let context = ImmediateContext()
         let future = self.beaconManager.startRangingBeaconsInRegion(self.testBeaconRegion, context: context)
         future.onSuccess(context) { beacons in
@@ -59,8 +59,8 @@ class BeaconManagerTests: XCTestCase {
     }
     
     func testStartRangingRegionFailure() {
-        CLLocationManagerMock._authorizationStatus = .AuthorizedAlways
-        let expectation = expectationWithDescription("onFailure fulfilled for future")
+        CLLocationManagerMock._authorizationStatus = .authorizedAlways
+        let expectation = self.expectation(description: "onFailure fulfilled for future")
         let context = ImmediateContext()
         let future = self.beaconManager.startRangingBeaconsInRegion(self.testBeaconRegion, context: context)
         future.onSuccess(context) { beacons in
@@ -78,8 +78,8 @@ class BeaconManagerTests: XCTestCase {
     }
     
     func testStartRangingAuthorizationFailure() {
-        CLLocationManagerMock._authorizationStatus = .NotDetermined
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        CLLocationManagerMock._authorizationStatus = .notDetermined
+        let expectation = self.expectation(description: "onSuccess fulfilled for future")
         let future = self.beaconManager.startRangingBeaconsInRegion(self.testBeaconRegion)
         future.onSuccess {state in
             XCTAssert(false, "onSuccess called")
@@ -91,13 +91,13 @@ class BeaconManagerTests: XCTestCase {
             XCTAssertFalse(self.beaconManager.isRanging, "isRanging invalid")
             expectation.fulfill()
         }
-        self.beaconManager.didChangeAuthorizationStatus(.Denied)
+        self.beaconManager.didChangeAuthorizationStatus(.denied)
         waitForExpectations()
     }
 
     func testStopRangingRegion() {
-        CLLocationManagerMock._authorizationStatus = .AuthorizedAlways
-        let expectation = expectationWithDescription("onSuccess fulfilled for future")
+        CLLocationManagerMock._authorizationStatus = .authorizedAlways
+        let expectation = self.expectation(description: "onSuccess fulfilled for future")
         let context = ImmediateContext()
         let future = self.beaconManager.startRangingBeaconsInRegion(self.testBeaconRegion, context: context)
         future.onSuccess(context) { beacons in

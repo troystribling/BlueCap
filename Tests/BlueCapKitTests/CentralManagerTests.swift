@@ -26,26 +26,26 @@ class CentralManagerTests: XCTestCase {
 
     // MARK: whenPowerOn
     func testWhenPowerOn_AndPoweredOn_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .PoweredOn)
+        let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOn_AndPoweredOff_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .PoweredOff)
+        let mock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
-        mock.state = .PoweredOn
+        mock.state = .poweredOn
         centralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOn_WithBluetoothUnsupported_CompletesWithFailure() {
-        let mock = CBCentralManagerMock(state: .PoweredOff)
+        let mock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
-        mock.state = .Unsupported
+        mock.state = .unsupported
         centralManager.didUpdateState(mock)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqual(error.code, BCError.centralStateUnsupported.code)
@@ -54,16 +54,16 @@ class CentralManagerTests: XCTestCase {
 
     // MARK: whenPowerOff
     func testWhenPowerOff_AndPoweredOn_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .PoweredOn)
+        let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
-        mock.state = .PoweredOff
+        mock.state = .poweredOff
         centralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPowerOff_AndPoweredOff_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .PoweredOff)
+        let mock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
@@ -71,7 +71,7 @@ class CentralManagerTests: XCTestCase {
 
     // MARK: Peripheral discovery
     func testStartScanning_WhenPoweredOnAndPeripheralDiscovered_CompletesSuccessfully() {
-        let centralMock = CBCentralManagerMock(state: .PoweredOn)
+        let centralMock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: centralMock)
         let peripheralMock = CBPeripheralMock()
         let future = centralManager.startScanning()
@@ -79,7 +79,7 @@ class CentralManagerTests: XCTestCase {
         XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
             { _ in
                 XCTAssert(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices not called")
-                if let peripheral = centralManager.peripherals.first where centralManager.peripherals.count == 1 {
+                if let peripheral = centralManager.peripherals.first, centralManager.peripherals.count == 1 {
                     XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
                     XCTAssertEqual(peripheral.name, peripheralMock.name, "Peripheral name is invalid")
                     XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier is invalid")
@@ -91,7 +91,7 @@ class CentralManagerTests: XCTestCase {
     }
     
     func testStartScanning_WhenPoweredOff_CompletesWithError() {
-        let centralMock = CBCentralManagerMock(state: .PoweredOff)
+        let centralMock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: centralMock)
         let future = centralManager.startScanning()
         XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
@@ -103,11 +103,11 @@ class CentralManagerTests: XCTestCase {
     }
 
     func testStartScanning_WithTimeoutPeripeharlDiscovered_CompeletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .PoweredOn)
+        let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let peripheralMock = CBPeripheralMock()
         let future = centralManager.startScanning(timeout: 1.0)
-        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI:NSNumber(integer: -45))
+        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(value: -45))
         XCTAssertFutureStreamSucceeds(future, context:self.immediateContext, validations: [
             { peripheral in
                 XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier timeout")
@@ -116,7 +116,7 @@ class CentralManagerTests: XCTestCase {
     }
 
     func testStartScanning_OnScanTimeout_CompletesWithPeripheralScanTimeout() {
-        let mock = CBCentralManagerMock(state: .PoweredOn)
+        let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.startScanning(timeout: 0.1)
         XCTAssertFutureStreamFails(future, validations: [
@@ -130,7 +130,7 @@ class CentralManagerTests: XCTestCase {
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let mock = CBCentralManagerMock()
         let centralManager = CentralManager(centralManager: mock)
-        let testPeripherals = [CBPeripheralMock(state: .Connected, identifier: NSUUID()), CBPeripheralMock(state: .Connected, identifier: NSUUID())]
+        let testPeripherals = [CBPeripheralMock(state: .connected), CBPeripheralMock(state: .connected)]
         for testPeripheral in testPeripherals {
             let testServices = [CBServiceMock(), CBServiceMock()]
             for testService in testServices {
@@ -139,9 +139,9 @@ class CentralManagerTests: XCTestCase {
             }
             testPeripheral.services = testServices
         }
-        let testScannedServices = [CBUUID(string: NSUUID().UUIDString), CBUUID(string: NSUUID().UUIDString)]
-        let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(bool: true),
-                                                CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test"]
+        let testScannedServices = [CBUUID(string: UUID().uuidString), CBUUID(string: UUID().uuidString)]
+        let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(value: true),
+                                                CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test" as AnyObject]
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
                                         scannedServices: testScannedServices, options: testOptions)

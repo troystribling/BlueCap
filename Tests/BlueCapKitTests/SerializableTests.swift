@@ -80,14 +80,14 @@ class SerializableTests: XCTestCase {
     }
 
     func testSerialize_Pair_Sucess() {
-        let data = NSData.serialize(Int16(-1100),  value2:UInt8(100))
+        let data = Data.serialize(Int16(-1100),  value2:UInt8(100))
         XCTAssert(data.hexStringValue() == "b4fb64", "Pair serialization value invalid: \(data.hexStringValue())")
     }
 
     func testSerialize_PairArray_Sucess() {
         let value1 = [Int16(-1100), Int16(1000)]
         let value2 = [UInt8(100), UInt8(75)]
-        let data = NSData.serializeArrays(value1, values2:value2)
+        let data = Data.serializeArrays(value1, values2:value2)
         XCTAssert(data.hexStringValue() == "b4fbe803644b", "Pair serialization value invalid: \(data.hexStringValue())")
     }
 }

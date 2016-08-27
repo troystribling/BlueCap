@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import SimpleFutures
+@testable import BlueCapKit
 
 class FutureStreamTests: XCTestCase {
 
@@ -813,10 +813,10 @@ class FutureStreamTests: XCTestCase {
         stream.success(2)
         XCTAssertFutureStreamFails(filtered, context: TestContext.immediate, validations: [
             { error in
-                XCTAssertEqualErrors(error, SimpleFutures.Error.noSuchElement)
+                XCTAssertEqualErrors(error, FuturesError.noSuchElement)
             },
             { error in
-                XCTAssertEqualErrors(error, SimpleFutures.Error.noSuchElement)
+                XCTAssertEqualErrors(error, FuturesError.noSuchElement)
             }
         ])
     }

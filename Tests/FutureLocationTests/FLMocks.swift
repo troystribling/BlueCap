@@ -13,7 +13,7 @@ import CoreLocation
 // MARK: - CLLocationManagerMock -
 class CLLocationManagerMock : CLLocationManagerInjectable {
 
-    static var _authorizationStatus = CLAuthorizationStatus.NotDetermined
+    static var _authorizationStatus = CLAuthorizationStatus.notDetermined
     static var _isRangingAvailable = true
     static var _significantLocationChangeMonitoringAvailable = true
     static var _deferredLocationUpdatesAvailable = true
@@ -58,7 +58,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
     // MARK: Configure
     var pausesLocationUpdatesAutomatically = false
     var allowsBackgroundLocationUpdates = false
-    var activityType = CLActivityType.Fitness
+    var activityType = CLActivityType.fitness
     var distanceFilter: CLLocationDistance = kCLDistanceFilterNone
     var desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
 
@@ -82,7 +82,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
         return self._deferredLocationUpdatesAvailable
     }
 
-    func allowDeferredLocationUpdatesUntilTraveled(distance: CLLocationDistance, timeout: Double) {
+    func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: Double) {
         self.allowDeferredLocationUpdatesUntilTraveledCalled = true
         self.allowDeferredLocationUpdatesUntilTraveledDistance = distance
         self.allowDeferredLocationUpdatesUntilTraveledTimeout = timeout
@@ -106,17 +106,17 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
 
     var monitoredRegions = Set<CLRegion>()
 
-    func startMonitoringForRegion(region: CLRegion) {
+    func startMonitoringForRegion(_ region: CLRegion) {
         self.startMonitoringForRegionCalled = true
         self.startMonitoringForRegionRegion = region
     }
 
-    func stopMonitoringForRegion(region: CLRegion) {
+    func stopMonitoringForRegion(_ region: CLRegion) {
         self.stopMonitoringForRegionCalled = true
         self.stopMonitoringForRegionRegion = region
     }
 
-    func requestStateForRegion(region: CLRegion) {
+    func requestStateForRegion(_ region: CLRegion) {
         self.requestStateForRegionCalled = true
         self.requestStateForRegionRegion = region
     }
@@ -128,12 +128,12 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
 
     var rangedRegions = Set<CLRegion>()
 
-    func startRangingBeaconsInRegion(region: CLBeaconRegion) {
+    func startRangingBeaconsInRegion(_ region: CLBeaconRegion) {
         self.startRangingBeaconsInRegionCalled = true
         self.startRangingBeaconsInRegionRegion = region
     }
 
-    func stopRangingBeaconsInRegion(region: CLBeaconRegion) {
+    func stopRangingBeaconsInRegion(_ region: CLBeaconRegion) {
         self.stopRangingBeaconsInRegionCalled = true
         self.stopRangingBeaconsInRegionRegion = region
     }
@@ -168,13 +168,13 @@ class BeaconManagerUT : FLBeaconManager {
 
 // MARK: - CLBeaconMock -
 class CLBeaconMock : CLBeaconInjectable {
-    let proximityUUID: NSUUID
+    let proximityUUID: UUID
     let major: NSNumber
     let minor: NSNumber
     let proximity: CLProximity
     let accuracy: CLLocationAccuracy
     let rssi: Int
-    init(proximityUUID: NSUUID, major: NSNumber, minor: NSNumber, proximity: CLProximity, accuracy: CLLocationAccuracy, rssi: Int) {
+    init(proximityUUID: UUID, major: NSNumber, minor: NSNumber, proximity: CLProximity, accuracy: CLLocationAccuracy, rssi: Int) {
         self.proximityUUID = proximityUUID
         self.major = major
         self.minor = minor

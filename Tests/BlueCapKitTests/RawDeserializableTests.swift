@@ -16,9 +16,9 @@ import CoreLocation
 class RawDeserializableTests: XCTestCase {
 
     enum Testit: UInt8, RawDeserializable {
-        case No     = 0
-        case Yes    = 1
-        case Maybe  = 2        
+        case no     = 0
+        case yes    = 1
+        case maybe  = 2        
         static let UUID = "abc"
     }
 
@@ -47,7 +47,7 @@ class RawDeserializableTests: XCTestCase {
     }
     
     func testSerialize_ValidRawDeserializable_Sucess() {
-        let value = Testit.Yes
+        let value = Testit.yes
         let data = SerDe.serialize(value)
         XCTAssert(data.hexStringValue() == "01", "RawDeserializable serialization failed: \(data)")
     }

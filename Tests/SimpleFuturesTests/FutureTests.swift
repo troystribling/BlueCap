@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import SimpleFutures
+@testable import BlueCapKit
 
 class FutureTests: XCTestCase {
 
@@ -478,7 +478,7 @@ class FutureTests: XCTestCase {
         }
         future.success(1)
         XCTAssertFutureFails(filtered, context: TestContext.immediate) { error in
-            XCTAssertEqualErrors(error, Error.noSuchElement)
+            XCTAssertEqualErrors(error, FuturesError.noSuchElement)
         }
     }
 
@@ -824,7 +824,7 @@ class FutureTests: XCTestCase {
     }
 
     func testFuture_WithValueErrorCallbackCompletedWithValidValue_CompletesSuccessfully() {
-        func testMethod(completion: (Int?, Swift.Error?) -> Void) {
+        func testMethod(_ completion: (Int?, Swift.Error?) -> Void) {
             completion(1, nil)
         }
         let result = future(method: testMethod)
@@ -834,17 +834,17 @@ class FutureTests: XCTestCase {
     }
 
     func testFuture_WithValueErrorCallbackCompletedWithInvalidValue_CompletesWithInvalidValueError() {
-        func testMethod(completion: (Int?, Swift.Error?) -> Void) {
+        func testMethod(_ completion: (Int?, Swift.Error?) -> Void) {
             completion(nil, nil)
         }
         let result = future(method: testMethod)
         XCTAssertFutureFails(result, context: TestContext.immediate) { error in
-            XCTAssertEqualErrors(error, Error.invalidValue)
+            XCTAssertEqualErrors(error, FuturesError.invalidValue)
         }
     }
 
     func testFuture_WithValueErrorCallbackCompletedWithWrror_CompletesWithError() {
-        func testMethod(completion: (Int?, Swift.Error?) -> Void) {
+        func testMethod(_ completion: (Int?, Swift.Error?) -> Void) {
             completion(nil, TestFailure.error)
         }
         let result = future(method: testMethod)
@@ -854,7 +854,7 @@ class FutureTests: XCTestCase {
     }
 
     func testFuture_WithErrorCallbackCompletedWithNoError_CompletesSuccessfully() {
-        func testMethod(completion: (Swift.Error?) -> Void) {
+        func testMethod(_ completion: (Swift.Error?) -> Void) {
             completion(nil)
         }
         let result = future(method: testMethod)
@@ -862,7 +862,7 @@ class FutureTests: XCTestCase {
     }
 
     func testFuture_WithErrorCallbackCompletedWithWrror_CompletesWithError() {
-        func testMethod(completion: (Swift.Error?) -> Void) {
+        func testMethod(_ completion: (Swift.Error?) -> Void) {
             completion(TestFailure.error)
         }
         let result = future(method: testMethod)
@@ -872,7 +872,7 @@ class FutureTests: XCTestCase {
     }
 
     func testFuture_WithValueCallbackCompletedWithValidValue_CompletesSuccessfully() {
-        func testMethod(completion: (Int) -> Void) {
+        func testMethod(_ completion: (Int) -> Void) {
             completion(1)
         }
         let result = future(method: testMethod)

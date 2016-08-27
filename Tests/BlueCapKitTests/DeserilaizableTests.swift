@@ -34,7 +34,7 @@ class DeserilaizableTests: XCTestCase {
     }
 
     func testDeserialize_WhenGivenInvalidSerializedUInt8_ReturnsNil() {
-        let data = NSData()
+        let data = Data()
         if let value: UInt8 = UInt8.deserialize(data) {
             XCTFail("UInt8 deserialization succeded: \(value)")
         }
@@ -59,7 +59,7 @@ class DeserilaizableTests: XCTestCase {
     }
 
     func testDeserialize_WhenGivenInvalidSerializedInt8_ReturnsNil() {
-        let data = NSData()
+        let data = Data()
         if let value: Int8 = Int8.deserialize(data) {
             XCTFail("Int8 deserializaion succeded: \(value)")
         }

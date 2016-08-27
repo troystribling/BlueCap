@@ -15,9 +15,9 @@ class CharacteristicProfileTests: XCTestCase {
 
     var centralManager: CentralManager!
     var service: Service!
-    let mockPerpheral = CBPeripheralMock(state: .Connected)
+    let mockPerpheral = CBPeripheralMock(state: .connected)
     let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))
-    let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.Read, .Write], isNotifying: false)
+    let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.read, .write], isNotifying: false)
 
     var peripheral: Peripheral!
     let immediateContext = ImmediateContext()
@@ -26,7 +26,7 @@ class CharacteristicProfileTests: XCTestCase {
     override func setUp() {
         super.setUp()
         GnosusProfiles.create()
-        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .PoweredOn))
+        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn))
         self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         self.service  = Service(cbService: self.mockService, peripheral: self.peripheral)
     }
