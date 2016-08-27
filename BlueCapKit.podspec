@@ -11,7 +11,7 @@ Pod::Spec.new do |spec|
   spec.author             = { "Troy Stribling" => "me@troystribling.com" }
   spec.social_media_url   = "http://twitter.com/troystribling"
 
-  spec.platform           = :ios, "8.0"
+  spec.platform           = :ios, "10.0"
 
   spec.cocoapods_version  = '>= 1.0'
 
