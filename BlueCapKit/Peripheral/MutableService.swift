@@ -52,23 +52,11 @@ public class MutableService : NSObject {
         self.init(profile: ServiceProfile(UUID: UUID))
     }
 
-    internal init(cbMutableService: CBMutableServiceInjectable, profile: ServiceProfile) {
+    internal init(cbMutableService: CBMutableServiceInjectable, profile: ServiceProfile? = nil) {
         self.cbMutableService = cbMutableService
-        self.profile = profile
+        self.profile = profile ?? ServiceProfile(UUID: cbMutableService.UUID.uuidString)
         super.init()
     }
-
-    internal init(cbMutableService: CBMutableServiceInjectable) {
-        self.cbMutableService = cbMutableService
-        let uuid = cbMutableService.UUID
-        if let profile = ProfileManager.sharedInstance.services[uuid] {
-            self.profile = profile
-        } else {
-            self.profile = ServiceProfile(UUID: uuid.uuidString)
-        }
-        super.init()
-    }
-
 
     public func characteristicsFromProfiles() {
         self.characteristics = self.profile.characteristics.map { MutableCharacteristic(profile: $0) }

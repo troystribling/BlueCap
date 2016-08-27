@@ -10,6 +10,7 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - PeripheralManager -
+@available(iOS 10, *)
 public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: Serialize Property IO
@@ -27,7 +28,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate var _afterSeriviceAddPromise = Promise<Void>()
     fileprivate var _afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
 
-    fileprivate var _state = CBPeripheralManagerState.unknown
+    fileprivate var _state = CBManagerState.unknown
     fileprivate var _poweredOn = false
     fileprivate var _isAdvertising = false
 
@@ -96,7 +97,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    public var state: CBPeripheralManagerState {
+    public var state: CBManagerState {
         get {
             return cbPeripheralManager.state
         }
@@ -166,7 +167,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         if !self.isAdvertising {
             var advertisementData: [String : AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]
             if let uuids = uuids {
-                advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids
+                advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids as AnyObject
             }
             self.cbPeripheralManager.startAdvertising(advertisementData)
         } else {
@@ -196,17 +197,17 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Manage Services
-    public func addService(_ service: MutableService) -> Future<Void> {
+    public func add(service: MutableService) -> Future<Void> {
         service.peripheralManager = self
         self.addConfiguredCharacteristics(service.characteristics)
         self.afterSeriviceAddPromise = Promise<Void>()
         self.configuredServices[service.UUID] = service
-        self.cbPeripheralManager.addService(service.cbMutableService)
+        self.cbPeripheralManager.add(service: service.cbMutableService)
         Logger.debug("service name=\(service.name), uuid=\(service.UUID)")
         return self.afterSeriviceAddPromise.future
     }
     
-    public func addServices(_ services: [MutableService]) -> Future<Void> {
+    public func add(services: [MutableService]) -> Future<Void> {
         Logger.debug("service count \(services.count)")
         for service in services {
             self.addConfiguredCharacteristics(service.characteristics)
@@ -409,7 +410,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     // MARK: Utils
     public func addServices(_ promise: Promise<Void>, services: [MutableService]) {
         if services.count > 0 {
-            let future = self.addService(services[0])
+            let future = self.add(service: services[0])
             future.onSuccess {
                 if services.count > 1 {
                     let servicesTail = Array(services[1...services.count-1])
@@ -447,7 +448,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
         }
         self.configuredServices.removeValueForKey(service.UUID)
-        self.cbPeripheralManager.removeService(service.cbMutableService)
+        self.cbPeripheralManager.remove(service: service.cbMutableService)
     }
     
     fileprivate func removeAllServiceAndCharacteristics() {

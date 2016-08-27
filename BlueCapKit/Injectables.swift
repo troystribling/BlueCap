@@ -11,14 +11,14 @@ import CoreBluetooth
 
 // MARK: - CBCentralManagerInjectable -
 public protocol CBCentralManagerInjectable {
-    var state : CBCentralManagerState { get }
+    var state : CBManagerState { get }
     var delegate: CBCentralManagerDelegate? { get set }
     func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?)
     func stopScan()
     func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?)
     func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable)
-    func retrieveConnectedPeripheralsWithServices(_ serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable]
-    func retrievePeripheralsWithIdentifiers(_ identifiers: [UUID]) -> [CBPeripheralInjectable]
+    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable]
+    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable]
 }
 
 extension CBCentralManager : CBCentralManagerInjectable {
@@ -31,12 +31,12 @@ extension CBCentralManager : CBCentralManagerInjectable {
         self.cancelPeripheralConnection(peripheral as! CBPeripheral)
     }
 
-    public func retrieveConnectedPeripheralsWithServices(_ serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
+    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
         let peripherals = self.retrieveConnectedPeripherals(withServices: serviceUUIDs) as [CBPeripheral]
         return  peripherals.map { $0 as CBPeripheralInjectable }
     }
 
-    public func retrievePeripheralsWithIdentifiers(_ identifiers: [UUID]) -> [CBPeripheralInjectable] {
+    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
         let peripherals = self.retrievePeripherals(withIdentifiers: identifiers) as [CBPeripheral]
         return  peripherals.map { $0 as CBPeripheralInjectable }
     }
@@ -111,11 +111,11 @@ extension CBCharacteristic : CBCharacteristicInjectable {}
 public protocol CBPeripheralManagerInjectable {
     var delegate: CBPeripheralManagerDelegate? { get set }
     var isAdvertising: Bool { get }
-    var state: CBPeripheralManagerState { get }
-    func startAdvertising(_ advertisementData:[String:AnyObject]?)
+    var state: CBManagerState { get }
+    func startAdvertising(_ advertisementData : [String : Any]?)
     func stopAdvertising()
-    func addService(_ service: CBMutableServiceInjectable)
-    func removeService(_ service: CBMutableServiceInjectable)
+    func add(service: CBMutableServiceInjectable)
+    func remove(service: CBMutableServiceInjectable)
     func removeAllServices()
     func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code)
     func updateValue(_ value: Data, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool
@@ -123,19 +123,19 @@ public protocol CBPeripheralManagerInjectable {
 
 extension CBPeripheralManager: CBPeripheralManagerInjectable {
 
-    public func addService(_ service: CBMutableServiceInjectable) {
+    open func add(service: CBMutableServiceInjectable) {
         self.add(service as! CBMutableService)
     }
 
-    public func removeService(_ service: CBMutableServiceInjectable) {
+    open func remove(service: CBMutableServiceInjectable) {
         self.remove(service as! CBMutableService)
     }
 
-    public func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
+    open func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
         self.respond(to: request as! CBATTRequest, withResult: result)
     }
 
-    public func updateValue(_ value: Data, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool {
+    open func updateValue(_ value: Data, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool {
         return self.updateValue(value, for: characteristic as! CBMutableCharacteristic, onSubscribedCentrals: centrals as! [CBCentral]?)
     }
 

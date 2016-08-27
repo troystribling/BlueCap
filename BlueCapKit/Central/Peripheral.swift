@@ -362,7 +362,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
         Logger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.uuidString)")
         centralManager.centralQueue.delay(reconnectDelay) {
-            centralManager.connect(peripheral: self)
+            centralManager.connect(self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
             self.currentError = .none
@@ -390,7 +390,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.stopPollingRSSI()
         if self.state == .connected {
             Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
-            central.cancelConnection(forPeripheral: self)
+            central.cancelPeripheralConnection(self)
         } else {
             Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
             self.didDisconnectPeripheral(PeripheralError.disconnected)
@@ -705,7 +705,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             if self.state != .connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("connection timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .timeout
-                centralManager.cancelConnection(forPeripheral: self)
+                centralManager.cancelPeripheralConnection(self)
             } else {
                 Logger.debug("connection timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(self.connectionSequence), state=\(self.state.rawValue)")
             }
@@ -720,7 +720,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         Peripheral.pollQueue.delay(timeout) {
             if sequence == self.serviceDiscoverySequence && self.serviceDiscoveryInProgress {
                 Logger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
-                centralManager.cancelConnection(forPeripheral: self)
+                centralManager.cancelPeripheralConnection(self)
                 self.serviceDiscoveryInProgress = false
                 self.servicesDiscoveredPromise?.failure(PeripheralError.serviceDiscoveryTimeout)
             } else {

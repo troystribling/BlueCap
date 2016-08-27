@@ -182,9 +182,7 @@ public struct BLESIGGATT {
 // MARK: - Profile Definition -
 public class BLESIGGATTProfiles {
     
-    public class func create () {
-        
-        let profileManager = ProfileManager.sharedInstance
+    public static func create(profileManager: ProfileManager) {
         
         // Device Information Service
         let deviceInformationService = ConfiguredServiceProfile<BLESIGGATT.DeviceInformationService>()

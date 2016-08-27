@@ -200,9 +200,7 @@ public struct Nordic {
 // MARK: - Profile Definition -
 public class NordicProfiles {
     
-    public class func create() {
-        
-        let profileManager = ProfileManager.sharedInstance
+    public static func create(profileManager: ProfileManager) {
         
         // Nordic Device Temperature Service
         let temperatureService = ConfiguredServiceProfile<Nordic.DeviceTemperatureService>()

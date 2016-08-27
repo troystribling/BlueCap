@@ -11,34 +11,11 @@ import CoreBluetooth
 
 public class ProfileManager {
     
-    private static var __once: () = {
-            StaticInstance.instance = ProfileManager()
-        }()
-    
-    // INTERNAL
-    internal var _services = [CBUUID: ServiceProfile]()
-    
-    // PRIVATE
-    fileprivate init() {
-    }
-    
-    // PUBLIC
-    public var services: [CBUUID: ServiceProfile] {
-        return self._services
-    }
+    public private(set) var services = [CBUUID : ServiceProfile]()
 
-    public class var sharedInstance: ProfileManager {
-        struct StaticInstance {
-            static var onceToken: Int  = 0
-            static var instance: ProfileManager?   = nil
-        }
-        _ = ProfileManager.__once
-        return StaticInstance.instance!
-    }
-    
     public func addService(_ serviceProfile: ServiceProfile) {
         Logger.debug("name=\(serviceProfile.name), UUID=\(serviceProfile.UUID.uuidString)")
-        self._services[serviceProfile.UUID] = serviceProfile
+        self.services[serviceProfile.UUID] = serviceProfile
     }
-    
+
 }

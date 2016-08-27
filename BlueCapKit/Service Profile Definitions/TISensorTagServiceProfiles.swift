@@ -1199,9 +1199,7 @@ public class TISensorTagServiceProfiles {
     fileprivate static var barometerCharacteristicInit: FutureStream<Characteristic>!
     fileprivate static var hygrometerCharacteristicInit: FutureStream<Characteristic>!
 
-    public class func create() {
-
-        let profileManager = ProfileManager.sharedInstance
+    public static func create(profileManager: ProfileManager) {
 
         // Accelerometer Service
         let accelerometerService = ConfiguredServiceProfile<TISensorTag.AccelerometerService>()

@@ -165,10 +165,8 @@ public struct Gnosus {
 // MARK: - Profile Definition -
 public struct GnosusProfiles {
 
-    public static func create() {
-        
-        let profileManager = ProfileManager.sharedInstance
-        
+    public static func create(profileManager: ProfileManager) {
+
         // Hello World Service
         let helloWorldService = ConfiguredServiceProfile<Gnosus.HelloWorldService>()
         let greetingCharacteristic = StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>()

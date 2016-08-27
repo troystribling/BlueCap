@@ -253,7 +253,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
     public class func reverseGeocodeLocation(_ location: CLLocation) -> Future<[CLPlacemark]>  {
         let geocoder = CLGeocoder()
         let promise = Promise<[CLPlacemark]>()
-        geocoder.reverseGeocodeLocation(location){ (placemarks: [CLPlacemark]?, error: Error?) -> Void in
+        geocoder.reverseGeocodeLocation(location) { (placemarks: [CLPlacemark]?, error: Swift.Error?) -> Void in
             if let error = error {
                 promise.failure(error)
             } else {
@@ -263,17 +263,15 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
                     promise.success([CLPlacemark]())
                 }
             }
-        } as! CLGeocodeCompletionHandler as! CLGeocodeCompletionHandler as! CLGeocodeCompletionHandler as! CLGeocodeCompletionHandler as! CLGeocodeCompletionHandler as! CLGeocodeCompletionHandler as! CLGeocodeCompletionHandler
+        }
         return promise.future
     }
 
-    open func reverseGeocodeLocation()  -> Future<[CLPlacemark]>  {
+    public func reverseGeocodeLocation()  -> Future<[CLPlacemark]>  {
         if let location = self.location {
             return FLLocationManager.reverseGeocodeLocation(location)
         } else {
-            let promise = Promise<[CLPlacemark]>()
-            promise.failure(LocationError.updateFailed)
-            return promise.future
+            return Future(error: LocationError.updateFailed)
         }
     }
 

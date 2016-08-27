@@ -10,6 +10,7 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - CentralManager -
+@available(iOS 10, *)
 public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Serialize Property IO
@@ -68,8 +69,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public var peripherals: [Peripheral] {
-        var values = Array(discoveredPeripherals.values)
-        let sorted: [Peripheral] = values.sort { (p1: Peripheral, p2: Peripheral) -> Bool in
+        return Array(discoveredPeripherals.values).sorted { (p1: Peripheral, p2: Peripheral) -> Bool in
             switch p1.discoveredAt.compare(p2.discoveredAt) {
             case .orderedSame:
                 return true
@@ -79,7 +79,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return true
             }
         }
-        return sorted
     }
 
     public private(set) var isScanning: Bool {
@@ -100,7 +99,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public var state: CBCentralManagerState {
+    public var state: CBManagerState {
         get {
             return cbCentralManager.state
         }
@@ -154,11 +153,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Manage Peripherals
 
-    func connect(peripheral: Peripheral, options: [String : Any]? = nil) {
+    func connect(_ peripheral: Peripheral, options: [String : Any]? = nil) {
         cbCentralManager.connect(peripheral.cbPeripheral, options: options)
     }
     
-    func cancelConnection(forPeripheral peripheral: Peripheral) {
+    func cancelPeripheralConnection(_ peripheral: Peripheral) {
         cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
     }
 
@@ -226,7 +225,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: Retrieve Peripherals
 
     public func retrieveConnectedPeripherals(withServices services: [CBUUID]) -> [Peripheral] {
-        return cbCentralManager.retrieveConnectedPeripheralsWithServices(services).map { cbPeripheral in
+        return cbCentralManager.retrieveConnectedPeripherals(withServices: services).map { cbPeripheral in
             let newBCPeripheral: Peripheral
             if let oldBCPeripheral = discoveredPeripherals[cbPeripheral.identifier] {
                 newBCPeripheral = Peripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)
@@ -239,7 +238,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [Peripheral] {
-        return cbCentralManager.retrievePeripheralsWithIdentifiers(identifiers).map { cbPeripheral in
+        return cbCentralManager.retrievePeripherals(withIdentifiers: identifiers).map { cbPeripheral in
             let newBCPeripheral: Peripheral
             if let oldBCPeripheral = discoveredPeripherals[cbPeripheral.identifier] {
                 newBCPeripheral = Peripheral(cbPeripheral: cbPeripheral, bcPeripheral: oldBCPeripheral)

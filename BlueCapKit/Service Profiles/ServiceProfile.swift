@@ -40,7 +40,14 @@ public class ServiceProfile {
         Logger.debug("name=\(characteristicProfile.name), uuid=\(characteristicProfile.UUID.uuidString)")
         self.characteristicProfiles[characteristicProfile.UUID] = characteristicProfile
     }
-    
+
+    public func characteristicProfile(withUUID UUID: CBUUID) -> CharacteristicProfile {
+        guard let characteristicProfile = self.characteristicProfiles[UUID] else {
+            return CharacteristicProfile(UUID: UUID.uuidString)
+        }
+        return characteristicProfile
+    }
+
 }
 
 public class ConfiguredServiceProfile<Config: ServiceConfigurable>: ServiceProfile {

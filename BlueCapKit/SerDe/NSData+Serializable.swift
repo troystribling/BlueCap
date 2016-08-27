@@ -15,13 +15,22 @@ extension Data: Serializable {
     }
     
     public static func serialize<T>(_ value: T) -> Data {
-        let values = [fromHostByteOrder(value)]
-        return Data(bytes: UnsafePointer<UInt8>(values), count:MemoryLayout<T>.size)
+        var littleValue = fromHostByteOrder(value)
+        let size = MemoryLayout<T>.size
+        return withUnsafePointer(to: &littleValue) { ptr in
+            ptr.withMemoryRebound(to: UInt8.self, capacity: size) { bytes in
+                Data(bytes: bytes, count: size)
+            }
+        }
     }
     
     public static func serializeArray<T>(_ values: [T]) -> Data {
-        let littleValues = values.map{fromHostByteOrder($0)}
-        return Data(bytes: UnsafePointer<UInt8>(littleValues), count: MemoryLayout<T>.size*littleValues.count)
+        var littleValues = values.map{ fromHostByteOrder($0) }
+        let size = MemoryLayout<T>.size*littleValues.count
+        return withUnsafePointer(to: &littleValues) { ptr in
+            ptr.withMemoryRebound(to: UInt8.self, capacity: size) { bytes in
+                return Data(bytes: bytes, count: size)}
+        }
     }
 
     public static func serialize<T1, T2>(_ value1: T1, value2: T2) -> Data {

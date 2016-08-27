@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Errors -
 
-public enum Error : Int, Swift.Error {
+public enum FuturesError : Int, Swift.Error {
     case noSuchElement
     case invalidValue
 }
@@ -180,7 +180,7 @@ public enum Try<T> : Tryable {
         case .success(let value):
             do {
                 if try !predicate(value) {
-                    return Try<T>(Error.noSuchElement)
+                    return Try<T>(FuturesError.noSuchElement)
                 } else {
                     return .success(value)
                 }
@@ -686,7 +686,7 @@ public func future<T>(method: ((T?, Swift.Error?) -> Void) -> Void) -> Future<T>
             } else if let error = error {
                 completion(.failure(error))
             } else {
-                completion(.failure(Error.invalidValue))
+                completion(.failure(FuturesError.invalidValue))
             }
         }
     })

@@ -48,7 +48,7 @@ public class Service {
     }
 
     // MARK: Properties
-    fileprivate let profile: ServiceProfile?
+    internal let profile: ServiceProfile?
 
     internal var discoveredCharacteristics = [CBUUID : Characteristic]()
 
@@ -73,10 +73,10 @@ public class Service {
     public fileprivate(set) weak var peripheral: Peripheral?
 
     // MARK: Initializer
-    internal init(cbService: CBServiceInjectable, peripheral: Peripheral) {
+    internal init(cbService: CBServiceInjectable, peripheral: Peripheral, profile: ServiceProfile? = nil) {
         self.cbService = cbService
         self.peripheral = peripheral
-        self.profile = ProfileManager.sharedInstance.services[cbService.UUID]
+        self.profile = profile
     }
 
     // MARK: Discover Characteristics
@@ -150,7 +150,7 @@ public class Service {
         Peripheral.pollQueue.delay(timeout) {
             if sequence == self.characteristicDiscoverySequence && self.characteristicDiscoveryInProgress {
                 Logger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
-                centralManager.cancelConnection(forPeripheral: peripheral)
+                centralManager.cancelPeripheralConnection(peripheral)
                 self.characteristicDiscoveryInProgress = false
                 self.characteristicsDiscoveredPromise?.failure(ServiceError.characteristicDiscoveryTimeout)
             } else {

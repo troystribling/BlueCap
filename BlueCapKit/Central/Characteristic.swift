@@ -156,19 +156,8 @@ public class Characteristic : NSObject {
     internal init(cbCharacteristic: CBCharacteristicInjectable, service: Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
-        if let serviceProfile = ProfileManager.sharedInstance.services[service.UUID] {
-            Logger.debug("creating characteristic for service profile: \(service.name):\(service.UUID)")
-            if let characteristicProfile = serviceProfile.characteristicProfiles[cbCharacteristic.UUID] {
-                Logger.debug("charcteristic profile found creating characteristic: \(characteristicProfile.name):\(characteristicProfile.UUID.uuidString)")
-                self.profile = characteristicProfile
-            } else {
-                Logger.debug("no characteristic profile found. Creating characteristic with UUID: \(service.UUID.uuidString)")
-                self.profile = CharacteristicProfile(UUID: service.UUID.uuidString)
-            }
-        } else {
-            Logger.debug("no service profile found. Creating characteristic with UUID: \(service.UUID.uuidString)")
-            self.profile = CharacteristicProfile(UUID: service.UUID.uuidString)
-        }
+        self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.UUID) ??
+            CharacteristicProfile(UUID: cbCharacteristic.UUID.uuidString)
         super.init()
     }
 
@@ -458,4 +447,5 @@ public class Characteristic : NSObject {
             return nil
         }
     }
+
 }
