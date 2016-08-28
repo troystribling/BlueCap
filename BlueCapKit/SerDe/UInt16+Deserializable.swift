@@ -25,7 +25,8 @@ extension UInt16: Deserializable {
     public static func deserialize(_ data: Data) -> UInt16? {
         if data.count >= MemoryLayout<UInt16>.size {
             var value : UInt16 = 0
-            (data as NSData).getBytes(&value, length: MemoryLayout<UInt16>.size)
+            let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
+            data.copyBytes(to: buffer, from:0..<MemoryLayout<UInt16>.size)
             return toHostByteOrder(value)
         } else {
             return nil
@@ -35,7 +36,8 @@ extension UInt16: Deserializable {
     public static func deserialize(_ data: Data, start: Int) -> UInt16? {
         if data.count >= start + MemoryLayout<UInt16>.size {
             var value : UInt16 = 0
-            (data as NSData).getBytes(&value, range: NSMakeRange(start, MemoryLayout<UInt16>.size))
+            let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
+            data.copyBytes(to: buffer, from:start..<start+MemoryLayout<UInt16>.size)
             return toHostByteOrder(value)
         } else {
             return nil

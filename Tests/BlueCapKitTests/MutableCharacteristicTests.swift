@@ -372,7 +372,7 @@ class MutableCharacteristicTests: XCTestCase {
     }
     
     func testDidReceiveReadRequest_WhenCharacteristicIsNotInService_RespondsWithUnlikelyError() {
-        let centralMock = CBCentralMockmaximumUpdateValueLength: 20)
+        let centralMock = CBCentralMock(maximumUpdateValueLength: 20)
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let characteristic = MutableCharacteristic(profile: StringCharacteristicProfile<Gnosus.HelloWorldService.Greeting>())
         let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)

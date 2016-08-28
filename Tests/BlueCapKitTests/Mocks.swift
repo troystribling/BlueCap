@@ -13,7 +13,10 @@ import CoreLocation
 
 // MARK: - Advertisements -
 let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral",
-                                CBAdvertisementDataTxPowerLevelKey:NSNumber(value:-45)] as [String : Any]
+                                CBAdvertisementDataTxPowerLevelKey:NSNumber(value: -45)] as [String : Any]
+
+// MARK: - ProfileManager -
+let profileManager = ProfileManager()
 
 // MARK: - CBCentralManagerMock -
 class CBCentralManagerMock: CBCentralManagerInjectable {
@@ -22,15 +25,15 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
     var cancelPeripheralConnection  = false
     var scanForPeripheralsWithServicesCalled = false
 
-    var state: CBCentralManagerState
+    var state: CBManagerState
     var stopScanCalled = false
     var delegate: CBCentralManagerDelegate?
 
-    init(state: CBCentralManagerState = .poweredOn) {
+    init(state: CBManagerState = .poweredOn) {
         self.state = state
     }
     
-    func scanForPeripheralsWithServices(_ uuids: [CBUUID]?, options:[ String:AnyObject]?) {
+    func scanForPeripherals(withServices uuids: [CBUUID]?, options:[String : Any]?) {
         self.scanForPeripheralsWithServicesCalled = true
     }
     
@@ -38,7 +41,7 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
         self.stopScanCalled = true
     }
     
-    func connectPeripheral(_ peripheral: CBPeripheralInjectable, options: [String: AnyObject]?) {
+    func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
         self.connectPeripheralCalled = true
     }
 
@@ -46,12 +49,12 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
         self.cancelPeripheralConnection = true
     }
 
-    func retrieveConnectedPeripheralsWithServices(_ serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
-        return self.retrieveConnectedPeripheralsWithServices(serviceUUIDs)
+    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
+        return self.retrieveConnectedPeripherals(withServices: serviceUUIDs)
     }
 
-    func retrievePeripheralsWithIdentifiers(_ identifiers: [NSUUID]) -> [CBPeripheralInjectable] {
-        return self.retrievePeripheralsWithIdentifiers(identifiers)
+    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
+        return self.retrievePeripherals(withIdentifiers: identifiers)
     }
 
 }
@@ -124,7 +127,7 @@ class CBPeripheralMock: CBPeripheralInjectable {
     func readRSSI() {
         self.readRSSICalled = true
         self.readRSSICalledCount += 1
-        self.bcPeripheral?.didReadRSSI(NSNumber(long: self.RSSI), error: self.error)
+        self.bcPeripheral?.didReadRSSI(NSNumber(value: self.RSSI), error: self.error)
     }
 
     func discoverServices(_ services: [CBUUID]?) {
@@ -165,7 +168,7 @@ class CBPeripheralMock: CBPeripheralInjectable {
 // MARK: - PeripheralUT -
 class PeripheralUT: Peripheral {
     
-    let error:NSError?
+    let error: ErrorType?
     
     init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String: AnyObject], rssi: Int, error: NSError?) {
         self.error = error
@@ -231,9 +234,9 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var respondToRequestCalled = false
     var updateValueCalled = false
 
-    var advertisementData: [String:AnyObject]?
+    var advertisementData: [String : Any]?
     var isAdvertising : Bool
-    var state: CBPeripheralManagerState
+    var state: CBManagerState
     var addedService: CBMutableServiceInjectable?
     var removedService: CBMutableServiceInjectable?
     var delegate: CBPeripheralManagerDelegate?
@@ -242,12 +245,12 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var addServiceCount = 0
     var updateValueCount = 0
 
-    init(isAdvertising: Bool, state: CBPeripheralManagerState) {
+    init(isAdvertising: Bool, state: CBManagerState) {
         self.isAdvertising = isAdvertising
         self.state = state
     }
     
-    func startAdvertising(_ advertisementData: [String:AnyObject]?) {
+    func startAdvertising(_ advertisementData: [String : Any]?) {
         self.startAdvertisingCalled = true
         self.advertisementData = advertisementData
         self.isAdvertising = true
@@ -258,13 +261,13 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
         self.isAdvertising = false
     }
     
-    func addService(_ service: CBMutableServiceInjectable) {
+    func add(service: CBMutableServiceInjectable) {
         self.addServiceCalled = true
         self.addedService = service
         self.addServiceCount += 1
     }
     
-    func removeService(_ service: CBMutableServiceInjectable) {
+    func remove(service: CBMutableServiceInjectable) {
         self.removeServiceCalled = true
         self.removedService = service
         self.removeServiceCount += 1
@@ -366,7 +369,6 @@ func createPeripheralManager(_ isAdvertising: Bool, state: CBManagerState) -> (C
 }
 
 func createPeripheralManagerServices(_ peripheral: PeripheralManager) -> [MutableService] {
-    let profileManager = ProfileManager.sharedInstance
     if let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)], let locationService = profileManager.services[CBUUID(string: Gnosus.LocationService.UUID)] {
         return [MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService),
                 MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: locationService)]

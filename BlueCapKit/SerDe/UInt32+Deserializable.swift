@@ -25,7 +25,8 @@ extension UInt32: Deserializable {
     public static func deserialize(_ data: Data) -> UInt32? {
         if data.count >= MemoryLayout<UInt32>.size {
             var value : UInt32 = 0
-            (data as NSData).getBytes(&value, length:MemoryLayout<UInt32>.size)
+            let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
+            data.copyBytes(to: buffer, from:0..<MemoryLayout<UInt32>.size)
             return toHostByteOrder(value)
         } else {
             return nil
@@ -35,7 +36,8 @@ extension UInt32: Deserializable {
     public static func deserialize(_ data: Data, start: Int) -> UInt32? {
         if data.count >= start + MemoryLayout<UInt32>.size {
             var value : UInt32 = 0
-            (data as NSData).getBytes(&value, range:NSMakeRange(start, MemoryLayout<UInt32>.size))
+            let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
+            data.copyBytes(to: buffer, from:start..<start+MemoryLayout<UInt32>.size)
             return toHostByteOrder(value)
         } else {
             return nil

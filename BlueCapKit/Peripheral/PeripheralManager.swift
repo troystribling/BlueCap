@@ -176,7 +176,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return self.afterAdvertisingStartedPromise.future
     }
     
-    public func startAdvertising(_ region: FLBeaconRegion) -> Future<Void> {
+    public func startAdvertising(_ region: BeaconRegion) -> Future<Void> {
         self._name = region.identifier
         self.afterAdvertisingStartedPromise = Promise<Void>()
         if !self.isAdvertising {

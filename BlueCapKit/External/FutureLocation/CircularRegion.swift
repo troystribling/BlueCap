@@ -1,5 +1,5 @@
 //
-//  FLCircularRegion.swift
+//  CircularRegion.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 10/6/14.
@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 
-public class FLCircularRegion : FLRegion {
+public class CircularRegion : Region {
 
     internal let clCircularRegion : CLCircularRegion
     
@@ -25,17 +25,17 @@ public class FLCircularRegion : FLRegion {
         return self.clCircularRegion.radius
     }
 
-    internal init(region:CLCircularRegion, capacity:Int? = nil) {
+    internal init(region:CLCircularRegion, capacity: Int = Int.max) {
         self.clCircularRegion = region
-        super.init(region:region, capacity:capacity)
+        super.init(region:region, capacity: capacity)
     }
 
-    public convenience init(center:CLLocationCoordinate2D, radius:CLLocationDistance, identifier:String, capacity:Int? = nil) {
+    public convenience init(center:CLLocationCoordinate2D, radius:CLLocationDistance, identifier:String, capacity: Int = Int.max) {
         let circularRegion = CLCircularRegion(center:center, radius:radius, identifier:identifier)
         self.init(region:circularRegion, capacity:capacity)
     }
     
-    public convenience init(center:CLLocationCoordinate2D, identifier:String, capacity:Int? = nil) {
+    public convenience init(center:CLLocationCoordinate2D, identifier:String, capacity: Int = Int.max) {
         let circularRegion = CLCircularRegion(center:center, radius:DEFAULT_REGION_RADIUS, identifier:identifier)
         self.init(region:circularRegion, capacity:capacity)
     }

@@ -41,7 +41,8 @@ extension Int8: Deserializable {
     public static func deserialize(_ data: Data) -> Int8? {
         if data.count >= MemoryLayout<Int8>.size {
             var value : Int8 = 0
-            (data as NSData).getBytes(&value, length:MemoryLayout<Int8>.size)
+            let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
+            data.copyBytes(to: buffer, from:0..<MemoryLayout<Int8>.size)
             return toHostByteOrder(value)
         } else {
             return nil
@@ -51,7 +52,8 @@ extension Int8: Deserializable {
     public static func deserialize(_ data: Data, start: Int) -> Int8? {
         if data.count >= start + MemoryLayout<Int8>.size {
             var value : Int8 = 0
-            (data as NSData).getBytes(&value, range: NSMakeRange(start, MemoryLayout<Int8>.size))
+            let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
+            data.copyBytes(to: buffer, from:start..<start+MemoryLayout<Int8>.size)
             return toHostByteOrder(value)
         } else {
             return nil

@@ -106,7 +106,7 @@ extension XCTestCase  {
 
 
     func XCTAssertFutureFails<T>(_ future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0,
-                              line: UInt = #line, file: String = #file, validate: ((NSError) -> Void)? = nil) {
+                              line: UInt = #line, file: String = #file, validate: ((ErrorType) -> Void)? = nil) {
         var expectation: XCTestExpectation?
         var onFailureCalled = false
         if context is QueueContext {
@@ -139,7 +139,7 @@ extension XCTestCase  {
     }
 
     func XCTAssertFutureStreamFails<T>(_ future: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0,
-                                    line: UInt = #line, file: String = #file, validations: [((NSError) -> Void)] = []) {
+                                    line: UInt = #line, file: String = #file, validations: [((ErrorType) -> Void)] = []) {
         var expectation: XCTestExpectation?
         let maxCount = validations.count
         var count = 0

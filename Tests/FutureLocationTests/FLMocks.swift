@@ -89,7 +89,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
     }
 
     // MARK: Significant Change in Location
-    class func significantLocationChangeMonitoringAvailable() -> Bool {
+    class func significOantLocationChangeMonitoringAvailable() -> Bool {
         return self._significantLocationChangeMonitoringAvailable
     }
 
@@ -143,14 +143,14 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
 }
 
 // MARK: - Test Classes -
-class LocationManagerUT : FLLocationManager {
+class LocationManagerUT : LocationManager {
 
     override func authorizationStatus() -> CLAuthorizationStatus {
         return CLLocationManagerMock.authorizationStatus()
     }
 }
 
-class RegionManagerUT : FLRegionManager {
+class RegionManagerUT : RegionManager {
 
     override func authorizationStatus() -> CLAuthorizationStatus {
         return CLLocationManagerMock.authorizationStatus()
@@ -158,7 +158,7 @@ class RegionManagerUT : FLRegionManager {
 
 }
 
-class BeaconManagerUT : FLBeaconManager {
+class BeaconManagerUT : BeaconManager {
 
     override func authorizationStatus() -> CLAuthorizationStatus {
         return CLLocationManagerMock.authorizationStatus()

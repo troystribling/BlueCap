@@ -1,5 +1,5 @@
 //
-//  FLBeacon.swift
+//  Beacon.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 9/19/14.
@@ -21,8 +21,8 @@ public protocol CLBeaconInjectable {
 
 extension CLBeacon: CLBeaconInjectable {}
 
-// MARK: - FLBeacon -
-public class FLBeacon {
+// MARK: - Beacon -
+public class Beacon {
     
     fileprivate let clBeacon : CLBeaconInjectable
     fileprivate let _discoveredAt = NSDate()

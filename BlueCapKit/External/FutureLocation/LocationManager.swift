@@ -1,5 +1,5 @@
 //
-//  FLLocationManager.swift
+//  LocationManager.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 9/1/14.
@@ -66,7 +66,7 @@ public protocol CLLocationManagerInjectable {
 extension CLLocationManager : CLLocationManagerInjectable {}
 
 // MARK: - FLLocationManager -
-public class FLLocationManager : NSObject, CLLocationManagerDelegate {
+public class LocationManager : NSObject, CLLocationManagerDelegate {
 
     // MARK: Serilaize Property IO
     static let ioQueue = Queue("us.gnos.futureLocation.location-manager.io")
@@ -84,46 +84,46 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     public fileprivate(set) var isUpdating: Bool {
         get {
-            return FLLocationManager.ioQueue.sync { return self._isUpdating }
+            return LocationManager.ioQueue.sync { return self._isUpdating }
         }
         set {
-            FLLocationManager.ioQueue.sync { self._isUpdating = newValue }
+            LocationManager.ioQueue.sync { self._isUpdating = newValue }
         }
     }
 
     fileprivate var locationUpdatePromise: StreamPromise<[CLLocation]>? {
         get {
-            return FLLocationManager.ioQueue.sync { return self._locationUpdatePromise }
+            return LocationManager.ioQueue.sync { return self._locationUpdatePromise }
         }
         set {
-            FLLocationManager.ioQueue.sync { self._locationUpdatePromise = newValue }
+            LocationManager.ioQueue.sync { self._locationUpdatePromise = newValue }
         }
     }
 
     fileprivate var deferredLocationUpdatePromise: Promise<Void>? {
         get {
-            return FLLocationManager.ioQueue.sync { return self._deferredLocationUpdatePromise}
+            return LocationManager.ioQueue.sync { return self._deferredLocationUpdatePromise}
         }
         set {
-            FLLocationManager.ioQueue.sync { self._deferredLocationUpdatePromise = newValue }
+            LocationManager.ioQueue.sync { self._deferredLocationUpdatePromise = newValue }
         }
     }
 
     fileprivate var requestLocationPromise: Promise<[CLLocation]>? {
         get {
-            return FLLocationManager.ioQueue.sync { return self._requestLocationPromise }
+            return LocationManager.ioQueue.sync { return self._requestLocationPromise }
         }
         set {
-            FLLocationManager.ioQueue.sync { self._requestLocationPromise = newValue }
+            LocationManager.ioQueue.sync { self._requestLocationPromise = newValue }
         }
     }
 
     fileprivate var authorizationStatusChangedPromise: Promise<CLAuthorizationStatus>? {
         get {
-            return FLLocationManager.ioQueue.sync { return self._authorizationStatusChangedPromise }
+            return LocationManager.ioQueue.sync { return self._authorizationStatusChangedPromise }
         }
         set {
-            FLLocationManager.ioQueue.sync { self._authorizationStatusChangedPromise = newValue }
+            LocationManager.ioQueue.sync { self._authorizationStatusChangedPromise = newValue }
         }
     }
 
@@ -207,10 +207,10 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
             case .authorizedAlways:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .authorizedAlways {
-                        FLLogger.debug("location AuthorizedAlways succcess")
+                        Logger.debug("location AuthorizedAlways succcess")
                         promise.success()
                     } else {
-                        FLLogger.debug("location AuthorizedAlways failed")
+                        Logger.debug("location AuthorizedAlways failed")
                         promise.failure(LocationError.authorizationAlwaysFailed)
                     }
                 }
@@ -219,17 +219,17 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
             case .authorizedWhenInUse:
                 self.authorizationStatusChangedPromise?.future.onSuccess {(status) in
                     if status == .authorizedWhenInUse {
-                        FLLogger.debug("location AuthorizedWhenInUse succcess")
+                        Logger.debug("location AuthorizedWhenInUse succcess")
                         promise.success()
                     } else {
-                        FLLogger.debug("location AuthorizedWhenInUse failed")
+                        Logger.debug("location AuthorizedWhenInUse failed")
                         promise.failure(LocationError.authorizationWhenInUseFailed)
                     }
                 }
                 self.requestWhenInUseAuthorization()
                 break
             default:
-                FLLogger.debug("location authorization invalid")
+                Logger.debug("location authorization invalid")
                 break
             }
         } else {
@@ -269,7 +269,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     public func reverseGeocodeLocation()  -> Future<[CLPlacemark]>  {
         if let location = self.location {
-            return FLLocationManager.reverseGeocodeLocation(location)
+            return LocationManager.reverseGeocodeLocation(location)
         } else {
             return Future(error: LocationError.updateFailed)
         }
@@ -305,10 +305,6 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
 
     public func requestLocation(authorization: CLAuthorizationStatus = .authorizedAlways, context: ExecutionContext = QueueContext.main) -> Future<[CLLocation]> {
         self.requestLocationPromise = Promise<[CLLocation]>()
-        guard #available(iOS 9.0, *) else {
-            self.requestLocationPromise?.failure(LocationError.notSupportedForIOSVersion)
-            return self.requestLocationPromise!.future
-        }
         guard let clLocationManager = self.clLocationManager as? CLLocationManager else {
             self.requestLocationPromise?.failure(LocationError.notSupportedForIOSVersion)
             return self.requestLocationPromise!.future
@@ -366,7 +362,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     @nonobjc public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        self.didFailWithError(error as NSError)
+        self.didFailWithError(error)
     }
 
     @nonobjc public func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?) {
@@ -378,7 +374,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     public func didUpdateLocations(_ locations: [CLLocation]) {
-        FLLogger.debug()
+        Logger.debug()
         self.isUpdating = true
         if let requestLocationPromise = self.requestLocationPromise {
             requestLocationPromise.success(locations)
@@ -387,8 +383,8 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
         self.locationUpdatePromise?.success(locations)
     }
 
-    public func didFailWithError(_ error: NSError) {
-        FLLogger.debug("error \(error.localizedDescription)")
+    public func didFailWithError(_ error: Error) {
+        Logger.debug("error \(error.localizedDescription)")
         self.isUpdating = false
         if let requestLocationPromise = self.requestLocationPromise {
             requestLocationPromise.failure(error)
@@ -406,7 +402,7 @@ public class FLLocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     public func didChangeAuthorizationStatus(_ status: CLAuthorizationStatus) {
-        FLLogger.debug("status: \(status)")
+        Logger.debug("status: \(status)")
         self.authorizationStatusChangedPromise?.success(status)
     }
 
