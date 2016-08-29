@@ -33,12 +33,6 @@ class BeaconManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    func waitForExpectations(_ timeout: Double = 2.0) {
-        waitForExpectations(timeout: timeout) { error in
-            XCTAssertNil(error, "\(error)")
-        }
-    }
-
     func testStartRangingRegion_WhenAuthorizedAndBeaconsDiscovered_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
         let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, context: TestContext.immediate)

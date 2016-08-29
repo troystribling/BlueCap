@@ -14,8 +14,6 @@ import CoreBluetooth
 // MARK - CentralManagerTests -
 class CentralManagerTests: XCTestCase {
 
-    let immediateContext = ImmediateContext()
-
     override func setUp() {
         super.setUp()
     }
@@ -29,7 +27,7 @@ class CentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOn()
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
     }
 
     func testWhenPowerOn_AndPoweredOff_CompletesSuccessfully() {
@@ -38,7 +36,7 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.whenPowerOn()
         mock.state = .poweredOn
         centralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
     }
 
     func testWhenPowerOn_WithBluetoothUnsupported_CompletesWithFailure() {
@@ -47,8 +45,8 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.whenPowerOn()
         mock.state = .unsupported
         centralManager.didUpdateState(mock)
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqual(error.code, BCError.centralStateUnsupported.code)
+        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
+            XCTAssertEqualErrors(error, CentralManagerError.unsupported)
         }
     }
 
@@ -59,14 +57,14 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.whenPowerOff()
         mock.state = .poweredOff
         centralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
     }
 
     func testWhenPowerOff_AndPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenPowerOff()
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
     }
 
     // MARK: Peripheral discovery
@@ -75,14 +73,14 @@ class CentralManagerTests: XCTestCase {
         let centralManager = CentralManager(centralManager: centralMock)
         let peripheralMock = CBPeripheralMock()
         let future = centralManager.startScanning()
-        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(integer: -45))
-        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+        centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(value: -45))
+        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
             { _ in
-                XCTAssert(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices not called")
+                XCTAssert(centralMock.scanForPeripheralsWithServicesCalled)
                 if let peripheral = centralManager.peripherals.first, centralManager.peripherals.count == 1 {
-                    XCTAssert(peripheralMock.setDelegateCalled, "Peripheral delegate not set")
-                    XCTAssertEqual(peripheral.name, peripheralMock.name, "Peripheral name is invalid")
-                    XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier is invalid")
+                    XCTAssert(peripheralMock.setDelegateCalled)
+                    XCTAssertEqual(peripheral.name, peripheralMock.name)
+                    XCTAssertEqual(peripheral.identifier, peripheralMock.identifier)
                 } else {
                     XCTFail("Discovered peripheral missing")
                 }
@@ -94,10 +92,10 @@ class CentralManagerTests: XCTestCase {
         let centralMock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: centralMock)
         let future = centralManager.startScanning()
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
-                XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled, "CBCentralManager#scanForPeripheralsWithServices is called")
-                XCTAssert(error.code == BCError.centralIsPoweredOff.code, "Error code invalid")
+                XCTAssertFalse(centralMock.scanForPeripheralsWithServicesCalled)
+                XCTAssertEqualErrors(error, CentralManagerError.isPoweredOff)
             }
         ])
     }
@@ -108,9 +106,9 @@ class CentralManagerTests: XCTestCase {
         let peripheralMock = CBPeripheralMock()
         let future = centralManager.startScanning(timeout: 1.0)
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(value: -45))
-        XCTAssertFutureStreamSucceeds(future, context:self.immediateContext, validations: [
+        XCTAssertFutureStreamSucceeds(future, context:TestContext.immediate, validations: [
             { peripheral in
-                XCTAssertEqual(peripheral.identifier, peripheralMock.identifier, "Peripheral identifier timeout")
+                XCTAssertEqual(peripheral.identifier, peripheralMock.identifier)
             }
         ])
     }
@@ -121,7 +119,7 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.startScanning(timeout: 0.1)
         XCTAssertFutureStreamFails(future, validations: [
             {error in
-                XCTAssertEqual(BCError.centralPeripheralScanTimeout.code, error.code, "onFailure error invalid")
+                XCTAssertEqualErrors(error, CentralManagerError.peripheralScanTimeout)
             }
         ])
     }
@@ -145,26 +143,26 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
                                         scannedServices: testScannedServices, options: testOptions)
-        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations:[
+        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations:[
             { (peripherals, scannedServices, options) in
-                XCTAssertEqual(peripherals.count, testPeripherals.count, "Restored peripherals count invalid")
-                XCTAssertEqual(scannedServices, testScannedServices, "Scanned services invalid")
-                XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, "Restored option invalid")
-                XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, "Restored option invalid")
-                XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }), "Restored peripherals identifier invalid")
+                XCTAssertEqual(peripherals.count, testPeripherals.count)
+                XCTAssertEqual(scannedServices, testScannedServices)
+                XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber)
+                XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString)
+                XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }))
                 for testPeripheral in testPeripherals {
                     let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
-                    XCTAssertNotNil(peripheral, "Restored peripheral not found")
+                    XCTAssertNotNil(peripheral)
                     let services = peripheral!.services
                     let testServices = testPeripheral.services!
-                    XCTAssertEqual(services.count, testServices.count, "Restored services count invalid")
-                    XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }), "Restored services identifier invalid")
+                    XCTAssertEqual(services.count, testServices.count)
+                    XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }))
                     for testService in testServices {
                         let testCharacteristics = testService.characteristics!
                         let service = peripheral!.discoveredServices[testService.UUID]
                         let characteristics = service!.characteristics
-                        XCTAssertEqual(characteristics.count, testCharacteristics.count, "Restored characteristics count invalid")
-                        XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }), "Restored characteristics identifier invalid")
+                        XCTAssertEqual(characteristics.count, testCharacteristics.count)
+                        XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }))
                     }
                 }
             }
@@ -176,9 +174,9 @@ class CentralManagerTests: XCTestCase {
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
-                XCTAssertEqual(error.code, BCError.centralRestoreFailed.code, "Invalid error code")
+                XCTAssertEqualErrors(error, CentralManagerError.restoreFailed)
             }
         ])
     }

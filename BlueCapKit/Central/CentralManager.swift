@@ -186,7 +186,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 cbCentralManager.scanForPeripherals(withServices: UUIDs, options: options)
                 timeoutScan(timeout, sequence: timeoutSequence)
             } else {
-                afterPeripheralDiscoveredPromise.failure(CentralError.isPoweredOff)
+                afterPeripheralDiscoveredPromise.failure(CentralManagerError.isPoweredOff)
             }
         }
         return afterPeripheralDiscoveredPromise.stream
@@ -208,7 +208,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         centralQueue.delay(timeout) {
             if self.isScanning {
                 if self.peripherals.count == 0 && sequence == self.timeoutSequence{
-                    self.afterPeripheralDiscoveredPromise.failure(CentralError.peripheralScanTimeout)
+                    self.afterPeripheralDiscoveredPromise.failure(CentralManagerError.peripheralScanTimeout)
                 }
                 self.stopScanning()
             }
@@ -342,7 +342,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             }
             afterStateRestoredPromise.success((peripherals, scannedServices, options))
         } else {
-            afterStateRestoredPromise.failure(CentralError.restoreFailed)
+            afterStateRestoredPromise.failure(CentralManagerError.restoreFailed)
         }
     }
 
@@ -358,7 +358,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         case .unsupported:
             Logger.debug("Unsupported")
             if !afterPowerOnPromise.completed {
-                afterPowerOnPromise.failure(CentralError.unsupported)
+                afterPowerOnPromise.failure(CentralManagerError.unsupported)
             }
             break
         case .resetting:

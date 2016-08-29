@@ -1,5 +1,5 @@
 //
-//  NSData+Serializable.swift
+//  Data+Serializable.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 6/29/14.

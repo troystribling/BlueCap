@@ -33,7 +33,7 @@ public enum PeripheralManagerError: Swift.Error {
     case unsupported
 }
 
-public enum CentralError: Swift.Error {
+public enum CentralManagerError: Swift.Error {
     case isScanning
     case isPoweredOff
     case restoreFailed
