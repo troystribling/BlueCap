@@ -493,7 +493,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         guard let characteristics = service.getCharacteristics() else {
             return
         }
-        didDiscoverCharacteristicsForService(service, characteristics: characteristics, error: error as NSError?)
+        didDiscoverCharacteristicsForService(service, characteristics: characteristics, error: error)
     }
 
     @nonobjc public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
@@ -521,7 +521,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: CBPeripheralDelegate Shims
-    internal func didDiscoverCharacteristicsForService(_ service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: NSError?) {
+    internal func didDiscoverCharacteristicsForService(_ service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: Error?) {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         if let bcService = self.discoveredServices[service.UUID] {
             bcService.didDiscoverCharacteristics(characteristics, error: error)

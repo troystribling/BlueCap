@@ -366,7 +366,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     @nonobjc public func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?) {
-        self.didFinishDeferredUpdatesWithError(error as NSError?)
+        self.didFinishDeferredUpdatesWithError(error)
     }
         
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -393,7 +393,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         self.locationUpdatePromise?.failure(error)
     }
 
-    public func didFinishDeferredUpdatesWithError(_ error: NSError?) {
+    public func didFinishDeferredUpdatesWithError(_ error: Error?) {
         if let error = error {
             self.deferredLocationUpdatePromise?.failure(error)
         } else {

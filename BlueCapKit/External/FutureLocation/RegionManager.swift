@@ -99,7 +99,7 @@ public class RegionManager : LocationManager {
         self.didDetermineState(state, forRegion: region)
     }
     
-    public func locationManager(_:CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error:NSError) {
+    public func locationManager(_:CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: Error) {
         self.monitoringDidFailForRegion(region, withError: error)
     }
     
@@ -123,7 +123,7 @@ public class RegionManager : LocationManager {
         self.requestStateForRegionPromises.removeValueForKey(region.identifier)
     }
 
-    public func monitoringDidFailForRegion(_ region: CLRegion?, withError error:NSError) {
+    public func monitoringDidFailForRegion(_ region: CLRegion?, withError error: Error) {
         if let region = region, let flRegion = self.configuredRegions[region.identifier] {
             Logger.debug("region identifier '\(region.identifier)'")
             self.regionMonitorStatus[region.identifier] = false

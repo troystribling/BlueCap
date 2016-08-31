@@ -17,6 +17,7 @@ let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral
 
 // MARK: - ProfileManager -
 let profileManager = ProfileManager()
+GnosusProfiles.create(profileManager: profileManager)
 
 // MARK: - CBCentralManagerMock -
 class CBCentralManagerMock: CBCentralManagerInjectable {
@@ -102,7 +103,7 @@ class CBPeripheralMock: CBPeripheralInjectable {
     var services: [CBServiceMock]?
 
     var bcPeripheral: Peripheral?
-    var error: NSError?
+    var error: Error?
     var RSSI: Int = -44
 
     init(state: CBPeripheralState = .disconnected, identifier: UUID = UUID()) {
@@ -170,7 +171,7 @@ class PeripheralUT: Peripheral {
     
     let error: ErrorType?
     
-    init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String: AnyObject], rssi: Int, error: NSError?) {
+    init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String: AnyObject], rssi: Int, error: Error?) {
         self.error = error
         super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, RSSI: rssi)
     }
@@ -312,7 +313,7 @@ class PeripheralManagerUT : PeripheralManager {
     
     var respondToRequestCalled = false
 
-    var error: NSError?
+    var error: Error?
     var result: CBATTError.Code?
     var request: CBATTRequestInjectable?
     

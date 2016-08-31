@@ -259,11 +259,11 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     @nonobjc public func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
-        self.didStartAdvertising(error as NSError?)
+        self.didStartAdvertising(error)
     }
     
     @nonobjc public func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
-        self.didAddService(service, error:error as NSError?)
+        self.didAddService(service, error:error)
     }
     
     public func peripheralManager(_: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
@@ -364,7 +364,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    internal func didStartAdvertising(_ error: NSError?) {
+    internal func didStartAdvertising(_ error: Error?) {
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
             self.afterAdvertisingStartedPromise.failure(error)
@@ -374,7 +374,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
     
-    internal func didAddService(_ service: CBServiceInjectable, error: NSError?) {
+    internal func didAddService(_ service: CBServiceInjectable, error: Error?) {
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
             self.configuredServices.removeValueForKey(service.UUID)
