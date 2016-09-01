@@ -35,7 +35,7 @@ class DeserilaizableTests: XCTestCase {
 
     func testDeserialize_WhenGivenInvalidSerializedUInt8_ReturnsNil() {
         let data = Data()
-        if let value: UInt8 = UInt8.deserialize(data) {
+        if let _: UInt8 = UInt8.deserialize(data) {
             XCTFail()
         }
     }
@@ -60,7 +60,7 @@ class DeserilaizableTests: XCTestCase {
 
     func testDeserialize_WhenGivenInvalidSerializedInt8_ReturnsNil() {
         let data = Data()
-        if let value: Int8 = Int8.deserialize(data) {
+        if let _: Int8 = Int8.deserialize(data) {
             XCTFail()
         }
     }
@@ -84,7 +84,7 @@ class DeserilaizableTests: XCTestCase {
 
     func testDeserialize_WhenGivenInvalidSerializedUInt16_ReturnsNil() {
         let data = SerDe.serialize(UInt8(100))
-        if let value: UInt16 = UInt16.deserialize(data) {
+        if let _: UInt16 = UInt16.deserialize(data) {
             XCTFail()
         }
     }
@@ -108,7 +108,7 @@ class DeserilaizableTests: XCTestCase {
     
     func testDeserialize_WhenGivenInvalidSerializedInt16_ReturnsNil() {
         let data = SerDe.serialize(UInt8(100))
-        if let value: Int16 = Int16.deserialize(data) {
+        if let _: Int16 = Int16.deserialize(data) {
             XCTFail()
         }
     }
@@ -132,7 +132,7 @@ class DeserilaizableTests: XCTestCase {
 
     func testDeserialize_WhenGivenInvalidSerializedInt32_ReturnsNil() {
         let data = SerDe.serialize(Int16(100))
-        if let value: Int32 = Int32.deserialize(data) {
+        if let _: Int32 = Int32.deserialize(data) {
             XCTFail()
         }
     }
@@ -156,7 +156,7 @@ class DeserilaizableTests: XCTestCase {
 
     func testDeserialize_WhenGivenInvalidSerializedUInt32_ReturnsNil() {
         let data = SerDe.serialize(UInt16(100))
-        if let value: UInt32 = UInt32.deserialize(data) {
+        if let _: UInt32 = UInt32.deserialize(data) {
             XCTFail()
         }
     }

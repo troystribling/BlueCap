@@ -14,7 +14,6 @@ import CoreBluetooth
 // MARK: - CharacteristicTests -
 class CharacteristicTests: XCTestCase {
 
-    let profileManager = ProfileManager()
     var centralManager: CentralManager!
     var peripheral: Peripheral!
     var service: Service!
@@ -23,6 +22,7 @@ class CharacteristicTests: XCTestCase {
     let RSSI = -45
 
     override func setUp() {
+        GnosusProfiles.create(profileManager: profileManager)
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn))
         self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)

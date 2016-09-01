@@ -23,6 +23,7 @@ class CharacteristicProfileTests: XCTestCase {
     let RSSI = -45
 
     override func setUp() {
+        GnosusProfiles.create(profileManager: profileManager)
         super.setUp()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn))
         self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)

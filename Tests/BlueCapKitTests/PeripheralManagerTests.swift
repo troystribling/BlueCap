@@ -255,8 +255,8 @@ class PeripheralManagerTests: XCTestCase {
         peripheralManager.willRestoreState(testServices.map { $0 as CBMutableServiceInjectable }, advertisements: peripheralAdvertisements)
         XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
             { (services, advertisements) in
-                XCTAssertEqual(advertisements.localName, peripheralAdvertisements[CBAdvertisementDataLocalNameKey])
-                XCTAssertEqual(advertisements.txPower, peripheralAdvertisements[CBAdvertisementDataTxPowerLevelKey])
+                XCTAssertEqual(advertisements.localName!, peripheralAdvertisements[CBAdvertisementDataLocalNameKey]! as! String)
+                XCTAssertEqual(advertisements.txPower!, peripheralAdvertisements[CBAdvertisementDataTxPowerLevelKey]! as! NSNumber)
                 XCTAssertEqual(services.count, testServices.count)
                 XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }))
                 for testService in testServices {

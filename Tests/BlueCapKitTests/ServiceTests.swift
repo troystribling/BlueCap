@@ -48,8 +48,8 @@ class ServiceTests: XCTestCase {
         let future = service.discoverAllCharacteristics()
         service.didDiscoverCharacteristics(self.mockCharateristics, error: nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
-            XCTAssert(service.characteristics.count == 3, "Characteristic count invalid")
-            XCTAssertEqual(Set(service.characteristics.map { $0.UUID }), Set(self.mockCharateristics.map { $0.UUID }), "Invalid characteristic UUIDs")
+            XCTAssert(service.characteristics.count == 3)
+            XCTAssertEqual(Set(service.characteristics.map { $0.UUID }), Set(self.mockCharateristics.map { $0.UUID }))
         }
     }
 
@@ -58,7 +58,7 @@ class ServiceTests: XCTestCase {
         let future = service.discoverAllCharacteristics()
         service.didDiscoverCharacteristics(self.mockCharateristics, error: TestFailure.error)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqual(error.code, TestFailure.error.code, "Error code invalid")
+            XCTAssertEqualErrors(error, TestFailure.error)
         }
     }
 
@@ -66,7 +66,7 @@ class ServiceTests: XCTestCase {
         let service = self.service(self.peripheral(.disconnected))
         let future = service.discoverAllCharacteristics()
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssert(error.code == BCError.peripheralDisconnected.code, "Error code invalid \(error.code)")
+            XCTAssertEqualErrors(error, PeripheralError.disconnected)
         }
     }
 
@@ -74,16 +74,16 @@ class ServiceTests: XCTestCase {
         let service = self.service(self.peripheral(.connected))
         let future = service.discoverAllCharacteristics(0.25)
         XCTAssertFutureFails(future, timeout: 5) { error in
-            XCTAssert(error.code == BCError.serviceCharacteristicDiscoveryTimeout.code, "Error code invalid \(error.code)")
+            XCTAssertEqualErrors(error, ServiceError.characteristicDiscoveryTimeout)
         }
     }
 
     func testDiscoverAllCharacteristics_WhenDiscoveryInProgress_CompletesServiceCharacteristicDiscoveryInProgress() {
         let service = self.service(self.peripheral(.connected))
-        service.discoverAllCharacteristics()
+        let _ = service.discoverAllCharacteristics()
         let future = service.discoverAllCharacteristics()
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssert(error.code == BCError.serviceCharacteristicDiscoveryInProgress.code, "Error code invalid \(error.code)")
+            XCTAssertEqualErrors(error, ServiceError.characteristicDiscoveryInProgress)
         }
     }
 

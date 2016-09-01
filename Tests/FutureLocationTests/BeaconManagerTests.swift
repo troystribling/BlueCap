@@ -68,7 +68,7 @@ class BeaconManagerTests: XCTestCase {
         self.beaconManager.didChangeAuthorizationStatus(.denied)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in
-                XCTAssertEqualErrors(error.code, FLError.authorizationAlwaysFailed.code)
+                XCTAssertEqualErrors(error, LocationError.authorizationAlwaysFailed)
                 XCTAssertFalse(self.mock.startRangingBeaconsInRegionCalled)
                 XCTAssertEqual(self.testBeaconRegion.beacons.count, 0)
                 XCTAssertFalse(self.beaconManager.isRanging)

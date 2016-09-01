@@ -249,7 +249,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.didUpdateState(peripheralManager)
     }
     
-    public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String:Any]) {
+    public func peripheralManager(_: CBPeripheralManager, willRestoreState dict: [String: Any]) {
         var injectableServices: [CBMutableServiceInjectable]?
         if let cbServices = dict[CBPeripheralManagerRestoredStateServicesKey] as? [CBMutableService] {
             injectableServices = cbServices.map { $0 as CBMutableServiceInjectable }
@@ -385,7 +385,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
 
-    public func willRestoreState(_ cbServices: [CBMutableServiceInjectable]?, advertisements: [String: AnyObject]?) {
+    public func willRestoreState(_ cbServices: [CBMutableServiceInjectable]?, advertisements: [String: Any]?) {
         if let cbServices = cbServices, let advertisements = advertisements {
             let services = cbServices.map { cbService -> MutableService in
                 let service = MutableService(cbMutableService: cbService)

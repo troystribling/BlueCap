@@ -89,7 +89,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
     }
 
     // MARK: Significant Change in Location
-    class func significOantLocationChangeMonitoringAvailable() -> Bool {
+    class func significantLocationChangeMonitoringAvailable() -> Bool {
         return self._significantLocationChangeMonitoringAvailable
     }
 

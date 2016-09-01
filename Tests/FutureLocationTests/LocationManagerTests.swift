@@ -113,7 +113,7 @@ class LocationManagerTests: XCTestCase {
     
     func testStartUpdatingLocation_WhenAuthorizedAlwaysAndUpdateFails_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let stream = self.locationManager.startUpdatingLocation(authorization: .authorizedAlways, context: context, context: TestContext.immediate)
+        let stream = self.locationManager.startUpdatingLocation(authorization: .authorizedAlways, context: TestContext.immediate)
         self.locationManager.didFailWithError(TestFailure.error)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in

@@ -55,31 +55,31 @@ class RawArrayPairDeserializableTests: XCTestCase {
     func testDeserialize_ValidRawPairArray_Sucess() {
         let data = "02ab03ab".dataFromHexString()
         if let value : Pair = SerDe.deserialize(data) {
-            XCTAssert(value.value1 == [Int8]([2, -85]) && value.value2 == [UInt8]([3, 171]), "RawPairDeserializableTests deserialization value invalid: \(value.value1), \(value.value2)")
+            XCTAssert(value.value1 == [Int8]([2, -85]) && value.value2 == [UInt8]([3, 171]))
         } else {
-            XCTFail("RawArrayPair deserialization failed")
+            XCTFail()
         }
     }
     
     func testDeserialize_InvalidRawPairArray_Fails() {
         let data = "020103".dataFromHexString()
         if let _ : Pair = SerDe.deserialize(data) {
-            XCTFail("RawArrayPair deserialization succeeded")
+            XCTFail()
         }
     }
     
     func testSerialize_ValidRawPairArray_Sucess() {
         if let value = Pair(rawValue1:[2, -85], rawValue2:[3, 171]) {
             let data = SerDe.serialize(value)
-            XCTAssert(data.hexStringValue() == "02ab03ab", "RawDeserializable serialization failed: \(data.hexStringValue())")
+            XCTAssert(data.hexStringValue() == "02ab03ab")
         } else {
-            XCTFail("RawArrayPair creation failed")
+            XCTFail()
         }
     }
     
     func testCreate_InValidRawPairArray_Fails() {
         if let _ = Pair(rawValue1: [5], rawValue2: [1]) {
-            XCTFail("RawArrayPair creation succeeded")
+            XCTFail()
         }
     }
 

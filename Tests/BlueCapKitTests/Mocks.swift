@@ -12,12 +12,10 @@ import CoreLocation
 @testable import BlueCapKit
 
 // MARK: - Advertisements -
-let peripheralAdvertisements = [CBAdvertisementDataLocalNameKey:"Test Peripheral",
-                                CBAdvertisementDataTxPowerLevelKey:NSNumber(value: -45)] as [String : Any]
+let peripheralAdvertisements: [String : Any] = [CBAdvertisementDataLocalNameKey : "Test Peripheral", CBAdvertisementDataTxPowerLevelKey : NSNumber(value: -45)]
 
 // MARK: - ProfileManager -
 let profileManager = ProfileManager()
-GnosusProfiles.create(profileManager: profileManager)
 
 // MARK: - CBCentralManagerMock -
 class CBCentralManagerMock: CBCentralManagerInjectable {
@@ -169,7 +167,7 @@ class CBPeripheralMock: CBPeripheralInjectable {
 // MARK: - PeripheralUT -
 class PeripheralUT: Peripheral {
     
-    let error: ErrorType?
+    let error: Error?
     
     init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String: AnyObject], rssi: Int, error: Error?) {
         self.error = error

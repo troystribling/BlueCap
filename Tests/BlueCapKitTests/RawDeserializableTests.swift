@@ -33,28 +33,28 @@ class RawDeserializableTests: XCTestCase {
     func testDeserialize_ValidRawDeserializable_Sucess() {
         let data = "02".dataFromHexString()
         if let value : Testit = SerDe.deserialize(data) {
-            XCTAssert(value == .Maybe, "RawDeserializable deserialization value wrong: \(data)")
+            XCTAssert(value == .maybe)
         } else {
-            XCTFail("RawDeserializable deserialization failed")
+            XCTFail()
         }
     }
 
     func testDeserialize_InvalidRawDeserializable_Fails() {
         let data = "03".dataFromHexString()
         if let _ : Testit = SerDe.deserialize(data) {
-            XCTFail("RawDeserializable deserialization succeeded")
+            XCTFail()
         }
     }
     
     func testSerialize_ValidRawDeserializable_Sucess() {
         let value = Testit.yes
         let data = SerDe.serialize(value)
-        XCTAssert(data.hexStringValue() == "01", "RawDeserializable serialization failed: \(data)")
+        XCTAssert(data.hexStringValue() == "01")
     }
 
     func testCreate_InvalidRawDeserializable_Fails() {
         if let _ = Testit(rawValue: 5) {
-            XCTFail("RawDeserializable creation succeeded")
+            XCTFail()
         }
     }
 

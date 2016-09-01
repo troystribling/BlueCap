@@ -54,31 +54,31 @@ class RawPairDeserializableTests: XCTestCase {
     func testDeserialize_ValidPairDeserializable_Sucess() {
         let data = "02ab".dataFromHexString()
         if let value : Pair = SerDe.deserialize(data) {
-            XCTAssert(value.value1 == 2 && value.value2 == 171, "RawPairDeserializableTests deserialization value invalid: \(value.value1), \(value.value2)")
+            XCTAssert(value.value1 == 2 && value.value2 == 171)
         } else {
-            XCTFail("RawPairDeserializableTests deserialization failed")
+            XCTFail()
         }
     }
     
     func testDeserialize_InvalidPairDeserializable_Fails() {
         let data = "0201".dataFromHexString()
         if let _ : Pair = SerDe.deserialize(data) {
-            XCTFail("RawPairDeserializableTests deserialization succeeded")
+            XCTFail()
         }
     }
     
     func testSerialize_ValidPairDeserializable_Sucess() {
         if let value = Pair(rawValue1:5, rawValue2:100) {
             let data = SerDe.serialize(value)
-            XCTAssert(data.hexStringValue() == "0564", "RawDeserializable serialization failed: \(data)")
+            XCTAssert(data.hexStringValue() == "0564")
         } else {
-            XCTFail("RawPairDeserializableTests RawArray creation failed")
+            XCTFail()
         }
     }
 
     func testCreate_InvalidPairDeserializable_Fails() {
         if let _ = Pair(rawValue1:5, rawValue2:1) {
-            XCTFail("RawPairDeserializableTests RawArray creation succeeded")
+            XCTFail()
         }
     }
 

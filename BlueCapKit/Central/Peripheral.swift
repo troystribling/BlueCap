@@ -24,35 +24,35 @@ public struct PeripheralAdvertisements {
     let advertisements: [String : Any]
     
     public var localName: String? {
-        return self.advertisements[CBAdvertisementDataLocalNameKey].flatMap { $0 as? String }
+        return self.advertisements[CBAdvertisementDataLocalNameKey] as? String
     }
     
     public var manufactuereData: Data? {
-        return self.advertisements[CBAdvertisementDataManufacturerDataKey].flatMap { $0 as? Data }
+        return self.advertisements[CBAdvertisementDataManufacturerDataKey] as? Data
     }
     
     public var txPower: NSNumber? {
-        return self.advertisements[CBAdvertisementDataTxPowerLevelKey].flatMap { $0 as? NSNumber }
+        return self.advertisements[CBAdvertisementDataTxPowerLevelKey] as? NSNumber
     }
     
     public var isConnectable: NSNumber? {
-        return self.advertisements[CBAdvertisementDataIsConnectable].flatMap { $0 as? NSNumber }
+        return self.advertisements[CBAdvertisementDataIsConnectable] as? NSNumber
     }
     
     public var serviceUUIDs: [CBUUID]? {
-        return self.advertisements[CBAdvertisementDataServiceUUIDsKey].flatMap { $0 as? [CBUUID] }
+        return self.advertisements[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
     }
     
     public var serviceData: [CBUUID:Data]? {
-        return self.advertisements[CBAdvertisementDataServiceDataKey].flatMap { $0 as? [CBUUID:Data] }
+        return self.advertisements[CBAdvertisementDataServiceDataKey] as? [CBUUID:Data]
     }
     
     public var overflowServiceUUIDs: [CBUUID]? {
-        return self.advertisements[CBAdvertisementDataOverflowServiceUUIDsKey].flatMap { $0 as? [CBUUID] }
+        return self.advertisements[CBAdvertisementDataOverflowServiceUUIDsKey] as? [CBUUID]
     }
     
     public var solicitedServiceUUIDs: [CBUUID]? {
-        return self.advertisements[CBAdvertisementDataSolicitedServiceUUIDsKey].flatMap { $0 as? [CBUUID] }
+        return self.advertisements[CBAdvertisementDataSolicitedServiceUUIDsKey] as? [CBUUID]
     }    
 }
 
