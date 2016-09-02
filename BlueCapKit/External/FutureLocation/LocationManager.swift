@@ -139,21 +139,15 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
 
     public var allowsBackgroundLocationUpdates: Bool {
         get {
-            if #available(iOS 9.0, *) {
-                if let locationManager = self.clLocationManager as? CLLocationManager {
-                    return locationManager.allowsBackgroundLocationUpdates
-                } else {
-                    return false
-                }
+            if let locationManager = self.clLocationManager as? CLLocationManager {
+                return locationManager.allowsBackgroundLocationUpdates
             } else {
                 return false
             }
         }
         set {
-            if  #available(iOS 9.0, *) {
-                if let locationManager = self.clLocationManager as? CLLocationManager {
-                    locationManager.allowsBackgroundLocationUpdates = newValue
-                }
+            if let locationManager = self.clLocationManager as? CLLocationManager {
+                locationManager.allowsBackgroundLocationUpdates = newValue
             }
         }
     }

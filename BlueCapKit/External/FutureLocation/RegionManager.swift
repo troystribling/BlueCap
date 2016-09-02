@@ -80,7 +80,7 @@ public class RegionManager : LocationManager {
         }
     }
 
-    public func requestStateForRegion(_ region: Region) -> Future<CLRegionState> {
+    public func requestState(forRegion region: Region) -> Future<CLRegionState> {
         self.requestStateForRegionPromises[region.identifier] = Promise<CLRegionState>()
         self.clLocationManager.requestStateForRegion(region.clRegion)
         return self.requestStateForRegionPromises[region.identifier]!.future

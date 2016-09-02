@@ -27,10 +27,8 @@ extension Data: Serializable {
     public static func serializeArray<T>(_ values: [T]) -> Data {
         var littleValues = values.map{ fromHostByteOrder($0) }
         let size = MemoryLayout<T>.size*littleValues.count
-        return withUnsafePointer(to: &littleValues) { ptr in
-            ptr.withMemoryRebound(to: UInt8.self, capacity: size) { bytes in
-                return Data(bytes: bytes, count: size)}
-        }
+        let buffer = UnsafeMutableBufferPointer(start: &littleValues, count: size)
+        return Data(buffer: buffer)
     }
 
     public static func serialize<T1, T2>(_ value1: T1, value2: T2) -> Data {
