@@ -25,8 +25,8 @@ class CharacteristicProfileTests: XCTestCase {
     override func setUp() {
         GnosusProfiles.create(profileManager: profileManager)
         super.setUp()
-        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn))
-        self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn), profileManager: profileManager)
+        self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI, profileManager: profileManager)
         self.service  = Service(cbService: self.mockService, peripheral: self.peripheral)
     }
     

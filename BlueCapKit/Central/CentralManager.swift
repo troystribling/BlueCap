@@ -24,6 +24,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate var _isScanning = false
     fileprivate var _poweredOn = false
 
+    fileprivate let profileManager: ProfileManager?
+
     internal var _afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>()
     internal var discoveredPeripherals = SerialIODictionary<UUID, Peripheral>(CentralManager.ioQueue)
 
@@ -106,23 +108,25 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Initializers
-
-    public override init() {
+    public init(profileManager: ProfileManager? = nil) {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
+        self.profileManager = profileManager
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)
         self.poweredOn = self.cbCentralManager.state == .poweredOn
     }
 
-    public init(queue:DispatchQueue, options: [String:AnyObject]?=nil) {
+    public init(queue:DispatchQueue, profileManager: ProfileManager? = nil, options: [String:AnyObject]?=nil) {
         self.centralQueue = Queue(queue)
+        self.profileManager = profileManager
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
         self.poweredOn = self.cbCentralManager.state == .poweredOn
     }
 
-    public init(centralManager: CBCentralManagerInjectable) {
+    public init(centralManager: CBCentralManagerInjectable, profileManager: ProfileManager? = nil) {
         self.centralQueue = Queue("us.gnos.blueCap.central-manger.main")
+        self.profileManager = profileManager
         super.init()
         self.cbCentralManager = centralManager
         self.poweredOn = self.cbCentralManager.state == .poweredOn
@@ -305,7 +309,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         guard discoveredPeripherals[peripheral.identifier] == nil else {
             return
         }
-        let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue)
+        let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
         Logger.debug("uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name)")
         discoveredPeripherals[peripheral.identifier] = bcPeripheral
         afterPeripheralDiscoveredPromise.success(bcPeripheral)

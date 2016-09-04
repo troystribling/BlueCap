@@ -56,11 +56,11 @@ public class CharacteristicProfile {
         return (self.permissions.rawValue & permission.rawValue) > 0
     }
         
-    public func stringValue(_ data: Data) -> [String:String]? {
+    public func stringValue(_ data: Data) -> [String : String]? {
         return [self.name: data.hexStringValue()]
     }
     
-    public func data(fromString data: [String: String]) -> Data? {
+    public func data(fromString data: [String : String]) -> Data? {
         return data[self.name].map{ $0.dataFromHexString() }
     }
     

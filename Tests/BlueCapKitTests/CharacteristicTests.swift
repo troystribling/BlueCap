@@ -23,8 +23,8 @@ class CharacteristicTests: XCTestCase {
 
     override func setUp() {
         GnosusProfiles.create(profileManager: profileManager)
-        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn))
-        self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn), profileManager: profileManager)
+        self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI, profileManager: profileManager)
         self.peripheral.didDiscoverServices([self.mockService], error:nil)
         self.service = self.peripheral.services.first!
         super.setUp()
@@ -34,7 +34,7 @@ class CharacteristicTests: XCTestCase {
         super.tearDown()
     }
     
-    func createCharacteristic(_ properties: CBCharacteristicProperties, isNotifying:Bool) -> (Characteristic, CBCharacteristicMock) {
+    func createCharacteristic(_ properties: CBCharacteristicProperties, isNotifying:Bool, hasProfile: Bool = true) -> (Characteristic, CBCharacteristicMock) {
         let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, isNotifying: isNotifying)
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
@@ -103,7 +103,7 @@ class CharacteristicTests: XCTestCase {
     func testWriteString_WithTypeWithResponseWritableAndNoErrorOnAck_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(string: ["Hello World Greeting" : "Good bye"])
-        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
             XCTAssert(self.mockPerpheral.writeValueCalled)
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)

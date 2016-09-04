@@ -61,8 +61,8 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
 // MARK: - CentralManagerUT -
 class CentralManagerUT: CentralManager {
 
-    override init(centralManager: CBCentralManagerInjectable) {
-        super.init(centralManager: centralManager)
+    override init(centralManager: CBCentralManagerInjectable, profileManager: ProfileManager? = nil) {
+        super.init(centralManager: centralManager, profileManager: profileManager)
     }
 
     override func cancelPeripheralConnection(_ peripheral: Peripheral) {

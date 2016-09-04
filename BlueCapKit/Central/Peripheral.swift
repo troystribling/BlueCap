@@ -69,6 +69,8 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     fileprivate var _connectionPromise: StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
 
+    fileprivate let profileManager: ProfileManager?
+
     fileprivate var _RSSI: Int = 0
     fileprivate var _state = CBPeripheralState.disconnected
 
@@ -301,28 +303,31 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Initializers
-    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String : Any], RSSI: Int) {
+    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String : Any], RSSI: Int, profileManager: ProfileManager? = nil) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: advertisements)
+        self.profileManager = profileManager
         super.init()
         self.RSSI = RSSI
         self.cbPeripheral.delegate = self
     }
 
-    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager) {
+    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, profileManager: ProfileManager? = nil) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: [String : AnyObject]())
+        self.profileManager = profileManager
         super.init()
         self.RSSI = 0
         self.cbPeripheral.delegate = self
     }
 
-    internal init(cbPeripheral: CBPeripheralInjectable, bcPeripheral: Peripheral) {
+    internal init(cbPeripheral: CBPeripheralInjectable, bcPeripheral: Peripheral, profileManager: ProfileManager? = nil) {
         self.cbPeripheral = cbPeripheral
         self.advertisements = bcPeripheral.advertisements
         self.centralManager = bcPeripheral.centralManager
+        self.profileManager = profileManager
         super.init()
         self.RSSI = bcPeripheral.RSSI
         self.cbPeripheral.delegate = self
@@ -541,7 +546,8 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.servicesDiscoveredPromise?.failure(error)
         } else {
             for service in discoveredServices {
-                let bcService = Service(cbService:service, peripheral:self)
+                let serviceProfile = profileManager?.services[service.UUID]
+                let bcService = Service(cbService: service, peripheral: self, profile: serviceProfile)
                 self.discoveredServices[bcService.UUID] = bcService
                 Logger.debug("uuid=\(bcService.UUID.uuidString), name=\(bcService.name)")
             }

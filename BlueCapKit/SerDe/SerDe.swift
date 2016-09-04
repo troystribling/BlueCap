@@ -148,7 +148,7 @@ public struct SerDe {
     public static func deserialize<T: RawPairDeserializable>(_ data:Data) -> T? where T.RawType1: Deserializable,  T.RawType2: Deserializable {
         if data.count >= (T.RawType1.size + T.RawType2.size) {
             let rawData1 = data.subdata(in: 0..<T.RawType1.size)
-            let rawData2 = data.subdata(in: T.RawType1.size..<T.RawType2.size)
+            let rawData2 = data.subdata(in: T.RawType1.size..<T.RawType2.size+T.RawType1.size)
             return T.RawType1.deserialize(rawData1).flatMap { rawValue1 in
                 T.RawType2.deserialize(rawData2).flatMap { rawValue2 in
                     T(rawValue1: rawValue1, rawValue2: rawValue2)
@@ -166,7 +166,7 @@ public struct SerDe {
     public static func deserialize<T: RawArrayPairDeserializable>(_ data: Data) -> T? where T.RawType1: Deserializable,  T.RawType2: Deserializable {
         if data.count >= (T.size1 + T.size2) {
             let rawData1 = data.subdata(in: 0..<T.size1)
-            let rawData2 = data.subdata(in: T.size1..<T.size2)
+            let rawData2 = data.subdata(in: T.size1..<T.size2+T.size2)
             return T(rawValue1:T.RawType1.deserialize(rawData1), rawValue2: T.RawType2.deserialize(rawData2))
         } else {
             return nil

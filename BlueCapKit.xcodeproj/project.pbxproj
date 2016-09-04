@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		055120DF19F5513700ED3B74 /* Int16+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B319F5513700ED3B74 /* Int16+Deserializable.swift */; };
 		055120E019F5513700ED3B74 /* Int8+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B419F5513700ED3B74 /* Int8+Deserializable.swift */; };
-		055120E119F5513700ED3B74 /* NSData+Serializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B519F5513700ED3B74 /* NSData+Serializable.swift */; };
 		055120E319F5513700ED3B74 /* UInt16+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B719F5513700ED3B74 /* UInt16+Deserializable.swift */; };
 		055120E419F5513700ED3B74 /* Uint8+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B819F5513700ED3B74 /* Uint8+Deserializable.swift */; };
 		055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */; };
@@ -23,9 +22,6 @@
 		05585BD01D0CA437000F5307 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCB1D0CA437000F5307 /* Characteristic.swift */; };
 		05585BD11D0CA437000F5307 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCC1D0CA437000F5307 /* Peripheral.swift */; };
 		05585BD21D0CA437000F5307 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCD1D0CA437000F5307 /* Service.swift */; };
-		05585BD71D0CA441000F5307 /* MutableCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */; };
-		05585BD81D0CA441000F5307 /* MutableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD51D0CA441000F5307 /* MutableService.swift */; };
-		05585BD91D0CA441000F5307 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BD61D0CA441000F5307 /* PeripheralManager.swift */; };
 		05585BDB1D0CA459000F5307 /* SerDe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDA1D0CA459000F5307 /* SerDe.swift */; };
 		05585BDF1D0CA475000F5307 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDC1D0CA475000F5307 /* CharacteristicProfile.swift */; };
 		05585BE01D0CA475000F5307 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDD1D0CA475000F5307 /* ProfileManager.swift */; };
@@ -35,16 +31,18 @@
 		056276091CCD3F0A00F955D7 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* Errors.swift */; };
 		057FACF01D1C325B0006B93B /* Int32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057FACEF1D1C325B0006B93B /* Int32+Deserializable.swift */; };
 		05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */; };
-		05BF91A41CFBF62700B78B12 /* FLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91981CFBF62700B78B12 /* FLBeacon.swift */; };
-		05BF91A51CFBF62700B78B12 /* FLBeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91991CFBF62700B78B12 /* FLBeaconManager.swift */; };
-		05BF91A61CFBF62700B78B12 /* FLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919A1CFBF62700B78B12 /* FLBeaconRegion.swift */; };
-		05BF91A71CFBF62700B78B12 /* FLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919B1CFBF62700B78B12 /* FLCircularRegion.swift */; };
-		05BF91A81CFBF62700B78B12 /* FLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919C1CFBF62700B78B12 /* FLLocationManager.swift */; };
-		05BF91A91CFBF62700B78B12 /* FLLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919D1CFBF62700B78B12 /* FLLogger.swift */; };
-		05BF91AA1CFBF62700B78B12 /* FLRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919E1CFBF62700B78B12 /* FLRegion.swift */; };
-		05BF91AB1CFBF62700B78B12 /* FLRegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */; };
-		05BF91AC1CFBF62700B78B12 /* FLSerialIODictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */; };
 		05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */; };
+		05C405971D7B7BE300803654 /* Data+Serializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405961D7B7BE300803654 /* Data+Serializable.swift */; };
+		05C4059C1D7B7BF900803654 /* MutableCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405991D7B7BF900803654 /* MutableCharacteristic.swift */; };
+		05C4059D1D7B7BF900803654 /* MutableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C4059A1D7B7BF900803654 /* MutableService.swift */; };
+		05C4059E1D7B7BF900803654 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C4059B1D7B7BF900803654 /* PeripheralManager.swift */; };
+		05C405A61D7B7C6F00803654 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C4059F1D7B7C6F00803654 /* Beacon.swift */; };
+		05C405A71D7B7C6F00803654 /* BeaconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405A01D7B7C6F00803654 /* BeaconManager.swift */; };
+		05C405A81D7B7C6F00803654 /* BeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405A11D7B7C6F00803654 /* BeaconRegion.swift */; };
+		05C405A91D7B7C6F00803654 /* CircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405A21D7B7C6F00803654 /* CircularRegion.swift */; };
+		05C405AA1D7B7C6F00803654 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405A31D7B7C6F00803654 /* LocationManager.swift */; };
+		05C405AB1D7B7C6F00803654 /* Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405A41D7B7C6F00803654 /* Region.swift */; };
+		05C405AC1D7B7C6F00803654 /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405A51D7B7C6F00803654 /* RegionManager.swift */; };
 		05D3B9451A2BA162008E794E /* Double+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* Double+BlueCap.swift */; };
 		05D3B9461A2BA162008E794E /* String+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* String+BlueCap.swift */; };
 		05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */; };
@@ -56,7 +54,6 @@
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		055120B319F5513700ED3B74 /* Int16+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int16+Deserializable.swift"; sourceTree = "<group>"; };
 		055120B419F5513700ED3B74 /* Int8+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int8+Deserializable.swift"; sourceTree = "<group>"; };
-		055120B519F5513700ED3B74 /* NSData+Serializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+Serializable.swift"; sourceTree = "<group>"; };
 		055120B719F5513700ED3B74 /* UInt16+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UInt16+Deserializable.swift"; sourceTree = "<group>"; };
 		055120B819F5513700ED3B74 /* Uint8+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Uint8+Deserializable.swift"; sourceTree = "<group>"; };
 		055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLESIGGATTProfiles.swift; sourceTree = "<group>"; };
@@ -70,9 +67,6 @@
 		05585BCB1D0CA437000F5307 /* Characteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		05585BCC1D0CA437000F5307 /* Peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		05585BCD1D0CA437000F5307 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
-		05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableCharacteristic.swift; sourceTree = "<group>"; };
-		05585BD51D0CA441000F5307 /* MutableService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableService.swift; sourceTree = "<group>"; };
-		05585BD61D0CA441000F5307 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
 		05585BDA1D0CA459000F5307 /* SerDe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerDe.swift; sourceTree = "<group>"; };
 		05585BDC1D0CA475000F5307 /* CharacteristicProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicProfile.swift; sourceTree = "<group>"; };
 		05585BDD1D0CA475000F5307 /* ProfileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
@@ -82,16 +76,18 @@
 		056276081CCD3F0A00F955D7 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		057FACEF1D1C325B0006B93B /* Int32+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int32+Deserializable.swift"; sourceTree = "<group>"; };
 		05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
-		05BF91981CFBF62700B78B12 /* FLBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeacon.swift; sourceTree = "<group>"; };
-		05BF91991CFBF62700B78B12 /* FLBeaconManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeaconManager.swift; sourceTree = "<group>"; };
-		05BF919A1CFBF62700B78B12 /* FLBeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLBeaconRegion.swift; sourceTree = "<group>"; };
-		05BF919B1CFBF62700B78B12 /* FLCircularRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLCircularRegion.swift; sourceTree = "<group>"; };
-		05BF919C1CFBF62700B78B12 /* FLLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLLocationManager.swift; sourceTree = "<group>"; };
-		05BF919D1CFBF62700B78B12 /* FLLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLLogger.swift; sourceTree = "<group>"; };
-		05BF919E1CFBF62700B78B12 /* FLRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLRegion.swift; sourceTree = "<group>"; };
-		05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLRegionManager.swift; sourceTree = "<group>"; };
-		05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLSerialIODictionary.swift; sourceTree = "<group>"; };
 		05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFutures.swift; sourceTree = "<group>"; };
+		05C405961D7B7BE300803654 /* Data+Serializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Serializable.swift"; sourceTree = "<group>"; };
+		05C405991D7B7BF900803654 /* MutableCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableCharacteristic.swift; sourceTree = "<group>"; };
+		05C4059A1D7B7BF900803654 /* MutableService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableService.swift; sourceTree = "<group>"; };
+		05C4059B1D7B7BF900803654 /* PeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManager.swift; sourceTree = "<group>"; };
+		05C4059F1D7B7C6F00803654 /* Beacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
+		05C405A01D7B7C6F00803654 /* BeaconManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconManager.swift; sourceTree = "<group>"; };
+		05C405A11D7B7C6F00803654 /* BeaconRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegion.swift; sourceTree = "<group>"; };
+		05C405A21D7B7C6F00803654 /* CircularRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircularRegion.swift; sourceTree = "<group>"; };
+		05C405A31D7B7C6F00803654 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		05C405A41D7B7C6F00803654 /* Region.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Region.swift; sourceTree = "<group>"; };
+		05C405A51D7B7C6F00803654 /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
 		05D3B9431A2BA162008E794E /* Double+BlueCap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+BlueCap.swift"; sourceTree = "<group>"; };
 		05D3B9441A2BA162008E794E /* String+BlueCap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+BlueCap.swift"; sourceTree = "<group>"; };
 		05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Injectables.swift; sourceTree = "<group>"; };
@@ -137,7 +133,7 @@
 				0551209C19F5513700ED3B74 /* Central */,
 				05D3B9421A2BA162008E794E /* Extensions */,
 				05BF91951CFBF62700B78B12 /* External */,
-				055120AE19F5513700ED3B74 /* Peripheral */,
+				05C405981D7B7BF900803654 /* PeripheralManager */,
 				055120B219F5513700ED3B74 /* SerDe */,
 				055120C219F5513700ED3B74 /* Service Profile Definitions */,
 				055120B919F5513700ED3B74 /* Service Profiles */,
@@ -166,23 +162,13 @@
 			path = Central;
 			sourceTree = "<group>";
 		};
-		055120AE19F5513700ED3B74 /* Peripheral */ = {
-			isa = PBXGroup;
-			children = (
-				05585BD41D0CA441000F5307 /* MutableCharacteristic.swift */,
-				05585BD51D0CA441000F5307 /* MutableService.swift */,
-				05585BD61D0CA441000F5307 /* PeripheralManager.swift */,
-			);
-			path = Peripheral;
-			sourceTree = "<group>";
-		};
 		055120B219F5513700ED3B74 /* SerDe */ = {
 			isa = PBXGroup;
 			children = (
+				05C405961D7B7BE300803654 /* Data+Serializable.swift */,
 				05585BDA1D0CA459000F5307 /* SerDe.swift */,
 				055120B419F5513700ED3B74 /* Int8+Deserializable.swift */,
 				055120B319F5513700ED3B74 /* Int16+Deserializable.swift */,
-				055120B519F5513700ED3B74 /* NSData+Serializable.swift */,
 				055120B819F5513700ED3B74 /* Uint8+Deserializable.swift */,
 				055120B719F5513700ED3B74 /* UInt16+Deserializable.swift */,
 				4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */,
@@ -234,16 +220,14 @@
 		05BF91961CFBF62700B78B12 /* FutureLocation */ = {
 			isa = PBXGroup;
 			children = (
+				05C4059F1D7B7C6F00803654 /* Beacon.swift */,
+				05C405A01D7B7C6F00803654 /* BeaconManager.swift */,
+				05C405A11D7B7C6F00803654 /* BeaconRegion.swift */,
+				05C405A21D7B7C6F00803654 /* CircularRegion.swift */,
 				05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */,
-				05BF91981CFBF62700B78B12 /* FLBeacon.swift */,
-				05BF91991CFBF62700B78B12 /* FLBeaconManager.swift */,
-				05BF919A1CFBF62700B78B12 /* FLBeaconRegion.swift */,
-				05BF919B1CFBF62700B78B12 /* FLCircularRegion.swift */,
-				05BF919C1CFBF62700B78B12 /* FLLocationManager.swift */,
-				05BF919D1CFBF62700B78B12 /* FLLogger.swift */,
-				05BF919E1CFBF62700B78B12 /* FLRegion.swift */,
-				05BF919F1CFBF62700B78B12 /* FLRegionManager.swift */,
-				05BF91A01CFBF62700B78B12 /* FLSerialIODictionary.swift */,
+				05C405A31D7B7C6F00803654 /* LocationManager.swift */,
+				05C405A41D7B7C6F00803654 /* Region.swift */,
+				05C405A51D7B7C6F00803654 /* RegionManager.swift */,
 			);
 			path = FutureLocation;
 			sourceTree = "<group>";
@@ -254,6 +238,16 @@
 				05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */,
 			);
 			path = SimpleFutures;
+			sourceTree = "<group>";
+		};
+		05C405981D7B7BF900803654 /* PeripheralManager */ = {
+			isa = PBXGroup;
+			children = (
+				05C405991D7B7BF900803654 /* MutableCharacteristic.swift */,
+				05C4059A1D7B7BF900803654 /* MutableService.swift */,
+				05C4059B1D7B7BF900803654 /* PeripheralManager.swift */,
+			);
+			path = PeripheralManager;
 			sourceTree = "<group>";
 		};
 		05D3B9421A2BA162008E794E /* Extensions */ = {
@@ -345,44 +339,42 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05BF91A51CFBF62700B78B12 /* FLBeaconManager.swift in Sources */,
 				05585BD11D0CA437000F5307 /* Peripheral.swift in Sources */,
 				055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */,
 				05585BDB1D0CA459000F5307 /* SerDe.swift in Sources */,
+				05C405AB1D7B7C6F00803654 /* Region.swift in Sources */,
 				055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */,
 				055120E419F5513700ED3B74 /* Uint8+Deserializable.swift in Sources */,
+				05C405971D7B7BE300803654 /* Data+Serializable.swift in Sources */,
 				056276091CCD3F0A00F955D7 /* Errors.swift in Sources */,
-				05BF91AB1CFBF62700B78B12 /* FLRegionManager.swift in Sources */,
-				055120E119F5513700ED3B74 /* NSData+Serializable.swift in Sources */,
+				05C405A91D7B7C6F00803654 /* CircularRegion.swift in Sources */,
+				05C405AA1D7B7C6F00803654 /* LocationManager.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16+Deserializable.swift in Sources */,
-				05585BD91D0CA441000F5307 /* PeripheralManager.swift in Sources */,
 				05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */,
+				05C405A81D7B7C6F00803654 /* BeaconRegion.swift in Sources */,
+				05C405A71D7B7C6F00803654 /* BeaconManager.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8+Deserializable.swift in Sources */,
 				05585BDF1D0CA475000F5307 /* CharacteristicProfile.swift in Sources */,
 				05585BD21D0CA437000F5307 /* Service.swift in Sources */,
 				05D3B9461A2BA162008E794E /* String+BlueCap.swift in Sources */,
-				05BF91A91CFBF62700B78B12 /* FLLogger.swift in Sources */,
-				05BF91AA1CFBF62700B78B12 /* FLRegion.swift in Sources */,
 				05585BCF1D0CA437000F5307 /* CentralManager.swift in Sources */,
-				05585BD71D0CA441000F5307 /* MutableCharacteristic.swift in Sources */,
 				05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */,
+				05C405A61D7B7C6F00803654 /* Beacon.swift in Sources */,
 				05585BE41D0CA4AB000F5307 /* Logger.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
 				05585BE11D0CA475000F5307 /* ServiceProfile.swift in Sources */,
 				05D3B9451A2BA162008E794E /* Double+BlueCap.swift in Sources */,
-				05585BD81D0CA441000F5307 /* MutableService.swift in Sources */,
-				05BF91AC1CFBF62700B78B12 /* FLSerialIODictionary.swift in Sources */,
+				05C405AC1D7B7C6F00803654 /* RegionManager.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16+Deserializable.swift in Sources */,
+				05C4059E1D7B7BF900803654 /* PeripheralManager.swift in Sources */,
 				057FACF01D1C325B0006B93B /* Int32+Deserializable.swift in Sources */,
 				4ED105C01C315C420034D5D2 /* UInt32+Deserializable.swift in Sources */,
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
-				05BF91A41CFBF62700B78B12 /* FLBeacon.swift in Sources */,
+				05C4059D1D7B7BF900803654 /* MutableService.swift in Sources */,
 				05585BD01D0CA437000F5307 /* Characteristic.swift in Sources */,
 				05585BE51D0CA4AB000F5307 /* SerialIO.swift in Sources */,
 				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
-				05BF91A81CFBF62700B78B12 /* FLLocationManager.swift in Sources */,
-				05BF91A61CFBF62700B78B12 /* FLBeaconRegion.swift in Sources */,
-				05BF91A71CFBF62700B78B12 /* FLCircularRegion.swift in Sources */,
+				05C4059C1D7B7BF900803654 /* MutableCharacteristic.swift in Sources */,
 				05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */,
 				05585BE01D0CA475000F5307 /* ProfileManager.swift in Sources */,
 			);

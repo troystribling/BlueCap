@@ -25,30 +25,26 @@ extension Data: Serializable {
     }
     
     public static func serializeArray<T>(_ values: [T]) -> Data {
-        var littleValues = values.map{ fromHostByteOrder($0) }
-        let size = MemoryLayout<T>.size*littleValues.count
-        let buffer = UnsafeMutableBufferPointer(start: &littleValues, count: size)
-        return Data(buffer: buffer)
+        let littleValues = values.map{ fromHostByteOrder($0) }
+        return littleValues.withUnsafeBufferPointer { Data(buffer: $0) }
     }
 
     public static func serialize<T1, T2>(_ value1: T1, value2: T2) -> Data {
-        let data = NSMutableData()
-        data.setData(Data.serialize(value1))
+        var data = Data.serialize(value1)
         data.append(Data.serialize(value2))
-        return data as Data
+        return data
     }
 
     public static func serializeArrays<T1, T2>(_ values1: [T1], values2: [T2]) -> Data {
-        let data = NSMutableData()
-        data.setData(Data.serializeArray(values1))
+        var data = Data.serializeArray(values1)
         data.append(Data.serializeArray(values2))
-        return data as Data
+        return data
     }
 
     public func hexStringValue() -> String {
         var dataBytes = [UInt8](repeating: 0x00, count: self.count)
         let buffer = UnsafeMutableBufferPointer(start: &dataBytes, count: self.count)
-        self.copyBytes(to: buffer, from:0..<self.count)
+        let _ = self.copyBytes(to: buffer, from:0..<self.count)
         let hexString = dataBytes.reduce(""){ (out: String, dataByte: UInt8) in
             return out + (NSString(format: "%02lx", dataByte) as String)
         }
