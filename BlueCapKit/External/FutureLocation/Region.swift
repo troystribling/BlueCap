@@ -45,7 +45,7 @@ public class Region {
     
     public init(region: CLRegion, capacity:Int = Int.max) {
         self.clRegion = region
-        self.regionPromise = StreamPromise<RegionState>(capacity:capacity)
+        self.regionPromise = StreamPromise(capacity: capacity)
     }
 
     public class func isMonitoringAvailableForClass() -> Bool {

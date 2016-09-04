@@ -11,7 +11,7 @@ import Foundation
 extension Data: Serializable {
     
     public static func fromString(_ value: String, encoding: String.Encoding = String.Encoding.utf8) -> Data? {
-        return value.data(using: encoding).map{ (NSData(data:$0) as Data) }
+        return value.data(using: encoding)
     }
     
     public static func serialize<T>(_ value: T) -> Data {

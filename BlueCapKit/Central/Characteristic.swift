@@ -116,7 +116,7 @@ public class Characteristic : NSObject {
         }
     }
     
-    public var afterDiscoveredPromise: StreamPromise<Characteristic>? {
+    public var afterDiscoveredPromise: StreamPromise<Characteristic> {
         return profile.afterDiscoveredPromise
     }
     

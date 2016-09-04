@@ -18,7 +18,7 @@ public class CharacteristicProfile {
     public let properties: CBCharacteristicProperties
     public let initialValue: Data?
 
-    internal var afterDiscoveredPromise: StreamPromise<Characteristic>!
+    internal let afterDiscoveredPromise = StreamPromise<Characteristic>(capacity: 1)
 
     public var stringValues: [String] {
         return []
@@ -40,28 +40,24 @@ public class CharacteristicProfile {
         self.init(UUID: UUID, name: "Unknown")
     }
     
-    public func afterDiscovered(capacity: Int = Int.max) -> FutureStream<Characteristic> {
-        guard let afterDiscoveredPromise = self.afterDiscoveredPromise else {
-            self.afterDiscoveredPromise = StreamPromise<Characteristic>(capacity: capacity)
-            return self.afterDiscoveredPromise.stream
-        }
+    public func afterDiscovered() -> FutureStream<Characteristic> {
         return afterDiscoveredPromise.stream
     }
 
     public func propertyEnabled(_ property: CBCharacteristicProperties) -> Bool {
-        return (self.properties.rawValue & property.rawValue) > 0
+        return (properties.rawValue & property.rawValue) > 0
     }
     
     public func permissionEnabled(_ permission: CBAttributePermissions) -> Bool {
-        return (self.permissions.rawValue & permission.rawValue) > 0
+        return (permissions.rawValue & permission.rawValue) > 0
     }
         
     public func stringValue(_ data: Data) -> [String : String]? {
-        return [self.name: data.hexStringValue()]
+        return [name: data.hexStringValue()]
     }
     
     public func data(fromString data: [String : String]) -> Data? {
-        return data[self.name].map{ $0.dataFromHexString() }
+        return data[name].map{ $0.dataFromHexString() }
     }
     
 }

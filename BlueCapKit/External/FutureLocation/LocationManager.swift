@@ -279,16 +279,16 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     public func startUpdatingLocation(capacity: Int = Int.max, authorization: CLAuthorizationStatus = .authorizedWhenInUse, context: ExecutionContext = QueueContext.main) -> FutureStream<[CLLocation]> {
-            self.locationUpdatePromise = StreamPromise<[CLLocation]>(capacity:capacity)
-            let authoriztaionFuture = self.authorize(authorization)
-        authoriztaionFuture.onSuccess(context: context) {status in
-                self.clLocationManager.startUpdatingLocation()
-            }
-        authoriztaionFuture.onFailure(context: context) {error in
-                self.isUpdating = false
-                self.locationUpdatePromise!.failure(error)
-            }
-            return self.locationUpdatePromise!.stream
+        self.locationUpdatePromise = StreamPromise<[CLLocation]>(capacity:capacity)
+        let authorizationFuture = self.authorize(authorization)
+        authorizationFuture.onSuccess(context: context) {status in
+            self.clLocationManager.startUpdatingLocation()
+        }
+        authorizationFuture.onFailure(context: context) {error in
+            self.isUpdating = false
+            self.locationUpdatePromise!.failure(error)
+        }
+        return self.locationUpdatePromise!.stream
     }
 
     public func stopUpdatingLocation() {
@@ -352,22 +352,22 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
 
     // MARK: CLLocationManagerDelegate
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.didUpdateLocations(locations)
+        self.didUpdate(locations: locations)
     }
 
     @nonobjc public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        self.didFailWithError(error)
+        self.didFail(withError: error)
     }
 
     @nonobjc public func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?) {
-        self.didFinishDeferredUpdatesWithError(error)
+        self.didFinishDeferredUpdates(withError: error)
     }
         
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        self.didChangeAuthorizationStatus(status)
+        self.didChangeAuthorization(status: status)
     }
 
-    public func didUpdateLocations(_ locations: [CLLocation]) {
+    public func didUpdate(locations locations: [CLLocation]) {
         Logger.debug()
         self.isUpdating = true
         if let requestLocationPromise = self.requestLocationPromise {
@@ -377,7 +377,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         self.locationUpdatePromise?.success(locations)
     }
 
-    public func didFailWithError(_ error: Error) {
+    public func didFail(withError error: Error) {
         Logger.debug("error \(error.localizedDescription)")
         self.isUpdating = false
         if let requestLocationPromise = self.requestLocationPromise {
@@ -387,7 +387,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         self.locationUpdatePromise?.failure(error)
     }
 
-    public func didFinishDeferredUpdatesWithError(_ error: Error?) {
+    public func didFinishDeferredUpdates(withError error: Error?) {
         if let error = error {
             self.deferredLocationUpdatePromise?.failure(error)
         } else {
@@ -395,7 +395,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         }
     }
 
-    public func didChangeAuthorizationStatus(_ status: CLAuthorizationStatus) {
+    public func didChangeAuthorization(status status: CLAuthorizationStatus) {
         Logger.debug("status: \(status)")
         self.authorizationStatusChangedPromise?.success(status)
     }

@@ -20,6 +20,7 @@ class PeripheralManagerTests: XCTestCase {
     let immediateContext = ImmediateContext()
 
     override func setUp() {
+        GnosusProfiles.create(profileManager: profileManager)
         super.setUp()
     }
     
@@ -48,7 +49,7 @@ class PeripheralManagerTests: XCTestCase {
         mock.state = .unsupported
         peripheralManager.didUpdateState(mock)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqualErrors(error, CentralManagerError.unsupported)
+            XCTAssertEqualErrors(error, PeripheralManagerError.unsupported)
         }
     }
 

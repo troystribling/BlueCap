@@ -20,6 +20,7 @@ class CharacteristicProfileTests: XCTestCase {
     let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: [.read, .write], isNotifying: false)
 
     var peripheral: Peripheral!
+    var serviceProfile: ServiceProfile!
     let RSSI = -45
 
     override func setUp() {
@@ -27,7 +28,8 @@ class CharacteristicProfileTests: XCTestCase {
         super.setUp()
         self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn), profileManager: profileManager)
         self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI, profileManager: profileManager)
-        self.service  = Service(cbService: self.mockService, peripheral: self.peripheral)
+        serviceProfile = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
+        self.service  = Service(cbService: self.mockService, peripheral: self.peripheral, profile: serviceProfile)
     }
     
     override func tearDown() {
@@ -36,7 +38,6 @@ class CharacteristicProfileTests: XCTestCase {
     
     // MARK: After discovered
     func testAfterDiscovered_WhenCharacteristicIsDiscovered_CompletesSuccessfully() {
-        let serviceProfile = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
         let characteristicProfile = serviceProfile.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]!
         let future = characteristicProfile.afterDiscovered()
         service.didDiscoverCharacteristics([self.mockCharacteristic], error: nil)
@@ -47,8 +48,7 @@ class CharacteristicProfileTests: XCTestCase {
         ])
     }
 
-    func testAfterDiscovered_WhenCharacteristicDiscoveryFailes_CompletesWithFailure() {
-        let serviceProfile = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
+    func testAfterDiscovered_WhenCharacteristicDiscoveryFails_CompletesWithFailure() {
         let characteristicProfile = serviceProfile.characteristic[CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)]!
         let future = characteristicProfile.afterDiscovered()
         service.didDiscoverCharacteristics([self.mockCharacteristic], error: TestFailure.error)

@@ -811,6 +811,11 @@ public final class FutureStream<T> {
         completeWith(context: context, stream: dependent)
     }
 
+    public convenience init(value: T, capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault) {
+        self.init(capacity: capacity)
+        success(value)
+    }
+
     // MARK: Callbacks
 
     func complete(_ result: Try<T>) {

@@ -35,7 +35,12 @@ class CharacteristicTests: XCTestCase {
     }
     
     func createCharacteristic(_ properties: CBCharacteristicProperties, isNotifying:Bool, hasProfile: Bool = true) -> (Characteristic, CBCharacteristicMock) {
-        let mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, isNotifying: isNotifying)
+        let mockCharacteristic: CBCharacteristicMock
+        if hasProfile {
+            mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, isNotifying: isNotifying)
+        } else {
+            mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(), properties: properties, isNotifying: isNotifying)
+        }
         self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
         return (self.service.characteristics.first!, mockCharacteristic)
     }
@@ -100,7 +105,7 @@ class CharacteristicTests: XCTestCase {
         }
     }
 
-    func testWriteString_WithTypeWithResponseWritableAndNoErrorOnAck_CompletesSuccessfully() {
+    func testWriteString_WithTypeWithResponseWritableAndProfileAndNoErrorOnAck_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(string: ["Hello World Greeting" : "Good bye"])
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error: nil)
@@ -115,7 +120,23 @@ class CharacteristicTests: XCTestCase {
             }
         }
     }
-    
+
+    func testWriteString_WithTypeWithResponseWritableAndNoProfileAndNoErrorOnAck_CompletesSuccessfully() {
+        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false, hasProfile: false)
+        let future = characteristic.write(string: ["Unknown" : "abcd0101"])
+        self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error: nil)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
+            XCTAssert(self.mockPerpheral.writeValueCalled)
+            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
+            XCTAssertEqual(self.mockPerpheral.writtenType, .withResponse)
+            if let data = self.mockPerpheral.writtenData {
+                XCTAssertEqual(data, "abcd0101".dataFromHexString())
+            } else {
+                XCTFail()
+            }
+        }
+    }
+
     func testWriteString_WhenStringIsNotSerializable_CompletesWithErrorNotSerailizable() {
         let (characteristic, _) = self.createCharacteristic([.read, .write], isNotifying:  false)
         let future = characteristic.write(string: ["bad name" : "Invalid"])

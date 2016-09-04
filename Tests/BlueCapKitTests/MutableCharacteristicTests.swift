@@ -16,6 +16,7 @@ import CoreLocation
 class MutableCharacteristicTests: XCTestCase {
 
     override func setUp() {
+        GnosusProfiles.create(profileManager: profileManager)
         super.setUp()
     }
     

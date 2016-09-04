@@ -88,42 +88,42 @@ public class RegionManager : LocationManager {
 
     // MARK: CLLocationManagerDelegate
     public func locationManager(_: CLLocationManager, didEnterRegion region: CLRegion) {
-        self.didEnterRegion(region)
+        self.didEnter(region: region)
     }
     
     public func locationManager(_: CLLocationManager, didExitRegion region: CLRegion) {
-        self.didExitRegion(region)
+        self.didExit(region: region)
     }
     
     public func locationManager(_: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
-        self.didDetermineState(state, forRegion: region)
+        self.didDetermine(state: state, forRegion: region)
     }
     
     public func locationManager(_:CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: Error) {
-        self.monitoringDidFailForRegion(region, withError: error)
+        self.monitoringDidFail(forRegion: region, withError: error)
     }
     
     public func locationManager(_: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
-        self.didStartMonitoringForRegion(region)
+        self.didStartMonitoring(forRegion: region)
     }
 
-    public func didEnterRegion(_ region: CLRegion) {
+    public func didEnter(region: CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         self.configuredRegions[region.identifier]?.regionPromise.success(.inside)
     }
 
-    public func didExitRegion(_ region: CLRegion) {
+    public func didExit(region: CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         self.configuredRegions[region.identifier]?.regionPromise.success(.outside)
     }
 
-    public func didDetermineState(_ state: CLRegionState, forRegion region: CLRegion) {
+    public func didDetermine(state: CLRegionState, forRegion region: CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         self.requestStateForRegionPromises[region.identifier]?.success(state)
         self.requestStateForRegionPromises.removeValueForKey(region.identifier)
     }
 
-    public func monitoringDidFailForRegion(_ region: CLRegion?, withError error: Error) {
+    public func monitoringDidFail(forRegion region: CLRegion?, withError error: Error) {
         if let region = region, let flRegion = self.configuredRegions[region.identifier] {
             Logger.debug("region identifier '\(region.identifier)'")
             self.regionMonitorStatus[region.identifier] = false
@@ -132,7 +132,7 @@ public class RegionManager : LocationManager {
         }
     }
 
-    public func didStartMonitoringForRegion(_ region: CLRegion) {
+    public func didStartMonitoring(forRegion region: CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         self.updateIsMonitoring(true)
         self.regionMonitorStatus[region.identifier] = true
