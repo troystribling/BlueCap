@@ -54,8 +54,7 @@ public class BeaconManager : RegionManager {
     }
 
     public func startRangingBeacons(inRegion beaconRegion: BeaconRegion, context: ExecutionContext = QueueContext.main) -> FutureStream<[Beacon]> {
-        let authoriztaionFuture = self.authorize(CLAuthorizationStatus.authorizedAlways)
-        return authoriztaionFuture.flatMap(context: context) {status in
+        return self.authorize(CLAuthorizationStatus.authorizedAlways).flatMap(context: context) {status in
             Logger.debug("authorization status: \(status)")
             self.configuredBeaconRegions[beaconRegion.identifier] = beaconRegion
             self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.clBeaconRegion)

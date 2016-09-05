@@ -23,6 +23,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
     var requestWhenInUseAuthorizationCalled = false
     var startUpdatingLocationCalled = false
     var stopUpdatingLocationCalled = false
+    var requestLocationCalled = false
     var allowDeferredLocationUpdatesUntilTraveledCalled = false
     var startMonitoringSignificantLocationChangesCalled = false
     var stopMonitoringSignificantLocationChangesCalled = false
@@ -66,39 +67,45 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
     var location: CLLocation?
 
     static func locationServicesEnabled() -> Bool {
-        return self._locationServicesEnabled
+        return _locationServicesEnabled
     }
 
     func startUpdatingLocation() {
-        self.startUpdatingLocationCalled = true
+        startUpdatingLocationCalled = true
     }
 
     func stopUpdatingLocation() {
-        self.stopUpdatingLocationCalled = true
+        stopUpdatingLocationCalled = true
     }
+
+    // MARK: request location
+    func requestLocation() {
+        requestLocationCalled = true
+    }
+
 
     // MARK: Deferred Location Updates
     class func deferredLocationUpdatesAvailable() -> Bool {
-        return self._deferredLocationUpdatesAvailable
+        return _deferredLocationUpdatesAvailable
     }
 
     func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: Double) {
-        self.allowDeferredLocationUpdatesUntilTraveledCalled = true
-        self.allowDeferredLocationUpdatesUntilTraveledDistance = distance
-        self.allowDeferredLocationUpdatesUntilTraveledTimeout = timeout
+        allowDeferredLocationUpdatesUntilTraveledCalled = true
+        allowDeferredLocationUpdatesUntilTraveledDistance = distance
+        allowDeferredLocationUpdatesUntilTraveledTimeout = timeout
     }
 
     // MARK: Significant Change in Location
     class func significantLocationChangeMonitoringAvailable() -> Bool {
-        return self._significantLocationChangeMonitoringAvailable
+        return _significantLocationChangeMonitoringAvailable
     }
 
     func startMonitoringSignificantLocationChanges() {
-        self.startMonitoringSignificantLocationChangesCalled = true
+        startMonitoringSignificantLocationChangesCalled = true
     }
 
     func stopMonitoringSignificantLocationChanges() {
-        self.stopMonitoringSignificantLocationChangesCalled = true
+        stopMonitoringSignificantLocationChangesCalled = true
     }
 
     // MARK: Region Monitoring
@@ -107,35 +114,35 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
     var monitoredRegions = Set<CLRegion>()
 
     func startMonitoringForRegion(_ region: CLRegion) {
-        self.startMonitoringForRegionCalled = true
-        self.startMonitoringForRegionRegion = region
+        startMonitoringForRegionCalled = true
+        startMonitoringForRegionRegion = region
     }
 
     func stopMonitoringForRegion(_ region: CLRegion) {
-        self.stopMonitoringForRegionCalled = true
-        self.stopMonitoringForRegionRegion = region
+        stopMonitoringForRegionCalled = true
+        stopMonitoringForRegionRegion = region
     }
 
     func requestStateForRegion(_ region: CLRegion) {
-        self.requestStateForRegionCalled = true
-        self.requestStateForRegionRegion = region
+        requestStateForRegionCalled = true
+        requestStateForRegionRegion = region
     }
 
     // MARK: Beacons
     class func isRangingAvailable() -> Bool {
-        return self._isRangingAvailable
+        return _isRangingAvailable
     }
 
     var rangedRegions = Set<CLRegion>()
 
     func startRangingBeaconsInRegion(_ region: CLBeaconRegion) {
-        self.startRangingBeaconsInRegionCalled = true
-        self.startRangingBeaconsInRegionRegion = region
+        startRangingBeaconsInRegionCalled = true
+        startRangingBeaconsInRegionRegion = region
     }
 
     func stopRangingBeaconsInRegion(_ region: CLBeaconRegion) {
-        self.stopRangingBeaconsInRegionCalled = true
-        self.stopRangingBeaconsInRegionRegion = region
+        stopRangingBeaconsInRegionCalled = true
+        stopRangingBeaconsInRegionRegion = region
     }
 
     init() {}

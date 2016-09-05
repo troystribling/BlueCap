@@ -35,7 +35,7 @@ class LocationManagerTests: XCTestCase {
 
     func testAuthorized_WhenAuthorizedAlwaysRequestedAndStatusIsAuthorizedAlways_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let future = self.locationManager.authorize(.authorizedAlways)
+        let future = self.locationManager.authorize(.authorizedAlways, context: TestContext.immediate)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
             XCTAssertFalse(self.mock.requestAlwaysAuthorizationCalled)
         }
@@ -43,26 +43,26 @@ class LocationManagerTests: XCTestCase {
 
     func testAuthorized_WhenAuthorizedAlwaysRequestedAndStatusIsNotDetermined_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let future = self.locationManager.authorize(.authorizedAlways)
+        let future = self.locationManager.authorize(.authorizedAlways, context: TestContext.immediate)
         self.locationManager.didChangeAuthorization(status: .authorizedAlways)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
-            XCTAssertFalse(self.mock.requestAlwaysAuthorizationCalled)
+            XCTAssertTrue(self.mock.requestAlwaysAuthorizationCalled)
         }
     }
 
     func testAuthorized_WhenAuthorizedAlwaysRequestedAndStatusIsAuthorizedWhenInUse_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .authorizedWhenInUse
-        let future = self.locationManager.authorize(.authorizedAlways)
+        let future = self.locationManager.authorize(.authorizedAlways, context: TestContext.immediate)
         self.locationManager.didChangeAuthorization(status: .authorizedAlways)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
-            XCTAssertFalse(self.mock.requestAlwaysAuthorizationCalled)
+            XCTAssertTrue(self.mock.requestAlwaysAuthorizationCalled)
         }
     }
 
 
     func testAuthorized_WhenAuthorizedAlwaysRequestedAndRequestDenied_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let future = self.locationManager.authorize(.authorizedAlways)
+        let future = self.locationManager.authorize(.authorizedAlways, context: TestContext.immediate)
         self.locationManager.didChangeAuthorization(status: .denied)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssert(self.mock.requestAlwaysAuthorizationCalled)
@@ -72,7 +72,7 @@ class LocationManagerTests: XCTestCase {
 
     func testAuthorized_WhenAuthorizedWhenInUseRequestedAndStatusIsAuthorizedWhenInUse_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .authorizedWhenInUse
-        let future = self.locationManager.authorize(.authorizedWhenInUse)
+        let future = self.locationManager.authorize(.authorizedWhenInUse, context: TestContext.immediate)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
             XCTAssertFalse(self.mock.requestWhenInUseAuthorizationCalled)
         }
@@ -80,7 +80,7 @@ class LocationManagerTests: XCTestCase {
     
     func testAuthorized_WhenAuthorizedWhenInUseRequestedAndStatusIsNotDetermined_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let future = self.locationManager.authorize(.authorizedWhenInUse)
+        let future = self.locationManager.authorize(.authorizedWhenInUse, context: TestContext.immediate)
         self.locationManager.didChangeAuthorization(status: .authorizedWhenInUse)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
             XCTAssert(self.mock.requestWhenInUseAuthorizationCalled)
@@ -89,7 +89,7 @@ class LocationManagerTests: XCTestCase {
     
     func testAuthorized_WhenAuthorizedWhenInUseRequestedAndRequestDenied_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let future = self.locationManager.authorize(.authorizedWhenInUse)
+        let future = self.locationManager.authorize(.authorizedWhenInUse, context: TestContext.immediate)
         locationManager.didChangeAuthorization(status: .denied)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssert(self.mock.requestWhenInUseAuthorizationCalled)
@@ -180,7 +180,7 @@ class LocationManagerTests: XCTestCase {
 
     func testStartMonitoringSignificantLocationChanges_WhenAuthorizationFails_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let stream = self.locationManager.startMonitoringSignificantLocationChanges(authorization:.authorizedAlways)
+        let stream = self.locationManager.startMonitoringSignificantLocationChanges(authorization:.authorizedAlways, context: TestContext.immediate)
         self.locationManager.didChangeAuthorization(status: .denied)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in
