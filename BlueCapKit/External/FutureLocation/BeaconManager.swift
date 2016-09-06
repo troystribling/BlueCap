@@ -54,8 +54,9 @@ public class BeaconManager : RegionManager {
     }
 
     public func startRangingBeacons(inRegion beaconRegion: BeaconRegion, context: ExecutionContext = QueueContext.main) -> FutureStream<[Beacon]> {
-        return self.authorize(CLAuthorizationStatus.authorizedAlways).flatMap(context: context) {status in
+        return self.authorize(.authorizedAlways, context: context).flatMap(context: context) {status in
             Logger.debug("authorization status: \(status)")
+            self.updateIsRanging(true)
             self.configuredBeaconRegions[beaconRegion.identifier] = beaconRegion
             self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
             return beaconRegion.beaconPromise.stream
@@ -88,7 +89,6 @@ public class BeaconManager : RegionManager {
         Logger.debug("region identifier \(region.identifier)")
         if let beaconRegion = self.configuredBeaconRegions[region.identifier] {
             self.regionRangingStatus[beaconRegion.identifier] = true
-            self.updateIsRanging(true)
             let flBeacons = beacons.map { Beacon(clBeacon:$0) }
             beaconRegion._beacons = flBeacons
             beaconRegion.beaconPromise.success(flBeacons)
@@ -98,7 +98,6 @@ public class BeaconManager : RegionManager {
     public func rangingBeaconsDidFail(inRegion region: CLBeaconRegion, withError error: Error) {
         Logger.debug("region identifier \(region.identifier)")
         self.regionRangingStatus[region.identifier] = false
-        self.updateIsRanging(false)
         self.configuredBeaconRegions[region.identifier]?.beaconPromise.failure(error)
     }
 

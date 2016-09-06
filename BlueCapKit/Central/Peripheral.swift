@@ -375,7 +375,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
      
-    public func connect(_ capacity: Int = Int.max, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
+    public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity, capacity: Int = Int.max) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
         if self.connectionPromise == nil {
             self.connectionPromise = StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>(capacity: capacity)
         }

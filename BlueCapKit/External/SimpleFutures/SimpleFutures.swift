@@ -811,10 +811,16 @@ public final class FutureStream<T> {
         completeWith(context: context, stream: dependent)
     }
 
-    public convenience init(value: T, capacity: Int = Int.max, context: ExecutionContext = QueueContext.futuresDefault) {
+    public convenience init(value: T, capacity: Int = Int.max) {
         self.init(capacity: capacity)
         success(value)
     }
+
+    public convenience init(error: Swift.Error, capacity: Int = Int.max) {
+        self.init(capacity: capacity)
+        failure(error)
+    }
+
 
     // MARK: Callbacks
 

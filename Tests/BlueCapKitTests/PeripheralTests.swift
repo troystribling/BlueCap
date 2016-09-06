@@ -21,7 +21,6 @@ class PeripheralTests: XCTestCase {
 
     var centralManagerMock: CBCentralManagerMock!
     var centralManager: CentralManager!
-    let immediateContext = ImmediateContext()
 
     let mockServices = [
         CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
@@ -50,7 +49,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices()
         peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 2)
             XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1)
@@ -64,7 +63,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices()
         peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error: TestFailure.error)
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 0)
             XCTAssertEqualErrors(error, TestFailure.error)
@@ -78,7 +77,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices()
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 0)
             XCTAssertEqualErrors(error, PeripheralError.disconnected)
@@ -143,7 +142,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect(connectionTimeout: 120.0)
         peripheral.didConnectPeripheral()
-        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
             { (peripheral, connectionEvent) in
                 XCTAssert(self.centralManagerMock.connectPeripheralCalled)
                 XCTAssertEqual(connectionEvent, ConnectionEvent.connect)
@@ -164,7 +163,7 @@ class PeripheralTests: XCTestCase {
         let future = peripheral.connect(connectionTimeout: 120.0)
         peripheral.didFailToConnectPeripheral(TestFailure.error)
         XCTAssert(self.centralManagerMock.connectPeripheralCalled)
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamFails(future, context:  TestContext.immediate, validations: [
             { error in
                 XCTAssertEqualErrors(error, TestFailure.error)
             }
@@ -176,7 +175,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.disconnect()
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
                 XCTAssertEqualErrors(error, PeripheralError.disconnected)
             }
@@ -188,7 +187,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.disconnect()
-        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
             { (_, connectionEvent) in
                 XCTAssertEqual(connectionEvent, ConnectionEvent.forceDisconnect)
             }
@@ -200,7 +199,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.didDisconnectPeripheral(nil)
-        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
             { (_, connectionEvent) in
                 XCTAssertEqual(connectionEvent, ConnectionEvent.disconnect)
             }
@@ -212,7 +211,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.didDisconnectPeripheral(TestFailure.error)
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
+        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
                 XCTAssertEqualErrors(error, TestFailure.error)
             }
@@ -307,7 +306,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
         peripheral.didReadRSSI(NSNumber(value: Int32(self.updatedRSSI1)), error: nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) { rssi in
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { rssi in
             XCTAssertEqual(rssi, self.updatedRSSI1)
             XCTAssertEqual(peripheral.RSSI, self.updatedRSSI1)
         }
@@ -317,7 +316,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertEqualErrors(error, PeripheralError.disconnected)
         }
     }
@@ -327,7 +326,7 @@ class PeripheralTests: XCTestCase {
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
         peripheral.didReadRSSI(NSNumber(value: Int32(self.updatedRSSI1)), error: TestFailure.error)
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertEqualErrors(error, TestFailure.error)
         }
     }
@@ -356,7 +355,7 @@ class PeripheralTests: XCTestCase {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.startPollingRSSI()
-        XCTAssertFutureStreamFails(future, context:self.immediateContext, validations: [
+        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
                 peripheral.stopPollingRSSI()
                 XCTAssertEqualErrors(error, PeripheralError.disconnected)

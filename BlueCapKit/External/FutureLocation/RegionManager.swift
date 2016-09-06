@@ -57,6 +57,7 @@ public class RegionManager : LocationManager {
 
     public func startMonitoring(forRegion region: Region, authorization: CLAuthorizationStatus = .authorizedWhenInUse, capacity: Int = Int.max, context: ExecutionContext = QueueContext.main) -> FutureStream<RegionState> {
         return self.authorize(authorization, context: context).flatMap(capacity: capacity, context: context) {
+            self.updateIsMonitoring(true)
             self.configuredRegions[region.identifier] = region
             self.clLocationManager.startMonitoringForRegion(region.clRegion)
             return region.regionPromise.stream
@@ -123,14 +124,12 @@ public class RegionManager : LocationManager {
         if let region = region, let flRegion = self.configuredRegions[region.identifier] {
             Logger.debug("region identifier '\(region.identifier)'")
             self.regionMonitorStatus[region.identifier] = false
-            self.updateIsMonitoring(false)
             flRegion.regionPromise.failure(error)
         }
     }
 
     public func didStartMonitoring(forRegion region: CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
-        self.updateIsMonitoring(true)
         self.regionMonitorStatus[region.identifier] = true
         self.configuredRegions[region.identifier]?.regionPromise.success(.start)
     }

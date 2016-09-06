@@ -64,7 +64,7 @@ class BeaconManagerTests: XCTestCase {
     
     func testStartRangingRegion_WhenNotAuthorization_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion)
+        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, context: TestContext.immediate)
         self.beaconManager.didChangeAuthorization(status: .denied)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in
