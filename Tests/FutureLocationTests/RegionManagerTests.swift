@@ -46,7 +46,7 @@ class RegionManagerTests: XCTestCase {
         ])
     }
 
-    func testStartMonitoringForRegion_WhenAuthorizedAlwaysAndMonitoringStartsWithoFailure_CompletesWithError() {
+    func testStartMonitoringForRegion_WhenAuthorizedAlwaysAndMonitoringStartsWithFailure_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
         let stream = regionManager.startMonitoring(forRegion: testRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         regionManager.monitoringDidFail(forRegion: testCLRegion, withError: TestFailure.error)
@@ -55,7 +55,7 @@ class RegionManagerTests: XCTestCase {
                 XCTAssert(self.mock.startMonitoringForRegionCalled)
                 XCTAssertEqualErrors(error, TestFailure.error)
                 XCTAssertEqual(self.regionManager.regions.count, 1)
-                XCTAssertFalse(self.regionManager.isMonitoring)
+                XCTAssert(self.regionManager.isMonitoring)
             }
         ])
     }

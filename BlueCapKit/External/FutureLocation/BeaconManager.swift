@@ -53,8 +53,10 @@ public class BeaconManager : RegionManager {
         return self.regionRangingStatus[identifier] ?? false
     }
 
-    public func startRangingBeacons(inRegion beaconRegion: BeaconRegion, context: ExecutionContext = QueueContext.main) -> FutureStream<[Beacon]> {
-        return self.authorize(.authorizedAlways, context: context).flatMap(context: context) {status in
+    public func startRangingBeacons(inRegion beaconRegion: BeaconRegion, authorization: CLAuthorizationStatus = .authorizedWhenInUse, capacity: Int = Int.max, context: ExecutionContext = QueueContext.main) -> FutureStream<[Beacon]> {
+        let authorizationFuture = self.authorize(authorization, context: context)
+        authorizationFuture.onFailure { _ in self.updateIsRanging(false) }
+        return authorizationFuture.flatMap(capacity: capacity, context: context) {status in
             Logger.debug("authorization status: \(status)")
             self.updateIsRanging(true)
             self.configuredBeaconRegions[beaconRegion.identifier] = beaconRegion

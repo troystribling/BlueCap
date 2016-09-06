@@ -17,7 +17,7 @@ public enum RegionState {
 
 public class Region {
     
-    public var regionPromise  : StreamPromise<RegionState>
+    public let regionPromise  : StreamPromise<RegionState>
     
     public var identifier : String {
         return self.clRegion.identifier

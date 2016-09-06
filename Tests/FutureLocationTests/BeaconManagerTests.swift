@@ -35,7 +35,7 @@ class BeaconManagerTests: XCTestCase {
 
     func testStartRangingRegion_WhenAuthorizedAndBeaconsDiscovered_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, context: TestContext.immediate)
+        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         self.beaconManager.didRange(beacons: self.testCLBeacons.map{$0 as CLBeaconInjectable}, inRegion: self.testCLBeaconRegion)
         XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
             { beacons in
@@ -50,21 +50,21 @@ class BeaconManagerTests: XCTestCase {
     
     func testStartRangingRegion_WhenAuthorizedAndRangingFails_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, context: TestContext.immediate)
+        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         self.beaconManager.rangingBeaconsDidFail(inRegion: self.testCLBeaconRegion, withError: TestFailure.error)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in
                 XCTAssert(self.mock.startRangingBeaconsInRegionCalled)
                 XCTAssertEqual(self.testBeaconRegion.beacons.count, 0)
                 XCTAssertEqualErrors(error, TestFailure.error)
-                XCTAssertFalse(self.beaconManager.isRanging)
+                XCTAssertTrue(self.beaconManager.isRanging)
             }
         ])
     }
     
-    func testStartRangingRegion_WhenNotAuthorization_CompletesWithError() {
+    func testStartRangingRegion_WhenAuthorizationFails_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, context: TestContext.immediate)
+        let stream = self.beaconManager.startRangingBeacons(inRegion: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         self.beaconManager.didChangeAuthorization(status: .denied)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in
