@@ -39,6 +39,8 @@ public enum CentralManagerError: Swift.Error {
     case restoreFailed
     case peripheralScanTimeout
     case unsupported
+    case powerOnInProgress
+    case powerOffInProgress
 }
 
 public enum ServiceError: Swift.Error {
