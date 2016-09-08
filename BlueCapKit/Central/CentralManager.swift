@@ -138,10 +138,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Power ON/OFF
 
-    public func whenPowerOn() -> Future<Void> {
+    public func whenPoweredOn() -> Future<Void> {
         return self.centralQueue.sync {
-            if let afterPowerOnPromise = self.afterPowerOnPromise, afterPowerOnPromise.completed {
-                return Future(error: CentralManagerError.powerOnInProgress)
+            if let afterPowerOnPromise = self.afterPowerOnPromise, !afterPowerOnPromise.completed {
+                return afterPowerOnPromise.future
             }
             self.afterPowerOnPromise = Promise<Void>()
             if self.poweredOn {
@@ -152,10 +152,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    public func whenPowerOff() -> Future<Void> {
+    public func whenPoweredOff() -> Future<Void> {
         return self.centralQueue.sync {
-            if let afterPowerOffPromise = self.afterPowerOffPromise, afterPowerOffPromise.completed {
-                return Future(error: CentralManagerError.powerOffInProgress)
+            if let afterPowerOffPromise = self.afterPowerOffPromise, !afterPowerOffPromise.completed {
+                return afterPowerOffPromise.future
             }
             self.afterPowerOffPromise = Promise<Void>()
             if !self.poweredOn {
@@ -192,18 +192,20 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
-        if !isScanning {
-            Logger.debug("UUIDs \(UUIDs)")
-            isScanning = true
-            afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
-            if poweredOn {
-                cbCentralManager.scanForPeripherals(withServices: UUIDs, options: options)
-                timeoutScan(timeout, sequence: timeoutSequence)
-            } else {
-                afterPeripheralDiscoveredPromise.failure(CentralManagerError.isPoweredOff)
+        return self.centralQueue.sync {
+            if !self.isScanning {
+                Logger.debug("UUIDs \(UUIDs)")
+                self.isScanning = true
+                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
+                if self.poweredOn {
+                    self.cbCentralManager.scanForPeripherals(withServices: UUIDs, options: options)
+                    self.timeoutScan(timeout, sequence: self.timeoutSequence)
+                } else {
+                    self.afterPeripheralDiscoveredPromise.failure(CentralManagerError.isPoweredOff)
+                }
             }
+            return self.afterPeripheralDiscoveredPromise.stream
         }
-        return afterPeripheralDiscoveredPromise.stream
     }
     
     public func stopScanning() {
@@ -380,7 +382,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             break
         case .poweredOff:
             Logger.debug("PoweredOff")
-            if let afterPowerOffPromise = self.afterPowerOnPromise, !afterPowerOffPromise.completed {
+            if let afterPowerOffPromise = self.afterPowerOffPromise, !afterPowerOffPromise.completed {
                 afterPowerOffPromise.success()
             }
             break
