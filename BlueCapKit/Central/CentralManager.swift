@@ -17,8 +17,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     static let ioQueue = Queue("us.gnos.blueCap.central-manager.io")
 
     // MARK: Properties
-    fileprivate var _afterPowerOnPromise: Promise<Void>?
-    fileprivate var _afterPowerOffPromise: Promise<Void>?
+    fileprivate var afterPoweredOnPromise: Promise<Void>?
+    fileprivate var afterPoweredOffPromise: Promise<Void>?
+
     fileprivate var _afterStateRestoredPromise = StreamPromise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>()
 
     fileprivate var _isScanning = false
@@ -33,24 +34,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     open fileprivate(set) var cbCentralManager: CBCentralManagerInjectable!
 
     fileprivate var timeoutSequence = 0
-
-    fileprivate var afterPowerOnPromise: Promise<Void>? {
-        get {
-            return CentralManager.ioQueue.sync { return self._afterPowerOnPromise }
-        }
-        set {
-            CentralManager.ioQueue.sync { self._afterPowerOnPromise = newValue }
-        }
-    }
-
-    fileprivate var afterPowerOffPromise: Promise<Void>? {
-        get {
-            return CentralManager.ioQueue.sync { return self._afterPowerOffPromise }
-        }
-        set {
-            CentralManager.ioQueue.sync { self._afterPowerOffPromise = newValue }
-        }
-    }
 
     internal var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral> {
         get {
@@ -140,28 +123,27 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     public func whenPoweredOn() -> Future<Void> {
         return self.centralQueue.sync {
-            if let afterPowerOnPromise = self.afterPowerOnPromise, !afterPowerOnPromise.completed {
-                return afterPowerOnPromise.future
+            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
+                return afterPoweredOnPromise.future
             }
-            self.afterPowerOnPromise = Promise<Void>()
+            self.afterPoweredOnPromise = Promise<Void>()
             if self.poweredOn {
-                Logger.debug("Central already powered on")
-                self.afterPowerOnPromise!.success()
+                self.afterPoweredOnPromise!.success()
             }
-            return self.afterPowerOnPromise!.future
+            return self.afterPoweredOnPromise!.future
         }
     }
 
     public func whenPoweredOff() -> Future<Void> {
         return self.centralQueue.sync {
-            if let afterPowerOffPromise = self.afterPowerOffPromise, !afterPowerOffPromise.completed {
-                return afterPowerOffPromise.future
+            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
+                return afterPoweredOffPromise.future
             }
-            self.afterPowerOffPromise = Promise<Void>()
+            self.afterPoweredOffPromise = Promise<Void>()
             if !self.poweredOn {
-                self.afterPowerOffPromise!.success()
+                self.afterPoweredOffPromise!.success()
             }
-            return self.afterPowerOffPromise!.future
+            return self.afterPoweredOffPromise!.future
         }
     }
 
@@ -366,32 +348,26 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         poweredOn = centralManager.state == .poweredOn
         switch(centralManager.state) {
         case .unauthorized:
-            Logger.debug("Unauthorized")
             break
         case .unknown:
-            Logger.debug("Unknown")
             break
         case .unsupported:
-            Logger.debug("Unsupported")
-            if let afterPowerOnPromise = self.afterPowerOnPromise, !afterPowerOnPromise.completed {
-                afterPowerOnPromise.failure(CentralManagerError.unsupported)
+            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
+                afterPoweredOnPromise.failure(CentralManagerError.unsupported)
             }
-            break
+            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
+                afterPoweredOffPromise.failure(CentralManagerError.unsupported)
+            }
         case .resetting:
-            Logger.debug("Resetting")
             break
         case .poweredOff:
-            Logger.debug("PoweredOff")
-            if let afterPowerOffPromise = self.afterPowerOffPromise, !afterPowerOffPromise.completed {
-                afterPowerOffPromise.success()
+            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
+                afterPoweredOffPromise.success()
             }
-            break
         case .poweredOn:
-            Logger.debug("PoweredOn")
-            if let afterPowerOnPromise = self.afterPowerOnPromise, !afterPowerOnPromise.completed {
-                afterPowerOnPromise.success()
+            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
+                afterPoweredOnPromise.success()
             }
-            break
         }
     }
     

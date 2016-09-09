@@ -22,9 +22,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate var _name: String?
     internal fileprivate(set) var cbPeripheralManager: CBPeripheralManagerInjectable!
     
-    fileprivate var _afterAdvertisingStartedPromise = Promise<Void>()
-    fileprivate var _afterPowerOnPromise = Promise<Void>()
-    fileprivate var _afterPowerOffPromise = Promise<Void>()
+    fileprivate var afterAdvertisingStartedPromise: Promise<Void>?
+    fileprivate var afterBeaconAdvertisingStartedPromise: Promise<Void>?
+
+    fileprivate var afterPoweredOnPromise: Promise<Void>?
+    fileprivate var afterPoweredOffPromise: Promise<Void>?
+
     fileprivate var _afterSeriviceAddPromise = Promise<Void>()
     fileprivate var _afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
 
@@ -36,33 +39,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal var configuredCharcteristics = SerialIODictionary<CBUUID, MutableCharacteristic>(PeripheralManager.ioQueue)
 
     internal let peripheralQueue: Queue
-
-    fileprivate var afterAdvertisingStartedPromise: Promise<Void> {
-        get {
-            return PeripheralManager.ioQueue.sync { return self._afterAdvertisingStartedPromise }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._afterAdvertisingStartedPromise = newValue }
-        }
-    }
-
-    fileprivate var afterPowerOnPromise: Promise<Void> {
-        get {
-            return PeripheralManager.ioQueue.sync { return self._afterPowerOnPromise }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._afterPowerOnPromise = newValue }
-        }
-    }
-
-    fileprivate var afterPowerOffPromise: Promise<Void> {
-        get {
-            return PeripheralManager.ioQueue.sync { return self._afterPowerOffPromise }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._afterPowerOffPromise = newValue }
-        }
-    }
 
     fileprivate var afterSeriviceAddPromise: Promise<Void> {
         get {
@@ -116,6 +92,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Initialize
+
     public override init() {
         self.peripheralQueue = Queue(DispatchQueue(label: "com.gnos.us.peripheral.main", attributes: []))
         super.init()
@@ -142,49 +119,68 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Power ON/OFF
-    public func whenPowerOn() -> Future<Void> {
-        Logger.debug()
-        self.afterPowerOnPromise = Promise<Void>()
-        if self.poweredOn {
-            self.afterPowerOnPromise.success()
+
+    public func whenPoweredOn() -> Future<Void> {
+        return self.peripheralQueue.sync {
+            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
+                return afterPoweredOnPromise.future
+            }
+            self.afterPoweredOnPromise = Promise<Void>()
+            if self.poweredOn {
+                self.afterPoweredOnPromise!.success()
+            }
+            return self.afterPoweredOnPromise!.future
         }
-        return self.afterPowerOnPromise.future
     }
     
-    public func whenPowerOff() -> Future<Void> {
-        Logger.debug()
-        self.afterPowerOffPromise = Promise<Void>()
-        if !self.poweredOn {
-            self.afterPowerOffPromise.success()
+    public func whenPoweredOff() -> Future<Void> {
+        return self.peripheralQueue.sync {
+            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
+                return afterPoweredOffPromise.future
+            }
+            self.afterPoweredOffPromise = Promise<Void>()
+            if !self.poweredOn {
+                self.afterPoweredOffPromise!.success()
+            }
+            return self.afterPoweredOffPromise!.future
         }
-        return self.afterPowerOffPromise.future
     }
 
     // MARK: Advertising
     public func startAdvertising(_ name: String, uuids: [CBUUID]? = nil) -> Future<Void> {
-        self._name = name
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        if !self.isAdvertising {
-            var advertisementData: [String : AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]
-            if let uuids = uuids {
-                advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids as AnyObject
+        return self.peripheralQueue.sync {
+            if let afterAdvertisingStartedPromise = self.afterAdvertisingStartedPromise, !afterAdvertisingStartedPromise.completed {
+                return afterAdvertisingStartedPromise.future
             }
-            self.cbPeripheralManager.startAdvertising(advertisementData)
-        } else {
-            self.afterAdvertisingStartedPromise.failure(PeripheralManagerError.isAdvertising)
+            self._name = name
+            if !self.isAdvertising {
+                self.afterAdvertisingStartedPromise = Promise<Void>()
+                var advertisementData: [String : AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]
+                if let uuids = uuids {
+                    advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids as AnyObject
+                }
+                self.cbPeripheralManager.startAdvertising(advertisementData)
+                return self.afterAdvertisingStartedPromise!.future
+            } else {
+                return Future(error: PeripheralManagerError.isAdvertising)
+            }
         }
-        return self.afterAdvertisingStartedPromise.future
     }
     
     public func startAdvertising(_ region: BeaconRegion) -> Future<Void> {
-        self._name = region.identifier
-        self.afterAdvertisingStartedPromise = Promise<Void>()
-        if !self.isAdvertising {
-            self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
-        } else {
-            self.afterAdvertisingStartedPromise.failure(PeripheralManagerError.isAdvertising)
+        return self.peripheralQueue.sync {
+            if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
+                return afterBeaconAdvertisingStartedPromise.future
+            }
+            self._name = region.identifier
+            self.afterBeaconAdvertisingStartedPromise = Promise<Void>()
+            if !self.isAdvertising {
+                self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
+                return self.afterBeaconAdvertisingStartedPromise!.future
+            } else {
+                return Future(error: PeripheralManagerError.isAdvertising)
+            }
         }
-        return self.afterAdvertisingStartedPromise.future
     }
     
     public func stopAdvertising() {
@@ -339,24 +335,22 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.poweredOn = peripheralManager.state == .poweredOn
         switch peripheralManager.state {
         case .poweredOn:
-            Logger.debug("poweredOn")
-            if !self.afterPowerOnPromise.completed {
-                self.afterPowerOnPromise.success()
+            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
+                afterPoweredOnPromise.success()
             }
-            break
         case .poweredOff:
-            Logger.debug("poweredOff")
-            if !self.afterPowerOffPromise.completed {
-                self.afterPowerOffPromise.success()
+            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
+                afterPoweredOffPromise.success()
             }
-            break
         case .resetting:
             break
         case .unsupported:
-            if !self.afterPowerOnPromise.completed {
-                self.afterPowerOnPromise.failure(PeripheralManagerError.unsupported)
+            if let afterPowerOffPromise = self.afterPoweredOffPromise, !afterPowerOffPromise.completed {
+                afterPowerOffPromise.failure(PeripheralManagerError.unsupported)
             }
-            break
+            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
+                afterPoweredOnPromise.failure(PeripheralManagerError.unsupported)
+            }
         case .unauthorized:
             break
         case .unknown:
@@ -367,10 +361,20 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal func didStartAdvertising(_ error: Error?) {
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
-            self.afterAdvertisingStartedPromise.failure(error)
+            if let afterAdvertisingStartedPromise = self.afterAdvertisingStartedPromise, !afterAdvertisingStartedPromise.completed {
+                afterAdvertisingStartedPromise.failure(error)
+            }
+            if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
+                afterBeaconAdvertisingStartedPromise.failure(error)
+            }
         } else {
             Logger.debug("success")
-            self.afterAdvertisingStartedPromise.success()
+            if let afterAdvertisingStartedPromise = self.afterAdvertisingStartedPromise, !afterAdvertisingStartedPromise.completed {
+                afterAdvertisingStartedPromise.success()
+            }
+            if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
+                afterBeaconAdvertisingStartedPromise.success()
+            }
         }
     }
     

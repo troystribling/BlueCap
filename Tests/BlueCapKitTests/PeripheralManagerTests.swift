@@ -29,23 +29,23 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Power on
-    func testWhenPowerOn_WhenPoweredOn_CompletesSuccessfully() {
+    func testWhenPoweredOn_WhenPoweredOn_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let future = peripheralManager.whenPowerOn()
+        let future = peripheralManager.whenPoweredOn()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
-    func testWhenPowerOn_WhenInitiallyPoweredOff_CompletesSuccessfully() {
+    func testWhenPoweredOn_WhenInitiallyPoweredOff_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future = peripheralManager.whenPowerOn()
+        let future = peripheralManager.whenPoweredOn()
         mock.state = .poweredOn
         peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
-    func testWhenPowerOn_WithBluetoothUnsupported_CompletesWithFailure() {
+    func testWhenPoweredOn_WithBluetoothUnsupported_CompletesWithFailure() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future = peripheralManager.whenPowerOn()
+        let future = peripheralManager.whenPoweredOn()
         mock.state = .unsupported
         peripheralManager.didUpdateState(mock)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
@@ -53,19 +53,49 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
+    func testWhenPoweredOn_WhilePreviousRequestUncompleted_CompletesSuccessfully() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
+        let future1 = peripheralManager.whenPoweredOn()
+        let future2 = peripheralManager.whenPoweredOn()
+        mock.state = .poweredOn
+        peripheralManager.didUpdateState(mock)
+        XCTAssertFutureSucceeds(future1, context: TestContext.immediate)
+        XCTAssertFutureSucceeds(future2, context: TestContext.immediate)
+    }
+
     // MARK: Power off
-    func testWhenPowerOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
+    func testWhenPoweredOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let future = peripheralManager.whenPowerOff()
+        let future = peripheralManager.whenPoweredOff()
         mock.state = .poweredOff
         peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
-    func testWhenPowerOff_WhenPoweredOff_CompletesSuccessfully() {
+    func testWhenPoweredOff_WhenPoweredOff_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future = peripheralManager.whenPowerOff()
+        let future = peripheralManager.whenPoweredOff()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
+    }
+
+    func testWhenPoweredOff_WithBluetoothUnsupported_CompletesWithFailure() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
+        let future = peripheralManager.whenPoweredOff()
+        mock.state = .unsupported
+        peripheralManager.didUpdateState(mock)
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+            XCTAssertEqualErrors(error, PeripheralManagerError.unsupported)
+        }
+    }
+
+    func testWhenPoweredOff_WhilePreviousRequestUncompleted_CompletesWithFailure() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
+        let future1 = peripheralManager.whenPoweredOff()
+        let future2 = peripheralManager.whenPoweredOff()
+        mock.state = .poweredOff
+        peripheralManager.didUpdateState(mock)
+        XCTAssertFutureSucceeds(future1, context: TestContext.immediate)
+        XCTAssertFutureSucceeds(future2, context: TestContext.immediate)
     }
 
     // MARK: Start advertising
