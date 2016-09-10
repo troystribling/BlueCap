@@ -366,12 +366,19 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         Logger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.uuidString)")
-        centralManager.centralQueue.delay(reconnectDelay) {
+        let performConnection = {
             centralManager.connect(self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
             self.currentError = .none
             self.timeoutConnection(self.connectionSequence)
+        }
+        if reconnectDelay > 0.0 {
+            centralManager.centralQueue.delay(reconnectDelay) {
+                performConnection()
+            }
+        } else {
+            performConnection()
         }
     }
      

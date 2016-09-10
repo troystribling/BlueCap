@@ -83,7 +83,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Initialize
-
     public override init() {
         self.peripheralQueue = Queue(DispatchQueue(label: "com.gnos.us.peripheral.main", attributes: []))
         super.init()
@@ -110,7 +109,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Power ON/OFF
-
     public func whenPoweredOn() -> Future<Void> {
         return self.peripheralQueue.sync {
             if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
@@ -138,7 +136,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Advertising
-
     public func startAdvertising(_ name: String, uuids: [CBUUID]? = nil) -> Future<Void> {
         return self.peripheralQueue.sync {
             if let afterAdvertisingStartedPromise = self.afterAdvertisingStartedPromise, !afterAdvertisingStartedPromise.completed {
@@ -185,7 +182,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Manage Services
-
     public func add(service: MutableService) -> Future<Void> {
         service.peripheralManager = self
         self.addConfiguredCharacteristics(service.characteristics)
@@ -217,7 +213,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Characteristic IO
-
     public func updateValue(_ value: Data, forCharacteristic characteristic: MutableCharacteristic) -> Bool  {
         return self.cbPeripheralManager.updateValue(value, forCharacteristic:characteristic.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
@@ -229,7 +224,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: State Restoration
-
     public func whenStateRestored() -> FutureStream<(services: [MutableService], advertisements: PeripheralAdvertisements)> {
         return peripheralQueue.sync {
             if let afterStateRestoredPromise = self.afterStateRestoredPromise {
@@ -241,7 +235,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: CBPeripheralManagerDelegate
-
     public func peripheralManagerDidUpdateState(_ peripheralManager: CBPeripheralManager) {
         self.didUpdateState(peripheralManager)
     }
@@ -441,19 +434,21 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     fileprivate func removeServiceAndCharacteristics(_ service: MutableService) {
-        let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
-            for bcCharacteristic in service.characteristics {
-                if uuid == bcCharacteristic.UUID {
-                    return true
+        peripheralQueue.sync {
+            let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
+                for bcCharacteristic in service.characteristics {
+                    if uuid == bcCharacteristic.UUID {
+                        return true
+                    }
                 }
+                return false
             }
-            return false
+            for cbCharacteristic in removedCharacteristics {
+                self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
+            }
+            self.configuredServices.removeValueForKey(service.UUID)
+            self.cbPeripheralManager.remove(service: service.cbMutableService)
         }
-        for cbCharacteristic in removedCharacteristics {
-            self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
-        }
-        self.configuredServices.removeValueForKey(service.UUID)
-        self.cbPeripheralManager.remove(service: service.cbMutableService)
     }
     
     fileprivate func removeAllServiceAndCharacteristics() {

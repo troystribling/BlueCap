@@ -138,31 +138,31 @@ class PeripheralTests: XCTestCase {
 
     // MARK: connect
     func testConnect_WhenDisconnected_CompletesSuccesfullyWithEventConnect() {
-        let mockPeripheral = CBPeripheralMock(state:.disconnected)
+        let mockPeripheral = CBPeripheralMock(state: .disconnected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect(connectionTimeout: 120.0)
+        XCTAssert(self.centralManagerMock.connectPeripheralCalled)
         peripheral.didConnectPeripheral()
         XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
             { (peripheral, connectionEvent) in
-                XCTAssert(self.centralManagerMock.connectPeripheralCalled)
                 XCTAssertEqual(connectionEvent, ConnectionEvent.connect)
             }
         ])
     }
 
     func testConnect_WhenConnected_DoesNotConnect() {
-        let mockPeripheral = CBPeripheralMock(state:.connected)
+        let mockPeripheral = CBPeripheralMock(state: .connected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let _ = peripheral.connect()
-        XCTAssertFalse(self.centralManagerMock.connectPeripheralCalled)
+        XCTAssertFalse(centralManagerMock.connectPeripheralCalled)
     }
 
     func testConnect_WhenDisconnectedWithConnectionError_CompletesWithConnectionError() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect(connectionTimeout: 120.0)
+        XCTAssert(centralManagerMock.connectPeripheralCalled)
         peripheral.didFailToConnectPeripheral(TestFailure.error)
-        XCTAssert(self.centralManagerMock.connectPeripheralCalled)
         XCTAssertFutureStreamFails(future, context:  TestContext.immediate, validations: [
             { error in
                 XCTAssertEqualErrors(error, TestFailure.error)
