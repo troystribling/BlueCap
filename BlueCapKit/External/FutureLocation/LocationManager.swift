@@ -259,7 +259,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: Reverse Geocode
-    public class func reverseGeocode(location location: CLLocation) -> Future<[CLPlacemark]>  {
+    public class func reverseGeocode(location: CLLocation) -> Future<[CLPlacemark]>  {
         let geocoder = CLGeocoder()
         let promise = Promise<[CLPlacemark]>()
         geocoder.reverseGeocodeLocation(location) { (placemarks: [CLPlacemark]?, error: Swift.Error?) -> Void in
@@ -377,7 +377,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         self.didChangeAuthorization(status: status)
     }
 
-    public func didUpdate(locations locations: [CLLocation]) {
+    public func didUpdate(locations: [CLLocation]) {
         Logger.debug()
         if let requestLocationPromise = self.requestLocationPromise, !requestLocationPromise.completed {
             requestLocationPromise.success(locations)
@@ -401,7 +401,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         }
     }
 
-    public func didChangeAuthorization(status status: CLAuthorizationStatus) {
+    public func didChangeAuthorization(status: CLAuthorizationStatus) {
         guard let authorizationStatusChangedPromise = self.authorizationStatusChangedPromise, !authorizationStatusChangedPromise.completed else {
             return
         }

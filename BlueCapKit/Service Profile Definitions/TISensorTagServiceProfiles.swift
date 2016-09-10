@@ -1246,7 +1246,7 @@ public class TISensorTagServiceProfiles {
         let temperatureDataCharacteristic = RawArrayCharacteristicProfile<TISensorTag.TemperatureService.Data>()
         let temperatureEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.TemperatureService.Enabled>()
         
-        temperatureEnabledCharacteristic.afterDiscovered().flatMap
+        let _ = temperatureEnabledCharacteristic.afterDiscovered().flatMap
         { characteristic in
             characteristic.write(TISensorTag.TemperatureService.Enabled.yes)
         }

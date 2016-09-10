@@ -27,9 +27,9 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     fileprivate var afterPoweredOnPromise: Promise<Void>?
     fileprivate var afterPoweredOffPromise: Promise<Void>?
+    fileprivate var afterStateRestoredPromise: StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>?
 
     fileprivate var _afterSeriviceAddPromise = Promise<Void>()
-    fileprivate var _afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
 
     fileprivate var _state = CBManagerState.unknown
     fileprivate var _poweredOn = false
@@ -46,15 +46,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
         set {
             PeripheralManager.ioQueue.sync { self._afterSeriviceAddPromise = newValue }
-        }
-    }
-
-    fileprivate var afterStateRestoredPromise: StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)> {
-        get {
-            return PeripheralManager.ioQueue.sync { return self._afterStateRestoredPromise }
-        }
-        set {
-            PeripheralManager.ioQueue.sync { self._afterStateRestoredPromise = newValue }
         }
     }
 
@@ -147,6 +138,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Advertising
+
     public func startAdvertising(_ name: String, uuids: [CBUUID]? = nil) -> Future<Void> {
         return self.peripheralQueue.sync {
             if let afterAdvertisingStartedPromise = self.afterAdvertisingStartedPromise, !afterAdvertisingStartedPromise.completed {
@@ -193,6 +185,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Manage Services
+
     public func add(service: MutableService) -> Future<Void> {
         service.peripheralManager = self
         self.addConfiguredCharacteristics(service.characteristics)
@@ -224,6 +217,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Characteristic IO
+
     public func updateValue(_ value: Data, forCharacteristic characteristic: MutableCharacteristic) -> Bool  {
         return self.cbPeripheralManager.updateValue(value, forCharacteristic:characteristic.cbMutableChracteristic, onSubscribedCentrals:nil)
     }
@@ -235,12 +229,19 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: State Restoration
+
     public func whenStateRestored() -> FutureStream<(services: [MutableService], advertisements: PeripheralAdvertisements)> {
-        self.afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
-        return self.afterStateRestoredPromise.stream
+        return peripheralQueue.sync {
+            if let afterStateRestoredPromise = self.afterStateRestoredPromise {
+                return afterStateRestoredPromise.stream
+            }
+            self.afterStateRestoredPromise = StreamPromise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
+            return self.afterStateRestoredPromise!.stream
+        }
     }
 
     // MARK: CBPeripheralManagerDelegate
+
     public func peripheralManagerDidUpdateState(_ peripheralManager: CBPeripheralManager) {
         self.didUpdateState(peripheralManager)
     }
@@ -405,9 +406,9 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 service.characteristics = characteristics
                 return service
             }
-            self.afterStateRestoredPromise.success((services, PeripheralAdvertisements(advertisements: advertisements)))
+            self.afterStateRestoredPromise?.success((services, PeripheralAdvertisements(advertisements: advertisements)))
         } else {
-            self.afterStateRestoredPromise.failure(PeripheralManagerError.restoreFailed)
+            self.afterStateRestoredPromise?.failure(PeripheralManagerError.restoreFailed)
         }
     }
 
