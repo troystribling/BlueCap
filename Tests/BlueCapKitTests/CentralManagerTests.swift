@@ -176,30 +176,28 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
                                         scannedServices: testScannedServices, options: testOptions)
-        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations:[
-            { (peripherals, scannedServices, options) in
-                XCTAssertEqual(peripherals.count, testPeripherals.count)
-                XCTAssertEqual(scannedServices, testScannedServices)
-                XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber)
-                XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString)
-                XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }))
-                for testPeripheral in testPeripherals {
-                    let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
-                    XCTAssertNotNil(peripheral)
-                    let services = peripheral!.services
-                    let testServices = testPeripheral.services!
-                    XCTAssertEqual(services.count, testServices.count)
-                    XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }))
-                    for testService in testServices {
-                        let testCharacteristics = testService.characteristics!
-                        let service = peripheral!.discoveredServices[testService.UUID]
-                        let characteristics = service!.characteristics
-                        XCTAssertEqual(characteristics.count, testCharacteristics.count)
-                        XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }))
-                    }
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { (peripherals, scannedServices, options) in
+            XCTAssertEqual(peripherals.count, testPeripherals.count)
+            XCTAssertEqual(scannedServices, testScannedServices)
+            XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber)
+            XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString)
+            XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }))
+            for testPeripheral in testPeripherals {
+                let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
+                XCTAssertNotNil(peripheral)
+                let services = peripheral!.services
+                let testServices = testPeripheral.services!
+                XCTAssertEqual(services.count, testServices.count)
+                XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }))
+                for testService in testServices {
+                    let testCharacteristics = testService.characteristics!
+                    let service = peripheral!.discoveredServices[testService.UUID]
+                    let characteristics = service!.characteristics
+                    XCTAssertEqual(characteristics.count, testCharacteristics.count)
+                    XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }))
                 }
             }
-        ])
+        }
     }
 
     func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
@@ -207,10 +205,8 @@ class CentralManagerTests: XCTestCase {
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
-        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
-            { error in
+        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
                 XCTAssertEqualErrors(error, CentralManagerError.restoreFailed)
-            }
-        ])
+        }
     }
 }

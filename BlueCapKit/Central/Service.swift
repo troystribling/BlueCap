@@ -13,12 +13,11 @@ import CoreBluetooth
 public class Service {
 
     // MARK: Serialize Property IO
+
     static let ioQueue = Queue("us.gnos.blueCap.service.io")
-    static let timeoutQueue = Queue("us.gnos.blueCap.service.timeout")
 
     fileprivate var _characteristicDiscoverySequence = 0
-    fileprivate var _characteristicDiscoveryInProgress = false
-    fileprivate var _characteristicsDiscoveredPromise: Promise<Service>?
+    fileprivate var characteristicsDiscoveredPromise: Promise<Service>?
 
     fileprivate var characteristicDiscoverySequence: Int {
         get {
@@ -29,30 +28,13 @@ public class Service {
         }
     }
 
-    fileprivate var characteristicDiscoveryInProgress: Bool {
-        get {
-            return Service.ioQueue.sync { return self._characteristicDiscoveryInProgress }
-        }
-        set {
-            Service.ioQueue.sync { self._characteristicDiscoveryInProgress = newValue }
-        }
-    }
-
-     internal var characteristicsDiscoveredPromise: Promise<Service>? {
-        get {
-            return Service.ioQueue.sync { return self._characteristicsDiscoveredPromise }
-        }
-        set {
-            Service.ioQueue.sync { self._characteristicsDiscoveredPromise = newValue }
-        }
-    }
-
     // MARK: Properties
-    internal let profile: ServiceProfile?
 
-    internal var discoveredCharacteristics = [CBUUID : Characteristic]()
+    let centralQueue: Queue
 
-    internal let cbService: CBServiceInjectable
+    let profile: ServiceProfile?
+    var discoveredCharacteristics = [CBUUID : Characteristic]()
+    let cbService: CBServiceInjectable
 
     public var name: String {
         if let profile = self.profile {
@@ -73,19 +55,22 @@ public class Service {
     public fileprivate(set) weak var peripheral: Peripheral?
 
     // MARK: Initializer
+
     internal init(cbService: CBServiceInjectable, peripheral: Peripheral, profile: ServiceProfile? = nil) {
         self.cbService = cbService
+        self.centralQueue = peripheral.centralQueue
         self.peripheral = peripheral
         self.profile = profile
     }
 
     // MARK: Discover Characteristics
-    public func discoverAllCharacteristics(_ timeout: Double? = nil) -> Future<Service> {
+
+    public func discoverAllCharacteristics(_ timeout: Double = Double.infinity) -> Future<Service> {
         Logger.debug("uuid=\(self.UUID.uuidString), name=\(self.name)")
         return self.discoverIfConnected(nil, timeout: timeout)
     }
     
-    public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: Double? = nil) -> Future<Service> {
+    public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: Double = Double.infinity) -> Future<Service> {
         Logger.debug("uuid=\(self.UUID.uuidString), name=\(self.name)")
         return self.discoverIfConnected(characteristics, timeout: timeout)
     }
@@ -95,8 +80,8 @@ public class Service {
     }
 
     // MARK: CBPeripheralDelegate Shim
+
     internal func didDiscoverCharacteristics(_ discoveredCharacteristics: [CBCharacteristicInjectable], error: Swift.Error?) {
-        self.characteristicDiscoveryInProgress = false
         self.discoveredCharacteristics.removeAll()
         if let error = error {
             Logger.debug("discover failed")
@@ -119,40 +104,38 @@ public class Service {
     }
 
     internal func didDisconnectPeripheral(_ error: Swift.Error?) {
-        self.characteristicDiscoveryInProgress = false
+        if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
+            characteristicsDiscoveredPromise.failure(PeripheralError.disconnected)
+        }
     }
 
     // MARK: Utils
-    fileprivate func discoverIfConnected(_ characteristics: [CBUUID]?, timeout: Double?) -> Future<Service> {
-        if !self.characteristicDiscoveryInProgress {
-            self.characteristicsDiscoveredPromise = Promise<Service>()
-            if self.peripheral?.state == .connected {
-                self.characteristicDiscoveryInProgress = true
-                self.characteristicDiscoverySequence += 1
-                self.timeoutCharacteristicDiscovery(self.characteristicDiscoverySequence, timeout: timeout)
-                self.peripheral?.discoverCharacteristics(characteristics, forService:self)
-            } else {
-                self.characteristicsDiscoveredPromise?.failure(PeripheralError.disconnected)
-            }
-            return self.characteristicsDiscoveredPromise!.future
-        } else {
-            let promise = Promise<Service>()
-            promise.failure(ServiceError.characteristicDiscoveryInProgress)
-            return promise.future
+
+    fileprivate func discoverIfConnected(_ characteristics: [CBUUID]?, timeout: Double) -> Future<Service> {
+        if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
+            return characteristicsDiscoveredPromise.future
         }
+        self.characteristicsDiscoveredPromise = Promise<Service>()
+        if self.peripheral?.state == .connected {
+            self.characteristicDiscoverySequence += 1
+            self.timeoutCharacteristicDiscovery(self.characteristicDiscoverySequence, timeout: timeout)
+            self.peripheral?.discoverCharacteristics(characteristics, forService:self)
+        } else {
+            self.characteristicsDiscoveredPromise?.failure(PeripheralError.disconnected)
+        }
+        return self.characteristicsDiscoveredPromise!.future
     }
 
-    fileprivate func timeoutCharacteristicDiscovery(_ sequence: Int, timeout: Double?) {
-        guard let peripheral = peripheral, let centralManager = peripheral.centralManager, let timeout = timeout else {
+    fileprivate func timeoutCharacteristicDiscovery(_ sequence: Int, timeout: Double) {
+        guard let peripheral = peripheral, let centralManager = peripheral.centralManager, timeout < Double.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(peripheral.identifier.uuidString), sequence = \(sequence), timeout = \(timeout)")
-        Peripheral.pollQueue.delay(timeout) {
-            if sequence == self.characteristicDiscoverySequence && self.characteristicDiscoveryInProgress {
+        centralQueue.delay(timeout) {
+            if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, sequence == self.characteristicDiscoverySequence && !characteristicsDiscoveredPromise.completed {
                 Logger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(peripheral)
-                self.characteristicDiscoveryInProgress = false
-                self.characteristicsDiscoveredPromise?.failure(ServiceError.characteristicDiscoveryTimeout)
+                characteristicsDiscoveredPromise.failure(ServiceError.characteristicDiscoveryTimeout)
             } else {
                 Logger.debug("characteristic scan timeout expired name = \(self.name), UUID = \(self.UUID.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(self.characteristicDiscoverySequence)")
             }

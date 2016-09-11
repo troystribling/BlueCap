@@ -24,84 +24,35 @@ struct ReadParameters {
 public class Characteristic : NSObject {
 
     // MARK: Properties
-    static let ioQueue      = Queue("us.gnos.blueCap.characteristic.io")
-    static let timeoutQueue = Queue("us.gnos.blueCap.characteristic.timeout")
+    fileprivate var notificationStateChangedPromise: Promise<Characteristic>?
+    fileprivate var notificationUpdatePromise: StreamPromise<(characteristic: Characteristic, data: Data?)>?
 
-    fileprivate var _notificationStateChangedPromise: Promise<Characteristic>?
-    fileprivate var _notificationUpdatePromise: StreamPromise<(characteristic: Characteristic, data: Data?)>?
+    fileprivate var readParameters  = [ReadParameters]()
+    fileprivate var writeParameters = [WriteParameters]()
 
-    internal var readPromises    = SerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
-    internal var writePromises   = SerialIOArray<Promise<Characteristic>>(Characteristic.ioQueue)
-    fileprivate var readParameters  = SerialIOArray<ReadParameters>(Characteristic.ioQueue)
-    fileprivate var writeParameters = SerialIOArray<WriteParameters>(Characteristic.ioQueue)
-    
     fileprivate weak var _service: Service?
     
     fileprivate let profile: CharacteristicProfile
 
-    fileprivate var _reading = false
-    fileprivate var _writing = false
-    fileprivate var _readSequence = 0
-    fileprivate var _writeSequence = 0
-    fileprivate var _isNotifying = false
-    fileprivate let defaultTimeout  = 10.0
+    fileprivate var reading = false
+    fileprivate var writing = false
+    fileprivate var readSequence = 0
+    fileprivate var writeSequence = 0
 
-    internal let cbCharacteristic: CBCharacteristicInjectable
+    var readPromises = [Promise<Characteristic>]()
+    var writePromises = [Promise<Characteristic>]()
 
-    fileprivate var notificationStateChangedPromise: Promise<Characteristic>? {
-        get {
-            return Characteristic.ioQueue.sync { return self._notificationStateChangedPromise }
-        }
-        set {
-            Characteristic.ioQueue.sync { self._notificationStateChangedPromise = newValue }
-        }
+    let cbCharacteristic: CBCharacteristicInjectable
+    let centralQueue: Queue
+
+    public var pendingReadCount: Int {
+        return centralQueue.sync { self.readPromises.count }
     }
 
-    fileprivate var notificationUpdatePromise: StreamPromise<(characteristic: Characteristic, data: Data?)>? {
-        get {
-            return Characteristic.ioQueue.sync { return self._notificationUpdatePromise }
-        }
-        set {
-            Characteristic.ioQueue.sync { self._notificationUpdatePromise = newValue }
-        }
+    public var pendingWriteCount: Int {
+        return centralQueue.sync { self.writePromises.count }
     }
 
-    fileprivate var reading: Bool {
-        get {
-            return Characteristic.ioQueue.sync { return self._reading }
-        }
-        set {
-            Characteristic.ioQueue.sync{self._reading = newValue}
-        }
-    }
-
-    fileprivate var writing: Bool {
-        get {
-            return Characteristic.ioQueue.sync { return self._writing }
-        }
-        set {
-            Characteristic.ioQueue.sync{ self._writing = newValue }
-        }
-    }
-
-    fileprivate var readSequence: Int {
-        get {
-            return Characteristic.ioQueue.sync { return self._readSequence }
-        }
-        set {
-            Characteristic.ioQueue.sync{ self._readSequence = newValue }
-        }
-    }
-
-    fileprivate var writeSequence: Int {
-        get {
-            return Characteristic.ioQueue.sync { return self._writeSequence }
-        }
-        set {
-            Characteristic.ioQueue.sync{ self._writeSequence = newValue }
-        }
-    }
-    
     public var UUID: CBUUID {
         return cbCharacteristic.UUID
     }
@@ -111,9 +62,7 @@ public class Characteristic : NSObject {
     }
     
     public var isNotifying: Bool {
-        get {
-            return cbCharacteristic.isNotifying
-        }
+        return cbCharacteristic.isNotifying
     }
     
     public var afterDiscoveredPromise: StreamPromise<Characteristic> {
@@ -156,8 +105,8 @@ public class Characteristic : NSObject {
     internal init(cbCharacteristic: CBCharacteristicInjectable, service: Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
-        self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.UUID) ??
-            CharacteristicProfile(UUID: cbCharacteristic.UUID.uuidString)
+        self.centralQueue = service.centralQueue
+        self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.UUID) ??  CharacteristicProfile(UUID: cbCharacteristic.UUID.uuidString)
         super.init()
     }
 
@@ -220,35 +169,47 @@ public class Characteristic : NSObject {
 
     // MARK: Notifications
     public func startNotifying() -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
-        if self.canNotify {
-            self.notificationStateChangedPromise = promise
-            self.setNotifyValue(true)
-        } else {
-            promise.failure(CharacteristicError.notifyNotSupported)
+        return centralQueue.sync {
+            if let notificationStateChangedPromise = self.notificationStateChangedPromise, !notificationStateChangedPromise.completed {
+                return notificationStateChangedPromise.future
+            }
+            if self.canNotify {
+                self.notificationStateChangedPromise = Promise<Characteristic>()
+                self.setNotifyValue(true)
+                return self.notificationStateChangedPromise!.future
+            } else {
+                return Future(error: CharacteristicError.notifyNotSupported)
+            }
         }
-        return promise.future
     }
 
     public func stopNotifying() -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
-        if self.canNotify {
-            self.notificationStateChangedPromise = promise
-            self.setNotifyValue(false)
-        } else {
-            promise.failure(CharacteristicError.notifyNotSupported)
+        return centralQueue.sync {
+            if let notificationStateChangedPromise = self.notificationStateChangedPromise, !notificationStateChangedPromise.completed {
+                return notificationStateChangedPromise.future
+            }
+            if self.canNotify {
+                self.notificationStateChangedPromise = Promise<Characteristic>()
+                self.setNotifyValue(false)
+                return self.notificationStateChangedPromise!.future
+            } else {
+                return Future(error: CharacteristicError.notifyNotSupported)
+            }
         }
-        return promise.future
     }
 
     public func receiveNotificationUpdates(capacity: Int = Int.max) -> FutureStream<(characteristic: Characteristic, data: Data?)> {
-        let promise = StreamPromise<(characteristic: Characteristic, data: Data?)>(capacity: capacity)
-        if self.canNotify {
-            self.notificationUpdatePromise = promise
-        } else {
-            promise.failure(CharacteristicError.notifyNotSupported)
+        return centralQueue.sync {
+            if let notificationUpdatePromise = self.notificationUpdatePromise {
+                return notificationUpdatePromise.stream
+            }
+            if self.canNotify {
+                self.notificationUpdatePromise = StreamPromise<(characteristic: Characteristic, data: Data?)>(capacity: capacity)
+                return self.notificationUpdatePromise!.stream
+            } else {
+                return FutureStream(error: CharacteristicError.notifyNotSupported)
+            }
         }
-        return promise.stream
     }
     
     public func stopNotificationUpdates() {
@@ -257,33 +218,37 @@ public class Characteristic : NSObject {
 
     // MARK: Read Data
     public func read(timeout: Double = Double.infinity) -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
-        if self.canRead {
-            self.readPromises.append(promise)
-            self.readParameters.append(ReadParameters(timeout:timeout))
-            self.readNext()
-        } else {
-            promise.failure(CharacteristicError.readNotSupported)
+        return centralQueue.sync {
+            if self.canRead {
+                let promise = Promise<Characteristic>()
+                self.readPromises.append(promise)
+                self.readParameters.append(ReadParameters(timeout:timeout))
+                self.readNext()
+                return promise.future
+            } else {
+                return Future(error: CharacteristicError.readNotSupported)
+            }
         }
-        return promise.future
     }
 
     // MARK: Write Data
     public func write(data value: Data, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        let promise = Promise<Characteristic>()
-        if self.canWrite {
-            if type == .withResponse {
-                self.writePromises.append(promise)
-                self.writeParameters.append(WriteParameters(value: value, timeout: timeout, type: type))
-                self.writeNext()
+        return centralQueue.sync {
+            if self.canWrite {
+                if type == .withResponse {
+                    let promise = Promise<Characteristic>()
+                    self.writePromises.append(promise)
+                    self.writeParameters.append(WriteParameters(value: value, timeout: timeout, type: type))
+                    self.writeNext()
+                    return promise.future
+                } else {
+                    self.writeValue(value, type: type)
+                    return Future(value: self)
+                }
             } else {
-                self.writeValue(value, type: type)
-                promise.success(self)
+                return Future(error: CharacteristicError.writeNotSupported)
             }
-        } else {
-            promise.failure(CharacteristicError.writeNotSupported)
         }
-        return promise.future
     }
 
     public func write(string stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
@@ -376,7 +341,7 @@ public class Characteristic : NSObject {
             return
         }
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
-        Characteristic.timeoutQueue.delay(timeout) {
+        centralQueue.delay(timeout) {
             if sequence == self.readSequence && self.reading {
                 Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
                 self.didUpdate(CharacteristicError.readTimeout)
@@ -391,7 +356,7 @@ public class Characteristic : NSObject {
             return
         }
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
-        Characteristic.timeoutQueue.delay(timeout) {
+        centralQueue.delay(timeout) {
             if sequence == self.writeSequence && self.writing {
                 Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
                 self.didWrite(CharacteristicError.writeTimeout)
@@ -420,7 +385,7 @@ public class Characteristic : NSObject {
             return
         }
         Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.UUID.uuidString)")
-        self.writeParameters.removeAtIndex(0)
+        self.writeParameters.remove(at :0)
         self.writing = true
         self.writeValue(parameters.value, type: parameters.type)
         self.writeSequence += 1
@@ -432,17 +397,16 @@ public class Characteristic : NSObject {
             return
         }
         Logger.debug("read characteristic \(self.UUID.uuidString)")
-        self.readParameters.removeAtIndex(0)
+        self.readParameters.remove(at :0)
         self.readValueForCharacteristic()
         self.reading = true
         self.readSequence += 1
         self.timeoutRead(self.readSequence, timeout: parameters.timeout)
     }
     
-    fileprivate func shiftPromise(_ promises: inout SerialIOArray<Promise<Characteristic>>) -> Promise<Characteristic>? {
-        if let item = promises.first {
-            promises.removeAtIndex(0)
-            return item
+    fileprivate func shiftPromise(_ promises: inout [Promise<Characteristic>]) -> Promise<Characteristic>? {
+        if let _ = promises.first {
+            return promises.remove(at :0)
         } else {
             return nil
         }

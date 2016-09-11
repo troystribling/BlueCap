@@ -53,12 +53,12 @@ class CharacteristicTests: XCTestCase {
         XCTAssert(self.mockPerpheral.writeValueCalled)
         XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
         XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
-        XCTAssertEqual(characteristic.writePromises.count, 1)
+        XCTAssertEqual(characteristic.pendingWriteCount, 1)
         XCTAssertEqual(self.mockPerpheral.writtenType, .withResponse)
 
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error :nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
-            XCTAssertEqual(characteristic.writePromises.count, 0)
+            XCTAssertEqual(characteristic.pendingWriteCount, 0)
         }
     }
 
@@ -69,7 +69,7 @@ class CharacteristicTests: XCTestCase {
         XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
         XCTAssertEqual(self.mockPerpheral.writtenType, .withoutResponse)
         XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
-        XCTAssertEqual(characteristic.writePromises.count, 0)
+        XCTAssertEqual(characteristic.pendingWriteCount, 0)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate)
     }
 
@@ -155,23 +155,23 @@ class CharacteristicTests: XCTestCase {
         XCTAssert(self.mockPerpheral.writeValueCalled)
         XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
         XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
-        XCTAssertEqual(characteristic.writePromises.count, 3)
+        XCTAssertEqual(characteristic.pendingWriteCount, 3)
 
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future1, context: TestContext.immediate) { characteristic in
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 2)
             XCTAssertEqual(self.mockPerpheral.writtenData!, "bb".dataFromHexString())
-            XCTAssertEqual(characteristic.writePromises.count, 2)
+            XCTAssertEqual(characteristic.pendingWriteCount, 2)
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future2, context: TestContext.immediate) { characteristic in
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 3)
             XCTAssertEqual(self.mockPerpheral.writtenData!, "cc".dataFromHexString())
-            XCTAssertEqual(characteristic.writePromises.count, 1)
+            XCTAssertEqual(characteristic.pendingWriteCount, 1)
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future3, context: TestContext.immediate) { characteristic in
-            XCTAssertEqual(characteristic.writePromises.count, 0)
+            XCTAssertEqual(characteristic.pendingWriteCount, 0)
         }
     }
 
@@ -222,23 +222,23 @@ class CharacteristicTests: XCTestCase {
         let future3 = characteristic.read()
 
         XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
-        XCTAssertEqual(characteristic.readPromises.count, 3)
+        XCTAssertEqual(characteristic.pendingReadCount, 3)
         XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled)
 
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future1, context: TestContext.immediate) { chracteristic in
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 2)
-            XCTAssertEqual(characteristic.readPromises.count, 2)
+            XCTAssertEqual(characteristic.pendingReadCount, 2)
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future2, context: TestContext.immediate) { _ in
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3)
-            XCTAssertEqual(characteristic.readPromises.count, 1)
+            XCTAssertEqual(characteristic.pendingReadCount, 1)
         }
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future3, context: TestContext.immediate) { _ in
             XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 3)
-            XCTAssertEqual(characteristic.readPromises.count, 0)
+            XCTAssertEqual(characteristic.pendingReadCount, 0)
         }
     }
 

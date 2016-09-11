@@ -14,7 +14,7 @@ public class BeaconRegion : Region {
     internal let beaconPromise: StreamPromise<[Beacon]>
     
     internal var _beacons = [Beacon]()
-    internal  let clBeaconRegion: CLBeaconRegion
+    internal let clBeaconRegion: CLBeaconRegion
     
     public var beacons: [Beacon] {
         return self._beacons.sorted() {(b1: Beacon, b2: Beacon) -> Bool in

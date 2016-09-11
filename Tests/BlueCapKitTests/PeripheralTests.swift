@@ -102,40 +102,6 @@ class PeripheralTests: XCTestCase {
         }
     }
 
-    // MARK: discoverAllPeripheralServices
-    func testDiscoverAllPeripheralServices_WhenConnectedAndNoErrorInResponse_CompletesSuccessfully() {
-        let mockPeripheral = CBPeripheralMock(state:.connected)
-        let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements as [String : AnyObject], rssi: self.RSSI, error:nil)
-        let future = peripheral.discoverAllPeripheralServices()
-        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
-        XCTAssertFutureSucceeds(future, timeout: 5.0) { _ in
-            let discoveredServices = peripheral.services
-            XCTAssertEqual(discoveredServices.count, 2)
-            XCTAssert(mockPeripheral.discoverServicesCalled)
-        }
-    }
-
-    func testDiscoverAllPeripheralServices_WhenConnectedAndErrorInServiceDiscoveryResponse_CompletesWithResponseError() {
-        let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = PeripheralUT(cbPeripheral:mockPeripheral, centralManager:self.centralManager, advertisements:peripheralAdvertisements as [String : AnyObject], rssi: self.RSSI, error:TestFailure.error)
-        let future = peripheral.discoverAllPeripheralServices()
-        peripheral.didDiscoverServices(self.mockServices.map { $0 as CBServiceInjectable }, error:nil)
-        XCTAssertFutureFails(future, timeout: 5.0) { error in
-            XCTAssertEqualErrors(error, TestFailure.error)
-            XCTAssert(mockPeripheral.discoverServicesCalled)
-        }
-    }
-
-    func testDiscoverAllPeripheralServices_WhenConnectedAndNoServicesDiscovered_CompletesWithPeripheralNoServices() {
-        let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let future = peripheral.discoverAllPeripheralServices()
-        peripheral.didDiscoverServices([], error:nil)
-        XCTAssertFutureFails(future, timeout: 5.0) { error in
-            XCTAssertEqualErrors(error, PeripheralError.noServices)
-        }
-    }
-
     // MARK: connect
     func testConnect_WhenDisconnected_CompletesSuccesfullyWithEventConnect() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)

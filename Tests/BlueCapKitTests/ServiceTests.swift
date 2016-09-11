@@ -78,13 +78,4 @@ class ServiceTests: XCTestCase {
         }
     }
 
-    func testDiscoverAllCharacteristics_WhenDiscoveryInProgress_CompletesServiceCharacteristicDiscoveryInProgress() {
-        let service = self.service(self.peripheral(.connected))
-        let _ = service.discoverAllCharacteristics()
-        let future = service.discoverAllCharacteristics()
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqualErrors(error, ServiceError.characteristicDiscoveryInProgress)
-        }
-    }
-
 }

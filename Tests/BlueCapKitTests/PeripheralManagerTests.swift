@@ -29,6 +29,7 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Power on
+
     func testWhenPoweredOn_WhenPoweredOn_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.whenPoweredOn()
@@ -64,6 +65,7 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Power off
+
     func testWhenPoweredOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.whenPoweredOff()
@@ -99,6 +101,7 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Start advertising
+
     func testStartAdvertising_WhenNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
@@ -141,6 +144,7 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: iBeacon
+
     func testStartAdvertising_WheniBeaconAndNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.startAdvertising(BeaconRegion(proximityUUID: UUID(), identifier: "Beacon Regin"))
@@ -171,6 +175,7 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Stop advertising
+
     func testStopAdvertising_WhenAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .poweredOn)
         peripheralManager.stopAdvertising()
@@ -184,24 +189,25 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: Add Service
+
     func testAddService_WhenNoErrorInAck_CompletesSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        let future = peripheralManager.add(service: services[0])
-        peripheralManager.didAddService(services[0].cbMutableService, error: nil)
+        let service = createPeripheralManagerService(peripheralManager)
+        let future = peripheralManager.add(service: service)
+        peripheralManager.didAddService(service.cbMutableService, error: nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) {
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.addServiceCalled)
             XCTAssertEqual(peripheralServices.count, 1)
-            XCTAssertEqual(peripheralServices[0].UUID, services[0].UUID)
+            XCTAssertEqual(peripheralServices[0].UUID, service.UUID)
         }
     }
 
     func testAddService_WhenErrorOnAck_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        let future = peripheralManager.add(service: services[0])
-        peripheralManager.didAddService(services[0].cbMutableService, error: TestFailure.error)
+        let service = createPeripheralManagerService(peripheralManager)
+        let future = peripheralManager.add(service: service)
+        peripheralManager.didAddService(service.cbMutableService, error: TestFailure.error)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             let peripheralServices = peripheralManager.services
             XCTAssertEqualErrors(error, TestFailure.error)
@@ -210,45 +216,20 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testAddServices_WhenNoErrorInAck_CompletesSuccessfully() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        let future = peripheralManager.add(services: services)
-        XCTAssertFutureSucceeds(future, timeout: 5.0) {
-            let peripheralServices = peripheralManager.services.map { $0.UUID }
-            XCTAssert(mock.addServiceCalled)
-            XCTAssertEqual(peripheralServices.count, 2)
-            XCTAssert(peripheralServices.contains(services[0].UUID))
-            XCTAssert(peripheralServices.contains(services[1].UUID))
-        }
-    }
-
-    func testAddServices_WhenErrorInAck_CompletesWithAckError() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        let future = peripheralManager.add(services: services)
-        peripheralManager.error = TestFailure.error
-        XCTAssertFutureFails(future, timeout: 5.0) { error in
-            let peripheralServices = peripheralManager.services
-            XCTAssertEqualErrors(error, TestFailure.error)
-            XCTAssert(mock.addServiceCalled)
-            XCTAssertEqual(peripheralServices.count, 0)
-        }
-    }
-
     // MARK: Remove Service
+
     func testRemovedService_WhenServiceIsPresent_RemovesService() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        let future = peripheralManager.add(services: services)
+        let service = createPeripheralManagerService(peripheralManager)
+        let future = peripheralManager.add(service: service)
+        peripheralManager.didAddService(service.cbMutableService, error: nil)
         XCTAssertFutureSucceeds(future, timeout: 5.0) {
-            peripheralManager.removeService(services[0])
+            peripheralManager.removeService(service)
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.removeServiceCalled)
-            XCTAssertEqual(peripheralServices.count, 1)
-            XCTAssertEqual(peripheralServices[0].UUID, services[1].UUID)
+            XCTAssertEqual(peripheralServices.count, 0)
             if let removedService = mock.removedService {
-                XCTAssertEqual(removedService.UUID, services[0].UUID)
+                XCTAssertEqual(removedService.UUID, service.UUID)
             } else {
                 XCTFail()
             }
@@ -257,15 +238,16 @@ class PeripheralManagerTests: XCTestCase {
 
     func testRemovedService_WhenNoServiceIsPresent_DoesNothing() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        peripheralManager.removeService(services[0])
+        let service = createPeripheralManagerService(peripheralManager)
+        peripheralManager.removeService(service)
         XCTAssert(mock.removeServiceCalled, "CBPeripheralManager#removeService not called")
     }
 
     func testRemovedAllServices_WhenServicesArePresent_RemovesAllServices() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        let future = peripheralManager.add(services: services)
+        let service = createPeripheralManagerService(peripheralManager)
+        let future = peripheralManager.add(service: service)
+        peripheralManager.didAddService(service.cbMutableService, error: nil)
         XCTAssertFutureSucceeds(future, timeout: 5.0) {
             peripheralManager.removeAllServices()
             let peripheralServices = peripheralManager.services
@@ -275,6 +257,7 @@ class PeripheralManagerTests: XCTestCase {
     }
 
     // MARK: State Restoration
+
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let testServices = [CBMutableServiceMock(), CBMutableServiceMock()]
@@ -284,8 +267,7 @@ class PeripheralManagerTests: XCTestCase {
         }
         let future = peripheralManager.whenStateRestored()
         peripheralManager.willRestoreState(testServices.map { $0 as CBMutableServiceInjectable }, advertisements: peripheralAdvertisements)
-        XCTAssertFutureStreamSucceeds(future, context: self.immediateContext, validations: [
-            { (services, advertisements) in
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { (services, advertisements) in
                 XCTAssertEqual(advertisements.localName!, peripheralAdvertisements[CBAdvertisementDataLocalNameKey]! as! String)
                 XCTAssertEqual(advertisements.txPower!, peripheralAdvertisements[CBAdvertisementDataTxPowerLevelKey]! as! NSNumber)
                 XCTAssertEqual(services.count, testServices.count)
@@ -297,18 +279,15 @@ class PeripheralManagerTests: XCTestCase {
                     XCTAssertEqual(characteristics.count, testCharacteristics.count)
                     XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }))
                 }
-            }
-        ])
+        }
     }
 
     func testWhenStateRestored_WithPreviousInvalidState_CompletesWithCentralRestoreFailed() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.whenStateRestored()
         peripheralManager.willRestoreState(nil, advertisements: nil)
-        XCTAssertFutureStreamFails(future, context: self.immediateContext, validations: [
-            { error in
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
                 XCTAssertEqualErrors(error, PeripheralManagerError.restoreFailed)
-            }
-        ])
+        }
     }
 }

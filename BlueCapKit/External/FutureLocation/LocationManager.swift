@@ -74,11 +74,11 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
 
 
     // MARK: Properties
-    fileprivate var _locationUpdatePromise: StreamPromise<[CLLocation]>?
-    fileprivate var _deferredLocationUpdatePromise: Promise<Void>?
-    fileprivate var _requestLocationPromise: Promise<[CLLocation]>?
-    fileprivate var _authorizationStatusChangedPromise: Promise<CLAuthorizationStatus>?
-    fileprivate var _authorizationFuture: Future<Void>?
+    fileprivate var locationUpdatePromise: StreamPromise<[CLLocation]>?
+    fileprivate var deferredLocationUpdatePromise: Promise<Void>?
+    fileprivate var requestLocationPromise: Promise<[CLLocation]>?
+    fileprivate var authorizationStatusChangedPromise: Promise<CLAuthorizationStatus>?
+    fileprivate var authorizationFuture: Future<Void>?
 
     fileprivate var _isUpdating = false
 
@@ -90,51 +90,6 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         }
         set {
             LocationManager.ioQueue.sync { self._isUpdating = newValue }
-        }
-    }
-
-    fileprivate var locationUpdatePromise: StreamPromise<[CLLocation]>? {
-        get {
-            return LocationManager.ioQueue.sync { return self._locationUpdatePromise }
-        }
-        set {
-            LocationManager.ioQueue.sync { self._locationUpdatePromise = newValue }
-        }
-    }
-
-    fileprivate var deferredLocationUpdatePromise: Promise<Void>? {
-        get {
-            return LocationManager.ioQueue.sync { return self._deferredLocationUpdatePromise}
-        }
-        set {
-            LocationManager.ioQueue.sync { self._deferredLocationUpdatePromise = newValue }
-        }
-    }
-
-    fileprivate var requestLocationPromise: Promise<[CLLocation]>? {
-        get {
-            return LocationManager.ioQueue.sync { return self._requestLocationPromise }
-        }
-        set {
-            LocationManager.ioQueue.sync { self._requestLocationPromise = newValue }
-        }
-    }
-
-    fileprivate var authorizationStatusChangedPromise: Promise<CLAuthorizationStatus>? {
-        get {
-            return LocationManager.ioQueue.sync { return self._authorizationStatusChangedPromise }
-        }
-        set {
-            LocationManager.ioQueue.sync { self._authorizationStatusChangedPromise = newValue }
-        }
-    }
-
-    fileprivate var authorizationFuture: Future<Void>? {
-        get {
-            return LocationManager.ioQueue.sync { return self._authorizationFuture }
-        }
-        set {
-            LocationManager.ioQueue.sync { self._authorizationFuture = newValue }
         }
     }
 
@@ -256,6 +211,10 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         self.clLocationManager = clLocationManager
         super.init()
         self.clLocationManager.delegate = self
+    }
+
+    deinit {
+        clLocationManager.delegate = nil
     }
 
     // MARK: Reverse Geocode

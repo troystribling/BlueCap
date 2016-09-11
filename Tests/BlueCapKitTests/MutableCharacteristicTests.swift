@@ -26,20 +26,20 @@ class MutableCharacteristicTests: XCTestCase {
 
     func addCharacteristics(onSuccess: @escaping (_ mock: CBPeripheralManagerMock, _ peripheralManager: PeripheralManagerUT, _ service: MutableService) -> Void) {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let services = createPeripheralManagerServices(peripheralManager)
-        services[0].characteristics = services[0].profile.characteristics.map { profile in
+        let service = createPeripheralManagerService(peripheralManager)
+        service.characteristics = service.profile.characteristics.map { profile in
             let characteristic = CBMutableCharacteristicMock(UUID:profile.UUID, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
             return MutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
         }
-        let future = peripheralManager.add(service: services[0])
+        let future = peripheralManager.add(service: service)
         future.onSuccess(context: TestContext.immediate) {
             mock.isAdvertising = true
-            onSuccess(mock, peripheralManager, services[0])
+            onSuccess(mock, peripheralManager, service)
         }
         future.onFailure(context: TestContext.immediate) {error in
-            XCTFail("onFailure called")
+            XCTFail()
         }
-        peripheralManager.didAddService(services[0].cbMutableService, error: nil)
+        peripheralManager.didAddService(service.cbMutableService, error: nil)
     }
 
     // MARK: Add characteristics

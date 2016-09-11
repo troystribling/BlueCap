@@ -207,6 +207,6 @@ func XCTAssertFutureStreamFails<T>(_ stream: FutureStream<T>, context: Execution
 }
 
 func XCTAssertEqualErrors(_ error1: Swift.Error, _ error2: Swift.Error, line: UInt = #line, file: StaticString = #file) {
-    XCTAssertEqual(error1._domain, error2._domain, "invalid error code")
-    XCTAssertEqual(error1._code, error2._code, "invalid error code")
+    XCTAssertEqual(error1._domain, error2._domain, "invalid error code", file: file, line: line)
+    XCTAssertEqual(error1._code, error2._code, "invalid error code", file: file, line: line)
 }

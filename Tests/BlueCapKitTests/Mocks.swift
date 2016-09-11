@@ -174,15 +174,6 @@ class PeripheralUT: Peripheral {
         super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, RSSI: rssi)
     }
     
-    override func discoverService(_ head: Service, tail: [Service], promise: Promise<Peripheral>) {
-        if let error = self.error {
-            promise.failure(error)
-        } else {
-            promise.success(self)
-            
-        }
-    }
-
 }
 
 // MARK: - CBServiceMock -
@@ -314,14 +305,7 @@ class PeripheralManagerUT : PeripheralManager {
     var error: Error?
     var result: CBATTError.Code?
     var request: CBATTRequestInjectable?
-    
-    override func addServices(_ promise: Promise<Void>, services: [MutableService]) {
-        super.addServices(promise, services: services)
-        if let service = services.first {
-            self.didAddService(service.cbMutableService, error: self.error)
-        }
-    }
-    
+        
     override func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
         self.respondToRequestCalled = true
         self.result = result
@@ -367,12 +351,8 @@ func createPeripheralManager(_ isAdvertising: Bool, state: CBManagerState) -> (C
     return (mock, PeripheralManagerUT(peripheralManager:mock))
 }
 
-func createPeripheralManagerServices(_ peripheral: PeripheralManager) -> [MutableService] {
-    if let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)], let locationService = profileManager.services[CBUUID(string: Gnosus.LocationService.UUID)] {
-        return [MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService),
-                MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: locationService)]
-    } else {
-        return []
-    }
+func createPeripheralManagerService(_ peripheral: PeripheralManager) -> MutableService {
+    let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
+    return MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService)
 }
 

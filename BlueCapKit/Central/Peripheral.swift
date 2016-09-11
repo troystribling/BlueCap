@@ -60,14 +60,13 @@ public struct PeripheralAdvertisements {
 public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Serialize Property IO
+
     static let ioQueue = Queue("us.gnos.blueCap.peripheral")
-    static let pollQueue = Queue("us.gnos.blueCap.peripheral.poll")
 
-    fileprivate var _servicesDiscoveredPromise: Promise<Peripheral>?
-    fileprivate var _readRSSIPromise: Promise<Int>?
-    fileprivate var _pollRSSIPromise: StreamPromise<Int>?
-
-    fileprivate var _connectionPromise: StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    fileprivate var servicesDiscoveredPromise: Promise<Peripheral>?
+    fileprivate var readRSSIPromise: Promise<Int>?
+    fileprivate var pollRSSIPromise: StreamPromise<Int>?
+    fileprivate var connectionPromise: StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
 
     fileprivate let profileManager: ProfileManager?
 
@@ -83,68 +82,33 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     fileprivate var _currentError = PeripheralConnectionError.none
     fileprivate var _forcedDisconnect = false
-    fileprivate var _serviceDiscoveryInProgress = false
 
     fileprivate var _connectedAt: Date?
     fileprivate var _disconnectedAt : Date?
     fileprivate var _totalSecondsConnected = 0.0
 
-    internal var discoveredServices = SerialIODictionary<CBUUID, Service>(Peripheral.ioQueue)
-    internal var discoveredCharacteristics = SerialIODictionary<CBUUID, Characteristic>(Peripheral.ioQueue)
-
     fileprivate var connectionTimeout = Double.infinity
     fileprivate var timeoutRetries = UInt.max
     fileprivate var disconnectRetries = UInt.max
 
-    internal fileprivate(set) weak var centralManager: CentralManager?
-    
+    fileprivate(set) weak var centralManager: CentralManager?
+
+    let centralQueue: Queue
+    var discoveredServices = SerialIODictionary<CBUUID, Service>(Peripheral.ioQueue)
+    var discoveredCharacteristics = SerialIODictionary<CBUUID, Characteristic>(Peripheral.ioQueue)
+
     internal fileprivate(set) var cbPeripheral: CBPeripheralInjectable
     public let advertisements: PeripheralAdvertisements
     public let discoveredAt = Date()
 
     // MARK: Serial Properties
+
     public var RSSI: Int {
         get {
             return Peripheral.ioQueue.sync { return self._RSSI }
         }
         set {
             Peripheral.ioQueue.sync { self._RSSI = newValue }
-        }
-    }
-
-    fileprivate var servicesDiscoveredPromise: Promise<Peripheral>? {
-        get {
-            return Peripheral.ioQueue.sync { return self._servicesDiscoveredPromise }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._servicesDiscoveredPromise = newValue }
-        }
-    }
-
-    fileprivate var readRSSIPromise: Promise<Int>? {
-        get {
-            return Peripheral.ioQueue.sync { return self._readRSSIPromise }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._readRSSIPromise = newValue }
-        }
-    }
-
-    fileprivate var pollRSSIPromise: StreamPromise<Int>? {
-        get {
-            return Peripheral.ioQueue.sync { return self._pollRSSIPromise }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._pollRSSIPromise = newValue }
-        }
-    }
-
-    fileprivate var connectionPromise: StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>? {
-        get {
-            return Peripheral.ioQueue.sync { return self._connectionPromise }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._connectionPromise = newValue }
         }
     }
 
@@ -193,15 +157,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    fileprivate var serviceDiscoveryInProgress: Bool {
-        get {
-            return Peripheral.ioQueue.sync { return self._serviceDiscoveryInProgress }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._serviceDiscoveryInProgress = newValue }
-        }
-    }
-
     fileprivate fileprivate(set) var totalSecondsConnected: Double {
         get {
             return Peripheral.ioQueue.sync { return self._totalSecondsConnected }
@@ -212,6 +167,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Public Properties
+
     public fileprivate(set) var connectedAt: Date? {
         get {
             return Peripheral.ioQueue.sync { return self._connectedAt }
@@ -303,11 +259,13 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Initializers
+
     internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String : Any], RSSI: Int, profileManager: ProfileManager? = nil) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: advertisements)
         self.profileManager = profileManager
+        self.centralQueue = centralManager.centralQueue
         super.init()
         self.RSSI = RSSI
         self.cbPeripheral.delegate = self
@@ -318,6 +276,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: [String : AnyObject]())
         self.profileManager = profileManager
+        self.centralQueue = centralManager.centralQueue
         super.init()
         self.RSSI = 0
         self.cbPeripheral.delegate = self
@@ -327,6 +286,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.cbPeripheral = cbPeripheral
         self.advertisements = bcPeripheral.advertisements
         self.centralManager = bcPeripheral.centralManager
+        self.centralQueue = bcPeripheral.centralManager?.centralQueue ?? Queue.main
         self.profileManager = profileManager
         super.init()
         self.RSSI = bcPeripheral.RSSI
@@ -338,28 +298,42 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: RSSI
+
     public func readRSSI() -> Future<Int> {
-        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString)")
-        self.readRSSIPromise = Promise<Int>()
-        self.readRSSIIfConnected()
-        return self.readRSSIPromise!.future
+        return centralQueue.sync {
+            if let readRSSIPromise = self.readRSSIPromise, !readRSSIPromise.completed {
+                return readRSSIPromise.future
+            }
+            Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString)")
+            self.readRSSIPromise = Promise<Int>()
+            self.readRSSIIfConnected()
+            return self.readRSSIPromise!.future
+        }
     }
 
     public func startPollingRSSI(_ period: Double = 10.0, capacity: Int = Int.max) -> FutureStream<Int> {
-        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), period = \(period)")
-        self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
-        self.readRSSIIfConnected()
-        self.RSSISequence += 1
-        self.pollRSSI(period, sequence: self.RSSISequence)
-        return pollRSSIPromise!.stream
+        return centralQueue.sync {
+            if let pollRSSIPromise = self.pollRSSIPromise {
+                return pollRSSIPromise.stream
+            }
+            Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), period = \(period)")
+            self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
+            self.readRSSIIfConnected()
+            self.RSSISequence += 1
+            self.pollRSSI(period, sequence: self.RSSISequence)
+            return self.pollRSSIPromise!.stream
+        }
     }
 
     public func stopPollingRSSI() {
-        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString)")
-        self.pollRSSIPromise = nil
+        centralQueue.sync {
+            Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString)")
+            self.pollRSSIPromise = nil
+        }
     }
 
     // MARK: Connection
+
     public func reconnect(_ reconnectDelay: Double = 0.0) {
         guard let centralManager = self.centralManager , self.state == .disconnected  else {
             Logger.debug("peripheral not disconnected \(self.name), \(self.identifier.uuidString)")
@@ -383,29 +357,32 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
      
     public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity, capacity: Int = Int.max) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
-        if self.connectionPromise == nil {
+        return centralQueue.sync {
             self.connectionPromise = StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>(capacity: capacity)
+            self.timeoutRetries = timeoutRetries
+            self.disconnectRetries = disconnectRetries
+            self.connectionTimeout = connectionTimeout
+            Logger.debug("connect peripheral \(self.name)', \(self.identifier.uuidString)")
+            self.reconnect()
+            return self.connectionPromise!.stream
         }
-        self.timeoutRetries = timeoutRetries
-        self.disconnectRetries = disconnectRetries
-        self.connectionTimeout = connectionTimeout
-        Logger.debug("connect peripheral \(self.name)', \(self.identifier.uuidString)")
-        self.reconnect()
-        return self.connectionPromise!.stream
     }
     
     public func disconnect() {
-        guard let central = self.centralManager else {
-            return
-        }
-        self.forcedDisconnect = true
-        self.stopPollingRSSI()
-        if self.state == .connected {
-            Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
-            central.cancelPeripheralConnection(self)
-        } else {
-            Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
-            self.didDisconnectPeripheral(PeripheralError.disconnected)
+        return centralQueue.sync {
+            guard let central = self.centralManager else {
+                return
+            }
+            self.forcedDisconnect = true
+            self.pollRSSIPromise = nil
+            self.readRSSIPromise = nil
+            if self.state == .connected {
+                Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
+                central.cancelPeripheralConnection(self)
+            } else {
+                Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
+                self.didDisconnectPeripheral(PeripheralError.disconnected)
+            }
         }
     }
     
@@ -420,6 +397,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Discover Services
+
     public func discoverAllServices(_ timeout: Double = Double.infinity) -> Future<Peripheral> {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         return self.discoverServices(nil, timeout: timeout)
@@ -430,55 +408,8 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         return self.discoverIfConnected(services, timeout: timeout)
     }
     
-    public func discoverAllPeripheralServices(_ timeout: Double = Double.infinity) -> Future<Peripheral> {
-        return self.discoverPeripheralServices(nil)
-    }
-
-    public func discoverPeripheralServices(_ services: [CBUUID]?, timeout: Double = Double.infinity) -> Future<Peripheral> {
-        let peripheralDiscoveredPromise = Promise<Peripheral>()
-        Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
-        let servicesDiscoveredFuture = self.discoverServices(services, timeout: timeout)
-        servicesDiscoveredFuture.onSuccess {_ in
-            if self.services.count > 1 {
-                self.discoverService(self.services[0], tail:Array(self.services[1..<self.services.count]), promise: peripheralDiscoveredPromise)
-            } else {
-                if self.services.count > 0 {
-                    let discoveryFuture = self.services[0].discoverAllCharacteristics()
-                    discoveryFuture.onSuccess {_ in
-                        peripheralDiscoveredPromise.success(self)
-                    }
-                    discoveryFuture.onFailure {error in
-                        peripheralDiscoveredPromise.failure(error)
-                    }
-                } else {
-                    peripheralDiscoveredPromise.failure(PeripheralError.noServices)
-                }
-            }
-        }
-        servicesDiscoveredFuture.onFailure {(error) in
-            peripheralDiscoveredPromise.failure(error)
-        }
-        return peripheralDiscoveredPromise.future
-    }
-    
-    public func discoverService(_ head: Service, tail: [Service], promise: Promise<Peripheral>) {
-        let discoveryFuture = head.discoverAllCharacteristics()
-        Logger.debug("service name \(head.name) count \(tail.count + 1)")
-        if tail.count > 0 {
-            discoveryFuture.onSuccess {_ in
-                self.discoverService(tail[0], tail:Array(tail[1..<tail.count]), promise:promise)
-            }
-        } else {
-            discoveryFuture.onSuccess {_ in
-                promise.success(self)
-            }
-        }
-        discoveryFuture.onFailure {error in
-            promise.failure(error)
-        }
-    }
-
     // MARK: CBPeripheralDelegate
+
     public func peripheralDidUpdateName(_:CBPeripheral) {
         Logger.debug()
     }
@@ -533,6 +464,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: CBPeripheralDelegate Shims
+
     internal func didDiscoverCharacteristicsForService(_ service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: Error?) {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         if let bcService = self.discoveredServices[service.UUID] {
@@ -548,7 +480,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal func didDiscoverServices(_ discoveredServices: [CBServiceInjectable], error: Error?) {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         self.clearAll()
-        self.serviceDiscoveryInProgress = false
         if let error = error {
             self.servicesDiscoveredPromise?.failure(error)
         } else {
@@ -589,17 +520,22 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal func didReadRSSI(_ RSSI: NSNumber, error: Error?) {
         if let error = error {
             Logger.debug("RSSI read failed: \(error.localizedDescription)")
-            self.readRSSIPromise?.failure(error)
+            if let completed = self.readRSSIPromise?.completed, !completed {
+                self.readRSSIPromise?.failure(error)
+            }
             self.pollRSSIPromise?.failure(error)
         } else {
             Logger.debug("RSSI = \(RSSI.stringValue), peripheral name = \(self.name), uuid=\(self.identifier.uuidString), state = \(self.state.rawValue)")
             self.RSSI = RSSI.intValue
-            self.readRSSIPromise?.success(RSSI.intValue)
+            if let completed = self.readRSSIPromise?.completed, !completed {
+                self.readRSSIPromise?.success(RSSI.intValue)
+            }
             self.pollRSSIPromise?.success(RSSI.intValue)
         }
     }
 
     // MARK: CBCentralManagerDelegate Shims
+
     internal func didConnectPeripheral() {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         self.connectedAt = Date()
@@ -610,7 +546,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal func didDisconnectPeripheral(_ error: Swift.Error?) {
         self.disconnectedAt = Date()
         self.totalSecondsConnected += self.secondsConnected
-        self.serviceDiscoveryInProgress = false
         switch(self.currentError) {
         case .none:
             if let error = error {
@@ -638,6 +573,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: CBPeripheral Delegation
+
     internal func setNotifyValue(_ state: Bool, forCharacteristic characteristic: Characteristic) {
         self.cbPeripheral.setNotifyValue(state, forCharacteristic:characteristic.cbCharacteristic)
     }
@@ -655,6 +591,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Utilities
+
     fileprivate func shouldFailOrGiveUp(_ error: Swift.Error) {
         Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
             if self.disconnectionCount < disconnectRetries {
@@ -686,10 +623,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: Double = Double.infinity)  -> Future<Peripheral> {
-        if !self.serviceDiscoveryInProgress {
+        return centralQueue.sync {
+            if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
+                return servicesDiscoveredPromise.future
+            }
             self.servicesDiscoveredPromise = Promise<Peripheral>()
             if self.state == .connected {
-                self.serviceDiscoveryInProgress = true
                 self.serviceDiscoverySequence += 1
                 self.timeoutServiceDiscovery(self.serviceDiscoverySequence, timeout: timeout)
                 self.cbPeripheral.discoverServices(services)
@@ -697,10 +636,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 self.servicesDiscoveredPromise?.failure(PeripheralError.disconnected)
             }
             return self.servicesDiscoveredPromise!.future
-        } else {
-            let promise = Promise<Peripheral>()
-            promise.failure(PeripheralError.serviceDiscoveryInProgress)
-            return promise.future
         }
     }
 
@@ -714,7 +649,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
-        Peripheral.pollQueue.delay(self.connectionTimeout) {
+        centralQueue.delay(self.connectionTimeout) {
             if self.state != .connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("connection timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
                 self.currentError = .timeout
@@ -726,16 +661,15 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func timeoutServiceDiscovery(_ sequence: Int, timeout: Double) {
-        guard let centralManager = self.centralManager , timeout < Double.infinity else {
+        guard let centralManager = self.centralManager, timeout < Double.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(timeout)")
-        Peripheral.pollQueue.delay(timeout) {
-            if sequence == self.serviceDiscoverySequence && self.serviceDiscoveryInProgress {
+        centralQueue.delay(timeout) {
+            if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, sequence == self.serviceDiscoverySequence && !servicesDiscoveredPromise.completed {
                 Logger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
                 centralManager.cancelPeripheralConnection(self)
-                self.serviceDiscoveryInProgress = false
-                self.servicesDiscoveredPromise?.failure(PeripheralError.serviceDiscoveryTimeout)
+                servicesDiscoveredPromise.failure(PeripheralError.serviceDiscoveryTimeout)
             } else {
                 Logger.debug("service scan timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.serviceDiscoverySequence)")
             }
@@ -748,7 +682,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("exiting: name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
             return
         }
-        Peripheral.pollQueue.delay(period) {
+        centralQueue.delay(period) {
             Logger.debug("trigger: name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
             self.readRSSIIfConnected()
             self.pollRSSI(period, sequence: sequence)
