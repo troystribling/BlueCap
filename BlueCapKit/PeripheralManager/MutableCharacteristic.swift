@@ -13,52 +13,36 @@ import CoreBluetooth
 public class MutableCharacteristic : NSObject {
 
     // MARK: Properties
-    static let ioQueue = Queue("us.gnos.blueCap.mutable-characteristic.io")
+    let profile: CharacteristicProfile
 
-    fileprivate let profile: CharacteristicProfile
+    fileprivate var centrals = [NSUUID : CBCentralInjectable]()
 
-    fileprivate var centrals = SerialIODictionary<Foundation.UUID, CBCentralInjectable>(MutableCharacteristic.ioQueue)
-
-    fileprivate var _queuedUpdates = [Data]()
+    fileprivate var queuedUpdates = [Data]()
     fileprivate var _isUpdating = false
+    fileprivate var processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
 
-    internal var _processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
-    internal weak var _service: MutableService?
-    
-    internal let cbMutableChracteristic: CBMutableCharacteristicInjectable
+    let cbMutableChracteristic: CBMutableCharacteristicInjectable
+
     public var value: Data?
+    public internal(set) weak var service: MutableService?
 
-    fileprivate var queuedUpdates: [Data] {
-        get {
-            return MutableCharacteristic.ioQueue.sync { return self._queuedUpdates }
-        }
-        set {
-            MutableCharacteristic.ioQueue.sync { self._queuedUpdates = newValue }
-        }
-    }
-
-    fileprivate var processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>? {
-        get {
-            return MutableCharacteristic.ioQueue.sync { return self._processWriteRequestPromise }
-        }
-        set {
-            MutableCharacteristic.ioQueue.sync { self._processWriteRequestPromise = newValue }
-        }
+    fileprivate var peripheralQueue: Queue {
+        return service?.peripheralManager?.peripheralQueue ?? Queue.main
     }
 
     public fileprivate(set) var isUpdating: Bool {
         get {
-            return MutableCharacteristic.ioQueue.sync { return self._isUpdating }
+            return peripheralQueue.sync { return self._isUpdating }
         }
         set {
-            MutableCharacteristic.ioQueue.sync { self._isUpdating = newValue }
+            peripheralQueue.sync { self._isUpdating = newValue }
         }
     }
 
     public var UUID: CBUUID {
         return self.profile.UUID
     }
-    
+
     public var name: String {
         return self.profile.name
     }
@@ -83,10 +67,6 @@ public class MutableCharacteristic : NSObject {
         return Array(self.queuedUpdates)
     }
 
-    public var service: MutableService? {
-        return self._service
-    }
-
     public var stringValue: [String:String]? {
         if let value = self.value {
             return self.profile.stringValue(value)
@@ -103,6 +83,7 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: Initializers
+
     public convenience init(profile: CharacteristicProfile) {
         let cbMutableChracteristic = CBMutableCharacteristic(type: profile.UUID, properties: profile.properties, value: nil, permissions: profile.permissions)
         self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
@@ -139,6 +120,7 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: Properties & Permissions
+
     open func propertyEnabled(_ property:CBCharacteristicProperties) -> Bool {
         return (self.properties.rawValue & property.rawValue) > 0
     }
@@ -148,18 +130,27 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: Data
+
     open func data(fromString data: [String:String]) -> Data? {
         return self.profile.data(fromString: data)
     }
 
     // MARK: Manage Writes
+
     open func startRespondingToWriteRequests(capacity: Int = Int.max) -> FutureStream<(request: CBATTRequestInjectable, central: CBCentralInjectable)> {
-        self.processWriteRequestPromise = StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>(capacity: capacity)
-        return self.processWriteRequestPromise!.stream
+        return peripheralQueue.sync {
+            if let processWriteRequestPromise = self.processWriteRequestPromise {
+                return processWriteRequestPromise.stream
+            }
+            self.processWriteRequestPromise = StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>(capacity: capacity)
+            return self.processWriteRequestPromise!.stream
+        }
     }
     
     open func stopRespondingToWriteRequests() {
-        self.processWriteRequestPromise = nil
+        peripheralQueue.sync {
+            self.processWriteRequestPromise = nil
+        }
     }
     
     open func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
@@ -175,6 +166,7 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: Manage Notification Updates
+
     open func updateValue(withString value: [String:String]) -> Bool {
         guard let data = self.profile.data(fromString: value) else {
             return false
@@ -207,6 +199,7 @@ public class MutableCharacteristic : NSObject {
     }
 
     // MARK: CBPeripheralManagerDelegate Shims
+
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
         self.isUpdating = true
         let _ = self.updateValues(self.queuedUpdates)
@@ -215,19 +208,20 @@ public class MutableCharacteristic : NSObject {
 
     internal func didSubscribeToCharacteristic(_ central: CBCentralInjectable) {
         self.isUpdating = true
-        self.centrals[central.identifier] = central
+        self.centrals[central.identifier as NSUUID] = central
         let _ = self.updateValues(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didUnsubscribeFromCharacteristic(_ central: CBCentralInjectable) {
-        self.centrals.removeValueForKey(central.identifier)
+        self.centrals.removeValue(forKey: central.identifier as NSUUID)
         if self.centrals.keys.count == 0 {
             self.isUpdating = false
         }
     }
 
     // MARK: Utils
+
     fileprivate func updateValues(_ values: [Data]) -> Bool  {
         guard let value = values.last else {
             return self.isUpdating

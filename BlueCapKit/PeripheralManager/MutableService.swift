@@ -12,15 +12,10 @@ import CoreBluetooth
 // MARK: - MutableService -
 public class MutableService : NSObject {
 
-    static let ioQueue = Queue("us.gnos.blueCap.mutable-service")
+    let profile: ServiceProfile
 
-    fileprivate var _characteristics = SerialIOArray<MutableCharacteristic>(MutableService.ioQueue)
-
-    internal let profile: ServiceProfile
-
-    internal weak var peripheralManager: PeripheralManager?
-
-    internal let cbMutableService: CBMutableServiceInjectable
+    weak var peripheralManager: PeripheralManager?
+    let cbMutableService: CBMutableServiceInjectable
 
     public var UUID: CBUUID {
         return self.profile.UUID
@@ -30,14 +25,10 @@ public class MutableService : NSObject {
         return self.profile.name
     }
     
-    public var characteristics: [MutableCharacteristic] {
-        get {
-            return self._characteristics.data
-        }
-        set {
-            self._characteristics.data = newValue
-            let cbCharacteristics = self._characteristics.map { characteristic -> CBCharacteristicInjectable in
-                characteristic._service = self
+    public var characteristics = [MutableCharacteristic]() {
+        didSet {
+            let cbCharacteristics = characteristics.map { characteristic -> CBCharacteristicInjectable in
+                characteristic.service = self
                 return characteristic.cbMutableChracteristic
             }
             self.cbMutableService.setCharacteristics(cbCharacteristics)
