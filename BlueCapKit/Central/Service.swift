@@ -12,21 +12,8 @@ import CoreBluetooth
 // MARK: - Service -
 public class Service {
 
-    // MARK: Serialize Property IO
-
-    static let ioQueue = Queue("us.gnos.blueCap.service.io")
-
-    fileprivate var _characteristicDiscoverySequence = 0
+    fileprivate var characteristicDiscoverySequence = 0
     fileprivate var characteristicsDiscoveredPromise: Promise<Service>?
-
-    fileprivate var characteristicDiscoverySequence: Int {
-        get {
-            return Service.ioQueue.sync { return self._characteristicDiscoverySequence }
-        }
-        set {
-            Service.ioQueue.sync { self._characteristicDiscoverySequence = newValue }
-        }
-    }
 
     // MARK: Properties
 

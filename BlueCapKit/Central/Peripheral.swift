@@ -76,9 +76,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     fileprivate var _timeoutCount: UInt = 0
     fileprivate var _disconnectionCount: UInt = 0
     
-    fileprivate var _connectionSequence = 0
-    fileprivate var _RSSISequence = 0
-    fileprivate var _serviceDiscoverySequence = 0
+    fileprivate var connectionSequence = 0
+    fileprivate var RSSISequence = 0
+    fileprivate var serviceDiscoverySequence = 0
 
     fileprivate var _currentError = PeripheralConnectionError.none
     fileprivate var _forcedDisconnect = false
@@ -102,42 +102,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     public let discoveredAt = Date()
 
     // MARK: Serial Properties
-
-    public var RSSI: Int {
-        get {
-            return Peripheral.ioQueue.sync { return self._RSSI }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._RSSI = newValue }
-        }
-    }
-
-    fileprivate var connectionSequence: Int {
-        get {
-            return Peripheral.ioQueue.sync { return self._connectionSequence }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._connectionSequence = newValue }
-        }
-    }
-
-    fileprivate var RSSISequence: Int {
-        get {
-            return Peripheral.ioQueue.sync { return self._RSSISequence }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._RSSISequence = newValue }
-        }
-    }
-
-    fileprivate var serviceDiscoverySequence: Int {
-        get {
-            return Peripheral.ioQueue.sync { return self._serviceDiscoverySequence }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._serviceDiscoverySequence = newValue }
-        }
-    }
 
     fileprivate var currentError: PeripheralConnectionError {
         get {
@@ -168,6 +132,15 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Public Properties
 
+    public var RSSI: Int {
+        get {
+            return Peripheral.ioQueue.sync { return self._RSSI }
+        }
+        set {
+            Peripheral.ioQueue.sync { self._RSSI = newValue }
+        }
+    }
+
     public fileprivate(set) var connectedAt: Date? {
         get {
             return Peripheral.ioQueue.sync { return self._connectedAt }
@@ -188,10 +161,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     public fileprivate(set) var timeoutCount: UInt {
         get {
-            return Peripheral.ioQueue.sync  { return self._timeoutCount }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._timeoutCount = newValue }
+            return centralQueue.sync  { return self._timeoutCount }
         }
     }
 
@@ -286,7 +256,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.cbPeripheral = cbPeripheral
         self.advertisements = bcPeripheral.advertisements
         self.centralManager = bcPeripheral.centralManager
-        self.centralQueue = bcPeripheral.centralManager?.centralQueue ?? Queue.main
+        self.centralQueue = bcPeripheral.centralManager?.centralQueue ?? Queue("us.gnus.BlueCap.Peripheral")
         self.profileManager = profileManager
         super.init()
         self.RSSI = bcPeripheral.RSSI
