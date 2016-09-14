@@ -19,6 +19,7 @@ public enum ConnectionEvent {
 }
 
 // MARK: - PeripheralAdvertisements -
+
 public struct PeripheralAdvertisements {
     
     let advertisements: [String : Any]
@@ -57,6 +58,7 @@ public struct PeripheralAdvertisements {
 }
 
 // MARK: - Peripheral -
+
 public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Serialize Property IO
@@ -75,13 +77,13 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     fileprivate var _timeoutCount: UInt = 0
     fileprivate var _disconnectionCount: UInt = 0
-    
+
     fileprivate var connectionSequence = 0
     fileprivate var RSSISequence = 0
     fileprivate var serviceDiscoverySequence = 0
+    fileprivate var forcedDisconnect = false
 
     fileprivate var _currentError = PeripheralConnectionError.none
-    fileprivate var _forcedDisconnect = false
 
     fileprivate var _connectedAt: Date?
     fileprivate var _disconnectedAt : Date?
@@ -112,21 +114,13 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    fileprivate var forcedDisconnect: Bool {
-        get {
-            return Peripheral.ioQueue.sync { return self._forcedDisconnect }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._forcedDisconnect = newValue }
-        }
-    }
-
-    fileprivate fileprivate(set) var totalSecondsConnected: Double {
-        get {
-            return Peripheral.ioQueue.sync { return self._totalSecondsConnected }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._totalSecondsConnected = newValue }
+    fileprivate var _secondsConnected: Double {
+        if let disconnectedAt = self._disconnectedAt, let connectedAt = self._connectedAt {
+            return disconnectedAt.timeIntervalSince(connectedAt)
+        } else if let connectedAt = self._connectedAt {
+            return Date().timeIntervalSince(connectedAt)
+        } else {
+            return 0.0
         }
     }
 
@@ -150,52 +144,32 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public fileprivate(set) var disconnectedAt: Date? {
-        get {
-            return Peripheral.ioQueue.sync { return self._disconnectedAt }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._disconnectedAt = newValue }
-        }
+    public var disconnectedAt: Date? {
+        return centralQueue.sync { return self._disconnectedAt }
     }
 
-    public fileprivate(set) var timeoutCount: UInt {
-        get {
-            return centralQueue.sync  { return self._timeoutCount }
-        }
+    public var timeoutCount: UInt {
+        return centralQueue.sync  { return self._timeoutCount }
     }
 
-    public fileprivate(set) var disconnectionCount: UInt {
-        get {
-            return Peripheral.ioQueue.sync { return self._disconnectionCount }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._disconnectionCount = newValue }
-        }
+    public var disconnectionCount: UInt {
+        return centralQueue.sync { return self._disconnectionCount }
     }
 
     public var connectionCount: Int {
-        get {
-            return Peripheral.ioQueue.sync { return self._connectionSequence }
-        }
+        return centralQueue.sync { return self.connectionSequence }
     }
 
     public var secondsConnected: Double {
-        if let disconnectedAt = self.disconnectedAt, let connectedAt = self.connectedAt {
-            return disconnectedAt.timeIntervalSince(connectedAt)
-        } else if let connectedAt = self.connectedAt {
-            return Date().timeIntervalSince(connectedAt)
-        } else {
-            return 0.0
-        }
+        return centralQueue.sync { return self._secondsConnected }
+    }
+
+    public var totalSecondsConnected: Double {
+        return centralQueue.sync { return self._totalSecondsConnected }
     }
 
     public var cumlativeSecondsConnected: Double {
-        if self.disconnectedAt != nil {
-            return self.totalSecondsConnected
-        } else {
-            return self.totalSecondsConnected + self.secondsConnected
-        }
+        return self.disconnectedAt != nil ? self.totalSecondsConnected : self.totalSecondsConnected + self.secondsConnected
     }
 
     public var cumlativeSecondsDisconnected: Double {
@@ -256,7 +230,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.cbPeripheral = cbPeripheral
         self.advertisements = bcPeripheral.advertisements
         self.centralManager = bcPeripheral.centralManager
-        self.centralQueue = bcPeripheral.centralManager?.centralQueue ?? Queue("us.gnus.BlueCap.Peripheral")
+        self.centralQueue = bcPeripheral.centralManager!.centralQueue
         self.profileManager = profileManager
         super.init()
         self.RSSI = bcPeripheral.RSSI
@@ -304,25 +278,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Connection
 
-    public func reconnect(_ reconnectDelay: Double = 0.0) {
-        guard let centralManager = self.centralManager , self.state == .disconnected  else {
-            Logger.debug("peripheral not disconnected \(self.name), \(self.identifier.uuidString)")
-            return
-        }
-        Logger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.uuidString)")
-        let performConnection = {
-            centralManager.connect(self)
-            self.forcedDisconnect = false
-            self.connectionSequence += 1
-            self.currentError = .none
-            self.timeoutConnection(self.connectionSequence)
-        }
-        if reconnectDelay > 0.0 {
-            centralManager.centralQueue.delay(reconnectDelay) {
-                performConnection()
-            }
-        } else {
-            performConnection()
+    public func reconnect(withDelay delay: Double = 0.0) {
+        centralQueue.sync {
+            self.reconnectIfDisconnected(delay)
         }
     }
      
@@ -333,7 +291,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.disconnectRetries = disconnectRetries
             self.connectionTimeout = connectionTimeout
             Logger.debug("connect peripheral \(self.name)', \(self.identifier.uuidString)")
-            self.reconnect()
+            self.reconnectIfDisconnected()
             return self.connectionPromise!.stream
         }
     }
@@ -363,6 +321,28 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
         if self.state == .connected {
             self.disconnect()
+        }
+    }
+
+    fileprivate func reconnectIfDisconnected(_ delay: Double = 0.0) {
+        guard let centralManager = self.centralManager , self.state == .disconnected  else {
+            Logger.debug("peripheral not disconnected \(self.name), \(self.identifier.uuidString)")
+            return
+        }
+        Logger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.uuidString)")
+        let performConnection = {
+            centralManager.connect(self)
+            self.forcedDisconnect = false
+            self.connectionSequence += 1
+            self.currentError = .none
+            self.timeoutConnection(self.connectionSequence)
+        }
+        if delay > 0.0 {
+            centralManager.centralQueue.delay(delay) {
+                performConnection()
+            }
+        } else {
+            performConnection()
         }
     }
 
@@ -509,13 +489,13 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal func didConnectPeripheral() {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         self.connectedAt = Date()
-        self.disconnectedAt = nil
+        self._disconnectedAt = nil
         self.connectionPromise?.success((self, .connect))
     }
 
     internal func didDisconnectPeripheral(_ error: Swift.Error?) {
-        self.disconnectedAt = Date()
-        self.totalSecondsConnected += self.secondsConnected
+        self._disconnectedAt = Date()
+        self._totalSecondsConnected += self._secondsConnected
         switch(self.currentError) {
         case .none:
             if let error = error {
@@ -563,9 +543,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     // MARK: Utilities
 
     fileprivate func shouldFailOrGiveUp(_ error: Swift.Error) {
-        Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
-            if self.disconnectionCount < disconnectRetries {
-                self.disconnectionCount += 1
+        Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), disconnectCount=\(self._disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
+            if self._disconnectionCount < disconnectRetries {
+                self._disconnectionCount += 1
                 self.connectionPromise?.failure(error)
             } else {
                 self.connectionPromise?.success((self, ConnectionEvent.giveUp))
@@ -573,19 +553,19 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func shouldTimeoutOrGiveup() {
-        Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), timeoutCount=\(self.timeoutCount), timeoutRetries=\(self.timeoutRetries)")
-        if self.timeoutCount < timeoutRetries {
+        Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), timeoutCount=\(self._timeoutCount), timeoutRetries=\(self.timeoutRetries)")
+        if self._timeoutCount < timeoutRetries {
             self.connectionPromise?.success((self, .timeout))
-            self.timeoutCount += 1
+            self._timeoutCount += 1
         } else {
             self.connectionPromise?.success((self, .giveUp))
         }
     }
 
     fileprivate func shouldDisconnectOrGiveup() {
-        Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), disconnectCount=\(self.disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
-        if self.disconnectionCount < disconnectRetries {
-            self.disconnectionCount += 1
+        Logger.debug("name=\(self.name), uuid=\(self.identifier.uuidString), disconnectCount=\(self._disconnectionCount), disconnectRetries=\(self.disconnectRetries)")
+        if self._disconnectionCount < disconnectRetries {
+            self._disconnectionCount += 1
             self.connectionPromise?.success((self, .disconnect))
         } else {
             self.connectionPromise?.success((self, .giveUp))

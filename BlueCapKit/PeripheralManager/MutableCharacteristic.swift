@@ -26,22 +26,22 @@ public class MutableCharacteristic : NSObject {
 
     public internal(set) weak var service: MutableService?
 
-    fileprivate var peripheralQueue: Queue {
-        return service?.peripheralManager?.peripheralQueue ?? Queue("us.gnos.BlueCap.MutableCharacteristic")
+    fileprivate var peripheralQueue: Queue? {
+        return service?.peripheralManager?.peripheralQueue
     }
 
     public var value: Data? {
         get {
-            return peripheralQueue.sync { return self._value }
+            return peripheralQueue?.sync { return self._value }
         }
         set {
-            peripheralQueue.sync { self._value = newValue }
+            peripheralQueue?.sync { self._value = newValue }
         }
     }
 
     public var isUpdating: Bool {
         get {
-            return peripheralQueue.sync { return self._isUpdating }
+            return peripheralQueue?.sync { return self._isUpdating } ?? false
         }
     }
 
@@ -66,15 +66,15 @@ public class MutableCharacteristic : NSObject {
     }
 
     public var subscribers: [CBCentralInjectable] {
-        return peripheralQueue.sync {
+        return peripheralQueue?.sync {
             return Array(self.centrals.values)
-        }
+        } ?? [CBCentralInjectable]()
     }
 
     public var pendingUpdates : [Data] {
-        return peripheralQueue.sync {
+        return peripheralQueue?.sync {
             return Array(self.queuedUpdates)
-        }
+        } ?? [Data]()
     }
 
     public var stringValue: [String:String]? {
@@ -148,17 +148,17 @@ public class MutableCharacteristic : NSObject {
     // MARK: Manage Writes
 
     public func startRespondingToWriteRequests(capacity: Int = Int.max) -> FutureStream<(request: CBATTRequestInjectable, central: CBCentralInjectable)> {
-        return peripheralQueue.sync {
+        return peripheralQueue?.sync {
             if let processWriteRequestPromise = self.processWriteRequestPromise {
                 return processWriteRequestPromise.stream
             }
             self.processWriteRequestPromise = StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>(capacity: capacity)
             return self.processWriteRequestPromise!.stream
-        }
+        } ?? FutureStream(error: PeripheralManagerError.unconfigured)
     }
     
     public func stopRespondingToWriteRequests() {
-        peripheralQueue.sync {
+        peripheralQueue?.sync {
             self.processWriteRequestPromise = nil
         }
     }
@@ -233,7 +233,7 @@ public class MutableCharacteristic : NSObject {
     // MARK: Utils
 
     fileprivate func updateValues(_ values: [Data]) -> Bool  {
-        return peripheralQueue.sync {
+        return peripheralQueue?.sync {
             guard let value = values.last else {
                 return self._isUpdating
             }
@@ -250,7 +250,7 @@ public class MutableCharacteristic : NSObject {
                 self.queuedUpdates.append(value)
             }
             return self._isUpdating
-        }
+        } ?? false
     }
 
 }

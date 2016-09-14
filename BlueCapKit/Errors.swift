@@ -31,6 +31,7 @@ public enum PeripheralManagerError: Swift.Error {
     case addServiceFailed
     case restoreFailed
     case unsupported
+    case unconfigured
 }
 
 public enum CentralManagerError: Swift.Error {

@@ -351,8 +351,18 @@ func createPeripheralManager(_ isAdvertising: Bool, state: CBManagerState) -> (C
     return (mock, PeripheralManagerUT(peripheralManager:mock))
 }
 
-func createPeripheralManagerService(_ peripheral: PeripheralManager) -> MutableService {
+func createPeripheralManagerService(_ peripheralManager: PeripheralManager) -> MutableService {
     let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
-    return MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService)
+    let service = MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService)
+    service.peripheralManager = peripheralManager
+    return service
+}
+
+func createPeripheralManagerCharacteristic(_ service: MutableService) -> MutableCharacteristic {
+    service.characteristics = service.profile.characteristics.map { profile in
+        let characteristic = CBMutableCharacteristicMock(UUID:profile.UUID, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
+        return MutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
+    }
+    return service.characteristics[0]
 }
 

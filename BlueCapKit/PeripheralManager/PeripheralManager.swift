@@ -31,7 +31,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate var afterStateRestoredPromise: Promise<(services: [MutableService], advertisements: PeripheralAdvertisements)>?
     fileprivate var afterSeriviceAddPromise: Promise<Void>?
 
-    fileprivate var _state = CBManagerState.unknown
     fileprivate var _poweredOn = false
     fileprivate var _isAdvertising = false
 
