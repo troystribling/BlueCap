@@ -63,8 +63,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Serialize Property IO
 
-    static let ioQueue = Queue("us.gnos.blueCap.peripheral")
-
     fileprivate var servicesDiscoveredPromise: Promise<Peripheral>?
     fileprivate var readRSSIPromise: Promise<Int>?
     fileprivate var pollRSSIPromise: StreamPromise<Int>?
@@ -82,7 +80,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     fileprivate var RSSISequence = 0
     fileprivate var serviceDiscoverySequence = 0
     fileprivate var forcedDisconnect = false
-
     fileprivate var _currentError = PeripheralConnectionError.none
 
     fileprivate var _connectedAt: Date?
@@ -96,23 +93,14 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     fileprivate(set) weak var centralManager: CentralManager?
 
     let centralQueue: Queue
-    var discoveredServices = SerialIODictionary<CBUUID, Service>(Peripheral.ioQueue)
-    var discoveredCharacteristics = SerialIODictionary<CBUUID, Characteristic>(Peripheral.ioQueue)
+    var discoveredServices = [CBUUID : Service]()
+    var discoveredCharacteristics = [CBUUID : Characteristic]()
 
     internal fileprivate(set) var cbPeripheral: CBPeripheralInjectable
     public let advertisements: PeripheralAdvertisements
     public let discoveredAt = Date()
 
-    // MARK: Serial Properties
-
-    fileprivate var currentError: PeripheralConnectionError {
-        get {
-            return Peripheral.ioQueue.sync { return self._currentError }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._currentError = newValue }
-        }
-    }
+    // MARK: Private Properties
 
     fileprivate var _secondsConnected: Double {
         if let disconnectedAt = self._disconnectedAt, let connectedAt = self._connectedAt {
@@ -126,22 +114,16 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Public Properties
 
-    public var RSSI: Int {
-        get {
-            return Peripheral.ioQueue.sync { return self._RSSI }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._RSSI = newValue }
-        }
+    fileprivate var currentError: PeripheralConnectionError {
+        return centralQueue.sync { return self._currentError }
     }
 
-    public fileprivate(set) var connectedAt: Date? {
-        get {
-            return Peripheral.ioQueue.sync { return self._connectedAt }
-        }
-        set {
-            Peripheral.ioQueue.sync { self._connectedAt = newValue }
-        }
+    public var RSSI: Int {
+        return centralQueue.sync { return self._RSSI }
+    }
+
+    public var connectedAt: Date? {
+        return centralQueue.sync { return self._connectedAt }
     }
 
     public var disconnectedAt: Date? {
@@ -185,7 +167,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     public var services: [Service] {
-        return Array(self.discoveredServices.values)
+        return centralQueue.sync  { return Array(self.discoveredServices.values) }
     }
     
     public var identifier: UUID {
@@ -193,13 +175,11 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     public func service(_ uuid: CBUUID) -> Service? {
-        return self.discoveredServices[uuid]
+        return centralQueue.sync { return self.discoveredServices[uuid] }
     }
 
     public var state: CBPeripheralState {
-        get {
-            return cbPeripheral.state
-        }
+        return cbPeripheral.state
     }
 
     // MARK: Initializers
@@ -211,7 +191,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.profileManager = profileManager
         self.centralQueue = centralManager.centralQueue
         super.init()
-        self.RSSI = RSSI
+        self._RSSI = RSSI
         self.cbPeripheral.delegate = self
     }
 
@@ -222,7 +202,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.profileManager = profileManager
         self.centralQueue = centralManager.centralQueue
         super.init()
-        self.RSSI = 0
+        self._RSSI = 0
         self.cbPeripheral.delegate = self
     }
 
@@ -233,7 +213,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.centralQueue = bcPeripheral.centralManager!.centralQueue
         self.profileManager = profileManager
         super.init()
-        self.RSSI = bcPeripheral.RSSI
+        self._RSSI = bcPeripheral.RSSI
         self.cbPeripheral.delegate = self
     }
 
@@ -318,7 +298,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         guard let central = self.centralManager else {
             return
         }
-        central.discoveredPeripherals.removeValueForKey(self.cbPeripheral.identifier)
+        central.removePeripheral(withIdentifier: self.cbPeripheral.identifier)
         if self.state == .connected {
             self.disconnect()
         }
@@ -334,7 +314,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             centralManager.connect(self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
-            self.currentError = .none
+            self._currentError = .none
             self.timeoutConnection(self.connectionSequence)
         }
         if delay > 0.0 {
@@ -476,7 +456,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.pollRSSIPromise?.failure(error)
         } else {
             Logger.debug("RSSI = \(RSSI.stringValue), peripheral name = \(self.name), uuid=\(self.identifier.uuidString), state = \(self.state.rawValue)")
-            self.RSSI = RSSI.intValue
+            self._RSSI = RSSI.intValue
             if let completed = self.readRSSIPromise?.completed, !completed {
                 self.readRSSIPromise?.success(RSSI.intValue)
             }
@@ -488,7 +468,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     internal func didConnectPeripheral() {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
-        self.connectedAt = Date()
+        self._connectedAt = Date()
         self._disconnectedAt = nil
         self.connectionPromise?.success((self, .connect))
     }
@@ -496,7 +476,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     internal func didDisconnectPeripheral(_ error: Swift.Error?) {
         self._disconnectedAt = Date()
         self._totalSecondsConnected += self._secondsConnected
-        switch(self.currentError) {
+        switch(self._currentError) {
         case .none:
             if let error = error {
                 Logger.debug("disconnecting with errors uuid=\(self.identifier.uuidString), name=\(self.name), error=\(error.localizedDescription)")
@@ -513,7 +493,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("timeout uuid=\(self.identifier.uuidString), name=\(self.name)")
             self.shouldTimeoutOrGiveup()
         }
-        for service in self.services {
+        for (_ , service) in self.discoveredServices {
             service.didDisconnectPeripheral(error)
         }
     }
@@ -602,7 +582,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         centralQueue.delay(self.connectionTimeout) {
             if self.state != .connected && sequence == self.connectionSequence && !self.forcedDisconnect {
                 Logger.debug("connection timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
-                self.currentError = .timeout
+                self._currentError = .timeout
                 centralManager.cancelPeripheralConnection(self)
             } else {
                 Logger.debug("connection timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(self.connectionSequence), state=\(self.state.rawValue)")
