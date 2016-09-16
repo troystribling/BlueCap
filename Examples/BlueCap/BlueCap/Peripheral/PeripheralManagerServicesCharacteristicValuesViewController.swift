@@ -30,7 +30,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated:Bool) {
+    override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         if let characteristic = self.characteristic {
@@ -38,7 +38,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         }
         let future = self.characteristic.startRespondingToWriteRequests(10)
         future.onSuccess {(request, _) in
-            if let value = request.value where value.length > 0 {
+            if let value = request.value , value.length > 0 {
                 self.characteristic.value = request.value
                 self.characteristic.respondToRequest(request, withResult: CBATTError.Success)
                 self.updateWhenActive()
@@ -46,21 +46,21 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
                 self.characteristic.respondToRequest(request, withResult :CBATTError.InvalidAttributeValueLength)
             }
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralManagerServicesCharacteristicValuesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServicesCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         self.characteristic.stopRespondingToWriteRequests()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue {
-            let viewController = segue.destinationViewController as! PeripheralManagerServiceCharacteristicEditValueViewController
+            let viewController = segue.destination as! PeripheralManagerServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
-            let selectedIndex = sender as! NSIndexPath
+            let selectedIndex = sender as! IndexPath
             if let stringValues = self.characteristic?.stringValue {
                 let values = Array(stringValues.keys)
                 viewController.valueName = values[selectedIndex.row]
@@ -69,7 +69,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
                 viewController.peripheralManagerViewController = peripheralManagerViewController
             }
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue {
-            let viewController = segue.destinationViewController as! PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController
+            let viewController = segue.destination as! PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
@@ -84,7 +84,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         }
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -96,8 +96,8 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServicesCharacteristicValueCell, forIndexPath: indexPath) as! CharacteristicValueCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerServicesCharacteristicValueCell, for: indexPath) as! CharacteristicValueCell
         if let values = self.characteristic?.stringValue {
             let characteristicValueNames = Array(values.keys)
             let characteristicValues = Array(values.values)
@@ -107,11 +107,11 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         return cell
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if self.characteristic.stringValues.isEmpty {
-            self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue, sender:indexPath)
+            self.performSegue(withIdentifier: MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue, sender:indexPath)
         } else {
-            self.performSegueWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
+            self.performSegue(withIdentifier: MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)
         }
     }
 

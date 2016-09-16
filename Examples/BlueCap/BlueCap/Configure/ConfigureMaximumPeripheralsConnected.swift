@@ -23,19 +23,19 @@ class ConfigureMaximumPeripheralsConnected: UIViewController {
         self.maximumPeripheralsConnectedTextField.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let maxConnectedText = self.maximumPeripheralsConnectedTextField.text, maxConnected = Int(maxConnectedText) where !maxConnectedText.isEmpty {
+    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+        if let maxConnectedText = self.maximumPeripheralsConnectedTextField.text, let maxConnected = Int(maxConnectedText) , !maxConnectedText.isEmpty {
             ConfigStore.setMaximumPeripheralsConnected(maxConnected)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.navigationController?.popToRootViewController(animated: true)
         }
         return true
     }

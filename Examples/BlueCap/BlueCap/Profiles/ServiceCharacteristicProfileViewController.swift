@@ -45,7 +45,7 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
         if let characteristicProfile = self.characteristicProfile {
 
             self.navigationItem.title = characteristicProfile.name
-            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 
             self.uuidLabel.text = characteristicProfile.UUID.UUIDString
             
@@ -72,14 +72,14 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfileValuesSegue {
-            let viewController = segue.destinationViewController as! ServiceCharacteristicProfileValuesViewController
+            let viewController = segue.destination as! ServiceCharacteristicProfileValuesViewController
             viewController.characteristicProfile = self.characteristicProfile
         }
     }
     
-    func booleanStringValue(value: Bool) -> String {
+    func booleanStringValue(_ value: Bool) -> String {
         return value ? "YES" : "NO"
     }
 

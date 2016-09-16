@@ -25,23 +25,23 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
         super.viewDidLoad()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralAdvertisementsSolicitedServicesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralAdvertisementsSolicitedServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func didEnterBackground() {
-        self.navigationController?.popToRootViewControllerAnimated(false)
+        self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
@@ -53,8 +53,8 @@ class PeripheralAdvertisementsSolicitedServicesViewController: UITableViewContro
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralAdvertisementsSolicitedServiceCell, forIndexPath:indexPath)
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralAdvertisementsSolicitedServiceCell, for:indexPath)
         if let services = self.peripheral?.advertisements.solicitedServiceUUIDs {
             let service = services[indexPath.row]
             cell.textLabel?.text = service.UUIDString

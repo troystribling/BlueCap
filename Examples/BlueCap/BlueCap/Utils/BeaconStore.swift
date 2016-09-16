@@ -11,12 +11,12 @@ import BlueCapKit
 
 class BeaconStore {
     
-    class func getBeacons() -> [String: NSUUID] {
-        if let storedBeacons = NSUserDefaults.standardUserDefaults().dictionaryForKey("beacons") {
-            var beacons = [String: NSUUID]()
+    class func getBeacons() -> [String: UUID] {
+        if let storedBeacons = UserDefaults.standard.dictionary(forKey: "beacons") {
+            var beacons = [String: UUID]()
             for (name, uuid) in storedBeacons {
                 if let uuid = uuid as? String {
-                    beacons[name] = NSUUID(UUIDString: uuid)
+                    beacons[name] = UUID(uuidString: uuid)
                 }
             }
             return beacons
@@ -25,27 +25,27 @@ class BeaconStore {
         }
     }
     
-    class func setBeacons(beacons: [String: NSUUID]) {
+    class func setBeacons(_ beacons: [String: UUID]) {
         var storedBeacons = [String: String]()
         for (name, uuid) in beacons {
-            storedBeacons[name] = uuid.UUIDString
+            storedBeacons[name] = uuid.uuidString
         }
-        NSUserDefaults.standardUserDefaults().setObject(storedBeacons, forKey: "beacons")
+        UserDefaults.standard.set(storedBeacons, forKey: "beacons")
     }
 
     class func getBeaconNames() -> [String] {
         return Array(self.getBeacons().keys)
     }
     
-    class func addBeacon(name: String, uuid: NSUUID) {
+    class func addBeacon(_ name: String, uuid: UUID) {
         var beacons = self.getBeacons()
         beacons[name] = uuid
         self.setBeacons(beacons)
     }
     
-    class func removeBeacon(name: String) {
+    class func removeBeacon(_ name: String) {
         var beacons = self.getBeacons()
-        beacons.removeValueForKey(name)
+        beacons.removeValue(forKey: name)
         self.setBeacons(beacons)
     }
 }

@@ -21,19 +21,19 @@ class ConfigurePeripheralConnectionTimeoutViewController: UIViewController {
         self.peripheralConnectionTimeoutTextField.text = "\(ConfigStore.getPeripheralConnectionTimeout())"
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let timeoutText = self.peripheralConnectionTimeoutTextField.text, timeout = UInt(timeoutText)  where !timeoutText.isEmpty  {
+    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+        if let timeoutText = self.peripheralConnectionTimeoutTextField.text, let timeout = UInt(timeoutText)  , !timeoutText.isEmpty  {
             ConfigStore.setPeripheralConnectionTimeout(timeout)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.navigationController?.popToRootViewController(animated: true)
         }
         return true
     }

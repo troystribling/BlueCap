@@ -26,25 +26,25 @@ class BeaconsViewController: UITableViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let beaconRegion = self.beaconRegion {
             self.navigationItem.title = beaconRegion.identifier
             // TODO: Use Future Callback
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BeaconsViewController.updateBeacons), name: BlueCapNotification.didUpdateBeacon, object: beaconRegion)
+            NotificationCenter.defaultCenter().addObserver(self, selector: #selector(BeaconsViewController.updateBeacons), name: BlueCapNotification.didUpdateBeacon, object: beaconRegion)
         } else {
             self.navigationItem.title = "Beacons"
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(BeaconsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(BeaconsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender: Any!) {
     }
 
     func updateBeacons() {
@@ -52,7 +52,7 @@ class BeaconsViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func sortBeacons(beacons: [FLBeacon]) -> [FLBeacon] {
+    func sortBeacons(_ beacons: [FLBeacon]) -> [FLBeacon] {
         return beacons.sort(){(b1: FLBeacon, b2: FLBeacon) -> Bool in
             if b1.major > b2.major {
                 return true
@@ -66,15 +66,15 @@ class BeaconsViewController: UITableViewController {
     
     func didEnterBackground() {
         Logger.debug()
-        self.navigationController?.popToRootViewControllerAnimated(false)
+        self.navigationController?.popToRootViewController(animated: false)
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let beaconRegion = self.beaconRegion {
             return beaconRegion.beacons.count
         } else {
@@ -82,8 +82,8 @@ class BeaconsViewController: UITableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconCell, forIndexPath: indexPath) as! BeaconCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryBoard.beaconCell, for: indexPath) as! BeaconCell
         if let beaconRegion = self.beaconRegion {
             let beacon = self.sortBeacons(beaconRegion.beacons)[indexPath.row]
             cell.proximityUUIDLabel.text = beacon.proximityUUID.UUIDString

@@ -26,7 +26,7 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
         super.viewDidLoad()
         if let serviceProfile = self.serviceProfile {
             self.navigationItem.title = serviceProfile.name
-            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         }
     }
     
@@ -34,11 +34,11 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if let serviceProfile = self.serviceProfile {
             if segue.identifier == MainStoryboard.serviceCharacteristicProfileSegue {
-                if let selectedIndexPath = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                    let viewController = segue.destinationViewController as! ServiceCharacteristicProfileViewController
+                if let selectedIndexPath = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                    let viewController = segue.destination as! ServiceCharacteristicProfileViewController
                     viewController.characteristicProfile = serviceProfile.characteristics[selectedIndexPath.row]
                 }
             }
@@ -46,7 +46,7 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -58,8 +58,8 @@ class ServiceCharacteristicProfilesViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileCell, forIndexPath: indexPath) as! NameUUIDCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.serviceCharacteristicProfileCell, for: indexPath) as! NameUUIDCell
         if let serviceProfile = self.serviceProfile {
             let characteristicProfile = serviceProfile.characteristics[indexPath.row]
             cell.nameLabel.text = characteristicProfile.name

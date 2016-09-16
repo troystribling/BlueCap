@@ -11,7 +11,7 @@ import UIKit
 extension UITableViewController {
     
     func updateWhenActive() {
-        if UIApplication.sharedApplication().applicationState == .Active {
+        if UIApplication.shared.applicationState == .active {
             self.tableView.reloadData()
         }
     }
@@ -20,7 +20,7 @@ extension UITableViewController {
         let font = UIFont(name:"Thonburi", size:20.0)
         var titleAttributes : [String:AnyObject]
         if let defaultTitleAttributes = UINavigationBar.appearance().titleTextAttributes {
-            titleAttributes = defaultTitleAttributes
+            titleAttributes = defaultTitleAttributes as [String : AnyObject]
         } else {
             titleAttributes = [String:AnyObject]()
         }
@@ -28,15 +28,15 @@ extension UITableViewController {
         self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
     }
     
-    func styleUIBarButton(button:UIBarButtonItem) {
+    func styleUIBarButton(_ button:UIBarButtonItem) {
         let font = UIFont(name:"Thonburi", size:16.0)
         var titleAttributes : [String:AnyObject]
-        if let defaultitleAttributes = button.titleTextAttributesForState(UIControlState.Normal) {
-            titleAttributes = defaultitleAttributes
+        if let defaultitleAttributes = button.titleTextAttributes(for: UIControlState()) {
+            titleAttributes = defaultitleAttributes as [String : AnyObject]
         } else {
             titleAttributes = [String:AnyObject]()
         }
         titleAttributes[NSFontAttributeName] = font
-        button.setTitleTextAttributes(titleAttributes, forState:UIControlState.Normal)
+        button.setTitleTextAttributes(titleAttributes, for:UIControlState())
     }
 }

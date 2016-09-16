@@ -18,7 +18,7 @@ class ConfigureScanModeViewController: UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -26,23 +26,23 @@ class ConfigureScanModeViewController: UITableViewController {
         return self.scanModes.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
-        let scanModeString = scanModes[indexPath.row]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.configureScanModeCell, for: indexPath) as UITableViewCell
+        let scanModeString = scanModes[(indexPath as NSIndexPath).row]
         cell.textLabel?.text = scanModeString
-        if let scanMode = ServiceScanMode(scanModeString) where scanMode == ConfigStore.getScanMode() {
-            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+        if let scanMode = ServiceScanMode(scanModeString) , scanMode == ConfigStore.getScanMode() {
+            cell.accessoryType = UITableViewCellAccessoryType.checkmark
         } else {
-            cell.accessoryType = UITableViewCellAccessoryType.None
+            cell.accessoryType = UITableViewCellAccessoryType.none
         }
         return cell
     }
     
     // UITableViewDelegate
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let scanMode = self.scanModes[indexPath.row]
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let scanMode = self.scanModes[(indexPath as NSIndexPath).row]
         ConfigStore.setScanMode(ServiceScanMode(scanMode)!)
-        self.navigationController?.popViewControllerAnimated(true)
+        self.navigationController?.popViewController(animated: true)
     }
 
 }

@@ -25,17 +25,17 @@ class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate 
         if let serviceName = self.serviceName {
             self.nameTextField.text = serviceName
             if let uuid = ConfigStore.getScannedServiceUUID(serviceName) {
-                self.uuidTextField.text = uuid.UUIDString
+                self.uuidTextField.text = uuid.uuidString
             }
         }
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField:UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField:UITextField) -> Bool {
         textField.resignFirstResponder()
-        if let enteredUUID = self.uuidTextField.text, enteredName = self.nameTextField.text where !enteredName.isEmpty && !enteredUUID.isEmpty {
-            if let nsuuid = NSUUID(UUIDString:enteredUUID) {
-                let uuid = CBUUID(NSUUID:nsuuid)
+        if let enteredUUID = self.uuidTextField.text, let enteredName = self.nameTextField.text , !enteredName.isEmpty && !enteredUUID.isEmpty {
+            if let nsuuid = UUID(uuidString:enteredUUID) {
+                let uuid = CBUUID(nsuuid:nsuuid)
                 if let serviceName = self.serviceName {
                     // updating
                     ConfigStore.addScannedService(enteredName, uuid:uuid)
@@ -46,10 +46,10 @@ class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate 
                     // new region
                     ConfigStore.addScannedService(enteredName, uuid:uuid)
                 }
-                self.navigationController?.popViewControllerAnimated(true)
+                self.navigationController?.popViewController(animated: true)
                 return true
             } else {
-                self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
                 return false
             }
         }

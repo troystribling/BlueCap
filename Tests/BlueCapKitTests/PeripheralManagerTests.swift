@@ -274,8 +274,8 @@ class PeripheralManagerTests: XCTestCase {
                 XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }))
                 for testService in testServices {
                     let testCharacteristics = testService.characteristics!
-                    let service = peripheralManager.configuredServices[testService.UUID]
-                    let characteristics = service!.characteristics
+                    let service = peripheralManager.services.filter { $0.UUID == testService.UUID }.first!
+                    let characteristics = service.characteristics
                     XCTAssertEqual(characteristics.count, testCharacteristics.count)
                     XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }))
                 }

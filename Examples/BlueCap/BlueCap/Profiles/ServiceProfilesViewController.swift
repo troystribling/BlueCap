@@ -29,12 +29,12 @@ class ServiceProfilesViewController : ServiceProfilesTableViewController {
         self.styleNavigationBar()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Service Profiles"
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
     }
@@ -42,12 +42,12 @@ class ServiceProfilesViewController : ServiceProfilesTableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.serviceCharacteristicProfilesSegue {
-            if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+            if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
                 let tag = Array(self.serviceProfiles.keys)
                 if let profiles = self.serviceProfiles[tag[selectedIndex.section]] {
-                    let viewController = segue.destinationViewController as! ServiceCharacteristicProfilesViewController
+                    let viewController = segue.destination as! ServiceCharacteristicProfilesViewController
                     viewController.serviceProfile =  profiles[selectedIndex.row]
                 }
             }

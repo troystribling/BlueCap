@@ -18,7 +18,7 @@ class ConfigurePeripheralSortOrderViewController: UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
@@ -26,23 +26,23 @@ class ConfigurePeripheralSortOrderViewController: UITableViewController {
         return self.sortOrders.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanModeCell, forIndexPath: indexPath) as UITableViewCell
-        let sortOrderString = sortOrders[indexPath.row]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.configureScanModeCell, for: indexPath) as UITableViewCell
+        let sortOrderString = sortOrders[(indexPath as NSIndexPath).row]
         cell.textLabel?.text = sortOrderString
-        if let sortOrder = PeripheralSortOrder(sortOrderString) where sortOrder == ConfigStore.getPeripheralSortOrder() {
-            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+        if let sortOrder = PeripheralSortOrder(sortOrderString) , sortOrder == ConfigStore.getPeripheralSortOrder() {
+            cell.accessoryType = UITableViewCellAccessoryType.checkmark
         } else {
-            cell.accessoryType = UITableViewCellAccessoryType.None
+            cell.accessoryType = UITableViewCellAccessoryType.none
         }
         return cell
     }
 
     // UITableViewDelegate
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let sortOrder = self.sortOrders[indexPath.row]
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let sortOrder = self.sortOrders[(indexPath as NSIndexPath).row]
         ConfigStore.setPeripheralSortOrder(PeripheralSortOrder(sortOrder)!)
-        self.navigationController?.popViewControllerAnimated(true)
+        self.navigationController?.popViewController(animated: true)
     }
     
 }

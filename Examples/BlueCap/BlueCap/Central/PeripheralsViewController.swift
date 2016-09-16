@@ -17,7 +17,7 @@ class PeripheralsViewController : UITableViewController {
 
     var scanStatus = false
     var shouldUpdatePeripheralConnectionStatus = false
-    var peripheralConnectionStatus = [NSUUID : Bool]()
+    var peripheralConnectionStatus = [UUID : Bool]()
     var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
 
     var reachedDiscoveryLimit: Bool {
@@ -39,7 +39,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     var peripherals: [Peripheral] {
-        if ConfigStore.getPeripheralSortOrder() == .DiscoveryDate {
+        if ConfigStore.getPeripheralSortOrder() == .discoveryDate {
             return Singletons.centralManager.peripherals
         } else {
             return self.peripheralsSortedByRSSI
@@ -54,9 +54,9 @@ class PeripheralsViewController : UITableViewController {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
-        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
+        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
         self.styleUIBarButton(self.startScanBarButtonItem)
     }
     
@@ -66,38 +66,38 @@ class PeripheralsViewController : UITableViewController {
         self.setScanButton()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.shouldUpdatePeripheralConnectionStatus = true
         self.updatePeripheralConnectionsIfNeeded()
         self.startPolllingRSSIForPeripherals()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: UIApplicationDidBecomeActiveNotification, object:nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
         self.setScanButton()
     }
 
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.shouldUpdatePeripheralConnectionStatus = false
         self.stopPollingRSSIForPeripherals()
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralSegue {
-            if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                let viewController = segue.destinationViewController as! PeripheralViewController
+            if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                let viewController = segue.destination as! PeripheralViewController
                 viewController.peripheral = self.peripherals[selectedIndex.row]
             }
         }
     }
     
     // actions
-    func toggleScan(sender: AnyObject) {
+    func toggleScan(_ sender: AnyObject) {
         if !Singletons.beaconManager.isMonitoring {
             if self.scanStatus {
                 Logger.debug("Scan toggled off")
@@ -111,7 +111,7 @@ class PeripheralsViewController : UITableViewController {
                 }
             }
         } else {
-            self.presentViewController(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
+            self.present(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
         }
     }
 
@@ -143,9 +143,9 @@ class PeripheralsViewController : UITableViewController {
 
     func setScanButton() {
         if self.scanStatus {
-            self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated:false)
+            self.navigationItem.setLeftBarButton(self.stopScanBarButtonItem, animated:false)
         } else {
-            self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated:false)
+            self.navigationItem.setLeftBarButton(self.startScanBarButtonItem, animated:false)
         }
     }
 
@@ -182,7 +182,7 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func startPollingRSSIForPeripheral(peripheral: Peripheral) {
+    func startPollingRSSIForPeripheral(_ peripheral: Peripheral) {
         guard self.shouldUpdatePeripheralConnectionStatus else {
             return
         }
@@ -191,7 +191,7 @@ class PeripheralsViewController : UITableViewController {
 
     func startPolllingRSSIForPeripherals() {
         for peripheral in Singletons.centralManager.peripherals {
-            guard let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] where connectionStatus else {
+            guard let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] , connectionStatus else {
                 continue
             }
             self.startPollingRSSIForPeripheral(peripheral)
@@ -204,7 +204,7 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func connect(peripheral: Peripheral) {
+    func connect(_ peripheral: Peripheral) {
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.UUIDString)")
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
@@ -250,8 +250,8 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func reconnectIfNecessary(peripheral: Peripheral) {
-        if let status = self.peripheralConnectionStatus[peripheral.identifier] where status {
+    func reconnectIfNecessary(_ peripheral: Peripheral) {
+        if let status = self.peripheralConnectionStatus[peripheral.identifier] , status {
             peripheral.reconnect(1.0)
         }
     }
@@ -286,15 +286,15 @@ class PeripheralsViewController : UITableViewController {
         var future: FutureStream<Peripheral>
         let scanTimeout = ConfigStore.getScanTimeoutEnabled() ? Double(ConfigStore.getScanTimeout()) : Double.infinity
         switch scanMode {
-        case .Promiscuous:
+        case .promiscuous:
             // Promiscuous Scan with Timeout Enabled
             future = Singletons.centralManager.startScanning(10, timeout: scanTimeout)
             future.onSuccess(afterPeripheralDiscovered)
             future.onFailure(afterTimeout)
-        case .Service:
+        case .service:
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             if scannedServices.isEmpty {
-                self.presentViewController(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
+                self.present(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
             } else {
                 future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10, timeout: scanTimeout)
                 future.onSuccess(afterPeripheralDiscovered)
@@ -304,7 +304,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -312,19 +312,19 @@ class PeripheralsViewController : UITableViewController {
         return Singletons.centralManager.peripherals.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralCell, forIndexPath: indexPath) as! PeripheralCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        cell.accessoryType = .None
+        cell.accessoryType = .none
         if peripheral.state == .Connected {
-            cell.nameLabel.textColor = UIColor.blackColor()
+            cell.nameLabel.textColor = UIColor.black
             cell.stateLabel.text = "Connected"
             cell.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
         } else {
-            cell.nameLabel.textColor = UIColor.lightGrayColor()
+            cell.nameLabel.textColor = UIColor.lightGray
             cell.stateLabel.text = "Disconnected"
-            cell.stateLabel.textColor = UIColor.lightGrayColor()
+            cell.stateLabel.textColor = UIColor.lightGray
         }
         cell.rssiLabel.text = "\(peripheral.RSSI)"
         return cell

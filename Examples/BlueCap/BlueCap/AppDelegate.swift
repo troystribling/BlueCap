@@ -45,34 +45,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window : UIWindow?
 
     class func sharedApplication() -> AppDelegate {
-        return UIApplication.sharedApplication().delegate as! AppDelegate
+        return UIApplication.shared.delegate as! AppDelegate
     }
     
     override init() {
         super.init()
     }
     
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         TISensorTagServiceProfiles.create()
         BLESIGGATTProfiles.create()
         GnosusProfiles.create()
         NordicProfiles.create()
-        let defaultConfig = NSBundle.mainBundle().URLForResource("DefaultConfiguration", withExtension: "plist").flatMap { NSDictionary(contentsOfURL: $0) }.flatMap { $0 as? [String: AnyObject] }
+        let defaultConfig = Bundle.main.url(forResource: "DefaultConfiguration", withExtension: "plist").flatMap { NSDictionary(contentsOf: $0) }.flatMap { $0 as? [String: AnyObject] }
         if let defaultConfig = defaultConfig {
-            NSUserDefaults.standardUserDefaults().registerDefaults(defaultConfig)
+            UserDefaults.standard.register(defaults: defaultConfig)
         }
         application.registerUserNotificationSettings(
-            UIUserNotificationSettings(forTypes:[UIUserNotificationType.Sound, UIUserNotificationType.Alert, UIUserNotificationType.Badge], categories:nil))
+            UIUserNotificationSettings(types:[UIUserNotificationType.sound, UIUserNotificationType.alert, UIUserNotificationType.badge], categories:nil))
         return true
     }
 
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         Logger.debug()
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         Logger.debug()
-        NSUserDefaults.standardUserDefaults().synchronize()
+        UserDefaults.standard.synchronize()
         if Singletons.centralManager.isScanning {
             Singletons.centralManager.stopScanning()
         }
@@ -82,18 +82,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         Logger.debug()
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         Logger.debug()
         Notify.resetEventCount()
     }
 
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         Logger.debug()
-        NSUserDefaults.standardUserDefaults().synchronize()
+        UserDefaults.standard.synchronize()
     }
 
 }

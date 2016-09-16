@@ -42,7 +42,7 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         }
     }
     
-    override func viewWillAppear(animated:Bool) {
+    override func viewWillAppear(_ animated:Bool) {
         self.tableView.reloadData()
     }
     
@@ -50,11 +50,11 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepareForSegue(_ segue:UIStoryboardSegue, sender:AnyObject!) {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSectionsInTableView(_ tableView:UITableView) -> Int {
         return 1
     }
     
@@ -66,7 +66,7 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileValueCell, forIndexPath: indexPath) as! CharacteristicValueCell
         if let values = self.values {
             let characteristicValueNames = Array(values.keys)

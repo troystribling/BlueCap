@@ -22,19 +22,19 @@ class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate
         self.timeoutTextField.text = "\(ConfigStore.getScanTimeout())"
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        if let timeoutText = self.timeoutTextField.text, timeout = UInt(timeoutText) where !timeoutText.isEmpty {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let timeoutText = self.timeoutTextField.text, let timeout = UInt(timeoutText) , !timeoutText.isEmpty {
             ConfigStore.setScanTimeout(timeout)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.navigationController?.popToRootViewController(animated: true)
         }
         return true
     }

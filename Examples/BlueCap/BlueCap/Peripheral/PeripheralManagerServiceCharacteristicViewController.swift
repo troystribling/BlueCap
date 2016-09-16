@@ -65,23 +65,23 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralManagerServiceCharacteristicViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicValuesSegue {
-            let viewController = segue.destinationViewController as! PeripheralManagerServicesCharacteristicValuesViewController
+            let viewController = segue.destination as! PeripheralManagerServicesCharacteristicValuesViewController
             viewController.characteristic = self.characteristic
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
@@ -96,7 +96,7 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
         }
     }
     
-    func booleanStringValue(value:Bool) -> String {
+    func booleanStringValue(_ value:Bool) -> String {
         return value ? "YES" : "NO"
     }
 

@@ -14,8 +14,8 @@ import CoreBluetooth
 class PeripheralStore {
     
     // MARK: Services
-    class func getPeripheralServices(key: String) -> [String: [CBUUID]] {
-        if let storedPeripherals = NSUserDefaults.standardUserDefaults().dictionaryForKey(key) {
+    class func getPeripheralServices(_ key: String) -> [String: [CBUUID]] {
+        if let storedPeripherals = UserDefaults.standard.dictionary(forKey: key) {
             var peripherals = [String:[CBUUID]]()
             for (name, services) in storedPeripherals {
                 if let services = services as? [String] {
@@ -32,25 +32,25 @@ class PeripheralStore {
         }
     }
 
-    class func setPeripheralServices(key: String, peripheralServices: [String:[CBUUID]]) {
+    class func setPeripheralServices(_ key: String, peripheralServices: [String:[CBUUID]]) {
         var storedPeripherals = [String: [String]]()
         for (name, uuids) in peripheralServices {
             storedPeripherals[name] = uuids.reduce([String]()) {(storedUUIDs, uuid) in
-                return storedUUIDs + [uuid.UUIDString]
+                return storedUUIDs + [uuid.uuidString]
             }
         }
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(storedPeripherals, forKey:key)
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(storedPeripherals, forKey:key)
     }
     
     // MARK: Peripheral Supported Services
-    class func addPeripheralServices(name: String, services: [CBUUID]) {
+    class func addPeripheralServices(_ name: String, services: [CBUUID]) {
         var peripherals = self.getPeripheralServices("peripheralServices")
         peripherals[name] = services
         self.setPeripheralServices("peripheralServices", peripheralServices:peripherals)
     }
     
-    class func addPeripheralService(name: String, service: CBUUID) {
+    class func addPeripheralService(_ name: String, service: CBUUID) {
         var peripheralServices = self.getPeripheralServices("peripheralServices")
         if let services = peripheralServices[name] {
             peripheralServices[name] = services + [service]
@@ -60,7 +60,7 @@ class PeripheralStore {
         self.setPeripheralServices("peripheralServices", peripheralServices:peripheralServices)
     }
     
-    class func removePeripheralService(name: String, service: CBUUID) {
+    class func removePeripheralService(_ name: String, service: CBUUID) {
         var peripherals = self.getPeripheralServices("peripheralServices")
         if let services = peripherals[name] {
             peripherals[name] = services.filter{$0 != service}
@@ -68,13 +68,13 @@ class PeripheralStore {
         self.setPeripheralServices("peripheralServices", peripheralServices:peripherals)
     }
     
-    class func removePeripheralServices(name: String) {
+    class func removePeripheralServices(_ name: String) {
         var peripheralServices = self.getPeripheralServices("peripheralServices")
-        peripheralServices.removeValueForKey(name)
+        peripheralServices.removeValue(forKey: name)
         self.setPeripheralServices("peripheralServices", peripheralServices:peripheralServices)
     }
 
-    class func getPeripheralServicesForPeripheral(peripheral: String) -> [CBUUID] {
+    class func getPeripheralServicesForPeripheral(_ peripheral: String) -> [CBUUID] {
         var peripheralServices = self.getPeripheralServices("peripheralServices")
         if let services = peripheralServices[peripheral] {
             return services
@@ -88,13 +88,13 @@ class PeripheralStore {
         return self.getPeripheralServices("advertisedPeripheralServices")
     }
     
-    class func addAdvertisedPeripheralServices(name: String, services: [CBUUID]) {
+    class func addAdvertisedPeripheralServices(_ name: String, services: [CBUUID]) {
         var peripherals = self.getPeripheralServices("advertisedPeripheralServices")
         peripherals[name] = services
         self.setPeripheralServices("advertisedPeripheralServices", peripheralServices:peripherals)
     }
     
-    class func addAdvertisedPeripheralService(name: String, service: CBUUID) {
+    class func addAdvertisedPeripheralService(_ name: String, service: CBUUID) {
         var peripheralServices = self.getPeripheralServices("advertisedPeripheralServices")
         if let services = peripheralServices[name] {
             peripheralServices[name] = services + [service]
@@ -104,7 +104,7 @@ class PeripheralStore {
         self.setPeripheralServices("advertisedPeripheralServices", peripheralServices:peripheralServices)
     }
     
-    class func removeAdvertisedPeripheralService(name: String, service: CBUUID) {
+    class func removeAdvertisedPeripheralService(_ name: String, service: CBUUID) {
         Logger.debug("service \(name), \(service)")
         var peripherals = self.getPeripheralServices("advertisedPeripheralServices")
         Logger.debug("peripherals \(peripherals)")
@@ -117,13 +117,13 @@ class PeripheralStore {
         self.setPeripheralServices("advertisedPeripheralServices", peripheralServices:peripherals)
     }
     
-    class func removeAdvertisedPeripheralServices(name: String) {
+    class func removeAdvertisedPeripheralServices(_ name: String) {
         var peripheralServices = self.getPeripheralServices("advertisedPeripheralServices")
-        peripheralServices.removeValueForKey(name)
+        peripheralServices.removeValue(forKey: name)
         self.setPeripheralServices("advertisedPeripheralServices", peripheralServices:peripheralServices)
     }
 
-    class func getAdvertisedPeripheralServicesForPeripheral(peripheral: String) -> [CBUUID] {
+    class func getAdvertisedPeripheralServicesForPeripheral(_ peripheral: String) -> [CBUUID] {
         var peripheralServices = self.getPeripheralServices("advertisedPeripheralServices")
         if let services = peripheralServices[peripheral] {
             return services
@@ -134,30 +134,30 @@ class PeripheralStore {
 
     // MARK: Periphearl Names
     class func getPeripheralNames() -> [String] {
-        if let peripheral = NSUserDefaults.standardUserDefaults().arrayForKey("peripheralNames") {
+        if let peripheral = UserDefaults.standard.array(forKey: "peripheralNames") {
             return peripheral.map{$0 as! String}
         } else {
             return []
         }
     }
 
-    class func setPeripheralNames(names: [String]) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(names, forKey:"peripheralNames")
+    class func setPeripheralNames(_ names: [String]) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(names, forKey:"peripheralNames")
     }
     
-    class func addPeripheralName(name: String) {
+    class func addPeripheralName(_ name: String) {
         let names = self.getPeripheralNames()
         self.setPeripheralNames(names + [name])
     }
     
-    class func removePeripheralName(name: String) {
+    class func removePeripheralName(_ name: String) {
         let names = self.getPeripheralNames()
         self.setPeripheralNames(names.filter{$0 != name})
     }
     
     // MARK: Peripheral
-    class func removePeripheral(name:String) {
+    class func removePeripheral(_ name:String) {
         self.removePeripheralServices(name)
         self.removePeripheralName(name)
         self.removeAdvertisedPeripheralServices(name)
@@ -168,7 +168,7 @@ class PeripheralStore {
     // MSARK: iBeacon
     class func getAdvertisedBeacons() -> [String: String] {
         var beacons: [String: String] = [:]
-        if let storedBeacons = NSUserDefaults.standardUserDefaults().dictionaryForKey("peripheralAdvertisedBeaconConfigs") {
+        if let storedBeacons = UserDefaults.standard.dictionary(forKey: "peripheralAdvertisedBeaconConfigs") {
             for (peripheral, beacon) in storedBeacons {
                 if let beacon = beacon as? String {
                     beacons[peripheral] = beacon
@@ -180,31 +180,31 @@ class PeripheralStore {
         }
     }
     
-    class func setAdvertisedBeacons(beacons: [String:String]) {
-        NSUserDefaults.standardUserDefaults().setObject(beacons, forKey: "peripheralAdvertisedBeaconConfigs")
+    class func setAdvertisedBeacons(_ beacons: [String:String]) {
+        UserDefaults.standard.set(beacons, forKey: "peripheralAdvertisedBeaconConfigs")
     }
     
-    class func getAdvertisedBeacon(peripheral: String) -> String? {
+    class func getAdvertisedBeacon(_ peripheral: String) -> String? {
         let beacons = self.getAdvertisedBeacons()
         return beacons[peripheral]
     }
     
-    class func setAdvertisedBeacon(peripheral: String, beacon: String) {
+    class func setAdvertisedBeacon(_ peripheral: String, beacon: String) {
         var beacons = getAdvertisedBeacons()
         beacons[peripheral] = beacon
         self.setAdvertisedBeacons(beacons)
     }
     
-    class func removeAdvertisedBeacon(peripheral: String) {
+    class func removeAdvertisedBeacon(_ peripheral: String) {
         var beacons = getAdvertisedBeacons()
-        beacons.removeValueForKey(peripheral)
+        beacons.removeValue(forKey: peripheral)
         self.setAdvertisedBeacons(beacons)
     }
     
     // MARK: iBeacon Enabled
     class func getBeaconsEnabled() -> [String: Bool] {
         var beacons = [String: Bool]()
-        if let storedBeacons = NSUserDefaults.standardUserDefaults().dictionaryForKey("peipheralBeaconsEnabled") {
+        if let storedBeacons = UserDefaults.standard.dictionary(forKey: "peipheralBeaconsEnabled") {
             for (peripheral, enabled) in storedBeacons {
                 if let enabled = enabled as? NSNumber {
                     beacons[peripheral] = enabled.boolValue
@@ -216,15 +216,15 @@ class PeripheralStore {
         }
     }
     
-    class func setBeaconsEnabled(beacons: [String: Bool]) {
+    class func setBeaconsEnabled(_ beacons: [String: Bool]) {
         var storedBeacons = [String: NSNumber]()
         for (periheral, enabled) in beacons {
-            storedBeacons[periheral] = NSNumber(bool:enabled)
+            storedBeacons[periheral] = NSNumber(value: enabled as Bool)
         }
-        NSUserDefaults.standardUserDefaults().setObject(storedBeacons, forKey:"peipheralBeaconsEnabled")
+        UserDefaults.standard.set(storedBeacons, forKey:"peipheralBeaconsEnabled")
     }
     
-    class func getBeaconEnabled(peripheral: String) -> Bool {
+    class func getBeaconEnabled(_ peripheral: String) -> Bool {
         let beacons = self.getBeaconsEnabled()
         if let enabled = beacons[peripheral] {
             return (enabled as NSNumber).boolValue
@@ -233,25 +233,25 @@ class PeripheralStore {
         }
     }
 
-    class func setBeaconEnabled(peripheral: String, enabled: Bool) {
+    class func setBeaconEnabled(_ peripheral: String, enabled: Bool) {
         var beacons = self.getBeaconsEnabled()
         beacons[peripheral] = enabled
         self.setBeaconsEnabled(beacons)
     }
     
-    class func removeBeaconEnabled(peripheral: String) {
+    class func removeBeaconEnabled(_ peripheral: String) {
         var beacons = self.getBeaconsEnabled()
-        beacons.removeValueForKey(peripheral)
+        beacons.removeValue(forKey: peripheral)
         self.setBeaconsEnabled(beacons)
     }
 
     // MARK: Peripheral Beacon
-    class func getBeacons() -> [String: NSUUID] {
-        if let storedBeacons = NSUserDefaults.standardUserDefaults().dictionaryForKey("peripheralBeacons") {
-            var beacons = [String: NSUUID]()
+    class func getBeacons() -> [String: UUID] {
+        if let storedBeacons = UserDefaults.standard.dictionary(forKey: "peripheralBeacons") {
+            var beacons = [String: UUID]()
             for (name, uuid) in storedBeacons {
                 if let uuid = uuid as? String {
-                    beacons[name] = NSUUID(UUIDString: uuid)
+                    beacons[name] = UUID(uuidString: uuid)
                 }
             }
             return beacons
@@ -260,43 +260,43 @@ class PeripheralStore {
         }
     }
     
-    class func setBeacons(beacons: [String:NSUUID]) {
+    class func setBeacons(_ beacons: [String:UUID]) {
         var storedBeacons = [String: String]()
         for (name, uuid) in beacons {
-            storedBeacons[name] = uuid.UUIDString
+            storedBeacons[name] = uuid.uuidString
         }
-        NSUserDefaults.standardUserDefaults().setObject(storedBeacons, forKey: "peripheralBeacons")
+        UserDefaults.standard.set(storedBeacons, forKey: "peripheralBeacons")
     }
     
     class func getBeaconNames() -> [String] {
         return Array(self.getBeacons().keys)
     }
     
-    class func addBeacon(name: String, uuid: NSUUID) {
+    class func addBeacon(_ name: String, uuid: UUID) {
         var beacons = self.getBeacons()
         beacons[name] = uuid
         self.setBeacons(beacons)
     }
     
-    class func removeBeacon(name: String) {
+    class func removeBeacon(_ name: String) {
         var beacons = self.getBeacons()
-        beacons.removeValueForKey(name)
+        beacons.removeValue(forKey: name)
         self.setBeacons(beacons)
     }
     
-    class func getBeacon(name: String) -> NSUUID? {
+    class func getBeacon(_ name: String) -> UUID? {
         let beacons = self.getBeacons()
         return beacons[name]
     }
     
     class func getBeaconConfigs() -> [String: [UInt16]] {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let storedConfigs = userDefaults.dictionaryForKey("peipheralBeaconConfigs") {
+        let userDefaults = UserDefaults.standard
+        if let storedConfigs = userDefaults.dictionary(forKey: "peipheralBeaconConfigs") {
             var configs = [String: [UInt16]]()
             for (name, storedConfig) in storedConfigs {
-                if storedConfig.count == 2 {
+                if (storedConfig as AnyObject).count == 2 {
                     if let config = storedConfig as? [NSNumber] {
-                        configs[name] = [config[0].unsignedShortValue, config[1].unsignedShortValue]
+                        configs[name] = [config[0].uint16Value, config[1].uint16Value]
                     }
                 }
             }
@@ -306,22 +306,22 @@ class PeripheralStore {
         }
     }
     
-    class func setBeaconConfigs(configs: [String:[UInt16]]) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
+    class func setBeaconConfigs(_ configs: [String:[UInt16]]) {
+        let userDefaults = UserDefaults.standard
         var storeConfigs = [String: [NSNumber]]()
         for (name, config) in configs {
-            storeConfigs[name] = [NSNumber(unsignedShort: config[0]), NSNumber(unsignedShort: config[1])]
+            storeConfigs[name] = [NSNumber(value: config[0] as UInt16), NSNumber(value: config[1] as UInt16)]
         }
-        userDefaults.setObject(storeConfigs, forKey:"peipheralBeaconConfigs")
+        userDefaults.set(storeConfigs, forKey:"peipheralBeaconConfigs")
     }
     
-    class func addBeaconConfig(name: String, config: [UInt16]) {
+    class func addBeaconConfig(_ name: String, config: [UInt16]) {
         var configs = self.getBeaconConfigs()
         configs[name] = config
         self.setBeaconConfigs(configs)
     }
     
-    class func getBeaconConfig(name: String) -> [UInt16] {
+    class func getBeaconConfig(_ name: String) -> [UInt16] {
         let configs = self.getBeaconConfigs()
         if let config = configs[name] {
             return config
@@ -330,9 +330,9 @@ class PeripheralStore {
         }
     }
     
-    class func removeBeaconConfig(name: String) {
+    class func removeBeaconConfig(_ name: String) {
         var configs = self.getBeaconConfigs()
-        configs.removeValueForKey(name)
+        configs.removeValue(forKey: name)
         self.setBeaconConfigs(configs)
     }
     

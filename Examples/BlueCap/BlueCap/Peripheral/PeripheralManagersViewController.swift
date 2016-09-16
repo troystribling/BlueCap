@@ -24,36 +24,36 @@ class PeripheralManagersViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.styleNavigationBar()
-        self.navigationItem.leftBarButtonItem = self.editButtonItem()
-        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.blackColor()
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
+        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.black
     }
     
-    override func viewWillAppear(animated:Bool) {
+    override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         self.navigationItem.title = "Peripherals"
     }
     
-    override func viewWillDisappear(animated:Bool) {
+    override func viewWillDisappear(_ animated:Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerViewSegue {
-            if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                let viewController = segue.destinationViewController as! PeripheralManagerViewController
+            if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                let viewController = segue.destination as! PeripheralManagerViewController
                 let peripherals = PeripheralStore.getPeripheralNames()
-                viewController.peripheral = peripherals[selectedIndex.row]
+                viewController.peripheral = peripherals[(selectedIndex as NSIndexPath).row]
             }
         } else if segue.identifier == MainStoryboard.peripheralManagerAddSegue {
-            let viewController = segue.destinationViewController as! PeripheralManagerViewController
+            let viewController = segue.destination as! PeripheralManagerViewController
             viewController.peripheral = nil
         }
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
@@ -61,22 +61,22 @@ class PeripheralManagersViewController : UITableViewController {
         return PeripheralStore.getPeripheralNames().count
     }
     
-    override func tableView(tableView:UITableView, editingStyleForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCellEditingStyle {
-        return UITableViewCellEditingStyle.Delete
+    override func tableView(_ tableView:UITableView, editingStyleForRowAt indexPath:IndexPath) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.delete
     }
     
-    override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
+    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
             let peripherals = PeripheralStore.getPeripheralNames()
-            PeripheralStore.removePeripheral(peripherals[indexPath.row])
-            self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
+            PeripheralStore.removePeripheral(peripherals[(indexPath as NSIndexPath).row])
+            self.tableView.deleteRows(at: [indexPath], with:UITableViewRowAnimation.fade)
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerCell, forIndexPath: indexPath) as! SimpleCell
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerCell, for: indexPath) as! SimpleCell
         let peripherals = PeripheralStore.getPeripheralNames()
-        cell.nameLabel.text = peripherals[indexPath.row]
+        cell.nameLabel.text = peripherals[(indexPath as NSIndexPath).row]
         return cell
     }
 

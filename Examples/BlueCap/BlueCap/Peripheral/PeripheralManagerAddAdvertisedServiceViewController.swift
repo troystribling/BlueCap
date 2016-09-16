@@ -37,18 +37,18 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralManagerAddAdvertisedServiceViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerAddAdvertisedServiceViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     }
     
     func didEnterBackground() {
@@ -58,7 +58,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         }
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -66,8 +66,8 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         return self.services.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerAddAdverstisedServiceCell, forIndexPath: indexPath) as! NameUUIDCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerAddAdverstisedServiceCell, for: indexPath) as! NameUUIDCell
         if let _ = self.peripheral {
             let service = self.services[indexPath.row]
             cell.nameLabel.text = service.name
@@ -79,11 +79,11 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         return cell
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let peripheral = self.peripheral {
             let service = self.services[indexPath.row]
             PeripheralStore.addAdvertisedPeripheralService(peripheral, service:service.UUID)
         }
-        self.navigationController?.popViewControllerAnimated(true)
+        self.navigationController?.popViewController(animated: true)
     }
 }

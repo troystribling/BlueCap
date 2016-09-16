@@ -31,14 +31,14 @@ class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewContr
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicEditValueViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicEditValueViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     func didEnterBackground() {
@@ -49,14 +49,14 @@ class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewContr
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
         if let newValue = self.valueTextField.text,
-            valueName = self.valueName,
-            characteristic = self.characteristic  where !valueName.isEmpty {
+            let valueName = self.valueName,
+            let characteristic = self.characteristic  , !valueName.isEmpty {
             if var values = characteristic.stringValue {
                 values[valueName] = newValue
                 characteristic.updateValueWithString(values)
-                self.navigationController?.popViewControllerAnimated(true)
+                self.navigationController?.popViewController(animated: true)
             }
         }
         return true

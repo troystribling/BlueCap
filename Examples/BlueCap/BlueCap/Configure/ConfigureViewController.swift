@@ -70,10 +70,10 @@ class ConfigureViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.styleNavigationBar()
-        self.notifySwitch.on = Notify.getEnabled()
+        self.notifySwitch.isOn = Notify.getEnabled()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         self.scanModeLabel.text = ConfigStore.getScanMode().stringValue
         self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
         self.peripheralMaxDisconnectionsLabel.text = "\(ConfigStore.getPeripheralMaximumDisconnections())"
@@ -88,15 +88,15 @@ class ConfigureViewController : UITableViewController {
         super.viewWillAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
+    override func shouldPerformSegue(withIdentifier identifier:String?, sender:Any?) -> Bool {
         guard identifier != nil  else {
             return false
         }
@@ -108,19 +108,19 @@ class ConfigureViewController : UITableViewController {
     }
     
     @IBAction func toggelNotification(_: AnyObject) {
-        Notify.setEnable(self.notifySwitch.on)
+        Notify.setEnable(self.notifySwitch.isOn)
     }
 
     @IBAction func toggelPeripheralConnectionTimeout(_: AnyObject) {
-        ConfigStore.setPeripheralConnectionTimeoutEnabled(self.peripheralConnectionTimeoutSwitch.on)
+        ConfigStore.setPeripheralConnectionTimeoutEnabled(self.peripheralConnectionTimeoutSwitch.isOn)
     }
 
     @IBAction func togglePeripheralMaximumTimeouts(_: AnyObject) {
-        ConfigStore.setPeripheralMaximumTimeoutsEnabled(self.peripheralMaxTimeoutsSwitch.on)
+        ConfigStore.setPeripheralMaximumTimeoutsEnabled(self.peripheralMaxTimeoutsSwitch.isOn)
     }
 
     @IBAction func togglePeripheralMaximumDisconnections(_: AnyObject) {
-        ConfigStore.setPeripheralMaximumDisconnectionsEnabled(self.peripheralMaxDisconnectionsSwitch.on)
+        ConfigStore.setPeripheralMaximumDisconnectionsEnabled(self.peripheralMaxDisconnectionsSwitch.isOn)
     }
 
     func configUI() {
@@ -128,23 +128,23 @@ class ConfigureViewController : UITableViewController {
 
         self.servicesLabel.textColor = self.labelColorIfScanning()
 
-        self.scanTimeoutSwitch.on = ConfigStore.getScanTimeoutEnabled()
-        self.scanTimeoutSwitch.enabled = self.enableIfScanning()
+        self.scanTimeoutSwitch.isOn = ConfigStore.getScanTimeoutEnabled()
+        self.scanTimeoutSwitch.isEnabled = self.enableIfScanning()
         self.scanTimeoutEnabledLabel.textColor = self.labelColorIfScanning()
         self.scanTimeoutTitleLabel.textColor = self.labelColorIfScanning()
 
-        self.peripheralConnectionTimeoutSwitch.on = ConfigStore.getPeripheralConnectionTimeoutEnabled()
-        self.peripheralConnectionTimeoutSwitch.enabled = self.enableIfScanning()
+        self.peripheralConnectionTimeoutSwitch.isOn = ConfigStore.getPeripheralConnectionTimeoutEnabled()
+        self.peripheralConnectionTimeoutSwitch.isEnabled = self.enableIfScanning()
         self.peripheralConnectionTimeoutEnabledLabel.textColor = self.labelColorIfScanning()
         self.peripheralConnectionTimeoutTitleLabel.textColor = self.labelColorIfScanning()
 
-        self.peripheralMaxTimeoutsSwitch.on = ConfigStore.getPeripheralMaximumTimeoutsEnabled()
-        self.peripheralMaxTimeoutsSwitch.enabled = self.enableIfScanning()
+        self.peripheralMaxTimeoutsSwitch.isOn = ConfigStore.getPeripheralMaximumTimeoutsEnabled()
+        self.peripheralMaxTimeoutsSwitch.isEnabled = self.enableIfScanning()
         self.peripheralMaxTimeoutsEnabledLabel.textColor = self.labelColorIfScanning()
         self.peripheralMaxTimeoutsTitleLabel.textColor = self.labelColorIfScanning()
 
-        self.peripheralMaxDisconnectionsSwitch.on = ConfigStore.getPeripheralMaximumDisconnectionsEnabled()
-        self.peripheralMaxDisconnectionsSwitch.enabled = self.enableIfScanning()
+        self.peripheralMaxDisconnectionsSwitch.isOn = ConfigStore.getPeripheralMaximumDisconnectionsEnabled()
+        self.peripheralMaxDisconnectionsSwitch.isEnabled = self.enableIfScanning()
         self.peripheralMaxDisconnectionsEnabledLabel.textColor = self.labelColorIfScanning()
         self.peripheralMaxDisconnectionsTitleLabel.textColor = self.labelColorIfScanning()
 
@@ -159,9 +159,9 @@ class ConfigureViewController : UITableViewController {
 
     func labelColorIfScanning() -> UIColor {
         if  Singletons.centralManager.isScanning {
-            return UIColor.lightGrayColor()
+            return UIColor.lightGray
         } else {
-            return UIColor.blackColor()
+            return UIColor.black
         }
     }
 

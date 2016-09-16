@@ -21,19 +21,19 @@ class ConfigurePeripheralMaximumDisconnections: UIViewController {
         self.maximumDisconnectionsTextField.text = "\(ConfigStore.getPeripheralMaximumDisconnections())"
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let maximumDisconnections = self.maximumDisconnectionsTextField.text, maximumDisconnectionsInt = UInt(maximumDisconnections) where !maximumDisconnections.isEmpty {
+    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+        if let maximumDisconnections = self.maximumDisconnectionsTextField.text, let maximumDisconnectionsInt = UInt(maximumDisconnections) , !maximumDisconnections.isEmpty {
             ConfigStore.setPeripheralMaximumDisconnections(maximumDisconnectionsInt)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.navigationController?.popToRootViewController(animated: true)
             return true
         } else {
             return false

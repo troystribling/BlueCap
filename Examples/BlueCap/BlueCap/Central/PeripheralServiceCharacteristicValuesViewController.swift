@@ -12,7 +12,7 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
 
-    private static var BCPeripheralStateKVOContext = UInt8()
+    fileprivate static var BCPeripheralStateKVOContext = UInt8()
 
     weak var characteristic: Characteristic?
     weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
@@ -39,41 +39,41 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
             if characteristic.isNotifying {
-                self.refreshButton.enabled = false
+                self.refreshButton.isEnabled = false
             } else {
-                self.refreshButton.enabled = true
+                self.refreshButton.isEnabled = true
             }
         }
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
-    override func viewDidAppear(animated:Bool)  {
-        let options = NSKeyValueObservingOptions([.New])
+    override func viewDidAppear(_ animated:Bool)  {
+        let options = NSKeyValueObservingOptions([.new])
         // TODO: Use Future Callback
         self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         self.updateValues()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
                 characteristic.stopNotificationUpdates()
             }
         }
         self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
-            let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
+            let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
-            let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicEditValueViewController
+            let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
             if let stringValues = self.characteristic?.stringValue {
-                let selectedIndex = sender as! NSIndexPath
+                let selectedIndex = sender as! IndexPath
                 let names = Array(stringValues.keys)
                 viewController.valueName = names[selectedIndex.row]
             }
@@ -113,7 +113,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripheralConnected {
                 self.progressView.remove()
-                self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
+                self.present(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
                         peripheralViewController.peripheralConnected = false
                 }, animated: true, completion: nil)
             }
@@ -121,29 +121,29 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
 
     func didEnterBackground() {
-        self.navigationController?.popToRootViewControllerAnimated(false)
+        self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
 
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             return
         }
         switch (keyPath!, context) {
-        case("state", &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
-                if newState == .Disconnected {
-                    dispatch_async(dispatch_get_main_queue()) { self.peripheralDisconnected() }
+        case("state", PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext):
+            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+                if newState == .disconnected {
+                    DispatchQueue.main.async { self.peripheralDisconnected() }
                 }
             }
         default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -155,8 +155,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCharactertisticValueCell, forIndexPath: indexPath) as! CharacteristicValueCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCharactertisticValueCell, for: indexPath) as! CharacteristicValueCell
         if let characteristic = self.characteristic {
             if let stringValues = characteristic.stringValue {
                 let names = Array(stringValues.keys)
@@ -165,22 +165,22 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 cell.valueLable.text = values[indexPath.row]
             }
             if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
-                cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+                cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
             } else {
-                cell.accessoryType = UITableViewCellAccessoryType.None
+                cell.accessoryType = UITableViewCellAccessoryType.none
             }
         }
         return cell
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView:UITableView, didSelectRowAt indexPath: IndexPath) {
         if let characteristic = self.characteristic {
             if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
                 if characteristic.stringValues.isEmpty {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender: indexPath)
+                    self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender: indexPath)
                 } else {
-                    self.performSegueWithIdentifier(MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender: indexPath)
+                    self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue, sender: indexPath)
                 }
             }
         }

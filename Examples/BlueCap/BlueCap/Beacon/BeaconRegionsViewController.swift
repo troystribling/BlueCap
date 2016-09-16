@@ -24,8 +24,8 @@ class BeaconRegionsViewController: UITableViewController {
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
-        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop, target: self, action: #selector(BeaconRegionsViewController.toggleMonitoring(_:)))
-        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(BeaconRegionsViewController.toggleMonitoring(_:)))
+        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(BeaconRegionsViewController.toggleMonitoring(_:)))
+        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(BeaconRegionsViewController.toggleMonitoring(_:)))
         self.styleUIBarButton(self.startScanBarButtonItem)
     }
     
@@ -34,38 +34,38 @@ class BeaconRegionsViewController: UITableViewController {
         self.styleNavigationBar()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
         self.navigationItem.title = "Beacon Regions"
         self.setScanButton()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BeaconRegionsViewController.didBecomeActive), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(BeaconRegionsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         self.navigationItem.title = ""
     }
     
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryBoard.beaconsSegue {
-            let selectedIndexPath = sender as! NSIndexPath
-            let beaconsViewController = segue.destinationViewController as! BeaconsViewController
-            let beaconName = BeaconStore.getBeaconNames()[selectedIndexPath.row]
+            let selectedIndexPath = sender as! IndexPath
+            let beaconsViewController = segue.destination as! BeaconsViewController
+            let beaconName = BeaconStore.getBeaconNames()[(selectedIndexPath as NSIndexPath).row]
             if let beaconRegion = self.beaconRegions[beaconName] {
                 beaconsViewController.beaconRegion = beaconRegion
             }
         } else if segue.identifier == MainStoryBoard.beaconRegionAddSegue {
         } else if segue.identifier == MainStoryBoard.beaconRegionEditSegue {
-            let selectedIndexPath = sender as! NSIndexPath
-            let viewController = segue.destinationViewController as! BeaconRegionViewController
-            viewController.regionName = BeaconStore.getBeaconNames()[selectedIndexPath.row]
+            let selectedIndexPath = sender as! IndexPath
+            let viewController = segue.destination as! BeaconRegionViewController
+            viewController.regionName = BeaconStore.getBeaconNames()[(selectedIndexPath as NSIndexPath).row]
         }
     }
     
-    func toggleMonitoring(sender:AnyObject) {
+    func toggleMonitoring(_ sender:AnyObject) {
         if !Singletons.centralManager.isScanning {
             if Singletons.beaconManager.isMonitoring {
                 Singletons.beaconManager.stopRangingAllBeacons()
@@ -77,15 +77,15 @@ class BeaconRegionsViewController: UITableViewController {
             }
             self.tableView.reloadData()
         } else {
-            self.presentViewController(UIAlertController.alertWithMessage("Central scan is active. Cannot scan and monitor simutaneously. Stop scan to start monitoring"), animated: true, completion: nil)
+            self.present(UIAlertController.alertWithMessage("Central scan is active. Cannot scan and monitor simutaneously. Stop scan to start monitoring"), animated: true, completion: nil)
         }
     }
     
     func setScanButton() {
         if Singletons.beaconManager.isRanging {
-            self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated: false)
+            self.navigationItem.setLeftBarButton(self.stopScanBarButtonItem, animated: false)
         } else {
-            self.navigationItem.setLeftBarButtonItem(self.startScanBarButtonItem, animated: false)
+            self.navigationItem.setLeftBarButton(self.startScanBarButtonItem, animated: false)
         }
     }
     
@@ -139,7 +139,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func updateDisplay() {
-        if UIApplication.sharedApplication().applicationState == .Active {
+        if UIApplication.shared.applicationState == .active {
             self.tableView.reloadData()
         }
     }
@@ -150,32 +150,32 @@ class BeaconRegionsViewController: UITableViewController {
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return BeaconStore.getBeacons().count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryBoard.beaconRegionCell, forIndexPath: indexPath) as! BeaconRegionCell
-        let name = BeaconStore.getBeaconNames()[indexPath.row]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryBoard.beaconRegionCell, for: indexPath) as! BeaconRegionCell
+        let name = BeaconStore.getBeaconNames()[(indexPath as NSIndexPath).row]
         let beaconRegions = BeaconStore.getBeacons()
         if let beaconRegionUUID = beaconRegions[name] {
             cell.nameLabel.text = name
-            cell.uuidLabel.text = beaconRegionUUID.UUIDString
+            cell.uuidLabel.text = beaconRegionUUID.uuidString
         }
-        cell.nameLabel.textColor = UIColor.blackColor()
+        cell.nameLabel.textColor = UIColor.black
         cell.beaconsLabel.text = "0"
-        cell.nameLabel.textColor = UIColor.lightGrayColor()
-        cell.statusLabel.textColor = UIColor.lightGrayColor()
+        cell.nameLabel.textColor = UIColor.lightGray
+        cell.statusLabel.textColor = UIColor.lightGray
         if Singletons.beaconManager.isRangingRegion(name) {
             if let region = Singletons.beaconManager.beaconRegion(name) {
                 if region.beacons.count == 0 {
                     cell.statusLabel.text = "Monitoring"
                 } else {
-                    cell.nameLabel.textColor = UIColor.blackColor()
+                    cell.nameLabel.textColor = UIColor.black
                     cell.beaconsLabel.text = "\(region.beacons.count)"
                     cell.statusLabel.text = "Ranging"
                     cell.statusLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 0.5)
@@ -189,30 +189,30 @@ class BeaconRegionsViewController: UITableViewController {
         return cell
     }
     
-    override func tableView(tableView:UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        let name = BeaconStore.getBeaconNames()[indexPath.row]
+    override func tableView(_ tableView:UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        let name = BeaconStore.getBeaconNames()[(indexPath as NSIndexPath).row]
         return !Singletons.beaconManager.isRangingRegion(name)
     }
     
-    override func tableView(tableView:UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
-        if editingStyle == .Delete {
-            let name = BeaconStore.getBeaconNames()[indexPath.row]
+    override func tableView(_ tableView:UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
+        if editingStyle == .delete {
+            let name = BeaconStore.getBeaconNames()[(indexPath as NSIndexPath).row]
             BeaconStore.removeBeacon(name)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:.Fade)
+            tableView.deleteRows(at: [indexPath], with:.fade)
         }
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        let name = BeaconStore.getBeaconNames()[indexPath.row]
+    override func tableView(_ tableView:UITableView, didSelectRowAt indexPath:IndexPath) {
+        let name = BeaconStore.getBeaconNames()[(indexPath as NSIndexPath).row]
         if Singletons.beaconManager.isRangingRegion(name) {
             if let beaconRegion = self.beaconRegions[name] {
                 if beaconRegion.beacons.count > 0 {
-                    self.performSegueWithIdentifier(MainStoryBoard.beaconsSegue, sender:indexPath)
+                    self.performSegue(withIdentifier: MainStoryBoard.beaconsSegue, sender:indexPath)
                 }
             }
         } else {
-            self.performSegueWithIdentifier(MainStoryBoard.beaconRegionEditSegue, sender:indexPath)
+            self.performSegue(withIdentifier: MainStoryBoard.beaconRegionEditSegue, sender:indexPath)
         }
     }
     

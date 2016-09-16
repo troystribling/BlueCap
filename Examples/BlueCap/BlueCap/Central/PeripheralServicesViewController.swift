@@ -13,7 +13,7 @@ import CoreBluetooth
 
 class PeripheralServicesViewController : UITableViewController {
 
-    private static var BCPeripheralStateKVOContext = UInt8()
+    fileprivate static var BCPeripheralStateKVOContext = UInt8()
 
     weak var peripheral: Peripheral!
     weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
@@ -32,29 +32,29 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidLoad()  {
         super.viewDidLoad()
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.updateWhenActive()
-        let options = NSKeyValueObservingOptions([.New])
+        let options = NSKeyValueObservingOptions([.new])
         // TODO: Use Future Callback
         self.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServicesViewController.BCPeripheralStateKVOContext)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServicesViewController.BCPeripheralStateKVOContext)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServicesCharacteritics {
             if let peripheral = self.peripheral {
-                if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                    let viewController = segue.destinationViewController as! PeripheralServiceCharacteristicsViewController
+                if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                    let viewController = segue.destination as! PeripheralServiceCharacteristicsViewController
                     viewController.service = peripheral.services[selectedIndex.row]
                     viewController.peripheralViewController = self.peripheralViewController
 
@@ -63,43 +63,43 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier:String?, sender:AnyObject?) -> Bool {
+    override func shouldPerformSegue(withIdentifier identifier:String?, sender:Any?) -> Bool {
         return true
     }
     
     func peripheralDisconnected() {
         Logger.debug()
         if self.peripheralViewController.peripheralConnected {
-            self.presentViewController(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
+            self.present(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
             self.peripheralViewController.peripheralConnected = false
             self.updateWhenActive()
         }
     }
 
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             return
         }
         switch (keyPath!, context) {
-        case("state", &PeripheralServicesViewController.BCPeripheralStateKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
-                if newState == .Disconnected {
-                    dispatch_async(dispatch_get_main_queue()) { self.peripheralDisconnected() }
+        case("state", PeripheralServicesViewController.BCPeripheralStateKVOContext):
+            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+                if newState == .disconnected {
+                    DispatchQueue.main.async { self.peripheralDisconnected() }
                 }
             }
         default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
 
     func didEnterBackground() {
         Logger.debug()
-        self.navigationController?.popToRootViewControllerAnimated(false)
+        self.navigationController?.popToRootViewController(animated: false)
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -111,19 +111,19 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralServiceCell, forIndexPath: indexPath) as! NameUUIDCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCell, for: indexPath) as! NameUUIDCell
         let service = peripheral.services[indexPath.row]
         cell.nameLabel.text = service.name
         cell.uuidLabel.text = service.UUID.UUIDString
         if let peripheralViewController = self.peripheralViewController {
             if peripheralViewController.peripheralConnected {
-                cell.nameLabel.textColor = UIColor.blackColor()
+                cell.nameLabel.textColor = UIColor.black
             } else {
-                cell.nameLabel.textColor = UIColor.lightGrayColor()
+                cell.nameLabel.textColor = UIColor.lightGray
             }
         } else {
-            cell.nameLabel.textColor = UIColor.blackColor()
+            cell.nameLabel.textColor = UIColor.black
         }
         return cell
     }

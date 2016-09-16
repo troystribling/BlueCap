@@ -21,19 +21,19 @@ class ConfigureMaximumPeripheralsDiscovered: UIViewController {
         self.maximumPeripheralsDiscoveredTextField.text = "\(ConfigStore.getMaximumPeripheralsDiscovered())"
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let maxPeripheralsText = self.maximumPeripheralsDiscoveredTextField.text, maxPeripherals = Int(maxPeripheralsText) where !maxPeripheralsText.isEmpty {
+    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+        if let maxPeripheralsText = self.maximumPeripheralsDiscoveredTextField.text, let maxPeripherals = Int(maxPeripheralsText) , !maxPeripheralsText.isEmpty {
             ConfigStore.setMaximumPeripheralsDiscovered(maxPeripherals)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.navigationController?.popToRootViewController(animated: true)
         }
         return true
     }

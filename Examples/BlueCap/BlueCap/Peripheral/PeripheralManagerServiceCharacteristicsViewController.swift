@@ -28,25 +28,25 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let service = self.service {
             self.navigationItem.title = service.name
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicsViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender: AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicSegue {
             if let service = self.service {
-                if let selectedIndex = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                    let viewController = segue.destinationViewController as! PeripheralManagerServiceCharacteristicViewController
+                if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                    let viewController = segue.destination as! PeripheralManagerServiceCharacteristicViewController
                     viewController.characteristic = service.characteristics[selectedIndex.row]
                     if let peripheralManagerViewController = self.peripheralManagerViewController {
                         viewController.peripheralManagerViewController = peripheralManagerViewController
@@ -64,7 +64,7 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
@@ -76,8 +76,8 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceChracteristicCell, forIndexPath: indexPath) as! NameUUIDCell
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerServiceChracteristicCell, for: indexPath) as! NameUUIDCell
         if let service = self.service {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name

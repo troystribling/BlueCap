@@ -29,33 +29,33 @@ class PeripheralManagerServicesViewController : UITableViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated:Bool) {
+    override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Services"
         self.tableView.reloadData()
         if Singletons.peripheralManager.isAdvertising {
-            self.navigationItem.rightBarButtonItem!.enabled = false
+            self.navigationItem.rightBarButtonItem!.isEnabled = false
         } else {
-            self.navigationItem.rightBarButtonItem!.enabled = true
+            self.navigationItem.rightBarButtonItem!.isEnabled = true
         }
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(PeripheralManagerServicesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         self.navigationItem.title = ""
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
-            let viewController = segue.destinationViewController as! PeripheralManagerServiceProfilesViewController
+            let viewController = segue.destination as! PeripheralManagerServiceProfilesViewController
             viewController.peripheral = self.peripheral
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
             }
         } else if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicsSegue {
-            if let selectedIndexPath = self.tableView.indexPathForCell(sender as! UITableViewCell) {
-                let viewController = segue.destinationViewController as! PeripheralManagerServiceCharacteristicsViewController
+            if let selectedIndexPath = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                let viewController = segue.destination as! PeripheralManagerServiceCharacteristicsViewController
                 viewController.service = Singletons.peripheralManager.services[selectedIndexPath.row]
                 if let peripheralManagerViewController = self.peripheralManagerViewController {
                     viewController.peripheralManagerViewController = peripheralManagerViewController
@@ -72,7 +72,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
@@ -80,30 +80,30 @@ class PeripheralManagerServicesViewController : UITableViewController {
         return Singletons.peripheralManager.services.count
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCell, forIndexPath:indexPath) as! NameUUIDCell
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerServiceCell, for:indexPath) as! NameUUIDCell
         let service = Singletons.peripheralManager.services[indexPath.row]
         cell.nameLabel.text = service.name
         cell.uuidLabel.text = service.UUID.UUIDString
         return cell
     }
     
-    override func tableView(tableView:UITableView, canEditRowAtIndexPath indexPath:NSIndexPath) -> Bool {
+    override func tableView(_ tableView:UITableView, canEditRowAt indexPath:IndexPath) -> Bool {
         return !Singletons.peripheralManager.isAdvertising
     }
     
-    override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-        return UITableViewCellEditingStyle.Delete
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.delete
     }
     
-    override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
+    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
             if let peripheral = self.peripheral {
                 let service = Singletons.peripheralManager.services[indexPath.row]
                 Singletons.peripheralManager.removeService(service)
                 PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.UUID)
                 PeripheralStore.removePeripheralService(peripheral, service: service.UUID)
-                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+                self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
             }
         }
     }

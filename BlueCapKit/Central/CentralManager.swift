@@ -20,7 +20,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate var afterStateRestoredPromise: Promise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>?
 
     fileprivate var _isScanning = false
-    fileprivate var _poweredOn = false
 
     fileprivate let profileManager: ProfileManager?
     fileprivate var _discoveredPeripherals = [UUID : Peripheral]()
@@ -52,7 +51,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public var poweredOn: Bool {
-        return centralQueue.sync { return self._poweredOn }
+        return self.cbCentralManager.state == .poweredOn
     }
 
     public var state: CBManagerState {
@@ -64,7 +63,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         self.profileManager = profileManager
         super.init()
-        self._poweredOn = self.cbCentralManager.state == .poweredOn
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)
     }
 
@@ -72,7 +70,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.centralQueue = Queue(queue)
         self.profileManager = profileManager
         super.init()
-        self._poweredOn = self.cbCentralManager.state == .poweredOn
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
     }
 
@@ -80,7 +77,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.centralQueue = Queue("us.gnos.blueCap.central-manger.main")
         self.profileManager = profileManager
         super.init()
-        self._poweredOn = self.cbCentralManager.state == .poweredOn
         self.cbCentralManager = centralManager
     }
 
@@ -96,7 +92,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return afterPoweredOnPromise.future
             }
             self.afterPoweredOnPromise = Promise<Void>()
-            if self._poweredOn {
+            if self.poweredOn {
                 self.afterPoweredOnPromise!.success()
             }
             return self.afterPoweredOnPromise!.future
@@ -109,7 +105,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return afterPoweredOffPromise.future
             }
             self.afterPoweredOffPromise = Promise<Void>()
-            if !self._poweredOn {
+            if !self.poweredOn {
                 self.afterPoweredOffPromise!.success()
             }
             return self.afterPoweredOffPromise!.future
@@ -157,7 +153,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 Logger.debug("UUIDs \(UUIDs)")
                 self._isScanning = true
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
-                if self._poweredOn {
+                if self.poweredOn {
                     self.cbCentralManager.scanForPeripherals(withServices: UUIDs, options: options)
                     self.timeoutScan(timeout, sequence: self.timeoutSequence)
                 } else {
@@ -344,7 +340,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     internal func didUpdateState(_ centralManager: CBCentralManagerInjectable) {
-        _poweredOn = centralManager.state == .poweredOn
         switch(centralManager.state) {
         case .unauthorized:
             break

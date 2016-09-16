@@ -27,10 +27,9 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate var afterPoweredOffPromise: Promise<Void>?
     fileprivate var afterStateRestoredPromise: Promise<(services: [MutableService], advertisements: PeripheralAdvertisements)>?
     fileprivate var afterSeriviceAddPromise: Promise<Void>?
-    fileprivate var _poweredOn = false
 
-    internal var configuredServices  = [CBUUID, MutableService]()
-    internal var configuredCharcteristics = [CBUUID, MutableCharacteristic]()
+    fileprivate var configuredServices  = [CBUUID : MutableService]()
+    fileprivate var configuredCharcteristics = [CBUUID : MutableCharacteristic]()
 
     internal let peripheralQueue: Queue
 
@@ -39,7 +38,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     public var poweredOn: Bool {
-        return peripheralQueue.sync { return self._poweredOn }
+        return self.cbPeripheralManager.state == .poweredOn
     }
 
     public var state: CBManagerState {
@@ -59,21 +58,18 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     public override init() {
         self.peripheralQueue = Queue(DispatchQueue(label: "com.gnos.us.peripheral.main", attributes: []))
         super.init()
-        self._poweredOn = self.cbPeripheralManager.state == .poweredOn
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
     }
 
     public init(queue: DispatchQueue, options: [String:AnyObject]?=nil) {
         self.peripheralQueue = Queue(queue)
         super.init()
-        self._poweredOn = self.cbPeripheralManager.state == .poweredOn
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
     }
 
     public init(peripheralManager: CBPeripheralManagerInjectable) {
         self.peripheralQueue = Queue(DispatchQueue(label: "com.gnos.us.peripheral.main", attributes: []))
         super.init()
-        self._poweredOn = self.cbPeripheralManager.state == .poweredOn
         self.cbPeripheralManager = peripheralManager
     }
 
@@ -89,7 +85,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 return afterPoweredOnPromise.future
             }
             self.afterPoweredOnPromise = Promise<Void>()
-            if self._poweredOn {
+            if self.poweredOn {
                 self.afterPoweredOnPromise!.success()
             }
             return self.afterPoweredOnPromise!.future
@@ -102,7 +98,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 return afterPoweredOffPromise.future
             }
             self.afterPoweredOffPromise = Promise<Void>()
-            if !self._poweredOn {
+            if !self.poweredOn {
                 self.afterPoweredOffPromise!.success()
             }
             return self.afterPoweredOffPromise!.future
@@ -185,16 +181,20 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 return false
             }
             for cbCharacteristic in removedCharacteristics {
-                self.configuredCharcteristics.removeValueForKey(cbCharacteristic)
+                self.configuredCharcteristics.removeValue(forKey: cbCharacteristic)
             }
-            self.configuredServices.removeValueForKey(service.UUID)
+            self.configuredServices.removeValue(forKey: service.UUID)
             self.cbPeripheralManager.remove(service: service.cbMutableService)
         }
     }
     
     public func removeAllServices() {
         Logger.debug()
-        self.removeAllServiceAndCharacteristics()
+        peripheralQueue.sync {
+            self.configuredServices.removeAll()
+            self.configuredCharcteristics.removeAll()
+            self.cbPeripheralManager.removeAllServices()
+        }
     }
 
     // MARK: Characteristic IO
@@ -313,7 +313,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     internal func didUpdateState(_ peripheralManager: CBPeripheralManagerInjectable) {
-        self._poweredOn = peripheralManager.state == .poweredOn
         switch peripheralManager.state {
         case .poweredOn:
             if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
@@ -362,7 +361,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal func didAddService(_ service: CBServiceInjectable, error: Error?) {
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
-            self.configuredServices.removeValueForKey(service.UUID)
+            self.configuredServices.removeValue(forKey: service.UUID)
             self.afterSeriviceAddPromise?.failure(error)
         } else {
             Logger.debug("success")
@@ -401,14 +400,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate func addConfiguredCharacteristics(_ characteristics: [MutableCharacteristic]) {
         for characteristic in characteristics {
             self.configuredCharcteristics[characteristic.cbMutableChracteristic.UUID] = characteristic
-        }
-    }
-
-    fileprivate func removeAllServiceAndCharacteristics() {
-        peripheralQueue.sync {
-            self.configuredServices.removeAll()
-            self.configuredCharcteristics.removeAll()
-            self.cbPeripheralManager.removeAllServices()
         }
     }
 

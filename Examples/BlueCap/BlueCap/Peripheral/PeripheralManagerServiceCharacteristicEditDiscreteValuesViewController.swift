@@ -27,14 +27,14 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         self.navigationItem.title = self.characteristic.name
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func didEnterBackground() {
@@ -45,7 +45,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
@@ -53,16 +53,16 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         return self.characteristic.stringValues.count
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, forIndexPath: indexPath) as UITableViewCell
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, for: indexPath) as UITableViewCell
         let stringValue = characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
         if let valueName = self.characteristic.stringValue?.keys.first {
             if let value = self.characteristic.stringValue?[valueName] {
                 if value == stringValue {
-                    cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                    cell.accessoryType = UITableViewCellAccessoryType.checkmark
                 } else {
-                    cell.accessoryType = UITableViewCellAccessoryType.None
+                    cell.accessoryType = UITableViewCellAccessoryType.none
                 }
             }
         }
@@ -70,12 +70,12 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     }
     
     // UITableViewDelegate
-    override func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView:UITableView, didSelectRowAt indexPath: IndexPath) {
         if let characteristic = self.characteristic {
             if let valueName = self.characteristic.stringValue?.keys.first {
                 let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
                 characteristic.updateValueWithString(stringValue)
-                self.navigationController?.popViewControllerAnimated(true)
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }

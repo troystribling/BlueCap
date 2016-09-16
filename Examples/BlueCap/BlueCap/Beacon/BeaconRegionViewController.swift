@@ -26,41 +26,41 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
             self.nameTextField.text = regionName
             let beacons = BeaconStore.getBeacons()
             if let uuid = beacons[regionName] {
-                self.uuidTextField.text = uuid.UUIDString
+                self.uuidTextField.text = uuid.uuidString
             }
         }
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(BeaconRegionViewController.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(BeaconRegionViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func didEnterBackground() {
         Logger.debug()
-        self.navigationController?.popToRootViewControllerAnimated(false)
+        self.navigationController?.popToRootViewController(animated: false)
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()
-        if let enteredUUID = self.uuidTextField.text, enteredName = self.nameTextField.text where !enteredName.isEmpty && !enteredUUID.isEmpty {
-            if let uuid = NSUUID(UUIDString:enteredUUID) {
+        if let enteredUUID = self.uuidTextField.text, let enteredName = self.nameTextField.text , !enteredName.isEmpty && !enteredUUID.isEmpty {
+            if let uuid = UUID(uuidString:enteredUUID) {
                 BeaconStore.addBeacon(enteredName, uuid:uuid)
                 if let regionName = self.regionName {
                     if regionName != enteredName {
                         BeaconStore.removeBeacon(regionName)
                     }
                 }
-                self.navigationController?.popViewControllerAnimated(true)
+                self.navigationController?.popViewController(animated: true)
                 return true
             } else {
-                self.presentViewController(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
                 return false
             }
         } else {

@@ -12,27 +12,27 @@ class Notify {
     
     class func resetEventCount() {
         eventCount = 0;
-        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
-    class func withMessage(message:String) {
-        if UIApplication.sharedApplication().applicationState != .Active && self.getEnabled(){
+    class func withMessage(_ message:String) {
+        if UIApplication.shared.applicationState != .active && self.getEnabled(){
             eventCount += 1
             let localNotification = UILocalNotification()
             localNotification.alertBody = message
             localNotification.soundName = UILocalNotificationDefaultSoundName
             localNotification.applicationIconBadgeNumber = eventCount
-            UIApplication.sharedApplication().presentLocalNotificationNow(localNotification)
+            UIApplication.shared.presentLocalNotificationNow(localNotification)
         }
 
     }
     
-    class func setEnable(enabled:Bool = true) {
-        NSUserDefaults.standardUserDefaults().setBool(enabled, forKey:"notifications")
+    class func setEnable(_ enabled:Bool = true) {
+        UserDefaults.standard.set(enabled, forKey:"notifications")
     }
     
     class func getEnabled() -> Bool {
-        return NSUserDefaults.standardUserDefaults().boolForKey("notifications")
+        return UserDefaults.standard.bool(forKey: "notifications")
     }
     
 }

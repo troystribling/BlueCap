@@ -31,7 +31,7 @@ class ServiceProfilesTableViewController : UITableViewController {
         self.sortServiceProfiles()
     }
     
-    override func viewWillAppear(animated:Bool) {
+    override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
     }
     
@@ -48,7 +48,7 @@ class ServiceProfilesTableViewController : UITableViewController {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return self.serviceProfiles.count
     }
     
@@ -61,13 +61,13 @@ class ServiceProfilesTableViewController : UITableViewController {
         }
     }
     
-    override func tableView(tableView:UITableView, titleForHeaderInSection section:Int) -> String? {
+    override func tableView(_ tableView:UITableView, titleForHeaderInSection section:Int) -> String? {
         let tags = Array(self.serviceProfiles.keys)
         return tags[section]
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(self.serviceProfileCell, forIndexPath: indexPath) as! NameUUIDCell
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: self.serviceProfileCell, for: indexPath) as! NameUUIDCell
         let tags = Array(self.serviceProfiles.keys)
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let profile = profiles[indexPath.row]

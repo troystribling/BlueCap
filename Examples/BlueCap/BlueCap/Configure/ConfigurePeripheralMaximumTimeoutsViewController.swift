@@ -21,19 +21,19 @@ class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
         self.maximumTimeoutsTextField.text = "\(ConfigStore.getPeripheralMaximumTimeouts())"
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField!) -> Bool {
-        if let maximumTimeouts = self.maximumTimeoutsTextField.text, maximumTimeoutsInt = UInt(maximumTimeouts) where !maximumTimeouts.isEmpty {
+    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+        if let maximumTimeouts = self.maximumTimeoutsTextField.text, let maximumTimeoutsInt = UInt(maximumTimeouts) , !maximumTimeouts.isEmpty {
             ConfigStore.setPeripheralMaximumTimeouts(maximumTimeoutsInt)
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.navigationController?.popToRootViewController(animated: true)
             return true
         } else {
             return false

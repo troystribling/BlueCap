@@ -26,30 +26,30 @@ class ConfigureScanServicesViewController : UITableViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         self.navigationItem.title = "Scanned Services"
         super.viewWillAppear(animated)
         self.tableView.reloadData()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject?) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any?) {
         if segue.identifier == MainStoryboard.configureAddScanServiceSegue {
         } else if segue.identifier == MainStoryboard.configureEditScanServiceSegue {
-            if let selectedIndexPath = self.tableView.indexPathForCell(sender as! UITableViewCell) {
+            if let selectedIndexPath = self.tableView.indexPath(for: sender as! UITableViewCell) {
                 let names = ConfigStore.getScannedServiceNames()
-                let viewController = segue.destinationViewController as! ConfigureScanServiceViewController
-                viewController.serviceName = names[selectedIndexPath.row]
+                let viewController = segue.destination as! ConfigureScanServiceViewController
+                viewController.serviceName = names[(selectedIndexPath as NSIndexPath).row]
             }
         }
     }
 
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
@@ -57,27 +57,27 @@ class ConfigureScanServicesViewController : UITableViewController {
         return ConfigStore.getScannedServices().count
     }
     
-    override func tableView(tableView:UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-        return UITableViewCellEditingStyle.Delete
+    override func tableView(_ tableView:UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.delete
     }
     
-    override func tableView(tableView:UITableView, commitEditingStyle editingStyle:UITableViewCellEditingStyle, forRowAtIndexPath indexPath:NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
+    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
             let names = ConfigStore.getScannedServiceNames()
-            ConfigStore.removeScannedService(names[indexPath.row])
-            self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
+            ConfigStore.removeScannedService(names[(indexPath as NSIndexPath).row])
+            self.tableView.deleteRows(at: [indexPath], with:UITableViewRowAnimation.fade)
         }
     }
     
-    override func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.configureScanServicesCell, forIndexPath: indexPath) as! NameUUIDCell
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.configureScanServicesCell, for: indexPath) as! NameUUIDCell
         let names = ConfigStore.getScannedServiceNames()
-        if let serviceUUID = ConfigStore.getScannedServiceUUID(names[indexPath.row]) {
-            cell.uuidLabel.text = serviceUUID.UUIDString
+        if let serviceUUID = ConfigStore.getScannedServiceUUID(names[(indexPath as NSIndexPath).row]) {
+            cell.uuidLabel.text = serviceUUID.uuidString
         } else {
             cell.uuidLabel.text = "Unknown"
         }
-        cell.nameLabel.text = names[indexPath.row]
+        cell.nameLabel.text = names[(indexPath as NSIndexPath).row]
         return cell
     }
     

@@ -13,7 +13,7 @@ import BlueCapKit
 
 class PeripheralViewController : UITableViewController {
 
-    private static var BCPeripheralStateKVOContext = UInt8()
+    fileprivate static var BCPeripheralStateKVOContext = UInt8()
 
     weak var peripheral: Peripheral!
     weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
@@ -21,7 +21,7 @@ class PeripheralViewController : UITableViewController {
     var peripheralConnected = true
     var peripheralDiscovered = false
 
-    let dateFormatter = NSDateFormatter()
+    let dateFormatter = DateFormatter()
 
     @IBOutlet var uuidLabel: UILabel!
     @IBOutlet var rssiLabel: UILabel!
@@ -45,18 +45,18 @@ class PeripheralViewController : UITableViewController {
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
-        self.dateFormatter.dateStyle = .ShortStyle
-        self.dateFormatter.timeStyle = .ShortStyle
+        self.dateFormatter.dateStyle = .short
+        self.dateFormatter.timeStyle = .short
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = self.peripheral.name
         self.discoveredAtLabel.text = dateFormatter.stringFromDate(self.peripheral.discoveredAt)
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setConnectionStateLabel()
         self.peripheralConnected = (self.peripheral.state == .Connected)
@@ -64,31 +64,31 @@ class PeripheralViewController : UITableViewController {
         self.setConnectionStateLabel()
         self.toggleRSSIUpdates()
         self.updatePeripheralProperties()
-        let options = NSKeyValueObservingOptions([.New])
+        let options = NSKeyValueObservingOptions([.new])
         // TODO: Use Future Callback
         self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralViewController.BCPeripheralStateKVOContext)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: UIApplicationWillResignActiveNotification, object :nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object :nil)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         self.peripheral.stopPollingRSSI()
         super.viewDidDisappear(animated)
         self.peripheral.removeObserver(self, forKeyPath: "state", context: &PeripheralViewController.BCPeripheralStateKVOContext)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepareForSegue(segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
-            let viewController = segue.destinationViewController as! PeripheralServicesViewController
+            let viewController = segue.destination as! PeripheralServicesViewController
             viewController.peripheral = self.peripheral
             viewController.peripheralViewController = self
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
-            let viewController = segue.destinationViewController as! PeripheralAdvertisementsViewController
+            let viewController = segue.destination as! PeripheralAdvertisementsViewController
             viewController.peripheral = self.peripheral
         }
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
+    override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
         if let identifier = identifier {
             if identifier == MainStoryBoard.peripheralServicesSegue {
                 return self.peripheralDiscovered
@@ -101,19 +101,19 @@ class PeripheralViewController : UITableViewController {
     }
 
     func willResignActive() {
-        self.navigationController?.popToRootViewControllerAnimated(false)
+        self.navigationController?.popToRootViewController(animated: false)
     }
 
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         guard keyPath != nil else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             return
         }
         switch (keyPath!, context) {
-        case("state", &PeripheralViewController.BCPeripheralStateKVOContext):
-            if let change = change, newValue = change[NSKeyValueChangeNewKey], newRawState = newValue as? Int, newState = CBPeripheralState(rawValue: newRawState) {
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.peripheralConnected = (newState == .Connected)
+        case("state", PeripheralViewController.BCPeripheralStateKVOContext):
+            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+                DispatchQueue.main.async {
+                    self.peripheralConnected = (newState == .connected)
                     self.setConnectionStateLabel()
                     self.toggleRSSIUpdates()
                     self.discoverPeripheral()
@@ -121,7 +121,7 @@ class PeripheralViewController : UITableViewController {
                 }
             }
         default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
 
@@ -175,12 +175,12 @@ class PeripheralViewController : UITableViewController {
 
     func toggleDiscoveryIndicator() {
         if self.peripheralDiscovered {
-            self.serviceLabel.textColor = UIColor.blackColor()
-            self.serviceCount.hidden = false
+            self.serviceLabel.textColor = UIColor.black
+            self.serviceCount.isHidden = false
             self.serviceDiscoverySpinner.stopAnimating()
         } else {
-            self.serviceLabel.textColor = UIColor.lightGrayColor()
-            self.serviceCount.hidden = true
+            self.serviceLabel.textColor = UIColor.lightGray
+            self.serviceCount.isHidden = true
             self.serviceDiscoverySpinner.startAnimating()
         }
     }
