@@ -58,14 +58,14 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
             if peripheralViewController.peripheralConnected {
                 self.present(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
                         peripheralViewController.peripheralConnected = false
-                        self.navigationController?.popViewController(animated: true)
+                        let _ = self.navigationController?.popViewController(animated: true)
                     }, animated:true, completion:nil)
             }
         }
     }
 
     func didEnterBackground() {
-        self.navigationController?.popToRootViewController(animated: false)
+        let _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
 
@@ -91,13 +91,13 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         if let newValue = self.valueTextField.text {
             let afterWriteSuceses = { (characteristic: Characteristic) -> Void in
                 self.progressView.remove()
-                self.navigationController?.popViewControllerAnimated(true)
+                let _ = self.navigationController?.popViewController(animated: true)
                 return
             }
             let afterWriteFailed = { (error: NSError) -> Void in
                 self.progressView.remove()
                 self.present(UIAlertController.alertOnError("Characteristic Write Error", error:error) {(action) in
-                    self.navigationController?.popViewController(animated: true)
+                    let _ = self.navigationController?.popViewController(animated: true)
                         return
                     } , animated:true, completion:nil)
             }

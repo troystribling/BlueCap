@@ -53,6 +53,14 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return peripheralQueue.sync { Array(self.configuredCharcteristics.values) }
     }
 
+    public func service(withUUID uuid: CBUUID) {
+        return peripheralQueue.sync { return self.configuredServices[uuid] }
+    }
+
+    public func characteristic(withUUID uuid: CBUUID) {
+        return peripheralQueue.sync { return self.configuredCharcteristics[uuid] }
+    }
+
     // MARK: Initialize
 
     public override init() {

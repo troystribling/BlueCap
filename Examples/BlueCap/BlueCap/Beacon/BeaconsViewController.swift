@@ -11,7 +11,7 @@ import BlueCapKit
 
 class BeaconsViewController: UITableViewController {
 
-    var beaconRegion: FLBeaconRegion?
+    var beaconRegion: BeaconRegion?
 
     struct MainStoryBoard {
         static let beaconCell   = "BeaconCell"
@@ -31,7 +31,7 @@ class BeaconsViewController: UITableViewController {
         if let beaconRegion = self.beaconRegion {
             self.navigationItem.title = beaconRegion.identifier
             // TODO: Use Future Callback
-            NotificationCenter.defaultCenter().addObserver(self, selector: #selector(BeaconsViewController.updateBeacons), name: BlueCapNotification.didUpdateBeacon, object: beaconRegion)
+            NotificationCenter.default.addObserver(self, selector: #selector(BeaconsViewController.updateBeacons), name: NSNotification.Name(rawValue: BlueCapNotification.didUpdateBeacon), object: beaconRegion)
         } else {
             self.navigationItem.title = "Beacons"
         }
@@ -52,8 +52,8 @@ class BeaconsViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func sortBeacons(_ beacons: [FLBeacon]) -> [FLBeacon] {
-        return beacons.sort(){(b1: FLBeacon, b2: FLBeacon) -> Bool in
+    func sortBeacons(_ beacons: [Beacon]) -> [Beacon] {
+        return beacons.sorted() { (b1: Beacon, b2: Beacon) -> Bool in
             if b1.major > b2.major {
                 return true
             } else if b1.major == b2.major && b1.minor > b2.minor {
@@ -66,7 +66,7 @@ class BeaconsViewController: UITableViewController {
     
     func didEnterBackground() {
         Logger.debug()
-        self.navigationController?.popToRootViewController(animated: false)
+        let _ = self.navigationController?.popToRootViewController(animated: false)
     }
     
     // UITableViewDataSource
@@ -86,7 +86,7 @@ class BeaconsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryBoard.beaconCell, for: indexPath) as! BeaconCell
         if let beaconRegion = self.beaconRegion {
             let beacon = self.sortBeacons(beaconRegion.beacons)[indexPath.row]
-            cell.proximityUUIDLabel.text = beacon.proximityUUID.UUIDString
+            cell.proximityUUIDLabel.text = beacon.proximityUUID.uuidString
             cell.majorLabel.text = "\(beacon.major)"
             cell.minorLabel.text = "\(beacon.minor)"
             cell.proximityLabel.text = beacon.proximity.stringValue

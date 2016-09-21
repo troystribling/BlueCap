@@ -53,7 +53,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            let _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
@@ -74,7 +74,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         if let peripheral = self.peripheral {
             let serviceUUID = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)[(indexPath as NSIndexPath).row]
             cell.uuidLabel.text = serviceUUID.uuidString
-            if let service = Singletons.peripheralManager.service(serviceUUID) {
+            if let service = Singletons.peripheralManager.service(withUUID: serviceUUID) {
                 cell.nameLabel.text = service.name
             } else {
                 cell.nameLabel.text = "Unknown"

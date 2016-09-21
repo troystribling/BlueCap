@@ -56,7 +56,7 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            let _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
@@ -97,7 +97,7 @@ class PeripheralManagerBeaconsViewController: UITableViewController {
         if let peripheral = self.peripheral {
             let beaconNames = PeripheralStore.getBeaconNames()
             PeripheralStore.setAdvertisedBeacon(peripheral, beacon:beaconNames[(indexPath as NSIndexPath).row])
-            self.navigationController?.popViewController(animated: true)
+            let _ = self.navigationController?.popViewController(animated: true)
         }
     }
     

@@ -46,7 +46,7 @@ class ConfigureScanServiceViewController: UIViewController, UITextFieldDelegate 
                     // new region
                     ConfigStore.addScannedService(enteredName, uuid:uuid)
                 }
-                self.navigationController?.popViewController(animated: true)
+                let _ = self.navigationController?.popViewController(animated: true)
                 return true
             } else {
                 self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)

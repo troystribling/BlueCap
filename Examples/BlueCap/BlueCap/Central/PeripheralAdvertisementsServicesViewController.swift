@@ -36,7 +36,7 @@ class PeripheralAdvertisementsServicesViewController : UITableViewController {
     }
     
     func didEnterBackground() {
-        self.navigationController?.popToRootViewController(animated: false)
+        let _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
     
@@ -57,7 +57,7 @@ class PeripheralAdvertisementsServicesViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralAdvertisementsServiceCell, for: indexPath)
         if let services = self.peripheral?.advertisements.serviceUUIDs {
             let service = services[indexPath.row]
-            cell.textLabel?.text = service.UUIDString
+            cell.textLabel?.text = service.uuidString
         }
         return cell
     }

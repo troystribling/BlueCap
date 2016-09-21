@@ -54,7 +54,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
+            let _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }
     }
     
@@ -71,7 +71,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         if let _ = self.peripheral {
             let service = self.services[indexPath.row]
             cell.nameLabel.text = service.name
-            cell.uuidLabel.text = service.UUID.UUIDString
+            cell.uuidLabel.text = service.UUID.uuidString
         } else {
             cell.nameLabel.text = "Unknown"
             cell.uuidLabel.text = "Unknown"
@@ -84,6 +84,6 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
             let service = self.services[indexPath.row]
             PeripheralStore.addAdvertisedPeripheralService(peripheral, service:service.UUID)
         }
-        self.navigationController?.popViewController(animated: true)
+        let _ = self.navigationController?.popViewController(animated: true)
     }
 }

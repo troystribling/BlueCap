@@ -18,4 +18,6 @@ public class ProfileManager {
         self.services[serviceProfile.UUID] = serviceProfile
     }
 
+    public init() {}
+
 }

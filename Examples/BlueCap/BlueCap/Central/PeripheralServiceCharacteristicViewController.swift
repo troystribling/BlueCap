@@ -12,8 +12,6 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicViewController : UITableViewController {
 
-    fileprivate static var BCPeripheralStateKVOContext = UInt8()
-
     struct MainStoryboard {
         static let peripheralServiceCharacteristicValueSegue = "PeripheralServiceCharacteristicValues"
         static let peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue = "PeripheralServiceCharacteristicEditWriteOnlyDiscreteValues"
@@ -54,19 +52,19 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
 
         self.setUI()
         
-        self.uuidLabel.text = self.characteristic.UUID.UUIDString
+        self.uuidLabel.text = self.characteristic.UUID.uuidString
         self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
         
-        self.propertyBroadcastLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Broadcast))
-        self.propertyReadLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Read))
-        self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.WriteWithoutResponse))
-        self.propertyWriteLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Write))
-        self.propertyNotifyLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Notify))
-        self.propertyIndicateLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.Indicate))
-        self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.AuthenticatedSignedWrites))
-        self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.ExtendedProperties))
-        self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.NotifyEncryptionRequired))
-        self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.IndicateEncryptionRequired))
+        self.propertyBroadcastLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.broadcast))
+        self.propertyReadLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.read))
+        self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.writeWithoutResponse))
+        self.propertyWriteLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.write))
+        self.propertyNotifyLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.notify))
+        self.propertyIndicateLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.indicate))
+        self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.authenticatedSignedWrites))
+        self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.extendedProperties))
+        self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.notifyEncryptionRequired))
+        self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.indicateEncryptionRequired))
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
     
@@ -101,7 +99,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
         if let _ = identifier {
-            return (self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.Write)) && self.peripheralViewController.peripheralConnected
+            return (self.characteristic.propertyEnabled(.read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.write)) && self.peripheralViewController.peripheralConnected
         } else {
             return false
         }
@@ -115,9 +113,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
                 self.characteristic.stopNotificationUpdates()
             }
             future.onFailure {(error) in
-                self.notifySwitch.on = false
+                self.notifySwitch.isOn = false
                 self.setUI()
-                self.presentViewController(UIAlertController.alertOnError("Stop Notifications Error", error: error), animated: true, completion: nil)
+                self.present(UIAlertController.alertOnError("Stop Notifications Error", error: error), animated: true, completion: nil)
             }
         } else {
             let future = self.characteristic.startNotifying()
@@ -125,27 +123,27 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
                 self.setUI()
             }
             future.onFailure {(error) in
-                self.notifySwitch.on = false
+                self.notifySwitch.isOn = false
                 self.setUI()
-                self.presentViewController(UIAlertController.alertOnError("Start Notifications Error", error: error), animated: true, completion: nil)
+                self.present(UIAlertController.alertOnError("Start Notifications Error", error: error), animated: true, completion: nil)
             }
         }
     }
     
     func setUI() {
-        if (!self.characteristic.propertyEnabled(.Read) && !self.characteristic.propertyEnabled(.Write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripheralConnected {
+        if (!self.characteristic.propertyEnabled(.read) && !self.characteristic.propertyEnabled(.write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripheralConnected {
             self.valuesLabel.textColor = UIColor.lightGray
         } else {
             self.valuesLabel.textColor = UIColor.black
         }
         if self.peripheralViewController.peripheralConnected &&
-            (characteristic.propertyEnabled(.Notify)                     ||
-             characteristic.propertyEnabled(.Indicate)                   ||
-             characteristic.propertyEnabled(.NotifyEncryptionRequired)   ||
-             characteristic.propertyEnabled(.IndicateEncryptionRequired)) {
+            (characteristic.propertyEnabled(.notify)                     ||
+             characteristic.propertyEnabled(.indicate)                   ||
+             characteristic.propertyEnabled(.notifyEncryptionRequired)   ||
+             characteristic.propertyEnabled(.indicateEncryptionRequired)) {
             self.notifyLabel.textColor = UIColor.black
             self.notifySwitch.isEnabled = true
-            self.notifySwitch.on = self.characteristic.isNotifying
+            self.notifySwitch.isOn = self.characteristic.isNotifying
         } else {
             self.notifyLabel.textColor = UIColor.lightGray
             self.notifySwitch.isEnabled = false
@@ -169,32 +167,32 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
 
     func didEnterBackground() {
-        self.navigationController?.popToRootViewController(animated: false)
+        let _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
 
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        guard keyPath != nil else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext):
-            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-                if newState == .disconnected {
-                    DispatchQueue.main.async { self.peripheralDisconnected() }
-                }
-            }
-        default:
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
+//    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+//        guard keyPath != nil else {
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//            return
+//        }
+//        switch (keyPath!, context) {
+//        case("state", PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext):
+//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+//                if newState == .disconnected {
+//                    DispatchQueue.main.async { self.peripheralDisconnected() }
+//                }
+//            }
+//        default:
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//        }
+//    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if (indexPath as NSIndexPath).row == 0 {
-            if self.characteristic.propertyEnabled(.Read) || self.characteristic.isNotifying  {
+            if self.characteristic.propertyEnabled(.read) || self.characteristic.isNotifying  {
                 self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicValueSegue, sender: indexPath)
-            } else if (self.characteristic.propertyEnabled(.Write) || self.characteristic.propertyEnabled(.WriteWithoutResponse)) && !self.characteristic.propertyEnabled(.Read) {
+            } else if (self.characteristic.propertyEnabled(.write) || self.characteristic.propertyEnabled(.writeWithoutResponse)) && !self.characteristic.propertyEnabled(.read) {
                 if self.characteristic.stringValues.isEmpty {
                     self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender: indexPath)
                 } else {

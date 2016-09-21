@@ -27,8 +27,8 @@ struct BCAppError {
 struct Singletons {
     static let centralManager = CentralManager()
     static let peripheralManager = PeripheralManager()
-    static let beaconManager = FLBeaconManager()
-    static let profileManager = ProfileManager.sharedInstance
+    static let beaconManager = BeaconManager()
+    static let profileManager = ProfileManager()
 }
 
 struct Params {
@@ -53,10 +53,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        TISensorTagServiceProfiles.create()
-        BLESIGGATTProfiles.create()
-        GnosusProfiles.create()
-        NordicProfiles.create()
+        TISensorTagServiceProfiles.create(profileManager: Singletons.profileManager)
+        BLESIGGATTProfiles.create(profileManager: Singletons.profileManager)
+        GnosusProfiles.create(profileManager: Singletons.profileManager)
+        NordicProfiles.create(profileManager: Singletons.profileManager)
         let defaultConfig = Bundle.main.url(forResource: "DefaultConfiguration", withExtension: "plist").flatMap { NSDictionary(contentsOf: $0) }.flatMap { $0 as? [String: AnyObject] }
         if let defaultConfig = defaultConfig {
             UserDefaults.standard.register(defaults: defaultConfig)
