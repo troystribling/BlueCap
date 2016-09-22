@@ -92,7 +92,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
     }
 
     func didEnterBackground() {
-        self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
     

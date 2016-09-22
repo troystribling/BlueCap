@@ -66,7 +66,7 @@ class BeaconsViewController: UITableViewController {
     
     func didEnterBackground() {
         Logger.debug()
-        let _ = self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
     }
     
     // UITableViewDataSource

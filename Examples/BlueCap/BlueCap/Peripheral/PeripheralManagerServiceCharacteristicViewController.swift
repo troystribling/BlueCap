@@ -45,23 +45,23 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
     override func viewDidLoad() {
         super.viewDidLoad()
         if let characteristic = self.characteristic {
-            self.uuidLabel.text = characteristic.UUID.UUIDString
+            self.uuidLabel.text = characteristic.UUID.uuidString
             
-            self.permissionReadableLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.Readable))
-            self.permissionWriteableLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.Writeable))
-            self.permissionReadEncryptionLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.ReadEncryptionRequired))
-            self.permissionWriteEncryptionLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.WriteEncryptionRequired))
+            self.permissionReadableLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.readable))
+            self.permissionWriteableLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.writeable))
+            self.permissionReadEncryptionLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.readEncryptionRequired))
+            self.permissionWriteEncryptionLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.writeEncryptionRequired))
             
-            self.propertyBroadcastLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.Broadcast))
-            self.propertyReadLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.Read))
-            self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.WriteWithoutResponse))
-            self.propertyWriteLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.Write))
-            self.propertyNotifyLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.Notify))
-            self.propertyIndicateLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.Indicate))
-            self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.AuthenticatedSignedWrites))
-            self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.ExtendedProperties))
-            self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.NotifyEncryptionRequired))
-            self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.IndicateEncryptionRequired))
+            self.propertyBroadcastLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.broadcast))
+            self.propertyReadLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.read))
+            self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.writeWithoutResponse))
+            self.propertyWriteLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.write))
+            self.propertyNotifyLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.notify))
+            self.propertyIndicateLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.indicate))
+            self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.authenticatedSignedWrites))
+            self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.extendedProperties))
+            self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.notifyEncryptionRequired))
+            self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristic.propertyEnabled(CBCharacteristicProperties.indicateEncryptionRequired))
         }
     }
     
@@ -92,7 +92,7 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     

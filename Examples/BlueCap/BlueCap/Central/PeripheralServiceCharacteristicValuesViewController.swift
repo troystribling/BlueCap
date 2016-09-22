@@ -83,24 +83,24 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     @IBAction func updateValues() {
         if let characteristic = self.characteristic {
             if characteristic.isNotifying {
-                let future = characteristic.receiveNotificationUpdates(10)
+                let future = characteristic.receiveNotificationUpdates(capacity: 10)
                 future.onSuccess { _ in
                     self.updateWhenActive()
                 }
                 future.onFailure{ error in
-                    self.presentViewController(UIAlertController.alertOnError("Characteristic Notification Error", error: error), animated: true, completion: nil)
+                    self.present(UIAlertController.alertOnError("Characteristic Notification Error", error: error), animated: true, completion: nil)
                 }
-            } else if characteristic.propertyEnabled(.Read) {
+            } else if characteristic.propertyEnabled(.read) {
                 self.progressView.show()
-                let future = characteristic.read(Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                let future = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
                 future.onSuccess { _ in
                     self.updateWhenActive()
                     self.progressView.remove()
                 }
                 future.onFailure { error in
                     self.progressView.remove()
-                    self.presentViewController(UIAlertController.alertOnError("Charcteristic Read Error", error: error) { action in
-                        self.navigationController?.popViewControllerAnimated(true)
+                    self.present(UIAlertController.alertOnError("Charcteristic Read Error", error: error) { action in
+                        _ = self.navigationController?.popViewController(animated: true)
                         return
                     }, animated:true, completion:nil)
                 }
@@ -121,25 +121,26 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
 
     func didEnterBackground() {
-        self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        guard keyPath != nil else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext):
-            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-                if newState == .disconnected {
-                    DispatchQueue.main.async { self.peripheralDisconnected() }
-                }
-            }
-        default:
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
+        // TODO: Use Future Callback
+//        guard keyPath != nil else {
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//            return
+//        }
+//        switch (keyPath!, context) {
+//        case("state", PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext):
+//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+//                if newState == .disconnected {
+//                    DispatchQueue.main.async { self.peripheralDisconnected() }
+//                }
+//            }
+//        default:
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//        }
     }
 
     // UITableViewDataSource
@@ -164,7 +165,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 cell.valueNameLabel.text = names[indexPath.row]
                 cell.valueLable.text = values[indexPath.row]
             }
-            if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+            if characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse) {
                 cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
             } else {
                 cell.accessoryType = UITableViewCellAccessoryType.none
@@ -176,7 +177,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     // UITableViewDelegate
     override func tableView(_ tableView:UITableView, didSelectRowAt indexPath: IndexPath) {
         if let characteristic = self.characteristic {
-            if characteristic.propertyEnabled(.Write) || characteristic.propertyEnabled(.WriteWithoutResponse) {
+            if characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse) {
                 if characteristic.stringValues.isEmpty {
                     self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditValueSeque, sender: indexPath)
                 } else {

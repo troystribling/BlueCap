@@ -35,7 +35,7 @@ class ConfigureMaximumPeripheralsConnected: UIViewController {
     func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
         if let maxConnectedText = self.maximumPeripheralsConnectedTextField.text, let maxConnected = Int(maxConnectedText) , !maxConnectedText.isEmpty {
             ConfigStore.setMaximumPeripheralsConnected(maxConnected)
-            let _ = self.navigationController?.popToRootViewController(animated: true)
+            _ = self.navigationController?.popToRootViewController(animated: true)
         }
         return true
     }

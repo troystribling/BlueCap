@@ -71,15 +71,16 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setUI()
-        let options = NSKeyValueObservingOptions([.new])
+//        let options = NSKeyValueObservingOptions([.new])
         // TODO: Use Future Callback
-        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
+//        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
+        // TODO: Use Future Callback
+//        self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -167,10 +168,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
 
     func didEnterBackground() {
-        let _ = self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
-
+    
+    // TODO: Use Future Callback
 //    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
 //        guard keyPath != nil else {
 //            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)

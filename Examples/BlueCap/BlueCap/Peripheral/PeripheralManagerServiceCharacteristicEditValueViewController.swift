@@ -44,7 +44,7 @@ class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewContr
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            let _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
@@ -55,8 +55,8 @@ class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewContr
             let characteristic = self.characteristic  , !valueName.isEmpty {
             if var values = characteristic.stringValue {
                 values[valueName] = newValue
-                let _ = characteristic.updateValue(withString: values)
-                let _ = self.navigationController?.popViewController(animated: true)
+                _ = characteristic.updateValue(withString: values)
+                _ = self.navigationController?.popViewController(animated: true)
             }
         }
         return true

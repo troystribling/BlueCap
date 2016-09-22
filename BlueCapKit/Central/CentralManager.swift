@@ -135,7 +135,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func removePeripheral(withIdentifier identifier: UUID) {
-        centralQueue.sync { let _ = self._discoveredPeripherals.removeValue(forKey: identifier) }
+        centralQueue.sync { _ = self._discoveredPeripherals.removeValue(forKey: identifier) }
     }
 
     // MARK: Scan

@@ -1200,7 +1200,7 @@ public class TISensorTagServiceProfiles {
         let accelerometerEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>()
         let accelerometerUpdatePeriodCharacteristic = RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>()
         
-        let _ = accelerometerEnabledCharacteristic.afterDiscovered().flatMap
+        _ = accelerometerEnabledCharacteristic.afterDiscovered().flatMap
             { characteristic in
                 characteristic.write(TISensorTag.AccelerometerService.Enabled.yes)
             }
@@ -1216,7 +1216,7 @@ public class TISensorTagServiceProfiles {
         let magnetometerEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.MagnetometerService.Enabled>()
         let magnetometerUpdatePeriodCharacteristic = RawCharacteristicProfile<TISensorTag.MagnetometerService.UpdatePeriod>()
         
-        let _ = magnetometerEnabledCharacteristic.afterDiscovered().flatMap
+        _ = magnetometerEnabledCharacteristic.afterDiscovered().flatMap
         { characteristic in
             characteristic.write(TISensorTag.MagnetometerService.Enabled.yes)
         }
@@ -1231,7 +1231,7 @@ public class TISensorTagServiceProfiles {
         let gyroscopeDataCharacteristic = RawArrayCharacteristicProfile<TISensorTag.GyroscopeService.Data>()
         let gyroscopeEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.GyroscopeService.Enabled>()
         
-        let _ = gyroscopeEnabledCharacteristic.afterDiscovered().flatMap
+        _ = gyroscopeEnabledCharacteristic.afterDiscovered().flatMap
         { characteristic in
             characteristic.write(TISensorTag.GyroscopeService.Enabled.xyzAxis)
         }
@@ -1246,7 +1246,7 @@ public class TISensorTagServiceProfiles {
         let temperatureDataCharacteristic = RawArrayCharacteristicProfile<TISensorTag.TemperatureService.Data>()
         let temperatureEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.TemperatureService.Enabled>()
         
-        let _ = temperatureEnabledCharacteristic.afterDiscovered().flatMap
+        _ = temperatureEnabledCharacteristic.afterDiscovered().flatMap
         { characteristic in
             characteristic.write(TISensorTag.TemperatureService.Enabled.yes)
         }
@@ -1261,7 +1261,7 @@ public class TISensorTagServiceProfiles {
         let barometerCalibrationCharacteristic = RawArrayPairCharacteristicProfile<TISensorTag.BarometerService.Calibration>()
         let barometerEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.BarometerService.Enabled>()
         
-        let _ = barometerEnabledCharacteristic.afterDiscovered().flatMap
+        _ = barometerEnabledCharacteristic.afterDiscovered().flatMap
         { characteristic -> Future<Characteristic> in
             characteristic.write(TISensorTag.BarometerService.Enabled.yes)
         }.flatMap { characteristic in
@@ -1278,7 +1278,7 @@ public class TISensorTagServiceProfiles {
         let hygrometerDataCharacteristic = RawArrayCharacteristicProfile<TISensorTag.HygrometerService.Data>()
         let hygrometerEnabledCharacteristic = RawCharacteristicProfile<TISensorTag.HygrometerService.Enabled>()
         
-        let _ = hygrometerEnabledCharacteristic.afterDiscovered().flatMap
+        _ = hygrometerEnabledCharacteristic.afterDiscovered().flatMap
         {characteristic in
             characteristic.write(TISensorTag.HygrometerService.Enabled.yes)
         }

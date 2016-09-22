@@ -80,7 +80,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
+            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }
     }
     

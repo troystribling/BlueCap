@@ -42,7 +42,7 @@ extension UInt8: Deserializable {
         if data.count >= MemoryLayout<UInt8>.size {
             var value : UInt8 = 0
             let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
-            let _ = data.copyBytes(to: buffer, from:0..<MemoryLayout<UInt8>.size)
+            _ = data.copyBytes(to: buffer, from:0..<MemoryLayout<UInt8>.size)
             return toHostByteOrder(value)
         } else {
             return nil
@@ -53,7 +53,7 @@ extension UInt8: Deserializable {
         if data.count >= start + MemoryLayout<UInt8>.size {
             var value : UInt8 = 0
             let buffer = UnsafeMutableBufferPointer(start: &value, count: 1)
-            let _ = data.copyBytes(to: buffer, from:start..<start+MemoryLayout<UInt8>.size)
+            _ = data.copyBytes(to: buffer, from:start..<start+MemoryLayout<UInt8>.size)
             return toHostByteOrder(value)
         } else {
             return nil

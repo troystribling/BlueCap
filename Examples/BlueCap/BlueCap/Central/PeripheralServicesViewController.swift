@@ -77,25 +77,27 @@ class PeripheralServicesViewController : UITableViewController {
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        guard keyPath != nil else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", PeripheralServicesViewController.BCPeripheralStateKVOContext):
-            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-                if newState == .disconnected {
-                    DispatchQueue.main.async { self.peripheralDisconnected() }
-                }
-            }
-        default:
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
+        // TODO: Use Future Callback
+//
+//        guard keyPath != nil else {
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//            return
+//        }
+//        switch (keyPath!, context) {
+//        case("state", PeripheralServicesViewController.BCPeripheralStateKVOContext):
+//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+//                if newState == .disconnected {
+//                    DispatchQueue.main.async { self.peripheralDisconnected() }
+//                }
+//            }
+//        default:
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//        }
     }
 
     func didEnterBackground() {
         Logger.debug()
-        self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
     }
     
     // UITableViewDataSource

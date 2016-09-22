@@ -212,14 +212,14 @@ public class MutableCharacteristic : NSObject {
 
     internal func peripheralManagerIsReadyToUpdateSubscribers() {
         self._isUpdating = true
-        let _ = self.updateValues(self.queuedUpdates)
+        _ = self.updateValues(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didSubscribeToCharacteristic(_ central: CBCentralInjectable) {
         self._isUpdating = true
         self.centrals[central.identifier as NSUUID] = central
-        let _ = self.updateValues(self.queuedUpdates)
+        _ = self.updateValues(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 

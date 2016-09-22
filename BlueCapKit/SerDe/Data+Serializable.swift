@@ -44,7 +44,7 @@ extension Data: Serializable {
     public func hexStringValue() -> String {
         var dataBytes = [UInt8](repeating: 0x00, count: self.count)
         let buffer = UnsafeMutableBufferPointer(start: &dataBytes, count: self.count)
-        let _ = self.copyBytes(to: buffer, from:0..<self.count)
+        _ = self.copyBytes(to: buffer, from:0..<self.count)
         let hexString = dataBytes.reduce(""){ (out: String, dataByte: UInt8) in
             return out + (NSString(format: "%02lx", dataByte) as String)
         }

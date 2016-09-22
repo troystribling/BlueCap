@@ -47,7 +47,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            let _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
@@ -64,16 +64,16 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
                 if let peripheral = self.peripheral {
                     PeripheralStore.addPeripheralService(peripheral, service:service.UUID)
                 }
-                let _ = self.navigationController?.popViewController(animated: true)
+                _ = self.navigationController?.popViewController(animated: true)
                 self.progressView.remove()
             }
             future.onFailure { error in
                 self.present(UIAlertController.alertOnError("Add Service Error", error: error), animated: true, completion: nil)
-                let _ = self.navigationController?.popViewController(animated: true)
+                _ = self.navigationController?.popViewController(animated: true)
                 self.progressView.remove()
             }
         } else {
-            let _ = self.navigationController?.popViewController(animated: true)
+            _ = self.navigationController?.popViewController(animated: true)
         }
     }
 

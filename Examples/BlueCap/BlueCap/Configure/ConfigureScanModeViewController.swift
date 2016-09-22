@@ -42,7 +42,7 @@ class ConfigureScanModeViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let scanMode = self.scanModes[(indexPath as NSIndexPath).row]
         ConfigStore.setScanMode(ServiceScanMode(scanMode)!)
-        self.navigationController?.popViewController(animated: true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
 
 }

@@ -43,7 +43,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
     
     func didEnterBackground() {
         Logger.debug()
-        self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
     }
     
     // UITextFieldDelegate
@@ -57,7 +57,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
                         BeaconStore.removeBeacon(regionName)
                     }
                 }
-                self.navigationController?.popViewController(animated: true)
+                _ = self.navigationController?.popViewController(animated: true)
                 return true
             } else {
                 self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)

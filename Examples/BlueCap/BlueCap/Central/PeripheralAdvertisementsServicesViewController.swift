@@ -36,7 +36,7 @@ class PeripheralAdvertisementsServicesViewController : UITableViewController {
     }
     
     func didEnterBackground() {
-        let _ = self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
     

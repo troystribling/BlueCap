@@ -67,7 +67,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
@@ -84,7 +84,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerServiceCell, for:indexPath) as! NameUUIDCell
         let service = Singletons.peripheralManager.services[indexPath.row]
         cell.nameLabel.text = service.name
-        cell.uuidLabel.text = service.UUID.UUIDString
+        cell.uuidLabel.text = service.UUID.uuidString
         return cell
     }
     

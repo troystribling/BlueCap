@@ -36,7 +36,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     }
     
     func didEnterBackground() {
-        self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
     
@@ -57,7 +57,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralAdvertisementsOverflowServiceCell, for:indexPath)
         if let services = self.peripheral?.advertisements.overflowServiceUUIDs {
             let service = services[indexPath.row]
-            cell.textLabel?.text = service.UUIDString
+            cell.textLabel?.text = service.uuidString
         }
         return cell
     }

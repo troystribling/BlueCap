@@ -33,7 +33,7 @@ class ConfigureCharacteristicReadWriteTimeoutViewController: UIViewController {
     func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
         if let readWriteTimeoutText = self.readWriteTimeoutTextField.text, let readWriteTimeout = UInt(readWriteTimeoutText) , !readWriteTimeoutText.isEmpty  {
             ConfigStore.setCharacteristicReadWriteTimeout(readWriteTimeout)
-            self.navigationController?.popToRootViewController(animated: true)
+            _ = self.navigationController?.popToRootViewController(animated: true)
         }
         return true
     }

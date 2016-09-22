@@ -40,7 +40,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
+            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
         }
     }
     
@@ -74,8 +74,8 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         if let characteristic = self.characteristic {
             if let valueName = self.characteristic.stringValue?.keys.first {
                 let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
-                characteristic.updateValueWithString(stringValue)
-                self.navigationController?.popViewController(animated: true)
+                _ = characteristic.updateValue(withString: stringValue)
+                _ = self.navigationController?.popViewController(animated: true)
             }
         }
     }
