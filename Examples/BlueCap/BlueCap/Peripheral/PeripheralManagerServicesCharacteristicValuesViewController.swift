@@ -36,14 +36,14 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
-        let future = self.characteristic.startRespondingToWriteRequests(10)
+        let future = self.characteristic.startRespondingToWriteRequests(capacity: 10)
         future.onSuccess {(request, _) in
-            if let value = request.value , value.length > 0 {
+            if let value = request.value , value.count > 0 {
                 self.characteristic.value = request.value
-                self.characteristic.respondToRequest(request, withResult: CBATTError.Success)
+                self.characteristic.respondToRequest(request, withResult: CBATTError.success)
                 self.updateWhenActive()
             } else {
-                self.characteristic.respondToRequest(request, withResult :CBATTError.InvalidAttributeValueLength)
+                self.characteristic.respondToRequest(request, withResult :CBATTError.invalidAttributeValueLength)
             }
         }
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServicesCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)

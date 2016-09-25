@@ -70,7 +70,7 @@ class ConfigureViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.styleNavigationBar()
-        self.notifySwitch.isOn = Notify.getEnabled()
+        self.notifySwitch.isOn = Notification.getEnabled()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -108,7 +108,7 @@ class ConfigureViewController : UITableViewController {
     }
     
     @IBAction func toggelNotification(_: AnyObject) {
-        Notify.setEnable(self.notifySwitch.isOn)
+        Notification.setEnable(self.notifySwitch.isOn)
     }
 
     @IBAction func toggelPeripheralConnectionTimeout(_: AnyObject) {

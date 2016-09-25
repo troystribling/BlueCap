@@ -71,8 +71,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setUI()
-//        let options = NSKeyValueObservingOptions([.new])
         // TODO: Use Future Callback
+//        let options = NSKeyValueObservingOptions([.new])
 //        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }

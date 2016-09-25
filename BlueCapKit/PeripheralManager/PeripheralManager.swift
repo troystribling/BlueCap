@@ -53,30 +53,36 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return peripheralQueue.sync { Array(self.configuredCharcteristics.values) }
     }
 
-    public func service(withUUID uuid: CBUUID) {
-        return peripheralQueue.sync { return self.configuredServices[uuid] }
+    public func service(withUUID uuid: CBUUID) -> Service? {
+        return peripheralQueue.sync { return self.configuredServices[uuid] } as? Service
     }
 
-    public func characteristic(withUUID uuid: CBUUID) {
-        return peripheralQueue.sync { return self.configuredCharcteristics[uuid] }
+    public func characteristic(withUUID uuid: CBUUID) -> Characteristic? {
+        return peripheralQueue.sync { return self.configuredCharcteristics[uuid] } as? Characteristic
     }
 
     // MARK: Initialize
 
     public override init() {
-        self.peripheralQueue = Queue(DispatchQueue(label: "com.gnos.us.peripheral.main", attributes: []))
+        self.peripheralQueue = Queue("com.gnos.us.peripheral.main")
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
     }
 
-    public init(queue: DispatchQueue, options: [String:AnyObject]?=nil) {
+    public init(queue: DispatchQueue, options: [String : AnyObject]? = nil) {
         self.peripheralQueue = Queue(queue)
         super.init()
-        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue, options:options)
+        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
+    }
+
+    public init(options: [String : AnyObject]? = nil) {
+        self.peripheralQueue = Queue("com.gnos.us.peripheral.main")
+        super.init()
+        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
     }
 
     public init(peripheralManager: CBPeripheralManagerInjectable) {
-        self.peripheralQueue = Queue(DispatchQueue(label: "com.gnos.us.peripheral.main", attributes: []))
+        self.peripheralQueue = Queue("com.gnos.us.peripheral.main")
         super.init()
         self.cbPeripheralManager = peripheralManager
     }
@@ -162,7 +168,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: Manage Services
 
-    public func add(service: MutableService) -> Future<Void> {
+    public func add(_ service: MutableService) -> Future<Void> {
         return self.peripheralQueue.sync {
             if let afterSeriviceAddPromise = self.afterSeriviceAddPromise, !afterSeriviceAddPromise.completed {
                 return afterSeriviceAddPromise.future
@@ -172,12 +178,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             self.addConfiguredCharacteristics(service.characteristics)
             self.afterSeriviceAddPromise = Promise<Void>()
             self.configuredServices[service.UUID] = service
-            self.cbPeripheralManager.add(service: service.cbMutableService)
+            self.cbPeripheralManager.add(service.cbMutableService)
             return self.afterSeriviceAddPromise!.future
         }
     }
     
-    public func removeService(_ service: MutableService) {
+    public func remove(_ service: MutableService) {
         peripheralQueue.sync {
             Logger.debug("removing service \(service.UUID.uuidString)")
             let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
@@ -192,7 +198,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 self.configuredCharcteristics.removeValue(forKey: cbCharacteristic)
             }
             self.configuredServices.removeValue(forKey: service.UUID)
-            self.cbPeripheralManager.remove(service: service.cbMutableService)
+            self.cbPeripheralManager.remove(service.cbMutableService)
         }
     }
     

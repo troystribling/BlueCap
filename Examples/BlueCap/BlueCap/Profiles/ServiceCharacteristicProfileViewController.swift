@@ -47,23 +47,23 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
             self.navigationItem.title = characteristicProfile.name
             self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 
-            self.uuidLabel.text = characteristicProfile.UUID.UUIDString
+            self.uuidLabel.text = characteristicProfile.UUID.uuidString
             
-            self.permissionReadableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Readable))
-            self.permissionWriteableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.Writeable))
-            self.permissionReadEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.ReadEncryptionRequired))
-            self.permissionWriteEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(CBAttributePermissions.WriteEncryptionRequired))
+            self.permissionReadableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(.readable))
+            self.permissionWriteableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(.writeable))
+            self.permissionReadEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(.readEncryptionRequired))
+            self.permissionWriteEncryptionLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(.writeEncryptionRequired))
             
-            self.propertyBroadcastLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Broadcast))
-            self.propertyReadLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Read))
-            self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.WriteWithoutResponse))
-            self.propertyWriteLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Write))
-            self.propertyNotifyLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Notify))
-            self.propertyIndicateLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.Indicate))
-            self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.AuthenticatedSignedWrites))
-            self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.ExtendedProperties))
-            self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.NotifyEncryptionRequired))
-            self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(CBCharacteristicProperties.IndicateEncryptionRequired))
+            self.propertyBroadcastLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.broadcast))
+            self.propertyReadLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.read))
+            self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.writeWithoutResponse))
+            self.propertyWriteLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.write))
+            self.propertyNotifyLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.notify))
+            self.propertyIndicateLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.indicate))
+            self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.authenticatedSignedWrites))
+            self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.extendedProperties))
+            self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.notifyEncryptionRequired))
+            self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(characteristicProfile.propertyEnabled(.indicateEncryptionRequired))
             
         }
     }

@@ -114,8 +114,8 @@ public protocol CBPeripheralManagerInjectable {
     var state: CBManagerState { get }
     func startAdvertising(_ advertisementData : [String : Any]?)
     func stopAdvertising()
-    func add(service: CBMutableServiceInjectable)
-    func remove(service: CBMutableServiceInjectable)
+    func add(_ service: CBMutableServiceInjectable)
+    func remove(_ service: CBMutableServiceInjectable)
     func removeAllServices()
     func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code)
     func updateValue(_ value: Data, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool
@@ -123,11 +123,11 @@ public protocol CBPeripheralManagerInjectable {
 
 extension CBPeripheralManager: CBPeripheralManagerInjectable {
 
-    open func add(service: CBMutableServiceInjectable) {
+    open func add(_ service: CBMutableServiceInjectable) {
         self.add(service as! CBMutableService)
     }
 
-    open func remove(service: CBMutableServiceInjectable) {
+    open func remove(_ service: CBMutableServiceInjectable) {
         self.remove(service as! CBMutableService)
     }
 

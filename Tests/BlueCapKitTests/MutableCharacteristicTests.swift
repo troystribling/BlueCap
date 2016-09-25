@@ -31,7 +31,7 @@ class MutableCharacteristicTests: XCTestCase {
             let characteristic = CBMutableCharacteristicMock(UUID:profile.UUID, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
             return MutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
         }
-        let future = peripheralManager.add(service: service)
+        let future = peripheralManager.add(service)
         future.onSuccess(context: TestContext.immediate) {
             mock.isAdvertising = true
             onSuccess(mock, peripheralManager, service)

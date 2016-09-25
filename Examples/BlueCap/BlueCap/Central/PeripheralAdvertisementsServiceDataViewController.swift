@@ -37,7 +37,7 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
     }
     
     func didEnterBackground() {
-        self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }
     
@@ -60,7 +60,7 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
             let uuids = [CBUUID](serviceData.keys)
             let uuid = uuids[indexPath.row]
             let data = serviceData[uuid]
-            cell.uuidLabel.text = uuid.UUIDString
+            cell.uuidLabel.text = uuid.uuidString
             cell.nameLabel.text = data?.hexStringValue()
         }
         return cell

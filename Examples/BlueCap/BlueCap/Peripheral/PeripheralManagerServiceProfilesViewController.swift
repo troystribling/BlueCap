@@ -59,7 +59,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             let service = MutableService(profile:serviceProfile)
             service.characteristicsFromProfiles()
             self.progressView.show()
-            let future = Singletons.peripheralManager.add(service: service)
+            let future = Singletons.peripheralManager.add(service)
             future.onSuccess {
                 if let peripheral = self.peripheral {
                     PeripheralStore.addPeripheralService(peripheral, service:service.UUID)

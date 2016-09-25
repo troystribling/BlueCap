@@ -9,7 +9,7 @@
 import Foundation
 
 // MARK: - Errors -
-public enum CharacteristicError: Swift.Error {
+public enum CharacteristicError : Swift.Error {
     case readTimeout
     case writeTimeout
     case notSerializable
@@ -18,14 +18,13 @@ public enum CharacteristicError: Swift.Error {
     case notifyNotSupported
 }
 
-public enum PeripheralError: Swift.Error {
+public enum PeripheralError : Swift.Error {
     case disconnected
     case noServices
     case serviceDiscoveryTimeout
-    case serviceDiscoveryInProgress
 }
 
-public enum PeripheralManagerError: Swift.Error {
+public enum PeripheralManagerError : Swift.Error {
     case isAdvertising
     case isNotAdvertising
     case addServiceFailed
@@ -34,7 +33,7 @@ public enum PeripheralManagerError: Swift.Error {
     case unconfigured
 }
 
-public enum CentralManagerError: Swift.Error {
+public enum CentralManagerError : Swift.Error {
     case isScanning
     case isPoweredOff
     case restoreFailed
@@ -42,7 +41,7 @@ public enum CentralManagerError: Swift.Error {
     case unsupported
 }
 
-public enum ServiceError: Swift.Error {
+public enum ServiceError : Swift.Error {
     case characteristicDiscoveryTimeout
     case characteristicDiscoveryInProgress
 }

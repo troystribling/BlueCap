@@ -52,12 +52,12 @@ public class Service {
 
     // MARK: Discover Characteristics
 
-    public func discoverAllCharacteristics(_ timeout: Double = Double.infinity) -> Future<Service> {
+    public func discoverAllCharacteristics(timeout: TimeInterval = TimeInterval.infinity) -> Future<Service> {
         Logger.debug("uuid=\(self.UUID.uuidString), name=\(self.name)")
         return self.discoverIfConnected(nil, timeout: timeout)
     }
     
-    public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: Double = Double.infinity) -> Future<Service> {
+    public func discover(characteristics: [CBUUID], timeout: TimeInterval = TimeInterval.infinity) -> Future<Service> {
         Logger.debug("uuid=\(self.UUID.uuidString), name=\(self.name)")
         return self.discoverIfConnected(characteristics, timeout: timeout)
     }
@@ -98,7 +98,7 @@ public class Service {
 
     // MARK: Utils
 
-    fileprivate func discoverIfConnected(_ characteristics: [CBUUID]?, timeout: Double) -> Future<Service> {
+    fileprivate func discoverIfConnected(_ characteristics: [CBUUID]?, timeout: TimeInterval) -> Future<Service> {
         if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
             return characteristicsDiscoveredPromise.future
         }
@@ -113,8 +113,8 @@ public class Service {
         return self.characteristicsDiscoveredPromise!.future
     }
 
-    fileprivate func timeoutCharacteristicDiscovery(_ sequence: Int, timeout: Double) {
-        guard let peripheral = peripheral, let centralManager = peripheral.centralManager, timeout < Double.infinity else {
+    fileprivate func timeoutCharacteristicDiscovery(_ sequence: Int, timeout: TimeInterval) {
+        guard let peripheral = peripheral, let centralManager = peripheral.centralManager, timeout < TimeInterval.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(peripheral.identifier.uuidString), sequence = \(sequence), timeout = \(timeout)")

@@ -53,7 +53,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
-            self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
         }
     }
     
@@ -70,7 +70,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     }
     
     @IBAction func done(_ sender:AnyObject) {
-        self.addBeacon()
+        _ = self.addBeacon()
     }
     
     // UITextFieldDelegate
@@ -92,7 +92,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
                             PeripheralStore.removeBeaconConfig(beaconName)
                         }
                     }
-                    self.navigationController?.popViewController(animated: true)
+                    _ = self.navigationController?.popViewController(animated: true)
                     return true
 
                 } else {

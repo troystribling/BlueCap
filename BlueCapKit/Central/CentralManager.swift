@@ -59,14 +59,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Initializers
-    public init(profileManager: ProfileManager? = nil) {
+    public init(profileManager: ProfileManager? = nil, options: [String:AnyObject]? = nil) {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         self.profileManager = profileManager
         super.init()
-        self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue)
+        self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
     }
 
-    public init(queue:DispatchQueue, profileManager: ProfileManager? = nil, options: [String:AnyObject]?=nil) {
+    public init(queue: DispatchQueue, profileManager: ProfileManager? = nil, options: [String:AnyObject]? = nil) {
         self.centralQueue = Queue(queue)
         self.profileManager = profileManager
         super.init()
@@ -140,11 +140,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Scan
 
-    public func startScanning(capacity: Int = Int.max, timeout: Double = Double.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
         return startScanning(forServiceUUIDs: nil, capacity: capacity, timeout: timeout)
     }
 
-    public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral> {
         return self.centralQueue.sync {
             if let afterPeripheralDiscoveredPromise = self.afterPeripheralDiscoveredPromise {
                 return afterPeripheralDiscoveredPromise.stream
@@ -178,8 +178,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    fileprivate func timeoutScan(_ timeout: Double, sequence: Int) {
-        guard timeout < Double.infinity else {
+    fileprivate func timeoutScan(_ timeout: TimeInterval, sequence: Int) {
+        guard timeout < TimeInterval.infinity else {
             return
         }
         Logger.debug("timeout in \(timeout)s")

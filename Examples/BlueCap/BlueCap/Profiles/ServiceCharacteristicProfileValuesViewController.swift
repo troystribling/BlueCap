@@ -38,7 +38,7 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         super.viewDidLoad()
         if let characteristicProfile = self.characteristicProfile {
             self.navigationItem.title = characteristicProfile.name
-            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.Plain, target:nil, action:nil)
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
         }
     }
     
@@ -50,11 +50,11 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
-    override func prepareForSegue(_ segue:UIStoryboardSegue, sender:AnyObject!) {
+    override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
     }
     
     // UITableViewDataSource
-    override func numberOfSectionsInTableView(_ tableView:UITableView) -> Int {
+    override func numberOfSections(in tableView:UITableView) -> Int {
         return 1
     }
     
@@ -66,8 +66,8 @@ class ServiceCharacteristicProfileValuesViewController : UITableViewController {
         }
     }
     
-    override func tableView(_ tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(MainStoryboard.serviceCharacteristicProfileValueCell, forIndexPath: indexPath) as! CharacteristicValueCell
+    override func tableView(_ tableView:UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.serviceCharacteristicProfileValueCell, for: indexPath) as! CharacteristicValueCell
         if let values = self.values {
             let characteristicValueNames = Array(values.keys)
             let characteristicValues = Array(values.values)

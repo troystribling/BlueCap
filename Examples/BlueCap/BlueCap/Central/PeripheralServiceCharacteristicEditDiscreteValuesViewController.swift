@@ -70,20 +70,21 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        guard keyPath != nil else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", PeripheralServiceCharacteristicEditDiscreteValuesViewController.BCPeripheralStateKVOContext):
-            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-                if newState == .disconnected {
-                    DispatchQueue.main.async { self.peripheralDisconnected() }
-                }
-            }
-        default:
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
+        // TODO: Use Future Callbacks
+//        guard keyPath != nil else {
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//            return
+//        }
+//        switch (keyPath!, context) {
+//        case("state", PeripheralServiceCharacteristicEditDiscreteValuesViewController.BCPeripheralStateKVOContext):
+//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+//                if newState == .disconnected {
+//                    DispatchQueue.main.async { self.peripheralDisconnected() }
+//                }
+//            }
+//        default:
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//        }
     }
 
     // UITableViewDataSource
@@ -117,16 +118,16 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         if let characteristic = self.characteristic {
             if let valueName = characteristic.stringValue?.keys.first {
                 let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
-                let write = characteristic.writeString(stringValue, timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                let write = characteristic.write(string: stringValue, timeout: (Double(ConfigStore.getCharacteristicReadWriteTimeout())))
                 write.onSuccess {characteristic in
                     self.progressView.remove()
-                    self.navigationController?.popViewControllerAnimated(true)
+                    _ = self.navigationController?.popViewController(animated: true)
                     return
                 }
                 write.onFailure {error in
-                    self.presentViewController(UIAlertController.alertOnError("Charactertistic Write Error", error: error), animated: true, completion: nil)
+                    self.present(UIAlertController.alertOnError("Charactertistic Write Error", error: error), animated: true, completion: nil)
                     self.progressView.remove()
-                    self.navigationController?.popViewControllerAnimated(true)
+                    _ = self.navigationController?.popViewController(animated: true)
                     return
                 }
             }

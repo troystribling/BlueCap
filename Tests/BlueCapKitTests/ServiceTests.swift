@@ -72,7 +72,7 @@ class ServiceTests: XCTestCase {
 
     func testDiscoverAllCharacteristics_WhenConnectedOnTimeout_CompletesServiceCharacteristicDiscoveryTimeout() {
         let service = self.service(self.peripheral(.connected))
-        let future = service.discoverAllCharacteristics(0.25)
+        let future = service.discoverAllCharacteristics(timeout: 0.25)
         XCTAssertFutureFails(future, timeout: 5) { error in
             XCTAssertEqualErrors(error, ServiceError.characteristicDiscoveryTimeout)
         }

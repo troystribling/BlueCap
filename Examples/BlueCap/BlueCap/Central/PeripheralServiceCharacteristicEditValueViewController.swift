@@ -96,7 +96,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
                 _ = self.navigationController?.popViewController(animated: true)
                 return
             }
-            let afterWriteFailed = { (error: NSError) -> Void in
+            let afterWriteFailed = { (error: Swift.Error) -> Void in
                 self.progressView.remove()
                 self.present(UIAlertController.alertOnError("Characteristic Write Error", error:error) {(action) in
                     _ = self.navigationController?.popViewController(animated: true)
@@ -107,19 +107,19 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
             if let valueName = self.valueName {
                 if var values = self.characteristic.stringValue {
                     values[valueName] = newValue
-                    let write = characteristic.writeString(values, timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-                    write.onSuccess(afterWriteSuceses)
-                    write.onFailure(afterWriteFailed)
+                    let write = characteristic.write(string: values, timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                    write.onSuccess(completion: afterWriteSuceses)
+                    write.onFailure(completion: afterWriteFailed)
                 } else {
-                    let write = characteristic.writeData(newValue.dataFromHexString(), timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-                    write.onSuccess(afterWriteSuceses)
-                    write.onFailure(afterWriteFailed)
+                    let write = characteristic.write(data: newValue.dataFromHexString(), timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                    write.onSuccess(completion: afterWriteSuceses)
+                    write.onFailure(completion: afterWriteFailed)
                 }
             } else {
                 Logger.debug("VALUE: \(newValue.dataFromHexString())")
-                let write = characteristic.writeData(newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-                write.onSuccess(afterWriteSuceses)
-                write.onFailure(afterWriteFailed)
+                let write = characteristic.write(data: newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                write.onSuccess(completion: afterWriteSuceses)
+                write.onFailure(completion: afterWriteFailed)
             }
         }
         return true

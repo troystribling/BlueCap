@@ -42,7 +42,7 @@ class ConfigurePeripheralSortOrderViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let sortOrder = self.sortOrders[(indexPath as NSIndexPath).row]
         ConfigStore.setPeripheralSortOrder(PeripheralSortOrder(sortOrder)!)
-        self.navigationController?.popViewController(animated: true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
 }

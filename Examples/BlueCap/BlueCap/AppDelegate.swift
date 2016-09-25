@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import UserNotifications
+import CoreBluetooth
 import BlueCapKit
 
 struct BlueCapNotification {
@@ -25,8 +27,8 @@ struct BCAppError {
 }
 
 struct Singletons {
-    static let centralManager = CentralManager()
-    static let peripheralManager = PeripheralManager()
+    static let centralManager = CentralManager(profileManager: Singletons.profileManager, options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.CentralManager" as NSString])
+    static let peripheralManager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.PeripheralManager" as NSString])
     static let beaconManager = BeaconManager()
     static let profileManager = ProfileManager()
 }
@@ -61,8 +63,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let defaultConfig = defaultConfig {
             UserDefaults.standard.register(defaults: defaultConfig)
         }
-        application.registerUserNotificationSettings(
-            UIUserNotificationSettings(types:[UIUserNotificationType.sound, UIUserNotificationType.alert, UIUserNotificationType.badge], categories:nil))
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            guard error != nil else {
+                Notification.setPermissionGranted(false)
+                return
+            }
+            Notification.setPermissionGranted(granted)
+        }
         return true
     }
 
@@ -88,7 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         Logger.debug()
-        Notify.resetEventCount()
+        Notification.resetEventCount()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

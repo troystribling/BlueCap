@@ -12,12 +12,12 @@ import CoreBluetooth
 // MARK: - IO Parameters -
 struct WriteParameters {
     let value: Data
-    let timeout: Double
+    let timeout: TimeInterval
     let type: CBCharacteristicWriteType
 }
 
 struct ReadParameters {
-    let timeout: Double
+    let timeout: TimeInterval
 }
 
 // MARK: - Characteristic -
@@ -217,7 +217,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Read Data
-    public func read(timeout: Double = Double.infinity) -> Future<Characteristic> {
+    public func read(timeout: TimeInterval = TimeInterval.infinity) -> Future<Characteristic> {
         return centralQueue.sync {
             if self.canRead {
                 let promise = Promise<Characteristic>()
@@ -232,7 +232,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Write Data
-    public func write(data value: Data, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write(data value: Data, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return centralQueue.sync {
             if self.canWrite {
                 if type == .withResponse {
@@ -251,7 +251,7 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func write(string stringValue: [String: String], timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write(string stringValue: [String: String], timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         if let value = self.data(fromString: stringValue) {
             return self.write(data: value, timeout: timeout, type: type)
         } else {
@@ -259,23 +259,23 @@ public class Characteristic : NSObject {
         }
     }
 
-    public func write<T: Deserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write<T: Deserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write<T: RawDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawArrayDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
-    public func write<T: RawPairDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write<T: RawPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
     
-    public func write<T: RawArrayPairDeserializable>(_ value: T, timeout: Double = Double.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
+    public func write<T: RawArrayPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
         return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
@@ -336,8 +336,8 @@ public class Characteristic : NSObject {
     }
 
     // MARK: IO Timeout
-    fileprivate func timeoutRead(_ sequence: Int, timeout: Double) {
-        guard timeout < Double.infinity else {
+    fileprivate func timeoutRead(_ sequence: Int, timeout: TimeInterval) {
+        guard timeout < TimeInterval.infinity else {
             return
         }
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
@@ -351,8 +351,8 @@ public class Characteristic : NSObject {
         }
     }
     
-    fileprivate func timeoutWrite(_ sequence: Int, timeout: Double) {
-        guard timeout < Double.infinity else {
+    fileprivate func timeoutWrite(_ sequence: Int, timeout: TimeInterval) {
+        guard timeout < TimeInterval.infinity else {
             return
         }
         Logger.debug("sequence \(sequence), timeout:\(timeout)")

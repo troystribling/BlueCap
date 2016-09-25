@@ -72,7 +72,7 @@ class ServiceProfilesTableViewController : UITableViewController {
         if let profiles = self.serviceProfiles[tags[indexPath.section]] {
             let profile = profiles[indexPath.row]
             cell.nameLabel.text = profile.name
-            cell.uuidLabel.text = profile.UUID.UUIDString
+            cell.uuidLabel.text = profile.UUID.uuidString
         } else {
             cell.nameLabel.text = "Unknown"
             cell.uuidLabel.text = "Unknown"

@@ -25,7 +25,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     var peripheralsSortedByRSSI: [Peripheral] {
-        return Singletons.centralManager.peripherals.sort() { (p1, p2) -> Bool in
+        return Singletons.centralManager.peripherals.sorted() { (p1, p2) -> Bool in
             if p1.RSSI == 127 && p2.RSSI != 127 {
                 return false
             }  else if p1.RSSI != 127 && p2.RSSI == 127 {
@@ -104,7 +104,7 @@ class PeripheralsViewController : UITableViewController {
                 self.stopScanning()
             } else {
                 Logger.debug("Scan toggled on")
-                Singletons.centralManager.whenPowerOn().onSuccess {
+                Singletons.centralManager.whenPoweredOn().onSuccess {
                     self.startScan()
                     self.setScanButton()
                     self.updatePeripheralConnectionsIfNeeded()
@@ -214,7 +214,7 @@ class PeripheralsViewController : UITableViewController {
             switch connectionEvent {
             case .connect:
                 Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                Notify.withMessage("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                Notification.send("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 self.startPollingRSSIForPeripheral(peripheral)
                 self.peripheralConnectionStatus[peripheral.identifier] = true
                 self.updateWhenActive()
@@ -225,13 +225,13 @@ class PeripheralsViewController : UITableViewController {
                 self.updateWhenActive()
             case .disconnect:
                 Logger.debug("Disconnected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                Notify.withMessage("Disconnected peripheral: '\(peripheral.name)'")
+                Notification.send("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.stopPollingRSSI()
                 self.reconnectIfNecessary(peripheral)
                 self.updateWhenActive()
             case .forceDisconnect:
                 Logger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                Notify.withMessage("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.uuidString)'")
+                Notification.send("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.uuidString)'")
                 self.reconnectIfNecessary(peripheral)
                 self.updateWhenActive()
             case .giveUp:
@@ -265,7 +265,7 @@ class PeripheralsViewController : UITableViewController {
         let afterPeripheralDiscovered = { (peripheral: Peripheral) -> Void in
             if Singletons.centralManager.peripherals.contains(peripheral) {
                 Logger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                Notify.withMessage("Discovered peripheral '\(peripheral.name)'")
+                Notification.send("Discovered peripheral '\(peripheral.name)'")
                 self.updateWhenActive()
                 self.peripheralConnectionStatus[peripheral.identifier] = false
                 if self.reachedDiscoveryLimit {
@@ -275,6 +275,9 @@ class PeripheralsViewController : UITableViewController {
             }
         }
         let afterTimeout = { (error: Swift.Error) -> Void in
+            guard let error = error as? CentralManagerError else {
+                return
+            }
             if error == CentralManagerError.peripheralScanTimeout {
                 Logger.debug("timeoutScan: timing out")
                 Singletons.centralManager.stopScanning()
@@ -288,17 +291,17 @@ class PeripheralsViewController : UITableViewController {
         switch scanMode {
         case .promiscuous:
             // Promiscuous Scan with Timeout Enabled
-            future = Singletons.centralManager.startScanning(10, timeout: scanTimeout)
-            future.onSuccess(afterPeripheralDiscovered)
-            future.onFailure(afterTimeout)
+            future = Singletons.centralManager.startScanning(capacity:10, timeout: scanTimeout)
+            future.onSuccess(completion: afterPeripheralDiscovered)
+            future.onFailure(completion: afterTimeout)
         case .service:
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             if scannedServices.isEmpty {
                 self.present(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
             } else {
-                future = Singletons.centralManager.startScanningForServiceUUIDs(scannedServices, capacity: 10, timeout: scanTimeout)
-                future.onSuccess(afterPeripheralDiscovered)
-                future.onFailure(afterTimeout)
+                future = Singletons.centralManager.startScanning(forServiceUUIDs:scannedServices, capacity: 10, timeout: scanTimeout)
+                future.onSuccess(completion: afterPeripheralDiscovered)
+                future.onFailure(completion: afterTimeout)
             }
         }
     }

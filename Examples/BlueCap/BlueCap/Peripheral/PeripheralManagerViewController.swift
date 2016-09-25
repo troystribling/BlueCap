@@ -47,7 +47,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             } else {
                 self.advertisedBeaconLabel.text = "None"
             }
-            Singletons.peripheralManager.whenPowerOn().onSuccess {
+            Singletons.peripheralManager.whenPoweredOn().onSuccess {
                 self.setPeripheralManagerServices()
             }
             self.setUIState()
@@ -105,7 +105,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 let afterAdvertisingStarted = {
                     self.setUIState()
                 }
-                let afterAdvertisingStartFailed:(_ error:NSError)->() = {(error) in
+                let afterAdvertisingStartFailed:(_ error: Swift.Error)->() = {(error) in
                     self.setUIState()
                     self.present(UIAlertController.alertOnError("Peripheral Advertise Error", error: error), animated: true, completion: nil)
                 }
@@ -114,20 +114,20 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                     if let name = self.advertisedBeaconLabel.text {
                         if let uuid = PeripheralStore.getBeacon(name) {
                             let beaconConfig = PeripheralStore.getBeaconConfig(name)
-                            let beaconRegion = FLBeaconRegion(proximityUUID: uuid, identifier: name, major: beaconConfig[1], minor: beaconConfig[0])
+                            let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconConfig[1], minor: beaconConfig[0])
                             let future = Singletons.peripheralManager.startAdvertising(beaconRegion)
-                            future.onSuccess(afterAdvertisingStarted)
-                            future.onFailure(afterAdvertisingStartFailed)
+                            future.onSuccess(completion: afterAdvertisingStarted)
+                            future.onFailure(completion: afterAdvertisingStartFailed)
                         }
                     }
                 } else if advertisedServices.count > 0 {
                     let future = Singletons.peripheralManager.startAdvertising(peripheral, uuids: advertisedServices)
-                    future.onSuccess(afterAdvertisingStarted)
-                    future.onFailure(afterAdvertisingStartFailed)
+                    future.onSuccess(completion: afterAdvertisingStarted)
+                    future.onFailure(completion: afterAdvertisingStartFailed)
                 } else {
                     let future = Singletons.peripheralManager.startAdvertising(peripheral)
-                    future.onSuccess(afterAdvertisingStarted)
-                    future.onFailure(afterAdvertisingStartFailed)
+                    future.onSuccess(completion: afterAdvertisingStarted)
+                    future.onFailure(completion: afterAdvertisingStartFailed)
                 }
             }
         }
@@ -177,13 +177,13 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 return services
             }
         }
-        let future = Singletons.peripheralManager.addServices(services)
-        future.onSuccess {
+        let future = services.map { Singletons.peripheralManager.add($0) }.sequence()
+        future.onSuccess { _ in
             self.setUIState()
         }
-        future.onFailure {(error) in
+        future.onFailure { (error) in
             self.setUIState()
-            self.presentViewController(UIAlertController.alertOnError("Add Services Error", error:error), animated:true, completion:nil)
+            self.present(UIAlertController.alertOnError("Add Services Error", error:error), animated:true, completion:nil)
         }
     }
 

@@ -33,7 +33,7 @@ class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
     func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
         if let maximumTimeouts = self.maximumTimeoutsTextField.text, let maximumTimeoutsInt = UInt(maximumTimeouts) , !maximumTimeouts.isEmpty {
             ConfigStore.setPeripheralMaximumTimeouts(maximumTimeoutsInt)
-            self.navigationController?.popToRootViewController(animated: true)
+            _ = self.navigationController?.popToRootViewController(animated: true)
             return true
         } else {
             return false

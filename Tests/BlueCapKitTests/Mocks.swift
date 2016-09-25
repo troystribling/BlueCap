@@ -251,13 +251,13 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
         self.isAdvertising = false
     }
     
-    func add(service: CBMutableServiceInjectable) {
+    func add(_ service: CBMutableServiceInjectable) {
         self.addServiceCalled = true
         self.addedService = service
         self.addServiceCount += 1
     }
     
-    func remove(service: CBMutableServiceInjectable) {
+    func remove(_ service: CBMutableServiceInjectable) {
         self.removeServiceCalled = true
         self.removedService = service
         self.removeServiceCount += 1

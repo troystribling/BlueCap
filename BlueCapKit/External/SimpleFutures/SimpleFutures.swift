@@ -388,7 +388,7 @@ public protocol Futurable {
     init(context: ExecutionContext, dependent: Self)
 
     func complete(_ result: Try<T>)
-    func onComplete(context: ExecutionContext, cancelToken: CancelToken, complete: @escaping (Try<T>) -> Void) -> Void
+    func onComplete(context: ExecutionContext, cancelToken: CancelToken, completion: @escaping (Try<T>) -> Void) -> Void
 
 }
 
@@ -426,9 +426,9 @@ public extension Futurable {
         }
     }
 
-    public func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void) -> Future<T> {
+    public func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (T) -> Void) -> Future<T> {
         let future = Future<T>()
-        future.onSuccess(context: context, cancelToken: cancelToken, success: success)
+        future.onSuccess(context: context, cancelToken: cancelToken, completion: completion)
         onComplete(context: context, cancelToken: cancelToken) { result in
             future.complete(result)
         }
@@ -585,41 +585,41 @@ public final class Future<T> : Futurable {
 
     // MARK: Callbacks
 
-    public func onComplete(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), complete: @escaping (Try<T>) -> Void) -> Void {
-        let completion : OnComplete = { result in
+    public func onComplete(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (Try<T>) -> Void) -> Void {
+        let savedCompletion : OnComplete = { result in
             context.execute {
-                complete(result)
+                completion(result)
             }
         }
         if let result = result {
-            completion(result)
+            savedCompletion(result)
         } else {
             queue.sync {
                 if let completions = self.savedCompletions[cancelToken.completionId] {
-                    self.savedCompletions[cancelToken.completionId] = completions + [completion]
+                    self.savedCompletions[cancelToken.completionId] = completions + [savedCompletion]
                 } else {
-                    self.savedCompletions[cancelToken.completionId] = [completion]
+                    self.savedCompletions[cancelToken.completionId] = [savedCompletion]
                 }
             }
         }
     }
     
-    public func onSuccess(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void){
+    public func onSuccess(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (T) -> Void){
         onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
             case .success(let value):
-                success(value)
+                completion(value)
             default:
                 break
             }
         }
     }
     
-    public func onFailure(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), failure: @escaping (Swift.Error) -> Void) {
+    public func onFailure(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (Swift.Error) -> Void) {
         onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
             case .failure(let error):
-                failure(error)
+                completion(error)
             default:
                 break
             }
@@ -882,9 +882,9 @@ public final class FutureStream<T> {
 
     // MARK: Callbacks
 
-    public func onComplete(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), complete: @escaping (Try<T>) -> Void) {
+    public func onComplete(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (Try<T>) -> Void) {
         let futureComplete : InFuture = { future in
-            future.onComplete(context: context, complete: complete)
+            future.onComplete(context: context, completion: completion)
         }
         queue.sync {
             if let completions = self.savedCompletions[cancelToken.completionId] {
@@ -896,22 +896,22 @@ public final class FutureStream<T> {
         }
     }
 
-    public func onSuccess(context:ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void) {
+    public func onSuccess(context:ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (T) -> Void) {
         onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
             case .success(let value):
-                success(value)
+                completion(value)
             default:
                 break
             }
         }
     }
     
-    public func onFailure(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), failure: @escaping (Swift.Error) -> Void) {
+    public func onFailure(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (Swift.Error) -> Void) {
         onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
             case .failure(let error):
-                failure(error)
+                completion(error)
             default:
                 break
             }
@@ -984,9 +984,9 @@ public final class FutureStream<T> {
         }
     }
 
-    public func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), success: @escaping (T) -> Void) -> FutureStream<T> {
+    public func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (T) -> Void) -> FutureStream<T> {
         let stream = FutureStream<T>(capacity: capacity)
-        stream.onSuccess(context: context, cancelToken: cancelToken, success: success)
+        stream.onSuccess(context: context, cancelToken: cancelToken, completion: completion)
         onComplete(context: context, cancelToken: cancelToken) { result in
             stream.complete(result)
         }

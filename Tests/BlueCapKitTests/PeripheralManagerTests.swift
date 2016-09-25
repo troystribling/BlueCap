@@ -193,7 +193,7 @@ class PeripheralManagerTests: XCTestCase {
     func testAddService_WhenNoErrorInAck_CompletesSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let service = createPeripheralManagerService(peripheralManager)
-        let future = peripheralManager.add(service: service)
+        let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) {
             let peripheralServices = peripheralManager.services
@@ -206,7 +206,7 @@ class PeripheralManagerTests: XCTestCase {
     func testAddService_WhenErrorOnAck_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let service = createPeripheralManagerService(peripheralManager)
-        let future = peripheralManager.add(service: service)
+        let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: TestFailure.error)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             let peripheralServices = peripheralManager.services
@@ -221,10 +221,10 @@ class PeripheralManagerTests: XCTestCase {
     func testRemovedService_WhenServiceIsPresent_RemovesService() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let service = createPeripheralManagerService(peripheralManager)
-        let future = peripheralManager.add(service: service)
+        let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: nil)
         XCTAssertFutureSucceeds(future, timeout: 5.0) {
-            peripheralManager.removeService(service)
+            peripheralManager.remove(service)
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.removeServiceCalled)
             XCTAssertEqual(peripheralServices.count, 0)
@@ -239,14 +239,14 @@ class PeripheralManagerTests: XCTestCase {
     func testRemovedService_WhenNoServiceIsPresent_DoesNothing() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let service = createPeripheralManagerService(peripheralManager)
-        peripheralManager.removeService(service)
+        peripheralManager.remove(service)
         XCTAssert(mock.removeServiceCalled, "CBPeripheralManager#removeService not called")
     }
 
     func testRemovedAllServices_WhenServicesArePresent_RemovesAllServices() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let service = createPeripheralManagerService(peripheralManager)
-        let future = peripheralManager.add(service: service)
+        let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: nil)
         XCTAssertFutureSucceeds(future, timeout: 5.0) {
             peripheralManager.removeAllServices()

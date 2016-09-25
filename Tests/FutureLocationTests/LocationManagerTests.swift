@@ -27,12 +27,6 @@ class LocationManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    func waitForExpectations(_ timeout: Double = 2.0) {
-        self.waitForExpectations(timeout: timeout) { error in
-            XCTAssertNil(error, "\(error)")
-        }
-    }
-
     // MARK: authorize
     func testAuthorize_WhenAuthorizedAlwaysRequestedAndStatusIsAuthorizedAlways_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways

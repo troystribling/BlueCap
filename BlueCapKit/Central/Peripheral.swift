@@ -86,7 +86,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     fileprivate var _disconnectedAt : Date?
     fileprivate var _totalSecondsConnected = 0.0
 
-    fileprivate var connectionTimeout = Double.infinity
+    fileprivate var connectionTimeout = TimeInterval.infinity
     fileprivate var timeoutRetries = UInt.max
     fileprivate var disconnectRetries = UInt.max
 
@@ -264,7 +264,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
      
-    public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity, capacity: Int = Int.max) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
+    public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
         return centralQueue.sync {
             self.connectionPromise = StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>(capacity: capacity)
             self.timeoutRetries = timeoutRetries
@@ -328,12 +328,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Discover Services
 
-    public func discoverAllServices(_ timeout: Double = Double.infinity) -> Future<Peripheral> {
+    public func discoverAllServices(_ timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral> {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         return self.discoverServices(nil, timeout: timeout)
     }
 
-    public func discoverServices(_ services: [CBUUID]?, timeout: Double = Double.infinity) -> Future<Peripheral> {
+    public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral> {
         Logger.debug(" \(self.name)")
         return self.discoverIfConnected(services, timeout: timeout)
     }
@@ -552,7 +552,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: Double = Double.infinity)  -> Future<Peripheral> {
+    fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity)  -> Future<Peripheral> {
         return centralQueue.sync {
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
                 return servicesDiscoveredPromise.future
@@ -575,7 +575,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func timeoutConnection(_ sequence: Int) {
-        guard let centralManager = self.centralManager , connectionTimeout < Double.infinity else {
+        guard let centralManager = self.centralManager , connectionTimeout < TimeInterval.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
@@ -590,8 +590,8 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    fileprivate func timeoutServiceDiscovery(_ sequence: Int, timeout: Double) {
-        guard let centralManager = self.centralManager, timeout < Double.infinity else {
+    fileprivate func timeoutServiceDiscovery(_ sequence: Int, timeout: TimeInterval) {
+        guard let centralManager = self.centralManager, timeout < TimeInterval.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(timeout)")

@@ -13,7 +13,7 @@ class BeaconRegionsViewController: UITableViewController {
 
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
-    var beaconRegions = [String: FLBeaconRegion]()
+    var beaconRegions = [String: BeaconRegion]()
 
     struct MainStoryBoard {
         static let beaconRegionCell = "BeaconRegionCell"
@@ -70,7 +70,7 @@ class BeaconRegionsViewController: UITableViewController {
             if Singletons.beaconManager.isMonitoring {
                 Singletons.beaconManager.stopRangingAllBeacons()
                 Singletons.beaconManager.stopMonitoringAllRegions()
-                self.beaconRegions.removeAll(keepCapacity:false)
+                self.beaconRegions.removeAll(keepingCapacity: false)
                 self.setScanButton()
             } else {
                 self.startMonitoring()
@@ -91,48 +91,43 @@ class BeaconRegionsViewController: UITableViewController {
     
     func startMonitoring() {
         for (name, uuid) in BeaconStore.getBeacons() {
-            let beacon = FLBeaconRegion(proximityUUID: uuid, identifier: name)
-            let regionFuture = Singletons.beaconManager.startMonitoringForRegion(beacon, authorization: .AuthorizedAlways)
-            let beaconFuture = regionFuture.flatmap { status -> FutureStream<[FLBeacon]> in
+            let beacon = BeaconRegion(proximityUUID: uuid, identifier: name)
+            let regionFuture = Singletons.beaconManager.startMonitoring(forRegion: beacon, authorization: .authorizedAlways)
+            let beaconFuture = regionFuture.flatMap { status -> FutureStream<[Beacon]> in
                 switch status {
-                case .Inside:
-                    if !Singletons.beaconManager.isRangingRegion(beacon.identifier) {
-                        self.updateDisplay()
-                        Notify.withMessage("Entering region '\(name)'. Started ranging beacons.")
-                        return Singletons.beaconManager.startRangingBeaconsInRegion(beacon)
-                    } else {
-                        let errorPromise = StreamPromise<[FLBeacon]>()
-                        errorPromise.failure(BCAppError.rangingBeacons)
-                        return errorPromise.future
+                case .inside:
+                    guard !Singletons.beaconManager.isRangingRegion(identifier: beacon.identifier) else {
+                        throw BCAppError.rangingBeacons
                     }
-                case .Outside:
-                    Singletons.beaconManager.stopRangingBeaconsInRegion(beacon)
+                    self.updateDisplay()
+                    Notification.send("Entering region '\(name)'. Started ranging beacons.")
+                    return Singletons.beaconManager.startRangingBeacons(forRegion: beacon)
+                case .outside:
+                    Singletons.beaconManager.stopRangingBeacons(forRegion: beacon)
                     self.updateWhenActive()
-                    Notify.withMessage("Exited region '\(name)'. Stoped ranging beacons.")
-                    let errorPromise = StreamPromise<[FLBeacon]>()
-                    errorPromise.failure(BCAppError.outOfRegion)
-                    return errorPromise.future
-                case .Start:
+                    Notification.send("Exited region '\(name)'. Stoped ranging beacons.")
+                    throw BCAppError.outOfRegion
+                case .start:
                     Logger.debug("started monitoring region \(name)")
-                    self.navigationItem.setLeftBarButtonItem(self.stopScanBarButtonItem, animated: false)
-                    return Singletons.beaconManager.startRangingBeaconsInRegion(beacon)
+                    self.navigationItem.setLeftBarButton(self.stopScanBarButtonItem, animated: false)
+                    return Singletons.beaconManager.startRangingBeacons(forRegion: beacon)
                 }
             }
-            beaconFuture.onSuccess {beacons in
+            beaconFuture.onSuccess { beacons in
                 self.setScanButton()
                 for beacon in beacons {
                     Logger.debug("major:\(beacon.major), minor: \(beacon.minor), rssi: \(beacon.rssi)")
                 }
                 self.updateWhenActive()
-                if UIApplication.sharedApplication().applicationState == .Active && beacons.count > 0 {
-                    NSNotificationCenter.defaultCenter().postNotificationName(BlueCapNotification.didUpdateBeacon, object:beacon)
+                if UIApplication.shared.applicationState == .active && beacons.count > 0 {
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: BlueCapNotification.didUpdateBeacon), object:beacon)
                 }
             }
-            regionFuture.onFailure {error in
+            regionFuture.onFailure { error in
                 self.setScanButton()
-                Singletons.beaconManager.stopRangingBeaconsInRegion(beacon)
+                Singletons.beaconManager.stopRangingBeacons(forRegion: beacon)
                 self.updateWhenActive()
-                self.presentViewController(UIAlertController.alertOnError("Region Monitoring Error", error:error), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnError("Region Monitoring Error", error:error), animated:true, completion:nil)
             }
             self.beaconRegions[name] = beacon
         }
@@ -170,8 +165,8 @@ class BeaconRegionsViewController: UITableViewController {
         cell.beaconsLabel.text = "0"
         cell.nameLabel.textColor = UIColor.lightGray
         cell.statusLabel.textColor = UIColor.lightGray
-        if Singletons.beaconManager.isRangingRegion(name) {
-            if let region = Singletons.beaconManager.beaconRegion(name) {
+        if Singletons.beaconManager.isRangingRegion(identifier: name) {
+            if let region = Singletons.beaconManager.beaconRegion(identifier: name) {
                 if region.beacons.count == 0 {
                     cell.statusLabel.text = "Monitoring"
                 } else {
@@ -191,7 +186,7 @@ class BeaconRegionsViewController: UITableViewController {
     
     override func tableView(_ tableView:UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         let name = BeaconStore.getBeaconNames()[(indexPath as NSIndexPath).row]
-        return !Singletons.beaconManager.isRangingRegion(name)
+        return !Singletons.beaconManager.isRangingRegion(identifier: name)
     }
     
     override func tableView(_ tableView:UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
@@ -205,7 +200,7 @@ class BeaconRegionsViewController: UITableViewController {
     // UITableViewDelegate
     override func tableView(_ tableView:UITableView, didSelectRowAt indexPath:IndexPath) {
         let name = BeaconStore.getBeaconNames()[(indexPath as NSIndexPath).row]
-        if Singletons.beaconManager.isRangingRegion(name) {
+        if Singletons.beaconManager.isRangingRegion(identifier: name) {
             if let beaconRegion = self.beaconRegions[name] {
                 if beaconRegion.beacons.count > 0 {
                     self.performSegue(withIdentifier: MainStoryBoard.beaconsSegue, sender:indexPath)

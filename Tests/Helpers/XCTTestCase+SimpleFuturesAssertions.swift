@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 import BlueCapKit
 
-func XCTAssertFutureSucceeds<T>(_ future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0,
+func XCTAssertFutureSucceeds<T>(_ future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: TimeInterval = 10.0,
                              line: UInt = #line, file: String = #file, validate: ((T) -> Void)? = nil) {
 
     guard let currentTest = _XCTCurrentTestCase() else { fatalError("XCTGuardAssert attempted without a running test.") }
@@ -46,7 +46,7 @@ func XCTAssertFutureSucceeds<T>(_ future: Future<T>, context: ExecutionContext =
     }
 }
 
-func XCTAssertFutureStreamSucceeds<T>(_ stream: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0, line: UInt = #line, file: String = #file, validations: [((T) -> Void)] = []) {
+func XCTAssertFutureStreamSucceeds<T>(_ stream: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: TimeInterval = 10.0, line: UInt = #line, file: String = #file, validations: [((T) -> Void)] = []) {
 
     guard let currentTest = _XCTCurrentTestCase() else { fatalError("XCTGuardAssert attempted without a running test.") }
 
@@ -109,7 +109,7 @@ func XCTAssertFutureStreamSucceeds<T>(_ stream: FutureStream<T>, context: Execut
 }
 
 
-func XCTAssertFutureFails<T>(_ future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0, line: UInt = #line, file: String = #file, validate: ((Swift.Error) -> Void)? = nil) {
+func XCTAssertFutureFails<T>(_ future: Future<T>, context: ExecutionContext = QueueContext.main, timeout: TimeInterval = 10.0, line: UInt = #line, file: String = #file, validate: ((Swift.Error) -> Void)? = nil) {
 
     guard let currentTest = _XCTCurrentTestCase() else { fatalError("XCTGuardAssert attempted without a running test.") }
 
@@ -144,7 +144,7 @@ func XCTAssertFutureFails<T>(_ future: Future<T>, context: ExecutionContext = Qu
     }
 }
 
-func XCTAssertFutureStreamFails<T>(_ stream: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: Double = 10.0, line: UInt = #line, file: String = #file, validations: [((Swift.Error) -> Void)] = []) {
+func XCTAssertFutureStreamFails<T>(_ stream: FutureStream<T>, context: ExecutionContext = QueueContext.main, timeout: TimeInterval = 10.0, line: UInt = #line, file: String = #file, validations: [((Swift.Error) -> Void)] = []) {
 
     guard let currentTest = _XCTCurrentTestCase() else { fatalError("XCTGuardAssert attempted without a running test.") }
 

@@ -33,7 +33,7 @@ class ConfigureMaximumPeripheralsDiscovered: UIViewController {
     func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
         if let maxPeripheralsText = self.maximumPeripheralsDiscoveredTextField.text, let maxPeripherals = Int(maxPeripheralsText) , !maxPeripheralsText.isEmpty {
             ConfigStore.setMaximumPeripheralsDiscovered(maxPeripherals)
-            self.navigationController?.popToRootViewController(animated: true)
+            _ = self.navigationController?.popToRootViewController(animated: true)
         }
         return true
     }

@@ -43,7 +43,7 @@ public protocol CLLocationManagerInjectable {
 
      // MARK: Deferred Location Updates
     static func deferredLocationUpdatesAvailable() -> Bool
-    func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: Double)
+    func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: TimeInterval)
 
     // MARK: Significant Change in Location
     static func significantLocationChangeMonitoringAvailable() -> Bool
@@ -313,7 +313,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         return CLLocationManager.deferredLocationUpdatesAvailable()
     }
 
-    public func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: Double) -> Future<Void> {
+    public func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: TimeInterval) -> Future<Void> {
         self.deferredLocationUpdatePromise = Promise<Void>()
         self.clLocationManager.allowDeferredLocationUpdatesUntilTraveled(distance, timeout: timeout)
         return self.deferredLocationUpdatePromise!.future

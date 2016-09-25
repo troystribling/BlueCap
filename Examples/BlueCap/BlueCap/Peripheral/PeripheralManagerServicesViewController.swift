@@ -100,7 +100,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
         if editingStyle == UITableViewCellEditingStyle.delete {
             if let peripheral = self.peripheral {
                 let service = Singletons.peripheralManager.services[indexPath.row]
-                Singletons.peripheralManager.removeService(service)
+                Singletons.peripheralManager.remove(service)
                 PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.UUID)
                 PeripheralStore.removePeripheralService(peripheral, service: service.UUID)
                 self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)

@@ -126,7 +126,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        // TODO: Use Future Callback
+// TODO: Use Future Callback
 //        guard keyPath != nil else {
 //            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
 //            return

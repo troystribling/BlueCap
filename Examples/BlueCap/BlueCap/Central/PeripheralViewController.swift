@@ -52,14 +52,14 @@ class PeripheralViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = self.peripheral.name
-        self.discoveredAtLabel.text = dateFormatter.stringFromDate(self.peripheral.discoveredAt)
+        self.discoveredAtLabel.text = dateFormatter.string(from: self.peripheral.discoveredAt)
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setConnectionStateLabel()
-        self.peripheralConnected = (self.peripheral.state == .Connected)
+        self.peripheralConnected = (self.peripheral.state == .connected)
         self.discoverPeripheral()
         self.setConnectionStateLabel()
         self.toggleRSSIUpdates()
@@ -101,33 +101,35 @@ class PeripheralViewController : UITableViewController {
     }
 
     func willResignActive() {
-        self.navigationController?.popToRootViewController(animated: false)
+        _ = self.navigationController?.popToRootViewController(animated: false)
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        guard keyPath != nil else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        switch (keyPath!, context) {
-        case("state", PeripheralViewController.BCPeripheralStateKVOContext):
-            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-                DispatchQueue.main.async {
-                    self.peripheralConnected = (newState == .connected)
-                    self.setConnectionStateLabel()
-                    self.toggleRSSIUpdates()
-                    self.discoverPeripheral()
-                    self.updatePeripheralProperties()
-                }
-            }
-        default:
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
+// TODO: Use Future Callback
+//
+//        guard keyPath != nil else {
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//            return
+//        }
+//        switch (keyPath!, context) {
+//        case("state", PeripheralViewController.BCPeripheralStateKVOContext):
+//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
+//                DispatchQueue.main.async {
+//                    self.peripheralConnected = (newState == .connected)
+//                    self.setConnectionStateLabel()
+//                    self.toggleRSSIUpdates()
+//                    self.discoverPeripheral()
+//                    self.updatePeripheralProperties()
+//                }
+//            }
+//        default:
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//        }
     }
 
     func updatePeripheralProperties() {
         if let connectedAt = self.peripheral.connectedAt {
-            self.connectedAtLabel.text = dateFormatter.stringFromDate(connectedAt)
+            self.connectedAtLabel.text = dateFormatter.string(from: connectedAt)
         }
         self.rssiLabel.text = "\(self.peripheral.RSSI)"
         self.connectionsLabel.text = "\(self.peripheral.connectionCount)"
@@ -157,19 +159,19 @@ class PeripheralViewController : UITableViewController {
         guard self.peripheralConnected && !self.peripheralDiscovered else {
             return
         }
-        let peripheralDiscoveryFuture = self.peripheral.discoverAllPeripheralServices()
+        let peripheralDiscoveryFuture = self.peripheral.discoverAllServices().flatMap { peripheral in
+            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+        }
         self.toggleDiscoveryIndicator()
         peripheralDiscoveryFuture.onSuccess { _ in
             self.peripheralDiscovered = true
             self.setConnectionStateLabel()
         }
         peripheralDiscoveryFuture.onFailure { error in
-            if error.code != BCError.peripheralServiceDiscoveryInProgress.code {
-                self.serviceLabel.textColor = UIColor.lightGrayColor()
-                self.presentViewController(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
-                    self.setConnectionStateLabel()
-                }), animated: true, completion:nil)
-            }
+            self.serviceLabel.textColor = UIColor.lightGray
+            self.present(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
+                self.setConnectionStateLabel()
+            }), animated: true, completion:nil)
         }
     }
 
