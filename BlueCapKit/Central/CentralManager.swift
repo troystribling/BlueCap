@@ -125,7 +125,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     public func disconnectAllPeripherals() {
         centralQueue.sync {
             for peripheral in self._discoveredPeripherals.values {
-                peripheral.disconnect()
+                peripheral.cancelPeripheralConnection()
             }
         }
     }

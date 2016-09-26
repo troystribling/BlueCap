@@ -53,12 +53,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return peripheralQueue.sync { Array(self.configuredCharcteristics.values) }
     }
 
-    public func service(withUUID uuid: CBUUID) -> Service? {
-        return peripheralQueue.sync { return self.configuredServices[uuid] } as? Service
+    public func service(withUUID uuid: CBUUID) -> MutableService? {
+        return peripheralQueue.sync { return self.configuredServices[uuid] }
     }
 
-    public func characteristic(withUUID uuid: CBUUID) -> Characteristic? {
-        return peripheralQueue.sync { return self.configuredCharcteristics[uuid] } as? Characteristic
+    public func characteristic(withUUID uuid: CBUUID) -> MutableCharacteristic? {
+        return peripheralQueue.sync { return self.configuredCharcteristics[uuid] }
     }
 
     // MARK: Initialize

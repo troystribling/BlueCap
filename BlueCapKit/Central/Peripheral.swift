@@ -276,24 +276,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
     
-    public func disconnect() {
-        return centralQueue.sync {
-            guard let central = self.centralManager else {
-                return
-            }
-            self.forcedDisconnect = true
-            self.pollRSSIPromise = nil
-            self.readRSSIPromise = nil
-            if self.state == .connected {
-                Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
-                central.cancelPeripheralConnection(self)
-            } else {
-                Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
-                self.didDisconnectPeripheral(PeripheralError.disconnected)
-            }
-        }
-    }
-    
     public func terminate() {
         guard let central = self.centralManager else {
             return
@@ -302,6 +284,10 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         if self.state == .connected {
             self.disconnect()
         }
+    }
+
+    public func disconnect() {
+        centralQueue.sync { self.cancelPeripheralConnection() }
     }
 
     fileprivate func reconnectIfDisconnected(_ delay: Double = 0.0) {
@@ -325,6 +311,23 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             performConnection()
         }
     }
+
+    func cancelPeripheralConnection() {
+        guard let central = self.centralManager else {
+            return
+        }
+        self.forcedDisconnect = true
+        self.pollRSSIPromise = nil
+        self.readRSSIPromise = nil
+        if self.state == .connected {
+            Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
+            central.cancelPeripheralConnection(self)
+        } else {
+            Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
+            self.didDisconnectPeripheral(PeripheralError.disconnected)
+        }
+    }
+
 
     // MARK: Discover Services
 
