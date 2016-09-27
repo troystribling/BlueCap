@@ -38,11 +38,11 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     public var poweredOn: Bool {
-        return self.cbPeripheralManager.state == .poweredOn
+        return self.cbPeripheralManager.managerState == .poweredOn
     }
 
-    public var state: CBManagerState {
-        return cbPeripheralManager.state
+    public var state: ManagerState {
+        return cbPeripheralManager.managerState
     }
     
     public var services: [MutableService] {

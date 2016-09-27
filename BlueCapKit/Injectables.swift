@@ -9,9 +9,14 @@
 import Foundation
 import CoreBluetooth
 
+// MARK: - ManagerState -
+public enum ManagerState {
+    case unauthorized, unknown, unsupported, resetting, poweredOff, poweredOn
+}
+
 // MARK: - CBCentralManagerInjectable -
-public protocol CBCentralManagerInjectable {
-    var state : CBManagerState { get }
+protocol CBCentralManagerInjectable {
+    var managerState : ManagerState { get }
     var delegate: CBCentralManagerDelegate? { get set }
     func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?)
     func stopScan()
@@ -23,27 +28,44 @@ public protocol CBCentralManagerInjectable {
 
 extension CBCentralManager : CBCentralManagerInjectable {
 
-    public func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
+    var managerState: ManagerState {
+        switch state {
+        case .unauthorized:
+            return .unauthorized
+        case .unknown:
+            return .unknown
+        case .unsupported:
+            return .unsupported
+        case .resetting:
+            return .resetting
+        case .poweredOff:
+            return .poweredOff
+        case .poweredOn:
+            return .poweredOn
+        }
+    }
+
+    func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
         self.connect(peripheral as! CBPeripheral, options: options)
     }
 
-    public func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable) {
+    func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable) {
         self.cancelPeripheralConnection(peripheral as! CBPeripheral)
     }
 
-    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
+    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
         let peripherals = self.retrieveConnectedPeripherals(withServices: serviceUUIDs) as [CBPeripheral]
         return  peripherals.map { $0 as CBPeripheralInjectable }
     }
 
-    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
+    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
         let peripherals = self.retrievePeripherals(withIdentifiers: identifiers) as [CBPeripheral]
         return  peripherals.map { $0 as CBPeripheralInjectable }
     }
 }
 
 // MARK: - CBPeripheralInjectable -
-public protocol CBPeripheralInjectable {
+protocol CBPeripheralInjectable {
     var name: String? { get }
     var state: CBPeripheralState { get }
     var identifier: UUID { get }
@@ -61,23 +83,23 @@ public protocol CBPeripheralInjectable {
 
 extension CBPeripheral : CBPeripheralInjectable {
 
-    public func discoverCharacteristics(_ characteristics:[CBUUID]?, forService service: CBServiceInjectable) {
+    func discoverCharacteristics(_ characteristics:[CBUUID]?, forService service: CBServiceInjectable) {
         self.discoverCharacteristics(characteristics, for: service as! CBService)
     }
 
-    public func setNotifyValue(_ enabled: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
+    func setNotifyValue(_ enabled: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
         self.setNotifyValue(enabled, for: characteristic as! CBCharacteristic)
     }
 
-    public func readValueForCharacteristic(_ characteristic: CBCharacteristicInjectable) {
+    func readValueForCharacteristic(_ characteristic: CBCharacteristicInjectable) {
         self.readValue(for: characteristic as! CBCharacteristic)
     }
 
-    public func writeValue(_ data: Data, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
+    func writeValue(_ data: Data, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
         self.writeValue(data, for: characteristic as! CBCharacteristic, type: type)
     }
 
-    public func getServices() -> [CBServiceInjectable]? {
+    func getServices() -> [CBServiceInjectable]? {
         guard let services = self.services else { return nil }
         return services.map{ $0 as CBServiceInjectable }
     }
@@ -85,20 +107,20 @@ extension CBPeripheral : CBPeripheralInjectable {
 }
 
 // MARK: - CBServiceInjectable -
-public protocol CBServiceInjectable {
+protocol CBServiceInjectable {
     var UUID: CBUUID { get }
     func getCharacteristics() -> [CBCharacteristicInjectable]?
 }
 
 extension CBService : CBServiceInjectable {
-    public func getCharacteristics() -> [CBCharacteristicInjectable]? {
+    func getCharacteristics() -> [CBCharacteristicInjectable]? {
         guard let characteristics = self.characteristics else { return nil }
         return characteristics.map{ $0 as CBCharacteristicInjectable }
     }
 }
 
 // MARK: - CBCharacteristicInjectable -
-public protocol CBCharacteristicInjectable {
+protocol CBCharacteristicInjectable {
     var UUID: CBUUID { get }
     var value: Data? { get }
     var properties: CBCharacteristicProperties { get }
@@ -108,10 +130,10 @@ public protocol CBCharacteristicInjectable {
 extension CBCharacteristic : CBCharacteristicInjectable {}
 
 // MARK: - CBPeripheralManagerInjectable -
-public protocol CBPeripheralManagerInjectable {
+protocol CBPeripheralManagerInjectable {
     var delegate: CBPeripheralManagerDelegate? { get set }
     var isAdvertising: Bool { get }
-    var state: CBManagerState { get }
+    var managerState: ManagerState { get }
     func startAdvertising(_ advertisementData : [String : Any]?)
     func stopAdvertising()
     func add(_ service: CBMutableServiceInjectable)
@@ -123,37 +145,54 @@ public protocol CBPeripheralManagerInjectable {
 
 extension CBPeripheralManager: CBPeripheralManagerInjectable {
 
-    open func add(_ service: CBMutableServiceInjectable) {
+    var managerState: ManagerState {
+        switch state {
+        case .unauthorized:
+            return .unauthorized
+        case .unknown:
+            return .unknown
+        case .unsupported:
+            return .unsupported
+        case .resetting:
+            return .resetting
+        case .poweredOff:
+            return .poweredOff
+        case .poweredOn:
+            return .poweredOn
+        }
+    }
+
+    func add(_ service: CBMutableServiceInjectable) {
         self.add(service as! CBMutableService)
     }
 
-    open func remove(_ service: CBMutableServiceInjectable) {
+    func remove(_ service: CBMutableServiceInjectable) {
         self.remove(service as! CBMutableService)
     }
 
-    open func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
+    func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code) {
         self.respond(to: request as! CBATTRequest, withResult: result)
     }
 
-    open func updateValue(_ value: Data, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool {
+    func updateValue(_ value: Data, forCharacteristic characteristic: CBMutableCharacteristicInjectable, onSubscribedCentrals centrals: [CBCentralInjectable]?) -> Bool {
         return self.updateValue(value, for: characteristic as! CBMutableCharacteristic, onSubscribedCentrals: centrals as! [CBCentral]?)
     }
 
 }
 
 // MARK: - CBMutableServiceInjectable -
-public protocol CBMutableServiceInjectable : CBServiceInjectable {
+protocol CBMutableServiceInjectable : CBServiceInjectable {
     func setCharacteristics(_ characteristics: [CBCharacteristicInjectable]?)
 }
 
 extension CBMutableService : CBMutableServiceInjectable {
-    public func setCharacteristics(_ characteristics: [CBCharacteristicInjectable]?) {
+    func setCharacteristics(_ characteristics: [CBCharacteristicInjectable]?) {
         self.characteristics = characteristics?.map { $0 as! CBCharacteristic }
     }
 }
 
 // MARK: - CBMutableCharacteristicInjectable -
-public protocol CBMutableCharacteristicInjectable : CBCharacteristicInjectable {
+protocol CBMutableCharacteristicInjectable : CBCharacteristicInjectable {
     var permissions: CBAttributePermissions { get }
 }
 
@@ -161,20 +200,20 @@ extension CBMutableCharacteristic : CBMutableCharacteristicInjectable {}
 
 
 // MARK: - CBATTRequestInjectable -
-public protocol CBATTRequestInjectable {
+protocol CBATTRequestInjectable {
     var offset: Int { get }
     var value: Data? { get set }
     func getCharacteristic() -> CBCharacteristicInjectable
 }
 
 extension CBATTRequest: CBATTRequestInjectable {
-    public func getCharacteristic() -> CBCharacteristicInjectable {
+    func getCharacteristic() -> CBCharacteristicInjectable {
         return self.characteristic
     }
 }
 
 // MARK: - CBCentralInjectable -
-public protocol CBCentralInjectable {
+protocol CBCentralInjectable {
     var identifier: UUID { get }
     var maximumUpdateValueLength: Int { get }
 }

@@ -14,8 +14,7 @@ import CoreBluetooth
 public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Properties
-    fileprivate var afterPoweredOnPromise: Promise<Void>?
-    fileprivate var afterPoweredOffPromise: Promise<Void>?
+    fileprivate let afterStateChangedPromise = StreamPromise<ManagerState>()
     fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral>?
     fileprivate var afterStateRestoredPromise: Promise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>?
 
@@ -51,11 +50,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public var poweredOn: Bool {
-        return self.cbCentralManager.state == .poweredOn
+        return self.cbCentralManager.managerState == .poweredOn
     }
 
-    public var state: CBManagerState {
-        return cbCentralManager.state
+    public var state: ManagerState {
+        return cbCentralManager.managerState
     }
 
     // MARK: Initializers
@@ -73,7 +72,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
     }
 
-    public init(centralManager: CBCentralManagerInjectable, profileManager: ProfileManager? = nil) {
+    init(centralManager: CBCentralManagerInjectable, profileManager: ProfileManager? = nil) {
         self.centralQueue = Queue("us.gnos.blueCap.central-manger.main")
         self.profileManager = profileManager
         super.init()
@@ -86,29 +85,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Power ON/OFF
 
-    public func whenPoweredOn() -> Future<Void> {
+    public func whenStateChanged(capacity: Int = Int.max) -> FutureStream<ManagerState> {
         return self.centralQueue.sync {
-            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
-                return afterPoweredOnPromise.future
-            }
-            self.afterPoweredOnPromise = Promise<Void>()
-            if self.poweredOn {
-                self.afterPoweredOnPromise!.success()
-            }
-            return self.afterPoweredOnPromise!.future
-        }
-    }
-
-    public func whenPoweredOff() -> Future<Void> {
-        return self.centralQueue.sync {
-            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
-                return afterPoweredOffPromise.future
-            }
-            self.afterPoweredOffPromise = Promise<Void>()
-            if !self.poweredOn {
-                self.afterPoweredOffPromise!.success()
-            }
-            return self.afterPoweredOffPromise!.future
+            return self.afterStateChangedPromise.stream
         }
     }
 
@@ -340,29 +319,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     internal func didUpdateState(_ centralManager: CBCentralManagerInjectable) {
-        switch(centralManager.state) {
-        case .unauthorized:
-            break
-        case .unknown:
-            break
-        case .unsupported:
-            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
-                afterPoweredOnPromise.failure(CentralManagerError.unsupported)
-            }
-            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
-                afterPoweredOffPromise.failure(CentralManagerError.unsupported)
-            }
-        case .resetting:
-            break
-        case .poweredOff:
-            if let afterPoweredOffPromise = self.afterPoweredOffPromise, !afterPoweredOffPromise.completed {
-                afterPoweredOffPromise.success()
-            }
-        case .poweredOn:
-            if let afterPoweredOnPromise = self.afterPoweredOnPromise, !afterPoweredOnPromise.completed {
-                afterPoweredOnPromise.success()
-            }
-        }
+        afterStateChangedPromise.success(centralManager.state)
     }
     
 }
