@@ -23,49 +23,34 @@ class CentralManagerTests: XCTestCase {
     }
 
     // MARK: whenPowerOn
-    func testWhenPoweredOn_AndPoweredOn_CompletesSuccessfully() {
+    func testWhenStateChanges_AndPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
-        let future = centralManager.whenPoweredOn()
-        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
+        let stream = centralManager.whenStateChanges()
+        XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
+            { state in
+            }
+        ])
     }
 
-    func testWhenPoweredOn_AndPoweredOff_CompletesSuccessfully() {
+    func testWhenStateChanges_AndPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: mock)
-        let future = centralManager.whenPoweredOn()
+        let stream = centralManager.whenStateChanges()
         mock.state = .poweredOn
         centralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
+        XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
+            { state in
+            }
+        ])
     }
 
-    func testWhenPoweredOn_WithBluetoothUnsupported_CompletesWithFailure() {
-        let mock = CBCentralManagerMock(state: .poweredOff)
-        let centralManager = CentralManager(centralManager: mock)
-        let future = centralManager.whenPoweredOn()
-        mock.state = .unsupported
-        centralManager.didUpdateState(mock)
-        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
-            XCTAssertEqualErrors(error, CentralManagerError.unsupported)
-        }
-    }
-
-    func testWhenPoweredOn_WhilePreviousRequestUncompleted_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .poweredOff)
-        let centralManager = CentralManager(centralManager: mock)
-        let future1 = centralManager.whenPoweredOn()
-        let future2 = centralManager.whenPoweredOn()
-        mock.state = .poweredOn
-        centralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future1, context: TestContext.immediate)
-        XCTAssertFutureSucceeds(future2, context: TestContext.immediate)
-    }
 
     // MARK: whenPowerOff
     func testWhenPoweredOff_AndPoweredOn_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
-        let future = centralManager.whenPoweredOff()
+        let stream = centralManager.whenStateChanged()
         mock.state = .poweredOff
         centralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate)
@@ -74,40 +59,19 @@ class CentralManagerTests: XCTestCase {
     func testWhenPoweredOff_AndPoweredOff_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: mock)
-        let future = centralManager.whenPoweredOff()
+        let stream = centralManager.whenStateChanged()
         XCTAssertFutureSucceeds(future, context: TestContext.immediate)
     }
 
-    func testWhenPoweredOff_WithBluetoothUnsupported_CompletesWithFailure() {
-        let mock = CBCentralManagerMock(state: .poweredOn)
-        let centralManager = CentralManager(centralManager: mock)
-        let future = centralManager.whenPoweredOff()
-        mock.state = .unsupported
-        centralManager.didUpdateState(mock)
-        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
-            XCTAssertEqualErrors(error, CentralManagerError.unsupported)
-        }
-    }
-
-    func testWhenPoweredOff_WhilePreviousRequestUncompleted_CompletesWithFailure() {
-        let mock = CBCentralManagerMock(state: .poweredOn)
-        let centralManager = CentralManager(centralManager: mock)
-        let future1 = centralManager.whenPoweredOff()
-        let future2 = centralManager.whenPoweredOff()
-        mock.state = .poweredOff
-        centralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future1, context: TestContext.immediate)
-        XCTAssertFutureSucceeds(future2, context: TestContext.immediate)
-    }
 
     // MARK: Peripheral discovery
     func testStartScanning_WhenPoweredOnAndPeripheralDiscovered_CompletesSuccessfully() {
         let centralMock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: centralMock)
         let peripheralMock = CBPeripheralMock()
-        let future = centralManager.startScanning()
+        let stream = centralManager.startScanning()
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(value: -45))
-        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
+        XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
             { _ in
                 XCTAssert(centralMock.scanForPeripheralsWithServicesCalled)
                 if let peripheral = centralManager.peripherals.first, centralManager.peripherals.count == 1 {

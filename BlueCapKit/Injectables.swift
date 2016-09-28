@@ -120,7 +120,7 @@ extension CBService : CBServiceInjectable {
 }
 
 // MARK: - CBCharacteristicInjectable -
-protocol CBCharacteristicInjectable {
+public protocol CBCharacteristicInjectable {
     var UUID: CBUUID { get }
     var value: Data? { get }
     var properties: CBCharacteristicProperties { get }
@@ -200,20 +200,20 @@ extension CBMutableCharacteristic : CBMutableCharacteristicInjectable {}
 
 
 // MARK: - CBATTRequestInjectable -
-protocol CBATTRequestInjectable {
+public protocol CBATTRequestInjectable {
     var offset: Int { get }
     var value: Data? { get set }
     func getCharacteristic() -> CBCharacteristicInjectable
 }
 
 extension CBATTRequest: CBATTRequestInjectable {
-    func getCharacteristic() -> CBCharacteristicInjectable {
+    public func getCharacteristic() -> CBCharacteristicInjectable {
         return self.characteristic
     }
 }
 
 // MARK: - CBCentralInjectable -
-protocol CBCentralInjectable {
+public protocol CBCentralInjectable {
     var identifier: UUID { get }
     var maximumUpdateValueLength: Int { get }
 }

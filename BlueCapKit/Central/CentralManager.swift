@@ -85,7 +85,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Power ON/OFF
 
-    public func whenStateChanged(capacity: Int = Int.max) -> FutureStream<ManagerState> {
+    public func whenStateChanges() -> FutureStream<ManagerState> {
         return self.centralQueue.sync {
             return self.afterStateChangedPromise.stream
         }
@@ -255,21 +255,21 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: CBCentralManagerDelegate Shims
     
-    internal func didConnectPeripheral(_ peripheral: CBPeripheralInjectable) {
+    func didConnectPeripheral(_ peripheral: CBPeripheralInjectable) {
         Logger.debug("uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name)")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
-    internal func didDisconnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
+    func didDisconnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
         Logger.debug("uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name), error=\(error)")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral(error)
         }
     }
     
-    internal func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
+    func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
         guard _discoveredPeripherals[peripheral.identifier] == nil else {
             return
         }
@@ -279,7 +279,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         afterPeripheralDiscoveredPromise?.success(bcPeripheral)
     }
     
-    internal func didFailToConnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
+    func didFailToConnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
         Logger.debug()
         guard let bcPeripheral = _discoveredPeripherals[peripheral.identifier] else {
             return
@@ -287,7 +287,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         bcPeripheral.didFailToConnectPeripheral(error)
     }
 
-    internal func willRestoreState(_ cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
+    func willRestoreState(_ cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
         Logger.debug()
         if let cbPeripherals = cbPeripherals, let scannedServices = scannedServices, let options = options {
             let peripherals = cbPeripherals.map { cbPeripheral -> Peripheral in
@@ -318,8 +318,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
     }
 
-    internal func didUpdateState(_ centralManager: CBCentralManagerInjectable) {
-        afterStateChangedPromise.success(centralManager.state)
+    func didUpdateState(_ centralManager: CBCentralManagerInjectable) {
+        afterStateChangedPromise.success(centralManager.managerState)
     }
     
 }

@@ -32,43 +32,23 @@ class PeripheralManagerTests: XCTestCase {
 
     func testWhenPoweredOn_WhenPoweredOn_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let future = peripheralManager.whenPoweredOn()
+        let stream = peripheralManager.whenStateChanged()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
     func testWhenPoweredOn_WhenInitiallyPoweredOff_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future = peripheralManager.whenPoweredOn()
+        let stream = peripheralManager.whenStateChanged()
         mock.state = .poweredOn
         peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
-    }
-
-    func testWhenPoweredOn_WithBluetoothUnsupported_CompletesWithFailure() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future = peripheralManager.whenPoweredOn()
-        mock.state = .unsupported
-        peripheralManager.didUpdateState(mock)
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqualErrors(error, PeripheralManagerError.unsupported)
-        }
-    }
-
-    func testWhenPoweredOn_WhilePreviousRequestUncompleted_CompletesSuccessfully() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future1 = peripheralManager.whenPoweredOn()
-        let future2 = peripheralManager.whenPoweredOn()
-        mock.state = .poweredOn
-        peripheralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future1, context: TestContext.immediate)
-        XCTAssertFutureSucceeds(future2, context: TestContext.immediate)
     }
 
     // MARK: Power off
 
     func testWhenPoweredOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let future = peripheralManager.whenPoweredOff()
+        let stream = peripheralManager.whenStateChanged()
         mock.state = .poweredOff
         peripheralManager.didUpdateState(mock)
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
@@ -76,29 +56,10 @@ class PeripheralManagerTests: XCTestCase {
 
     func testWhenPoweredOff_WhenPoweredOff_CompletesSuccessfully() {
         let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future = peripheralManager.whenPoweredOff()
+        let stream = peripheralManager.whenStateChanged()
         XCTAssertFutureSucceeds(future, context: self.immediateContext)
     }
 
-    func testWhenPoweredOff_WithBluetoothUnsupported_CompletesWithFailure() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let future = peripheralManager.whenPoweredOff()
-        mock.state = .unsupported
-        peripheralManager.didUpdateState(mock)
-        XCTAssertFutureFails(future, context: self.immediateContext) { error in
-            XCTAssertEqualErrors(error, PeripheralManagerError.unsupported)
-        }
-    }
-
-    func testWhenPoweredOff_WhilePreviousRequestUncompleted_CompletesWithFailure() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let future1 = peripheralManager.whenPoweredOff()
-        let future2 = peripheralManager.whenPoweredOff()
-        mock.state = .poweredOff
-        peripheralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future1, context: TestContext.immediate)
-        XCTAssertFutureSucceeds(future2, context: TestContext.immediate)
-    }
 
     // MARK: Start advertising
 
