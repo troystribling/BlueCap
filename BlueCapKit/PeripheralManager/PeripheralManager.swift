@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - PeripheralManager -
-@available(iOS 10, *)
+
 public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     fileprivate let WAIT_FOR_ADVERTISING_TO_STOP_POLLING_INTERVAL   = 0.25

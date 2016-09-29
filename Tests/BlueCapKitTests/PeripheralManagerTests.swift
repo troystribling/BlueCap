@@ -13,6 +13,7 @@ import CoreLocation
 @testable import BlueCapKit
 
 // MARK: - PeripheralManagerTests -
+
 class PeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
@@ -28,36 +29,18 @@ class PeripheralManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: Power on
+    // MARK: whenStateChanges
 
-    func testWhenPoweredOn_WhenPoweredOn_CompletesSuccessfully() {
-        let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let stream = peripheralManager.whenStateChanged()
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
-    }
-
-    func testWhenPoweredOn_WhenInitiallyPoweredOff_CompletesSuccessfully() {
+    func testWhenStateChangesOnStateChange_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let stream = peripheralManager.whenStateChanged()
+        let stream = peripheralManager.whenStateChanges()
         mock.state = .poweredOn
         peripheralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
-    }
-
-    // MARK: Power off
-
-    func testWhenPoweredOff_WhenInitiallyPoweredOn_CompletesSuccessfully() {
-        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let stream = peripheralManager.whenStateChanged()
-        mock.state = .poweredOff
-        peripheralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
-    }
-
-    func testWhenPoweredOff_WhenPoweredOff_CompletesSuccessfully() {
-        let (_, peripheralManager) = createPeripheralManager(false, state: .poweredOff)
-        let stream = peripheralManager.whenStateChanged()
-        XCTAssertFutureSucceeds(future, context: self.immediateContext)
+        XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
+            { state in
+                XCTAssertEqual(state, .poweredOn)
+            }
+        ])
     }
 
 

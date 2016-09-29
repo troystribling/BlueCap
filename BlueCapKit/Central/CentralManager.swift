@@ -10,10 +10,11 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - CentralManager -
-@available(iOS 10, *)
+
 public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Properties
+
     fileprivate let afterStateChangedPromise = StreamPromise<ManagerState>()
     fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral>?
     fileprivate var afterStateRestoredPromise: Promise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>?
@@ -58,6 +59,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     // MARK: Initializers
+    
     public init(profileManager: ProfileManager? = nil, options: [String:AnyObject]? = nil) {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         self.profileManager = profileManager

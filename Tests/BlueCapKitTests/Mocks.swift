@@ -12,26 +12,33 @@ import CoreLocation
 @testable import BlueCapKit
 
 // MARK: - Advertisements -
+
 let peripheralAdvertisements: [String : Any] = [CBAdvertisementDataLocalNameKey : "Test Peripheral", CBAdvertisementDataTxPowerLevelKey : NSNumber(value: -45)]
 
 // MARK: - ProfileManager -
+
 let profileManager = ProfileManager()
 
 // MARK: - CBCentralManagerMock -
+
 class CBCentralManagerMock: CBCentralManagerInjectable {
 
     var connectPeripheralCalled     = false
     var cancelPeripheralConnection  = false
     var scanForPeripheralsWithServicesCalled = false
 
-    var state: CBManagerState
+    var state: ManagerState
     var stopScanCalled = false
     var delegate: CBCentralManagerDelegate?
 
-    init(state: CBManagerState = .poweredOn) {
+    init(state: ManagerState = .poweredOn) {
         self.state = state
     }
-    
+
+    var managerState: ManagerState {
+        return state
+    }
+
     func scanForPeripherals(withServices uuids: [CBUUID]?, options:[String : Any]?) {
         self.scanForPeripheralsWithServicesCalled = true
     }
@@ -59,6 +66,7 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
 }
 
 // MARK: - CentralManagerUT -
+
 class CentralManagerUT: CentralManager {
 
     override init(centralManager: CBCentralManagerInjectable, profileManager: ProfileManager? = nil) {
@@ -71,6 +79,7 @@ class CentralManagerUT: CentralManager {
 }
 
 // MARK: - CBPeripheralMock -
+
 class CBPeripheralMock: CBPeripheralInjectable {
    
     var state: CBPeripheralState
@@ -165,6 +174,7 @@ class CBPeripheralMock: CBPeripheralInjectable {
 }
 
 // MARK: - PeripheralUT -
+
 class PeripheralUT: Peripheral {
     
     let error: Error?
@@ -177,6 +187,7 @@ class PeripheralUT: Peripheral {
 }
 
 // MARK: - CBServiceMock -
+
 class CBServiceMock: CBServiceInjectable {
 
     var UUID: CBUUID
@@ -194,6 +205,7 @@ class CBServiceMock: CBServiceInjectable {
 }
 
 // MARK: - CBCharacteristicMock -
+
 class CBCharacteristicMock: CBCharacteristicInjectable {
     
     var UUID: CBUUID
@@ -210,6 +222,7 @@ class CBCharacteristicMock: CBCharacteristicInjectable {
 }
 
 // MARK: - CBPeripheralManagerMock -
+
 class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
 
     var services: [CBServiceMock]?
@@ -226,7 +239,7 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
 
     var advertisementData: [String : Any]?
     var isAdvertising : Bool
-    var state: CBManagerState
+    var state: ManagerState
     var addedService: CBMutableServiceInjectable?
     var removedService: CBMutableServiceInjectable?
     var delegate: CBPeripheralManagerDelegate?
@@ -235,11 +248,15 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var addServiceCount = 0
     var updateValueCount = 0
 
-    init(isAdvertising: Bool, state: CBManagerState) {
+    init(isAdvertising: Bool, state: ManagerState) {
         self.isAdvertising = isAdvertising
         self.state = state
     }
-    
+
+    var managerState: ManagerState {
+        return state
+    }
+
     func startAdvertising(_ advertisementData: [String : Any]?) {
         self.startAdvertisingCalled = true
         self.advertisementData = advertisementData
@@ -346,7 +363,7 @@ class CBCentralMock : CBCentralInjectable {
 }
 
 // MARK: - Utilities -
-func createPeripheralManager(_ isAdvertising: Bool, state: CBManagerState) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
+func createPeripheralManager(_ isAdvertising: Bool, state: ManagerState) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
     let mock = CBPeripheralManagerMock(isAdvertising: isAdvertising, state: state)
     return (mock, PeripheralManagerUT(peripheralManager:mock))
 }

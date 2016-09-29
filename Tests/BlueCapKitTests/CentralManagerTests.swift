@@ -12,6 +12,7 @@ import CoreBluetooth
 @testable import BlueCapKit
 
 // MARK - CentralManagerTests -
+
 class CentralManagerTests: XCTestCase {
 
     override func setUp() {
@@ -22,18 +23,9 @@ class CentralManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: whenPowerOn
-    func testWhenStateChanges_AndPoweredOn_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .poweredOn)
-        let centralManager = CentralManager(centralManager: mock)
-        let stream = centralManager.whenStateChanges()
-        XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
-            { state in
-            }
-        ])
-    }
+    // MARK: whenStateChanges
 
-    func testWhenStateChanges_AndPoweredOff_CompletesSuccessfully() {
+    func testWhenStateChangesOnStateChange_CompletesSuccessfully() {
         let mock = CBCentralManagerMock(state: .poweredOff)
         let centralManager = CentralManager(centralManager: mock)
         let stream = centralManager.whenStateChanges()
@@ -41,30 +33,13 @@ class CentralManagerTests: XCTestCase {
         centralManager.didUpdateState(mock)
         XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
             { state in
+                XCTAssertEqual(state, .poweredOn)
             }
         ])
     }
 
-
-    // MARK: whenPowerOff
-    func testWhenPoweredOff_AndPoweredOn_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .poweredOn)
-        let centralManager = CentralManager(centralManager: mock)
-        let stream = centralManager.whenStateChanged()
-        mock.state = .poweredOff
-        centralManager.didUpdateState(mock)
-        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
-    }
-
-    func testWhenPoweredOff_AndPoweredOff_CompletesSuccessfully() {
-        let mock = CBCentralManagerMock(state: .poweredOff)
-        let centralManager = CentralManager(centralManager: mock)
-        let stream = centralManager.whenStateChanged()
-        XCTAssertFutureSucceeds(future, context: TestContext.immediate)
-    }
-
-
     // MARK: Peripheral discovery
+
     func testStartScanning_WhenPoweredOnAndPeripheralDiscovered_CompletesSuccessfully() {
         let centralMock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: centralMock)
@@ -122,6 +97,7 @@ class CentralManagerTests: XCTestCase {
     }
 
     // MARK: State Restoration
+
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let mock = CBCentralManagerMock()
         let centralManager = CentralManager(centralManager: mock)
