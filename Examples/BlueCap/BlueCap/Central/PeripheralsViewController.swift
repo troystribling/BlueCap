@@ -104,10 +104,23 @@ class PeripheralsViewController : UITableViewController {
                 self.stopScanning()
             } else {
                 Logger.debug("Scan toggled on")
-                Singletons.centralManager.whenPoweredOn().onSuccess {
-                    self.startScan()
-                    self.setScanButton()
-                    self.updatePeripheralConnectionsIfNeeded()
+                Singletons.centralManager.whenStateChanges().onSuccess { state in
+                    switch state {
+                    case .poweredOn:
+                        self.startScan()
+                        self.setScanButton()
+                        self.updatePeripheralConnectionsIfNeeded()
+                    case .poweredOff:
+                        break
+                    case .resetting:
+                        break
+                    case .unauthorized:
+                        break
+                    case .unknown:
+                        break
+                    case .unsupported:
+                        break
+                    }
                 }
             }
         } else {

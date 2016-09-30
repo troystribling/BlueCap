@@ -47,8 +47,21 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             } else {
                 self.advertisedBeaconLabel.text = "None"
             }
-            Singletons.peripheralManager.whenPoweredOn().onSuccess {
-                self.setPeripheralManagerServices()
+            Singletons.peripheralManager.whenStateChanges().onSuccess { state in
+                switch state {
+                case .poweredOn:
+                    self.setPeripheralManagerServices()
+                case .poweredOff:
+                    break
+                case .resetting:
+                    break
+                case .unauthorized:
+                    break
+                case .unknown:
+                    break
+                case .unsupported:
+                    break
+                }
             }
             self.setUIState()
         }
