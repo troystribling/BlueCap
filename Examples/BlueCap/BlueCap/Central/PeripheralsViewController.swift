@@ -58,14 +58,26 @@ class PeripheralsViewController : UITableViewController {
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
         self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
         self.styleUIBarButton(self.startScanBarButtonItem)
+        Singletons.centralManager.whenStateChanges().onSuccess { [weak self] state in
+            switch state {
+            case .poweredOn:
+                break
+            default:
+                if let strongSelf = self, strongSelf.scanStatus {
+                    strongSelf.stopScanning()
+                    strongSelf.present(UIAlertController.alertWithMessage("Bluetooth disabled."), animated:true, completion:nil)
+                }
+                break
+            }
+        }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.styleNavigationBar()
         self.setScanButton()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.shouldUpdatePeripheralConnectionStatus = true
@@ -98,33 +110,22 @@ class PeripheralsViewController : UITableViewController {
     
     // actions
     func toggleScan(_ sender: AnyObject) {
-        if !Singletons.beaconManager.isMonitoring {
-            if self.scanStatus {
-                Logger.debug("Scan toggled off")
-                self.stopScanning()
-            } else {
-                Logger.debug("Scan toggled on")
-                Singletons.centralManager.whenStateChanges().onSuccess { state in
-                    switch state {
-                    case .poweredOn:
-                        self.startScan()
-                        self.setScanButton()
-                        self.updatePeripheralConnectionsIfNeeded()
-                    case .poweredOff:
-                        break
-                    case .resetting:
-                        break
-                    case .unauthorized:
-                        break
-                    case .unknown:
-                        break
-                    case .unsupported:
-                        break
-                    }
-                }
-            }
-        } else {
+        guard !Singletons.beaconManager.isMonitoring else {
             self.present(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
+            return
+        }
+        guard Singletons.centralManager.poweredOn else {
+            self.present(UIAlertController.alertWithMessage("Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
+            return
+        }
+        if self.scanStatus {
+            Logger.debug("Scan toggled off")
+            self.stopScanning()
+        } else {
+            Logger.debug("Scan toggled on")
+            self.startScan()
+            self.setScanButton()
+            self.updatePeripheralConnectionsIfNeeded()
         }
     }
 
@@ -187,11 +188,11 @@ class PeripheralsViewController : UITableViewController {
         guard self.shouldUpdatePeripheralConnectionStatus && self.scanStatus else {
             return
         }
-        Queue.main.delay(Params.updateConnectionsInterval) { [unowned self] in
+        Queue.main.delay(Params.updateConnectionsInterval) { [weak self] in
             Logger.debug("update connections triggered")
-            self.updatePeripheralConnections()
-            self.updateWhenActive()
-            self.updatePeripheralConnectionsIfNeeded()
+            self?.updatePeripheralConnections()
+            self?.updateWhenActive()
+            self?.updatePeripheralConnectionsIfNeeded()
         }
     }
 
@@ -204,7 +205,7 @@ class PeripheralsViewController : UITableViewController {
 
     func startPolllingRSSIForPeripherals() {
         for peripheral in Singletons.centralManager.peripherals {
-            guard let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] , connectionStatus else {
+            guard let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier], connectionStatus else {
                 continue
             }
             self.startPollingRSSIForPeripheral(peripheral)
@@ -223,43 +224,43 @@ class PeripheralsViewController : UITableViewController {
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
-        connectionFuture.onSuccess { (peripheral, connectionEvent) in
+        connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
             switch connectionEvent {
             case .connect:
                 Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 Notification.send("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                self.startPollingRSSIForPeripheral(peripheral)
-                self.peripheralConnectionStatus[peripheral.identifier] = true
-                self.updateWhenActive()
+                self?.startPollingRSSIForPeripheral(peripheral)
+                self?.peripheralConnectionStatus[peripheral.identifier] = true
+                self?.updateWhenActive()
             case .timeout:
                 Logger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 peripheral.stopPollingRSSI()
-                self.reconnectIfNecessary(peripheral)
-                self.updateWhenActive()
+                self?.reconnectIfNecessary(peripheral)
+                self?.updateWhenActive()
             case .disconnect:
                 Logger.debug("Disconnected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 Notification.send("Disconnected peripheral: '\(peripheral.name)'")
                 peripheral.stopPollingRSSI()
-                self.reconnectIfNecessary(peripheral)
-                self.updateWhenActive()
+                self?.reconnectIfNecessary(peripheral)
+                self?.updateWhenActive()
             case .forceDisconnect:
                 Logger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 Notification.send("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.uuidString)'")
-                self.reconnectIfNecessary(peripheral)
-                self.updateWhenActive()
+                self?.reconnectIfNecessary(peripheral)
+                self?.updateWhenActive()
             case .giveUp:
                 Logger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 peripheral.stopPollingRSSI()
-                self.peripheralConnectionStatus.removeValue(forKey: peripheral.identifier)
+                _ = self?.peripheralConnectionStatus.removeValue(forKey: peripheral.identifier)
                 peripheral.terminate()
-                self.startScan()
-                self.updateWhenActive()
+                self?.startScan()
+                self?.updateWhenActive()
             }
         }
-        connectionFuture.onFailure { error in
+        connectionFuture.onFailure { [weak self] error in
             peripheral.stopPollingRSSI()
-            self.reconnectIfNecessary(peripheral)
-            self.updateWhenActive()
+            self?.reconnectIfNecessary(peripheral)
+            self?.updateWhenActive()
         }
     }
 
