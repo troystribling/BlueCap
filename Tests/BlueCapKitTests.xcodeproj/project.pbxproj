@@ -275,7 +275,7 @@
 				<string>05BF91EA1CFC997F00B78B12</string>
 				<string>05F0EBF71CF7E96D00468FC9</string>
 				<string>05BF91B31CFBFD8A00B78B12</string>
-				<string>F136C247546145780B3BF940</string>
+				<string>AD1555F3BC3C44777DDB5ADC</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -426,7 +426,7 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>DE223FB19B65FEDDAAF472D1</string>
+				<string>2EB97961B5A8E79224E90F5B</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -450,12 +450,12 @@
 			<string>05F0EC0D1CF7E96D00468FC9</string>
 			<key>buildPhases</key>
 			<array>
-				<string>B46373A4AE7DFB801B430BC9</string>
+				<string>906517A14ED01DAA47FEAF94</string>
 				<string>05F0EBFC1CF7E96D00468FC9</string>
 				<string>05F0EBFD1CF7E96D00468FC9</string>
 				<string>05F0EBFE1CF7E96D00468FC9</string>
-				<string>DA26CEBAE8840DCDC9568DBB</string>
-				<string>2E70916AE959F0D475F35EDB</string>
+				<string>D1B208CD2654BE9FDE69C3DF</string>
+				<string>A0B1BEF920823B637EB2043E</string>
 			</array>
 			<key>buildRules</key>
 			<array/>
@@ -687,7 +687,7 @@
 		<key>05F0EC0E1CF7E96D00468FC9</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>863285FDA995DCADE88D4FE9</string>
+			<string>8100934EFCF397AAA9F7078D</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES</key>
@@ -719,7 +719,7 @@
 		<key>05F0EC0F1CF7E96D00468FC9</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>1486C44853A105ED48DE9D84</string>
+			<string>CEC1E35B8F594A0164054F1C</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES</key>
@@ -1041,27 +1041,12 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>1486C44853A105ED48DE9D84</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-BlueCapKitTests.release.xcconfig</string>
-			<key>path</key>
-			<string>Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.release.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>15FEEBF3DE438E42FA0ED909</key>
 		<dict>
 			<key>children</key>
 			<array>
 				<string>05F0EC401CF8162900468FC9</string>
-				<string>62BE208162CEF94EFCD4C66F</string>
+				<string>E073123720778088EE9FCF56</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -1070,44 +1055,14 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>2E70916AE959F0D475F35EDB</key>
+		<key>2EB97961B5A8E79224E90F5B</key>
 		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>inputPaths</key>
-			<array/>
+			<key>fileRef</key>
+			<string>E073123720778088EE9FCF56</string>
 			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
-			<key>name</key>
-			<string>&#128230; Copy Pods Resources</string>
-			<key>outputPaths</key>
-			<array/>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-resources.sh"
-</string>
-			<key>showEnvVarsInLog</key>
-			<string>0</string>
+			<string>PBXBuildFile</string>
 		</dict>
-		<key>62BE208162CEF94EFCD4C66F</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.framework</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>Pods_BlueCapKitTests.framework</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>863285FDA995DCADE88D4FE9</key>
+		<key>8100934EFCF397AAA9F7078D</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1122,7 +1077,7 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>B46373A4AE7DFB801B430BC9</key>
+		<key>906517A14ED01DAA47FEAF94</key>
 		<dict>
 			<key>buildActionMask</key>
 			<string>2147483647</string>
@@ -1152,7 +1107,60 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 		</dict>
-		<key>DA26CEBAE8840DCDC9568DBB</key>
+		<key>A0B1BEF920823B637EB2043E</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>&#128230; Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>AD1555F3BC3C44777DDB5ADC</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8100934EFCF397AAA9F7078D</string>
+				<string>CEC1E35B8F594A0164054F1C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Pods</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CEC1E35B8F594A0164054F1C</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-BlueCapKitTests.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-BlueCapKitTests/Pods-BlueCapKitTests.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>D1B208CD2654BE9FDE69C3DF</key>
 		<dict>
 			<key>buildActionMask</key>
 			<string>2147483647</string>
@@ -1176,26 +1184,18 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 		</dict>
-		<key>DE223FB19B65FEDDAAF472D1</key>
+		<key>E073123720778088EE9FCF56</key>
 		<dict>
-			<key>fileRef</key>
-			<string>62BE208162CEF94EFCD4C66F</string>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
 			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>F136C247546145780B3BF940</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>863285FDA995DCADE88D4FE9</string>
-				<string>1486C44853A105ED48DE9D84</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Pods</string>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_BlueCapKitTests.framework</string>
 			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
+			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
 	</dict>
 	<key>rootObject</key>
