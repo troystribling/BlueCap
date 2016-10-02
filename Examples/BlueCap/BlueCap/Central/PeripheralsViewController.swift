@@ -16,8 +16,7 @@ class PeripheralsViewController : UITableViewController {
     var startScanBarButtonItem: UIBarButtonItem!
 
     var scanStatus = false
-    var shouldUpdatePeripheralConnectionStatus = false
-    var peripheralConnectionStatus = [UUID : Bool]()
+    var shouldUpdateTable = false
     var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
 
     var reachedDiscoveryLimit: Bool {
@@ -59,15 +58,15 @@ class PeripheralsViewController : UITableViewController {
         self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
         self.styleUIBarButton(self.startScanBarButtonItem)
         Singletons.centralManager.whenStateChanges().onSuccess { [weak self] state in
-            switch state {
-            case .poweredOn:
-                break
-            default:
-                if let strongSelf = self, strongSelf.scanStatus {
+            self.forEach { strongSelf in
+                Logger.debug("CentralManager state changed: \(state.stringValue)")
+                switch state {
+                case .poweredOn:
+                    break
+                default:
                     strongSelf.stopScanning()
-                    strongSelf.present(UIAlertController.alertWithMessage("Bluetooth disabled."), animated:true, completion:nil)
+                    strongSelf.present(UIAlertController.alertWithMessage("CentralManager state \"\(state.stringValue)\""), animated:true, completion:nil)
                 }
-                break
             }
         }
     }
@@ -80,8 +79,8 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.shouldUpdatePeripheralConnectionStatus = true
-        self.updatePeripheralConnectionsIfNeeded()
+        self.shouldUpdateTable = true
+        self.updateTableIfNeeded()
         self.startPolllingRSSIForPeripherals()
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
@@ -90,7 +89,7 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.shouldUpdatePeripheralConnectionStatus = false
+        self.shouldUpdateTable = false
         self.stopPollingRSSIForPeripherals()
         NotificationCenter.default.removeObserver(self)
     }
@@ -125,7 +124,7 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("Scan toggled on")
             self.startScan()
             self.setScanButton()
-            self.updatePeripheralConnectionsIfNeeded()
+            self.updateTableIfNeeded()
         }
     }
 
@@ -137,7 +136,6 @@ class PeripheralsViewController : UITableViewController {
         self.stopPollingRSSIForPeripherals()
         Singletons.centralManager.disconnectAllPeripherals()
         Singletons.centralManager.removeAllPeripherals()
-        self.peripheralConnectionStatus.removeAll()
         self.setScanButton()
         self.updateWhenActive()
     }
@@ -152,7 +150,6 @@ class PeripheralsViewController : UITableViewController {
     func didEnterBackground() {
         Logger.debug()
         self.stopScanning()
-        self.peripheralConnectionStatus.removeAll()
     }
 
     func setScanButton() {
@@ -163,41 +160,19 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func updatePeripheralConnections() {
-        let peripherals = self.peripheralsSortedByRSSI
-        let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
-        for i in 0..<peripherals.count {
-            let peripheral = peripherals[i]
-            if let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier] {
-                if i < maxConnections {
-                    if !connectionStatus && peripheral.state == .disconnected {
-                        Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                        self.connect(peripheral)
-                    }
-                } else {
-                    if connectionStatus {
-                        Logger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                        peripheral.disconnect()
-                    }
-                }
-            }
-        }
-    }
-
-    func updatePeripheralConnectionsIfNeeded() {
-        guard self.shouldUpdatePeripheralConnectionStatus && self.scanStatus else {
+    func updateTableIfNeeded() {
+        guard self.shouldUpdateTable && self.scanStatus else {
             return
         }
         Queue.main.delay(Params.updateConnectionsInterval) { [weak self] in
-            Logger.debug("update connections triggered")
-            self?.updatePeripheralConnections()
+            Logger.debug("update table triggered")
             self?.updateWhenActive()
-            self?.updatePeripheralConnectionsIfNeeded()
+            self?.updateTableIfNeeded()
         }
     }
 
     func startPollingRSSIForPeripheral(_ peripheral: Peripheral) {
-        guard self.shouldUpdatePeripheralConnectionStatus else {
+        guard self.shouldUpdateTable else {
             return
         }
         _ = peripheral.startPollingRSSI(Params.peripheralsViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
@@ -205,9 +180,6 @@ class PeripheralsViewController : UITableViewController {
 
     func startPolllingRSSIForPeripherals() {
         for peripheral in Singletons.centralManager.peripherals {
-            guard let connectionStatus = self.peripheralConnectionStatus[peripheral.identifier], connectionStatus else {
-                continue
-            }
             self.startPollingRSSIForPeripheral(peripheral)
         }
     }
@@ -225,36 +197,36 @@ class PeripheralsViewController : UITableViewController {
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
         connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .connect:
-                Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                Notification.send("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                self?.startPollingRSSIForPeripheral(peripheral)
-                self?.peripheralConnectionStatus[peripheral.identifier] = true
-                self?.updateWhenActive()
-            case .timeout:
-                Logger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                peripheral.stopPollingRSSI()
-                self?.reconnectIfNecessary(peripheral)
-                self?.updateWhenActive()
-            case .disconnect:
-                Logger.debug("Disconnected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                Notification.send("Disconnected peripheral: '\(peripheral.name)'")
-                peripheral.stopPollingRSSI()
-                self?.reconnectIfNecessary(peripheral)
-                self?.updateWhenActive()
-            case .forceDisconnect:
-                Logger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                Notification.send("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.uuidString)'")
-                self?.reconnectIfNecessary(peripheral)
-                self?.updateWhenActive()
-            case .giveUp:
-                Logger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                peripheral.stopPollingRSSI()
-                _ = self?.peripheralConnectionStatus.removeValue(forKey: peripheral.identifier)
-                peripheral.terminate()
-                self?.startScan()
-                self?.updateWhenActive()
+            self.forEach { strongSelf in
+                switch connectionEvent {
+                case .connect:
+                    Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    Notification.send("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    strongSelf.startPollingRSSIForPeripheral(peripheral)
+                    strongSelf.updateWhenActive()
+                case .timeout:
+                    Logger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    peripheral.stopPollingRSSI()
+                    strongSelf.reconnectIfNecessary(peripheral)
+                    strongSelf.updateWhenActive()
+                case .disconnect:
+                    Logger.debug("Disconnected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    Notification.send("Disconnected peripheral: '\(peripheral.name)'")
+                    peripheral.stopPollingRSSI()
+                    strongSelf.reconnectIfNecessary(peripheral)
+                    strongSelf.updateWhenActive()
+                case .forceDisconnect:
+                    Logger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    Notification.send("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.uuidString)'")
+                    strongSelf.reconnectIfNecessary(peripheral)
+                    strongSelf.updateWhenActive()
+                case .giveUp:
+                    Logger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    peripheral.stopPollingRSSI()
+                    peripheral.terminate()
+                    strongSelf.startScan()
+                    strongSelf.updateWhenActive()
+                }
             }
         }
         connectionFuture.onFailure { [weak self] error in
@@ -265,27 +237,29 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func reconnectIfNecessary(_ peripheral: Peripheral) {
-        if let status = self.peripheralConnectionStatus[peripheral.identifier] , status {
-            peripheral.reconnect(withDelay: 1.0)
+        guard peripheral.state != .connected else {
+            return
         }
+        peripheral.reconnect(withDelay: 1.0)
     }
     
     func startScan() {
-        guard self.reachedDiscoveryLimit == false else {
+        guard reachedDiscoveryLimit == false else {
             return
         }
         self.scanStatus = true
         let scanMode = ConfigStore.getScanMode()
-        let afterPeripheralDiscovered = { (peripheral: Peripheral) -> Void in
+        let afterPeripheralDiscovered = { [weak self] (peripheral: Peripheral) -> Void in
             if Singletons.centralManager.peripherals.contains(peripheral) {
                 Logger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 Notification.send("Discovered peripheral '\(peripheral.name)'")
-                self.updateWhenActive()
-                self.peripheralConnectionStatus[peripheral.identifier] = false
-                if self.reachedDiscoveryLimit {
-                    Singletons.centralManager.stopScanning()
+                self.forEach { strongSelf in
+                    strongSelf.updateWhenActive()
+                    strongSelf.connect(peripheral)
+                    if strongSelf.reachedDiscoveryLimit {
+                        Singletons.centralManager.stopScanning()
+                    }
                 }
-                self.updatePeripheralConnections()
             }
         }
         let afterTimeout = { (error: Swift.Error) -> Void in

@@ -229,7 +229,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         didConnectPeripheral(peripheral)
     }
 
-    @nonobjc public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         didDisconnectPeripheral(peripheral, error: error)
     }
 
@@ -237,7 +237,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         didDiscoverPeripheral(peripheral, advertisementData: advertisementData, RSSI: RSSI)
     }
 
-    @nonobjc public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         didFailToConnectPeripheral(peripheral, error: error)
     }
 

@@ -324,11 +324,11 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         self.didUpdate(locations: locations)
     }
 
-    @nonobjc public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         self.didFail(withError: error)
     }
 
-    @nonobjc public func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?) {
+    public func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?) {
         self.didFinishDeferredUpdates(withError: error)
     }
         

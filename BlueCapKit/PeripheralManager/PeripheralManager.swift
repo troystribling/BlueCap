@@ -229,11 +229,11 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.willRestoreState(injectableServices, advertisements: advertisements)
     }
     
-    @nonobjc public func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
+    public func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         self.didStartAdvertising(error)
     }
     
-    @nonobjc public func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
+    public func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
         self.didAddService(service, error:error)
     }
     

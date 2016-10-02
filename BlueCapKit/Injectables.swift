@@ -12,6 +12,23 @@ import CoreBluetooth
 // MARK: - ManagerState -
 public enum ManagerState {
     case unauthorized, unknown, unsupported, resetting, poweredOff, poweredOn
+
+    public var stringValue: String {
+        switch self {
+        case .unauthorized:
+            return "unauthorized"
+        case .unknown:
+            return "unknown"
+        case .unsupported:
+            return "unsupported"
+        case .resetting:
+            return "resetting"
+        case .poweredOff:
+            return "poweredOff"
+        case .poweredOn:
+            return "poweredOn"
+        }
+    }
 }
 
 // MARK: - CBCentralManagerInjectable -
