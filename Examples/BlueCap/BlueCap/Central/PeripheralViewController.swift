@@ -74,7 +74,7 @@ class PeripheralViewController : UITableViewController {
                 strongSelf.updatePeripheralProperties()
             }
         }
-        connectionFuture?.onFailure(cancelToken: cancelToken) { error in
+        connectionFuture?.onFailure(cancelToken: cancelToken) { _ in
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object :nil)
