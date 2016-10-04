@@ -13,10 +13,9 @@ import BlueCapKit
 
 class PeripheralViewController : UITableViewController {
 
-    fileprivate static var BCPeripheralStateKVOContext = UInt8()
-
     weak var peripheral: Peripheral!
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    let cancelToken = CancelToken()
 
     var peripheralConnected = true
     var peripheralDiscovered = false
@@ -51,30 +50,40 @@ class PeripheralViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = self.peripheral.name
-        self.discoveredAtLabel.text = dateFormatter.string(from: self.peripheral.discoveredAt)
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
+        navigationItem.title = self.peripheral.name
+        discoveredAtLabel.text = dateFormatter.string(from: self.peripheral.discoveredAt)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.setConnectionStateLabel()
-        self.peripheralConnected = (self.peripheral.state == .connected)
-        self.discoverPeripheral()
-        self.setConnectionStateLabel()
-        self.toggleRSSIUpdates()
-        self.updatePeripheralProperties()
-        let options = NSKeyValueObservingOptions([.new])
-        // TODO: Use Future Callback
-        self.peripheral.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralViewController.BCPeripheralStateKVOContext)
+
+        setConnectionStateLabel()
+        peripheralConnected = (self.peripheral.state == .connected)
+        discoverPeripheral()
+        setConnectionStateLabel()
+        toggleRSSIUpdates()
+        updatePeripheralProperties()
+
+        connectionFuture?.onSuccess(cancelToken: cancelToken) { [weak self] (peripheral, connectionEvent) in
+            self.forEach { strongSelf in
+                strongSelf.peripheralConnected = (connectionEvent == ConnectionEvent.connect)
+                strongSelf.setConnectionStateLabel()
+                strongSelf.toggleRSSIUpdates()
+                strongSelf.discoverPeripheral()
+                strongSelf.updatePeripheralProperties()
+            }
+        }
+        connectionFuture?.onFailure(cancelToken: cancelToken) { error in
+        }
+
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object :nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        _ = connectionFuture?.cancel(cancelToken)
         self.peripheral.stopPollingRSSI()
         super.viewDidDisappear(animated)
-        self.peripheral.removeObserver(self, forKeyPath: "state", context: &PeripheralViewController.BCPeripheralStateKVOContext)
-        NotificationCenter.default.removeObserver(self)
     }
     
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
@@ -102,29 +111,6 @@ class PeripheralViewController : UITableViewController {
 
     func willResignActive() {
         _ = self.navigationController?.popToRootViewController(animated: false)
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-// TODO: Use Future Callback
-//
-//        guard keyPath != nil else {
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//            return
-//        }
-//        switch (keyPath!, context) {
-//        case("state", PeripheralViewController.BCPeripheralStateKVOContext):
-//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-//                DispatchQueue.main.async {
-//                    self.peripheralConnected = (newState == .connected)
-//                    self.setConnectionStateLabel()
-//                    self.toggleRSSIUpdates()
-//                    self.discoverPeripheral()
-//                    self.updatePeripheralProperties()
-//                }
-//            }
-//        default:
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//        }
     }
 
     func updatePeripheralProperties() {

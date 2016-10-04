@@ -373,6 +373,8 @@ public struct CancelToken {
 
     let completionId = CompletionId()
 
+    public init() { }
+
 }
 
 // MARK: - Futurable -

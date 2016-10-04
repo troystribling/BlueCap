@@ -94,7 +94,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     fileprivate var _disconnectionCount: UInt = 0
 
     fileprivate var connectionSequence = 0
-    fileprivate var RSSISequence = 0
     fileprivate var serviceDiscoverySequence = 0
     fileprivate var forcedDisconnect = false
     fileprivate var _currentError = PeripheralConnectionError.none
@@ -260,8 +259,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), period = \(period)")
             self.pollRSSIPromise = StreamPromise<Int>(capacity: capacity)
             self.readRSSIIfConnected()
-            self.RSSISequence += 1
-            self.pollRSSI(period, sequence: self.RSSISequence)
+            self.pollRSSI(period)
             return self.pollRSSIPromise!.stream
         }
     }
@@ -308,11 +306,11 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func reconnectIfNotConnected(_ delay: Double = 0.0) {
-        guard let centralManager = self.centralManager , self.state != .connected  else {
-            Logger.debug("peripheral not disconnected \(self.name), \(self.identifier.uuidString)")
+        guard let centralManager = self.centralManager , state != .connected  else {
+            Logger.debug("peripheral not disconnected \(name), \(identifier.uuidString)")
             return
         }
-        Logger.debug("reconnect peripheral name=\(self.name), uuid=\(self.identifier.uuidString)")
+        Logger.debug("reconnect peripheral name=\(name), uuid=\(identifier.uuidString)")
         let performConnection = {
             centralManager.connect(self)
             self.forcedDisconnect = false
@@ -626,16 +624,16 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    fileprivate func pollRSSI(_ period: Double, sequence: Int) {
-        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), period = \(period), sequence = \(sequence), current sequence = \(self.RSSISequence)")
-        guard self.pollRSSIPromise != nil && sequence == self.RSSISequence else {
-            Logger.debug("exiting: name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
+    fileprivate func pollRSSI(_ period: Double) {
+        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), period = \(period)")
+        guard self.pollRSSIPromise != nil else {
+            Logger.debug("exiting: name = \(self.name), uuid = \(self.identifier.uuidString)")
             return
         }
         centralQueue.delay(period) {
-            Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.RSSISequence)")
+            Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString)")
             self.readRSSIIfConnected()
-            self.pollRSSI(period, sequence: sequence)
+            self.pollRSSI(period)
         }
     }
 

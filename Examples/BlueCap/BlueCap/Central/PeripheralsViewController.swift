@@ -18,7 +18,7 @@ class PeripheralsViewController : UITableViewController {
     var scanStatus = false
     var shouldUpdateTable = false
     var connectedPeripherals = Set<UUID>()
-    var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+    var connectionFutures =  [UUID: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>]()
 
     var reachedDiscoveryLimit: Bool {
         return Singletons.centralManager.peripherals.count >= ConfigStore.getMaximumPeripheralsDiscovered()
@@ -105,7 +105,9 @@ class PeripheralsViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralSegue {
             if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
                 let viewController = segue.destination as! PeripheralViewController
-                viewController.peripheral = self.peripherals[selectedIndex.row]
+                let peripheral = self.peripherals[selectedIndex.row]
+                viewController.peripheral = peripheral
+                viewController.connectionFuture = connectionFutures[peripheral.identifier]
             }
         }
     }
@@ -172,13 +174,18 @@ class PeripheralsViewController : UITableViewController {
             if i < maxConnections {
                 if !connectedPeripherals.contains(peripheral.identifier) {
                     Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                    self.connect(peripheral)
+                    connectedPeripherals.insert(peripheral.identifier)
+                    if connectionFutures[peripheral.identifier] == nil {
+                        connect(peripheral)
+                    } else {
+                        reconnectIfNecessary(peripheral)
+                    }
                 }
             } else {
                 if connectedPeripherals.contains(peripheral.identifier) {
                     Logger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                    peripheral.disconnect()
                     connectedPeripherals.remove(peripheral.identifier)
+                    peripheral.disconnect()
                 }
             }
         }
@@ -222,7 +229,7 @@ class PeripheralsViewController : UITableViewController {
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
-        connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
         connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
             self.forEach { strongSelf in
                 switch connectionEvent {
@@ -230,7 +237,6 @@ class PeripheralsViewController : UITableViewController {
                     Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                     Notification.send("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                     strongSelf.startPollingRSSIForPeripheral(peripheral)
-                    strongSelf.connectedPeripherals.insert(peripheral.identifier)
                     strongSelf.updateWhenActive()
                 case .timeout:
                     Logger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
@@ -263,6 +269,7 @@ class PeripheralsViewController : UITableViewController {
             self?.reconnectIfNecessary(peripheral)
             self?.updateWhenActive()
         }
+        connectionFutures[peripheral.identifier] = connectionFuture
     }
 
     func reconnectIfNecessary(_ peripheral: Peripheral) {
