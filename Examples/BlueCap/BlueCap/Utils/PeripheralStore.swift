@@ -14,6 +14,7 @@ import CoreBluetooth
 class PeripheralStore {
     
     // MARK: Services
+
     class func getPeripheralServices(_ key: String) -> [String: [CBUUID]] {
         if let storedPeripherals = UserDefaults.standard.dictionary(forKey: key) {
             var peripherals = [String:[CBUUID]]()
@@ -32,8 +33,8 @@ class PeripheralStore {
         }
     }
 
-    class func setPeripheralServices(_ key: String, peripheralServices: [String:[CBUUID]]) {
-        var storedPeripherals = [String: [String]]()
+    class func setPeripheralServices(_ key: String, peripheralServices: [String : [CBUUID]]) {
+        var storedPeripherals = [String : [String]]()
         for (name, uuids) in peripheralServices {
             storedPeripherals[name] = uuids.reduce([String]()) {(storedUUIDs, uuid) in
                 return storedUUIDs + [uuid.uuidString]
@@ -44,6 +45,7 @@ class PeripheralStore {
     }
     
     // MARK: Peripheral Supported Services
+
     class func addPeripheralServices(_ name: String, services: [CBUUID]) {
         var peripherals = self.getPeripheralServices("peripheralServices")
         peripherals[name] = services
@@ -84,6 +86,7 @@ class PeripheralStore {
     }
     
     // MARK: Advertised Peripheral Services
+
     class func getAdvertisedPeripheralServices() -> [String: [CBUUID]] {
         return self.getPeripheralServices("advertisedPeripheralServices")
     }
@@ -133,6 +136,7 @@ class PeripheralStore {
     }
 
     // MARK: Periphearl Names
+
     class func getPeripheralNames() -> [String] {
         if let peripheral = UserDefaults.standard.array(forKey: "peripheralNames") {
             return peripheral.map{$0 as! String}
@@ -157,6 +161,7 @@ class PeripheralStore {
     }
     
     // MARK: Peripheral
+
     class func removePeripheral(_ name:String) {
         self.removePeripheralServices(name)
         self.removePeripheralName(name)
@@ -166,6 +171,7 @@ class PeripheralStore {
     }
     
     // MSARK: iBeacon
+
     class func getAdvertisedBeacons() -> [String: String] {
         var beacons: [String: String] = [:]
         if let storedBeacons = UserDefaults.standard.dictionary(forKey: "peripheralAdvertisedBeaconConfigs") {
@@ -202,6 +208,7 @@ class PeripheralStore {
     }
     
     // MARK: iBeacon Enabled
+
     class func getBeaconsEnabled() -> [String: Bool] {
         var beacons = [String: Bool]()
         if let storedBeacons = UserDefaults.standard.dictionary(forKey: "peipheralBeaconsEnabled") {
@@ -246,6 +253,7 @@ class PeripheralStore {
     }
 
     // MARK: Peripheral Beacon
+    
     class func getBeacons() -> [String: UUID] {
         if let storedBeacons = UserDefaults.standard.dictionary(forKey: "peripheralBeacons") {
             var beacons = [String: UUID]()
@@ -289,7 +297,7 @@ class PeripheralStore {
         return beacons[name]
     }
     
-    class func getBeaconConfigs() -> [String: [UInt16]] {
+    class func getBeaconConfigs() -> [String : [UInt16]] {
         let userDefaults = UserDefaults.standard
         if let storedConfigs = userDefaults.dictionary(forKey: "peipheralBeaconConfigs") {
             var configs = [String: [UInt16]]()
@@ -306,7 +314,7 @@ class PeripheralStore {
         }
     }
     
-    class func setBeaconConfigs(_ configs: [String:[UInt16]]) {
+    class func setBeaconConfigs(_ configs: [String : [UInt16]]) {
         let userDefaults = UserDefaults.standard
         var storeConfigs = [String: [NSNumber]]()
         for (name, config) in configs {

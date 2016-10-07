@@ -229,7 +229,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.centralQueue = bcPeripheral.centralManager!.centralQueue
         self.profileManager = profileManager
         super.init()
-        self._RSSI = bcPeripheral.RSSI
+        self._RSSI = bcPeripheral._RSSI
         self.cbPeripheral.delegate = self
     }
 

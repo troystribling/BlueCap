@@ -224,7 +224,7 @@ class ConfigStore {
     }
     
     // MARK: Scanned Services
-    class func getScannedServices() -> [String: CBUUID] {
+    class func getScannedServices() -> [String : CBUUID] {
         if let storedServices = UserDefaults.standard.dictionary(forKey: "services") {
             var services = [String: CBUUID]()
             for (name, uuid) in storedServices {
