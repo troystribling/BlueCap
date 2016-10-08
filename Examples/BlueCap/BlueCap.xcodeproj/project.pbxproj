@@ -109,6 +109,7 @@
 		054C7CA21BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralAdvertisementsSolicitedServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
 		054F53441DA54D6B00CD49E5 /* DiscoveredPeripheralStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoveredPeripheralStore.swift; sourceTree = "<group>"; };
+		054F53461DA951F300CD49E5 /* BlueCap.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BlueCap.playground; sourceTree = "<group>"; };
 		055A5A4E1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureMaximumPeripheralsConnected.swift; sourceTree = "<group>"; };
 		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerAddAdvertisedServiceViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -240,6 +241,7 @@
 		05840F56194206F100C744E6 = {
 			isa = PBXGroup;
 			children = (
+				054F53461DA951F300CD49E5 /* BlueCap.playground */,
 				05840F61194206F100C744E6 /* BlueCap */,
 				05840F60194206F100C744E6 /* Products */,
 				050BF09F1D985B3500928863 /* Frameworks */,

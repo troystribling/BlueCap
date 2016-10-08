@@ -85,7 +85,7 @@ class PeripheralsViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.shouldUpdateTable = true
-        self.pollConnectionStatusAndUpdateIfNeeded()
+        self.pollConnectionsUpdateIfNeeded()
         self.startPolllingRSSIForPeripherals()
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
@@ -131,7 +131,7 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("Scan toggled on")
             self.startScan()
             self.setScanButton()
-            self.pollConnectionStatusAndUpdateIfNeeded()
+            self.pollConnectionsUpdateIfNeeded()
         }
     }
 
@@ -171,7 +171,7 @@ class PeripheralsViewController : UITableViewController {
     func disconnectPeripheralsIfNecessary() {
         let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
         let peripherals = self.peripheralsSortedByRSSI
-        guard maxConnections <= peripherals.count else {
+        guard maxConnections < peripherals.count else {
             return
         }
         for i in maxConnections..<peripherals.count {
@@ -202,7 +202,7 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func pollConnectionStatusAndUpdateIfNeeded() {
+    func pollConnectionsUpdateIfNeeded() {
         guard self.shouldUpdateTable && self.isScanning else {
             return
         }
@@ -210,8 +210,8 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("update table triggered")
             self.forEach { strongSelf in
                 strongSelf.updateWhenActive()
-                strongSelf.connectPeripheralsIfNeccessay()
-                strongSelf.pollConnectionStatusAndUpdateIfNeeded()
+                strongSelf.disconnectPeripheralsIfNecessary()
+                strongSelf.pollConnectionsUpdateIfNeeded()
             }
         }
     }
@@ -285,6 +285,7 @@ class PeripheralsViewController : UITableViewController {
 
     func reconnectIfNecessary(_ peripheral: Peripheral) {
         guard peripheral.state != .connected && connectedPeripherals.contains(peripheral.identifier) else {
+            connectPeripheralsIfNeccessay()
             return
         }
         peripheral.reconnect(withDelay: 1.0)
