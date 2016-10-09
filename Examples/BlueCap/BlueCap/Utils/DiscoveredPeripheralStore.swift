@@ -22,16 +22,6 @@ class DiscoveredPeripheralStore {
         }
     }
 
-    class func clear() {
-        setPeripheralIdentifiers([])
-    }
-
-    class func popAll() -> [UUID] {
-        let peripherals = getPeripheralIdentifiers()
-        clear()
-        return peripherals
-    }
-
     class func setPeripheralIdentifiers(_ peripherals: [UUID]) {
         UserDefaults.standard.set(peripherals.map { $0.uuidString }, forKey: "discoveredPeripherals")
     }
