@@ -23,6 +23,8 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate var afterAdvertisingStartedPromise: Promise<Void>?
     fileprivate var afterBeaconAdvertisingStartedPromise: Promise<Void>?
 
+    fileprivate var options: [String : Any]?
+
     fileprivate let afterStateChangedPromise = StreamPromise<ManagerState>()
     fileprivate var afterStateRestoredPromise: Promise<(services: [MutableService], advertisements: PeripheralAdvertisements)>?
     fileprivate var afterSeriviceAddPromise: Promise<Void>?
@@ -68,14 +70,16 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
     }
 
-    public init(queue: DispatchQueue, options: [String : AnyObject]? = nil) {
+    public init(queue: DispatchQueue, options: [String : Any]? = nil) {
         self.peripheralQueue = Queue(queue)
+        self.options = options
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
     }
 
-    public init(options: [String : AnyObject]? = nil) {
+    public init(options: [String : Any]? = nil) {
         self.peripheralQueue = Queue("com.gnos.us.peripheral.main")
+        self.options = options
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
     }
@@ -88,6 +92,14 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     deinit {
         self.cbPeripheralManager.delegate = nil
+    }
+
+    public func invalidate()  {
+        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
+            return
+        }
+        cbPeripheralManager.delegate = nil
+        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
     }
 
     // MARK: Power ON/OFF

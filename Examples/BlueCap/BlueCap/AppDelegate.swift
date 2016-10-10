@@ -27,8 +27,8 @@ struct BCAppError {
 }
 
 struct Singletons {
-    static let centralManager = CentralManager(profileManager: Singletons.profileManager, options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.CentralManager" as NSString])
-    static let peripheralManager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.PeripheralManager" as NSString])
+    static private(set) var centralManager = CentralManager(profileManager: Singletons.profileManager, options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.CentralManager" as NSString])
+    static private(set) var peripheralManager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.PeripheralManager" as NSString])
     static let beaconManager = BeaconManager()
     static let profileManager = ProfileManager()
 }

@@ -19,6 +19,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral>?
     fileprivate var afterStateRestoredPromise: Promise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>?
 
+    fileprivate var options: [String : Any]?
+
     fileprivate var _isScanning = false
 
     fileprivate let profileManager: ProfileManager?
@@ -60,16 +62,18 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Initializers
     
-    public init(profileManager: ProfileManager? = nil, options: [String:AnyObject]? = nil) {
+    public init(profileManager: ProfileManager? = nil, options: [String : Any]? = nil) {
         self.centralQueue = Queue("us.gnos.blueCap.central-manager.main")
         self.profileManager = profileManager
+        self.options = options
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
     }
 
-    public init(queue: DispatchQueue, profileManager: ProfileManager? = nil, options: [String:AnyObject]? = nil) {
+    public init(queue: DispatchQueue, profileManager: ProfileManager? = nil, options: [String : Any]? = nil) {
         self.centralQueue = Queue(queue)
         self.profileManager = profileManager
+        self.options = options
         super.init()
         self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
     }
@@ -83,6 +87,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     deinit {
         cbCentralManager.delegate = nil
+    }
+
+    public func invalidate()  {
+        guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
+            return
+        }
+        cbCentralManager.delegate = nil
+        self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: options)
     }
 
     // MARK: Power ON/OFF

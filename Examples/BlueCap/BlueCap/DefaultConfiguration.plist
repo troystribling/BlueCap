@@ -23,7 +23,7 @@
 	<key>peripheralMaximumTimeouts</key>
 	<integer>5</integer>
 	<key>maximumPeripheralsConnected</key>
-	<integer>10</integer>
+	<integer>2</integer>
 	<key>maximumPeripheralsDiscovered</key>
 	<integer>10</integer>
 	<key>peripheralSortOrder</key>

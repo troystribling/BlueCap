@@ -14,11 +14,9 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
 
     weak var peripheral: Peripheral!
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
     let cancelToken = CancelToken()
 
     var peripheralConnected = true
-    var peripheralDiscovered = false
 
     let dateFormatter = DateFormatter()
 
@@ -60,28 +58,14 @@ class PeripheralViewController : UITableViewController {
 
         setConnectionStateLabel()
         peripheralConnected = (self.peripheral.state == .connected)
-        discoverPeripheral()
         setConnectionStateLabel()
         toggleRSSIUpdates()
         updatePeripheralProperties()
-
-        connectionFuture?.onSuccess(cancelToken: cancelToken) { [weak self] (peripheral, connectionEvent) in
-            self.forEach { strongSelf in
-                strongSelf.peripheralConnected = (connectionEvent == ConnectionEvent.connect)
-                strongSelf.setConnectionStateLabel()
-                strongSelf.toggleRSSIUpdates()
-                strongSelf.discoverPeripheral()
-                strongSelf.updatePeripheralProperties()
-            }
-        }
-        connectionFuture?.onFailure(cancelToken: cancelToken) { _ in
-        }
 
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object :nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        _ = connectionFuture?.cancel(cancelToken)
         self.peripheral.stopPollingRSSI()
         super.viewDidDisappear(animated)
     }
@@ -94,18 +78,6 @@ class PeripheralViewController : UITableViewController {
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destination as! PeripheralAdvertisementsViewController
             viewController.peripheral = self.peripheral
-        }
-    }
-    
-    override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-        if let identifier = identifier {
-            if identifier == MainStoryBoard.peripheralServicesSegue {
-                return self.peripheralDiscovered
-            } else {
-                return true
-            }
-        } else {
-            return true
         }
     }
 
@@ -141,38 +113,6 @@ class PeripheralViewController : UITableViewController {
 
     }
 
-    func discoverPeripheral() {
-        guard self.peripheralConnected && !self.peripheralDiscovered else {
-            return
-        }
-        let peripheralDiscoveryFuture = self.peripheral.discoverAllServices().flatMap { peripheral in
-            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
-        }
-        self.toggleDiscoveryIndicator()
-        peripheralDiscoveryFuture.onSuccess { _ in
-            self.peripheralDiscovered = true
-            self.setConnectionStateLabel()
-        }
-        peripheralDiscoveryFuture.onFailure { error in
-            self.serviceLabel.textColor = UIColor.lightGray
-            self.present(UIAlertController.alertOnError("Peripheral Discovery Error", error: error, handler: { action in
-                self.setConnectionStateLabel()
-            }), animated: true, completion:nil)
-        }
-    }
-
-    func toggleDiscoveryIndicator() {
-        if self.peripheralDiscovered {
-            self.serviceLabel.textColor = UIColor.black
-            self.serviceCount.isHidden = false
-            self.serviceDiscoverySpinner.stopAnimating()
-        } else {
-            self.serviceLabel.textColor = UIColor.lightGray
-            self.serviceCount.isHidden = true
-            self.serviceDiscoverySpinner.startAnimating()
-        }
-    }
-
     func setConnectionStateLabel() {
         if self.peripheralConnected {
             self.stateLabel.text = "Connected"
@@ -181,7 +121,6 @@ class PeripheralViewController : UITableViewController {
             self.stateLabel.text = "Disconnected"
             self.stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
         }
-        self.toggleDiscoveryIndicator()
         self.serviceCount.text = "\(self.peripheral.services.count)"
     }
     

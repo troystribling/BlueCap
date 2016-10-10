@@ -19,7 +19,7 @@ class PeripheralsViewController : UITableViewController {
     var shouldUpdateTable = false
 
     var connectedPeripherals = Set<UUID>()
-    var connectionFutures =  [UUID : FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>]()
+    var discoveredPeripherals = Set<UUID>()
 
     var reachedDiscoveryLimit: Bool {
         return Singletons.centralManager.peripherals.count >= ConfigStore.getMaximumPeripheralsDiscovered()
@@ -65,14 +65,23 @@ class PeripheralsViewController : UITableViewController {
                 switch state {
                 case .poweredOn:
                     break
-                case .poweredOff, .unsupported, .unauthorized:
-                    strongSelf.stopScanning()
-                    strongSelf.present(UIAlertController.alertWithMessage("CentralManager state \"\(state.stringValue)\""), animated:true, completion:nil)
-                case .resetting, .unknown:
-                    strongSelf.present(UIAlertController.alertWithMessage("CentralManager state \"\(state.stringValue)\""), animated:true, completion:nil)
+                case .poweredOff, .unknown, .unauthorized:
+                    strongSelf.alertAndStopScanning(message: "CentralManager state \"\(state.stringValue)\"")
+                case .resetting:
+                    strongSelf.alertAndStopScanning(message:
+                        "CentralManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost.")
+                case .unsupported:
+                    strongSelf.alertAndStopScanning(message: "CentralManager state \"\(state.stringValue)\". Bluetooth not supported.")
                 }
             }
         }
+    }
+
+    func alertAndStopScanning(message: String) {
+        present(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
+        stopScanning()
+        setScanButton()
+        Singletons.centralManager.invalidate()
     }
 
     override func viewDidLoad() {
@@ -108,12 +117,10 @@ class PeripheralsViewController : UITableViewController {
                 let viewController = segue.destination as! PeripheralViewController
                 let peripheral = self.peripherals[selectedIndex.row]
                 viewController.peripheral = peripheral
-                viewController.connectionFuture = connectionFutures[peripheral.identifier]
             }
         }
     }
     
-    // actions
     func toggleScan(_ sender: AnyObject) {
         guard !Singletons.beaconManager.isMonitoring else {
             present(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
@@ -128,7 +135,7 @@ class PeripheralsViewController : UITableViewController {
             stopScanning()
         } else {
             Logger.debug("Scan toggled on")
-            fetchCachedPeripheralsAndStartScan()
+            startScan()
             pollConnectionsAndUpdateIfNeeded()
         }
         setScanButton()
@@ -143,10 +150,10 @@ class PeripheralsViewController : UITableViewController {
         Singletons.centralManager.disconnectAllPeripherals()
         Singletons.centralManager.removeAllPeripherals()
         connectedPeripherals.removeAll()
+        discoveredPeripherals.removeAll()
         updateWhenActive()
     }
 
-    // utils
     func didBecomeActive() {
         Logger.debug()
         tableView.reloadData()
@@ -166,49 +173,7 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func disconnectPeripheralsIfNecessary() {
-        let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
-        let peripherals = self.peripheralsSortedByRSSI
-        guard maxConnections < peripherals.count else {
-            return
-        }
-        for i in maxConnections..<peripherals.count {
-            let peripheral = peripherals[i]
-            if connectedPeripherals.contains(peripheral.identifier) {
-                Logger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                connectedPeripherals.remove(peripheral.identifier)
-                peripheral.disconnect()
-            }
-        }
-    }
-
-    func connectPeripheralsIfNeccessay() {
-        let peripherals = self.peripheralsSortedByRSSI
-        let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
-        let connectionCount = maxConnections <= peripherals.count ? maxConnections : peripherals.count
-        for i in 0..<connectionCount {
-            let peripheral = peripherals[i]
-            if !connectedPeripherals.contains(peripheral.identifier) {
-                Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                connectedPeripherals.insert(peripheral.identifier)
-                connect(peripheral)
-            }
-        }
-    }
-
-    func pollConnectionsAndUpdateIfNeeded() {
-        guard shouldUpdateTable && isScanning else {
-            return
-        }
-        Queue.main.delay(Params.updateConnectionsInterval) { [weak self] in
-            Logger.debug("update table triggered")
-            self.forEach { strongSelf in
-                strongSelf.updateWhenActive()
-                strongSelf.disconnectPeripheralsIfNecessary()
-                strongSelf.pollConnectionsAndUpdateIfNeeded()
-            }
-        }
-    }
+    // MARK: Peripheral RSSI
 
     func startPollingRSSIForPeripheral(_ peripheral: Peripheral) {
         guard shouldUpdateTable else {
@@ -229,6 +194,60 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
+    // MARK: Peripheral Connection
+
+    func disconnectConnectedPeripherals() {
+        for peripheral in Singletons.centralManager.peripherals where peripheral.state != .disconnected {
+            peripheral.disconnect()
+        }
+    }
+
+    func disconnectPeripheralsIfNecessary() {
+        let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
+        let peripherals = peripheralsSortedByRSSI
+        guard maxConnections < peripherals.count else {
+            return
+        }
+        for peripheral in peripherals {
+            if connectedPeripherals.contains(peripheral.identifier) && discoveredPeripherals.contains(peripheral.identifier) {
+                Logger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                connectedPeripherals.remove(peripheral.identifier)
+                peripheral.disconnect()
+            }
+        }
+    }
+
+    func connectPeripheralsIfNeccessay() {
+        let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
+        var connectionCount = connectedPeripherals.count
+        guard connectionCount < maxConnections else {
+            return
+        }
+        let peripherals = self.peripheralsSortedByRSSI
+        for peripheral in peripherals where connectionCount < maxConnections {
+            if !connectedPeripherals.contains(peripheral.identifier) && !discoveredPeripherals.contains(peripheral.identifier) {
+                Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                connectedPeripherals.insert(peripheral.identifier)
+                connect(peripheral)
+                connectionCount += 1
+            }
+        }
+    }
+
+    func pollConnectionsAndUpdateIfNeeded() {
+        guard shouldUpdateTable && isScanning else {
+            return
+        }
+        Queue.main.delay(Params.updateConnectionsInterval) { [weak self] in
+            Logger.debug("update table triggered")
+            self.forEach { strongSelf in
+                strongSelf.updateWhenActive()
+                strongSelf.disconnectPeripheralsIfNecessary()
+                strongSelf.pollConnectionsAndUpdateIfNeeded()
+            }
+        }
+    }
+
     func connect(_ peripheral: Peripheral) {
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
@@ -242,6 +261,7 @@ class PeripheralsViewController : UITableViewController {
                     Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                     Notification.send("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                     strongSelf.startPollingRSSIForPeripheral(peripheral)
+                    strongSelf.discoverPeripheral(peripheral)
                     strongSelf.updateWhenActive()
                 case .timeout:
                     Logger.debug("Timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
@@ -275,7 +295,6 @@ class PeripheralsViewController : UITableViewController {
             self?.reconnectIfNecessary(peripheral)
             self?.updateWhenActive()
         }
-        connectionFutures[peripheral.identifier] = connectionFuture
     }
 
     func reconnectIfNecessary(_ peripheral: Peripheral) {
@@ -285,6 +304,8 @@ class PeripheralsViewController : UITableViewController {
         }
         peripheral.reconnect(withDelay: 1.0)
     }
+
+    // MARK: Scanning
 
     func fetchCachedPeripheralsAndStartScan() {
         let scanMode = ConfigStore.getScanMode()
@@ -350,7 +371,24 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    // UITableViewDataSource
+    // MARK: Peripheral discovery
+
+    func discoverPeripheral(_ peripheral: Peripheral) {
+        guard peripheral.state == .connected && !discoveredPeripherals.contains(peripheral.identifier) else {
+            return
+        }
+        let peripheralDiscoveryFuture = peripheral.discoverAllServices().flatMap { peripheral in
+            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+        }
+        peripheralDiscoveryFuture.onSuccess { [weak self] _ in
+            self?.discoveredPeripherals.insert(peripheral.identifier)
+        }
+        peripheralDiscoveryFuture.onFailure { _ in
+        }
+    }
+
+    // MARK: UITableViewDataSource
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -363,7 +401,7 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        cell.accessoryType = .none
+        cell.accessoryType = .disclosureIndicator
         if peripheral.state == .connected {
             cell.nameLabel.textColor = UIColor.black
             cell.stateLabel.text = "Connected"
@@ -378,6 +416,7 @@ class PeripheralsViewController : UITableViewController {
         } else {
             cell.rssiLabel.text = "\(peripheral.RSSI)"
         }
+        cell.servicesLabel.text = "\(peripheral.services.count)"
         return cell
     }
 }
