@@ -25,6 +25,10 @@ class PeripheralsViewController : UITableViewController {
         return Singletons.centralManager.peripherals.count >= ConfigStore.getMaximumPeripheralsDiscovered()
     }
 
+    var allPeripheralsDiscovered: Bool {
+        return discoveredPeripherals.count == Singletons.centralManager.peripherals.count
+    }
+
     var peripheralsSortedByRSSI: [Peripheral] {
         return Singletons.centralManager.peripherals.sorted() { (p1, p2) -> Bool in
             if (p1.RSSI == 127 || p1.RSSI == 0) && (p2.RSSI != 127  || p2.RSSI != 0) {
@@ -208,8 +212,12 @@ class PeripheralsViewController : UITableViewController {
         guard maxConnections < peripherals.count else {
             return
         }
+
         for peripheral in peripherals {
-            if connectedPeripherals.contains(peripheral.identifier) && discoveredPeripherals.contains(peripheral.identifier) {
+            let doDisconnect = allPeripheralsDiscovered ?
+                connectedPeripherals.contains(peripheral.identifier) :
+                connectedPeripherals.contains(peripheral.identifier) && discoveredPeripherals.contains(peripheral.identifier)
+            if doDisconnect {
                 Logger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 connectedPeripherals.remove(peripheral.identifier)
                 peripheral.disconnect()
@@ -224,12 +232,22 @@ class PeripheralsViewController : UITableViewController {
             return
         }
         let peripherals = self.peripheralsSortedByRSSI
-        for peripheral in peripherals where connectionCount < maxConnections {
-            if !connectedPeripherals.contains(peripheral.identifier) && !discoveredPeripherals.contains(peripheral.identifier) {
-                Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+        if allPeripheralsDiscovered {
+            for _ in 0..<maxConnections {
+                let peripheralIndex = Int(arc4random_uniform(UInt32(peripherals.count)))
+                let peripheral = peripherals[peripheralIndex]
+                Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheralIndex), \(peripheral.identifier.uuidString)")
                 connectedPeripherals.insert(peripheral.identifier)
                 connect(peripheral)
-                connectionCount += 1
+            }
+        } else {
+            for peripheral in peripherals where connectionCount < maxConnections {
+                if !connectedPeripherals.contains(peripheral.identifier) && !discoveredPeripherals.contains(peripheral.identifier) {
+                    Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    connectedPeripherals.insert(peripheral.identifier)
+                    connect(peripheral)
+                    connectionCount += 1
+                }
             }
         }
     }
@@ -401,15 +419,23 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        cell.accessoryType = .disclosureIndicator
+        if peripheral.state == .connected || discoveredPeripherals.contains(peripheral.identifier) {
+            cell.nameLabel.textColor = UIColor.black
+        } else {
+            cell.nameLabel.textColor = UIColor.lightGray
+        }
         if peripheral.state == .connected {
             cell.nameLabel.textColor = UIColor.black
             cell.stateLabel.text = "Connected"
             cell.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
         } else {
-            cell.nameLabel.textColor = UIColor.lightGray
-            cell.stateLabel.text = "Disconnected"
-            cell.stateLabel.textColor = UIColor.lightGray
+            if connectedPeripherals.contains(peripheral.identifier) {
+                cell.stateLabel.text = "Connecting"
+                cell.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:0.5)
+            } else {
+                cell.stateLabel.text = "Disconnected"
+                cell.stateLabel.textColor = UIColor.lightGray
+            }
         }
         if peripheral.RSSI == -127 || peripheral.RSSI == 0 {
             cell.rssiLabel.text = "NA"
