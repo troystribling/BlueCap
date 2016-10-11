@@ -73,7 +73,7 @@ class PeripheralsViewController : UITableViewController {
                     strongSelf.alertAndStopScanning(message: "CentralManager state \"\(state.stringValue)\"")
                 case .resetting:
                     strongSelf.alertAndStopScanning(message:
-                        "CentralManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost.")
+                        "CentralManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost. Restart scan.")
                 case .unsupported:
                     strongSelf.alertAndStopScanning(message: "CentralManager state \"\(state.stringValue)\". Bluetooth not supported.")
                 }
@@ -214,10 +214,7 @@ class PeripheralsViewController : UITableViewController {
         }
 
         for peripheral in peripherals {
-            let doDisconnect = allPeripheralsDiscovered ?
-                connectedPeripherals.contains(peripheral.identifier) :
-                connectedPeripherals.contains(peripheral.identifier) && discoveredPeripherals.contains(peripheral.identifier)
-            if doDisconnect {
+            if connectedPeripherals.contains(peripheral.identifier) && discoveredPeripherals.contains(peripheral.identifier) {
                 Logger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 connectedPeripherals.remove(peripheral.identifier)
                 peripheral.disconnect()
@@ -232,22 +229,12 @@ class PeripheralsViewController : UITableViewController {
             return
         }
         let peripherals = self.peripheralsSortedByRSSI
-        if allPeripheralsDiscovered {
-            for _ in 0..<maxConnections {
-                let peripheralIndex = Int(arc4random_uniform(UInt32(peripherals.count)))
-                let peripheral = peripherals[peripheralIndex]
-                Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheralIndex), \(peripheral.identifier.uuidString)")
+        for peripheral in peripherals where connectionCount < maxConnections {
+            if !connectedPeripherals.contains(peripheral.identifier) && !discoveredPeripherals.contains(peripheral.identifier) {
+                Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 connectedPeripherals.insert(peripheral.identifier)
                 connect(peripheral)
-            }
-        } else {
-            for peripheral in peripherals where connectionCount < maxConnections {
-                if !connectedPeripherals.contains(peripheral.identifier) && !discoveredPeripherals.contains(peripheral.identifier) {
-                    Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                    connectedPeripherals.insert(peripheral.identifier)
-                    connect(peripheral)
-                    connectionCount += 1
-                }
+                connectionCount += 1
             }
         }
     }
@@ -262,6 +249,10 @@ class PeripheralsViewController : UITableViewController {
                 strongSelf.updateWhenActive()
                 strongSelf.disconnectPeripheralsIfNecessary()
                 strongSelf.pollConnectionsAndUpdateIfNeeded()
+                if strongSelf.allPeripheralsDiscovered {
+                    strongSelf.discoveredPeripherals.removeAll()
+                    strongSelf.connectPeripheralsIfNeccessay()
+                }
             }
         }
     }
@@ -342,9 +333,10 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func startScan() {
-        guard !isScanning else { return }
-        isScanning = true
         guard !reachedDiscoveryLimit else { return }
+        guard !Singletons.centralManager.isScanning else { return }
+
+        isScanning = true
 
         let future: FutureStream<Peripheral>
         let scanMode = ConfigStore.getScanMode()
@@ -376,9 +368,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func afterPeripheralDiscovered(_ peripheral: Peripheral) -> Void {
-        guard  Singletons.centralManager.peripherals.contains(peripheral) else {
-            return
-        }
+        guard  Singletons.centralManager.peripherals.contains(peripheral) else { return }
         Logger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
         Notification.send("Discovered peripheral '\(peripheral.name)'")
         updateWhenActive()
@@ -419,7 +409,7 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        if peripheral.state == .connected || discoveredPeripherals.contains(peripheral.identifier) {
+        if peripheral.state == .connected || peripheral.services.count > 0 {
             cell.nameLabel.textColor = UIColor.black
         } else {
             cell.nameLabel.textColor = UIColor.lightGray
