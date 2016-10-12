@@ -25,7 +25,6 @@ class PeripheralViewController : UITableViewController {
     @IBOutlet var stateLabel: UILabel!
     @IBOutlet var serviceLabel: UILabel!
     @IBOutlet var serviceCount: UILabel!
-    @IBOutlet var serviceDiscoverySpinner: UIActivityIndicatorView!
 
     @IBOutlet var discoveredAtLabel: UILabel!
     @IBOutlet var connectedAtLabel: UILabel!
@@ -56,7 +55,6 @@ class PeripheralViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        setConnectionStateLabel()
         peripheralConnected = (self.peripheral.state == .connected)
         setConnectionStateLabel()
         toggleRSSIUpdates()
@@ -123,5 +121,35 @@ class PeripheralViewController : UITableViewController {
         }
         self.serviceCount.text = "\(self.peripheral.services.count)"
     }
-    
+
+    func connect() {
+        Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
+        let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
+        let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
+        let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
+        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+
+        connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
+            self.forEach { strongSelf in
+                switch connectionEvent {
+                case .connect:
+                    break
+                case .timeout:
+                    break
+                case .disconnect:
+                    break
+                case .forceDisconnect:
+                    break
+                case .giveUp:
+                    break
+                }
+            }
+            self?.toggleRSSIUpdates()
+        }
+
+        connectionFuture.onFailure { [weak self] error in
+            self?.toggleRSSIUpdates()
+        }
+    }
+
 }

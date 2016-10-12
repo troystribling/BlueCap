@@ -59,10 +59,10 @@ class PeripheralsViewController : UITableViewController {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
-        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
-        self.styleUIBarButton(self.startScanBarButtonItem)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
+        startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
+        styleUIBarButton(self.startScanBarButtonItem)
         Singletons.centralManager.whenStateChanges().onSuccess { [weak self] state in
             self.forEach { strongSelf in
                 Logger.debug("CentralManager state changed: \(state.stringValue)")
@@ -98,16 +98,18 @@ class PeripheralsViewController : UITableViewController {
         super.viewDidAppear(animated)
         shouldUpdateTable = true
         pollConnectionsAndUpdateIfNeeded()
-        self.startPolllingRSSIForPeripherals()
+        startPolllingRSSIForPeripherals()
+        connectPeripheralsIfNeccessay()
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
-        self.setScanButton()
+        setScanButton()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.shouldUpdateTable = false
-        self.stopPollingRSSIForPeripherals()
+        shouldUpdateTable = false
+        stopPollingRSSIForPeripherals()
+        disconnectConnectedPeripherals()
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -201,9 +203,10 @@ class PeripheralsViewController : UITableViewController {
     // MARK: Peripheral Connection
 
     func disconnectConnectedPeripherals() {
-        for peripheral in Singletons.centralManager.peripherals where peripheral.state != .disconnected {
+        for peripheral in Singletons.centralManager.peripherals where connectedPeripherals.contains(peripheral.identifier) {
             peripheral.disconnect()
         }
+        connectedPeripherals.removeAll()
     }
 
     func disconnectPeripheralsIfNecessary() {
@@ -263,6 +266,7 @@ class PeripheralsViewController : UITableViewController {
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+
         connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
             self.forEach { strongSelf in
                 switch connectionEvent {
@@ -299,6 +303,7 @@ class PeripheralsViewController : UITableViewController {
                 }
             }
         }
+
         connectionFuture.onFailure { [weak self] error in
             peripheral.stopPollingRSSI()
             self?.reconnectIfNecessary(peripheral)
