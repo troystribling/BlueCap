@@ -16,8 +16,6 @@ class PeripheralViewController : UITableViewController {
     weak var peripheral: Peripheral!
     let cancelToken = CancelToken()
 
-    var peripheralConnected = true
-
     let dateFormatter = DateFormatter()
 
     @IBOutlet var uuidLabel: UILabel!
@@ -55,9 +53,9 @@ class PeripheralViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        peripheralConnected = (self.peripheral.state == .connected)
-        setConnectionStateLabel()
-        toggleRSSIUpdates()
+        updateConnectionStateLabel()
+        connect()
+        toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
         updatePeripheralProperties()
 
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object :nil)
@@ -65,6 +63,7 @@ class PeripheralViewController : UITableViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         self.peripheral.stopPollingRSSI()
+        self.peripheral.disconnect()
         super.viewDidDisappear(animated)
     }
     
@@ -85,39 +84,43 @@ class PeripheralViewController : UITableViewController {
 
     func updatePeripheralProperties() {
         if let connectedAt = self.peripheral.connectedAt {
-            self.connectedAtLabel.text = dateFormatter.string(from: connectedAt)
+            connectedAtLabel.text = dateFormatter.string(from: connectedAt)
         }
-        self.rssiLabel.text = "\(self.peripheral.RSSI)"
-        self.connectionsLabel.text = "\(self.peripheral.connectionCount)"
-        self.secondsConnectedLabel.text = "\(Int(self.peripheral.cumlativeSecondsConnected))"
-        if self.peripheral.connectionCount > 0 {
-            self.avgSecondsConnected.text = "\(Int(self.peripheral.cumlativeSecondsConnected) / self.peripheral.connectionCount)"
+        rssiLabel.text = "\(self.peripheral.RSSI)"
+        connectionsLabel.text = "\(self.peripheral.connectionCount)"
+        secondsConnectedLabel.text = "\(Int(self.peripheral.cumlativeSecondsConnected))"
+        if peripheral.connectionCount > 0 {
+            avgSecondsConnected.text = "\(Int(self.peripheral.cumlativeSecondsConnected) / self.peripheral.connectionCount)"
         } else {
-            self.avgSecondsConnected.text = "0"
+            avgSecondsConnected.text = "0"
         }
-        self.disconnectionsLabel.text = "\(self.peripheral.disconnectionCount)"
-        self.timeoutsLabel.text = "\(self.peripheral.timeoutCount)"
+        disconnectionsLabel.text = "\(self.peripheral.disconnectionCount)"
+        timeoutsLabel.text = "\(self.peripheral.timeoutCount)"
     }
 
-    func toggleRSSIUpdates() {
-        if self.peripheralConnected {
-            let rssiFuture = self.peripheral.startPollingRSSI(Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
-            rssiFuture.onSuccess { [unowned self] _ in
-                self.updatePeripheralProperties()
+    func toggleRSSIUpdatesAndPeripheralPropertiesUpdates() {
+        if peripheral.state == .connected {
+            let rssiFuture = peripheral.startPollingRSSI(Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+            rssiFuture.onSuccess { [weak self] _ in
+                self?.updatePeripheralProperties()
             }
         } else {
-            self.peripheral.stopPollingRSSI()
+            peripheral.stopPollingRSSI()
         }
 
     }
 
-    func setConnectionStateLabel() {
-        if self.peripheralConnected {
-            self.stateLabel.text = "Connected"
-            self.stateLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 1.0)
-        } else {
-            self.stateLabel.text = "Disconnected"
-            self.stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
+    func updateConnectionStateLabel() {
+        switch peripheral.state {
+        case .connected:
+            stateLabel.text = "Connected"
+            stateLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 1.0)
+        case .disconnected:
+            stateLabel.text = "Disconnected"
+            stateLabel.textColor = UIColor.lightGray
+        default:
+            stateLabel.text = "Connecting"
+            stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
         }
         self.serviceCount.text = "\(self.peripheral.services.count)"
     }
@@ -135,20 +138,21 @@ class PeripheralViewController : UITableViewController {
                 case .connect:
                     break
                 case .timeout:
-                    break
+                    peripheral.reconnect()
                 case .disconnect:
-                    break
+                    peripheral.reconnect()
                 case .forceDisconnect:
-                    break
+                    break;
                 case .giveUp:
                     break
                 }
             }
-            self?.toggleRSSIUpdates()
+            self?.updateConnectionStateLabel()
+            self?.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
         }
 
         connectionFuture.onFailure { [weak self] error in
-            self?.toggleRSSIUpdates()
+            self?.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
         }
     }
 

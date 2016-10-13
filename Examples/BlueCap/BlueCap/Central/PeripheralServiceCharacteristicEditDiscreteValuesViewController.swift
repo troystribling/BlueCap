@@ -54,14 +54,14 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     func peripheralDisconnected() {
         Logger.debug()
-        if let peripheralViewController = self.peripheralViewController {
-            if peripheralViewController.peripheralConnected {
-                self.present(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                        peripheralViewController.peripheralConnected = false
-                        _ = self.navigationController?.popViewController(animated: true)
-                    }, animated: true, completion: nil)
-            }
-        }
+//        if let peripheralViewController = self.peripheralViewController {
+//            if peripheralViewController.peripheralConnected {
+//                self.present(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+//                        peripheralViewController.peripheralConnected = false
+//                        _ = self.navigationController?.popViewController(animated: true)
+//                    }, animated: true, completion: nil)
+//            }
+//        }
     }
 
     func didEnterBackground() {

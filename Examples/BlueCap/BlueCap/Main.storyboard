@@ -83,7 +83,7 @@
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disconnected" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="olY-hM-y4A">
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="State" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dij-rM-1p9">
@@ -116,28 +116,19 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xX2-GA-Ijp">
-                                                    <frame key="frameInset" minX="329" minY="12.5" width="13" height="25"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xX2-GA-Ijp">
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BKe-Wa-lSC">
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="xX2-GA-Ijp" secondAttribute="trailing" constant="-8" id="E9G-VI-tag"/>
-                                                <constraint firstItem="BKe-Wa-lSC" firstAttribute="centerY" secondItem="iHv-p6-ogI" secondAttribute="centerY" id="EdZ-Vi-Yxt"/>
+                                                <constraint firstItem="xX2-GA-Ijp" firstAttribute="centerY" secondItem="iHv-p6-ogI" secondAttribute="centerY" id="QpK-Sy-D9B"/>
                                                 <constraint firstItem="4mM-sK-tPs" firstAttribute="leading" secondItem="iHv-p6-ogI" secondAttribute="leadingMargin" constant="7" id="Son-D5-orE"/>
                                                 <constraint firstItem="4mM-sK-tPs" firstAttribute="centerY" secondItem="iHv-p6-ogI" secondAttribute="centerY" id="cMq-8Y-avL"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="BKe-Wa-lSC" secondAttribute="trailing" constant="33" id="wuS-M4-7zC"/>
-                                        </constraints>
                                         <connections>
                                             <segue destination="VpE-cb-2P0" kind="show" identifier="PeripheralServices" id="3a2-iQ-Y4I"/>
                                         </connections>
@@ -355,7 +346,7 @@
                         <outlet property="discoveredAtLabel" destination="Tum-Vn-nQe" id="ZBM-MH-XbU"/>
                         <outlet property="rssiLabel" destination="q4d-zx-jkB" id="wYN-NU-crN"/>
                         <outlet property="secondsConnectedLabel" destination="En3-lc-Rxz" id="Gqc-4B-mZ3"/>
-                        <outlet property="serviceCount" destination="BKe-Wa-lSC" id="ISp-YV-Cfd"/>
+                        <outlet property="serviceCount" destination="xX2-GA-Ijp" id="lPj-Vf-FaE"/>
                         <outlet property="serviceLabel" destination="4mM-sK-tPs" id="NMi-UF-rMY"/>
                         <outlet property="stateLabel" destination="olY-hM-y4A" id="oJf-bp-5OS"/>
                         <outlet property="timeoutsLabel" destination="W87-rn-1st" id="fNM-2v-Jzl"/>

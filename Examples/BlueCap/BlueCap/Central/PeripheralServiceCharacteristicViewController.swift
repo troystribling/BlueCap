@@ -99,11 +99,12 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-        if let _ = identifier {
-            return (self.characteristic.propertyEnabled(.read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.write)) && self.peripheralViewController.peripheralConnected
-        } else {
-            return false
-        }
+//        if let _ = identifier {
+//            return (self.characteristic.propertyEnabled(.read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.write)) && self.peripheralViewController.peripheralConnected
+//        } else {
+//            return false
+//        }
+        return true
     }
     
     @IBAction func toggleNotificatons() {
@@ -132,25 +133,25 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func setUI() {
-        if (!self.characteristic.propertyEnabled(.read) && !self.characteristic.propertyEnabled(.write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripheralConnected {
-            self.valuesLabel.textColor = UIColor.lightGray
-        } else {
-            self.valuesLabel.textColor = UIColor.black
-        }
-        if self.peripheralViewController.peripheralConnected &&
-            (characteristic.propertyEnabled(.notify)                     ||
-             characteristic.propertyEnabled(.indicate)                   ||
-             characteristic.propertyEnabled(.notifyEncryptionRequired)   ||
-             characteristic.propertyEnabled(.indicateEncryptionRequired)) {
-            self.notifyLabel.textColor = UIColor.black
-            self.notifySwitch.isEnabled = true
-            self.notifySwitch.isOn = self.characteristic.isNotifying
-        } else {
-            self.notifyLabel.textColor = UIColor.lightGray
-            self.notifySwitch.isEnabled = false
-            self.notifySwitch.isOn = false
-        }
-        self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
+//        if (!self.characteristic.propertyEnabled(.read) && !self.characteristic.propertyEnabled(.write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripheralConnected {
+//            self.valuesLabel.textColor = UIColor.lightGray
+//        } else {
+//            self.valuesLabel.textColor = UIColor.black
+//        }
+//        if self.peripheralViewController.peripheralConnected &&
+//            (characteristic.propertyEnabled(.notify)                     ||
+//             characteristic.propertyEnabled(.indicate)                   ||
+//             characteristic.propertyEnabled(.notifyEncryptionRequired)   ||
+//             characteristic.propertyEnabled(.indicateEncryptionRequired)) {
+//            self.notifyLabel.textColor = UIColor.black
+//            self.notifySwitch.isEnabled = true
+//            self.notifySwitch.isOn = self.characteristic.isNotifying
+//        } else {
+//            self.notifyLabel.textColor = UIColor.lightGray
+//            self.notifySwitch.isEnabled = false
+//            self.notifySwitch.isOn = false
+//        }
+//        self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
     }
     
     func booleanStringValue(_ value: Bool) -> String {
@@ -159,12 +160,12 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug()
-        if self.peripheralViewController.peripheralConnected {
-            self.present(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-                    self.peripheralViewController.peripheralConnected = false
-                    self.setUI()
-                }, animated: true, completion: nil)
-        }
+//        if self.peripheralViewController.peripheralConnected {
+//            self.present(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
+//                    self.peripheralViewController.peripheralConnected = false
+//                    self.setUI()
+//                }, animated: true, completion: nil)
+//        }
     }
 
     func didEnterBackground() {

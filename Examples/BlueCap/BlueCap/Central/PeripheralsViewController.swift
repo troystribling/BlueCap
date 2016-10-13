@@ -126,6 +126,16 @@ class PeripheralsViewController : UITableViewController {
             }
         }
     }
+
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == MainStoryboard.peripheralSegue {
+            if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                let peripheral = self.peripherals[selectedIndex.row]
+                return discoveredPeripherals.contains(peripheral.identifier)
+            }
+        }
+        return false
+    }
     
     func toggleScan(_ sender: AnyObject) {
         guard !Singletons.beaconManager.isMonitoring else {
@@ -290,7 +300,6 @@ class PeripheralsViewController : UITableViewController {
                 case .forceDisconnect:
                     Logger.debug("Force disconnection of: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                     Notification.send("Force disconnection of: '\(peripheral.name), \(peripheral.identifier.uuidString)'")
-                    strongSelf.reconnectIfNecessary(peripheral)
                     strongSelf.updateWhenActive()
                 case .giveUp:
                     Logger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
@@ -414,6 +423,7 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
+        cell.accessoryType = discoveredPeripherals.contains(peripheral.identifier) ? .disclosureIndicator : .none
         if peripheral.state == .connected || peripheral.services.count > 0 {
             cell.nameLabel.textColor = UIColor.black
         } else {
@@ -423,14 +433,12 @@ class PeripheralsViewController : UITableViewController {
             cell.nameLabel.textColor = UIColor.black
             cell.stateLabel.text = "Connected"
             cell.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
+        } else if connectedPeripherals.contains(peripheral.identifier) {
+            cell.stateLabel.text = "Connecting"
+            cell.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:0.5)
         } else {
-            if connectedPeripherals.contains(peripheral.identifier) {
-                cell.stateLabel.text = "Connecting"
-                cell.stateLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:0.5)
-            } else {
-                cell.stateLabel.text = "Disconnected"
-                cell.stateLabel.textColor = UIColor.lightGray
-            }
+            cell.stateLabel.text = "Disconnected"
+            cell.stateLabel.textColor = UIColor.lightGray
         }
         if peripheral.RSSI == -127 || peripheral.RSSI == 0 {
             cell.rssiLabel.text = "NA"

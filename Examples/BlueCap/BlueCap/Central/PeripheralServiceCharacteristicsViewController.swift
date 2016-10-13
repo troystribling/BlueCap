@@ -69,14 +69,14 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     func peripheralDisconnected() {
         Logger.debug()
         self.tableView.reloadData()
-        if let peripheralViewController = self.peripheralViewController {
-            if peripheralViewController.peripheralConnected {
-                self.present(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
-                        peripheralViewController.peripheralConnected = false
-                        self.updateWhenActive()
-                    }, animated:true, completion:nil)
-            }
-        }
+//        if let peripheralViewController = self.peripheralViewController {
+//            if peripheralViewController.peripheralConnected {
+//                self.present(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
+//                        peripheralViewController.peripheralConnected = false
+//                        self.updateWhenActive()
+//                    }, animated:true, completion:nil)
+//            }
+//        }
     }
     
     func didEnterBackground() {
@@ -121,15 +121,15 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name
             cell.uuidLabel.text = characteristic.UUID.uuidString
-            if let peripheralViewController = self.peripheralViewController {
-                if peripheralViewController.peripheralConnected {
-                    cell.nameLabel.textColor = UIColor.black
-                } else {
-                    cell.nameLabel.textColor = UIColor.lightGray
-                }
-            } else {
-                cell.nameLabel.textColor = UIColor.black
-            }
+//            if let peripheralViewController = self.peripheralViewController {
+//                if peripheralViewController.peripheralConnected {
+//                    cell.nameLabel.textColor = UIColor.black
+//                } else {
+//                    cell.nameLabel.textColor = UIColor.lightGray
+//                }
+//            } else {
+//                cell.nameLabel.textColor = UIColor.black
+//            }
         }
         return cell
     }

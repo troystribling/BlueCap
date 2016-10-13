@@ -69,11 +69,11 @@ class PeripheralServicesViewController : UITableViewController {
     
     func peripheralDisconnected() {
         Logger.debug()
-        if self.peripheralViewController.peripheralConnected {
-            self.present(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
-            self.peripheralViewController.peripheralConnected = false
-            self.updateWhenActive()
-        }
+//        if self.peripheralViewController.peripheralConnected {
+//            self.present(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
+//            self.peripheralViewController.peripheralConnected = false
+//            self.updateWhenActive()
+//        }
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
@@ -118,15 +118,15 @@ class PeripheralServicesViewController : UITableViewController {
         let service = peripheral.services[indexPath.row]
         cell.nameLabel.text = service.name
         cell.uuidLabel.text = service.UUID.uuidString
-        if let peripheralViewController = self.peripheralViewController {
-            if peripheralViewController.peripheralConnected {
-                cell.nameLabel.textColor = UIColor.black
-            } else {
-                cell.nameLabel.textColor = UIColor.lightGray
-            }
-        } else {
-            cell.nameLabel.textColor = UIColor.black
-        }
+//        if let peripheralViewController = self.peripheralViewController {
+//            if peripheralViewController.peripheralConnected {
+//                cell.nameLabel.textColor = UIColor.black
+//            } else {
+//                cell.nameLabel.textColor = UIColor.lightGray
+//            }
+//        } else {
+//            cell.nameLabel.textColor = UIColor.black
+//        }
         return cell
     }
     
