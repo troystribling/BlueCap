@@ -127,16 +127,6 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        if identifier == MainStoryboard.peripheralSegue {
-            if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
-                let peripheral = self.peripherals[selectedIndex.row]
-                return discoveredPeripherals.contains(peripheral.identifier)
-            }
-        }
-        return false
-    }
-    
     func toggleScan(_ sender: AnyObject) {
         guard !Singletons.beaconManager.isMonitoring else {
             present(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
@@ -385,9 +375,9 @@ class PeripheralsViewController : UITableViewController {
         guard  Singletons.centralManager.peripherals.contains(peripheral) else { return }
         Logger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
         Notification.send("Discovered peripheral '\(peripheral.name)'")
-        updateWhenActive()
         DiscoveredPeripheralStore.addPeripheralIdentifier(peripheral.identifier)
         connectPeripheralsIfNeccessay()
+        updateWhenActive()
         if reachedDiscoveryLimit {
             Singletons.centralManager.stopScanning()
         }
@@ -423,7 +413,6 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        cell.accessoryType = discoveredPeripherals.contains(peripheral.identifier) ? .disclosureIndicator : .none
         if peripheral.state == .connected || peripheral.services.count > 0 {
             cell.nameLabel.textColor = UIColor.black
         } else {
@@ -440,11 +429,9 @@ class PeripheralsViewController : UITableViewController {
             cell.stateLabel.text = "Disconnected"
             cell.stateLabel.textColor = UIColor.lightGray
         }
-        if peripheral.RSSI == -127 || peripheral.RSSI == 0 {
-            cell.rssiLabel.text = "NA"
-        } else {
-            cell.rssiLabel.text = "\(peripheral.RSSI)"
-        }
+//        if peripheral.RSSI == -127 || peripheral.RSSI == 0 {
+//        } else {
+//        }
         cell.servicesLabel.text = "\(peripheral.services.count)"
         return cell
     }

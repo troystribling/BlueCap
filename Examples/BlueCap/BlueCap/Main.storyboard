@@ -3430,11 +3430,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralCell" rowHeight="98" id="b10-w7-dLb" customClass="PeripheralCell" customModule="BlueCap" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PeripheralCell" rowHeight="98" id="b10-w7-dLb" customClass="PeripheralCell" customModule="BlueCap" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="22" width="375" height="98"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="b10-w7-dLb" id="7UM-ye-K73">
-                                    <frame key="frameInset" width="375" height="97.5"/>
+                                    <frame key="frameInset" width="342" height="97"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="BsC-C9-NZC">
@@ -3452,16 +3452,6 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-100" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lv5-qj-cN7">
-                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
-                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RSSI:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U6J-U4-GW4">
-                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
-                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0jF-MW-Io7">
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -3472,28 +3462,26 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="RSSI-5" translatesAutoresizingMaskIntoConstraints="NO" id="y2T-fE-UiN"/>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="BsC-C9-NZC" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="12" id="58V-sc-eh7"/>
-                                        <constraint firstItem="U6J-U4-GW4" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="9" id="Gze-d4-W8d"/>
                                         <constraint firstItem="MxI-ph-nLa" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="56" id="I1K-PN-RJZ"/>
                                         <constraint firstItem="0jF-MW-Io7" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="56" id="IMc-Ln-i7Z"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="lv5-qj-cN7" secondAttribute="trailing" constant="10" id="O5t-Ih-N5C"/>
                                         <constraint firstItem="BsC-C9-NZC" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="27" id="PZh-Os-XJS"/>
                                         <constraint firstItem="8ua-pZ-lzb" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="9" id="U9N-Kf-pi5"/>
                                         <constraint firstItem="0jF-MW-Io7" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="81" id="bJP-IN-Fo4"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="BsC-C9-NZC" secondAttribute="trailing" constant="-1" id="ehE-aI-spN"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="U6J-U4-GW4" secondAttribute="trailing" constant="50" id="gMH-PX-6GT"/>
                                         <constraint firstItem="8ua-pZ-lzb" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="63" id="krl-Ed-laO"/>
-                                        <constraint firstItem="lv5-qj-cN7" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="9" id="meh-SN-jgu"/>
                                         <constraint firstItem="Gl5-65-yK5" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="12" id="oYy-dy-4Xz"/>
                                         <constraint firstItem="Gl5-65-yK5" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="8" id="ofc-Gr-BiC"/>
+                                        <constraint firstItem="y2T-fE-UiN" firstAttribute="centerY" secondItem="7UM-ye-K73" secondAttribute="centerY" constant="2" id="rkG-ot-nfH"/>
                                         <constraint firstItem="MxI-ph-nLa" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="12" id="wVG-mM-fvn"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="y2T-fE-UiN" secondAttribute="trailing" id="zkT-Gj-Qcc"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="nameLabel" destination="BsC-C9-NZC" id="cQt-CI-Q0U"/>
-                                    <outlet property="rssiLabel" destination="lv5-qj-cN7" id="UT1-dQ-whb"/>
                                     <outlet property="servicesLabel" destination="0jF-MW-Io7" id="D8g-FZ-6mk"/>
                                     <outlet property="stateLabel" destination="8ua-pZ-lzb" id="q3C-BZ-qu5"/>
                                     <segue destination="XKG-l0-TPz" kind="show" identifier="Peripheral" id="cG8-kw-64y"/>
@@ -4889,6 +4877,7 @@
         <image name="Configure" width="32" height="32"/>
         <image name="Peripheral" width="32" height="32"/>
         <image name="Profiles" width="32" height="32"/>
+        <image name="RSSI-5" width="50" height="50"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="XuB-J8-fla"/>
