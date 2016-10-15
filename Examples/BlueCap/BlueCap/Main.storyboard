@@ -3462,10 +3462,11 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="RSSI-5" translatesAutoresizingMaskIntoConstraints="NO" id="y2T-fE-UiN"/>
+                                        <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="RSSI-0" translatesAutoresizingMaskIntoConstraints="NO" id="y2T-fE-UiN"/>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="BsC-C9-NZC" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="12" id="58V-sc-eh7"/>
+                                        <constraint firstItem="y2T-fE-UiN" firstAttribute="centerY" secondItem="7UM-ye-K73" secondAttribute="centerY" id="98y-YK-Hzg"/>
                                         <constraint firstItem="MxI-ph-nLa" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="56" id="I1K-PN-RJZ"/>
                                         <constraint firstItem="0jF-MW-Io7" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="56" id="IMc-Ln-i7Z"/>
                                         <constraint firstItem="BsC-C9-NZC" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="27" id="PZh-Os-XJS"/>
@@ -3475,13 +3476,15 @@
                                         <constraint firstItem="8ua-pZ-lzb" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="63" id="krl-Ed-laO"/>
                                         <constraint firstItem="Gl5-65-yK5" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="12" id="oYy-dy-4Xz"/>
                                         <constraint firstItem="Gl5-65-yK5" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="8" id="ofc-Gr-BiC"/>
-                                        <constraint firstItem="y2T-fE-UiN" firstAttribute="centerY" secondItem="7UM-ye-K73" secondAttribute="centerY" constant="2" id="rkG-ot-nfH"/>
                                         <constraint firstItem="MxI-ph-nLa" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="12" id="wVG-mM-fvn"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="y2T-fE-UiN" secondAttribute="trailing" id="zkT-Gj-Qcc"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="y2T-fE-UiN" secondAttribute="trailing" constant="41" id="01R-rX-DV5"/>
+                                </constraints>
                                 <connections>
                                     <outlet property="nameLabel" destination="BsC-C9-NZC" id="cQt-CI-Q0U"/>
+                                    <outlet property="rssiImage" destination="y2T-fE-UiN" id="Fqs-DH-c7B"/>
                                     <outlet property="servicesLabel" destination="0jF-MW-Io7" id="D8g-FZ-6mk"/>
                                     <outlet property="stateLabel" destination="8ua-pZ-lzb" id="q3C-BZ-qu5"/>
                                     <segue destination="XKG-l0-TPz" kind="show" identifier="Peripheral" id="cG8-kw-64y"/>
@@ -4877,7 +4880,7 @@
         <image name="Configure" width="32" height="32"/>
         <image name="Peripheral" width="32" height="32"/>
         <image name="Profiles" width="32" height="32"/>
-        <image name="RSSI-5" width="50" height="50"/>
+        <image name="RSSI-0" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="XuB-J8-fla"/>

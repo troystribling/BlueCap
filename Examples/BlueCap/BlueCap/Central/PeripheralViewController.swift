@@ -144,6 +144,7 @@ class PeripheralViewController : UITableViewController {
                 case .forceDisconnect:
                     break;
                 case .giveUp:
+                    strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(strongSelf.peripheral.name)` failed"), animated:true, completion:nil)
                     break
                 }
             }

@@ -73,7 +73,7 @@ class PeripheralsViewController : UITableViewController {
                     strongSelf.alertAndStopScanning(message: "CentralManager state \"\(state.stringValue)\"")
                 case .resetting:
                     strongSelf.alertAndStopScanning(message:
-                        "CentralManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost. Restart scan.")
+                        "CentralManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost.\n Restart scan.")
                 case .unsupported:
                     strongSelf.alertAndStopScanning(message: "CentralManager state \"\(state.stringValue)\". Bluetooth not supported.")
                 }
@@ -85,7 +85,7 @@ class PeripheralsViewController : UITableViewController {
         present(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
         stopScanning()
         setScanButton()
-        Singletons.centralManager.invalidate()
+        Singletons.centralManager.reset()
     }
 
     override func viewDidLoad() {
@@ -103,6 +103,7 @@ class PeripheralsViewController : UITableViewController {
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
         setScanButton()
+        updateWhenActive()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -406,7 +407,7 @@ class PeripheralsViewController : UITableViewController {
     }
     
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Singletons.centralManager.peripherals.count
+        return reachedDiscoveryLimit ? ConfigStore.getMaximumPeripheralsDiscovered() : Singletons.centralManager.peripherals.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -429,10 +430,25 @@ class PeripheralsViewController : UITableViewController {
             cell.stateLabel.text = "Disconnected"
             cell.stateLabel.textColor = UIColor.lightGray
         }
-//        if peripheral.RSSI == -127 || peripheral.RSSI == 0 {
-//        } else {
-//        }
+        cell.rssiImage.image = fetchRSSIImage(peripheral.RSSI)
         cell.servicesLabel.text = "\(peripheral.services.count)"
         return cell
+    }
+
+    func fetchRSSIImage(_ rssi: Int) -> UIImage {
+        switch rssi {
+        case (-40)...(-1):
+            return #imageLiteral(resourceName: "RSSI-5")
+        case (-50)...(-41):
+            return #imageLiteral(resourceName: "RSSI-4")
+        case (-64)...(-51):
+            return #imageLiteral(resourceName: "RSSI-3")
+        case (-74)...(-65):
+            return #imageLiteral(resourceName: "RSSI-2")
+        case (-90)...(-75):
+            return #imageLiteral(resourceName: "RSSI-1")
+        default:
+            return #imageLiteral(resourceName: "RSSI-0")
+        }
     }
 }

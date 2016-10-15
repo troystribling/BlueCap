@@ -89,7 +89,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         cbCentralManager.delegate = nil
     }
 
-    public func invalidate()  {
+    public func reset()  {
         guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
             return
         }
@@ -284,9 +284,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
-        guard _discoveredPeripherals[peripheral.identifier] == nil else {
-            return
-        }
         let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
         Logger.debug("uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name)")
         _discoveredPeripherals[peripheral.identifier] = bcPeripheral
