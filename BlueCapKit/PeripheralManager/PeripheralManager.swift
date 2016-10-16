@@ -64,21 +64,16 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: Initialize
 
-    public override init() {
-        self.peripheralQueue = Queue("com.gnos.us.peripheral.main")
-        super.init()
-        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue:self.peripheralQueue.queue)
+    public convenience override init() {
+        self.init(queue: DispatchQueue(label: "com.gnos.us.peripheral-manger.main", qos: .background), options: nil)
+    }
+
+    public convenience init(options: [String : Any]? = nil) {
+        self.init(queue: DispatchQueue(label: "com.gnos.us.peripheral-manger.main", qos: .background), options: options)
     }
 
     public init(queue: DispatchQueue, options: [String : Any]? = nil) {
         self.peripheralQueue = Queue(queue)
-        self.options = options
-        super.init()
-        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
-    }
-
-    public init(options: [String : Any]? = nil) {
-        self.peripheralQueue = Queue("com.gnos.us.peripheral.main")
         self.options = options
         super.init()
         self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)

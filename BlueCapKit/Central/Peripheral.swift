@@ -113,7 +113,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     var discoveredCharacteristics = [CBUUID : Characteristic]()
 
     internal fileprivate(set) var cbPeripheral: CBPeripheralInjectable
-    public let advertisements: PeripheralAdvertisements
+    public private(set) var advertisements: PeripheralAdvertisements
     public let discoveredAt = Date()
 
     // MARK: Private Properties

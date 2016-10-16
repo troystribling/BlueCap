@@ -22,14 +22,14 @@ class DiscoveredPeripheralStore {
         }
     }
 
-    class func setPeripheralIdentifiers(_ peripherals: [UUID]) {
-        UserDefaults.standard.set(peripherals.map { $0.uuidString }, forKey: "discoveredPeripherals")
+    class func setPeripheralIdentifiers(_ peripheralIdentifier: [UUID]) {
+        UserDefaults.standard.set(peripheralIdentifier.map { $0.uuidString }, forKey: "discoveredPeripherals")
     }
 
-    class func addPeripheralIdentifier(_ peripheral: UUID) {
+    class func addPeripheralIdentifier(_ peripheralIdentifier: UUID) {
         let peripherals = getPeripheralIdentifiers()
-        if !peripherals.contains(peripheral) {
-            setPeripheralIdentifiers(peripherals + [peripheral])
+        if !peripherals.contains(peripheralIdentifier) {
+            setPeripheralIdentifiers(peripherals + [peripheralIdentifier])
         }
     }
 }
