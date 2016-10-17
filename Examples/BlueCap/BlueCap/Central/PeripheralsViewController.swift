@@ -21,6 +21,7 @@ class PeripheralsViewController : UITableViewController {
 
     var connectedPeripherals = Set<UUID>()
     var discoveredPeripherals = Set<UUID>()
+    var removedPeripherals = Set<UUID>()
 
     var discoveryManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.central-manager.main", qos: .background),
                                           profileManager: Singletons.profileManager,
@@ -163,20 +164,6 @@ class PeripheralsViewController : UITableViewController {
         setScanButton()
     }
 
-    func stopScanning() {
-        if discoveryManager.isScanning {
-            discoveryManager.stopScanning()
-        }
-        isScanning = false
-        stopPollingRSSIForPeripherals()
-        Singletons.centralManager.disconnectAllPeripherals()
-        Singletons.centralManager.removeAllPeripherals()
-        discoveryManager.removeAllPeripherals()
-        connectedPeripherals.removeAll()
-        discoveredPeripherals.removeAll()
-        updateWhenActive()
-    }
-
     func didBecomeActive() {
         Logger.debug()
         tableView.reloadData()
@@ -312,6 +299,7 @@ class PeripheralsViewController : UITableViewController {
                     Logger.debug("GiveUp: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                     peripheral.stopPollingRSSI()
                     strongSelf.connectedPeripherals.remove(peripheral.identifier)
+                    strongSelf.removedPeripherals.insert(peripheral.identifier)
                     peripheral.terminate()
                     strongSelf.connectPeripheralsIfNeccessay()
                     strongSelf.startScan()
@@ -385,14 +373,19 @@ class PeripheralsViewController : UITableViewController {
         }
         if error == CentralManagerError.peripheralScanTimeout {
             Logger.debug("timeoutScan: timing out")
-            discoveryManager.stopScanning()
+            stopScanning()
             self.setScanButton()
+            present(UIAlertController.alertWithMessage("Bluetooth scan timeout."), animated:true, completion:nil)
         }
     }
 
     func afterPeripheralDiscovered(_ peripheral: Peripheral) -> Void {
         guard Singletons.centralManager.discoveredPeripherals[peripheral.identifier] == nil else {
-            Logger.debug("Peripheral discovered")
+            Logger.debug("Peripheral already discovered \(peripheral.name)")
+            return
+        }
+        guard !removedPeripherals.contains(peripheral.identifier) else {
+            Logger.debug("Peripheral has been removed \(peripheral.name)")
             return
         }
         guard Singletons.centralManager.retrievePeripherals(withIdentifiers: [peripheral.identifier]).first != nil else {
@@ -409,6 +402,22 @@ class PeripheralsViewController : UITableViewController {
             discoveryManager.stopScanning()
         }
     }
+
+    func stopScanning() {
+        if discoveryManager.isScanning {
+            discoveryManager.stopScanning()
+        }
+        isScanning = false
+        stopPollingRSSIForPeripherals()
+        Singletons.centralManager.disconnectAllPeripherals()
+        Singletons.centralManager.removeAllPeripherals()
+        discoveryManager.removeAllPeripherals()
+        connectedPeripherals.removeAll()
+        discoveredPeripherals.removeAll()
+        removedPeripherals.removeAll()
+        updateWhenActive()
+    }
+
 
     // MARK: Peripheral discovery
 
@@ -468,13 +477,13 @@ class PeripheralsViewController : UITableViewController {
         switch discoveredPeripheral.RSSI {
         case (-40)...(-1):
             return #imageLiteral(resourceName: "RSSI-5")
-        case (-50)...(-41):
+        case (-55)...(-41):
             return #imageLiteral(resourceName: "RSSI-4")
-        case (-64)...(-51):
+        case (-70)...(-56):
             return #imageLiteral(resourceName: "RSSI-3")
-        case (-74)...(-65):
+        case (-85)...(-71):
             return #imageLiteral(resourceName: "RSSI-2")
-        case (-90)...(-75):
+        case (-99)...(-86):
             return #imageLiteral(resourceName: "RSSI-1")
         default:
             return #imageLiteral(resourceName: "RSSI-0")

@@ -184,7 +184,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("\(self.name) timeout in \(timeout)s")
         centralQueue.delay(timeout) {
             if self._isScanning {
-                if self._discoveredPeripherals.count == 0 && sequence == self.timeoutSequence{
+                if sequence == self.timeoutSequence {
                     self.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.peripheralScanTimeout)
                 }
                 self.stopScanningIfScanning()
