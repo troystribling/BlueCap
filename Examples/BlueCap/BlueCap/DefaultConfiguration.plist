@@ -4,9 +4,9 @@
 <dict>
 	<key>scanMode</key>
 	<integer>0</integer>
-	<key>scanTimeoutEnabled</key>
+	<key>scanEnabledEnabled</key>
 	<false/>
-	<key>scanTimeout</key>
+	<key>scanDuration</key>
 	<integer>10</integer>
 	<key>peripheralConnectionTimeoutEnabled</key>
 	<true/>

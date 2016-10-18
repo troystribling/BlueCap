@@ -108,22 +108,22 @@ class ConfigStore {
         UserDefaults.standard.set(scanMode.rawValue, forKey:"scanMode")
     }
     
-    // MARK: Scan Timeout
-    class func getScanTimeoutEnabled() -> Bool {
-        return UserDefaults.standard.bool(forKey: "scanTimeoutEnabled")
+    // MARK: Scan Duration
+    class func getScanDurationEnabled() -> Bool {
+        return UserDefaults.standard.bool(forKey: "scanDurationEnabled")
     }
     
-    class func setScanTimeoutEnabled(_ timeoutEnabled: Bool) {
-        UserDefaults.standard.set(timeoutEnabled, forKey:"scanTimeoutEnabled")
+    class func setScanDurationEnabled(_ timeoutEnabled: Bool) {
+        UserDefaults.standard.set(timeoutEnabled, forKey:"scanDurationEnabled")
     }
     
-    class func getScanTimeout() -> UInt {
-        let timeout = UserDefaults.standard.integer(forKey: "scanTimeout")
+    class func getScanDuration() -> UInt {
+        let timeout = UserDefaults.standard.integer(forKey: "scanDuration")
         return UInt(timeout)
     }
     
-    class func setScanTimeout(_ timeout: UInt) {
-        UserDefaults.standard.set(Int(timeout), forKey:"scanTimeout")
+    class func setScanDuration(_ duration: UInt) {
+        UserDefaults.standard.set(Int(duration), forKey:"scanDuration")
     }
     
     // MARK: Peripheral Connection Timeout

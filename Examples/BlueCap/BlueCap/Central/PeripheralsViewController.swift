@@ -19,13 +19,11 @@ class PeripheralsViewController : UITableViewController {
     var shouldUpdateTable = false
     var discoveryLimitReached = false
 
+    var connectingPeripherals = Set<UUID>()
     var connectedPeripherals = Set<UUID>()
     var discoveredPeripherals = Set<UUID>()
     var removedPeripherals = Set<UUID>()
 
-    var discoveryManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.central-manager.main", qos: .background),
-                                          profileManager: Singletons.profileManager,
-                                          options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.DiscoveryManager" as NSString])
     var atDiscoveryLimit: Bool {
         return Singletons.centralManager.peripherals.count >= ConfigStore.getMaximumPeripheralsDiscovered()
     }
@@ -36,8 +34,8 @@ class PeripheralsViewController : UITableViewController {
 
     var peripheralsSortedByRSSI: [Peripheral] {
         return Singletons.centralManager.peripherals.sorted() { (p1, p2) -> Bool in
-            guard let p1RSSI = discoveryManager.discoveredPeripherals[p1.identifier],
-                  let p2RSSI = discoveryManager.discoveredPeripherals[p2.identifier] else {
+            guard let p1RSSI = Singletons.discoveryManager.discoveredPeripherals[p1.identifier],
+                  let p2RSSI = Singletons.discoveryManager.discoveredPeripherals[p2.identifier] else {
                     return false
             }
             if (p1RSSI.RSSI == 127 || p1RSSI.RSSI == 0) && (p2RSSI.RSSI != 127  || p2RSSI.RSSI != 0) {
@@ -75,7 +73,7 @@ class PeripheralsViewController : UITableViewController {
         Singletons.centralManager.whenStateChanges().onSuccess { state in
             Logger.debug("CentralManager state changed: \(state.stringValue)")
         }
-        discoveryManager.whenStateChanges().onSuccess { [weak self] state in
+        Singletons.discoveryManager.whenStateChanges().onSuccess { [weak self] state in
             self.forEach { strongSelf in
                 Logger.debug("DiscoveryManager state changed: \(state.stringValue)")
                 switch state {
@@ -98,6 +96,7 @@ class PeripheralsViewController : UITableViewController {
         stopScanning()
         setScanButton()
         Singletons.centralManager.reset()
+        Singletons.discoveryManager.reset()
     }
 
     override func viewDidLoad() {
@@ -136,6 +135,7 @@ class PeripheralsViewController : UITableViewController {
                 let viewController = segue.destination as! PeripheralViewController
                 let peripheral = self.peripherals[selectedIndex.row]
                 viewController.peripheral = peripheral
+                viewController.peripheralDiscovered = discoveredPeripherals.contains(peripheral.identifier)
             }
         }
     }
@@ -149,7 +149,7 @@ class PeripheralsViewController : UITableViewController {
             present(UIAlertController.alertWithMessage("Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
             return
         }
-        guard discoveryManager.poweredOn else {
+        guard Singletons.discoveryManager.poweredOn else {
             present(UIAlertController.alertWithMessage("Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
             return
         }
@@ -211,6 +211,7 @@ class PeripheralsViewController : UITableViewController {
             peripheral.disconnect()
         }
         connectedPeripherals.removeAll()
+        connectingPeripherals.removeAll()
     }
 
     func disconnectPeripheralsIfNecessary() {
@@ -351,17 +352,17 @@ class PeripheralsViewController : UITableViewController {
 
         let future: FutureStream<Peripheral>
         let scanMode = ConfigStore.getScanMode()
-        let scanTimeout = ConfigStore.getScanTimeoutEnabled() ? Double(ConfigStore.getScanTimeout()) : Double.infinity
+        let scanDuration = ConfigStore.getScanDurationEnabled() ? Double(ConfigStore.getScanDuration()) : Double.infinity
         switch scanMode {
         case .promiscuous:
-            future = discoveryManager.startScanning(capacity:10, timeout: scanTimeout, options: scanOptions)
+            future = Singletons.discoveryManager.startScanning(capacity:10, duration: scanDuration, options: scanOptions)
         case .service:
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             guard scannedServices.isEmpty == false else {
                 self.present(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
                 return
             }
-            future = discoveryManager.startScanning(forServiceUUIDs:scannedServices, capacity: 10, timeout: scanTimeout, options: scanOptions)
+            future = Singletons.discoveryManager.startScanning(forServiceUUIDs:scannedServices, capacity: 10, duration: scanDuration, options: scanOptions)
         }
         future.onSuccess(completion: afterPeripheralDiscovered)
         future.onFailure(completion: afterTimeout)
@@ -381,11 +382,11 @@ class PeripheralsViewController : UITableViewController {
 
     func afterPeripheralDiscovered(_ peripheral: Peripheral) -> Void {
         guard Singletons.centralManager.discoveredPeripherals[peripheral.identifier] == nil else {
-            Logger.debug("Peripheral already discovered \(peripheral.name)")
+            Logger.debug("Peripheral already discovered \(peripheral.name), \(peripheral.identifier.uuidString)")
             return
         }
         guard !removedPeripherals.contains(peripheral.identifier) else {
-            Logger.debug("Peripheral has been removed \(peripheral.name)")
+            Logger.debug("Peripheral has been removed \(peripheral.name), \(peripheral.identifier.uuidString)")
             return
         }
         guard Singletons.centralManager.retrievePeripherals(withIdentifiers: [peripheral.identifier]).first != nil else {
@@ -399,19 +400,19 @@ class PeripheralsViewController : UITableViewController {
         updateWhenActive()
         if atDiscoveryLimit {
             discoveryLimitReached = true
-            discoveryManager.stopScanning()
+            Singletons.discoveryManager.stopScanning()
         }
     }
 
     func stopScanning() {
-        if discoveryManager.isScanning {
-            discoveryManager.stopScanning()
+        if Singletons.discoveryManager.isScanning {
+            Singletons.discoveryManager.stopScanning()
         }
         isScanning = false
         stopPollingRSSIForPeripherals()
         Singletons.centralManager.disconnectAllPeripherals()
         Singletons.centralManager.removeAllPeripherals()
-        discoveryManager.removeAllPeripherals()
+        Singletons.discoveryManager.removeAllPeripherals()
         connectedPeripherals.removeAll()
         discoveredPeripherals.removeAll()
         removedPeripherals.removeAll()
@@ -432,6 +433,7 @@ class PeripheralsViewController : UITableViewController {
             self?.discoveredPeripherals.insert(peripheral.identifier)
         }
         peripheralDiscoveryFuture.onFailure { _ in
+            Logger.debug("Service discovery failed \(peripheral.name), \(peripheral.identifier.uuidString)")
         }
     }
 
@@ -465,28 +467,33 @@ class PeripheralsViewController : UITableViewController {
             cell.stateLabel.text = "Disconnected"
             cell.stateLabel.textColor = UIColor.lightGray
         }
-        cell.rssiImage.image = fetchRSSIImage(peripheral)
+        updateRSSI(peripheral: peripheral, cell: cell)
         cell.servicesLabel.text = "\(peripheral.services.count)"
         return cell
     }
 
-    func fetchRSSIImage(_ peripheral: Peripheral) -> UIImage {
-        guard let discoveredPeripheral = discoveryManager.discoveredPeripherals[peripheral.identifier] else {
-            return #imageLiteral(resourceName: "RSSI-0")
+    func updateRSSI(peripheral: Peripheral, cell: PeripheralCell) {
+        guard let discoveredPeripheral = Singletons.discoveryManager.discoveredPeripherals[peripheral.identifier] else {
+            cell.rssiImage.image = #imageLiteral(resourceName: "RSSI-0")
+            cell.rssiLabel.text = "NA"
+            return
         }
+        cell.rssiLabel.text = "\(discoveredPeripheral.RSSI)"
+        let rssiImage: UIImage
         switch discoveredPeripheral.RSSI {
         case (-40)...(-1):
-            return #imageLiteral(resourceName: "RSSI-5")
+            rssiImage = #imageLiteral(resourceName: "RSSI-5")
         case (-55)...(-41):
-            return #imageLiteral(resourceName: "RSSI-4")
+            rssiImage = #imageLiteral(resourceName: "RSSI-4")
         case (-70)...(-56):
-            return #imageLiteral(resourceName: "RSSI-3")
+            rssiImage = #imageLiteral(resourceName: "RSSI-3")
         case (-85)...(-71):
-            return #imageLiteral(resourceName: "RSSI-2")
+            rssiImage = #imageLiteral(resourceName: "RSSI-2")
         case (-99)...(-86):
-            return #imageLiteral(resourceName: "RSSI-1")
+            rssiImage = #imageLiteral(resourceName: "RSSI-1")
         default:
-            return #imageLiteral(resourceName: "RSSI-0")
+            rssiImage = #imageLiteral(resourceName: "RSSI-0")
         }
+        cell.rssiImage.image = rssiImage
     }
 }

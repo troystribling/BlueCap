@@ -1,5 +1,5 @@
 //
-//  ConfigureScanTimeoutViewController.swift
+//  ConfigureScanDurationViewController.swift
 //  BlueCap
 //
 //  Created by Troy Stribling on 9/9/14.
@@ -9,9 +9,9 @@
 import UIKit
 import BlueCapKit
 
-class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate {
+class ConfigureScanDurauinViewController : UIViewController, UITextFieldDelegate {
     
-    @IBOutlet var timeoutTextField    : UITextField!
+    @IBOutlet var timeoutDurationField    : UITextField!
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -19,7 +19,7 @@ class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.timeoutTextField.text = "\(ConfigStore.getScanTimeout())"
+        self.timeoutDurationField.text = "\(ConfigStore.getScanDuration())"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -32,8 +32,8 @@ class ConfigureScanTimeoutViewController : UIViewController, UITextFieldDelegate
     
     // UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let timeoutText = self.timeoutTextField.text, let timeout = UInt(timeoutText) , !timeoutText.isEmpty {
-            ConfigStore.setScanTimeout(timeout)
+        if let durationText = self.timeoutDurationField.text, let duration = UInt(durationText), !durationText.isEmpty {
+            ConfigStore.setScanDuration(duration)
             _ = self.navigationController?.popToRootViewController(animated: true)
         }
         return true

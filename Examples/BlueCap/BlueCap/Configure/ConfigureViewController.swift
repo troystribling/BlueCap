@@ -16,10 +16,10 @@ class ConfigureViewController : UITableViewController {
 
     @IBOutlet var servicesLabel: UILabel!
 
-    @IBOutlet var scanTimeoutSwitch: UISwitch!
-    @IBOutlet var scanTimeoutEnabledLabel: UILabel!
-    @IBOutlet var scanTimeoutTitleLabel: UILabel!
-    @IBOutlet var scanTimeoutLabel: UILabel!
+    @IBOutlet var scanDurationSwitch: UISwitch!
+    @IBOutlet var scanDurationEnabledLabel: UILabel!
+    @IBOutlet var scanDurationTitleLabel: UILabel!
+    @IBOutlet var scanDurationLabel: UILabel!
 
     @IBOutlet var peripheralConnectionTimeoutSwitch: UISwitch!
     @IBOutlet var peripheralConnectionTimeoutEnabledLabel: UILabel!
@@ -75,7 +75,7 @@ class ConfigureViewController : UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.scanModeLabel.text = ConfigStore.getScanMode().stringValue
-        self.scanTimeoutLabel.text = "\(ConfigStore.getScanTimeout())s"
+        self.scanDurationLabel.text = "\(ConfigStore.getScanDuration())s"
         self.peripheralMaxDisconnectionsLabel.text = "\(ConfigStore.getPeripheralMaximumDisconnections())"
         self.peripheralMaxTimeoutsLabel.text = "\(ConfigStore.getPeripheralMaximumTimeouts())"
         self.peripheralConnectionTimeoutLabel.text = "\(ConfigStore.getPeripheralConnectionTimeout())s"
@@ -100,11 +100,11 @@ class ConfigureViewController : UITableViewController {
         guard identifier != nil  else {
             return false
         }
-        return !Singletons.centralManager.isScanning
+        return !Singletons.discoveryManager.isScanning
     }
         
     @IBAction func toggleScanTimeout(_: AnyObject) {
-        ConfigStore.setScanTimeoutEnabled(!ConfigStore.getScanTimeoutEnabled())
+        ConfigStore.setScanDurationEnabled(!ConfigStore.getScanDurationEnabled())
     }
     
     @IBAction func toggelNotification(_: AnyObject) {
@@ -128,23 +128,23 @@ class ConfigureViewController : UITableViewController {
 
         self.servicesLabel.textColor = self.labelColorIfScanning()
 
-        self.scanTimeoutSwitch.isOn = ConfigStore.getScanTimeoutEnabled()
-        self.scanTimeoutSwitch.isEnabled = self.enableIfScanning()
-        self.scanTimeoutEnabledLabel.textColor = self.labelColorIfScanning()
-        self.scanTimeoutTitleLabel.textColor = self.labelColorIfScanning()
+        self.scanDurationSwitch.isOn = ConfigStore.getScanDurationEnabled()
+        self.scanDurationSwitch.isEnabled = self.enableIfNotScanning()
+        self.scanDurationEnabledLabel.textColor = self.labelColorIfScanning()
+        self.scanDurationTitleLabel.textColor = self.labelColorIfScanning()
 
         self.peripheralConnectionTimeoutSwitch.isOn = ConfigStore.getPeripheralConnectionTimeoutEnabled()
-        self.peripheralConnectionTimeoutSwitch.isEnabled = self.enableIfScanning()
+        self.peripheralConnectionTimeoutSwitch.isEnabled = self.enableIfNotScanning()
         self.peripheralConnectionTimeoutEnabledLabel.textColor = self.labelColorIfScanning()
         self.peripheralConnectionTimeoutTitleLabel.textColor = self.labelColorIfScanning()
 
         self.peripheralMaxTimeoutsSwitch.isOn = ConfigStore.getPeripheralMaximumTimeoutsEnabled()
-        self.peripheralMaxTimeoutsSwitch.isEnabled = self.enableIfScanning()
+        self.peripheralMaxTimeoutsSwitch.isEnabled = self.enableIfNotScanning()
         self.peripheralMaxTimeoutsEnabledLabel.textColor = self.labelColorIfScanning()
         self.peripheralMaxTimeoutsTitleLabel.textColor = self.labelColorIfScanning()
 
         self.peripheralMaxDisconnectionsSwitch.isOn = ConfigStore.getPeripheralMaximumDisconnectionsEnabled()
-        self.peripheralMaxDisconnectionsSwitch.isEnabled = self.enableIfScanning()
+        self.peripheralMaxDisconnectionsSwitch.isEnabled = self.enableIfNotScanning()
         self.peripheralMaxDisconnectionsEnabledLabel.textColor = self.labelColorIfScanning()
         self.peripheralMaxDisconnectionsTitleLabel.textColor = self.labelColorIfScanning()
 
@@ -158,15 +158,15 @@ class ConfigureViewController : UITableViewController {
     }
 
     func labelColorIfScanning() -> UIColor {
-        if  Singletons.centralManager.isScanning {
+        if  Singletons.discoveryManager.isScanning {
             return UIColor.lightGray
         } else {
             return UIColor.black
         }
     }
 
-    func enableIfScanning() -> Bool {
-        return !Singletons.centralManager.isScanning
+    func enableIfNotScanning() -> Bool {
+        return !Singletons.discoveryManager.isScanning
     }
 
 }

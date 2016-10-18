@@ -66,34 +66,7 @@ class PeripheralServicesViewController : UITableViewController {
     override func shouldPerformSegue(withIdentifier identifier:String?, sender:Any?) -> Bool {
         return true
     }
-    
-    func peripheralDisconnected() {
-        Logger.debug()
-//        if self.peripheralViewController.peripheralConnected {
-//            self.present(UIAlertController.alertWithMessage("Peripheral disconnected"), animated:true, completion:nil)
-//            self.peripheralViewController.peripheralConnected = false
-//            self.updateWhenActive()
-//        }
-    }
 
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        // TODO: Use Future Callback
-//
-//        guard keyPath != nil else {
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//            return
-//        }
-//        switch (keyPath!, context) {
-//        case("state", PeripheralServicesViewController.BCPeripheralStateKVOContext):
-//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-//                if newState == .disconnected {
-//                    DispatchQueue.main.async { self.peripheralDisconnected() }
-//                }
-//            }
-//        default:
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//        }
-    }
 
     func didEnterBackground() {
         Logger.debug()
@@ -118,15 +91,7 @@ class PeripheralServicesViewController : UITableViewController {
         let service = peripheral.services[indexPath.row]
         cell.nameLabel.text = service.name
         cell.uuidLabel.text = service.UUID.uuidString
-//        if let peripheralViewController = self.peripheralViewController {
-//            if peripheralViewController.peripheralConnected {
-//                cell.nameLabel.textColor = UIColor.black
-//            } else {
-//                cell.nameLabel.textColor = UIColor.lightGray
-//            }
-//        } else {
-//            cell.nameLabel.textColor = UIColor.black
-//        }
+        cell.nameLabel.textColor = UIColor.black
         return cell
     }
     

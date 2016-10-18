@@ -14,6 +14,9 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
 
     weak var peripheral: Peripheral!
+
+    var peripheralDiscovered = false
+
     let cancelToken = CancelToken()
 
     let dateFormatter = DateFormatter()
@@ -76,6 +79,13 @@ class PeripheralViewController : UITableViewController {
             let viewController = segue.destination as! PeripheralAdvertisementsViewController
             viewController.peripheral = self.peripheral
         }
+    }
+
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        guard identifier == MainStoryBoard.peripheralServicesSegue else {
+            return false
+        }
+        return peripheral.services.count > 0
     }
 
     func willResignActive() {
@@ -147,13 +157,36 @@ class PeripheralViewController : UITableViewController {
                     strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(strongSelf.peripheral.name)` failed"), animated:true, completion:nil)
                     break
                 }
+                strongSelf.updateConnectionStateLabel()
+                strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
             }
-            self?.updateConnectionStateLabel()
-            self?.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
         }
 
         connectionFuture.onFailure { [weak self] error in
-            self?.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
+            self.forEach { strongSelf in
+                strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
+                strongSelf.updateConnectionStateLabel()
+            }
+        }
+    }
+
+    // MARK: Peripheral discovery
+
+    func discoverPeripheral(_ peripheral: Peripheral) {
+        guard peripheral.state == .connected && !peripheralDiscovered else {
+            return
+        }
+        let peripheralDiscoveryFuture = peripheral.discoverAllServices().flatMap { peripheral in
+            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+        }
+        peripheralDiscoveryFuture.onSuccess { [weak self] _ in
+            self.forEach { strongSelf in
+                strongSelf.peripheralDiscovered = true
+                strongSelf.updateConnectionStateLabel()
+            }
+        }
+        peripheralDiscoveryFuture.onFailure { _ in
+            Logger.debug("Service discovery failed \(peripheral.name), \(peripheral.identifier.uuidString)")
         }
     }
 
