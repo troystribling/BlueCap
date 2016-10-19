@@ -346,7 +346,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Discover Services
 
-    public func discoverAllServices(_ timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral> {
+    public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral> {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         return self.discoverServices(nil, timeout: timeout)
     }

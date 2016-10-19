@@ -119,9 +119,6 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        shouldUpdateTable = false
-        stopPollingRSSIForPeripherals()
-        disconnectConnectedPeripherals()
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -326,22 +323,6 @@ class PeripheralsViewController : UITableViewController {
 
     // MARK: Scanning
 
-    func fetchCachedPeripheralsAndStartScan() {
-        let scanMode = ConfigStore.getScanMode()
-        switch scanMode {
-        case .promiscuous:
-            let discoveredPeripheralUUIDs = DiscoveredPeripheralStore.getPeripheralIdentifiers()
-            let cachedPeripherals = Singletons.centralManager.retrievePeripherals(withIdentifiers: discoveredPeripheralUUIDs)
-            DiscoveredPeripheralStore.setPeripheralIdentifiers(cachedPeripherals.map { $0.identifier })
-        case .service:
-            let scannedServices = ConfigStore.getScannedServiceUUIDs()
-            _ = Singletons.centralManager.retrieveConnectedPeripherals(withServices: scannedServices)
-        }
-        updateWhenActive()
-        connectPeripheralsIfNeccessay()
-        startScan()
-    }
-
     func startScan() {
         guard !atDiscoveryLimit else { return }
         guard !Singletons.centralManager.isScanning else { return }
@@ -470,6 +451,12 @@ class PeripheralsViewController : UITableViewController {
         updateRSSI(peripheral: peripheral, cell: cell)
         cell.servicesLabel.text = "\(peripheral.services.count)"
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        shouldUpdateTable = false
+        stopPollingRSSIForPeripherals()
+        disconnectConnectedPeripherals()
     }
 
     func updateRSSI(peripheral: Peripheral, cell: PeripheralCell) {
