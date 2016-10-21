@@ -125,9 +125,6 @@ class PeripheralViewController : UITableViewController {
         case .connected:
             stateLabel.text = "Connected"
             stateLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 1.0)
-        case .disconnected:
-            stateLabel.text = "Disconnected"
-            stateLabel.textColor = UIColor.lightGray
         default:
             stateLabel.text = "Connecting"
             stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
@@ -146,7 +143,7 @@ class PeripheralViewController : UITableViewController {
             self.forEach { strongSelf in
                 switch connectionEvent {
                 case .connect:
-                    break
+                    strongSelf.updateConnectionStateLabel()
                 case .timeout:
                     peripheral.reconnect()
                 case .disconnect:
@@ -154,10 +151,11 @@ class PeripheralViewController : UITableViewController {
                 case .forceDisconnect:
                     break;
                 case .giveUp:
+                    strongSelf.stateLabel.text = "Disconnected"
+                    strongSelf.stateLabel.textColor = UIColor.lightGray
                     strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(strongSelf.peripheral.name)` failed"), animated:true, completion:nil)
                     break
                 }
-                strongSelf.updateConnectionStateLabel()
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
             }
         }
