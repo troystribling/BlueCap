@@ -16,7 +16,7 @@ class PeripheralsViewController : UITableViewController {
     var startScanBarButtonItem: UIBarButtonItem!
 
     var isScanning = false
-    var shouldUpdateTable = false
+    var shouldUpdateConnections = false
     var discoveryLimitReached = false
 
     var connectingPeripherals = Set<UUID>()
@@ -107,7 +107,7 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        shouldUpdateTable = true
+        shouldUpdateConnections = true
         pollConnectionsAndUpdateIfNeeded()
         startPolllingRSSIForPeripherals()
         connectPeripheralsIfNeccessay()
@@ -183,7 +183,7 @@ class PeripheralsViewController : UITableViewController {
     // MARK: Peripheral RSSI
 
     func startPollingRSSIForPeripheral(_ peripheral: Peripheral) {
-        guard shouldUpdateTable else {
+        guard shouldUpdateConnections else {
             return
         }
         _ = peripheral.startPollingRSSI(Params.peripheralsViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
@@ -207,7 +207,6 @@ class PeripheralsViewController : UITableViewController {
         for peripheral in Singletons.centralManager.peripherals where connectingPeripherals.contains(peripheral.identifier) {
             peripheral.disconnect()
         }
-        connectedPeripherals.removeAll()
         connectingPeripherals.removeAll()
     }
 
@@ -228,9 +227,14 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func connectPeripheralsIfNeccessay() {
+        guard shouldUpdateConnections else {
+            Logger.debug("connection updates disabled")
+            return
+        }
         let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
         var connectionCount = connectingPeripherals.count
         guard connectionCount < maxConnections else {
+            Logger.debug("max connections reached")
             return
         }
         let peripherals = self.peripheralsSortedByRSSI
@@ -245,7 +249,8 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func pollConnectionsAndUpdateIfNeeded() {
-        guard shouldUpdateTable && isScanning else {
+        guard shouldUpdateConnections && isScanning else {
+            Logger.debug("connection updates disabled")
             return
         }
         Queue.main.delay(Params.updateConnectionsInterval) { [weak self] in
@@ -453,7 +458,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        shouldUpdateTable = false
+        shouldUpdateConnections = false
         stopPollingRSSIForPeripherals()
         disconnectConnectingPeripherals()
     }

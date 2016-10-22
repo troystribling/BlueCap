@@ -226,9 +226,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     private func loadRetrievedPeripheral(_ peripheral: CBPeripheralInjectable) -> Peripheral {
         let newBCPeripheral: Peripheral
         if let oldBCPeripheral = self._discoveredPeripherals[peripheral.identifier] {
-            newBCPeripheral = Peripheral(cbPeripheral: peripheral, bcPeripheral: oldBCPeripheral)
+            newBCPeripheral = Peripheral(cbPeripheral: peripheral, bcPeripheral: oldBCPeripheral, profileManager: profileManager)
         } else {
-            newBCPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self)
+            newBCPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, profileManager: profileManager)
         }
         Logger.debug("\(self.name) uuid=\(newBCPeripheral.identifier.uuidString), name=\(newBCPeripheral.name)")
         self._discoveredPeripherals[peripheral.identifier] = newBCPeripheral

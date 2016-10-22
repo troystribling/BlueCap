@@ -64,7 +64,7 @@ class PeripheralViewController : UITableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object :nil)
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         self.peripheral.stopPollingRSSI()
         self.peripheral.disconnect()
         super.viewDidDisappear(animated)
@@ -144,6 +144,7 @@ class PeripheralViewController : UITableViewController {
                 switch connectionEvent {
                 case .connect:
                     strongSelf.updateConnectionStateLabel()
+                    strongSelf.discoverPeripheralIfNeccessary()
                 case .timeout:
                     peripheral.reconnect()
                 case .disconnect:
@@ -170,7 +171,7 @@ class PeripheralViewController : UITableViewController {
 
     // MARK: Peripheral discovery
 
-    func discoverPeripheral(_ peripheral: Peripheral) {
+    func discoverPeripheralIfNeccessary() {
         guard peripheral.state == .connected && !peripheralDiscovered else {
             return
         }
@@ -183,8 +184,16 @@ class PeripheralViewController : UITableViewController {
                 strongSelf.updateConnectionStateLabel()
             }
         }
-        peripheralDiscoveryFuture.onFailure { _ in
-            Logger.debug("Service discovery failed \(peripheral.name), \(peripheral.identifier.uuidString)")
+        peripheralDiscoveryFuture.onFailure { [weak self] _ in
+            Logger.debug("Service discovery failed \(self?.peripheral.name), \(self?.peripheral.identifier.uuidString)")
+        }
+    }
+
+    // MARK: UITableViewDataSource
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 && indexPath.row == 0 {
+            self.peripheral.stopPollingRSSI()
+            self.peripheral.disconnect()
         }
     }
 

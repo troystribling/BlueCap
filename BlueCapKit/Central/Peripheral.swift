@@ -334,7 +334,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.forcedDisconnect = true
         self.pollRSSIPromise = nil
         self.readRSSIPromise = nil
-        if self.state == .connected {
+        if self.state != .disconnected {
             Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
             central.cancelPeripheralConnection(self)
         } else {
@@ -342,7 +342,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.didDisconnectPeripheral(PeripheralError.disconnected)
         }
     }
-
 
     // MARK: Discover Services
 
