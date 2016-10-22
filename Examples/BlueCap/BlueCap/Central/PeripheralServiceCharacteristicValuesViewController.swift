@@ -12,13 +12,12 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
 
-    fileprivate static var BCPeripheralStateKVOContext = UInt8()
-
     weak var characteristic: Characteristic?
+    weak var peripheral: Peripheral?
+
     weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
 
     let progressView: ProgressView!
-    var peripheralViewController: PeripheralViewController?
 
     
     @IBOutlet var refreshButton:UIButton!
@@ -48,9 +47,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func viewDidAppear(_ animated:Bool)  {
-        let options = NSKeyValueObservingOptions([.new])
-        // TODO: Use Future Callback
-        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         self.updateValues()
     }
@@ -61,7 +57,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 characteristic.stopNotificationUpdates()
             }
         }
-        self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -107,40 +102,10 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             }
         }
     }
-    
-    func peripheralDisconnected() {
-        Logger.debug()
-//        if let peripheralViewController = self.peripheralViewController {
-//            if peripheralViewController.peripheralConnected {
-//                self.progressView.remove()
-//                self.present(UIAlertController.alertWithMessage("Peripheral disconnected") { action in
-//                        peripheralViewController.peripheralConnected = false
-//                }, animated: true, completion: nil)
-//            }
-//        }
-    }
 
     func didEnterBackground() {
         _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-// TODO: Use Future Callback
-//        guard keyPath != nil else {
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//            return
-//        }
-//        switch (keyPath!, context) {
-//        case("state", PeripheralServiceCharacteristicValuesViewController.BCPeripheralStateKVOContext):
-//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-//                if newState == .disconnected {
-//                    DispatchQueue.main.async { self.peripheralDisconnected() }
-//                }
-//            }
-//        default:
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//        }
     }
 
     // UITableViewDataSource
@@ -173,7 +138,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
         return cell
     }
-    
+
     // UITableViewDelegate
     override func tableView(_ tableView:UITableView, didSelectRowAt indexPath: IndexPath) {
         if let characteristic = self.characteristic {

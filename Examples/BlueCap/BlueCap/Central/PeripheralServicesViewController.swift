@@ -13,13 +13,7 @@ import CoreBluetooth
 
 class PeripheralServicesViewController : UITableViewController {
 
-    fileprivate static var BCPeripheralStateKVOContext = UInt8()
-
-    weak var peripheral: Peripheral!
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
-
-    var peripheralViewController: PeripheralViewController!
-    var progressView  = ProgressView()
+    weak var peripheral: Peripheral?
     
     struct MainStoryboard {
         static let peripheralServiceCell = "PeripheralServiceCell"
@@ -32,33 +26,30 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidLoad()  {
         super.viewDidLoad()
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.updateWhenActive()
-        let options = NSKeyValueObservingOptions([.new])
-        // TODO: Use Future Callback
-        self.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServicesViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        guard peripheral != nil else {
+            _ = self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
+        updateWhenActive()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServicesViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.removeObserver(self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServicesCharacteritics {
-            if let peripheral = self.peripheral {
-                if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
-                    let viewController = segue.destination as! PeripheralServiceCharacteristicsViewController
-                    viewController.service = peripheral.services[selectedIndex.row]
-                    viewController.peripheralViewController = self.peripheralViewController
-
-                }
+            if let peripheral = peripheral, let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                let viewController = segue.destination as! PeripheralServiceCharacteristicsViewController
+                viewController.service = peripheral.services[selectedIndex.row]
+                viewController.peripheral = peripheral
             }
         }
     }
@@ -69,7 +60,8 @@ class PeripheralServicesViewController : UITableViewController {
 
 
     func didEnterBackground() {
-        Logger.debug()
+        peripheral?.stopPollingRSSI()
+        peripheral?.disconnect()
         _ = self.navigationController?.popToRootViewController(animated: false)
     }
     
@@ -88,14 +80,15 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCell, for: indexPath) as! NameUUIDCell
-        let service = peripheral.services[indexPath.row]
-        cell.nameLabel.text = service.name
-        cell.uuidLabel.text = service.UUID.uuidString
-        cell.nameLabel.textColor = UIColor.black
+        if let peripheral = peripheral {
+            let service = peripheral.services[indexPath.row]
+            cell.nameLabel.text = service.name
+            cell.uuidLabel.text = service.UUID.uuidString
+        } else {
+            cell.nameLabel.text = "Unknown"
+            cell.uuidLabel.text = "Unknown"
+        }
         return cell
     }
-    
-    
-    // UITableViewDelegate
-    
+
 }

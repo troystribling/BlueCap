@@ -13,11 +13,10 @@ import BlueCapKit
 
 class PeripheralViewController : UITableViewController {
 
-    weak var peripheral: Peripheral!
+    weak var peripheral: Peripheral?
+    let progressView  = ProgressView()
 
     var peripheralDiscovered = false
-
-    let cancelToken = CancelToken()
 
     let dateFormatter = DateFormatter()
 
@@ -42,73 +41,86 @@ class PeripheralViewController : UITableViewController {
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
-        self.dateFormatter.dateStyle = .short
-        self.dateFormatter.timeStyle = .short
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .short
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = self.peripheral.name
-        discoveredAtLabel.text = dateFormatter.string(from: self.peripheral.discoveredAt)
         navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
+        guard let peripheral = peripheral else {
+            navigationItem.title = "Unknown"
+            return
+        }
+        navigationItem.title = peripheral.name
+        discoveredAtLabel.text = dateFormatter.string(from: peripheral.discoveredAt)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object :nil)
+        guard peripheral != nil else {
+            _ = self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
         updateConnectionStateLabel()
         connect()
         toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
         updatePeripheralProperties()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object :nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.peripheral.stopPollingRSSI()
-        self.peripheral.disconnect()
+        peripheral?.stopPollingRSSI()
+        peripheral?.disconnect()
         super.viewDidDisappear(animated)
     }
     
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
             let viewController = segue.destination as! PeripheralServicesViewController
-            viewController.peripheral = self.peripheral
-            viewController.peripheralViewController = self
+            viewController.peripheral = peripheral
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destination as! PeripheralAdvertisementsViewController
-            viewController.peripheral = self.peripheral
+            viewController.peripheral = peripheral
         }
     }
 
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        guard identifier == MainStoryBoard.peripheralServicesSegue else {
+        guard let peripheral = peripheral, identifier == MainStoryBoard.peripheralServicesSegue else {
             return false
         }
         return peripheral.services.count > 0
     }
 
-    func willResignActive() {
-        _ = self.navigationController?.popToRootViewController(animated: false)
+    func didEnterBackground() {
+        peripheral?.stopPollingRSSI()
+        peripheral?.disconnect()
+        _ = navigationController?.popToRootViewController(animated: false)
     }
 
     func updatePeripheralProperties() {
-        if let connectedAt = self.peripheral.connectedAt {
+        guard let peripheral = peripheral else {
+            return
+        }
+        if let connectedAt = peripheral.connectedAt {
             connectedAtLabel.text = dateFormatter.string(from: connectedAt)
         }
-        rssiLabel.text = "\(self.peripheral.RSSI)"
-        connectionsLabel.text = "\(self.peripheral.connectionCount)"
-        secondsConnectedLabel.text = "\(Int(self.peripheral.cumlativeSecondsConnected))"
+        rssiLabel.text = "\(peripheral.RSSI)"
+        connectionsLabel.text = "\(peripheral.connectionCount)"
+        secondsConnectedLabel.text = "\(Int(peripheral.cumlativeSecondsConnected))"
         if peripheral.connectionCount > 0 {
-            avgSecondsConnected.text = "\(Int(self.peripheral.cumlativeSecondsConnected) / self.peripheral.connectionCount)"
+            avgSecondsConnected.text = "\(Int(peripheral.cumlativeSecondsConnected) / peripheral.connectionCount)"
         } else {
             avgSecondsConnected.text = "0"
         }
-        disconnectionsLabel.text = "\(self.peripheral.disconnectionCount)"
-        timeoutsLabel.text = "\(self.peripheral.timeoutCount)"
+        disconnectionsLabel.text = "\(peripheral.disconnectionCount)"
+        timeoutsLabel.text = "\(peripheral.timeoutCount)"
     }
 
     func toggleRSSIUpdatesAndPeripheralPropertiesUpdates() {
+        guard let peripheral = peripheral else {
+            return
+        }
         if peripheral.state == .connected {
             let rssiFuture = peripheral.startPollingRSSI(Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
             rssiFuture.onSuccess { [weak self] _ in
@@ -121,6 +133,9 @@ class PeripheralViewController : UITableViewController {
     }
 
     func updateConnectionStateLabel() {
+        guard let peripheral = peripheral else {
+            return
+        }
         switch peripheral.state {
         case .connected:
             stateLabel.text = "Connected"
@@ -129,11 +144,15 @@ class PeripheralViewController : UITableViewController {
             stateLabel.text = "Connecting"
             stateLabel.textColor = UIColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
         }
-        self.serviceCount.text = "\(self.peripheral.services.count)"
+        serviceCount.text = "\(peripheral.services.count)"
     }
 
     func connect() {
+        guard let peripheral = peripheral else {
+            return
+        }
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
+        progressView.show()
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
@@ -152,9 +171,10 @@ class PeripheralViewController : UITableViewController {
                 case .forceDisconnect:
                     break;
                 case .giveUp:
+                    strongSelf.progressView.remove()
                     strongSelf.stateLabel.text = "Disconnected"
                     strongSelf.stateLabel.textColor = UIColor.lightGray
-                    strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(strongSelf.peripheral.name)` failed"), animated:true, completion:nil)
+                    strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
                     break
                 }
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
@@ -163,8 +183,12 @@ class PeripheralViewController : UITableViewController {
 
         connectionFuture.onFailure { [weak self] error in
             self.forEach { strongSelf in
+                strongSelf.progressView.remove()
+                strongSelf.stateLabel.text = "Disconnected"
+                strongSelf.stateLabel.textColor = UIColor.lightGray
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
                 strongSelf.updateConnectionStateLabel()
+                strongSelf.present(UIAlertController.alertOnError("Error connecting", error: error), animated: true, completion: nil)
             }
         }
     }
@@ -172,7 +196,8 @@ class PeripheralViewController : UITableViewController {
     // MARK: Peripheral discovery
 
     func discoverPeripheralIfNeccessary() {
-        guard peripheral.state == .connected && !peripheralDiscovered else {
+        guard let peripheral = peripheral, peripheral.state == .connected && !peripheralDiscovered else {
+            progressView.remove()
             return
         }
         let peripheralDiscoveryFuture = peripheral.discoverAllServices().flatMap { peripheral in
@@ -180,20 +205,28 @@ class PeripheralViewController : UITableViewController {
         }
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
+                strongSelf.progressView.remove()
                 strongSelf.peripheralDiscovered = true
                 strongSelf.updateConnectionStateLabel()
             }
         }
-        peripheralDiscoveryFuture.onFailure { [weak self] _ in
-            Logger.debug("Service discovery failed \(self?.peripheral.name), \(self?.peripheral.identifier.uuidString)")
+        peripheralDiscoveryFuture.onFailure { [weak self] (error) in
+            self.forEach { strongSelf in
+                strongSelf.progressView.remove()
+                strongSelf.present(UIAlertController.alertOnError("Peripheral discovery error", error: error), animated: true, completion: nil)
+                Logger.debug("Service discovery failed")
+            }
         }
     }
 
     // MARK: UITableViewDataSource
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let peripheral = peripheral else {
+            return
+        }
         if indexPath.section == 1 && indexPath.row == 0 {
-            self.peripheral.stopPollingRSSI()
-            self.peripheral.disconnect()
+            peripheral.stopPollingRSSI()
+            peripheral.disconnect()
         }
     }
 

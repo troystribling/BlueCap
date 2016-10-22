@@ -18,10 +18,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         static let peripheralServiceCharacteristicEditWriteOnlyValueSeque = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
-    weak var characteristic: Characteristic!
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
-
-    var peripheralViewController: PeripheralViewController!
+    weak var characteristic: Characteristic?
+    weak var peripheral: Peripheral?
     
     @IBOutlet var valuesLabel: UILabel!
 
@@ -48,39 +46,39 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func viewDidLoad()  {
-        self.navigationItem.title = self.characteristic.name
-
-        self.setUI()
-        
-        self.uuidLabel.text = self.characteristic.UUID.uuidString
-        self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
-        
-        self.propertyBroadcastLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.broadcast))
-        self.propertyReadLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.read))
-        self.propertyWriteWithoutResponseLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.writeWithoutResponse))
-        self.propertyWriteLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.write))
-        self.propertyNotifyLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.notify))
-        self.propertyIndicateLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.indicate))
-        self.propertyAuthenticatedSignedWritesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.authenticatedSignedWrites))
-        self.propertyExtendedPropertiesLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.extendedProperties))
-        self.propertyNotifyEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.notifyEncryptionRequired))
-        self.propertyIndicateEncryptionRequiredLabel.text = self.booleanStringValue(self.characteristic.propertyEnabled(.indicateEncryptionRequired))
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
+        guard peripheral != nil, let characteristic = characteristic else {
+            _ = self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
+        navigationItem.title = characteristic.name
+        updateUI()
+        uuidLabel.text = characteristic.UUID.uuidString
+        notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
+        propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
+        propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))
+        propertyWriteWithoutResponseLabel.text = booleanStringValue(characteristic.propertyEnabled(.writeWithoutResponse))
+        propertyWriteLabel.text = booleanStringValue(characteristic.propertyEnabled(.write))
+        propertyNotifyLabel.text = booleanStringValue(characteristic.propertyEnabled(.notify))
+        propertyIndicateLabel.text = booleanStringValue(characteristic.propertyEnabled(.indicate))
+        propertyAuthenticatedSignedWritesLabel.text = booleanStringValue(characteristic.propertyEnabled(.authenticatedSignedWrites))
+        propertyExtendedPropertiesLabel.text = booleanStringValue(characteristic.propertyEnabled(.extendedProperties))
+        propertyNotifyEncryptionRequiredLabel.text = booleanStringValue(characteristic.propertyEnabled(.notifyEncryptionRequired))
+        propertyIndicateEncryptionRequiredLabel.text = booleanStringValue(characteristic.propertyEnabled(.indicateEncryptionRequired))
+        navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.setUI()
-        // TODO: Use Future Callback
-//        let options = NSKeyValueObservingOptions([.new])
-//        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        guard peripheral != nil, characteristic != nil else {
+            _ = self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
+        updateUI()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        // TODO: Use Future Callback
-//        self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -99,107 +97,124 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-//        if let _ = identifier {
-//            return (self.characteristic.propertyEnabled(.read) || self.characteristic.isNotifying || self.characteristic.propertyEnabled(.write)) && self.peripheralViewController.peripheralConnected
-//        } else {
-//            return false
-//        }
-        return true
+        guard let characteristic = characteristic, identifier != nil  else {
+            return false
+        }
+        return (characteristic.propertyEnabled(.read) ||
+                   characteristic.isNotifying || characteristic.propertyEnabled(.write))
     }
     
     @IBAction func toggleNotificatons() {
-        if self.characteristic.isNotifying {
-            let future = self.characteristic.stopNotifying()
-            future.onSuccess {_ in
-                self.setUI()
-                self.characteristic.stopNotificationUpdates()
+        guard let characteristic = characteristic else {
+            return
+        }
+        if characteristic.isNotifying {
+            let future = characteristic.stopNotifying()
+            future.onSuccess { [weak self] _ in
+                self?.updateUI()
+                characteristic.stopNotificationUpdates()
             }
-            future.onFailure {(error) in
-                self.notifySwitch.isOn = false
-                self.setUI()
-                self.present(UIAlertController.alertOnError("Stop Notifications Error", error: error), animated: true, completion: nil)
+            future.onFailure { [weak self] (error) in
+                self.forEach { strongSelf in
+                    strongSelf.notifySwitch.isOn = false
+                    strongSelf.updateUI()
+                    strongSelf.present(UIAlertController.alertOnError("Error stopping notifications", error: error), animated: true, completion: nil)
+                }
             }
         } else {
-            let future = self.characteristic.startNotifying()
-            future.onSuccess {_ in
-                self.setUI()
+            let future = characteristic.startNotifying()
+            future.onSuccess { [weak self] _ in
+                self?.updateUI()
             }
-            future.onFailure {(error) in
-                self.notifySwitch.isOn = false
-                self.setUI()
-                self.present(UIAlertController.alertOnError("Start Notifications Error", error: error), animated: true, completion: nil)
+            future.onFailure { [weak self] (error) in
+                self.forEach { strongSelf in
+                    strongSelf.notifySwitch.isOn = false
+                    strongSelf.updateUI()
+                    strongSelf.present(UIAlertController.alertOnError("Error stopping notification", error: error), animated: true, completion: nil)
+                }
             }
         }
     }
     
-    func setUI() {
-//        if (!self.characteristic.propertyEnabled(.read) && !self.characteristic.propertyEnabled(.write) && !self.characteristic.isNotifying) || !self.peripheralViewController.peripheralConnected {
-//            self.valuesLabel.textColor = UIColor.lightGray
-//        } else {
-//            self.valuesLabel.textColor = UIColor.black
-//        }
-//        if self.peripheralViewController.peripheralConnected &&
-//            (characteristic.propertyEnabled(.notify)                     ||
-//             characteristic.propertyEnabled(.indicate)                   ||
-//             characteristic.propertyEnabled(.notifyEncryptionRequired)   ||
-//             characteristic.propertyEnabled(.indicateEncryptionRequired)) {
-//            self.notifyLabel.textColor = UIColor.black
-//            self.notifySwitch.isEnabled = true
-//            self.notifySwitch.isOn = self.characteristic.isNotifying
-//        } else {
-//            self.notifyLabel.textColor = UIColor.lightGray
-//            self.notifySwitch.isEnabled = false
-//            self.notifySwitch.isOn = false
-//        }
-//        self.notifyingLabel.text = self.booleanStringValue(self.characteristic.isNotifying)
+    func updateUI() {
+        guard let characteristic = characteristic, let peripheral = peripheral else {
+            return
+        }
+        if (characteristic.propertyEnabled(.read) || characteristic.propertyEnabled(.write) || characteristic.isNotifying) && peripheral.state == .connected {
+            self.valuesLabel.textColor = UIColor.black
+        } else {
+            self.valuesLabel.textColor = UIColor.lightGray
+        }
+        if peripheral.state == .connected &&
+            (characteristic.propertyEnabled(.notify)                     ||
+             characteristic.propertyEnabled(.indicate)                   ||
+             characteristic.propertyEnabled(.notifyEncryptionRequired)   ||
+             characteristic.propertyEnabled(.indicateEncryptionRequired)) {
+            notifyLabel.textColor = UIColor.black
+            notifySwitch.isEnabled = true
+            notifySwitch.isOn = characteristic.isNotifying
+        } else {
+            self.notifyLabel.textColor = UIColor.lightGray
+            self.notifySwitch.isEnabled = false
+            self.notifySwitch.isOn = false
+        }
+        notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
     }
     
     func booleanStringValue(_ value: Bool) -> String {
         return value ? "YES" : "NO"
     }
     
-    func peripheralDisconnected() {
-        Logger.debug()
-//        if self.peripheralViewController.peripheralConnected {
-//            self.present(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-//                    self.peripheralViewController.peripheralConnected = false
-//                    self.setUI()
-//                }, animated: true, completion: nil)
-//        }
+    func didEnterBackground() {
+        peripheral?.stopPollingRSSI()
+        peripheral?.disconnect()
+        _ = self.navigationController?.popToRootViewController(animated: false)
     }
 
-    func didEnterBackground() {
-        _ = self.navigationController?.popToRootViewController(animated: false)
-        Logger.debug()
+    func connect() {
+        guard let peripheral = peripheral else {
+            return
+        }
+        Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
+        let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
+        let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
+        let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
+        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+
+        connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
+            self.forEach { strongSelf in
+                switch connectionEvent {
+                case .connect:
+                    break
+                case .timeout:
+                    peripheral.reconnect()
+                case .disconnect:
+                    peripheral.reconnect()
+                case .forceDisconnect:
+                    break;
+                case .giveUp:
+                    strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
+                }
+            }
+        }
+
+        connectionFuture.onFailure { [weak self] error in
+            self?.present(UIAlertController.alertOnError("Error connecting", error: error), animated: true, completion: nil)
+        }
     }
-    
-    // TODO: Use Future Callback
-//    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-//        guard keyPath != nil else {
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//            return
-//        }
-//        switch (keyPath!, context) {
-//        case("state", PeripheralServiceCharacteristicViewController.BCPeripheralStateKVOContext):
-//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-//                if newState == .disconnected {
-//                    DispatchQueue.main.async { self.peripheralDisconnected() }
-//                }
-//            }
-//        default:
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//        }
-//    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let characteristic = characteristic, let peripheral = peripheral, peripheral.state == .connected else {
+            return
+        }
         if (indexPath as NSIndexPath).row == 0 {
-            if self.characteristic.propertyEnabled(.read) || self.characteristic.isNotifying  {
+            if characteristic.propertyEnabled(.read) || characteristic.isNotifying  {
                 self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicValueSegue, sender: indexPath)
-            } else if (self.characteristic.propertyEnabled(.write) || self.characteristic.propertyEnabled(.writeWithoutResponse)) && !self.characteristic.propertyEnabled(.read) {
-                if self.characteristic.stringValues.isEmpty {
-                    self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender: indexPath)
+            } else if (characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse)) && !characteristic.propertyEnabled(.read) {
+                if characteristic.stringValues.isEmpty {
+                    performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender: indexPath)
                 } else {
-                    self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender: indexPath)
+                    performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue, sender: indexPath)
                 }
             }
         }
