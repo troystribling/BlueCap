@@ -92,11 +92,14 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func alertAndStopScanning(message: String) {
-        present(UIAlertController.alertWithMessage(message), animated:true, completion:nil)
-        stopScanning()
-        setScanButton()
-        Singletons.centralManager.reset()
-        Singletons.discoveryManager.reset()
+        present(UIAlertController.alertWithMessage(message), animated:true) { [weak self] _ in
+            self.forEach { strongSelf in
+                strongSelf.stopScanning()
+                strongSelf.setScanButton()
+                Singletons.centralManager.reset()
+                Singletons.discoveryManager.reset()
+            }
+        }
     }
 
     override func viewDidLoad() {
@@ -205,9 +208,9 @@ class PeripheralsViewController : UITableViewController {
 
     func disconnectConnectingPeripherals() {
         for peripheral in Singletons.centralManager.peripherals where connectingPeripherals.contains(peripheral.identifier) {
+            connectedPeripherals.remove(peripheral.identifier)
             peripheral.disconnect()
         }
-        connectingPeripherals.removeAll()
     }
 
     func disconnectPeripheralsIfNecessary() {
@@ -229,6 +232,7 @@ class PeripheralsViewController : UITableViewController {
     func connectPeripheralsIfNeccessay() {
         guard shouldUpdateConnections else {
             Logger.debug("connection updates disabled")
+            disconnectConnectingPeripherals()
             return
         }
         let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
@@ -459,6 +463,7 @@ class PeripheralsViewController : UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         shouldUpdateConnections = false
+        Singletons.discoveryManager.stopScanning()
         stopPollingRSSIForPeripherals()
         disconnectConnectingPeripherals()
     }

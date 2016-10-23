@@ -20,6 +20,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
+    var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    let progressView = ProgressView()
     
     @IBOutlet var valuesLabel: UILabel!
 
@@ -47,13 +49,13 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func viewDidLoad()  {
         guard peripheral != nil, let characteristic = characteristic else {
-            _ = self.navigationController?.popToRootViewController(animated: false)
+            _ = navigationController?.popToRootViewController(animated: false)
             return
         }
         navigationItem.title = characteristic.name
         updateUI()
         uuidLabel.text = characteristic.UUID.uuidString
-        notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
+        notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
         propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
         propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))
         propertyWriteWithoutResponseLabel.text = booleanStringValue(characteristic.propertyEnabled(.writeWithoutResponse))
@@ -71,9 +73,10 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         guard peripheral != nil, characteristic != nil else {
-            _ = self.navigationController?.popToRootViewController(animated: false)
+            _ = navigationController?.popToRootViewController(animated: false)
             return
         }
+        connect()
         updateUI()
     }
     
@@ -85,23 +88,28 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicValuesViewController
-            viewController.characteristic = self.characteristic
+            viewController.characteristic = characteristic
+            viewController.peripheral = peripheral
+            viewController.connectionFuture = connectionFuture
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-            viewController.characteristic = self.characteristic
+            viewController.characteristic = characteristic
+            viewController.peripheral = peripheral
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-            viewController.characteristic = self.characteristic
-            viewController.valueName = nil
+            viewController.characteristic = characteristic
+            viewController.peripheral = peripheral
         }
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-        guard let characteristic = characteristic, identifier != nil  else {
+        guard let peripheral = peripheral, let characteristic = characteristic, identifier != nil  else {
             return false
         }
-        return (characteristic.propertyEnabled(.read) ||
-                   characteristic.isNotifying || characteristic.propertyEnabled(.write))
+        return characteristic.propertyEnabled(.read)    ||
+            characteristic.isNotifying                  ||
+            characteristic.propertyEnabled(.write)      &&
+            peripheral.state == .connected
     }
     
     @IBAction func toggleNotificatons() {
@@ -141,9 +149,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return
         }
         if (characteristic.propertyEnabled(.read) || characteristic.propertyEnabled(.write) || characteristic.isNotifying) && peripheral.state == .connected {
-            self.valuesLabel.textColor = UIColor.black
+            valuesLabel.textColor = UIColor.black
         } else {
-            self.valuesLabel.textColor = UIColor.lightGray
+            valuesLabel.textColor = UIColor.lightGray
         }
         if peripheral.state == .connected &&
             (characteristic.propertyEnabled(.notify)                     ||
@@ -154,11 +162,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             notifySwitch.isEnabled = true
             notifySwitch.isOn = characteristic.isNotifying
         } else {
-            self.notifyLabel.textColor = UIColor.lightGray
-            self.notifySwitch.isEnabled = false
-            self.notifySwitch.isOn = false
+            notifyLabel.textColor = UIColor.lightGray
+            notifySwitch.isEnabled = false
+            notifySwitch.isOn = false
         }
-        notifyingLabel.text = self.booleanStringValue(characteristic.isNotifying)
+        notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
     }
     
     func booleanStringValue(_ value: Bool) -> String {
@@ -168,7 +176,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     func didEnterBackground() {
         peripheral?.stopPollingRSSI()
         peripheral?.disconnect()
-        _ = self.navigationController?.popToRootViewController(animated: false)
+        _ = navigationController?.popToRootViewController(animated: false)
     }
 
     func connect() {
@@ -176,30 +184,69 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return
         }
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
+        progressView.show()
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
-        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+        connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
 
-        connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
+        connectionFuture?.onSuccess { [weak self] (peripheral, connectionEvent) in
             self.forEach { strongSelf in
                 switch connectionEvent {
                 case .connect:
-                    break
+                    strongSelf.discoverPeripheralService()
+                    strongSelf.updateUI()
                 case .timeout:
-                    peripheral.reconnect()
+                    strongSelf.reconnect()
                 case .disconnect:
-                    peripheral.reconnect()
+                    strongSelf.reconnect()
                 case .forceDisconnect:
-                    break;
+                    fallthrough
                 case .giveUp:
+                    strongSelf.progressView.remove()
                     strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
                 }
             }
         }
 
-        connectionFuture.onFailure { [weak self] error in
-            self?.present(UIAlertController.alertOnError("Error connecting", error: error), animated: true, completion: nil)
+        connectionFuture?.onFailure { [weak self] error in
+            self.forEach { strongSelf in
+                strongSelf.updateUI()
+                strongSelf.connect()
+                strongSelf.present(UIAlertController.alertOnError("Connection", error: error) { _ in
+                    strongSelf.progressView.remove()
+                }, animated: true, completion: nil)
+            }
+        }
+    }
+
+    func reconnect() {
+        guard let peripheral = peripheral else {
+            return
+        }
+        peripheral.reconnect()
+    }
+
+    func discoverPeripheralService() {
+        guard let peripheral = peripheral, let service = characteristic?.service, peripheral.state == .connected else {
+            progressView.remove()
+            return
+        }
+        let serviceDiscoveryFuture = peripheral.discoverServices([service.UUID]).flatMap { peripheral in
+            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+        }
+        serviceDiscoveryFuture.onSuccess { [weak self] _ in
+            self.forEach { strongSelf in
+                strongSelf.progressView.remove()
+            }
+        }
+        serviceDiscoveryFuture.onFailure { [weak self] (error) in
+            self.forEach { strongSelf in
+                strongSelf.present(UIAlertController.alertOnError("Peripheral discovery error", error: error) { _ in
+                    strongSelf.progressView.remove()
+                }, animated: true, completion: nil)
+                Logger.debug("Service discovery failed")
+            }
         }
     }
 
@@ -209,7 +256,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
         if (indexPath as NSIndexPath).row == 0 {
             if characteristic.propertyEnabled(.read) || characteristic.isNotifying  {
-                self.performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicValueSegue, sender: indexPath)
+                performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicValueSegue, sender: indexPath)
             } else if (characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse)) && !characteristic.propertyEnabled(.read) {
                 if characteristic.stringValues.isEmpty {
                     performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque, sender: indexPath)

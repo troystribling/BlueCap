@@ -14,8 +14,8 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
 
     weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
-
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    let connectionCancelToken = CancelToken()
 
     let progressView: ProgressView!
 
@@ -23,9 +23,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     @IBOutlet var refreshButton:UIButton!
     
     struct MainStoryboard {
-        static let peripheralServiceCharactertisticValueCell                = "PeripheralServiceCharacteristicValueCell"
-        static let peripheralServiceCharacteristicEditDiscreteValuesSegue   = "PeripheralServiceCharacteristicEditDiscreteValues"
-        static let peripheralServiceCharacteristicEditValueSeque            = "PeripheralServiceCharacteristicEditValue"
+        static let peripheralServiceCharactertisticValueCell = "PeripheralServiceCharacteristicValueCell"
+        static let peripheralServiceCharacteristicEditDiscreteValuesSegue = "PeripheralServiceCharacteristicEditDiscreteValues"
+        static let peripheralServiceCharacteristicEditValueSeque = "PeripheralServiceCharacteristicEditValue"
     }
     
     required init?(coder aDecoder:NSCoder) {
@@ -35,28 +35,37 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let characteristic = self.characteristic {
-            self.navigationItem.title = characteristic.name
-            if characteristic.isNotifying {
-                self.refreshButton.isEnabled = false
-            } else {
-                self.refreshButton.isEnabled = true
-            }
+        guard connectionFuture != nil, peripheral != nil, let characteristic = characteristic else {
+            _ = self.navigationController?.popViewController(animated: true)
+            return
         }
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        self.navigationItem.title = characteristic.name
+        if characteristic.isNotifying {
+            refreshButton.isEnabled = false
+        } else {
+            refreshButton.isEnabled = true
+        }
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated:Bool)  {
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        self.updateValues()
+        guard connectionFuture != nil, peripheral != nil, characteristic != nil else {
+            _ = self.navigationController?.popViewController(animated: true)
+            return
+        }
+        monitorConnection()
+        updateValues()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        if let characteristic = self.characteristic {
-            if characteristic.isNotifying {
-                characteristic.stopNotificationUpdates()
-            }
+        guard let characteristic = characteristic, let connectionFuture = connectionFuture else {
+            return
         }
+        if characteristic.isNotifying {
+            characteristic.stopNotificationUpdates()
+        }
+        _ = connectionFuture.cancel(connectionCancelToken)
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -64,9 +73,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = self.characteristic
+            viewController.peripheral = peripheral
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = self.characteristic
+            viewController.peripheral = peripheral
             if let stringValues = self.characteristic?.stringValue {
                 let selectedIndex = sender as! IndexPath
                 let names = Array(stringValues.keys)
@@ -76,36 +87,71 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     @IBAction func updateValues() {
-        if let characteristic = self.characteristic {
-            if characteristic.isNotifying {
-                let future = characteristic.receiveNotificationUpdates(capacity: 10)
-                future.onSuccess { _ in
-                    self.updateWhenActive()
-                }
-                future.onFailure{ error in
-                    self.present(UIAlertController.alertOnError("Characteristic Notification Error", error: error), animated: true, completion: nil)
-                }
-            } else if characteristic.propertyEnabled(.read) {
-                self.progressView.show()
-                let future = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-                future.onSuccess { _ in
-                    self.updateWhenActive()
-                    self.progressView.remove()
-                }
-                future.onFailure { error in
-                    self.progressView.remove()
-                    self.present(UIAlertController.alertOnError("Charcteristic Read Error", error: error) { action in
-                        _ = self.navigationController?.popViewController(animated: true)
-                        return
-                    }, animated:true, completion:nil)
-                }
+        guard let characteristic = characteristic else {
+            progressView.remove()
+            _ = self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
+        if characteristic.isNotifying {
+            let future = characteristic.receiveNotificationUpdates(capacity: 10)
+            future.onSuccess { [weak self] _ in
+                self?.updateWhenActive()
             }
+            future.onFailure{ [weak self] error in
+                self?.present(UIAlertController.alertOnError("Characteristic notification error", error: error), animated: true, completion: nil)
+            }
+        } else if characteristic.propertyEnabled(.read) {
+            self.progressView.show()
+            let future = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+            future.onSuccess { _ in
+                self.updateWhenActive()
+                self.progressView.remove()
+            }
+            future.onFailure { error in
+                self.progressView.remove()
+                self.present(UIAlertController.alertOnError("Charcteristic read error", error: error) { [weak self] _ in
+                    _ = self?.navigationController?.popViewController(animated: true)
+                    return
+                }, animated:true, completion:nil)
+            }
+        } else {
+            progressView.remove()
         }
     }
 
     func didEnterBackground() {
         _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
+    }
+
+    func monitorConnection() {
+        connectionFuture?.onSuccess(cancelToken: connectionCancelToken) { [weak self] (peripheral, connectionEvent) in
+            self.forEach { strongSelf in
+                switch connectionEvent {
+                case .connect:
+                    break;
+                case .timeout:
+                    fallthrough
+                case .disconnect:
+                    fallthrough
+                case .forceDisconnect:
+                    fallthrough
+                case .giveUp:
+                    strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
+                    _ = self?.navigationController?.popViewController(animated: true)
+                }
+            }
+        }
+
+        connectionFuture?.onFailure(cancelToken: connectionCancelToken) { [weak self] error in
+            self.forEach { strongSelf in
+                strongSelf.present(UIAlertController.alertOnError("Charcteristic connection error", error: error) { _ in
+                    _ = strongSelf.navigationController?.popViewController(animated: true)
+                    return
+                }, animated:true, completion:nil)
+            }
+        }
+
     }
 
     // UITableViewDataSource

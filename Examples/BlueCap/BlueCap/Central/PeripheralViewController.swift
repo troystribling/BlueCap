@@ -49,7 +49,7 @@ class PeripheralViewController : UITableViewController {
         super.viewDidLoad()
         navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
         guard let peripheral = peripheral else {
-            navigationItem.title = "Unknown"
+            _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
         navigationItem.title = peripheral.name
@@ -86,10 +86,16 @@ class PeripheralViewController : UITableViewController {
     }
 
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        guard let peripheral = peripheral, identifier == MainStoryBoard.peripheralServicesSegue else {
+        guard let peripheral = peripheral else {
             return false
         }
-        return peripheral.services.count > 0
+        if identifier == MainStoryBoard.peripheralServicesSegue {
+            return peripheral.services.count > 0
+        } else if identifier == MainStoryBoard.peripehralAdvertisementsSegue {
+            return true
+        } else {
+            return false
+        }
     }
 
     func didEnterBackground() {
@@ -183,12 +189,14 @@ class PeripheralViewController : UITableViewController {
 
         connectionFuture.onFailure { [weak self] error in
             self.forEach { strongSelf in
-                strongSelf.progressView.remove()
                 strongSelf.stateLabel.text = "Disconnected"
                 strongSelf.stateLabel.textColor = UIColor.lightGray
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
                 strongSelf.updateConnectionStateLabel()
-                strongSelf.present(UIAlertController.alertOnError("Error connecting", error: error), animated: true, completion: nil)
+                strongSelf.present(UIAlertController.alertOnError("Connection error", error: error) { _ in
+                    strongSelf.progressView.remove()
+                    _ = strongSelf.navigationController?.popToRootViewController(animated: true)
+                }, animated: true)
             }
         }
     }
@@ -212,8 +220,9 @@ class PeripheralViewController : UITableViewController {
         }
         peripheralDiscoveryFuture.onFailure { [weak self] (error) in
             self.forEach { strongSelf in
-                strongSelf.progressView.remove()
-                strongSelf.present(UIAlertController.alertOnError("Peripheral discovery error", error: error), animated: true, completion: nil)
+                strongSelf.present(UIAlertController.alertOnError("Peripheral discovery error", error: error) { _ in
+                    strongSelf.progressView.remove()
+                }, animated: true, completion: nil)
                 Logger.debug("Service discovery failed")
             }
         }

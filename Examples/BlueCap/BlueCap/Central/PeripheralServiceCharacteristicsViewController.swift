@@ -28,13 +28,17 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard peripheral != nil,  service != nil else {
+            _ = self.navigationController?.popToRootViewController(animated: false)
+            return
+        }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard peripheral != nil else {
+        guard peripheral != nil, service != nil else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }

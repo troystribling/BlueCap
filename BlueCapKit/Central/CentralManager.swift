@@ -170,11 +170,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     fileprivate func stopScanningIfScanning() {
-        if _isScanning {
-            _isScanning = false
-            cbCentralManager.stopScan()
-            afterPeripheralDiscoveredPromise = nil
+        guard _isScanning else {
+            Logger.debug("\(self.name) is not scanning")
+            return
         }
+        Logger.debug("\(self.name)")
+        _isScanning = false
+        cbCentralManager.stopScan()
+        afterPeripheralDiscoveredPromise = nil
     }
 
     fileprivate func timeScan(_ duration: TimeInterval, sequence: Int) {

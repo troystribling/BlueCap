@@ -368,40 +368,40 @@ public class Characteristic : NSObject {
 
     // MARK: Peripheral Delegation
     fileprivate func setNotifyValue(_ state: Bool) {
-        self.service?.peripheral?.setNotifyValue(state, forCharacteristic: self)
+        service?.peripheral?.setNotifyValue(state, forCharacteristic: self)
     }
     
     fileprivate func readValueForCharacteristic() {
-        self.service?.peripheral?.readValueForCharacteristic(self)
+        service?.peripheral?.readValueForCharacteristic(self)
     }
     
     fileprivate func writeValue(_ value: Data, type: CBCharacteristicWriteType = .withResponse) {
-        self.service?.peripheral?.writeValue(value, forCharacteristic: self, type: type)
+        service?.peripheral?.writeValue(value, forCharacteristic: self, type: type)
     }
 
     // MARK: Utilities
     fileprivate func writeNext() {
-        guard let parameters = self.writeParameters.first , !self.writing else {
+        guard let parameters = writeParameters.first , !writing else {
             return
         }
         Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.UUID.uuidString)")
-        self.writeParameters.remove(at :0)
-        self.writing = true
-        self.writeValue(parameters.value, type: parameters.type)
-        self.writeSequence += 1
-        self.timeoutWrite(self.writeSequence, timeout: parameters.timeout)
+        writeParameters.remove(at :0)
+        writing = true
+        writeValue(parameters.value, type: parameters.type)
+        writeSequence += 1
+        timeoutWrite(self.writeSequence, timeout: parameters.timeout)
     }
     
     fileprivate func readNext() {
-        guard let parameters = self.readParameters.first , !self.reading else {
+        guard let parameters = readParameters.first , !reading else {
             return
         }
         Logger.debug("read characteristic \(self.UUID.uuidString)")
-        self.readParameters.remove(at :0)
-        self.readValueForCharacteristic()
-        self.reading = true
-        self.readSequence += 1
-        self.timeoutRead(self.readSequence, timeout: parameters.timeout)
+        readParameters.remove(at :0)
+        readValueForCharacteristic()
+        reading = true
+        readSequence += 1
+        timeoutRead(self.readSequence, timeout: parameters.timeout)
     }
     
     fileprivate func shiftPromise(_ promises: inout [Promise<Characteristic>]) -> Promise<Characteristic>? {

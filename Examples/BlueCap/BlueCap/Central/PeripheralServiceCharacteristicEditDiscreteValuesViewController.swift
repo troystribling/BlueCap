@@ -12,12 +12,8 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
 
-    fileprivate static var BCPeripheralStateKVOContext = UInt8()
-
-    weak var characteristic: Characteristic!
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>!
-
-    var peripheralViewController: PeripheralViewController?
+    weak var characteristic: Characteristic?
+    weak var peripheral: Peripheral?
 
     var progressView = ProgressView()
     
@@ -31,60 +27,30 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = self.characteristic.name
+        guard peripheral != nil, let characteristic = characteristic else {
+            return
+        }
+        self.navigationItem.title = characteristic.name
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let options = NSKeyValueObservingOptions([.new])
-        // TODO: Use Future Callback
-        self.characteristic?.service?.peripheral?.addObserver(self, forKeyPath: "state", options: options, context: &PeripheralServiceCharacteristicEditDiscreteValuesViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.characteristic?.service?.peripheral?.removeObserver(self, forKeyPath: "state", context: &PeripheralServiceCharacteristicEditDiscreteValuesViewController.BCPeripheralStateKVOContext)
         NotificationCenter.default.removeObserver(self)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
     }
 
-    func peripheralDisconnected() {
-        Logger.debug()
-//        if let peripheralViewController = self.peripheralViewController {
-//            if peripheralViewController.peripheralConnected {
-//                self.present(UIAlertController.alertWithMessage("Peripheral disconnected") {(action) in
-//                        peripheralViewController.peripheralConnected = false
-//                        _ = self.navigationController?.popViewController(animated: true)
-//                    }, animated: true, completion: nil)
-//            }
-//        }
-    }
-
     func didEnterBackground() {
+        peripheral?.stopPollingRSSI()
+        peripheral?.disconnect()
         _ = self.navigationController?.popToRootViewController(animated: false)
-        Logger.debug()
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        // TODO: Use Future Callbacks
-//        guard keyPath != nil else {
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//            return
-//        }
-//        switch (keyPath!, context) {
-//        case("state", PeripheralServiceCharacteristicEditDiscreteValuesViewController.BCPeripheralStateKVOContext):
-//            if let change = change, let newValue = change[NSKeyValueChangeKey.newKey], let newRawState = newValue as? Int, let newState = CBPeripheralState(rawValue: newRawState) {
-//                if newState == .disconnected {
-//                    DispatchQueue.main.async { self.peripheralDisconnected() }
-//                }
-//            }
-//        default:
-//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-//        }
     }
 
     // UITableViewDataSource
@@ -93,15 +59,21 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
     
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.characteristic.stringValues.count
+        guard let characteristic = characteristic else {
+            return 0
+        }
+        return characteristic.stringValues.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, for: indexPath) as UITableViewCell
-        let stringValue = self.characteristic.stringValues[indexPath.row]
-        cell.textLabel?.text = stringValue
+        guard let characteristic = characteristic else {
+            cell.textLabel?.text = "Unknown"
+            return cell
+        }
+        let stringValue = characteristic.stringValues[indexPath.row]
         if let valueName = characteristic.stringValue?.keys.first {
-            if let value = self.characteristic.stringValue?[valueName] {
+            if let value = characteristic.stringValue?[valueName] {
                 if value == stringValue {
                     cell.accessoryType = UITableViewCellAccessoryType.checkmark
                 } else {

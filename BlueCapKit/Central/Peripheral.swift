@@ -413,12 +413,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     // MARK: CBPeripheralDelegate Shims
 
     internal func didDiscoverCharacteristicsForService(_ service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: Error?) {
-        Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
+        Logger.debug("uuid=\(identifier.uuidString), name=\(name)")
         if let bcService = self.discoveredServices[service.UUID] {
             bcService.didDiscoverCharacteristics(characteristics, error: error)
             if error == nil {
                 for cbCharacteristic in characteristics {
-                    self.discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[cbCharacteristic.UUID]
+                    discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[cbCharacteristic.UUID]
                 }
             }
         }
@@ -441,27 +441,30 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
     
     internal func didUpdateNotificationStateForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        Logger.debug()
-        if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
-            Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
-            bcCharacteristic.didUpdateNotificationState(error)
+        guard let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] else {
+            Logger.debug("characteristic not found uuid=\(characteristic.UUID.uuidString)")
+            return
         }
+        Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
+        bcCharacteristic.didUpdateNotificationState(error)
     }
     
     internal func didUpdateValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        Logger.debug()
-        if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
-            Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
-            bcCharacteristic.didUpdate(error)
+        guard let bcCharacteristic = discoveredCharacteristics[characteristic.UUID] else {
+            Logger.debug("characteristic not found uuid=\(characteristic.UUID.uuidString)")
+            return
         }
+        Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
+        bcCharacteristic.didUpdate(error)
     }
-    
+
     internal func didWriteValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        Logger.debug()
-        if let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] {
-            Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
-            bcCharacteristic.didWrite(error)
+        guard let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] else {
+            Logger.debug("characteristic not found uuid=\(characteristic.UUID.uuidString)")
+            return
         }
+        Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
+        bcCharacteristic.didWrite(error)
     }
 
     internal func didReadRSSI(_ RSSI: NSNumber, error: Error?) {
@@ -516,46 +519,46 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     internal func didFailToConnectPeripheral(_ error: Swift.Error?) {
-        self.didDisconnectPeripheral(error)
+        didDisconnectPeripheral(error)
     }
 
     // MARK: CBPeripheral Delegation
 
     internal func setNotifyValue(_ state: Bool, forCharacteristic characteristic: Characteristic) {
-        self.cbPeripheral.setNotifyValue(state, forCharacteristic:characteristic.cbCharacteristic)
+        cbPeripheral.setNotifyValue(state, forCharacteristic:characteristic.cbCharacteristic)
     }
     
     internal func readValueForCharacteristic(_ characteristic: Characteristic) {
-        self.cbPeripheral.readValueForCharacteristic(characteristic.cbCharacteristic)
+        cbPeripheral.readValueForCharacteristic(characteristic.cbCharacteristic)
     }
     
     internal func writeValue(_ value: Data, forCharacteristic characteristic: Characteristic, type: CBCharacteristicWriteType = .withResponse) {
-            self.cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type:type)
+        cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type:type)
     }
     
     internal func discoverCharacteristics(_ characteristics: [CBUUID]?, forService service: Service) {
-        self.cbPeripheral.discoverCharacteristics(characteristics, forService:service.cbService)
+        cbPeripheral.discoverCharacteristics(characteristics, forService:service.cbService)
     }
 
     // MARK: Utilities
 
     fileprivate func shouldFailOrGiveUp(_ error: Swift.Error) {
-        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), disconnectCount = \(self._disconnectionCount), disconnectRetries = \(self.disconnectRetries)")
-            if self._disconnectionCount < disconnectRetries {
-                self._disconnectionCount += 1
-                self.connectionPromise?.failure(error)
+        Logger.debug("name = \(name), uuid = \(identifier.uuidString), disconnectCount = \(_disconnectionCount), disconnectRetries = \(disconnectRetries)")
+            if _disconnectionCount < disconnectRetries {
+                _disconnectionCount += 1
+                connectionPromise?.failure(error)
             } else {
-                self.connectionPromise?.success((self, ConnectionEvent.giveUp))
+                connectionPromise?.success((self, ConnectionEvent.giveUp))
             }
     }
 
     fileprivate func shouldTimeoutOrGiveup() {
-        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), timeoutCount = \(self._timeoutCount), timeoutRetries = \(self.timeoutRetries)")
-        if self._timeoutCount < timeoutRetries {
-            self.connectionPromise?.success((self, .timeout))
-            self._timeoutCount += 1
+        Logger.debug("name = \(name), uuid = \(identifier.uuidString), timeoutCount = \(_timeoutCount), timeoutRetries = \(timeoutRetries)")
+        if _timeoutCount < timeoutRetries {
+            connectionPromise?.success((self, .timeout))
+            _timeoutCount += 1
         } else {
-            self.connectionPromise?.success((self, .giveUp))
+            connectionPromise?.success((self, .giveUp))
         }
     }
 
@@ -577,6 +580,8 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.servicesDiscoveredPromise = Promise<Peripheral>()
             if self.state == .connected {
                 self.serviceDiscoverySequence += 1
+                self.discoveredServices.removeAll()
+                self.discoveredCharacteristics.removeAll()
                 self.timeoutServiceDiscovery(self.serviceDiscoverySequence, timeout: timeout)
                 self.cbPeripheral.discoverServices(services)
             } else {
