@@ -55,8 +55,8 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
             if let service = self.service, let peripheral = peripheral {
                 if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
                     let viewController = segue.destination as! PeripheralServiceCharacteristicViewController
-                    viewController.characteristic = service.characteristics[selectedIndex.row]
-                    viewController.peripheral = peripheral
+                    viewController.discoveredCharacteristic = service.characteristics[selectedIndex.row]
+                    viewController.discoveredPeripheral = peripheral
                 }
             }
         }

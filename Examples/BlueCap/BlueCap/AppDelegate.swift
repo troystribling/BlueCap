@@ -27,11 +27,15 @@ struct BCAppError {
 }
 
 struct Singletons {
-    static let centralManager = CentralManager(profileManager: Singletons.profileManager, options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.CentralManager" as NSString])
-    static let peripheralManager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.PeripheralManager" as NSString])
-    static let discoveryManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.central-manager.main", qos: .background),
-                                                 profileManager: Singletons.profileManager,
-                                                 options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.DiscoveryManager" as NSString])
+    static let peripheralManager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager" as NSString])
+    static let discoveryManager = CentralManager(profileManager: Singletons.profileManager, options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.discovery-manager" as NSString])
+    static let scanningManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.scanning-manager.main", qos: .background),
+                                                profileManager: Singletons.profileManager,
+                                                options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.scanning-manager" as NSString])
+    static let communicationManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.communication-manager.main", qos: .background),
+                                                     profileManager: Singletons.profileManager,
+                                                     options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.communication-manager" as NSString])
+
     static let beaconManager = BeaconManager()
     static let profileManager = ProfileManager()
 }
@@ -84,12 +88,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         Logger.debug()
         UserDefaults.standard.synchronize()
-        if Singletons.centralManager.isScanning {
-            Singletons.centralManager.stopScanning()
+        if Singletons.scanningManager.isScanning {
+            Singletons.scanningManager.stopScanning()
         }
-        if Singletons.centralManager.peripherals.count > 0 {
-            Singletons.centralManager.disconnectAllPeripherals()
-            Singletons.centralManager.removeAllPeripherals()
+        if Singletons.scanningManager.peripherals.count > 0 {
+            Singletons.scanningManager.disconnectAllPeripherals()
+            Singletons.scanningManager.removeAllPeripherals()
+        }
+        if Singletons.discoveryManager.peripherals.count > 0 {
+            Singletons.discoveryManager.disconnectAllPeripherals()
+            Singletons.discoveryManager.removeAllPeripherals()
+        }
+        if Singletons.communicationManager.peripherals.count > 0 {
+            Singletons.communicationManager.disconnectAllPeripherals()
+            Singletons.communicationManager.removeAllPeripherals()
         }
     }
 

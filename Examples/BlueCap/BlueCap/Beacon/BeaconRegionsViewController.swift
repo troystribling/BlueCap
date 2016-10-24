@@ -66,7 +66,7 @@ class BeaconRegionsViewController: UITableViewController {
     }
     
     func toggleMonitoring(_ sender:AnyObject) {
-        if !Singletons.centralManager.isScanning {
+        if !Singletons.scanningManager.isScanning {
             if Singletons.beaconManager.isMonitoring {
                 Singletons.beaconManager.stopRangingAllBeacons()
                 Singletons.beaconManager.stopMonitoringAllRegions()
@@ -176,7 +176,7 @@ class BeaconRegionsViewController: UITableViewController {
                     cell.statusLabel.textColor = UIColor(red: 0.1, green: 0.7, blue: 0.1, alpha: 0.5)
                 }
             }
-        } else if Singletons.centralManager.isScanning {
+        } else if Singletons.scanningManager.isScanning {
             cell.statusLabel.text = "Monitoring"
         } else {
             cell.statusLabel.text = "Idle"

@@ -18,8 +18,12 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         static let peripheralServiceCharacteristicEditWriteOnlyValueSeque = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
-    weak var characteristic: Characteristic?
+    weak var discoveredCharacteristic: Characteristic?
     weak var peripheral: Peripheral?
+
+    var characteristic: Characteristic?
+    var discoveredPeripheral: Peripheral?
+
     var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
     let progressView = ProgressView()
     
@@ -48,31 +52,32 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func viewDidLoad()  {
-        guard peripheral != nil, let characteristic = characteristic else {
+        guard let discoveredPeripheral = discoveredPeripheral, let discoveredCharacteristic = discoveredCharacteristic else {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
-        navigationItem.title = characteristic.name
+        peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [discoveredPeripheral.identifier]).first
+        navigationItem.title = discoveredCharacteristic.name
         updateUI()
-        uuidLabel.text = characteristic.UUID.uuidString
-        notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
-        propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
-        propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))
-        propertyWriteWithoutResponseLabel.text = booleanStringValue(characteristic.propertyEnabled(.writeWithoutResponse))
-        propertyWriteLabel.text = booleanStringValue(characteristic.propertyEnabled(.write))
-        propertyNotifyLabel.text = booleanStringValue(characteristic.propertyEnabled(.notify))
-        propertyIndicateLabel.text = booleanStringValue(characteristic.propertyEnabled(.indicate))
-        propertyAuthenticatedSignedWritesLabel.text = booleanStringValue(characteristic.propertyEnabled(.authenticatedSignedWrites))
-        propertyExtendedPropertiesLabel.text = booleanStringValue(characteristic.propertyEnabled(.extendedProperties))
-        propertyNotifyEncryptionRequiredLabel.text = booleanStringValue(characteristic.propertyEnabled(.notifyEncryptionRequired))
-        propertyIndicateEncryptionRequiredLabel.text = booleanStringValue(characteristic.propertyEnabled(.indicateEncryptionRequired))
+        uuidLabel.text = discoveredCharacteristic.UUID.uuidString
+        notifyingLabel.text = "NO"
+        propertyBroadcastLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.broadcast))
+        propertyReadLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.read))
+        propertyWriteWithoutResponseLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.writeWithoutResponse))
+        propertyWriteLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.write))
+        propertyNotifyLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.notify))
+        propertyIndicateLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.indicate))
+        propertyAuthenticatedSignedWritesLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.authenticatedSignedWrites))
+        propertyExtendedPropertiesLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.extendedProperties))
+        propertyNotifyEncryptionRequiredLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.notifyEncryptionRequired))
+        propertyIndicateEncryptionRequiredLabel.text = booleanStringValue(discoveredCharacteristic.propertyEnabled(.indicateEncryptionRequired))
         navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard peripheral != nil, characteristic != nil else {
+        guard discoveredPeripheral != nil, discoveredCharacteristic != nil else {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
@@ -107,9 +112,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return false
         }
         return characteristic.propertyEnabled(.read)    ||
-            characteristic.isNotifying                  ||
-            characteristic.propertyEnabled(.write)      &&
-            peripheral.state == .connected
+               characteristic.isNotifying               ||
+               characteristic.propertyEnabled(.write)   &&
+               peripheral.state == .connected
     }
     
     @IBAction func toggleNotificatons() {
@@ -174,7 +179,6 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func didEnterBackground() {
-        peripheral?.stopPollingRSSI()
         peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }
@@ -228,16 +232,25 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
 
     func discoverPeripheralService() {
-        guard let peripheral = peripheral, let service = characteristic?.service, peripheral.state == .connected else {
+        guard let peripheral = peripheral,
+              let discoveredCharacteristic = discoveredCharacteristic,
+              let discoveredService = discoveredCharacteristic.service, peripheral.state == .connected else {
             progressView.remove()
             return
         }
-        let serviceDiscoveryFuture = peripheral.discoverServices([service.UUID]).flatMap { peripheral in
+        let serviceDiscoveryFuture = peripheral.discoverServices([discoveredService.UUID]).flatMap { peripheral in
             peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
         }
-        serviceDiscoveryFuture.onSuccess { [weak self] _ in
+        serviceDiscoveryFuture.onSuccess { [weak self] peripherals in
             self.forEach { strongSelf in
+                strongSelf.characteristic = peripheral.service(discoveredService.UUID)?.characteristic(discoveredCharacteristic.UUID)
                 strongSelf.progressView.remove()
+                strongSelf.updateUI()
+                if let characteristic = strongSelf.characteristic {
+                    Logger.debug("Discovered charcateristic \(characteristic.name), \(characteristic.UUID)")
+                } else {
+                    Logger.debug("Characteristic discovery failed")
+                }
             }
         }
         serviceDiscoveryFuture.onFailure { [weak self] (error) in

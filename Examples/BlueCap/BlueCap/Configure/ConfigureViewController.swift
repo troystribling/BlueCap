@@ -100,7 +100,7 @@ class ConfigureViewController : UITableViewController {
         guard identifier != nil  else {
             return false
         }
-        return !Singletons.discoveryManager.isScanning
+        return !Singletons.scanningManager.isScanning
     }
         
     @IBAction func toggleScanTimeout(_: AnyObject) {
@@ -158,7 +158,7 @@ class ConfigureViewController : UITableViewController {
     }
 
     func labelColorIfScanning() -> UIColor {
-        if  Singletons.discoveryManager.isScanning {
+        if  Singletons.scanningManager.isScanning {
             return UIColor.lightGray
         } else {
             return UIColor.black
@@ -166,7 +166,7 @@ class ConfigureViewController : UITableViewController {
     }
 
     func enableIfNotScanning() -> Bool {
-        return !Singletons.discoveryManager.isScanning
+        return !Singletons.scanningManager.isScanning
     }
 
 }
