@@ -326,7 +326,6 @@ public class Characteristic : NSObject {
         self.readNext()
     }
 
-
     fileprivate func didNotify(_ error: Swift.Error?) {
         if let error = error {
             self.notificationUpdatePromise?.failure(error)
