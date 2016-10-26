@@ -74,6 +74,7 @@
 		05F2A8DC199271FA00004260 /* ServiceCharacteristicProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */; };
 		05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */; };
 		05FAFC3519D30247003725B0 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FAFC3419D30247003725B0 /* Notification.swift */; };
+		05FC225A1DC0FDC200CFF170 /* CharacteristicConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC22591DC0FDC200CFF170 /* CharacteristicConnector.swift */; };
 		CED7B7721CD9BB00B1ED9D36 /* Pods_BlueCap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2143352BE2EA90A5B33390E /* Pods_BlueCap.framework */; };
 /* End PBXBuildFile section */
 
@@ -161,6 +162,7 @@
 		05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileViewController.swift; sourceTree = "<group>"; };
 		05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
 		05FAFC3419D30247003725B0 /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		05FC22591DC0FDC200CFF170 /* CharacteristicConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicConnector.swift; sourceTree = "<group>"; };
 		148BFD3B55F3450D2B65023A /* Pods-BlueCap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.release.xcconfig"; sourceTree = "<group>"; };
 		C7DF568D1950508D0D4C1B57 /* Pods-BlueCap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.debug.xcconfig"; sourceTree = "<group>"; };
 		D2143352BE2EA90A5B33390E /* Pods_BlueCap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -234,6 +236,7 @@
 				05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */,
 				059F670719D7350000F53D56 /* UITableViewControllerExtensions.swift */,
 				054F53441DA54D6B00CD49E5 /* DiscoveredPeripheralStore.swift */,
+				05FC22591DC0FDC200CFF170 /* CharacteristicConnector.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				05B45C0219A78C6B009DAF6D /* PeripheralStore.swift in Sources */,
 				05B45BF819A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */,
 				0507973519C4D0B100A4D547 /* BeaconRegionViewController.swift in Sources */,
+				05FC225A1DC0FDC200CFF170 /* CharacteristicConnector.swift in Sources */,
 				05B48B5419C85B6900800327 /* BeaconStore.swift in Sources */,
 				05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */,
 				05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */,

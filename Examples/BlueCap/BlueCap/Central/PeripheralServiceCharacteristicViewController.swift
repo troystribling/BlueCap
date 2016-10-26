@@ -18,10 +18,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         static let peripheralServiceCharacteristicEditWriteOnlyValueSeque = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
-    var characteristicUUID: CBUUID?
-    var serviceUUID: CBUUID?
-    var peripheralIdentifier: UUID?
-
+    var isNotifying = false
     var characteristic: Characteristic?
     var peripheral: Peripheral?
 
@@ -53,13 +50,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func viewDidLoad()  {
-        guard let peripheralIdentifier = peripheralIdentifier, characteristicUUID != nil, serviceUUID != nil else {
+        guard peripheral != nil, characteristic != nil else {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
-        peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [peripheralIdentifier]).first
         navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
-        connect()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -81,7 +76,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             let viewController = segue.destination as! PeripheralServiceCharacteristicValuesViewController
             viewController.characteristic = characteristic
             viewController.peripheral = peripheral
-            viewController.connectionFuture = connectionFuture
+            viewController.isNotifying = isNotifying
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
             viewController.characteristic = characteristic
@@ -104,35 +99,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     @IBAction func toggleNotificatons() {
-        guard let characteristic = characteristic else {
-            return
-        }
-        if characteristic.isNotifying {
-            let future = characteristic.stopNotifying()
-            future.onSuccess { [weak self] _ in
-                self?.updateUI()
-                characteristic.stopNotificationUpdates()
-            }
-            future.onFailure { [weak self] (error) in
-                self.forEach { strongSelf in
-                    strongSelf.notifySwitch.isOn = false
-                    strongSelf.updateUI()
-                    strongSelf.present(UIAlertController.alertOnError("Error stopping notifications", error: error), animated: true, completion: nil)
-                }
-            }
-        } else {
-            let future = characteristic.startNotifying()
-            future.onSuccess { [weak self] _ in
-                self?.updateUI()
-            }
-            future.onFailure { [weak self] (error) in
-                self.forEach { strongSelf in
-                    strongSelf.notifySwitch.isOn = false
-                    strongSelf.updateUI()
-                    strongSelf.present(UIAlertController.alertOnError("Error stopping notification", error: error), animated: true, completion: nil)
-                }
-            }
-        }
+        isNotifying = notifySwitch.isOn
     }
 
     func setUI() {
@@ -140,7 +107,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return
         }
         uuidLabel.text = characteristic.UUID.uuidString
-        notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
+        notifyingLabel.text = booleanStringValue(isNotifying)
         propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
         propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))
         propertyWriteWithoutResponseLabel.text = booleanStringValue(characteristic.propertyEnabled(.writeWithoutResponse))
@@ -162,8 +129,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         } else {
             valuesLabel.textColor = UIColor.lightGray
         }
-        if peripheral.state == .connected &&
-            (characteristic.propertyEnabled(.notify)                     ||
+        if (characteristic.propertyEnabled(.notify)                     ||
              characteristic.propertyEnabled(.indicate)                   ||
              characteristic.propertyEnabled(.notifyEncryptionRequired)   ||
              characteristic.propertyEnabled(.indicateEncryptionRequired)) {
@@ -185,87 +151,6 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     func didEnterBackground() {
         peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
-    }
-
-    func connect() {
-        guard let peripheral = peripheral else {
-            return
-        }
-        Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
-        progressView.show()
-        let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
-        let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
-        let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
-        connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
-
-        connectionFuture?.onSuccess { [weak self] (peripheral, connectionEvent) in
-            self.forEach { strongSelf in
-                switch connectionEvent {
-                case .connect:
-                    strongSelf.discoverPeripheralService()
-                    strongSelf.updateUI()
-                case .timeout:
-                    strongSelf.reconnect()
-                case .disconnect:
-                    strongSelf.reconnect()
-                case .forceDisconnect:
-                    fallthrough
-                case .giveUp:
-                    strongSelf.progressView.remove()
-                    strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
-                }
-            }
-        }
-
-        connectionFuture?.onFailure { [weak self] error in
-            self.forEach { strongSelf in
-                strongSelf.updateUI()
-                strongSelf.connect()
-                strongSelf.present(UIAlertController.alertOnError("Connection", error: error) { _ in
-                    strongSelf.progressView.remove()
-                }, animated: true, completion: nil)
-            }
-        }
-    }
-
-    func reconnect() {
-        guard let peripheral = peripheral else {
-            return
-        }
-        peripheral.reconnect()
-    }
-
-    func discoverPeripheralService() {
-        guard let peripheral = peripheral,
-              let characteristicUUID = characteristicUUID,
-              let serviceUUID = serviceUUID, peripheral.state == .connected else {
-            progressView.remove()
-            return
-        }
-        let serviceDiscoveryFuture = peripheral.discoverServices([serviceUUID]).flatMap { peripheral in
-            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
-        }
-        serviceDiscoveryFuture.onSuccess { [weak self] peripherals in
-            self.forEach { strongSelf in
-                strongSelf.characteristic = peripheral.service(serviceUUID)?.characteristic(characteristicUUID)
-                strongSelf.progressView.remove()
-                strongSelf.setUI()
-                strongSelf.updateUI()
-                if let characteristic = strongSelf.characteristic {
-                    Logger.debug("Discovered charcateristic \(characteristic.name), \(characteristic.UUID)")
-                } else {
-                    Logger.debug("Characteristic discovery failed")
-                }
-            }
-        }
-        serviceDiscoveryFuture.onFailure { [weak self] (error) in
-            self.forEach { strongSelf in
-                strongSelf.present(UIAlertController.alertOnError("Peripheral discovery error", error: error) { _ in
-                    strongSelf.progressView.remove()
-                }, animated: true, completion: nil)
-                Logger.debug("Service discovery failed")
-            }
-        }
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
