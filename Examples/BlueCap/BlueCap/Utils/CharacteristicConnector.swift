@@ -12,95 +12,78 @@ import BlueCapKit
 
 class CharacteristicConnector {
 
-    var characteristic: Characteristic?
-    var peripheral: Peripheral?
+    enum CharacteristicConnectorError: Swift.Error {
+        case disconnected
+        case peripheralNotFound
+        case characteristicNotFound
+        case connectionFailed
+    }
 
     var characteristicUUID: CBUUID
     var serviceUUID: CBUUID
-    var viewController: UIViewController
-
-    let progressView = ProgressView()
+    var peripheralIdentifier: UUID
 
     var connectionPromise = StreamPromise<(Peripheral, Characteristic)>()
 
-    init(characteristicUUID: CBUUID, serviceUUID: CBUUID, peripheralIdentifier: UUID, viewController: UIViewController) {
-        peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [peripheralIdentifier]).first
+    init(characteristicUUID: CBUUID, serviceUUID: CBUUID, peripheralIdentifier: UUID) {
         self.characteristicUUID = characteristicUUID
         self.serviceUUID = serviceUUID
-        self.viewController = viewController
+        self.peripheralIdentifier = peripheralIdentifier
     }
 
-    func connect() {
-        guard let peripheral = peripheral else {
-            return
+    func connect() -> FutureStream<(Peripheral, Characteristic)> {
+        guard let peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [peripheralIdentifier]).first else {
+           return FutureStream<(Peripheral, Characteristic)>(error: CharacteristicConnectorError.peripheralNotFound)
         }
+        connect(peripheral: peripheral)
+        return connectionPromise.stream
+    }
+
+    private func connect(peripheral: Peripheral) {
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
-        progressView.show()
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
-        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
-
-        connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
-            self.forEach { strongSelf in
+        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts,
+                                                  disconnectRetries: maxDisconnections,
+                                                  connectionTimeout: connectionTimeout,
+                                                  capacity: 10)
+            .flatMap { [weak self] (peripheral, connectionEvent) -> Future<[Service]> in
+                guard let strongSelf = self else {
+                    throw CharacteristicConnectorError.connectionFailed
+                }
                 switch connectionEvent {
                 case .connect:
-                    strongSelf.discoverPeripheralService()
+                    return peripheral.discoverServices([strongSelf.serviceUUID]).flatMap { peripheral in
+                        peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+                    }
                 case .timeout:
-                    strongSelf.reconnect()
+                    throw CharacteristicConnectorError.disconnected
                 case .disconnect:
-                    strongSelf.reconnect()
+                    throw CharacteristicConnectorError.disconnected
                 case .forceDisconnect:
-                    fallthrough
+                    throw CharacteristicConnectorError.connectionFailed
                 case .giveUp:
-                    strongSelf.progressView.remove()
-                    strongSelf.viewController.present(UIAlertController.alertWithMessage("Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
+                    throw CharacteristicConnectorError.connectionFailed
                 }
-            }
         }
 
-        connectionFuture.onFailure { [weak self] error in
+        connectionFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
-                strongSelf.connect()
-                strongSelf.viewController.present(UIAlertController.alertOnError("Connection", error: error) { _ in
-                    strongSelf.progressView.remove()
-                }, animated: true, completion: nil)
-            }
-        }
-    }
-
-    func reconnect() {
-        guard let peripheral = peripheral else {
-            return
-        }
-        peripheral.reconnect()
-    }
-
-    func discoverPeripheralService() {
-        guard let peripheral = peripheral, peripheral.state == .connected else {
-                progressView.remove()
-                return
-        }
-        let serviceDiscoveryFuture = peripheral.discoverServices([serviceUUID]).flatMap { peripheral in
-            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
-        }
-        serviceDiscoveryFuture.onSuccess { [weak self] peripherals in
-            self.forEach { strongSelf in
-                strongSelf.characteristic = peripheral.service(strongSelf.serviceUUID)?.characteristic(strongSelf.characteristicUUID)
-                strongSelf.progressView.remove()
-                if let characteristic = strongSelf.characteristic {
+                if let characteristic = peripheral.service(strongSelf.serviceUUID)?.characteristic(strongSelf.characteristicUUID) {
                     Logger.debug("Discovered charcateristic \(characteristic.name), \(characteristic.UUID)")
                 } else {
                     Logger.debug("Characteristic discovery failed")
                 }
             }
         }
-        serviceDiscoveryFuture.onFailure { [weak self] (error) in
-            self.forEach { strongSelf in
-                strongSelf.viewController.present(UIAlertController.alertOnError("Peripheral discovery error", error: error) { _ in
-                    strongSelf.progressView.remove()
-                }, animated: true, completion: nil)
-                Logger.debug("Service discovery failed")
+
+        connectionFuture.onFailure { [weak self] error in
+            switch error {
+            case CharacteristicConnectorError.disconnected:
+                peripheral.reconnect()
+            default:
+                self?.connectionPromise.failure(error)
             }
         }
     }

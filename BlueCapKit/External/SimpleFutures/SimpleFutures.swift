@@ -19,19 +19,19 @@ public enum FuturesError : Int, Swift.Error {
 
 public extension Optional {
 
-    func filter(_ predicate: (Wrapped) -> Bool) -> Wrapped? {
+    func filter(_ predicate: (Wrapped) throws -> Bool) rethrows -> Wrapped? {
         switch self {
         case .some(let value):
-            return predicate(value) ? Optional(value) : nil
+            return try predicate(value) ? Optional(value) : nil
         case .none:
             return Optional.none
         }
     }
     
-    func forEach(_ apply: (Wrapped) -> Void) {
+    func forEach(_ apply: (Wrapped) throws -> Void) rethrows {
         switch self {
         case .some(let value):
-            apply(value)
+            try apply(value)
         case .none:
             break
         }
