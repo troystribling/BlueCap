@@ -74,8 +74,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicValuesViewController
-            viewController.characteristic = characteristic
-            viewController.peripheral = peripheral
+            viewController.characteristicUUID = characteristic?.UUID
+            viewController.peripheralIdentifier = peripheral?.identifier
+            viewController.serviceUUID = characteristic?.service?.UUID
             viewController.isNotifying = isNotifying
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController

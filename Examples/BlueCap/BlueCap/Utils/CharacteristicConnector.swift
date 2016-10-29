@@ -21,22 +21,29 @@ class CharacteristicConnector {
 
     var characteristicUUID: CBUUID
     var serviceUUID: CBUUID
-    var peripheralIdentifier: UUID
+
+    var peripheral: Peripheral?
 
     var connectionPromise = StreamPromise<(Peripheral, Characteristic)>()
 
     init(characteristicUUID: CBUUID, serviceUUID: CBUUID, peripheralIdentifier: UUID) {
+        peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [peripheralIdentifier]).first
         self.characteristicUUID = characteristicUUID
         self.serviceUUID = serviceUUID
-        self.peripheralIdentifier = peripheralIdentifier
     }
-
     func connect() -> FutureStream<(Peripheral, Characteristic)> {
-        guard let peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [peripheralIdentifier]).first else {
+        guard let peripheral = peripheral else {
            return FutureStream<(Peripheral, Characteristic)>(error: CharacteristicConnectorError.peripheralNotFound)
         }
         connect(peripheral: peripheral)
         return connectionPromise.stream
+    }
+
+    func disconnect() {
+        guard let peripheral = peripheral else {
+            return
+        }
+        peripheral.disconnect()
     }
 
     private func connect(peripheral: Peripheral) {
