@@ -10,14 +10,14 @@ import Foundation
 import CoreBluetooth
 import BlueCapKit
 
-class CharacteristicConnector {
+enum CharacteristicConnectorError: Swift.Error {
+    case disconnected
+    case peripheralNotFound
+    case characteristicNotFound
+    case connectionFailed
+}
 
-    enum CharacteristicConnectorError: Swift.Error {
-        case disconnected
-        case peripheralNotFound
-        case characteristicNotFound
-        case connectionFailed
-    }
+class CharacteristicConnector {
 
     var characteristicUUID: CBUUID
     var serviceUUID: CBUUID
@@ -79,8 +79,10 @@ class CharacteristicConnector {
             self.forEach { strongSelf in
                 if let characteristic = peripheral.service(strongSelf.serviceUUID)?.characteristic(strongSelf.characteristicUUID) {
                     Logger.debug("Discovered charcateristic \(characteristic.name), \(characteristic.UUID)")
+                    strongSelf.connectionPromise.success((peripheral, characteristic))
                 } else {
                     Logger.debug("Characteristic discovery failed")
+                    strongSelf.connectionPromise.failure(CharacteristicConnectorError.characteristicNotFound)
                 }
             }
         }

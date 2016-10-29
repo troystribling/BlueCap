@@ -64,6 +64,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
+        setUI()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -90,17 +91,17 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-        guard let peripheral = peripheral, let characteristic = characteristic, identifier != nil  else {
+        guard let characteristic = characteristic, identifier != nil  else {
             return false
         }
         return characteristic.propertyEnabled(.read)    ||
                characteristic.isNotifying               ||
-               characteristic.propertyEnabled(.write)   &&
-               peripheral.state == .connected
+               characteristic.propertyEnabled(.write)
     }
     
     @IBAction func toggleNotificatons() {
         isNotifying = notifySwitch.isOn
+        updateUI()
     }
 
     func setUI() {
@@ -119,13 +120,14 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         propertyExtendedPropertiesLabel.text = booleanStringValue(characteristic.propertyEnabled(.extendedProperties))
         propertyNotifyEncryptionRequiredLabel.text = booleanStringValue(characteristic.propertyEnabled(.notifyEncryptionRequired))
         propertyIndicateEncryptionRequiredLabel.text = booleanStringValue(characteristic.propertyEnabled(.indicateEncryptionRequired))
+        updateUI()
     }
 
     func updateUI() {
-        guard let characteristic = characteristic, let peripheral = peripheral else {
+        guard let characteristic = characteristic else {
             return
         }
-        if (characteristic.propertyEnabled(.read) || characteristic.propertyEnabled(.write) || characteristic.isNotifying) && peripheral.state == .connected {
+        if (characteristic.propertyEnabled(.read) || characteristic.propertyEnabled(.write) || characteristic.isNotifying) {
             valuesLabel.textColor = UIColor.black
         } else {
             valuesLabel.textColor = UIColor.lightGray
@@ -150,12 +152,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func didEnterBackground() {
-        peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let characteristic = characteristic, let peripheral = peripheral, peripheral.state == .connected else {
+        guard let characteristic = characteristic else {
             return
         }
         if (indexPath as NSIndexPath).row == 0 {

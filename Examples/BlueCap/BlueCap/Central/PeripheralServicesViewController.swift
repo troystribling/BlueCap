@@ -54,14 +54,7 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
-    override func shouldPerformSegue(withIdentifier identifier:String?, sender:Any?) -> Bool {
-        return true
-    }
-
-
     func didEnterBackground() {
-        peripheral?.stopPollingRSSI()
-        peripheral?.disconnect()
         _ = self.navigationController?.popToRootViewController(animated: false)
     }
     

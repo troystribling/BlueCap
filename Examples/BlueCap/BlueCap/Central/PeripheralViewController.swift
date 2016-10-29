@@ -17,6 +17,7 @@ class PeripheralViewController : UITableViewController {
     let progressView  = ProgressView()
 
     var peripheralDiscovered = false
+    var shouldReconnect = true
 
     let dateFormatter = DateFormatter()
 
@@ -99,6 +100,7 @@ class PeripheralViewController : UITableViewController {
     }
 
     func didEnterBackground() {
+        shouldReconnect = false
         peripheral?.stopPollingRSSI()
         peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
@@ -159,6 +161,7 @@ class PeripheralViewController : UITableViewController {
         }
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
         progressView.show()
+        shouldReconnect = true
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
@@ -171,11 +174,11 @@ class PeripheralViewController : UITableViewController {
                     strongSelf.updateConnectionStateLabel()
                     strongSelf.discoverPeripheralIfNeccessary()
                 case .timeout:
-                    peripheral.reconnect()
+                    strongSelf.reconnectIfNeccessay()
                 case .disconnect:
-                    peripheral.reconnect()
+                    strongSelf.reconnectIfNeccessay()
                 case .forceDisconnect:
-                    break;
+                    strongSelf.progressView.remove()
                 case .giveUp:
                     strongSelf.progressView.remove()
                     strongSelf.stateLabel.text = "Disconnected"
@@ -199,6 +202,13 @@ class PeripheralViewController : UITableViewController {
                 }, animated: true)
             }
         }
+    }
+
+    func reconnectIfNeccessay() {
+        guard let peripheral = peripheral, shouldReconnect else {
+            return
+        }
+        peripheral.reconnect()
     }
 
     // MARK: Peripheral discovery
@@ -234,6 +244,7 @@ class PeripheralViewController : UITableViewController {
             return
         }
         if indexPath.section == 1 && indexPath.row == 0 {
+            shouldReconnect = false
             peripheral.stopPollingRSSI()
             peripheral.disconnect()
         }
