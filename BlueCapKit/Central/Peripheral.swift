@@ -597,7 +597,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func timeoutConnection(_ sequence: Int) {
-        guard let centralManager = self.centralManager , connectionTimeout < TimeInterval.infinity else {
+        guard let centralManager = self.centralManager , connectionTimeout < TimeInterval.infinity, !forcedDisconnect else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
