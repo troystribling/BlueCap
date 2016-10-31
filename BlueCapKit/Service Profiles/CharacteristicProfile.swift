@@ -18,8 +18,6 @@ public class CharacteristicProfile {
     public let properties: CBCharacteristicProperties
     public let initialValue: Data?
 
-    internal let afterDiscoveredPromise = StreamPromise<Characteristic>(capacity: 1)
-
     public var stringValues: [String] {
         return []
     }
@@ -38,10 +36,6 @@ public class CharacteristicProfile {
     
     public convenience init(UUID: String) {
         self.init(UUID: UUID, name: "Unknown")
-    }
-    
-    public func afterDiscovered() -> FutureStream<Characteristic> {
-        return afterDiscoveredPromise.stream
     }
 
     public func propertyEnabled(_ property: CBCharacteristicProperties) -> Bool {

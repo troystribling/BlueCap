@@ -198,7 +198,7 @@ class CharacteristicTests: XCTestCase {
     
     func testRead_WhenReadableAndNoResponsdeReceivedBeforeTimeout_CompletesWithTimeoutError() {
         let (characteristic, _) = self.createCharacteristic([.read, .write], isNotifying: false)
-        let future = characteristic.read(timeout: 1.0)
+        let future = characteristic.read(timeout: 0.25)
         XCTAssertFutureFails(future) { error in
             XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled)
             XCTAssertEqualErrors(error, CharacteristicError.readTimeout)

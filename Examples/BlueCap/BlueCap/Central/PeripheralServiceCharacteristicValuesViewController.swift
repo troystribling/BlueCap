@@ -71,8 +71,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-//            viewController.characteristic = self.characteristic
-//            viewController.peripheral = peripheral
+            viewController.characteristicUUID = characteristicUUID
+            viewController.peripheralIdentifier = peripheralIdentifier
+            viewController.serviceUUID = serviceUUID
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
 //            viewController.characteristic = self.characteristic
@@ -122,13 +123,16 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             updateFuture.onFailure{ [weak self] error in
                 self?.present(UIAlertController.alertOnError("Characteristic notification error", error: error), animated: true, completion: nil)
             }
+        } else {
+            readFuture.onSuccess { [weak self] _ in
+                self?.characteristicConnector?.disconnect()
+            }
         }
     }
 
     func didEnterBackground() {
         characteristicConnector?.disconnect()
-        _ = self.navigationController?.popToRootViewController(animated: false)
-        Logger.debug()
+        _ = navigationController?.popToRootViewController(animated: false)
     }
 
     // UITableViewDataSource

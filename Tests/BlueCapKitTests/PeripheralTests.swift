@@ -91,7 +91,7 @@ class PeripheralTests: XCTestCase {
     func testDiscoverAllServices_WhenConnectedOnTimeout_CompletesWithServiceDiscoveryTimeout() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let future = peripheral.discoverAllServices(0.25)
+        let future = peripheral.discoverAllServices(timeout: 0.25)
         XCTAssertFutureFails(future, timeout: 5.0) { error in
             let discoveredServices = peripheral.services
             XCTAssertEqual(discoveredServices.count, 0)

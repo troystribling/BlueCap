@@ -65,10 +65,6 @@ public class Characteristic : NSObject {
         return cbCharacteristic.isNotifying
     }
     
-    public var afterDiscoveredPromise: StreamPromise<Characteristic> {
-        return profile.afterDiscoveredPromise
-    }
-    
     public var canNotify: Bool {
         return propertyEnabled(.notify) || propertyEnabled(.indicate) || propertyEnabled(.notifyEncryptionRequired) || propertyEnabled(.indicateEncryptionRequired)
     }

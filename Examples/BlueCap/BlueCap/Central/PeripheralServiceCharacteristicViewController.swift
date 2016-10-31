@@ -81,8 +81,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             viewController.isNotifying = isNotifying
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-            viewController.characteristic = characteristic
-            viewController.peripheral = peripheral
+            viewController.characteristicUUID = characteristic?.UUID
+            viewController.peripheralIdentifier = peripheral?.identifier
+            viewController.serviceUUID = characteristic?.service?.UUID
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
             viewController.characteristic = characteristic
@@ -138,13 +139,13 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
              characteristic.propertyEnabled(.indicateEncryptionRequired)) {
             notifyLabel.textColor = UIColor.black
             notifySwitch.isEnabled = true
-            notifySwitch.isOn = characteristic.isNotifying
+            notifySwitch.isOn = isNotifying
         } else {
             notifyLabel.textColor = UIColor.lightGray
             notifySwitch.isEnabled = false
             notifySwitch.isOn = false
         }
-        notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
+        notifyingLabel.text = booleanStringValue(isNotifying)
     }
     
     func booleanStringValue(_ value: Bool) -> String {
@@ -159,7 +160,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         guard let characteristic = characteristic else {
             return
         }
-        if (indexPath as NSIndexPath).row == 0 {
+        if indexPath.row == 0 && indexPath.section == 0 {
             if characteristic.propertyEnabled(.read) || characteristic.isNotifying  {
                 performSegue(withIdentifier: MainStoryboard.peripheralServiceCharacteristicValueSegue, sender: indexPath)
             } else if (characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse)) && !characteristic.propertyEnabled(.read) {

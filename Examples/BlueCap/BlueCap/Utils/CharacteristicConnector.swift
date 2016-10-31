@@ -15,6 +15,7 @@ enum CharacteristicConnectorError: Swift.Error {
     case peripheralNotFound
     case characteristicNotFound
     case connectionFailed
+    case forceDisconnect;
 }
 
 class CharacteristicConnector {
@@ -40,7 +41,7 @@ class CharacteristicConnector {
     }
 
     func disconnect() {
-        guard let peripheral = peripheral else {
+        guard let peripheral = peripheral, peripheral.state != .disconnected else {
             return
         }
         peripheral.disconnect()
@@ -69,7 +70,7 @@ class CharacteristicConnector {
                 case .disconnect:
                     throw CharacteristicConnectorError.disconnected
                 case .forceDisconnect:
-                    throw CharacteristicConnectorError.connectionFailed
+                    throw CharacteristicConnectorError.forceDisconnect
                 case .giveUp:
                     throw CharacteristicConnectorError.connectionFailed
                 }
@@ -91,6 +92,8 @@ class CharacteristicConnector {
             switch error {
             case CharacteristicConnectorError.disconnected:
                 peripheral.reconnect()
+            case CharacteristicConnectorError.forceDisconnect:
+                break
             default:
                 self?.connectionPromise.failure(error)
             }

@@ -75,14 +75,12 @@ public class Service {
             self.characteristicsDiscoveredPromise?.failure(error)
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
-                bcCharacteristic.afterDiscoveredPromise.failure(error)
                 Logger.debug("Error discovering uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
             }
         } else {
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 self.discoveredCharacteristics[bcCharacteristic.UUID] = bcCharacteristic
-                bcCharacteristic.afterDiscoveredPromise.success(bcCharacteristic)
                 Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
             }
             Logger.debug("discover success")
