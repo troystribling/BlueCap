@@ -12,6 +12,8 @@ import BlueCapKit
 
 class PeripheralsViewController : UITableViewController {
 
+    static let peripheralDiscoveryTimeout = TimeInterval(5.0)
+
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
 
@@ -419,8 +421,8 @@ class PeripheralsViewController : UITableViewController {
         guard peripheral.state == .connected && !discoveredPeripherals.contains(peripheral.identifier) else {
             return
         }
-        let peripheralDiscoveryFuture = peripheral.discoverAllServices().flatMap { peripheral in
-            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: PeripheralsViewController.peripheralDiscoveryTimeout).flatMap { peripheral in
+            peripheral.services.map { $0.discoverAllCharacteristics(timeout: PeripheralsViewController.peripheralDiscoveryTimeout) }.sequence()
         }
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self?.discoveredPeripherals.insert(peripheral.identifier)

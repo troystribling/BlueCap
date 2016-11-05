@@ -84,7 +84,9 @@ public class Service {
                 Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
             }
             Logger.debug("discover success")
-            self.characteristicsDiscoveredPromise?.success(self)
+            if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
+                self.characteristicsDiscoveredPromise?.success(self)
+            }
         }
     }
 
@@ -119,7 +121,6 @@ public class Service {
         centralQueue.delay(timeout) {
             if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, sequence == self.characteristicDiscoverySequence && !characteristicsDiscoveredPromise.completed {
                 Logger.debug("characteristic scan timing out name = \(self.name), UUID = \(self.UUID.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence=\(sequence), current sequence = \(self.characteristicDiscoverySequence)")
-                peripheral.cancelPeripheralConnection()
                 characteristicsDiscoveredPromise.failure(ServiceError.characteristicDiscoveryTimeout)
             } else {
                 Logger.debug("characteristic scan timeout expired name = \(self.name), UUID = \(self.UUID.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(self.characteristicDiscoverySequence)")

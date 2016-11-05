@@ -311,7 +311,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         Logger.debug("reconnect peripheral name=\(name), uuid=\(identifier.uuidString)")
-        let performConnection = {
+        func performConnection() {
             centralManager.connect(self)
             self.forcedDisconnect = false
             self.connectionSequence += 1
@@ -436,7 +436,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 self.discoveredServices[bcService.UUID] = bcService
                 Logger.debug("uuid=\(bcService.UUID.uuidString), name=\(bcService.name)")
             }
-            self.servicesDiscoveredPromise?.success(self)
+            if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
+                self.servicesDiscoveredPromise?.success(self)
+            }
         }
     }
     
@@ -503,7 +505,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 self.shouldFailOrGiveUp(error)
             } else if (self.forcedDisconnect) {
                 Logger.debug("disconnect forced uuid=\(self.identifier.uuidString), name=\(self.name)")
-                self.forcedDisconnect = false
                 self.connectionPromise?.success((self, .forceDisconnect))
             } else  {
                 Logger.debug("disconnecting with no errors uuid=\(self.identifier.uuidString), name=\(self.name)")
@@ -620,7 +621,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         centralQueue.delay(timeout) {
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, sequence == self.serviceDiscoverySequence && !servicesDiscoveredPromise.completed {
                 Logger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
-                self.cancelPeripheralConnection()
                 servicesDiscoveredPromise.failure(PeripheralError.serviceDiscoveryTimeout)
             } else {
                 Logger.debug("service scan timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.serviceDiscoverySequence)")

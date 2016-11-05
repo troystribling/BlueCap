@@ -64,7 +64,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         guard let characteristicConnector = characteristicConnector else {
             return
         }
-        characteristicConnector.disconnect()
+        _ = characteristicConnector.disconnect()
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -125,7 +125,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             }
         } else {
             readFuture.onSuccess { [weak self] _ in
-                self?.characteristicConnector?.disconnect()
+                _ = self?.characteristicConnector?.disconnect()
             }
         }
     }

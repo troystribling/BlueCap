@@ -13,11 +13,14 @@ import BlueCapKit
 
 class PeripheralViewController : UITableViewController {
 
+    static let peripheralDiscoveryTimeout = TimeInterval(5.0)
+
     weak var peripheral: Peripheral?
     let progressView  = ProgressView()
 
     var peripheralDiscovered = false
     var shouldReconnect = true
+    var shouldDisconnectOnDisapear = true
 
     let dateFormatter = DateFormatter()
 
@@ -64,6 +67,7 @@ class PeripheralViewController : UITableViewController {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
+        shouldDisconnectOnDisapear = true
         updateConnectionStateLabel()
         connect()
         toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
@@ -71,8 +75,9 @@ class PeripheralViewController : UITableViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        peripheral?.stopPollingRSSI()
-        peripheral?.disconnect()
+        if shouldDisconnectOnDisapear {
+            disconnect()
+        }
         super.viewDidDisappear(animated)
     }
     
@@ -100,9 +105,7 @@ class PeripheralViewController : UITableViewController {
     }
 
     func didEnterBackground() {
-        shouldReconnect = false
-        peripheral?.stopPollingRSSI()
-        peripheral?.disconnect()
+        disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }
 
@@ -211,6 +214,15 @@ class PeripheralViewController : UITableViewController {
         peripheral.reconnect()
     }
 
+    func disconnect() {
+        guard let peripheral = peripheral, peripheral.state != .disconnected else {
+            return
+        }
+        shouldReconnect = false
+        peripheral.stopPollingRSSI()
+        peripheral.disconnect()
+    }
+
     // MARK: Peripheral discovery
 
     func discoverPeripheralIfNeccessary() {
@@ -218,8 +230,8 @@ class PeripheralViewController : UITableViewController {
             progressView.remove()
             return
         }
-        let peripheralDiscoveryFuture = peripheral.discoverAllServices().flatMap { peripheral in
-            peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: PeripheralViewController.peripheralDiscoveryTimeout).flatMap { peripheral in
+            peripheral.services.map { $0.discoverAllCharacteristics(timeout: PeripheralViewController.peripheralDiscoveryTimeout) }.sequence()
         }
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
@@ -240,13 +252,9 @@ class PeripheralViewController : UITableViewController {
 
     // MARK: UITableViewDataSource
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let peripheral = peripheral else {
-            return
-        }
         if indexPath.section == 1 && indexPath.row == 0 {
-            shouldReconnect = false
-            peripheral.stopPollingRSSI()
-            peripheral.disconnect()
+            shouldDisconnectOnDisapear = false
+            disconnect()
         }
     }
 

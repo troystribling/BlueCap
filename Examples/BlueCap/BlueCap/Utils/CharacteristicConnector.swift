@@ -12,7 +12,7 @@ import BlueCapKit
 
 enum CharacteristicConnectorError: Swift.Error {
     case disconnected
-    case peripheralNotFound
+    case peripheralInvalid
     case characteristicNotFound
     case connectionFailed
     case forceDisconnect;
@@ -24,27 +24,36 @@ class CharacteristicConnector {
     var serviceUUID: CBUUID
 
     var peripheral: Peripheral?
+    var shouldReconnect = true
 
-    var connectionPromise = StreamPromise<(Peripheral, Characteristic)>()
+    var connectionPromise: StreamPromise<(Peripheral, Characteristic)>?
+    var disconnectPromise: Promise<Void>?
 
     init(characteristicUUID: CBUUID, serviceUUID: CBUUID, peripheralIdentifier: UUID) {
         peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [peripheralIdentifier]).first
         self.characteristicUUID = characteristicUUID
         self.serviceUUID = serviceUUID
     }
+
     func connect() -> FutureStream<(Peripheral, Characteristic)> {
-        guard let peripheral = peripheral else {
-           return FutureStream<(Peripheral, Characteristic)>(error: CharacteristicConnectorError.peripheralNotFound)
+        guard let peripheral = peripheral, peripheral.state == .disconnected else {
+           return FutureStream<(Peripheral, Characteristic)>(error: CharacteristicConnectorError.peripheralInvalid)
         }
+        shouldReconnect = true
+        connectionPromise = StreamPromise<(Peripheral, Characteristic)>()
         connect(peripheral: peripheral)
-        return connectionPromise.stream
+        return connectionPromise!.stream
     }
 
-    func disconnect() {
+    func disconnect() -> Future<Void> {
         guard let peripheral = peripheral, peripheral.state != .disconnected else {
-            return
+            return Future<Void>(value: ())
         }
+        disconnectPromise = Promise<Void>()
+        shouldReconnect = false
+        connectionPromise = nil
         peripheral.disconnect()
+        return disconnectPromise!.future
     }
 
     private func connect(peripheral: Peripheral) {
@@ -62,8 +71,9 @@ class CharacteristicConnector {
                 }
                 switch connectionEvent {
                 case .connect:
-                    return peripheral.discoverServices([strongSelf.serviceUUID]).flatMap { peripheral in
-                        peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+                    let timeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
+                    return peripheral.discoverServices([strongSelf.serviceUUID], timeout: timeout).flatMap { peripheral in
+                        peripheral.services.map { $0.discoverAllCharacteristics(timeout: timeout) }.sequence()
                     }
                 case .timeout:
                     throw CharacteristicConnectorError.disconnected
@@ -80,10 +90,10 @@ class CharacteristicConnector {
             self.forEach { strongSelf in
                 if let characteristic = peripheral.service(strongSelf.serviceUUID)?.characteristic(strongSelf.characteristicUUID) {
                     Logger.debug("Discovered charcateristic \(characteristic.name), \(characteristic.UUID)")
-                    strongSelf.connectionPromise.success((peripheral, characteristic))
+                    strongSelf.connectionPromise?.success((peripheral, characteristic))
                 } else {
                     Logger.debug("Characteristic discovery failed")
-                    strongSelf.connectionPromise.failure(CharacteristicConnectorError.characteristicNotFound)
+                    strongSelf.connectionPromise?.failure(CharacteristicConnectorError.characteristicNotFound)
                 }
             }
         }
@@ -91,11 +101,14 @@ class CharacteristicConnector {
         connectionFuture.onFailure { [weak self] error in
             switch error {
             case CharacteristicConnectorError.disconnected:
-                peripheral.reconnect()
+                if let shouldReconnect = self?.shouldReconnect, shouldReconnect {
+                    peripheral.reconnect()
+                }
             case CharacteristicConnectorError.forceDisconnect:
+                self?.disconnectPromise?.success()
                 break
             default:
-                self?.connectionPromise.failure(error)
+                self?.connectionPromise?.failure(error)
             }
         }
     }
