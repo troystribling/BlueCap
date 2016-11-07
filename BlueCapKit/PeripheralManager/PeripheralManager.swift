@@ -89,7 +89,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         self.cbPeripheralManager.delegate = nil
     }
 
-    public func invalidate()  {
+    public func reset()  {
         guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
             return
         }

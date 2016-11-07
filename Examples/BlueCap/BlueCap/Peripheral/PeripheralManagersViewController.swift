@@ -23,25 +23,25 @@ class PeripheralManagersViewController : UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.styleNavigationBar()
-        self.navigationItem.leftBarButtonItem = self.editButtonItem
-        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.black
+        styleNavigationBar()
+        navigationItem.leftBarButtonItem = self.editButtonItem
+        navigationItem.leftBarButtonItem?.tintColor = UIColor.black
     }
     
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
-        self.tableView.reloadData()
-        self.navigationItem.title = "Peripherals"
+        tableView.reloadData()
+        navigationItem.title = "Peripherals"
     }
     
     override func viewWillDisappear(_ animated:Bool) {
         super.viewWillDisappear(animated)
-        self.navigationItem.title = ""
+        navigationItem.title = ""
     }
     
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerViewSegue {
-            if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+            if let selectedIndex = tableView.indexPath(for: sender as! UITableViewCell) {
                 let viewController = segue.destination as! PeripheralManagerViewController
                 let peripherals = PeripheralStore.getPeripheralNames()
                 viewController.peripheral = peripherals[(selectedIndex as NSIndexPath).row]
@@ -69,7 +69,7 @@ class PeripheralManagersViewController : UITableViewController {
         if editingStyle == UITableViewCellEditingStyle.delete {
             let peripherals = PeripheralStore.getPeripheralNames()
             PeripheralStore.removePeripheral(peripherals[(indexPath as NSIndexPath).row])
-            self.tableView.deleteRows(at: [indexPath], with:UITableViewRowAnimation.fade)
+            tableView.deleteRows(at: [indexPath], with:UITableViewRowAnimation.fade)
         }
     }
     
