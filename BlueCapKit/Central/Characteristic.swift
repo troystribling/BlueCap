@@ -248,49 +248,49 @@ public class Characteristic : NSObject {
     }
 
     public func write(string stringValue: [String: String], timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        if let value = self.data(fromString: stringValue) {
-            return self.write(data: value, timeout: timeout, type: type)
+        if let value = data(fromString: stringValue) {
+            return write(data: value, timeout: timeout, type: type)
         } else {
             return Future(error: CharacteristicError.notSerializable)
         }
     }
 
     public func write<T: Deserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
+        return write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
     
     public func write<T: RawDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
+        return write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
     public func write<T: RawArrayDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
+        return write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
     public func write<T: RawPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
+        return write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
     
     public func write<T: RawArrayPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic> {
-        return self.write(data: SerDe.serialize(value), timeout: timeout, type: type)
+        return write(data: SerDe.serialize(value), timeout: timeout, type: type)
     }
 
     // MARK: CBPeripheralDelegate Shim
     internal func didUpdateNotificationState(_ error: Swift.Error?) {
         if let error = error {
             Logger.debug("failed uuid=\(self.UUID.uuidString), name=\(self.name)")
-            self.notificationStateChangedPromise?.failure(error)
+            notificationStateChangedPromise?.failure(error)
         } else {
             Logger.debug("success:  uuid=\(self.UUID.uuidString), name=\(self.name)")
-            self.notificationStateChangedPromise?.success(self)
+            notificationStateChangedPromise?.success(self)
         }
     }
     
     internal func didUpdate(_ error: Swift.Error?) {
-        if self.isNotifying {
-            self.didNotify(error)
+        if isNotifying {
+            didNotify(error)
         } else {
-            self.didRead(error)
+            didRead(error)
         }
     }
     
@@ -305,8 +305,8 @@ public class Characteristic : NSObject {
             Logger.debug("success:  uuid=\(self.UUID.uuidString), name=\(self.name)")
             promise.success(self)
         }
-        self.writing = false
-        self.writeNext()
+        writing = false
+        writeNext()
     }
 
     fileprivate func didRead(_ error: Swift.Error?) {
@@ -318,15 +318,15 @@ public class Characteristic : NSObject {
         } else {
             promise.success(self)
         }
-        self.reading = false
-        self.readNext()
+        reading = false
+        readNext()
     }
 
     fileprivate func didNotify(_ error: Swift.Error?) {
         if let error = error {
-            self.notificationUpdatePromise?.failure(error)
+            notificationUpdatePromise?.failure(error)
         } else {
-            self.notificationUpdatePromise?.success((self, self.dataValue))
+            notificationUpdatePromise?.success((self, self.dataValue))
         }
     }
 

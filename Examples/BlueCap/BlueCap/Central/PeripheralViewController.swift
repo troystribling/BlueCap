@@ -13,8 +13,6 @@ import BlueCapKit
 
 class PeripheralViewController : UITableViewController {
 
-    static let peripheralDiscoveryTimeout = TimeInterval(5.0)
-
     weak var peripheral: Peripheral?
     let progressView  = ProgressView()
 
@@ -230,8 +228,9 @@ class PeripheralViewController : UITableViewController {
             progressView.remove()
             return
         }
-        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: PeripheralViewController.peripheralDiscoveryTimeout).flatMap { peripheral in
-            peripheral.services.map { $0.discoverAllCharacteristics(timeout: PeripheralViewController.peripheralDiscoveryTimeout) }.sequence()
+        let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
+        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: scanTimeout).flatMap { peripheral in
+            peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
         }
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in

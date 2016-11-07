@@ -32,17 +32,17 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let peripheralIdentifier = peripheralIdentifier, let characteristicUUID = characteristicUUID, let serviceUUID = serviceUUID else {
-            _ = self.navigationController?.popViewController(animated: true)
-            return
-        }
-        characteristicConnector = CharacteristicConnector(characteristicUUID: characteristicUUID, serviceUUID: serviceUUID, peripheralIdentifier: peripheralIdentifier)
         self.navigationItem.title = characteristicName
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        guard let peripheralIdentifier = peripheralIdentifier, let characteristicUUID = characteristicUUID, let serviceUUID = serviceUUID else {
+            _ = self.navigationController?.popViewController(animated: true)
+            return
+        }
+        characteristicConnector = CharacteristicConnector(characteristicUUID: characteristicUUID, serviceUUID: serviceUUID, peripheralIdentifier: peripheralIdentifier)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         readCharacteristic()
     }
@@ -50,9 +50,6 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
     }
 
     func didEnterBackground() {
@@ -84,7 +81,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         }
         writeFuture.onFailure { [weak self] error in
             self?.progressView.remove()
-            self?.present(UIAlertController.alertOnError("Charcteristic read error", error: error) { _ in
+            self?.present(UIAlertController.alertOnError("Charcteristic write error", error: error) { _ in
                 _ = self?.navigationController?.popViewController(animated: true)
                 return
             }, animated:true, completion:nil)

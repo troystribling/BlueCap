@@ -86,8 +86,14 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             viewController.serviceUUID = characteristic?.service?.UUID
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-            viewController.characteristic = characteristic
-            viewController.peripheral = peripheral
+            viewController.characteristicUUID = characteristic?.UUID
+            viewController.peripheralIdentifier = peripheral?.identifier
+            viewController.serviceUUID = characteristic?.service?.UUID
+            if let stringValues = self.characteristic?.stringValue {
+                let selectedIndex = sender as! IndexPath
+                let names = Array(stringValues.keys)
+                viewController.valueName = names[selectedIndex.row]
+            }
         }
     }
     

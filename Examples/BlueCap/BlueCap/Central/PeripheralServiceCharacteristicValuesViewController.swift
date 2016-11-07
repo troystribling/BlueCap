@@ -34,14 +34,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let peripheralIdentifier = peripheralIdentifier, let characteristicUUID = characteristicUUID, let serviceUUID = serviceUUID else {
-            _ = self.navigationController?.popViewController(animated: true)
-            return
-        }
-        characteristicConnector = CharacteristicConnector(characteristicUUID: characteristicUUID, serviceUUID: serviceUUID, peripheralIdentifier: peripheralIdentifier)
         self.navigationItem.title = characteristicName
         if isNotifying {
             refreshButton.isEnabled = false
@@ -53,10 +48,11 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func viewDidAppear(_ animated:Bool)  {
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard peripheralIdentifier != nil, characteristicUUID != nil else {
+        guard let peripheralIdentifier = peripheralIdentifier, let characteristicUUID = characteristicUUID, let serviceUUID = serviceUUID else {
             _ = self.navigationController?.popViewController(animated: true)
             return
         }
+        characteristicConnector = CharacteristicConnector(characteristicUUID: characteristicUUID, serviceUUID: serviceUUID, peripheralIdentifier: peripheralIdentifier)
         updateValues()
     }
     
@@ -76,13 +72,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             viewController.serviceUUID = serviceUUID
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-//            viewController.characteristic = self.characteristic
-//            viewController.peripheral = peripheral
-//            if let stringValues = self.characteristic?.stringValue {
-//                let selectedIndex = sender as! IndexPath
-//                let names = Array(stringValues.keys)
-//                viewController.valueName = names[selectedIndex.row]
-//            }
+            viewController.characteristicUUID = characteristic?.UUID
+            viewController.peripheralIdentifier = peripheralIdentifier
+            viewController.serviceUUID = characteristic?.service?.UUID
+            if let stringValues = self.characteristic?.stringValue {
+                let selectedIndex = sender as! IndexPath
+                let names = Array(stringValues.keys)
+                viewController.valueName = names[selectedIndex.row]
+            }
         }
     }
     
@@ -131,8 +128,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
 
     func didEnterBackground() {
-        characteristicConnector?.disconnect()
-        _ = navigationController?.popToRootViewController(animated: false)
+        characteristicConnector?.disconnect().onComplete { [weak self] _ in
+            _ = self?.navigationController?.popToRootViewController(animated: false)
+        }
     }
 
     // UITableViewDataSource

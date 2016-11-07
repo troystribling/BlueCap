@@ -428,7 +428,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         self.clearAll()
         if let error = error {
-            self.servicesDiscoveredPromise?.failure(error)
+            if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
+                self.servicesDiscoveredPromise?.failure(error)
+            }
         } else {
             for service in discoveredServices {
                 let serviceProfile = profileManager?.services[service.UUID]

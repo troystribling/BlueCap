@@ -15,7 +15,8 @@ enum CharacteristicConnectorError: Swift.Error {
     case peripheralInvalid
     case characteristicNotFound
     case connectionFailed
-    case forceDisconnect;
+    case forceDisconnect
+    case unknown
 }
 
 class CharacteristicConnector {
@@ -33,6 +34,12 @@ class CharacteristicConnector {
         peripheral = Singletons.communicationManager.retrievePeripherals(withIdentifiers: [peripheralIdentifier]).first
         self.characteristicUUID = characteristicUUID
         self.serviceUUID = serviceUUID
+    }
+
+    deinit {
+        Logger.debug("dealloced")
+        Logger.debug("dealloced")
+        Logger.debug("dealloced")
     }
 
     func connect() -> FutureStream<(Peripheral, Characteristic)> {
@@ -71,9 +78,9 @@ class CharacteristicConnector {
                 }
                 switch connectionEvent {
                 case .connect:
-                    let timeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
-                    return peripheral.discoverServices([strongSelf.serviceUUID], timeout: timeout).flatMap { peripheral in
-                        peripheral.services.map { $0.discoverAllCharacteristics(timeout: timeout) }.sequence()
+                    let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
+                    return peripheral.discoverServices([strongSelf.serviceUUID], timeout: scanTimeout).flatMap { peripheral in
+                        peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
                     }
                 case .timeout:
                     throw CharacteristicConnectorError.disconnected
@@ -112,4 +119,5 @@ class CharacteristicConnector {
             }
         }
     }
+
 }

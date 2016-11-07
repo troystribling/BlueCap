@@ -72,7 +72,9 @@ public class Service {
         self.discoveredCharacteristics.removeAll()
         if let error = error {
             Logger.debug("discover failed")
-            self.characteristicsDiscoveredPromise?.failure(error)
+            if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
+                self.characteristicsDiscoveredPromise?.failure(error)
+            }
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 Logger.debug("Error discovering uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
