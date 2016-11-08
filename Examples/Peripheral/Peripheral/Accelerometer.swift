@@ -12,25 +12,25 @@ import BlueCapKit
 
 class Accelerometer {
 
-    var motionManager           = CMMotionManager()
-    let queue                   = NSOperationQueue.mainQueue()
+    var motionManager = CMMotionManager()
+    let queue = OperationQueue.main
     let accelerationDataPromise = StreamPromise<CMAcceleration>(capacity: 10)
     
-    var updatePeriod: NSTimeInterval {
+    var updatePeriod: TimeInterval {
         get {
-            return self.motionManager.accelerometerUpdateInterval
+            return motionManager.accelerometerUpdateInterval
         }
         set {
-            self.motionManager.accelerometerUpdateInterval = newValue
+            motionManager.accelerometerUpdateInterval = newValue
         }
     }
     
     var accelerometerActive: Bool {
-        return self.motionManager.accelerometerActive
+        return self.motionManager.isAccelerometerActive
     }
     
     var accelerometerAvailable: Bool {
-        return self.motionManager.accelerometerAvailable
+        return self.motionManager.isAccelerometerAvailable
     }
 
     init() {
@@ -38,7 +38,7 @@ class Accelerometer {
     }
 
     func startAcceleromterUpdates() -> FutureStream<CMAcceleration> {
-        self.motionManager.startAccelerometerUpdatesToQueue(self.queue) { (data: CMAccelerometerData?, error: NSError?) in
+        self.motionManager.startAccelerometerUpdates(to: self.queue) { (data: CMAccelerometerData?, error: Error?) in
             if let error = error {
                 self.accelerationDataPromise.failure(error)
             } else {
@@ -47,7 +47,7 @@ class Accelerometer {
                 }
             }
         }
-        return self.accelerationDataPromise.future
+        return self.accelerationDataPromise.stream
     }
     
     func stopAccelerometerUpdates() {
