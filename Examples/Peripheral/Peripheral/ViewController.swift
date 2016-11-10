@@ -14,7 +14,7 @@ import BlueCapKit
 enum AppError: Error {
     case invalidState
     case resetting
-    case .poweredOff
+    case poweredOff
 }
 
 class ViewController: UITableViewController {
@@ -57,7 +57,6 @@ class ViewController: UITableViewController {
         accelerometerService.characteristics = [accelerometerDataCharacteristic,
                                                 accelerometerEnabledCharacteristic,
                                                 accelerometerUpdatePeriodCharacteristic]
-        self.respondToWriteRequests()
     }
     
     override func viewDidLoad() {
@@ -128,6 +127,7 @@ class ViewController: UITableViewController {
             self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
         }
 
+
         startAdvertiseFuture.onSuccess { [unowned self] in
             self.present(UIAlertController.alertWithMessage("poweredOn and started advertising"), animated: true, completion: nil)
         }
@@ -148,25 +148,26 @@ class ViewController: UITableViewController {
             }
             self.startAdvertisingSwitch.isOn = false
             self.startAdvertisingSwitch.isEnabled = false
-            self.startAdvertisingLabel.textColor = UIColor.lightGrayColor
+            self.startAdvertisingLabel.textColor = UIColor.lightGray
             self.manager.stopAdvertising()
         }
 
-    }
-    
-    func respondToWriteRequests() {
-        let accelerometerUpdatePeriodFuture = self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(2)
+        let accelerometerUpdatePeriodFuture = startAdvertiseFuture.flatMap { [unowned self] in
+            self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(capacity: 2)
+        }
         accelerometerUpdatePeriodFuture.onSuccess { [unowned self] (request, _) in
-            if let value = request.value, value.length > 0 && value.length <= 8 {
+            if let value = request.value, value.count > 0 && value.count <= 8 {
                 self.accelerometerUpdatePeriodCharacteristic.value = value
-                self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.Success)
+                self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
                 self.updatePeriod()
             } else {
-                self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+                self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.invalidAttributeValueLength)
             }
         }
 
-        let accelerometerEnabledFuture = self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity: 2)
+        let accelerometerEnabledFuture = startAdvertiseFuture.flatMap { [unowned self] in
+            self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity: 2)
+        }
         accelerometerEnabledFuture.onSuccess { [unowned self] (request, _) in
             if let value = request.value, value.count == 1 {
                 self.accelerometerEnabledCharacteristic.value = request.value
@@ -176,8 +177,10 @@ class ViewController: UITableViewController {
                 self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.invalidAttributeValueLength)
             }
         }
+
+
     }
-    
+
     func updateAccelerometerData(_ data: CMAcceleration) {
         self.xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
         self.yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
@@ -187,7 +190,9 @@ class ViewController: UITableViewController {
             self.yRawAccelerationLabel.text = "\(yRaw)"
             self.zRawAccelerationLabel.text = "\(zRaw)"
             if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]), self.accelerometerDataCharacteristic.isUpdating {
-                self.accelerometerDataCharacteristic.updateValue(withString: data)
+                if !self.accelerometerDataCharacteristic.updateValue(withString: data.stringValue) {
+                    self.present(UIAlertController.alertWithMessage("Characteristic update failed"), animated: true)
+                }
             }
         }
     }

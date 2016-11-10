@@ -23,9 +23,9 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let isRaw = self.isRaw, updatePeriod : TISensorTag.AccelerometerService.UpdatePeriod = characteristic?.value() {
+        if let isRaw = self.isRaw, let updatePeriod : TISensorTag.AccelerometerService.UpdatePeriod = characteristic?.value() {
             if isRaw {
                 self.updatePeriodTextField.text = "\(updatePeriod.rawValue)"
             } else {
@@ -34,29 +34,29 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField:UITextField) -> Bool {
-        if let enteredPeriod = self.updatePeriodTextField.text, isRaw = self.isRaw, value = UInt16(enteredPeriod) where !enteredPeriod.isEmpty {
+    func textFieldShouldReturn(_ textField:UITextField) -> Bool {
+        if let enteredPeriod = self.updatePeriodTextField.text, let isRaw = self.isRaw, let value = UInt16(enteredPeriod), !enteredPeriod.isEmpty {
             let rawValue : UInt16
             if  isRaw {
                 rawValue = value
             } else {
                 rawValue = value / 10
             }
-            if let rawPeriod = UInt8(uintValue:rawValue), period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue:rawPeriod) {
+            if let rawPeriod = UInt8(uintValue:rawValue), let period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue:rawPeriod) {
                 let writeFuture = self.characteristic?.write(period, timeout:10.0)
                 writeFuture?.onSuccess {_ in
                     textField.resignFirstResponder()
                     self.navigationController?.popViewControllerAnimated(true)
                 }
-                writeFuture?.onFailure {error in
-                    self.presentViewController(UIAlertController.alertOnError(error), animated:true) {action in
+                writeFuture?.onFailure { [weak self] error in
+                    self?.present(UIAlertController.alertOnError(error), animated:true) { _ in
                         textField.resignFirstResponder()
-                        self.navigationController?.popViewControllerAnimated(true)
+                        _ = self?.navigationController?.popViewController(animated: true)
                     }
                 }
                 return true
