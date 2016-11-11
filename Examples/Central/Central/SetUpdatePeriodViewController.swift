@@ -51,10 +51,10 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
                 let writeFuture = self.characteristic?.write(period, timeout:10.0)
                 writeFuture?.onSuccess {_ in
                     textField.resignFirstResponder()
-                    self.navigationController?.popViewControllerAnimated(true)
+                    _ = self.navigationController?.popViewController(animated: true)
                 }
                 writeFuture?.onFailure { [weak self] error in
-                    self?.present(UIAlertController.alertOnError(error), animated:true) { _ in
+                    self?.present(UIAlertController.alertOnError(error: error), animated:true) { _ in
                         textField.resignFirstResponder()
                         _ = self?.navigationController?.popViewController(animated: true)
                     }

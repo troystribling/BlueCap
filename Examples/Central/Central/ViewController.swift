@@ -13,9 +13,10 @@ import BlueCapKit
 public enum AppError : Error {
     case dataCharactertisticNotFound
     case enabledCharactertisticNotFound
+    case updateCharactertisticNotFound
     case serviceNotFound
-    case characteristicNotFound
-    case peripheralNotC
+    case disconnected
+    case connectionFailed
     case invalidState
     case resetting
     case poweredOff
@@ -113,7 +114,7 @@ class ViewController: UITableViewController {
 
             
         // on power, start scanning. when peripheral is discovered connect and stop scanning
-        let peripheralConnectFuture = self.manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
+        let dataUpdateFuture = self.manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
                 switch state {
                 case .poweredOn:
                     return self.manager.startScanning(forServiceUUIDs: [serviceUUID], capacity: 10)
@@ -128,127 +129,97 @@ class ViewController: UITableViewController {
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
-        }.flatMap { [unowned self] (peripheral, connectionEvent) in
+        }.flatMap { [unowned self] (peripheral, connectionEvent) -> Future<Peripheral> in
             switch connectionEvent {
-            case .Connect:
+            case .connect:
+                return peripheral.discoverServices([serviceUUID])
+            case .timeout:
+                throw AppError.disconnected
+            case .disconnect:
+                throw AppError.disconnected
+            case .forceDisconnect:
                 self.updateUIStatus()
-            case .Timeout:
-                self.updateUIStatus()
-                peripheral.reconnect()
-            case .Disconnect:
-                peripheral.reconnect()
-                self.updateUIStatus()
-            case .ForceDisconnect:
-                self.updateUIStatus()
-            case .GiveUp:
-                peripheral.terminate()
-                self.updateUIStatus()
-                self.presentViewController(UIAlertController.alertWithMessage("Giving up"), animated:true, completion:nil)
+                throw AppError.connectionFailed
+            case .giveUp:
+                throw AppError.connectionFailed
             }
+        }.flatMap { peripheral -> Future<Service> in
+            guard let service = peripheral.service(serviceUUID) else {
+                throw AppError.serviceNotFound
+            }
+            return service.discover(characteristics: [dataUUID, enabledUUID, updatePeriodUUID])
+        }.flatMap { [unowned self] service -> Future<Characteristic> in
+            guard let dataCharacteristic = service.characteristic(dataUUID) else {
+                throw AppError.dataCharactertisticNotFound
+            }
+            guard let enabledCharacteristic = service.characteristic(enabledUUID) else {
+                throw AppError.enabledCharactertisticNotFound
+            }
+            guard let updatePeriodCharacteristic = service.characteristic(updatePeriodUUID) else {
+                throw AppError.updateCharactertisticNotFound
+            }
+            self.accelerometerDataCharacteristic = dataCharacteristic
+            self.accelerometerEnabledCharacteristic = enabledCharacteristic
+            self.accelerometerUpdatePeriodCharacteristic = updatePeriodCharacteristic
+            return enabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.yes)
+        }.flatMap { [unowned self] _ -> Future<Characteristic> in
+            guard let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic else {
+                throw AppError.enabledCharactertisticNotFound
+            }
+            return accelerometerEnabledCharacteristic.read(timeout: 10.0)
+        }.flatMap { [unowned self] _ -> Future<Characteristic> in
+            guard let accelerometerUpdatePeriodCharacteristic = self.accelerometerUpdatePeriodCharacteristic else {
+                throw AppError.updateCharactertisticNotFound
+            }
+            return accelerometerUpdatePeriodCharacteristic.read(timeout: 10.0)
+        }.flatMap { [unowned self] _ -> Future<Characteristic> in
+            guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
+                throw AppError.dataCharactertisticNotFound
+            }
+            return accelerometerDataCharacteristic.startNotifying()
+        }.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+            return characteristic.receiveNotificationUpdates(capacity: 10)
         }
 
-        peripheralConnectFuture.onFailure { error in
+        dataUpdateFuture.onFailure { [unowned self] error in
+            guard let appError = error as? AppError else {
+                self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
+                return
+            }
+            switch appError {
+            case .dataCharactertisticNotFound:
+                fallthrough
+            case .enabledCharactertisticNotFound:
+                fallthrough
+            case .updateCharactertisticNotFound:
+                fallthrough
+            case .serviceNotFound:
+                self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
+            case .disconnected:
+                self.updateUIStatus()
+                self.peripheral?.reconnect()
+            case .connectionFailed:
+                self.peripheral?.terminate()
+                self.updateUIStatus()
+                self.present(UIAlertController.alertWithMessage(message: "Connection failed"), animated:true, completion:nil)
+            case .invalidState:
+                self.present(UIAlertController.alertWithMessage(message: "Invalid state"), animated:true, completion:nil)
+            case .resetting:
+                self.manager.reset()
+                self.present(UIAlertController.alertWithMessage(message: "Bluetooth service resetting"), animated:true, completion:nil)
+            case .poweredOff:
+                self.manager.reset()
+                self.present(UIAlertController.alertWithMessage(message: "Bluetooth powered off"), animated:true, completion:nil)
+            }
             self.peripheral = nil
-            self.presentViewController(UIAlertController.alertOnError(error), animated:true, completion:nil)
             self.updateUIStatus()
         }
 
-        // discover services and characteristics and enable accelerometer
-        let peripheralDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
-            if peripheral.state == .Connected {
-                return peripheral.discoverPeripheralServices([serviceUUID])
-            } else {
-                let promise = Promise<Peripheral>()
-                promise.failure(CentralError.peripheralNotConnected)
-                return promise.future
-            }
-        }.flatmap { peripheral -> Future<Characteristic> in
-            if let service = peripheral.service(serviceUUID) {
-                self.accelerometerDataCharacteristic = service.characteristic(dataUUID)
-                self.accelerometerEnabledCharacteristic = service.characteristic(enabledUUID)
-                self.accelerometerUpdatePeriodCharacteristic = service.characteristic(updatePeriodUUID)
-                if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
-                    return accelerometerEnabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.Yes)
-                } else {
-                    let promise = Promise<Characteristic>()
-                    promise.failure(CentralError.enabledCharacteristicNotFound)
-                    return promise.future
-                }
-            } else {
-                let promise = Promise<Characteristic>()
-                promise.failure(CentralError.serviceNotFound)
-                return promise.future
-            }
-        }
 
-        // get enabled value
-        let readEnabledFuture = peripheralDiscoveredFuture.flatmap { _ -> Future<Characteristic> in
-            if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
-                return accelerometerEnabledCharacteristic.read(10.0)
-            } else {
-                let promise = Promise<Characteristic>()
-                promise.failure(CentralError.characteristicNotFound)
-                return promise.future
-            }
-        }
-        readEnabledFuture.onSuccess {characteristic in
-            self.updateEnabled(characteristic)
-        }
-        
-        // get update period value
-        let readUpdatePeriodFuture = readEnabledFuture.flatmap { _ -> Future<Characteristic> in
-            if let accelerometerUpdatePeriodCharacteristic = self.accelerometerUpdatePeriodCharacteristic {
-                return accelerometerUpdatePeriodCharacteristic.read(10.0)
-            } else {
-                let promise = Promise<Characteristic>()
-                promise.failure(CentralError.characteristicNotFound)
-                return promise.future
-            }
-        }
-        readUpdatePeriodFuture.onSuccess { characteristic in
-            self.updatePeriod(characteristic)
-        }
-
-        // subscribe to acceleration data updates
-        let dataSubscriptionFuture = readUpdatePeriodFuture.flatmap { _ -> Future<Characteristic> in
-            if let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic {
-                return accelerometerDataCharacteristic.startNotifying()
-            } else {
-                let promise = Promise<Characteristic>()
-                promise.failure(CentralError.characteristicNotFound)
-                return promise.future
-            }
-        }
-
-        dataSubscriptionFuture.flatmap { characteristic in
-            return characteristic.receiveNotificationUpdates(10)
-        }.onSuccess { (_, data) in
+        dataUpdateFuture.onSuccess { (_, data) in
             self.updateData(data)
         }
             
-        // handle bluetooth power off
-        let powerOffFuture = manager.whenPowerOff()
-        powerOffFuture.onSuccess {
-            self.deactivate()
-        }
-        powerOffFuture.onFailure {error in
-        }
-        // enable controls when bluetooth is powered on again after stop advertising is successul
-        let powerOffFutureSuccessFuture = powerOffFuture.flatmap { _ in
-            self.manager.whenPowerOn()
-        }
-        powerOffFutureSuccessFuture.onSuccess {
-            self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
-        }
-        // enable controls when bluetooth is powered on again after stop advertising fails
-        let powerOffFutureFailedFuture = powerOffFuture.recoverWith { _ in
-            self.manager.whenPowerOn()
-        }
-        powerOffFutureFailedFuture.onSuccess {
-            if self.manager.poweredOn {
-                self.presentViewController(UIAlertController.alertWithMessage("restart application"), animated:true, completion:nil)
-            }
-        }
     }
     
     func updateUIStatus() {
@@ -299,12 +270,16 @@ class ViewController: UITableViewController {
     }
 
     func readUpdatePeriod() {
-        let readFuture = self.accelerometerUpdatePeriodCharacteristic?.read(timeout: 10.0)
-        readFuture?.onSuccess {characteristic in
+        guard let accelerometerUpdatePeriodCharacteristic = self.accelerometerUpdatePeriodCharacteristic else {
+            return
+        }
+        let readFuture = accelerometerUpdatePeriodCharacteristic.read(timeout: 10.0)
+
+        readFuture.onSuccess {characteristic in
             self.updatePeriod(characteristic)
         }
-        readFuture?.onFailure{ error in
-            self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
+        readFuture.onFailure{ error in
+            self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
         }
     }
 
@@ -322,8 +297,14 @@ class ViewController: UITableViewController {
 
     func writeEnabled() {
         if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
-            let value = TISensorTag.AccelerometerService.Enabled(boolValue:self.enabledSwitch.isOn)
-            accelerometerEnabledCharacteristic.write(value, timeout:10.0)
+            let value = TISensorTag.AccelerometerService.Enabled(boolValue: enabledSwitch.isOn)
+            let writeFuture = accelerometerEnabledCharacteristic.write(value, timeout:10.0)
+            writeFuture.onSuccess { [unowned self] _ in
+                self.present(UIAlertController.alertWithMessage(message: "Accelerometer is " + (self.enabledSwitch.isOn ? "on" : "off")), animated:true, completion:nil)
+            }
+            writeFuture.onFailure { error in
+                self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
+            }
         }
     }
     
