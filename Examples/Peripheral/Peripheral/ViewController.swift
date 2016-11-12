@@ -39,24 +39,15 @@ class ViewController: UITableViewController {
 
     let accelerometerService = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
 
-    let accelerometerDataCharacteristic = MutableCharacteristic(UUID: TISensorTag.AccelerometerService.Data.UUID,
-                                                                properties: [.read, .notify],
-                                                                permissions: [.readable, .writeable],
-                                                                value: SerDe.serialize(TISensorTag.AccelerometerService.Data(x: 1.0, y: 0.5, z: -1.5)!))
-    let accelerometerEnabledCharacteristic = MutableCharacteristic(UUID:TISensorTag.AccelerometerService.Enabled.UUID,
-                                                                   properties: [.read, .write],
-                                                                   permissions: [.readable, .writeable],
-                                                                   value: SerDe.serialize(TISensorTag.AccelerometerService.Enabled.no.rawValue))
-    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(UUID: TISensorTag.AccelerometerService.UpdatePeriod.UUID,
-                                                                        properties: [.read, .write],
-                                                                        permissions: [.readable, .writeable],
-                                                                        value: SerDe.serialize(UInt8(100)))
-    
+    let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+    let accelerometerEnabledCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
+
+    var powerOffAlert = true
+
     required init?(coder aDecoder:NSCoder) {
         super.init(coder: aDecoder)
-        accelerometerService.characteristics = [accelerometerDataCharacteristic,
-                                                accelerometerEnabledCharacteristic,
-                                                accelerometerUpdatePeriodCharacteristic]
+        accelerometerService.characteristics = [accelerometerDataCharacteristic, accelerometerEnabledCharacteristic, accelerometerUpdatePeriodCharacteristic]
     }
     
     override func viewDidLoad() {
@@ -97,6 +88,7 @@ class ViewController: UITableViewController {
                 self.present(UIAlertController.alertOnError(error), animated: true, completion: nil)
             }
         }
+        self.updateEnabled()
     }
     
     @IBAction func toggleAdvertise(_ sender: AnyObject) {
@@ -114,6 +106,7 @@ class ViewController: UITableViewController {
         let startAdvertiseFuture = manager.whenStateChanges().flatMap { [unowned self] state -> Future<Void> in
             switch state {
             case .poweredOn:
+                self.powerOffAlert = true
                 self.manager.removeAllServices()
                 return self.manager.add(self.accelerometerService)
             case .poweredOff:
@@ -129,14 +122,19 @@ class ViewController: UITableViewController {
 
 
         startAdvertiseFuture.onSuccess { [unowned self] in
+            self.startAdvertisingSwitch.isOn = true
+            self.startAdvertisingSwitch.isEnabled = true
+            self.startAdvertisingLabel.textColor = UIColor.black
             self.present(UIAlertController.alertWithMessage("poweredOn and started advertising"), animated: true, completion: nil)
         }
         startAdvertiseFuture.onFailure { [unowned self] error in
             switch error {
             case AppError.poweredOff:
-                self.present(UIAlertController.alertWithMessage("Bluetooth poweredOff"), animated: true)
+                if self.powerOffAlert {
+                    self.present(UIAlertController.alertWithMessage("PeripheralManager powered off"), animated: true)
+                }
+                self.powerOffAlert = false
             case AppError.resetting:
-                self.manager.reset()
                 let message = "PeripheralManager state \"\(self.manager.state.stringValue)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
                 self.present(UIAlertController.alertWithMessage(message), animated: true)
             default:
@@ -146,10 +144,10 @@ class ViewController: UITableViewController {
                 self.accelerometer.stopAccelerometerUpdates()
                 self.enabledSwitch.isOn = false
             }
+            self.manager.reset()
             self.startAdvertisingSwitch.isOn = false
             self.startAdvertisingSwitch.isEnabled = false
             self.startAdvertisingLabel.textColor = UIColor.lightGray
-            self.manager.stopAdvertising()
         }
 
         let accelerometerUpdatePeriodFuture = startAdvertiseFuture.flatMap { [unowned self] in
@@ -189,9 +187,13 @@ class ViewController: UITableViewController {
             xRawAccelerationLabel.text = "\(xRaw)"
             yRawAccelerationLabel.text = "\(yRaw)"
             zRawAccelerationLabel.text = "\(zRaw)"
-            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]), self.accelerometerDataCharacteristic.isUpdating {
-                if !self.accelerometerDataCharacteristic.updateValue(withString: data.stringValue) {
-                    Logger.debug("update failed \(data.stringValue)")
+            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) {
+                if accelerometerDataCharacteristic.isUpdating {
+                    if !accelerometerDataCharacteristic.updateValue(withString: data.stringValue) {
+                        Logger.debug("update failed \(data.stringValue)")
+                    }
+                } else {
+                    accelerometerDataCharacteristic.value = SerDe.serialize(data)
                 }
             }
         }
@@ -205,8 +207,8 @@ class ViewController: UITableViewController {
                 rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
             }
         } else {
-            if let period: TISensorTag.AccelerometerService.UpdatePeriod = SerDe.deserialize(accelerometer.updatePeriod) {
-                accelerometer.updatePeriod = Double(period.period)/1000.0
+            let updatePeriod = UInt8(accelerometer.updatePeriod * 100)
+            if let period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue: updatePeriod)  {
                 updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
                 rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
             }
@@ -218,7 +220,9 @@ class ViewController: UITableViewController {
             enabledSwitch.isOn = enabled.boolValue
             toggleEnabled(self)
         } else {
-
+            if enabledSwitch.isOn {
+                accelerometerEnabledCharacteristic.value = SerDe.serialize(TISensorTag.AccelerometerService.Enabled(boolValue: true))
+            }
         }
     }
 }

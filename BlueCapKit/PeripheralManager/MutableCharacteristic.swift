@@ -33,10 +33,14 @@ public class MutableCharacteristic : NSObject {
 
     public var value: Data? {
         get {
-            return peripheralQueue?.sync { return self._value }
+            return peripheralQueue?.sync {
+                return self._value
+            }
         }
         set {
-            peripheralQueue?.sync { self._value = newValue }
+            peripheralQueue?.sync {
+                self._value = newValue
+            }
         }
     }
 
@@ -235,21 +239,21 @@ public class MutableCharacteristic : NSObject {
 
     fileprivate func updateValues(_ values: [Data]) -> Bool  {
         guard let value = values.last else {
-            return self._isUpdating
+            return _isUpdating
         }
-        self._value = value
-        if let peripheralManager = self.service?.peripheralManager , self._isUpdating && self.canNotify {
+        _value = value
+        if let peripheralManager = service?.peripheralManager, _isUpdating && canNotify {
             for value in values {
-                self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
-                if !self._isUpdating {
-                    self.queuedUpdates.append(value)
+                _isUpdating = peripheralManager.updateValue(value, forCharacteristic: self)
+                if !_isUpdating {
+                    queuedUpdates.append(value)
                 }
             }
         } else {
-            self._isUpdating = false
-            self.queuedUpdates.append(value)
+            _isUpdating = false
+            queuedUpdates.append(value)
         }
-        return self._isUpdating
+        return _isUpdating
     }
 
 }

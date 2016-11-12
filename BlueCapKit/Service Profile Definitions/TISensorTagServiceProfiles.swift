@@ -62,7 +62,7 @@ public struct TISensorTag {
             public static let name                                      = "Accelerometer Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Data(x: 1.0, y: 0.5, z: -1.5)!)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Data(x: 1.0, y: 0.5, z: -1.5)!)
             
             // RawArrayDeserializable
             public static let size = 3
@@ -121,7 +121,7 @@ public struct TISensorTag {
             public static let name                                      = "Accelerometer Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Enabled.no.rawValue)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Enabled.no.rawValue)
 
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
@@ -175,7 +175,7 @@ public struct TISensorTag {
             public let period: UInt16
             
             fileprivate static func valueFromRaw(_ rawValue:UInt8) -> UInt16 {
-                var period = 10*UInt16(rawValue)
+                var period = 10 * UInt16(rawValue)
                 if period < 10 {
                     period = 10
                 }
@@ -187,7 +187,7 @@ public struct TISensorTag {
             public static let name                                      = "Accelerometer Update Period"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.read, .write]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(UInt8(100))
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(UInt8(100))
             
             // RawDeserializable
             public var rawValue: UInt8 {
@@ -268,7 +268,7 @@ public struct TISensorTag {
             public static let name                                      = "Magnetometer Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Data(rawValue: [-2183, 1916, 1255])!)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Data(rawValue: [-2183, 1916, 1255])!)
             
             // RawArrayDeserializable
             public static let size = 6
@@ -323,7 +323,7 @@ public struct TISensorTag {
             public static let name                                      = "Magnetometer Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Enabled.no.rawValue)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Enabled.no.rawValue)
 
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
@@ -372,7 +372,7 @@ public struct TISensorTag {
             public static let name                                      = "Magnetometer Update Period"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.read, .write]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(UInt16(5000))
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(UInt16(5000))
             
             // RawDeserializable
             public var rawValue: UInt8 {
@@ -452,7 +452,7 @@ public struct TISensorTag {
             public static let name                                      = "Gyroscope Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Data(rawValue: [-24, -219, -23])!)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Data(rawValue: [-24, -219, -23])!)
 
             // RawArrayDeserializable
             public static let size = 6
@@ -513,7 +513,7 @@ public struct TISensorTag {
             public static let name                                      = "Gyroscope Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Enabled.no.rawValue)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Enabled.no.rawValue)
 
             // StringDeserializable
             public init?(stringValue: [String: String]) {
@@ -610,7 +610,7 @@ public struct TISensorTag {
             public static let name                                      = "Temperature Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Data(rawValue: [-172, 3388])!)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Data(rawValue: [-172, 3388])!)
 
             // RawArrayDeserializable
             public static let size = 4
@@ -660,7 +660,7 @@ public struct TISensorTag {
             public static let name                                      = "Temperature Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Enabled.no.rawValue)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Enabled.no.rawValue)
 
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
@@ -719,7 +719,7 @@ public struct TISensorTag {
             public static let name                                      = "Baraometer Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Data(rawValue1:-2343, rawValue2:33995)!)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Data(rawValue1:-2343, rawValue2:33995)!)
 
             // RawPairDeserializable
             public var rawValue1 : Int16 {
@@ -772,7 +772,7 @@ public struct TISensorTag {
             public static let name                                      = "Baraometer Calibration Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?                     = SerDe.serialize(Calibration(rawValue1:[45697, 25592, 48894, 36174], rawValue2:[7001, 1990, -2369, 5542])!)
+            public static let initialValue: Foundation.Data?            = SerDe.serialize(Calibration(rawValue1:[45697, 25592, 48894, 36174], rawValue2:[7001, 1990, -2369, 5542])!)
 
             // RawArrayPairDeserializable
             public static var size1: Int {
