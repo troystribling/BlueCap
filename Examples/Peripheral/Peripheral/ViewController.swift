@@ -125,8 +125,10 @@ class ViewController: UITableViewController {
             self.startAdvertisingSwitch.isOn = true
             self.startAdvertisingSwitch.isEnabled = true
             self.startAdvertisingLabel.textColor = UIColor.black
+            self.accelerometerEnabledCharacteristic.value = SerDe.serialize(TISensorTag.AccelerometerService.Enabled(boolValue: self.enabledSwitch.isOn))
             self.present(UIAlertController.alertWithMessage("poweredOn and started advertising"), animated: true, completion: nil)
         }
+
         startAdvertiseFuture.onFailure { [unowned self] error in
             switch error {
             case AppError.poweredOff:
@@ -219,10 +221,6 @@ class ViewController: UITableViewController {
         if let value = accelerometerEnabledCharacteristic.value, let enabled: TISensorTag.AccelerometerService.Enabled = SerDe.deserialize(value), enabledSwitch.isOn != enabled.boolValue {
             enabledSwitch.isOn = enabled.boolValue
             toggleEnabled(self)
-        } else {
-            if enabledSwitch.isOn {
-                accelerometerEnabledCharacteristic.value = SerDe.serialize(TISensorTag.AccelerometerService.Enabled(boolValue: true))
-            }
         }
     }
 }

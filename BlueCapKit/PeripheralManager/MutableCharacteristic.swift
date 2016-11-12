@@ -38,9 +38,7 @@ public class MutableCharacteristic : NSObject {
             }
         }
         set {
-            peripheralQueue?.sync {
-                self._value = newValue
-            }
+            peripheralQueue?.sync { self._value = newValue }
         }
     }
 
