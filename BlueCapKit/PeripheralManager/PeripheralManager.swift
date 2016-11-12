@@ -290,7 +290,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
             Logger.debug("characteristic write request received for \(characteristic.UUID.uuidString)")
             if characteristic.didRespondToWriteRequest(request, central: central) {
-                characteristic.value = request.value
+                characteristic._value = request.value
             } else {
                 respondToRequest(request, withResult:CBATTError.Code.requestNotSupported)
             }
@@ -303,8 +303,8 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         var request = request
         Logger.debug("chracteracteristic \(request.getCharacteristic().UUID)")
         if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
-            Logger.debug("responding with data: \(characteristic.stringValue)")
-            request.value = characteristic.value
+            Logger.debug("responding with data: \(characteristic._value)")
+            request.value = characteristic._value
             respondToRequest(request, withResult:CBATTError.Code.success)
         } else {
             Logger.debug("characteristic not found")

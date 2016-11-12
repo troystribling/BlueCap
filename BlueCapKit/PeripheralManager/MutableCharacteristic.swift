@@ -19,8 +19,9 @@ public class MutableCharacteristic : NSObject {
 
     fileprivate var queuedUpdates = [Data]()
     fileprivate var _isUpdating = false
-    fileprivate var _value: Data?
     fileprivate var processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
+
+    internal var _value: Data?
 
     let cbMutableChracteristic: CBMutableCharacteristicInjectable
 
@@ -233,24 +234,22 @@ public class MutableCharacteristic : NSObject {
     // MARK: Utils
 
     fileprivate func updateValues(_ values: [Data]) -> Bool  {
-        return peripheralQueue?.sync {
-            guard let value = values.last else {
-                return self._isUpdating
-            }
-            self._value = value
-            if let peripheralManager = self.service?.peripheralManager , self._isUpdating && self.canNotify {
-                for value in values {
-                    self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
-                    if !self._isUpdating {
-                        self.queuedUpdates.append(value)
-                    }
-                }
-            } else {
-                self._isUpdating = false
-                self.queuedUpdates.append(value)
-            }
+        guard let value = values.last else {
             return self._isUpdating
-        } ?? false
+        }
+        self._value = value
+        if let peripheralManager = self.service?.peripheralManager , self._isUpdating && self.canNotify {
+            for value in values {
+                self._isUpdating = peripheralManager.updateValue(value, forCharacteristic:self)
+                if !self._isUpdating {
+                    self.queuedUpdates.append(value)
+                }
+            }
+        } else {
+            self._isUpdating = false
+            self.queuedUpdates.append(value)
+        }
+        return self._isUpdating
     }
 
 }

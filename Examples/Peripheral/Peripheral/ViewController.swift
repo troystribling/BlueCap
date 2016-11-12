@@ -34,7 +34,7 @@ class ViewController: UITableViewController {
     @IBOutlet var enableLabel: UILabel!
     @IBOutlet var enabledSwitch: UISwitch!
     
-    let manager = PeripheralManager()
+    let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager.example" as NSString])
     let accelerometer = Accelerometer()
 
     let accelerometerService = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
@@ -182,16 +182,16 @@ class ViewController: UITableViewController {
     }
 
     func updateAccelerometerData(_ data: CMAcceleration) {
-        self.xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
-        self.yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
-        self.zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
+        xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
+        yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
+        zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
         if let xRaw = Int8(doubleValue: (-64.0*data.x)), let yRaw = Int8(doubleValue: (-64.0*data.y)), let zRaw = Int8(doubleValue: (64.0*data.z)) {
-            self.xRawAccelerationLabel.text = "\(xRaw)"
-            self.yRawAccelerationLabel.text = "\(yRaw)"
-            self.zRawAccelerationLabel.text = "\(zRaw)"
+            xRawAccelerationLabel.text = "\(xRaw)"
+            yRawAccelerationLabel.text = "\(yRaw)"
+            zRawAccelerationLabel.text = "\(zRaw)"
             if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]), self.accelerometerDataCharacteristic.isUpdating {
                 if !self.accelerometerDataCharacteristic.updateValue(withString: data.stringValue) {
-                    self.present(UIAlertController.alertWithMessage("Characteristic update failed"), animated: true)
+                    Logger.debug("update failed \(data.stringValue)")
                 }
             }
         }
@@ -200,17 +200,25 @@ class ViewController: UITableViewController {
     func updatePeriod() {
         if let value = self.accelerometerUpdatePeriodCharacteristic.value {
             if let period: TISensorTag.AccelerometerService.UpdatePeriod = SerDe.deserialize(value) {
-                self.accelerometer.updatePeriod = Double(period.period)/1000.0
-                self.updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
-                self.rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
+                accelerometer.updatePeriod = Double(period.period)/1000.0
+                updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
+                rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
+            }
+        } else {
+            if let period: TISensorTag.AccelerometerService.UpdatePeriod = SerDe.deserialize(accelerometer.updatePeriod) {
+                accelerometer.updatePeriod = Double(period.period)/1000.0
+                updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
+                rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
             }
         }
     }
     
     func updateEnabled() {
-        if let value = self.accelerometerEnabledCharacteristic.value, let enabled: TISensorTag.AccelerometerService.Enabled = SerDe.deserialize(value), self.enabledSwitch.isOn != enabled.boolValue {
-            self.enabledSwitch.isOn = enabled.boolValue
-            self.toggleEnabled(self)
+        if let value = accelerometerEnabledCharacteristic.value, let enabled: TISensorTag.AccelerometerService.Enabled = SerDe.deserialize(value), enabledSwitch.isOn != enabled.boolValue {
+            enabledSwitch.isOn = enabled.boolValue
+            toggleEnabled(self)
+        } else {
+
         }
     }
 }
