@@ -54,14 +54,15 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 switch state {
                 case .poweredOn:
                     strongSelf.setPeripheralManagerServices()
-                case .poweredOff, .unauthorized, .unknown:
-                    strongSelf.alertAndStopAdvertising(message: "PeripheralManager state \"\(state.stringValue)\"")
+                case .poweredOff, .unauthorized:
+                    strongSelf.alert(message: "PeripheralManager state \"\(state.stringValue)\"")
                 case .resetting:
-                    strongSelf.alertAndStopAdvertising(message:
+                    strongSelf.alert(message:
                         "PeripheralManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising.")
-
+                case .unknown:
+                    break
                 case .unsupported:
-                    strongSelf.alertAndStopAdvertising(message: "PeripheralManager state \"\(state.stringValue)\". Bluetooth not supported.")
+                    strongSelf.alert(message: "PeripheralManager state \"\(state.stringValue)\". Bluetooth not supported.")
                 }
             }
         }
@@ -236,7 +237,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
 
-    func alertAndStopAdvertising(message: String) {
+    func alert(message: String) {
         present(UIAlertController.alertWithMessage(message), animated:true) { [weak self] _ in
             self.forEach { strongSelf in
                 Singletons.peripheralManager.reset()

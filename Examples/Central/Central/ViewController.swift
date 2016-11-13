@@ -20,6 +20,7 @@ public enum AppError : Error {
     case invalidState
     case resetting
     case poweredOff
+    case unkown
 }
 
 public struct CentralError {
@@ -53,7 +54,7 @@ class ViewController: UITableViewController {
     var accelerometerEnabledCharacteristic: Characteristic?
     var accelerometerUpdatePeriodCharacteristic: Characteristic?
 
-    let manager = CentralManager()
+    let manager = CentralManager(options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.central-manager-example" as NSString])
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -120,12 +121,14 @@ class ViewController: UITableViewController {
                     return self.manager.startScanning(forServiceUUIDs: [serviceUUID], capacity: 10)
                 case .poweredOff:
                     throw AppError.poweredOff
-                case .unauthorized, .unknown, .unsupported:
+                case .unauthorized, .unsupported:
                     throw AppError.invalidState
                 case .resetting:
                     throw AppError.resetting
+                case .unknown:
+                    throw AppError.unkown
                 }
-        }.flatMap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+        }.flatMap {  peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
@@ -162,16 +165,10 @@ class ViewController: UITableViewController {
             self.accelerometerEnabledCharacteristic = enabledCharacteristic
             self.accelerometerUpdatePeriodCharacteristic = updatePeriodCharacteristic
             return enabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.yes)
-        }.flatMap { [unowned self] _ -> Future<Characteristic> in
-            guard let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic else {
-                throw AppError.enabledCharactertisticNotFound
-            }
-            return accelerometerEnabledCharacteristic.read(timeout: 10.0)
-        }.flatMap { [unowned self] _ -> Future<Characteristic> in
-            guard let accelerometerUpdatePeriodCharacteristic = self.accelerometerUpdatePeriodCharacteristic else {
-                throw AppError.updateCharactertisticNotFound
-            }
-            return accelerometerUpdatePeriodCharacteristic.read(timeout: 10.0)
+        }.flatMap { [unowned self] _ -> Future<[Characteristic]> in
+            return [self.accelerometerEnabledCharacteristic,
+                    self.accelerometerUpdatePeriodCharacteristic,
+                    self.accelerometerDataCharacteristic].flatMap { $0 }.map { $0.read(timeout: 10.0) }.sequence()
         }.flatMap { [unowned self] _ -> Future<Characteristic> in
             guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
                 throw AppError.dataCharactertisticNotFound
@@ -201,20 +198,21 @@ class ViewController: UITableViewController {
             case .connectionFailed:
                 self.peripheral?.terminate()
                 self.updateUIStatus()
-                self.present(UIAlertController.alertWithMessage(message: "Connection failed"), animated:true, completion:nil)
+                self.present(UIAlertController.alertWithMessage(message: "Connection failed"), animated: true, completion: nil)
             case .invalidState:
-                self.present(UIAlertController.alertWithMessage(message: "Invalid state"), animated:true, completion:nil)
+                self.present(UIAlertController.alertWithMessage(message: "Invalid state"), animated: true, completion: nil)
             case .resetting:
                 self.manager.reset()
-                self.present(UIAlertController.alertWithMessage(message: "Bluetooth service resetting"), animated:true, completion:nil)
+                self.present(UIAlertController.alertWithMessage(message: "Bluetooth service resetting"), animated: true, completion: nil)
             case .poweredOff:
                 self.manager.reset()
-                self.present(UIAlertController.alertWithMessage(message: "Bluetooth powered off"), animated:true, completion:nil)
+                self.present(UIAlertController.alertWithMessage(message: "Bluetooth powered off"), animated: true, completion: nil)
+            case .unkown:
+                break
             }
             self.peripheral = nil
             self.updateUIStatus()
         }
-
 
         dataUpdateFuture.onSuccess { (_, data) in
             self.updateData(data)

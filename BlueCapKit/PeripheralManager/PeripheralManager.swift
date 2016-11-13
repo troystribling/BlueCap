@@ -25,7 +25,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     fileprivate var options: [String : Any]?
 
-    fileprivate let afterStateChangedPromise = StreamPromise<ManagerState>()
+    fileprivate var afterStateChangedPromise: StreamPromise<ManagerState>?
     fileprivate var afterStateRestoredPromise: Promise<(services: [MutableService], advertisements: PeripheralAdvertisements)>?
     fileprivate var afterSeriviceAddPromise: Promise<Void>?
 
@@ -35,15 +35,15 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     internal let peripheralQueue: Queue
 
     public var isAdvertising: Bool {
-        return self.cbPeripheralManager.isAdvertising
+        return cbPeripheralManager?.isAdvertising ?? false
     }
 
     public var poweredOn: Bool {
-        return self.cbPeripheralManager.managerState == .poweredOn
+        return cbPeripheralManager.managerState == .poweredOn
     }
 
     public var state: ManagerState {
-        return cbPeripheralManager.managerState
+        return cbPeripheralManager?.managerState ?? .unknown
     }
     
     public var services: [MutableService] {
@@ -86,22 +86,30 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     deinit {
-        self.cbPeripheralManager.delegate = nil
+        cbPeripheralManager?.delegate = nil
     }
 
     public func reset()  {
-        guard let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager else {
-            return
+        return self.peripheralQueue.sync {
+            self.afterAdvertisingStartedPromise = nil
+            self.afterBeaconAdvertisingStartedPromise = nil
+            self.afterStateChangedPromise = nil
+            self.afterStateRestoredPromise = nil
+            self.afterSeriviceAddPromise = nil
+            if let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager {
+                self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: self.options)
+                self.cbPeripheralManager?.delegate = self
+            }
         }
-        cbPeripheralManager.delegate = nil
-        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
     }
 
     // MARK: Power ON/OFF
 
     public func whenStateChanges() -> FutureStream<ManagerState> {
         return self.peripheralQueue.sync {
-            return self.afterStateChangedPromise.stream
+            self.afterStateChangedPromise = StreamPromise<ManagerState>()
+            self.afterStateChangedPromise?.success(self.cbPeripheralManager.managerState)
+            return self.afterStateChangedPromise!.stream
         }
     }
 
@@ -313,7 +321,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     func didUpdateState(_ peripheralManager: CBPeripheralManagerInjectable) {
-        afterStateChangedPromise.success(peripheralManager.managerState)
+        afterStateChangedPromise?.success(peripheralManager.managerState)
     }
     
     func didStartAdvertising(_ error: Error?) {

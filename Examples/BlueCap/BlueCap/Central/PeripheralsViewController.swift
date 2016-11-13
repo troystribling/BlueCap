@@ -82,7 +82,9 @@ class PeripheralsViewController : UITableViewController {
                 switch state {
                 case .poweredOn:
                     break
-                case .poweredOff, .unknown, .unauthorized:
+                case .unknown:
+                    break
+                case .poweredOff, .unauthorized:
                     strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state.stringValue)\"")
                 case .resetting:
                     strongSelf.alertAndStopScanning(message:

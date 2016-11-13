@@ -15,7 +15,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Properties
 
-    fileprivate let afterStateChangedPromise = StreamPromise<ManagerState>()
+    fileprivate var afterStateChangedPromise: StreamPromise<ManagerState>?
     fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral>?
     fileprivate var afterStateRestoredPromise: Promise<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>?
 
@@ -94,12 +94,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func reset()  {
-        centralQueue.sync {
-            guard let cbCentralManager = self.cbCentralManager as? CBCentralManager else {
-                return
+        centralQueue.async {
+            self.afterStateChangedPromise = nil
+            self.afterPeripheralDiscoveredPromise = nil
+            self.afterStateRestoredPromise = nil
+            if let cbCentralManager = self.cbCentralManager as? CBCentralManager {
+                self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: self.options)
+                self.cbCentralManager.delegate = self
             }
-            cbCentralManager.delegate = nil
-            self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: self.options)
         }
     }
 
@@ -107,7 +109,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     public func whenStateChanges() -> FutureStream<ManagerState> {
         return self.centralQueue.sync {
-            return self.afterStateChangedPromise.stream
+            self.afterStateChangedPromise = StreamPromise<ManagerState>()
+            self.afterStateChangedPromise?.success(self.cbCentralManager.managerState)
+            return self.afterStateChangedPromise!.stream
         }
     }
 
@@ -333,7 +337,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     func didUpdateState(_ centralManager: CBCentralManagerInjectable) {
-        afterStateChangedPromise.success(centralManager.managerState)
+        afterStateChangedPromise?.success(centralManager.managerState)
     }
     
 }

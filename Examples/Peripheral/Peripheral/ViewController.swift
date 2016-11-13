@@ -15,6 +15,7 @@ enum AppError: Error {
     case invalidState
     case resetting
     case poweredOff
+    case unsupported
 }
 
 class ViewController: UITableViewController {
@@ -42,8 +43,6 @@ class ViewController: UITableViewController {
     let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
     let accelerometerEnabledCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
     let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
-
-    var powerOffAlert = true
 
     required init?(coder aDecoder:NSCoder) {
         super.init(coder: aDecoder)
@@ -106,13 +105,14 @@ class ViewController: UITableViewController {
         let startAdvertiseFuture = manager.whenStateChanges().flatMap { [unowned self] state -> Future<Void> in
             switch state {
             case .poweredOn:
-                self.powerOffAlert = true
                 self.manager.removeAllServices()
                 return self.manager.add(self.accelerometerService)
             case .poweredOff:
                 throw AppError.poweredOff
-            case .unauthorized, .unknown, .unsupported:
+            case .unauthorized, .unknown:
                 throw AppError.invalidState
+            case .unsupported:
+                throw AppError.unsupported
             case .resetting:
                 throw AppError.resetting
             }
@@ -122,9 +122,7 @@ class ViewController: UITableViewController {
 
 
         startAdvertiseFuture.onSuccess { [unowned self] in
-            self.startAdvertisingSwitch.isOn = true
-            self.startAdvertisingSwitch.isEnabled = true
-            self.startAdvertisingLabel.textColor = UIColor.black
+            self.enableAdvertising()
             self.accelerometerEnabledCharacteristic.value = SerDe.serialize(TISensorTag.AccelerometerService.Enabled(boolValue: self.enabledSwitch.isOn))
             self.present(UIAlertController.alertWithMessage("poweredOn and started advertising"), animated: true, completion: nil)
         }
@@ -132,24 +130,29 @@ class ViewController: UITableViewController {
         startAdvertiseFuture.onFailure { [unowned self] error in
             switch error {
             case AppError.poweredOff:
-                if self.powerOffAlert {
-                    self.present(UIAlertController.alertWithMessage("PeripheralManager powered off"), animated: true)
-                }
-                self.powerOffAlert = false
+                self.present(UIAlertController.alertWithMessage("PeripheralManager powered off") { _ in
+                    self.manager.reset()
+                    self.disableAdvertising()
+                }, animated: true)
             case AppError.resetting:
                 let message = "PeripheralManager state \"\(self.manager.state.stringValue)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
-                self.present(UIAlertController.alertWithMessage(message), animated: true)
+                self.present(UIAlertController.alertWithMessage(message) { _ in
+                    self.manager.reset()
+                }, animated: true)
+            case AppError.unsupported:
+                self.present(UIAlertController.alertWithMessage("Bluetooth not supported") { _ in
+                    self.disableAdvertising()
+                }, animated: true)
             default:
-                self.present(UIAlertController.alertOnError(error), animated: true, completion: nil)
+                self.present(UIAlertController.alertOnError(error) { _ in
+                    self.manager.reset()
+                }, animated: true, completion: nil)
             }
+            self.manager.stopAdvertising()
             if self.accelerometer.accelerometerActive {
                 self.accelerometer.stopAccelerometerUpdates()
                 self.enabledSwitch.isOn = false
             }
-            self.manager.reset()
-            self.startAdvertisingSwitch.isOn = false
-            self.startAdvertisingSwitch.isEnabled = false
-            self.startAdvertisingLabel.textColor = UIColor.lightGray
         }
 
         let accelerometerUpdatePeriodFuture = startAdvertiseFuture.flatMap { [unowned self] in
@@ -222,5 +225,15 @@ class ViewController: UITableViewController {
             enabledSwitch.isOn = enabled.boolValue
             toggleEnabled(self)
         }
+    }
+
+    func enableAdvertising() {
+        self.startAdvertisingSwitch.isOn = true
+        self.startAdvertisingSwitch.isEnabled = true
+        self.startAdvertisingLabel.textColor = UIColor.black
+    }
+
+    func disableAdvertising() {
+        self.startAdvertisingSwitch.isOn = false
     }
 }
