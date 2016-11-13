@@ -128,13 +128,14 @@ class ViewController: UITableViewController {
                 case .unknown:
                     throw AppError.unkown
                 }
-        }.flatMap {  peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+        }.flatMap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
         }.flatMap { [unowned self] (peripheral, connectionEvent) -> Future<Peripheral> in
             switch connectionEvent {
             case .connect:
+                self.updateUIStatus()
                 return peripheral.discoverServices([serviceUUID])
             case .timeout:
                 throw AppError.disconnected
@@ -173,6 +174,8 @@ class ViewController: UITableViewController {
             guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
                 throw AppError.dataCharactertisticNotFound
             }
+            self.updateEnabled()
+            self.updatePeriod()
             return accelerometerDataCharacteristic.startNotifying()
         }.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
             return characteristic.receiveNotificationUpdates(capacity: 10)
@@ -193,11 +196,9 @@ class ViewController: UITableViewController {
             case .serviceNotFound:
                 self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
             case .disconnected:
-                self.updateUIStatus()
                 self.peripheral?.reconnect()
             case .connectionFailed:
                 self.peripheral?.terminate()
-                self.updateUIStatus()
                 self.present(UIAlertController.alertWithMessage(message: "Connection failed"), animated: true, completion: nil)
             case .invalidState:
                 self.present(UIAlertController.alertWithMessage(message: "Invalid state"), animated: true, completion: nil)
@@ -214,7 +215,7 @@ class ViewController: UITableViewController {
             self.updateUIStatus()
         }
 
-        dataUpdateFuture.onSuccess { (_, data) in
+        dataUpdateFuture.onSuccess { [unowned self] (_, data) in
             self.updateData(data)
         }
             
@@ -254,14 +255,20 @@ class ViewController: UITableViewController {
         }
     }
     
-    func updateEnabled(_ characteristic: Characteristic) {
-        if let value : TISensorTag.AccelerometerService.Enabled = characteristic.value() {
+    func updateEnabled() {
+        guard let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic else {
+            return
+        }
+        if let value : TISensorTag.AccelerometerService.Enabled = accelerometerEnabledCharacteristic.value() {
             self.enabledSwitch.isOn = value.boolValue
         }
     }
 
-    func updatePeriod(_ characteristic: Characteristic) {
-        if let value : TISensorTag.AccelerometerService.UpdatePeriod = characteristic.value() {
+    func updatePeriod() {
+        guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic else {
+            return
+        }
+        if let value : TISensorTag.AccelerometerService.UpdatePeriod = accelerometerUpdatePeriodCharacteristic.value() {
             self.updatePeriodLabel.text = "\(value.period)"
             self.rawUpdatePeriodlabel.text = "\(value.rawValue)"
         }
@@ -273,10 +280,10 @@ class ViewController: UITableViewController {
         }
         let readFuture = accelerometerUpdatePeriodCharacteristic.read(timeout: 10.0)
 
-        readFuture.onSuccess {characteristic in
-            self.updatePeriod(characteristic)
+        readFuture.onSuccess { [unowned self] _ in
+            self.updatePeriod()
         }
-        readFuture.onFailure{ error in
+        readFuture.onFailure{ [unowned self] error in
             self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
         }
     }
@@ -300,7 +307,7 @@ class ViewController: UITableViewController {
             writeFuture.onSuccess { [unowned self] _ in
                 self.present(UIAlertController.alertWithMessage(message: "Accelerometer is " + (self.enabledSwitch.isOn ? "on" : "off")), animated:true, completion:nil)
             }
-            writeFuture.onFailure { error in
+            writeFuture.onFailure { [unowned self] error in
                 self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
             }
         }

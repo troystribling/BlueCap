@@ -18,7 +18,7 @@ public class MutableCharacteristic : NSObject {
     fileprivate var centrals = [NSUUID : CBCentralInjectable]()
 
     fileprivate var queuedUpdates = [Data]()
-    fileprivate var _isUpdating = false
+    internal fileprivate(set) var _isUpdating = false
     fileprivate var processWriteRequestPromise: StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>?
 
     internal var _value: Data?

@@ -288,7 +288,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     func isReadyToUpdateSubscribers() {
         Logger.debug()
         for characteristic in self.configuredCharcteristics.values {
-            if !characteristic.isUpdating {
+            if !characteristic._isUpdating {
                 characteristic.peripheralManagerIsReadyToUpdateSubscribers()
             }
         }
