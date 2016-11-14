@@ -253,6 +253,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        Logger.debug("advertisementData = \(advertisementData)")
         didDiscoverPeripheral(peripheral, advertisementData: advertisementData, RSSI: RSSI)
     }
 

@@ -118,6 +118,7 @@ class ViewController: UITableViewController {
         let dataUpdateFuture = self.manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
                 switch state {
                 case .poweredOn:
+                    self.activateSwitch.isOn = true
                     return self.manager.startScanning(forServiceUUIDs: [serviceUUID], capacity: 10)
                 case .poweredOff:
                     throw AppError.poweredOff
@@ -206,7 +207,6 @@ class ViewController: UITableViewController {
                 self.manager.reset()
                 self.present(UIAlertController.alertWithMessage(message: "Bluetooth service resetting"), animated: true, completion: nil)
             case .poweredOff:
-                self.manager.reset()
                 self.present(UIAlertController.alertWithMessage(message: "Bluetooth powered off"), animated: true, completion: nil)
             case .unkown:
                 break
