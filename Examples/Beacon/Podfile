@@ -1,4 +1,4 @@
-platform :ios, '8.0'
+platform :ios, '10.0'
 use_frameworks!
 
 target 'Beacon' do
@@ -6,15 +6,17 @@ target 'Beacon' do
 end
 
 post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        if target.name == 'BlueCapKit'
-            target.build_configurations.each do |config|
-                if config.name == 'Debug'
-                    config.build_settings['OTHER_SWIFT_FLAGS'] = '-DDEBUG'
-                    else
-                    config.build_settings['OTHER_SWIFT_FLAGS'] = ''
-                end
-            end
-        end
+  installer.pods_project.targets.each do |target|
+    puts "TARGET: #{target.name}"
+    target.build_configurations.each do |config|
+      puts "SETTING CONFIG: #{config.name}"
+      config.build_settings['SWIFT_VERSION'] = '3.0'
+      puts "config.build_settings['SWIFT_VERSION']: #{config.build_settings['SWIFT_VERSION']}"
+      if config.name == 'Debug'
+        config.build_settings['OTHER_SWIFT_FLAGS'] = '-DDEBUG'
+        puts "config.build_settings['OTHER_SWIFT_FLAGS']: #{config.build_settings['OTHER_SWIFT_FLAGS']}"
+      end
     end
+  end
 end
+

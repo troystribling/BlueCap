@@ -232,7 +232,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     private func loadRetrievedPeripheral(_ peripheral: CBPeripheralInjectable) -> Peripheral {
         let newBCPeripheral: Peripheral
-        if let oldBCPeripheral = self._discoveredPeripherals[peripheral.identifier] {
+        if let oldBCPeripheral = _discoveredPeripherals[peripheral.identifier] {
             newBCPeripheral = Peripheral(cbPeripheral: peripheral, bcPeripheral: oldBCPeripheral, profileManager: profileManager)
         } else {
             newBCPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, profileManager: profileManager)
@@ -293,7 +293,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
         let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
-        Logger.debug("\(self.name) uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI)")
+        Logger.debug("\(self.name) uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
         _discoveredPeripherals[peripheral.identifier] = bcPeripheral
         afterPeripheralDiscoveredPromise?.success(bcPeripheral)
     }

@@ -12,8 +12,8 @@ import BlueCapKit
 
 class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
 
-    weak var peripheral: Peripheral?
-    
+    var peripheralAdvertisements: PeripheralAdvertisements?
+
     struct MainStoryboard {
         static let peripheralAdvertisementsServiceDataCell = "PeripheralAdvertisementsServiceDataCell"
     }
@@ -47,7 +47,7 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
     }
     
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let services = self.peripheral?.advertisements.serviceData {
+        if let services = peripheralAdvertisements?.serviceData {
             return services.count
         } else {
             return 0;
@@ -56,7 +56,7 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralAdvertisementsServiceDataCell, for: indexPath) as! NameUUIDCell
-        if let serviceData = self.peripheral?.advertisements.serviceData {
+        if let serviceData = peripheralAdvertisements?.serviceData {
             let uuids = [CBUUID](serviceData.keys)
             let uuid = uuids[indexPath.row]
             let data = serviceData[uuid]

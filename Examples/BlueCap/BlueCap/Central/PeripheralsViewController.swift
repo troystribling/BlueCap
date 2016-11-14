@@ -23,6 +23,7 @@ class PeripheralsViewController : UITableViewController {
     var connectedPeripherals = Set<UUID>()
     var discoveredPeripherals = Set<UUID>()
     var removedPeripherals = Set<UUID>()
+    var peripheralAdvertisments = [UUID : PeripheralAdvertisements]()
 
     var atDiscoveryLimit: Bool {
         return Singletons.discoveryManager.peripherals.count >= ConfigStore.getMaximumPeripheralsDiscovered()
@@ -142,6 +143,7 @@ class PeripheralsViewController : UITableViewController {
                 let peripheral = self.peripherals[selectedIndex.row]
                 viewController.peripheral = peripheral
                 viewController.peripheralDiscovered = discoveredPeripherals.contains(peripheral.identifier)
+                viewController.peripheralAdvertisements = peripheralAdvertisments[peripheral.identifier]
             }
         }
     }
@@ -378,6 +380,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func afterPeripheralDiscovered(_ peripheral: Peripheral) -> Void {
+        updateWhenActive()
         guard Singletons.discoveryManager.discoveredPeripherals[peripheral.identifier] == nil else {
             Logger.debug("Peripheral already discovered \(peripheral.name), \(peripheral.identifier.uuidString)")
             return
@@ -391,8 +394,8 @@ class PeripheralsViewController : UITableViewController {
             return
         }
         Logger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+        peripheralAdvertisments[peripheral.identifier] = peripheral.advertisements
         connectPeripheralsIfNeccessay()
-        updateWhenActive()
         if atDiscoveryLimit {
             discoveryLimitReached = true
             Singletons.scanningManager.stopScanning()

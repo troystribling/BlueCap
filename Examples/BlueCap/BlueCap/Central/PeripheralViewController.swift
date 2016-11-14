@@ -14,11 +14,12 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
+    var peripheralAdvertisements: PeripheralAdvertisements?
+    
     let progressView  = ProgressView()
 
     var peripheralDiscovered = false
     var shouldReconnect = true
-    var shouldDisconnectOnDisapear = true
 
     let dateFormatter = DateFormatter()
 
@@ -65,7 +66,6 @@ class PeripheralViewController : UITableViewController {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
-        shouldDisconnectOnDisapear = true
         updateConnectionStateLabel()
         connect()
         toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
@@ -73,9 +73,7 @@ class PeripheralViewController : UITableViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if shouldDisconnectOnDisapear {
-            disconnect()
-        }
+        disconnect()
         super.viewDidDisappear(animated)
     }
     
@@ -85,7 +83,7 @@ class PeripheralViewController : UITableViewController {
             viewController.peripheral = peripheral
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destination as! PeripheralAdvertisementsViewController
-            viewController.peripheral = peripheral
+            viewController.peripheralAdvertisements = peripheralAdvertisements
         }
     }
 
@@ -252,7 +250,6 @@ class PeripheralViewController : UITableViewController {
     // MARK: UITableViewDataSource
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 && indexPath.row == 0 {
-            shouldDisconnectOnDisapear = false
             disconnect()
         }
     }

@@ -11,8 +11,8 @@ import BlueCapKit
 
 class PeripheralAdvertisementsOverflowServicesViewController: UITableViewController {
 
-    weak var peripheral: Peripheral?
-    
+    var peripheralAdvertisements: PeripheralAdvertisements?
+
     struct MainStoryboard {
         static let peripheralAdvertisementsOverflowServiceCell = "PeripheralAdvertisementsOverflowServiceCell"
     }
@@ -46,7 +46,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     }
     
     override func tableView(_:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let services = self.peripheral?.advertisements.overflowServiceUUIDs {
+        if let services = peripheralAdvertisements?.overflowServiceUUIDs {
             return services.count
         } else {
             return 0;
@@ -55,7 +55,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     
     override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralAdvertisementsOverflowServiceCell, for:indexPath)
-        if let services = self.peripheral?.advertisements.overflowServiceUUIDs {
+        if let services = peripheralAdvertisements?.overflowServiceUUIDs {
             let service = services[indexPath.row]
             cell.textLabel?.text = service.uuidString
         }
