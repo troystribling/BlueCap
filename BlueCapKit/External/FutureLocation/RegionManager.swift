@@ -13,11 +13,11 @@ import CoreLocation
 public class RegionManager : LocationManager {
 
     // MARK: Serialized Properties
-    internal var regionMonitorStatus = SerialIODictionary<String, Bool>(LocationManager.ioQueue)
-    internal var configuredRegions = SerialIODictionary<String, Region>(LocationManager.ioQueue)
-    fileprivate var requestStateForRegionPromises = SerialIODictionary<String, Promise<CLRegionState>>(LocationManager.ioQueue)
+    internal var regionMonitorStatus = [String : Bool]()
+    internal var configuredRegions = [String : Region]()
+    fileprivate var requestStateForRegionPromises = [String : Promise<CLRegionState>]()
 
-    fileprivate var _isMonitoring = false
+     public fileprivate(set) var isMonitoring = false
 
     // MARK: Configure
     public var maximumRegionMonitoringDistance: CLLocationDistance {
@@ -25,7 +25,7 @@ public class RegionManager : LocationManager {
     }
 
     public var regions: [Region] {
-        return self.configuredRegions.values
+        return Array(self.configuredRegions.values)
     }
 
     public func region(_ identifier: String) -> Region? {
@@ -42,15 +42,6 @@ public class RegionManager : LocationManager {
     }
 
     // MARK: Control
-    public fileprivate(set) var isMonitoring : Bool {
-        get {
-            return LocationManager.ioQueue.sync { return self._isMonitoring}
-        }
-        set {
-            LocationManager.ioQueue.sync { self._isMonitoring = newValue }
-        }
-    }
-
     public func isMonitoringRegion(_ identifier: String) -> Bool {
         return self.regionMonitorStatus[identifier] ?? false
     }
@@ -67,8 +58,8 @@ public class RegionManager : LocationManager {
     }
 
     public func stopMonitoringForRegion(_ region: Region) {
-        self.regionMonitorStatus.removeValueForKey(region.identifier)
-        self.configuredRegions.removeValueForKey(region.identifier)
+        self.regionMonitorStatus.removeValue(forKey: region.identifier)
+        self.configuredRegions.removeValue(forKey: region.identifier)
         self.clLocationManager.stopMonitoringForRegion(region.clRegion)
         self.updateIsMonitoring(false)
     }
@@ -119,7 +110,7 @@ public class RegionManager : LocationManager {
     public func didDetermine(state: CLRegionState, forRegion region: CLRegion) {
         Logger.debug("region identifier \(region.identifier)")
         self.requestStateForRegionPromises[region.identifier]?.success(state)
-        self.requestStateForRegionPromises.removeValueForKey(region.identifier)
+        self.requestStateForRegionPromises.removeValue(forKey: region.identifier)
     }
 
     public func monitoringDidFail(forRegion region: CLRegion?, withError error: Error) {
@@ -138,7 +129,7 @@ public class RegionManager : LocationManager {
 
     // MARK: Utilities
     func updateIsMonitoring(_ value: Bool) {
-        let regionCount = self.regionMonitorStatus.values.filter{$0}.count
+        let regionCount = Array(self.regionMonitorStatus.values).filter{$0}.count
         if value {
             self.isMonitoring = true
         } else {

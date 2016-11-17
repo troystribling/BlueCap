@@ -13,17 +13,17 @@ import CoreLocation
 public class BeaconManager : RegionManager {
 
     // MARK: Properties
-    fileprivate var regionRangingStatus = SerialIODictionary<String, Bool>(LocationManager.ioQueue)
-    internal var configuredBeaconRegions = SerialIODictionary<String, BeaconRegion>(LocationManager.ioQueue)
+    fileprivate var regionRangingStatus = [String : Bool]()
+    internal var configuredBeaconRegions = [String : BeaconRegion]()
 
-    fileprivate var _isRanging = false
+    public fileprivate(set) var isRanging = false
 
     public func isRangingAvailable() -> Bool {
         return CLLocationManager.isRangingAvailable()
     }
 
     public var beaconRegions: [BeaconRegion] {
-        return self.configuredBeaconRegions.values
+        return Array(self.configuredBeaconRegions.values)
     }
 
     public func beaconRegion(identifier: String) -> BeaconRegion? {
@@ -40,15 +40,6 @@ public class BeaconManager : RegionManager {
     }
 
     // MARK: Control
-    public private(set) var isRanging : Bool {
-        get {
-            return LocationManager.ioQueue.sync { return self._isRanging}
-        }
-        set {
-            LocationManager.ioQueue.sync { self._isRanging = newValue }
-        }
-    }
-
     public func isRangingRegion(identifier:String) -> Bool {
         return self.regionRangingStatus[identifier] ?? false
     }
@@ -66,8 +57,8 @@ public class BeaconManager : RegionManager {
     }
 
     public func stopRangingBeacons(forRegion beaconRegion: BeaconRegion) {
-        self.configuredBeaconRegions.removeValueForKey(beaconRegion.identifier)
-        self.regionRangingStatus.removeValueForKey(beaconRegion.identifier)
+        self.configuredBeaconRegions.removeValue(forKey: beaconRegion.identifier)
+        self.regionRangingStatus.removeValue(forKey: beaconRegion.identifier)
         self.updateIsRanging(false)
         self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
     }
@@ -105,7 +96,7 @@ public class BeaconManager : RegionManager {
 
     // MARK: Utilies
     func updateIsRanging(_ value: Bool) {
-        let regionCount = self.regionRangingStatus.values.filter{$0}.count
+        let regionCount = Array(self.regionRangingStatus.values).filter{$0}.count
         if value {
             self.isRanging = true
         } else {

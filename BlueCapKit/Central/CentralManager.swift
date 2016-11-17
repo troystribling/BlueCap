@@ -27,8 +27,8 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate let profileManager: ProfileManager?
     fileprivate var _discoveredPeripherals = [UUID : Peripheral]()
 
-    internal let centralQueue: Queue
-    internal fileprivate(set) var cbCentralManager: CBCentralManagerInjectable!
+    let centralQueue: Queue
+    fileprivate(set) var cbCentralManager: CBCentralManagerInjectable!
 
     fileprivate var scanTimeSequence = 0
 

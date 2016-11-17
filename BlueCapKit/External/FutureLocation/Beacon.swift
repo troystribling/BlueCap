@@ -24,7 +24,7 @@ extension CLBeacon: CLBeaconInjectable {}
 // MARK: - Beacon -
 public class Beacon {
     
-    fileprivate let clBeacon : CLBeaconInjectable
+    fileprivate let clBeacon: CLBeaconInjectable
     fileprivate let _discoveredAt = NSDate()
     
     public var discoveredAt : NSDate {
