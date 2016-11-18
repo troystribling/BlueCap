@@ -116,7 +116,7 @@ public class Service {
     }
 
     fileprivate func timeoutCharacteristicDiscovery(_ sequence: Int, timeout: TimeInterval) {
-        guard let peripheral = peripheral, let centralManager = peripheral.centralManager, timeout < TimeInterval.infinity else {
+        guard let peripheral = peripheral, timeout < TimeInterval.infinity else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(peripheral.identifier.uuidString), sequence = \(sequence), timeout = \(timeout)")

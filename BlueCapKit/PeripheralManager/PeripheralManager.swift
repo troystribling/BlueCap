@@ -96,7 +96,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             self.afterStateChangedPromise = nil
             self.afterStateRestoredPromise = nil
             self.afterSeriviceAddPromise = nil
-            if let cbPeripheralManager = self.cbPeripheralManager as? CBPeripheralManager {
+            if self.cbPeripheralManager is CBPeripheralManager {
                 self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: self.options)
                 self.cbPeripheralManager?.delegate = self
             }

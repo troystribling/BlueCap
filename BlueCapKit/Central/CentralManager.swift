@@ -98,7 +98,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             self.afterStateChangedPromise = nil
             self.afterPeripheralDiscoveredPromise = nil
             self.afterStateRestoredPromise = nil
-            if let cbCentralManager = self.cbCentralManager as? CBCentralManager {
+            if self.cbCentralManager is CBCentralManager {
                 self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: self.options)
                 self.cbCentralManager.delegate = self
             }
