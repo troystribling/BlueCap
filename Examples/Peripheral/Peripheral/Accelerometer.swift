@@ -26,19 +26,19 @@ class Accelerometer {
     }
     
     var accelerometerActive: Bool {
-        return self.motionManager.isAccelerometerActive
+        return motionManager.isAccelerometerActive
     }
     
     var accelerometerAvailable: Bool {
-        return self.motionManager.isAccelerometerAvailable
+        return motionManager.isAccelerometerAvailable
     }
 
     init() {
-        self.motionManager.accelerometerUpdateInterval = 1.0
+        motionManager.accelerometerUpdateInterval = 1.0
     }
 
     func startAcceleromterUpdates() -> FutureStream<CMAcceleration> {
-        self.motionManager.startAccelerometerUpdates(to: self.queue) { (data: CMAccelerometerData?, error: Error?) in
+        motionManager.startAccelerometerUpdates(to: queue) { [unowned self] (data: CMAccelerometerData?, error: Error?) in
             if let error = error {
                 self.accelerationDataPromise.failure(error)
             } else {
@@ -47,11 +47,11 @@ class Accelerometer {
                 }
             }
         }
-        return self.accelerationDataPromise.stream
+        return accelerationDataPromise.stream
     }
     
     func stopAccelerometerUpdates() {
-        self.motionManager.stopAccelerometerUpdates()
+        motionManager.stopAccelerometerUpdates()
     }
     
 }

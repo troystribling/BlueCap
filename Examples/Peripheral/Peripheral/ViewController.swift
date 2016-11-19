@@ -56,18 +56,18 @@ class ViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if self.accelerometer.accelerometerAvailable {
-            self.startAdvertisingSwitch.isEnabled = true
-            self.startAdvertisingLabel.textColor = UIColor.black
-            self.enabledSwitch.isEnabled = true
-            self.enableLabel.textColor = UIColor.black
-            self.updatePeriod()
+            startAdvertisingSwitch.isEnabled = true
+            startAdvertisingLabel.textColor = UIColor.black
+            enabledSwitch.isEnabled = true
+            enableLabel.textColor = UIColor.black
+            updatePeriod()
         } else {
-            self.startAdvertisingSwitch.isEnabled = false
-            self.startAdvertisingSwitch.isOn = false
-            self.startAdvertisingLabel.textColor = UIColor.lightGray
-            self.enabledSwitch.isEnabled = false
-            self.enabledSwitch.isOn = false
-            self.enableLabel.textColor = UIColor.lightGray
+            startAdvertisingSwitch.isEnabled = false
+            startAdvertisingSwitch.isOn = false
+            startAdvertisingLabel.textColor = UIColor.lightGray
+            enabledSwitch.isEnabled = false
+            enabledSwitch.isOn = false
+            enableLabel.textColor = UIColor.lightGray
         }
     }
     
@@ -79,7 +79,7 @@ class ViewController: UITableViewController {
         if accelerometer.accelerometerActive {
             accelerometer.stopAccelerometerUpdates()
         } else {
-            let accelrometerDataFuture = self.accelerometer.startAcceleromterUpdates()
+            let accelrometerDataFuture = accelerometer.startAcceleromterUpdates()
             accelrometerDataFuture.onSuccess { [unowned self] data in
                 self.updateAccelerometerData(data)
             }
@@ -87,7 +87,6 @@ class ViewController: UITableViewController {
                 self.present(UIAlertController.alertOnError(error), animated: true, completion: nil)
             }
         }
-        self.updateEnabled()
     }
     
     @IBAction func toggleAdvertise(_ sender: AnyObject) {
@@ -119,7 +118,6 @@ class ViewController: UITableViewController {
         }.flatMap { [unowned self] _ -> Future<Void> in
             self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
         }
-
 
         startAdvertiseFuture.onSuccess { [unowned self] in
             self.enableAdvertising()
@@ -159,48 +157,50 @@ class ViewController: UITableViewController {
             self.accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests(capacity: 2)
         }
         accelerometerUpdatePeriodFuture.onSuccess { [unowned self] (request, _) in
-            if let value = request.value, value.count > 0 && value.count <= 8 {
-                self.accelerometerUpdatePeriodCharacteristic.value = value
-                self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
-                self.updatePeriod()
-            } else {
+            guard let value = request.value, value.count > 0 && value.count <= 8 else {
                 self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.invalidAttributeValueLength)
+                return
             }
+            self.accelerometerUpdatePeriodCharacteristic.value = value
+            self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
+            self.updatePeriod()
         }
 
         let accelerometerEnabledFuture = startAdvertiseFuture.flatMap { [unowned self] in
             self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity: 2)
         }
         accelerometerEnabledFuture.onSuccess { [unowned self] (request, _) in
-            if let value = request.value, value.count == 1 {
-                self.accelerometerEnabledCharacteristic.value = request.value
-                self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.success)
-                self.updateEnabled()
-            } else {
+            guard let value = request.value, value.count == 1 else {
                 self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.invalidAttributeValueLength)
+                return
             }
+            self.accelerometerEnabledCharacteristic.value = request.value
+            self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.success)
+            self.updateEnabled()
         }
-
-
     }
 
     func updateAccelerometerData(_ data: CMAcceleration) {
         xAccelerationLabel.text = NSString(format: "%.2f", data.x) as String
         yAccelerationLabel.text = NSString(format: "%.2f", data.y) as String
         zAccelerationLabel.text = NSString(format: "%.2f", data.z) as String
-        if let xRaw = Int8(doubleValue: (-64.0*data.x)), let yRaw = Int8(doubleValue: (-64.0*data.y)), let zRaw = Int8(doubleValue: (64.0*data.z)) {
-            xRawAccelerationLabel.text = "\(xRaw)"
-            yRawAccelerationLabel.text = "\(yRaw)"
-            zRawAccelerationLabel.text = "\(zRaw)"
-            if let data = TISensorTag.AccelerometerService.Data(rawValue:[xRaw, yRaw, zRaw]) {
-                if accelerometerDataCharacteristic.isUpdating {
-                    if !accelerometerDataCharacteristic.updateValue(withString: data.stringValue) {
-                        Logger.debug("update failed \(data.stringValue)")
-                    }
-                } else {
-                    accelerometerDataCharacteristic.value = SerDe.serialize(data)
-                }
+        guard let xRaw = Int8(doubleValue: (-64.0*data.x)),
+              let yRaw = Int8(doubleValue: (-64.0*data.y)),
+              let zRaw = Int8(doubleValue: (64.0*data.z)) else {
+            return
+        }
+        xRawAccelerationLabel.text = "\(xRaw)"
+        yRawAccelerationLabel.text = "\(yRaw)"
+        zRawAccelerationLabel.text = "\(zRaw)"
+        guard let data = TISensorTag.AccelerometerService.Data(rawValue: [xRaw, yRaw, zRaw]) else {
+            return
+        }
+        if accelerometerDataCharacteristic.isUpdating {
+            if !accelerometerDataCharacteristic.updateValue(withString: data.stringValue) {
+                Logger.debug("update failed \(data.stringValue)")
             }
+        } else {
+            accelerometerDataCharacteristic.value = SerDe.serialize(data)
         }
     }
     
@@ -221,19 +221,20 @@ class ViewController: UITableViewController {
     }
     
     func updateEnabled() {
-        if let value = accelerometerEnabledCharacteristic.value, let enabled: TISensorTag.AccelerometerService.Enabled = SerDe.deserialize(value), enabledSwitch.isOn != enabled.boolValue {
-            enabledSwitch.isOn = enabled.boolValue
-            toggleEnabled(self)
+        guard let value = accelerometerEnabledCharacteristic.value, let enabled: TISensorTag.AccelerometerService.Enabled = SerDe.deserialize(value), enabledSwitch.isOn != enabled.boolValue else {
+            return
         }
+        enabledSwitch.isOn = enabled.boolValue
+        toggleEnabled(self)
     }
 
     func enableAdvertising() {
-        self.startAdvertisingSwitch.isOn = true
-        self.startAdvertisingSwitch.isEnabled = true
-        self.startAdvertisingLabel.textColor = UIColor.black
+        startAdvertisingSwitch.isOn = true
+        startAdvertisingSwitch.isEnabled = true
+        startAdvertisingLabel.textColor = UIColor.black
     }
 
     func disableAdvertising() {
-        self.startAdvertisingSwitch.isOn = false
+        startAdvertisingSwitch.isOn = false
     }
 }
