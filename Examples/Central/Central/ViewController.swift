@@ -180,7 +180,7 @@ class ViewController: UITableViewController {
 
         dataUpdateFuture.onFailure { [unowned self] error in
             guard let appError = error as? AppError else {
-                self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
                 return
             }
             switch appError {
@@ -191,19 +191,19 @@ class ViewController: UITableViewController {
             case .updateCharactertisticNotFound:
                 fallthrough
             case .serviceNotFound:
-                self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
             case .disconnected:
                 self.peripheral?.reconnect()
             case .connectionFailed:
                 self.peripheral?.terminate()
-                self.present(UIAlertController.alertWithMessage(message: "Connection failed"), animated: true, completion: nil)
+                self.present(UIAlertController.alertWithMessage("Connection failed"), animated: true, completion: nil)
             case .invalidState:
-                self.present(UIAlertController.alertWithMessage(message: "Invalid state"), animated: true, completion: nil)
+                self.present(UIAlertController.alertWithMessage("Invalid state"), animated: true, completion: nil)
             case .resetting:
                 self.manager.reset()
-                self.present(UIAlertController.alertWithMessage(message: "Bluetooth service resetting"), animated: true, completion: nil)
+                self.present(UIAlertController.alertWithMessage("Bluetooth service resetting"), animated: true, completion: nil)
             case .poweredOff:
-                self.present(UIAlertController.alertWithMessage(message: "Bluetooth powered off"), animated: true, completion: nil)
+                self.present(UIAlertController.alertWithMessage("Bluetooth powered off"), animated: true, completion: nil)
             case .unkown:
                 break
             }
@@ -277,7 +277,7 @@ class ViewController: UITableViewController {
             self.updatePeriod()
         }
         readFuture.onFailure{ [unowned self] error in
-            self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
+            self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
         }
     }
 
@@ -298,10 +298,10 @@ class ViewController: UITableViewController {
             let value = TISensorTag.AccelerometerService.Enabled(boolValue: enabledSwitch.isOn)
             let writeFuture = accelerometerEnabledCharacteristic.write(value, timeout:10.0)
             writeFuture.onSuccess { [unowned self] _ in
-                self.present(UIAlertController.alertWithMessage(message: "Accelerometer is " + (self.enabledSwitch.isOn ? "on" : "off")), animated:true, completion:nil)
+                self.present(UIAlertController.alertWithMessage("Accelerometer is " + (self.enabledSwitch.isOn ? "on" : "off")), animated:true, completion:nil)
             }
             writeFuture.onFailure { [unowned self] error in
-                self.present(UIAlertController.alertOnError(error: error), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
         }
     }

@@ -10,11 +10,8 @@ post_install do |installer|
     puts "TARGET: #{target.name}"
     target.build_configurations.each do |config|
       puts "SETTING CONFIG: #{config.name}"
-      config.build_settings['SWIFT_VERSION'] = '3.0'
-      puts "config.build_settings['SWIFT_VERSION']: #{config.build_settings['SWIFT_VERSION']}"
       if config.name == 'Debug'
-        config.build_settings['OTHER_SWIFT_FLAGS'] = '-DDEBUG'
-        puts "config.build_settings['OTHER_SWIFT_FLAGS']: #{config.build_settings['OTHER_SWIFT_FLAGS']}"
+        config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['$(inherited)', '-D DEBUG']
       end
     end
   end

@@ -92,6 +92,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
         BeaconStore.setBeaconName(enteredName)
         textField.resignFirstResponder()
         setUI()
+        return true
     }
     
     func startAdvertising() {

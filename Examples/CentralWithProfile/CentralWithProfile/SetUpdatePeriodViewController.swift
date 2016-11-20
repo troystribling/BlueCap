@@ -53,7 +53,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
                 _ = self.navigationController?.popViewController(animated: true)
             }
             writeFuture?.onFailure { [unowned self] error in
-                self.present(UIAlertController.alertOnError(error: error), animated: true) {action in
+                self.present(UIAlertController.alertOnError(error), animated: true) {action in
                     textField.resignFirstResponder()
                     _ = self.navigationController?.popViewController(animated: true)
                 }
