@@ -85,7 +85,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     @IBAction func updateValues() {
         guard let characteristicConnector = characteristicConnector else {
-            present(UIAlertController.alertWithMessage("Connection error") { _ in
+            present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
             return
@@ -102,7 +102,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
         readFuture.onFailure { [weak self] error in
             self?.progressView.remove()
-            self?.present(UIAlertController.alertOnError("Charcteristic read error", error: error) { [weak self] _ in
+            self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { [weak self] _ in
                 _ = self?.navigationController?.popViewController(animated: true)
                 return
             }, animated:true, completion:nil)
@@ -118,7 +118,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 self?.updateWhenActive()
             }
             updateFuture.onFailure{ [weak self] error in
-                self?.present(UIAlertController.alertOnError("Characteristic notification error", error: error), animated: true, completion: nil)
+                self?.present(UIAlertController.alert(title: "Characteristic notification error", error: error), animated: true, completion: nil)
             }
         } else {
             readFuture.onSuccess { [weak self] _ in

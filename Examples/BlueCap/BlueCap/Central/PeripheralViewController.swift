@@ -182,7 +182,7 @@ class PeripheralViewController : UITableViewController {
                     strongSelf.progressView.remove()
                     strongSelf.stateLabel.text = "Disconnected"
                     strongSelf.stateLabel.textColor = UIColor.lightGray
-                    strongSelf.present(UIAlertController.alertWithMessage("Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
+                    strongSelf.present(UIAlertController.alert(message: "Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
                     break
                 }
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
@@ -195,7 +195,7 @@ class PeripheralViewController : UITableViewController {
                 strongSelf.stateLabel.textColor = UIColor.lightGray
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
                 strongSelf.updateConnectionStateLabel()
-                strongSelf.present(UIAlertController.alertOnError("Connection error", error: error) { _ in
+                strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
                     strongSelf.progressView.remove()
                     _ = strongSelf.navigationController?.popToRootViewController(animated: true)
                 }, animated: true)
@@ -239,7 +239,7 @@ class PeripheralViewController : UITableViewController {
         }
         peripheralDiscoveryFuture.onFailure { [weak self] (error) in
             self.forEach { strongSelf in
-                strongSelf.present(UIAlertController.alertOnError("Peripheral discovery error", error: error) { _ in
+                strongSelf.present(UIAlertController.alert(title: "Peripheral discovery error", error: error) { _ in
                     strongSelf.progressView.remove()
                 }, animated: true, completion: nil)
                 Logger.debug("Service discovery failed")

@@ -77,7 +77,7 @@ class BeaconRegionsViewController: UITableViewController {
             }
             self.tableView.reloadData()
         } else {
-            self.present(UIAlertController.alertWithMessage("Central scan is active. Cannot scan and monitor simutaneously. Stop scan to start monitoring"), animated: true, completion: nil)
+            self.present(UIAlertController.alert(message: "Central scan is active. Cannot scan and monitor simutaneously. Stop scan to start monitoring"), animated: true, completion: nil)
         }
     }
     
@@ -127,7 +127,7 @@ class BeaconRegionsViewController: UITableViewController {
                 self.setScanButton()
                 Singletons.beaconManager.stopRangingBeacons(forRegion: beacon)
                 self.updateWhenActive()
-                self.present(UIAlertController.alertOnError("Region Monitoring Error", error:error), animated:true, completion:nil)
+                self.present(UIAlertController.alert(title: "Region Monitoring Error", error:error), animated:true, completion:nil)
             }
             self.beaconRegions[name] = beacon
         }

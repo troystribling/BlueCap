@@ -125,7 +125,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
         func afterAdvertisingStartFailed(_ error: Swift.Error) {
             self.setUIState()
-            self.present(UIAlertController.alertOnError("Peripheral Advertise Error", error: error), animated: true, completion: nil)
+            self.present(UIAlertController.alert(title: "Peripheral Advertise Error", error: error), animated: true, completion: nil)
         }
         let advertisedServices = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
         if PeripheralStore.getBeaconEnabled(peripheral) {
@@ -160,7 +160,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 if PeripheralStore.getBeacon(name) != nil {
                     PeripheralStore.setBeaconEnabled(peripheral, enabled:true)
                 } else {
-                    self.present(UIAlertController.alertWithMessage("iBeacon is invalid"), animated: true, completion: nil)
+                    self.present(UIAlertController.alert(message: "iBeacon is invalid"), animated: true, completion: nil)
                 }
             }
         }
@@ -199,7 +199,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
         future.onFailure { (error) in
             self.setUIState()
-            self.present(UIAlertController.alertOnError("Add Services Error", error:error), animated:true, completion:nil)
+            self.present(UIAlertController.alert(title: "Add Services Error", error:error), animated:true, completion:nil)
         }
     }
 
@@ -238,7 +238,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     func alert(message: String) {
-        present(UIAlertController.alertWithMessage(message), animated:true) { [weak self] _ in
+        present(UIAlertController.alert(message: message), animated:true) { [weak self] _ in
             self.forEach { strongSelf in
                 Singletons.peripheralManager.reset()
             }

@@ -98,7 +98,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func alertAndStopScanning(message: String) {
-        present(UIAlertController.alertWithMessage(message), animated:true) { [weak self] _ in
+        present(UIAlertController.alert(message: message), animated:true) { [weak self] _ in
             self.forEach { strongSelf in
                 strongSelf.stopScanning()
                 strongSelf.setScanButton()
@@ -150,15 +150,15 @@ class PeripheralsViewController : UITableViewController {
 
     func toggleScan(_ sender: AnyObject) {
         guard !Singletons.beaconManager.isMonitoring else {
-            present(UIAlertController.alertWithMessage("iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
+            present(UIAlertController.alert(message: "iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
             return
         }
         guard Singletons.discoveryManager.poweredOn else {
-            present(UIAlertController.alertWithMessage("Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
+            present(UIAlertController.alert(message: "Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
             return
         }
         guard Singletons.scanningManager.poweredOn else {
-            present(UIAlertController.alertWithMessage("Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
+            present(UIAlertController.alert(message: "Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
             return
         }
         if self.isScanning {
@@ -358,7 +358,7 @@ class PeripheralsViewController : UITableViewController {
         case .service:
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             guard scannedServices.isEmpty == false else {
-                self.present(UIAlertController.alertWithMessage("No scan services configured"), animated: true, completion: nil)
+                self.present(UIAlertController.alert(message: "No scan services configured"), animated: true, completion: nil)
                 return
             }
             future = Singletons.scanningManager.startScanning(forServiceUUIDs:scannedServices, capacity: 10, duration: scanDuration, options: scanOptions)
@@ -375,7 +375,7 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("timeoutScan: timing out")
             stopScanning()
             self.setScanButton()
-            present(UIAlertController.alertWithMessage("Bluetooth scan timeout."), animated:true, completion:nil)
+            present(UIAlertController.alert(message: "Bluetooth scan timeout."), animated:true, completion:nil)
         }
     }
 

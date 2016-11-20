@@ -59,7 +59,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
 
     func writeCharacteristic() {
         guard let characteristicConnector = characteristicConnector else {
-            present(UIAlertController.alertWithMessage("Connection error") { _ in
+            present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
             return
@@ -93,7 +93,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         }
         writeFuture.onFailure { [weak self] error in
             self?.progressView.remove()
-            self?.present(UIAlertController.alertOnError("Charcteristic write error", error: error) { _ in
+            self?.present(UIAlertController.alert(title: "Charcteristic write error", error: error) { _ in
                 _ = self?.navigationController?.popViewController(animated: true)
                 return
             }, animated:true, completion:nil)
@@ -102,7 +102,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
 
     func readCharacteristic() {
         guard let characteristicConnector = characteristicConnector else {
-            present(UIAlertController.alertWithMessage("Connection error") { _ in
+            present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
             return
@@ -126,7 +126,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         }
         readFuture.onFailure { [weak self] error in
             self?.progressView.remove()
-            self?.present(UIAlertController.alertOnError("Charcteristic read error", error: error) { _ in
+            self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { _ in
                 _ = self?.navigationController?.popViewController(animated: true)
                 return
             }, animated:true, completion:nil)
