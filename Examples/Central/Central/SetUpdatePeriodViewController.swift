@@ -25,11 +25,11 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let isRaw = self.isRaw, let updatePeriod : TISensorTag.AccelerometerService.UpdatePeriod = characteristic?.value() {
+        if let isRaw = isRaw, let updatePeriod : TISensorTag.AccelerometerService.UpdatePeriod = characteristic?.value() {
             if isRaw {
-                self.updatePeriodTextField.text = "\(updatePeriod.rawValue)"
+                updatePeriodTextField.text = "\(updatePeriod.rawValue)"
             } else {
-                self.updatePeriodTextField.text = "\(updatePeriod.period)"
+                updatePeriodTextField.text = "\(updatePeriod.period)"
             }
         }
     }
@@ -40,7 +40,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
     
     // UITextFieldDelegate
     func textFieldShouldReturn(_ textField:UITextField) -> Bool {
-        if let enteredPeriod = self.updatePeriodTextField.text, let isRaw = self.isRaw, let value = UInt16(enteredPeriod), !enteredPeriod.isEmpty {
+        if let enteredPeriod = self.updatePeriodTextField.text, let isRaw = isRaw, let value = UInt16(enteredPeriod), !enteredPeriod.isEmpty {
             let rawValue : UInt16
             if  isRaw {
                 rawValue = value
@@ -67,5 +67,4 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
             return false
         }
     }
-    
 }

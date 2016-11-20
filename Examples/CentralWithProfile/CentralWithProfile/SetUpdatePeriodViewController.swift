@@ -23,9 +23,9 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let isRaw = self.isRaw, data = self.characteristic?.stringValue, period = data["period"], rawPeriod = data["periodRaw"] {
+        if let isRaw = self.isRaw, let data = self.characteristic?.stringValue, let period = data["period"], let rawPeriod = data["periodRaw"] {
             if isRaw {
                 self.updatePeriodTextField.text = rawPeriod
             } else {
@@ -34,28 +34,28 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        if let enteredPeriod = self.updatePeriodTextField.text, isRaw = self.isRaw, value = UInt16(enteredPeriod) where !enteredPeriod.isEmpty {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let enteredPeriod = self.updatePeriodTextField.text, let isRaw = self.isRaw, let value = UInt16(enteredPeriod), !enteredPeriod.isEmpty {
             let rawValue : String
             if  isRaw {
                 rawValue = enteredPeriod
             } else {
                 rawValue = "\(value / 10)"
             }
-            let writeFuture = self.characteristic?.writeString(["periodRaw": rawValue], timeout:10.0)
-            writeFuture?.onSuccess {_ in
+            let writeFuture = self.characteristic?.write(string: ["periodRaw": rawValue], timeout: 10.0)
+            writeFuture?.onSuccess { [unowned self] _ in
                 textField.resignFirstResponder()
-                self.navigationController?.popViewControllerAnimated(true)
+                _ = self.navigationController?.popViewController(animated: true)
             }
-            writeFuture?.onFailure {error in
-                self.presentViewController(UIAlertController.alertOnError(error), animated: true) {action in
+            writeFuture?.onFailure { [unowned self] error in
+                self.present(UIAlertController.alertOnError(error: error), animated: true) {action in
                     textField.resignFirstResponder()
-                    self.navigationController?.popViewControllerAnimated(true)
+                    _ = self.navigationController?.popViewController(animated: true)
                 }
             }
             return true
@@ -63,5 +63,4 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
             return false
         }
     }
-    
 }

@@ -11,34 +11,34 @@ import CoreMotion
 import BlueCapKit
 
 class Accelerometer {
-
-    var motionManager           = CMMotionManager()
-    let queue                   = NSOperationQueue.mainQueue()
+    
+    var motionManager = CMMotionManager()
+    let queue = OperationQueue.main
     let accelerationDataPromise = StreamPromise<CMAcceleration>(capacity: 10)
     
-    var updatePeriod : NSTimeInterval {
+    var updatePeriod: TimeInterval {
         get {
-            return self.motionManager.accelerometerUpdateInterval
+            return motionManager.accelerometerUpdateInterval
         }
         set {
-            self.motionManager.accelerometerUpdateInterval = newValue
+            motionManager.accelerometerUpdateInterval = newValue
         }
     }
     
     var accelerometerActive: Bool {
-        return self.motionManager.accelerometerActive
+        return motionManager.isAccelerometerActive
     }
     
     var accelerometerAvailable: Bool {
-        return self.motionManager.accelerometerAvailable
+        return motionManager.isAccelerometerAvailable
     }
     
     init() {
-        self.motionManager.accelerometerUpdateInterval = 1.0
+        motionManager.accelerometerUpdateInterval = 1.0
     }
-
+    
     func startAcceleromterUpdates() -> FutureStream<CMAcceleration> {
-        self.motionManager.startAccelerometerUpdatesToQueue(self.queue) { (data: CMAccelerometerData?, error: NSError?) in
+        motionManager.startAccelerometerUpdates(to: queue) { [unowned self] (data: CMAccelerometerData?, error: Error?) in
             if let error = error {
                 self.accelerationDataPromise.failure(error)
             } else {
@@ -47,12 +47,11 @@ class Accelerometer {
                 }
             }
         }
-        return self.accelerationDataPromise.future
+        return accelerationDataPromise.stream
     }
     
     func stopAccelerometerUpdates() {
-        self.motionManager.stopAccelerometerUpdates()
+        motionManager.stopAccelerometerUpdates()
     }
     
 }
-

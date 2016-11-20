@@ -23,10 +23,6 @@ public enum AppError : Error {
     case unkown
 }
 
-public struct CentralError {
-    public static let domain = "Central Example"
-}
-
 class ViewController: UITableViewController {
     
     struct MainStoryboard {
@@ -66,8 +62,8 @@ class ViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.updateUIStatus()
-        self.readUpdatePeriod()
+        updateUIStatus()
+        readUpdatePeriod()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -77,34 +73,35 @@ class ViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == MainStoryboard.updatePeriodValueSegue {
             let viewController = segue.destination as! SetUpdatePeriodViewController
-            viewController.characteristic = self.accelerometerUpdatePeriodCharacteristic
+            viewController.characteristic = accelerometerUpdatePeriodCharacteristic
             viewController.isRaw = false
         } else if segue.identifier == MainStoryboard.updatePeriodRawValueSegue {
             let viewController = segue.destination as! SetUpdatePeriodViewController
-            viewController.characteristic = self.accelerometerUpdatePeriodCharacteristic
+            viewController.characteristic = accelerometerUpdatePeriodCharacteristic
             viewController.isRaw = true
         }
-
     }
     
     @IBAction func toggleEnabled(_ sender: AnyObject) {
-        if let peripheral = self.peripheral, peripheral.state == .connected {
-            self.writeEnabled()
+        guard let peripheral = peripheral, peripheral.state == .connected else {
+            return
         }
+        writeEnabled()
     }
     
     @IBAction func toggleActivate(_ sender: AnyObject) {
-        if self.activateSwitch.isOn  {
-            self.activate()
+        if activateSwitch.isOn  {
+            activate()
         } else {
-            self.deactivate()
+            deactivate()
         }
     }
     
     @IBAction func disconnect(_ sender: AnyObject) {
-        if let peripheral = self.peripheral, peripheral.state != .disconnected {
-            peripheral.disconnect()
+        guard let peripheral = self.peripheral, peripheral.state != .disconnected else {
+            return
         }
+        peripheral.disconnect()
     }
     
     func activate() {
@@ -112,10 +109,9 @@ class ViewController: UITableViewController {
         let dataUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.UUID)
         let enabledUUID = CBUUID(string: TISensorTag.AccelerometerService.Enabled.UUID)
         let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.UUID)
-
             
         // on power, start scanning. when peripheral is discovered connect and stop scanning
-        let dataUpdateFuture = self.manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
+        let dataUpdateFuture = manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
                 switch state {
                 case .poweredOn:
                     self.activateSwitch.isOn = true
@@ -222,60 +218,57 @@ class ViewController: UITableViewController {
     }
     
     func updateUIStatus() {
-        if let peripheral = self.peripheral {
+        if let peripheral = peripheral {
             switch peripheral.state {
             case .connected:
-                self.statusLabel.text = "Connected"
-                self.statusLabel.textColor = UIColor(red:0.2, green:0.7, blue:0.2, alpha:1.0)
+                statusLabel.text = "Connected"
+                statusLabel.textColor = UIColor(red:0.2, green:0.7, blue:0.2, alpha:1.0)
             case .connecting:
-                self.statusLabel.text = "Connecting"
-                self.statusLabel.textColor = UIColor(red:0.9, green:0.7, blue:0.0, alpha:1.0)
+                statusLabel.text = "Connecting"
+                statusLabel.textColor = UIColor(red:0.9, green:0.7, blue:0.0, alpha:1.0)
             case .disconnected:
-                self.statusLabel.text = "Disconnected"
-                self.statusLabel.textColor = UIColor.lightGray
+                statusLabel.text = "Disconnected"
+                statusLabel.textColor = UIColor.lightGray
             case .disconnecting:
-                self.statusLabel.text = "Disconnecting"
-                self.statusLabel.textColor = UIColor.lightGray
+                statusLabel.text = "Disconnecting"
+                statusLabel.textColor = UIColor.lightGray
             }
             if peripheral.state == .connected {
-                self.enabledLabel.textColor = UIColor.black
-                self.enabledSwitch.isEnabled = true
+                enabledLabel.textColor = UIColor.black
+                enabledSwitch.isEnabled = true
             } else {
-                self.enabledLabel.textColor = UIColor.lightGray
-                self.enabledSwitch.isEnabled = false
-                self.enabledSwitch.isOn = false
+                enabledLabel.textColor = UIColor.lightGray
+                enabledSwitch.isEnabled = false
+                enabledSwitch.isOn = false
             }
         } else {
-            self.statusLabel.text = "Disconnected"
-            self.statusLabel.textColor = UIColor.lightGray
-            self.enabledLabel.textColor = UIColor.lightGray
-            self.enabledSwitch.isOn = false
-            self.enabledSwitch.isEnabled = false
-            self.activateSwitch.isOn = false
+            statusLabel.text = "Disconnected"
+            statusLabel.textColor = UIColor.lightGray
+            enabledLabel.textColor = UIColor.lightGray
+            enabledSwitch.isOn = false
+            enabledSwitch.isEnabled = false
+            activateSwitch.isOn = false
         }
     }
     
     func updateEnabled() {
-        guard let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic else {
+        guard let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic,
+              let value : TISensorTag.AccelerometerService.Enabled = accelerometerEnabledCharacteristic.value()else {
             return
         }
-        if let value : TISensorTag.AccelerometerService.Enabled = accelerometerEnabledCharacteristic.value() {
-            self.enabledSwitch.isOn = value.boolValue
-        }
+        enabledSwitch.isOn = value.boolValue
     }
 
     func updatePeriod() {
-        guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic else {
+        guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic, let value : TISensorTag.AccelerometerService.UpdatePeriod = accelerometerUpdatePeriodCharacteristic.value() else {
             return
         }
-        if let value : TISensorTag.AccelerometerService.UpdatePeriod = accelerometerUpdatePeriodCharacteristic.value() {
-            self.updatePeriodLabel.text = "\(value.period)"
-            self.rawUpdatePeriodlabel.text = "\(value.rawValue)"
-        }
+        updatePeriodLabel.text = "\(value.period)"
+        rawUpdatePeriodlabel.text = "\(value.rawValue)"
     }
 
     func readUpdatePeriod() {
-        guard let accelerometerUpdatePeriodCharacteristic = self.accelerometerUpdatePeriodCharacteristic else {
+        guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic else {
             return
         }
         let readFuture = accelerometerUpdatePeriodCharacteristic.read(timeout: 10.0)
@@ -290,18 +283,18 @@ class ViewController: UITableViewController {
 
     func updateData(_ data:Data?) {
         if let data = data, let accelerometerData: TISensorTag.AccelerometerService.Data = SerDe.deserialize(data) {
-            self.xAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.x) as String
-            self.yAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.y) as String
-            self.zAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.z) as String
+            xAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.x) as String
+            yAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.y) as String
+            zAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.z) as String
             let rawValue = accelerometerData.rawValue
-            self.xRawAccelerationLabel.text = "\(rawValue[0])"
-            self.yRawAccelerationLabel.text = "\(rawValue[1])"
-            self.zRawAccelerationLabel.text = "\(rawValue[2])"
+            xRawAccelerationLabel.text = "\(rawValue[0])"
+            yRawAccelerationLabel.text = "\(rawValue[1])"
+            zRawAccelerationLabel.text = "\(rawValue[2])"
         }
     }
 
     func writeEnabled() {
-        if let accelerometerEnabledCharacteristic = self.accelerometerEnabledCharacteristic {
+        if let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic {
             let value = TISensorTag.AccelerometerService.Enabled(boolValue: enabledSwitch.isOn)
             let writeFuture = accelerometerEnabledCharacteristic.write(value, timeout:10.0)
             writeFuture.onSuccess { [unowned self] _ in
@@ -314,13 +307,12 @@ class ViewController: UITableViewController {
     }
     
     func deactivate() {
-        if manager.isScanning {
-            self.manager.stopScanning()
+        guard let peripheral = self.peripheral, manager.isScanning else {
+            return
         }
-        if let peripheral = self.peripheral {
-            peripheral.terminate()
-        }
+        manager.stopScanning()
+        peripheral.terminate()
         self.peripheral = nil
-        self.updateUIStatus()
+        updateUIStatus()
     }
 }
