@@ -118,10 +118,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     public func startAdvertising(_ name: String, uuids: [CBUUID]? = nil) -> Future<Void> {
         return self.peripheralQueue.sync {
             if let afterAdvertisingStartedPromise = self.afterAdvertisingStartedPromise, !afterAdvertisingStartedPromise.completed {
+                Logger.debug("Alerady adversting beacon")
                 return afterAdvertisingStartedPromise.future
             }
-            self._name = name
             if !self.isAdvertising {
+                Logger.debug("Adversting with UUIDs: \(uuids.map { $0.map { $0.uuidString } })")
+                self._name = name
                 self.afterAdvertisingStartedPromise = Promise<Void>()
                 var advertisementData: [String : AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]
                 if let uuids = uuids {
@@ -138,8 +140,10 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     public func startAdvertising(_ region: BeaconRegion) -> Future<Void> {
         return self.peripheralQueue.sync {
             if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
+                Logger.debug("Alerady adversting beacon")
                 return afterBeaconAdvertisingStartedPromise.future
             }
+            Logger.debug("Adversting beacon with UUID: \(region.proximityUUID)")
             self._name = region.identifier
             self.afterBeaconAdvertisingStartedPromise = Promise<Void>()
             if !self.isAdvertising {

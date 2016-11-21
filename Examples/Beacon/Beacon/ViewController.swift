@@ -26,10 +26,15 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet var generateUUIDButton: UIButton!
     @IBOutlet var startAdvertisingSwitch: UISwitch!
     @IBOutlet var startAdvertisingLabel: UILabel!
+    
+    let estimoteUUID = UUID(uuidString: "B9407F30-F5F8-466E-AFF9-25556B57FE6D")!
 
     let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.ibeacon-simulator.example" as NSString])
 
     required init?(coder aDecoder: NSCoder) {
+        if BeaconStore.getBeaconUUID() == nil {
+            BeaconStore.setBeaconUUID(estimoteUUID)
+        }
         super.init(coder: aDecoder)
     }
     
