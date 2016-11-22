@@ -98,7 +98,7 @@ public class Characteristic : NSObject {
     }
 
     // MARK: Initializers
-    internal init(cbCharacteristic: CBCharacteristicInjectable, service: Service) {
+    init(cbCharacteristic: CBCharacteristicInjectable, service: Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         self.centralQueue = service.centralQueue
@@ -336,12 +336,14 @@ public class Characteristic : NSObject {
             return
         }
         Logger.debug("sequence \(sequence), timeout:\(timeout))")
-        centralQueue.delay(timeout) {
-            if sequence == self.readSequence && self.reading {
-                Logger.debug("timing out sequence=\(sequence), current readSequence=\(self.readSequence)")
-                self.didUpdate(CharacteristicError.readTimeout)
-            } else {
-                Logger.debug("timeout expired")
+        centralQueue.delay(timeout) { [weak self] in
+            self.forEach { strongSelf in
+                if sequence == strongSelf.readSequence && strongSelf.reading {
+                    Logger.debug("timing out sequence=\(sequence), current readSequence=\(strongSelf.readSequence)")
+                    strongSelf.didUpdate(CharacteristicError.readTimeout)
+                } else {
+                    Logger.debug("timeout expired")
+                }
             }
         }
     }
@@ -351,12 +353,14 @@ public class Characteristic : NSObject {
             return
         }
         Logger.debug("sequence \(sequence), timeout:\(timeout)")
-        centralQueue.delay(timeout) {
-            if sequence == self.writeSequence && self.writing {
-                Logger.debug("timing out sequence=\(sequence), current writeSequence=\(self.writeSequence)")
-                self.didWrite(CharacteristicError.writeTimeout)
-            } else {
-                Logger.debug("timeout expired")
+        centralQueue.delay(timeout) { [weak self] in
+            self.forEach { strongSelf in
+                if sequence == strongSelf.writeSequence && strongSelf.writing {
+                    Logger.debug("timing out sequence=\(sequence), current writeSequence=\(strongSelf.writeSequence)")
+                    strongSelf.didWrite(CharacteristicError.writeTimeout)
+                } else {
+                    Logger.debug("timeout expired")
+                }
             }
         }
     }

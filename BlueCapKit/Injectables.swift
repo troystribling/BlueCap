@@ -10,10 +10,10 @@ import Foundation
 import CoreBluetooth
 
 // MARK: - ManagerState -
-public enum ManagerState {
+public enum ManagerState: CustomStringConvertible {
     case unauthorized, unknown, unsupported, resetting, poweredOff, poweredOn
 
-    public var stringValue: String {
+    public var description: String {
         switch self {
         case .unauthorized:
             return "unauthorized"

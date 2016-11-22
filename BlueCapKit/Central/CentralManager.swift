@@ -189,12 +189,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             return
         }
         Logger.debug("\(self.name) scan duration in \(duration)s")
-        centralQueue.delay(duration) {
-            if self._isScanning {
-                if sequence == self.scanTimeSequence {
-                    self.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.peripheralScanTimeout)
+        centralQueue.delay(duration) { [weak self] in
+            self.forEach { strongSelf in
+                if strongSelf._isScanning {
+                    if sequence == strongSelf.scanTimeSequence {
+                        strongSelf.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.peripheralScanTimeout)
+                    }
+                    strongSelf.stopScanningIfScanning()
                 }
-                self.stopScanningIfScanning()
             }
         }
     }

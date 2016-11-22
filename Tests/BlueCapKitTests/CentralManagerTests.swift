@@ -33,6 +33,9 @@ class CentralManagerTests: XCTestCase {
         centralManager.didUpdateState(mock)
         XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
             { state in
+                XCTAssertEqual(state, .poweredOff)
+            },
+            { state in
                 XCTAssertEqual(state, .poweredOn)
             }
         ])

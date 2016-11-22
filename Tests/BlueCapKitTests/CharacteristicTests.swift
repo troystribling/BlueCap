@@ -23,10 +23,11 @@ class CharacteristicTests: XCTestCase {
 
     override func setUp() {
         GnosusProfiles.create(profileManager: profileManager)
-        self.centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn), profileManager: profileManager)
-        self.peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI, profileManager: profileManager)
-        self.peripheral.didDiscoverServices([self.mockService], error:nil)
-        self.service = self.peripheral.services.first!
+        centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn), profileManager: profileManager)
+        peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI, profileManager: profileManager)
+        let serviceProfile = profileManager.services[mockService.UUID]!
+        service = Service(cbService: mockService, peripheral: peripheral, profile: serviceProfile)
+        peripheral.discoveredServices = [service.UUID : service]
         super.setUp()
     }
     
@@ -41,13 +42,15 @@ class CharacteristicTests: XCTestCase {
         } else {
             mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(), properties: properties, isNotifying: isNotifying)
         }
-        self.peripheral.didDiscoverCharacteristicsForService(self.mockService, characteristics: [mockCharacteristic], error: nil)
-        return (self.service.characteristics.first!, mockCharacteristic)
+        let characteristic = Characteristic(cbCharacteristic: mockCharacteristic, service: service)
+        peripheral.discoveredCharacteristics = [characteristic.UUID : characteristic]
+        service.discoveredCharacteristics = [characteristic.UUID : characteristic]
+        return (characteristic, mockCharacteristic)
     }
 
     // MARK: Write data
     func testWriteData_WithTypeWithResponseWritableAndNoErrorInAck_QueuesRequestAndCompletesSuccessfilly() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(data: "aa".dataFromHexString())
 
         XCTAssert(self.mockPerpheral.writeValueCalled)
@@ -63,7 +66,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteData_WithTypeWithoutResponseAndWriteable_DoesNotQueueRequestsAndCompleteSuccessfully() {
-        let (characteristic, _) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(data: "aa".dataFromHexString(), type: .withoutResponse)
         XCTAssert(self.mockPerpheral.writeValueCalled)
         XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
@@ -74,7 +77,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteData_WithTypeWithResponseWritableAndErrorInAck_CompletesWithAckError() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(data: "aa".dataFromHexString())
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
@@ -85,19 +88,19 @@ class CharacteristicTests: XCTestCase {
         }
     }
 
-    func testWriteData_WithTypeWithResponseWritableAndOnTimeout_CompletesWithTimeoutError() {
-        let (characteristic, _) = self.createCharacteristic([.read, .write], isNotifying: false)
-        let future = characteristic.write(data: "aa".dataFromHexString(), timeout:1.0)
-        XCTAssertFutureFails(future) { error in
-            XCTAssertEqualErrors(error, CharacteristicError.writeTimeout)
-            XCTAssert(self.mockPerpheral.writeValueCalled)
-            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
-            XCTAssertEqual(self.mockPerpheral.writtenType, .withResponse)
-        }
-    }
+//    func testWriteData_WithTypeWithResponseWritableAndOnTimeout_CompletesWithTimeoutError() {
+//        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
+//        let future = characteristic.write(data: "aa".dataFromHexString(), timeout:1.0)
+//        XCTAssertFutureFails(future) { error in
+//            XCTAssertEqualErrors(error, CharacteristicError.writeTimeout)
+//            XCTAssert(self.mockPerpheral.writeValueCalled)
+//            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
+//            XCTAssertEqual(self.mockPerpheral.writtenType, .withResponse)
+//        }
+//    }
 
     func testWriteData_WhenNotWriteable_CompletesWithErrorWriteNotSupported() {
-        let (characteristic, _) = self.createCharacteristic([.read], isNotifying: false)
+        let (characteristic, _) = createCharacteristic([.read], isNotifying: false)
         let future = characteristic.write(data: "aa".dataFromHexString())
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertEqualErrors(error, CharacteristicError.writeNotSupported)
@@ -106,7 +109,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteString_WithTypeWithResponseWritableAndProfileAndNoErrorOnAck_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(string: ["Hello World Greeting" : "Good bye"])
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -122,7 +125,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteString_WithTypeWithResponseWritableAndNoProfileAndNoErrorOnAck_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false, hasProfile: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false, hasProfile: false)
         let future = characteristic.write(string: ["Unknown" : "abcd0101"])
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -138,7 +141,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteString_WhenStringIsNotSerializable_CompletesWithErrorNotSerailizable() {
-        let (characteristic, _) = self.createCharacteristic([.read, .write], isNotifying:  false)
+        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying:  false)
         let future = characteristic.write(string: ["bad name" : "Invalid"])
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertFalse(self.mockPerpheral.writeValueCalled)
@@ -147,7 +150,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteData_WhenMultipleWithTypeWithResponseBeforeFirstAckReceived_QueuesRequestsAndCompleteSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future1 = characteristic.write(data: "aa".dataFromHexString(), type: .withResponse)
         let future2 = characteristic.write(data: "bb".dataFromHexString(), type: .withResponse)
         let future3 = characteristic.write(data: "cc".dataFromHexString(), type: .withResponse)
@@ -177,7 +180,7 @@ class CharacteristicTests: XCTestCase {
 
    // MARK: Read data
     func testRead_WhenReadableAndNoErrorInResponse_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.read()
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -187,7 +190,7 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testRead_WhenReadableAnResponseHasError_CompletesWithResponseError() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.read()
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error:TestFailure.error)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
@@ -196,18 +199,18 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
-    func testRead_WhenReadableAndNoResponsdeReceivedBeforeTimeout_CompletesWithTimeoutError() {
-        let (characteristic, _) = self.createCharacteristic([.read, .write], isNotifying: false)
-        let future = characteristic.read(timeout: 0.25)
-        XCTAssertFutureFails(future) { error in
-            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled)
-            XCTAssertEqualErrors(error, CharacteristicError.readTimeout)
-            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
-        }
-    }
+//    func testRead_WhenReadableAndNoResponsdeReceivedBeforeTimeout_CompletesWithTimeoutError() {
+//        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
+//        let future = characteristic.read(timeout: 0.25)
+//        XCTAssertFutureFails(future) { error in
+//            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled)
+//            XCTAssertEqualErrors(error, CharacteristicError.readTimeout)
+//            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
+//        }
+//    }
     
     func testRead_WhenNotReadable_CompletesWithReadNotSupported() {
-        let (characteristic, _) = self.createCharacteristic([.write], isNotifying: false)
+        let (characteristic, _) = createCharacteristic([.write], isNotifying: false)
         let future = characteristic.read()
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertFalse(self.mockPerpheral.readValueForCharacteristicCalled)
@@ -216,7 +219,7 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testRead_WhenMultipleReadsAreMadeBeforeFirstResponseIsReceived_AllCompleteSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future1 = characteristic.read()
         let future2 = characteristic.read()
         let future3 = characteristic.read()
@@ -244,7 +247,7 @@ class CharacteristicTests: XCTestCase {
 
     // MARK: Notifications
     func testStartNotifying_WhenNotifiableAndNoErrorOnAck_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notify], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: false)
         let future = characteristic.startNotifying()
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error:nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -259,7 +262,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStartNotifying_WhenNotifiableAndErrorInAck_CompletesWithAckError() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notify], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: false)
         let future = characteristic.startNotifying()
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: TestFailure.error)
         XCTAssertFutureFails(future, context:TestContext.immediate) { error in
@@ -275,7 +278,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStartNotifying_WhenIndicatableAndNoErrorOnAck_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.indicate], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.indicate], isNotifying: false)
         let future = characteristic.startNotifying()
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -290,7 +293,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStartNotify_WhenNotifyEncryptionRequiredAndNoErrorOnAck_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notifyEncryptionRequired], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notifyEncryptionRequired], isNotifying: false)
         let future = characteristic.startNotifying()
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -305,7 +308,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStartNotify_WhenIndicateEncryptionRequiredAndNoErrorOnAck_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.indicateEncryptionRequired], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.indicateEncryptionRequired], isNotifying: false)
         let future = characteristic.startNotifying()
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -320,7 +323,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStartNotifying_WhenNotNotifiable_CompletesWithNotifyNotSupportedError() {
-        let (characteristic, _) = self.createCharacteristic([], isNotifying: false)
+        let (characteristic, _) = createCharacteristic([], isNotifying: false)
         let future = characteristic.startNotifying()
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertFalse(self.mockPerpheral.setNotifyValueCalled)
@@ -332,7 +335,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notify], isNotifying: true)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let startNotifyingFuture = characteristic.startNotifying()
         let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<(characteristic: Characteristic, data: Data?)> in
             characteristic.receiveNotificationUpdates()
@@ -353,7 +356,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notify], isNotifying: true)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let startNotifyingFuture = characteristic.startNotifying()
         let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<(characteristic: Characteristic, data: Data?)> in
             characteristic.receiveNotificationUpdates()
@@ -370,7 +373,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testReceiveNotificationUpdates_WhenNotNotifiableUpdateIsReceivedWithError_CompletesWithNotifyNotSupported() {
-        let (characteristic, _) = self.createCharacteristic([], isNotifying: true)
+        let (characteristic, _) = createCharacteristic([], isNotifying: true)
         let future = characteristic.receiveNotificationUpdates()
         XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
@@ -380,7 +383,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testReceiveNotificationUpdates_WhenNotifiableAndMultipleUpdatesAreReceivedWithoutErrot_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notify], isNotifying: true)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
 
         let startNotifyingFuture = characteristic.startNotifying()
 
@@ -423,7 +426,7 @@ class CharacteristicTests: XCTestCase {
     }
     
     func testStopNotifying_WhenNotifyingAndNoErrorOnAck_CompletesSuccessfully() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notify], isNotifying: true)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let future = characteristic.stopNotifying()
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
@@ -438,7 +441,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotifying_WhenNotifyingAndErrorOnAck_CompletesWithAckError() {
-        let (characteristic, mockCharacteristic) = self.createCharacteristic([.notify], isNotifying: true)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let future = characteristic.stopNotifying()
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: TestFailure.error)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
@@ -454,7 +457,7 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testStopNotifying_WhenNotNotifiable_CompletesWithNotifyNotSupported() {
-        let (characteristic, _) = self.createCharacteristic([], isNotifying: true)
+        let (characteristic, _) = createCharacteristic([], isNotifying: true)
         let future = characteristic.stopNotifying()
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertFalse(self.mockPerpheral.setNotifyValueCalled)

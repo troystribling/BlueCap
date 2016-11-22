@@ -311,19 +311,19 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         Logger.debug("reconnect peripheral name=\(name), uuid=\(identifier.uuidString)")
-        func performConnection() {
-            centralManager.connect(self)
-            self.forcedDisconnect = false
-            self.connectionSequence += 1
-            self._currentError = .none
-            self.timeoutConnection(self.connectionSequence)
+        func performConnection(_ peripheral: Peripheral) {
+            centralManager.connect(peripheral)
+            peripheral.forcedDisconnect = false
+            peripheral.connectionSequence += 1
+            peripheral._currentError = .none
+            peripheral.timeoutConnection(peripheral.connectionSequence)
         }
         if delay > 0.0 {
-            centralManager.centralQueue.delay(delay) {
-                performConnection()
+            centralManager.centralQueue.delay(delay) { [weak self] in
+                self.forEach { performConnection($0) }
             }
         } else {
-            performConnection()
+            performConnection(self)
         }
     }
 
@@ -604,13 +604,15 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
-        centralQueue.delay(self.connectionTimeout) {
-            if self.state != .connected && sequence == self.connectionSequence && !self.forcedDisconnect {
-                Logger.debug("connection timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current connectionSequence=\(self.connectionSequence)")
-                self._currentError = .timeout
-                self.cancelPeripheralConnection()
-            } else {
-                Logger.debug("connection timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(self.connectionSequence), state=\(self.state.rawValue)")
+        centralQueue.delay(self.connectionTimeout) { [weak self] in
+            self.forEach { strongSelf in
+                if strongSelf.state != .connected && sequence == strongSelf.connectionSequence && !strongSelf.forcedDisconnect {
+                    Logger.debug("connection timing out name = \(strongSelf.name), UUID = \(strongSelf.identifier.uuidString), sequence=\(sequence), current connectionSequence=\(strongSelf.connectionSequence)")
+                    strongSelf._currentError = .timeout
+                    strongSelf.cancelPeripheralConnection()
+                } else {
+                    Logger.debug("connection timeout expired name = \(strongSelf.name), uuid = \(strongSelf.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(strongSelf.connectionSequence), state=\(strongSelf.state.rawValue)")
+                }
             }
         }
     }
@@ -620,12 +622,14 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(timeout)")
-        centralQueue.delay(timeout) {
-            if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, sequence == self.serviceDiscoverySequence && !servicesDiscoveredPromise.completed {
-                Logger.debug("service scan timing out name = \(self.name), UUID = \(self.identifier.uuidString), sequence=\(sequence), current sequence=\(self.serviceDiscoverySequence)")
-                servicesDiscoveredPromise.failure(PeripheralError.serviceDiscoveryTimeout)
-            } else {
-                Logger.debug("service scan timeout expired name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), current sequence = \(self.serviceDiscoverySequence)")
+        centralQueue.delay(timeout) { [weak self] in
+            self.forEach { strongSelf in
+                if let servicesDiscoveredPromise = strongSelf.servicesDiscoveredPromise, sequence == strongSelf.serviceDiscoverySequence && !servicesDiscoveredPromise.completed {
+                    Logger.debug("service scan timing out name = \(strongSelf.name), UUID = \(strongSelf.identifier.uuidString), sequence=\(sequence), current sequence=\(strongSelf.serviceDiscoverySequence)")
+                    servicesDiscoveredPromise.failure(PeripheralError.serviceDiscoveryTimeout)
+                } else {
+                    Logger.debug("service scan timeout expired name = \(strongSelf.name), uuid = \(strongSelf.identifier.uuidString), sequence = \(sequence), current sequence = \(strongSelf.serviceDiscoverySequence)")
+                }
             }
         }
     }
@@ -636,10 +640,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("exiting: name = \(self.name), uuid = \(self.identifier.uuidString)")
             return
         }
-        centralQueue.delay(period) {
-            Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString)")
-            self.readRSSIIfConnected()
-            self.pollRSSI(period)
+        centralQueue.delay(period) { [weak self] in
+            self.forEach { strongSelf in
+                Logger.debug("name = \(strongSelf.name), uuid = \(strongSelf.identifier.uuidString)")
+                strongSelf.readRSSIIfConnected()
+                strongSelf.pollRSSI(period)
+            }
         }
     }
 
