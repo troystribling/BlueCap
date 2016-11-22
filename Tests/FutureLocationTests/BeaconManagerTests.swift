@@ -35,7 +35,7 @@ class BeaconManagerTests: XCTestCase {
 
     func testStartRangingRegion_WhenAuthorizedAndBeaconsDiscovered_CompletesSuccessfully() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let stream = self.beaconManager.startRangingBeacons(forRegion: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
+        let stream = self.beaconManager.startRangingBeacons(in: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         self.beaconManager.didRange(beacons: self.testCLBeacons.map{$0 as CLBeaconInjectable}, inRegion: self.testCLBeaconRegion)
         XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
             { beacons in
@@ -50,7 +50,7 @@ class BeaconManagerTests: XCTestCase {
     
     func testStartRangingRegion_WhenAuthorizedAndRangingFails_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let stream = self.beaconManager.startRangingBeacons(forRegion: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
+        let stream = self.beaconManager.startRangingBeacons(in: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         self.beaconManager.rangingBeaconsDidFail(inRegion: self.testCLBeaconRegion, withError: TestFailure.error)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in
@@ -64,7 +64,7 @@ class BeaconManagerTests: XCTestCase {
     
     func testStartRangingRegion_WhenAuthorizationFails_CompletesWithError() {
         CLLocationManagerMock._authorizationStatus = .notDetermined
-        let stream = self.beaconManager.startRangingBeacons(forRegion: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
+        let stream = self.beaconManager.startRangingBeacons(in: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         self.beaconManager.didChangeAuthorization(status: .denied)
         XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
             { error in
@@ -78,7 +78,7 @@ class BeaconManagerTests: XCTestCase {
 
     func testStopRanging_WhenRanging_StopsRanging() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let future = self.beaconManager.startRangingBeacons(forRegion: self.testBeaconRegion, context: TestContext.immediate)
+        let future = self.beaconManager.startRangingBeacons(in: self.testBeaconRegion, context: TestContext.immediate)
         future.onSuccess(context: TestContext.immediate) { beacons in
             XCTAssert(self.beaconManager.isRanging, "isRanging invalid")
             XCTAssertFalse(self.mock.stopRangingBeaconsInRegionCalled, "stopRangingBeaconsInRegion called")
@@ -87,7 +87,7 @@ class BeaconManagerTests: XCTestCase {
             XCTFail()
         }
         self.beaconManager.didRange(beacons: self.testCLBeacons.map{$0 as CLBeaconInjectable}, inRegion: self.testCLBeaconRegion)
-        self.beaconManager.stopRangingBeacons(forRegion: self.testBeaconRegion)
+        self.beaconManager.stopRangingBeacons(in: self.testBeaconRegion)
         XCTAssert(self.mock.stopRangingBeaconsInRegionCalled)
         XCTAssertFalse(self.beaconManager.isRanging)
     }

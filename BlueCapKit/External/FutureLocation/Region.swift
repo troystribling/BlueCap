@@ -11,8 +11,50 @@ import CoreLocation
 
 let DEFAULT_REGION_RADIUS = 100.0
 
-public enum RegionState {
-    case start, inside, outside
+extension CLRegionState: CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .unknown:
+            return "unknown"
+        case .inside:
+            return "inside"
+        case .outside:
+            return "outside"
+        }
+    }
+}
+
+public enum RegionState: CustomStringConvertible {
+    case start
+    case unknown
+    case inside
+    case outside
+    
+    init(clRegionState: CLRegionState) {
+        switch clRegionState {
+        case .unknown:
+            self = .unknown
+        case .inside:
+            self = .inside
+        case .outside:
+            self = .outside
+        }
+    }
+    
+    public var description: String {
+        switch self {
+        case .start:
+            return "start"
+        case .unknown:
+            return "unknown"
+        case .inside:
+            return "inside"
+        case .outside:
+            return "outside"
+        }
+    }
+    
 }
 
 public class Region {

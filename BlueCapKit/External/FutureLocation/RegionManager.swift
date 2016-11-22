@@ -46,79 +46,84 @@ public class RegionManager : LocationManager {
         return self.regionMonitorStatus[identifier] ?? false
     }
 
-    public func startMonitoring(forRegion region: Region, authorization: CLAuthorizationStatus = .authorizedWhenInUse, capacity: Int = Int.max, context: ExecutionContext = QueueContext.main) -> FutureStream<RegionState> {
+    public func startMonitoring(for region: Region, authorization: CLAuthorizationStatus = .authorizedWhenInUse, capacity: Int = Int.max, context: ExecutionContext = QueueContext.main) -> FutureStream<RegionState> {
+        Logger.debug("region identifier '\(region.identifier)'")
         let authorizationFuture = self.authorize(authorization, context: context)
         authorizationFuture.onFailure { _ in self.updateIsMonitoring(false) }
         return authorizationFuture.flatMap(capacity: capacity, context: context) {
             self.updateIsMonitoring(true)
             self.configuredRegions[region.identifier] = region
-            self.clLocationManager.startMonitoringForRegion(region.clRegion)
+            self.clLocationManager.startMonitoring(for: region.clRegion)
             return region.regionPromise.stream
         }
     }
 
-    public func stopMonitoringForRegion(_ region: Region) {
+    public func stopMonitoring(for region: Region) {
+        Logger.debug("region identifier '\(region.identifier)'")
         self.regionMonitorStatus.removeValue(forKey: region.identifier)
         self.configuredRegions.removeValue(forKey: region.identifier)
-        self.clLocationManager.stopMonitoringForRegion(region.clRegion)
+        self.clLocationManager.stopMonitoring(for: region.clRegion)
         self.updateIsMonitoring(false)
     }
 
     public func stopMonitoringAllRegions() {
         for region in self.regions {
-            self.stopMonitoringForRegion(region)
+            self.stopMonitoring(for: region)
         }
     }
 
-    public func requestState(forRegion region: Region) -> Future<CLRegionState> {
+    public func requestState(for region: Region) -> Future<CLRegionState> {
+        Logger.debug("region identifier '\(region.identifier)'")
         self.requestStateForRegionPromises[region.identifier] = Promise<CLRegionState>()
-        self.clLocationManager.requestStateForRegion(region.clRegion)
+        self.clLocationManager.requestState(for: region.clRegion)
         return self.requestStateForRegionPromises[region.identifier]!.future
     }
 
     // MARK: CLLocationManagerDelegate
-    public func locationManager(_: CLLocationManager, didEnterRegion region: CLRegion) {
-        self.didEnter(region: region)
-    }
-    
-    public func locationManager(_: CLLocationManager, didExitRegion region: CLRegion) {
-        self.didExit(region: region)
-    }
+//    public func locationManager(_: CLLocationManager, didEnterRegion region: CLRegion) {
+//        didEnter(region: region)
+//    }
+//    
+//    public func locationManager(_: CLLocationManager, didExitRegion region: CLRegion) {
+//        didExit(region: region)
+//    }
     
     public func locationManager(_: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
-        self.didDetermine(state: state, forRegion: region)
+        didDetermine(state: state, forRegion: region)
     }
     
     public func locationManager(_:CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: Error) {
-        self.monitoringDidFail(forRegion: region, withError: error)
+        monitoringDidFail(forRegion: region, withError: error)
     }
     
     public func locationManager(_: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
-        self.didStartMonitoring(forRegion: region)
+        didStartMonitoring(forRegion: region)
     }
 
     public func didEnter(region: CLRegion) {
-        Logger.debug("region identifier \(region.identifier)")
-        self.configuredRegions[region.identifier]?.regionPromise.success(.inside)
+        Logger.debug("region identifier '\(region.identifier)'")
+        configuredRegions[region.identifier]?.regionPromise.success(.inside)
     }
 
     public func didExit(region: CLRegion) {
-        Logger.debug("region identifier \(region.identifier)")
-        self.configuredRegions[region.identifier]?.regionPromise.success(.outside)
+        Logger.debug("region identifier '\(region.identifier)'")
+        configuredRegions[region.identifier]?.regionPromise.success(.outside)
     }
 
     public func didDetermine(state: CLRegionState, forRegion region: CLRegion) {
-        Logger.debug("region identifier \(region.identifier)")
-        self.requestStateForRegionPromises[region.identifier]?.success(state)
-        self.requestStateForRegionPromises.removeValue(forKey: region.identifier)
+        Logger.debug("state '\(state)' region identifier '\(region.identifier)'")
+        requestStateForRegionPromises[region.identifier]?.success(state)
+        requestStateForRegionPromises.removeValue(forKey: region.identifier)
+        configuredRegions[region.identifier]?.regionPromise.success(RegionState(clRegionState: state))
     }
 
     public func monitoringDidFail(forRegion region: CLRegion?, withError error: Error) {
-        if let region = region, let flRegion = self.configuredRegions[region.identifier] {
-            Logger.debug("region identifier '\(region.identifier)'")
-            self.regionMonitorStatus[region.identifier] = false
-            flRegion.regionPromise.failure(error)
+        guard let region = region, let flRegion = self.configuredRegions[region.identifier] else {
+            return
         }
+        Logger.debug("region identifier '\(region.identifier)'")
+        self.regionMonitorStatus[region.identifier] = false
+        flRegion.regionPromise.failure(error)
     }
 
     public func didStartMonitoring(forRegion region: CLRegion) {

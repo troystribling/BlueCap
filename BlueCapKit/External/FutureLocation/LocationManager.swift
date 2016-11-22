@@ -54,15 +54,15 @@ public protocol CLLocationManagerInjectable {
     // MARK: Region Monitoring
     var maximumRegionMonitoringDistance: CLLocationDistance { get }
     var monitoredRegions: Set<CLRegion> { get }
-    func startMonitoringForRegion(_ region: CLRegion)
-    func stopMonitoringForRegion(_ region: CLRegion)
+    func startMonitoring(for region: CLRegion)
+    func stopMonitoring(for region: CLRegion)
+    func requestState(for region: CLRegion)
 
     // MARK: Beacons
     static func isRangingAvailable() -> Bool
     var rangedRegions: Set<CLRegion> { get }
-    func startRangingBeaconsInRegion(_ region: CLBeaconRegion)
-    func stopRangingBeaconsInRegion(_ region: CLBeaconRegion)
-    func requestStateForRegion(_ region: CLRegion)
+    func startRangingBeacons(in region: CLBeaconRegion)
+    func stopRangingBeacons(in region: CLBeaconRegion)
 }
 
 extension CLLocationManager : CLLocationManagerInjectable {}
@@ -139,25 +139,25 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     fileprivate func requestWhenInUseAuthorization()  {
-        self.clLocationManager.requestWhenInUseAuthorization()
+        clLocationManager.requestWhenInUseAuthorization()
     }
 
     fileprivate func requestAlwaysAuthorization() {
-        self.clLocationManager.requestAlwaysAuthorization()
+        clLocationManager.requestAlwaysAuthorization()
     }
 
     public func authorize(_ authorization: CLAuthorizationStatus, context: ExecutionContext = QueueContext.main) -> Future<Void> {
         let currentAuthorization = self.authorizationStatus()
-        if currentAuthorization != authorization {
+        if currentAuthorization != authorization && currentAuthorization != .authorizedAlways {
             if let authorizationFuture = self.authorizationFuture, !authorizationFuture.completed {
                 return authorizationFuture
             }
-            self.authorizationStatusChangedPromise = Promise<CLAuthorizationStatus>()
+            authorizationStatusChangedPromise = Promise<CLAuthorizationStatus>()
             switch authorization {
             case .authorizedAlways:
-                self.requestAlwaysAuthorization()
+                requestAlwaysAuthorization()
             case .authorizedWhenInUse:
-                self.requestWhenInUseAuthorization()
+                requestWhenInUseAuthorization()
             default:
                 Logger.debug("requested location authorization invalid")
                 return Future(error: LocationError.authroizationInvalid)
@@ -186,6 +186,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
             }
             return authorizationFuture!
         } else {
+            Logger.debug("requested authoriztation given: \(currentAuthorization)")
             return Future(value: ())
         }
     }

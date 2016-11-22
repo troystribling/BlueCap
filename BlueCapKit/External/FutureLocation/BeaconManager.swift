@@ -44,28 +44,30 @@ public class BeaconManager : RegionManager {
         return self.regionRangingStatus[identifier] ?? false
     }
 
-    public func startRangingBeacons(forRegion beaconRegion: BeaconRegion, authorization: CLAuthorizationStatus = .authorizedWhenInUse, capacity: Int = Int.max, context: ExecutionContext = QueueContext.main) -> FutureStream<[Beacon]> {
+    public func startRangingBeacons(in beaconRegion: BeaconRegion, authorization: CLAuthorizationStatus = .authorizedWhenInUse, capacity: Int = Int.max, context: ExecutionContext = QueueContext.main) -> FutureStream<[Beacon]> {
+        Logger.debug("region identifier `\(beaconRegion.identifier)`")
         let authorizationFuture = self.authorize(authorization, context: context)
         authorizationFuture.onFailure { _ in self.updateIsRanging(false) }
         return authorizationFuture.flatMap(capacity: capacity, context: context) {status in
             Logger.debug("authorization status: \(status)")
             self.updateIsRanging(true)
             self.configuredBeaconRegions[beaconRegion.identifier] = beaconRegion
-            self.clLocationManager.startRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
+            self.clLocationManager.startRangingBeacons(in: beaconRegion.clBeaconRegion)
             return beaconRegion.beaconPromise.stream
         }
     }
 
-    public func stopRangingBeacons(forRegion beaconRegion: BeaconRegion) {
+    public func stopRangingBeacons(in beaconRegion: BeaconRegion) {
+        Logger.debug("region identifier `\(beaconRegion.identifier)`")
         self.configuredBeaconRegions.removeValue(forKey: beaconRegion.identifier)
         self.regionRangingStatus.removeValue(forKey: beaconRegion.identifier)
         self.updateIsRanging(false)
-        self.clLocationManager.stopRangingBeaconsInRegion(beaconRegion.clBeaconRegion)
+        self.clLocationManager.stopRangingBeacons(in: beaconRegion.clBeaconRegion)
     }
 
     public func stopRangingAllBeacons() {
         for beaconRegion in self.beaconRegions {
-            self.stopRangingBeacons(forRegion: beaconRegion)
+            self.stopRangingBeacons(in: beaconRegion)
         }
     }
     

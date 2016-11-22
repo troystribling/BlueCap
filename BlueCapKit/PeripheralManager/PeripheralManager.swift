@@ -122,7 +122,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 return afterAdvertisingStartedPromise.future
             }
             if !self.isAdvertising {
-                Logger.debug("Adversting with UUIDs: \(uuids.map { $0.map { $0.uuidString } })")
+                Logger.debug("Adversting with UUIDs: \(uuids.map { $0 })")
                 self._name = name
                 self.afterAdvertisingStartedPromise = Promise<Void>()
                 var advertisementData: [String : AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]

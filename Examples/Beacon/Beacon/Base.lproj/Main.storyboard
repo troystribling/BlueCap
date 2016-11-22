@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="sHZ-C7-U0G">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -19,17 +19,17 @@
             <objects>
                 <tableViewController id="sHZ-C7-U0G" customClass="ViewController" customModule="Beacon" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Fbn-wc-fAP">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <sections>
                             <tableViewSection headerTitle=" Status" id="IG7-iT-AuR">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="III-d4-1wO">
-                                        <rect key="frame" x="0.0" y="56" width="375" height="60"/>
+                                        <rect key="frame" x="0.0" y="56" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="III-d4-1wO" id="kea-FA-ijW">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertise" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tpv-Cv-Xaj">
@@ -39,7 +39,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="DaL-2G-Xqt">
-                                                    <rect key="frame" x="305" y="14" width="51" height="31"/>
+                                                    <rect key="frame" x="250" y="14" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="toggleAdvertise:" destination="sHZ-C7-U0G" eventType="valueChanged" id="zv3-Vk-9rB"/>
                                                     </connections>
@@ -58,14 +58,14 @@
                             <tableViewSection headerTitle="Configure" id="SNj-VC-jSv">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="kbs-Lh-B2t">
-                                        <rect key="frame" x="0.0" y="164" width="375" height="60"/>
+                                        <rect key="frame" x="0.0" y="165" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kbs-Lh-B2t" id="Wlq-d3-qpY">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="8Js-SD-RGK">
-                                                    <rect key="frame" x="28" y="15" width="319" height="30"/>
+                                                    <rect key="frame" x="28" y="15" width="264" height="30"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
@@ -81,15 +81,15 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="aeW-Mz-etc">
-                                        <rect key="frame" x="0.0" y="224" width="375" height="60"/>
+                                        <rect key="frame" x="0.0" y="225" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aeW-Mz-etc" id="Kqe-PC-3xH">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" borderStyle="roundedRect" placeholder="UUID" textAlignment="center" minimumFontSize="10" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Iue-Cd-XzR">
-                                                    <rect key="frame" x="28" y="13" width="319" height="30"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="11"/>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="B9407F30-F5F8-466E-AFF9-25556B57FE6D" borderStyle="roundedRect" placeholder="UUID" textAlignment="center" minimumFontSize="5" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Iue-Cd-XzR">
+                                                    <rect key="frame" x="28" y="13" width="264" height="30"/>
+                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="10"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
                                                         <outlet property="delegate" destination="sHZ-C7-U0G" id="p8n-s3-wHz"/>
@@ -104,14 +104,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="mSg-L5-bqx">
-                                        <rect key="frame" x="0.0" y="283.5" width="375" height="60"/>
+                                        <rect key="frame" x="0.0" y="285" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mSg-L5-bqx" id="hM3-uK-7XS">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Major" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9C1-RW-AGl">
-                                                    <rect key="frame" x="28" y="15" width="319" height="30"/>
+                                                    <rect key="frame" x="28" y="15" width="264" height="30"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
@@ -127,14 +127,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="60" id="hbb-eh-kUS">
-                                        <rect key="frame" x="0.0" y="343.5" width="375" height="60"/>
+                                        <rect key="frame" x="0.0" y="345" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hbb-eh-kUS" id="ZwE-Qk-1xZ">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Minor" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="enk-zQ-F1J">
-                                                    <rect key="frame" x="28" y="14" width="319" height="30"/>
+                                                    <rect key="frame" x="28" y="14" width="264" height="30"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                     <connections>
@@ -150,14 +150,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="iAU-So-clP">
-                                        <rect key="frame" x="0.0" y="403.5" width="375" height="60"/>
+                                        <rect key="frame" x="0.0" y="405" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iAU-So-clP" id="LRh-AW-AYW">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I0T-fJ-Seb">
-                                                    <rect key="frame" x="20" y="11" width="335" height="37"/>
+                                                    <rect key="frame" x="20" y="11" width="280" height="37"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                     <state key="normal" title="Generate UUID">
                                                         <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

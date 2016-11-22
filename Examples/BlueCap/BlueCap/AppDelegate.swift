@@ -15,15 +15,11 @@ struct BlueCapNotification {
     static let didUpdateBeacon = "DidUpdateBeacon"
 }
 
-enum AppError : Int {
-    case rangingBeacons = 0
-    case outOfRegion    = 1
-}
-
-struct BCAppError {
-    static let domain = "BlueCapApp"
-    static let rangingBeacons = NSError(domain:domain, code:AppError.rangingBeacons.rawValue, userInfo:[NSLocalizedDescriptionKey:"Ranging beacons"])
-    static let outOfRegion = NSError(domain:domain, code:AppError.outOfRegion.rawValue, userInfo:[NSLocalizedDescriptionKey:"Out of region"])
+enum AppError : Error {
+    case rangingBeacons
+    case outOfRegion
+    case unknownRegionStatus
+    case invalid
 }
 
 struct Singletons {
