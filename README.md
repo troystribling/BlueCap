@@ -23,8 +23,8 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 # Requirements
 
-- iOS 8.0+
-- Xcode 7.3
+- iOS 9.0+
+- Xcode 8.1
 
 # Installation
 
@@ -41,7 +41,7 @@ gem install cocoapods
 Add `BluCapKit` to your to your project `Podfile`,
 
 ```ruby
-platform :ios, '8.0'
+platform :ios, '10.0'
 use_frameworks!
 
 target 'Your Target Name' do
@@ -93,66 +93,76 @@ This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual)
 
 # Getting Started
 
-With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported in some detail. [Example applications](/Examples) are also available.
+With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported. [Example applications](/Examples) are also available.
  
 ## Central
 
-A simple Central implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) and connects on peripheral discovery will be described. 
+A simple Central implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217), connects on peripheral discovery, discovers service and characteristics and subscribes to accelerometer data updates will be described. 
 
-All applications begin by calling `CentralManager#whenPowerOn` which returns a `Future<Void>` completed when the `CBCentralManager` state is set to `CBCentralManagerState.PoweredOn`.
-
-```swift
-let manager = CentralManager()
-let powerOnFuture = manager.whenPowerOn()
-```
-
-To start scanning for `Peripherals` advertising the [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) `powerOnFuture` will chained to `CentralManager#startScanningForServiceUUIDs` using the `Future#flatmap` combinator.
+All applications begin by calling `CentralManager#whenStateChanges` which returns a `Future<Void>` completed when the `CBCentralManager` state is set to `CBCentralManagerState.PoweredOn`.
 
 ```swift
-let manager = CentralManager()
-let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid)!
+let manager = CentralManager(options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.central-manager-example" as NSString])
 
-let scanningFuture = manager.whenPowerOn().flatmap {
-	manager.startScanningForServiceUUIDs([serviceUUID])
-}
+let stateChangeFuture = manager.whenStateChanges()
 ```
 
-`CentralManager#startScanningForServiceUUIDs` returns `FutureStream<Peripheral>`. `scanningFuture` will be completed once for each peripheral discovered.
-
-To connect a discovered peripheral use `FutureStream#flatmap` to call `Peripheral#connect()` which returns  `FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>`.
+To start scanning for `Peripherals` advertising the [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) follow `whenStateChanges()` with `CentralManager#startScanning` and combine the two with the [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream#flatMap` combinator. An application error object is also defined,
 
 ```swift
-let manager = CentralManager()
-let serviceUUID = CBUUID(string:TISensorTag.AccelerometerService.uuid)!
-
-let connectionFuture = manager.whenPowerOn().flatmap {
-	manager.startScanningForServiceUUIDs([serviceUUID])
-}.flatmap { peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
-	peripheral.connect()
+public enum AppError : Error {
+    case invalidState
+    case resetting
+    case poweredOff
+    case unknown
 }
 
-connectionFuture.onSuccess{ (peripheral, connectionEvent) in
-    switch connectionEvent {
-    case .Connect:
-	    break
-    case .Timeout:
-	    peripheral.reconnect()
-    case .Disconnect:
-	    peripheral.reconnect()
-    case .ForceDisconnect:
-	    break
-    case .GiveUp:
-	    peripheral.terminate()
-	 }
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+    
+let scanFuture = stateChangeFuture.flatMap { [unowned self] state -> FutureStream<Peripheral> in
+        switch state {
+        case .poweredOn:
+            self.activateSwitch.isOn = true
+            return self.manager.startScanning(forServiceUUIDs: [serviceUUID])
+        case .poweredOff:
+            throw AppError.poweredOff
+        case .unauthorized, .unsupported:
+            throw AppError.invalidState
+        case .resetting:
+            throw AppError.resetting
+        case .unknown:
+            throw AppError.unknown
+        }
 }
 
-connectionFuture.onFailure { error in
+scanFuture.onFailure { [unowned self] error in
+    guard let appError = error as? AppError else {
+        return
+    }
+    switch appError {
+    case .invalidState:
+	      break
+    case .resetting:
+        self.manager.reset()
+    case .poweredOff:
+        Break
+    case .unknown:
+        break
+    }
 }
+
 ```
 
-Here on `.Timeout` and `.Disconnect` try to reconnect and on `.Giveup` terminate connection
+Here when `.poweredOn` is received the scan is started. On all other state changes the appropriate error is `thrown` and handled in the error handler.
 
-See the [Central Example](/Examples/Central) application for a more detailed implementation that additionally discovers the peripheral and subscribes to accelerometer update notifications.
+To connect the discovered the discovered peripheral the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`.
+
+```swift
+let connectionFuture = scanFuture.flatMap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+    self.manager.stopScanning()
+    return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
+}
+```
 
 ## Peripheral
 
