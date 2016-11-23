@@ -123,7 +123,7 @@ let dataUpdateFuture = manager.whenStateChanges().flatMap { [unowned self] state
         case .resetting:
             throw AppError.resetting
         case .unknown:
-            throw AppError.unkown
+            throw AppError.unknown
         }
 }.flatMap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
     self.manager.stopScanning()
@@ -148,7 +148,7 @@ let dataUpdateFuture = manager.whenStateChanges().flatMap { [unowned self] state
     guard let service = peripheral.service(serviceUUID) else {
         throw AppError.serviceNotFound
     }
-    return service.discover(characteristics: [dataUUID, enabledUUID, updatePeriodUUID])
+    return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
 }.flatMap { [unowned self] service -> Future<Characteristic> in
     guard let dataCharacteristic = service.characteristic(dataUUID) else {
         throw AppError.dataCharactertisticNotFound
