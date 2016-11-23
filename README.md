@@ -222,7 +222,7 @@ discoveryFuture.onFailure { error in
 }
 ```
 
-Finally read and subscribe to the data `Characteristic`,
+Finally read and subscribe to the data `Characteristic` and handle the `dataCharactertisticNotFound`.
 
 ```swift
 public enum AppError : Error {
@@ -255,7 +255,6 @@ let subscriptionFuture = discoveryFuture.flatMap { service -> Future<Characteris
 
 dataUpdateFuture.onFailure { [unowned self] error in
     guard let appError = error as? AppError else {
-        self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
         return
     }
     switch appError {
@@ -265,6 +264,8 @@ dataUpdateFuture.onFailure { [unowned self] error in
 }
 ```
  
+These examples can be written as a single chain of `flatMap`s as shown in the  [Central Example](/Examples/Central).
+
 ## Peripheral
 
 A simple Peripheral application that emulates a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and services will be described. It will advertise the service and respond to characteristic write request.
@@ -386,10 +387,6 @@ carthage update
 		<td>Peripheral implements the BLE Peripheral role advertising a TiSensorTag Accelerometer Service. Peripheral uses the onboard accelerometer to provide data notification updates.</td>
 	</tr>
 	<tr>
-		<td><a href="/Examples/PeripheralWithIndication">PeripheralWithIndication</a></td>
-		<td>A version of Peripheral that uses indications instead of notifications.</td>
-	</tr>
-	<tr>
 		<td><a href="Examples/PeripheralWithProfile">PeripheralWithProfile</a></td>
 		<td>A version of Peripheral that uses GATT Profile Definitions to create services.</td>
 	</tr>
@@ -397,6 +394,7 @@ carthage update
 		<td><a href="/Examples/Beacon">Beacon</a></td>
 		<td>Peripheral emulating an iBeacon.</td>
 	</tr>
+
 </table>
 
 # <a name="usage">Documentation</a>
