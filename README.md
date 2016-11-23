@@ -119,11 +119,10 @@ public enum AppError : Error {
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
     
-let scanFuture = stateChangeFuture.flatMap { [unowned self] state -> FutureStream<Peripheral> in
+let scanFuture = stateChangeFuture.flatMap { state -> FutureStream<Peripheral> in
         switch state {
         case .poweredOn:
-            self.activateSwitch.isOn = true
-            return self.manager.startScanning(forServiceUUIDs: [serviceUUID])
+            return manager.startScanning(forServiceUUIDs: [serviceUUID])
         case .poweredOff:
             throw AppError.poweredOff
         case .unauthorized, .unsupported:
@@ -135,7 +134,7 @@ let scanFuture = stateChangeFuture.flatMap { [unowned self] state -> FutureStrea
         }
 }
 
-scanFuture.onFailure { [unowned self] error in
+scanFuture.onFailure { error in
     guard let appError = error as? AppError else {
         return
     }
@@ -143,7 +142,7 @@ scanFuture.onFailure { [unowned self] error in
     case .invalidState:
 	      break
     case .resetting:
-        self.manager.reset()
+        manager.reset()
     case .poweredOff:
         Break
     case .unknown:
@@ -155,15 +154,117 @@ scanFuture.onFailure { [unowned self] error in
 
 Here when `.poweredOn` is received the scan is started. On all other state changes the appropriate error is `thrown` and handled in the error handler.
 
-To connect the discovered the discovered peripheral the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`.
+To connect discovered peripheral the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`,
 
 ```swift
-let connectionFuture = scanFuture.flatMap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
-    self.manager.stopScanning()
+let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+    manager.stopScanning()
     return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
 }
 ```
 
+Here the scan is also stopped after a peripheral with the desire service UUID is discovered.
+
+The `Peripheral` `Services` and `Characteristics` need to be discovered and the connection events need to be handled. `Service` and `Characteristic` discovery are performed by 'Peripheral#discoverServices' and `Service#discoverCharacteristics` and more errors are added to `AppError`.
+
+```swift
+public enum AppError : Error {
+    case dataCharactertisticNotFound
+    case enabledCharactertisticNotFound
+    case updateCharactertisticNotFound
+    case serviceNotFound
+    case disconnected
+    case connectionFailed
+    case invalidState
+    case resetting
+    case poweredOff
+    case unknown
+}
+
+var peripheral: Peripheral
+
+let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
+    switch connectionEvent {
+    case .connect:
+        self.updateUIStatus()
+        return peripheral.discoverServices([serviceUUID])
+    case .timeout:
+        throw AppError.disconnected
+    case .disconnect:
+        throw AppError.disconnected
+    case .forceDisconnect:
+        self.updateUIStatus()
+        throw AppError.connectionFailed
+    case .giveUp:
+        throw AppError.connectionFailed
+    }
+}.flatMap { discoveredPeripheral -> Future<Service> in
+    guard let service = peripheral.service(serviceUUID) else {
+        throw AppError.serviceNotFound
+    }
+    peripheral = discoveredPeripheral
+    return service.discover(: [dataUUID, enabledUUID, updatePeriodUUID])
+}
+
+discoveryFuture.onFailure { error in
+    guard let appError = error as? AppError else {
+        self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
+        return
+    }
+    switch appError {
+    case .serviceNotFound:
+        break
+    case .disconnected:
+        peripheral.reconnect()
+    case .connectionFailed:
+        peripheral.terminate()
+    }
+}
+```
+
+Finally read and subscribe to the data `Characteristic`,
+
+```swift
+public enum AppError : Error {
+    case dataCharactertisticNotFound
+    case enabledCharactertisticNotFound
+    case updateCharactertisticNotFound
+    case serviceNotFound
+    case disconnected
+    case connectionFailed
+    case invalidState
+    case resetting
+    case poweredOff
+    case unknown
+}
+
+let subscriptionFuture = discoveryFuture.flatMap { service -> Future<Characteristic> in
+    guard let dataCharacteristic = service.characteristic(dataUUID) else {
+        throw AppError.dataCharactertisticNotFound
+    }
+    self.accelerometerDataCharacteristic = dataCharacteristic
+    return self.accelerometerEnabledCharacteristic.read(timeout: 10.0)
+}.flatMap { _ -> Future<Characteristic> in
+    guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
+        throw AppError.dataCharactertisticNotFound
+    }
+    return accelerometerDataCharacteristic.startNotifying()
+}.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+    return characteristic.receiveNotificationUpdates(capacity: 10)
+}
+
+dataUpdateFuture.onFailure { [unowned self] error in
+    guard let appError = error as? AppError else {
+        self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
+        return
+    }
+    switch appError {
+    case .dataCharactertisticNotFound:
+       break
+    default:
+}
+```
+ 
 ## Peripheral
 
 A simple Peripheral application that emulates a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and services will be described. It will advertise the service and respond to characteristic write request.
