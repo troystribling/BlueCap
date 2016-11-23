@@ -57,7 +57,7 @@ public class Service {
         return self.discoverIfConnected(nil, timeout: timeout)
     }
     
-    public func discover(characteristics: [CBUUID], timeout: TimeInterval = TimeInterval.infinity) -> Future<Service> {
+    public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: TimeInterval = TimeInterval.infinity) -> Future<Service> {
         Logger.debug("uuid=\(self.UUID.uuidString), name=\(self.name)")
         return self.discoverIfConnected(characteristics, timeout: timeout)
     }
