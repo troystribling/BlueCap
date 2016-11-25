@@ -296,6 +296,8 @@ enum AppError: Error {
     case unsupported
 }
 
+let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager.example" as NSString])
+    
 let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
     switch state {
     case .poweredOn:
@@ -327,7 +329,6 @@ startAdvertiseFuture.onFailure { error in
     manager.stopAdvertising()
 }
 ```
-
 
 Now respond to write events on `accelerometerEnabledFuture` and `accelerometerUpdatePeriodFuture`.
 
@@ -408,11 +409,12 @@ carthage update
 
 BlueCap supports many features that simplify writing Bluetooth LE applications. Use cases with example implementations are described in each of the following sections.
 
-1. [Serialization/Deserialization](/Documentation/SerializationDeserialization.md): Serialization and deserialization of device messages.
+1. [CentralManager](/Documentation/CentralManager.md): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
+
+2. [PeripheralManager](/Documentation/PeripheralManager.md): The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
+
+3. [Serialization/Deserialization](/Documentation/SerializationDeserialization.md): Serialization and deserialization of device messages.
  
-2. [GATT Profile Definition](/Documentation/GATTProfileDefinition.md): Define reusable GATT profiles and add profiles to the BlueCap app.
+4. [GATT Profile Definition](/Documentation/GATTProfileDefinition.md): Define reusable GATT profiles and add profiles to the BlueCap app.
 
-3. [CentralManager](/Documentation/CentralManager.md): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
-
-4. [PeripheralManager](/Documentation/PeripheralManager.md): The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
 

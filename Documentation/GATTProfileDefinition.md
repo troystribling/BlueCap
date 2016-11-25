@@ -1,6 +1,6 @@
 # <a name="gatt">GATT Profile Definition</a>
 
-GATT profile definitions are required to add support for a device to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure `Services` and `Characteristics` as the are created and provides serialization and deserialization of `Characteristic` values to and from Strings. The examples in this section are also available in a [Playground project](/Playgrounds).
+GATT profile definitions are required to add support for a device to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app but are not required to build a functional application using the framework. Implementing a GATT profile for a device allows the framework to automatically identify and configure `Services` and `Characteristics` as they are created and provides serialization and deserialization of `Characteristic` values to and from Strings. The examples in this section are also available in a [Playground project](/Playgrounds).
 
 ##  Content
 
@@ -24,28 +24,14 @@ The `ServiceConfigurable` `protocol` is used to specify `Service` configuration 
 
 ```swift
 public protocol ServiceConfigurable {
-    static var name: String {get}
-    static var UUID: String {get}
-    static var tag: String {get}
-}
+    // Service name.
+    static var name: String { get }
+    // Service UUID.
+    static var UUID: String { get }
+    // Used to organize services in the BlueCap app profile browser.
+    static var tag: String { get }
+}}
 ```
-
-**Description**
-
-<table>
-	<tr>
-		<td>name</td>
-		<td>Service name.</td>
-	</tr>
-  <tr>
-		<td>UUID</td>
-		<td>Service UUID.</td>
-  </tr>
-  <tr>
-		<td>tag</td>
-		<td>Used to organize services in the BlueCap app profile browser.</td>
-  </tr>
-</table>
 
 ### <a name="gatt_characteristicconfigurable">CharacteristicConfigurable Protocol</a>
 
@@ -53,38 +39,18 @@ The `CharacteristicConfigurable` `protocol` is used to specify `Characteristic` 
 
 ```swift
 public protocol CharacteristicConfigurable {
-    static var name: String {get}
-    static var UUID: String {get}
-    static var permissions: CBAttributePermissions {get}
-    static var properties: CBCharacteristicProperties {get}
-    static var initialValue: NSData? {get}
+    // Characteristic name.
+    static var name: String { get }
+    // Characteristic UUID.
+    static var UUID: String { get }
+    // Charcteristic permissions
+    static var permissions: CBAttributePermissions { get }
+    // Charcteristic properties
+    static var properties: CBCharacteristicProperties { get }
+    // Characteristic initial value.
+    static var initialValue: Data? { get }
 }
 ```
-
-**Description**
-
-<table>
-	<tr>
-		<td>name</td>
-		<td>Characteristic name.</td>
-	</tr>
-  <tr>
-		<td>UUID</td>
-		<td>Characteristic UUID.</td>
-  </tr>
-  <tr>
-		<td>permissions</td>
-		<td><a href="https://developer.apple.com/library/mac/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/swift/struct/CBAttributePermissions">CBAttributePermissions</a>.</td>
-  </tr>
-  <tr>
-		<td>properties</td>
-		<td><a href="https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/#//apple_ref/swift/struct/CBCharacteristicProperties">CBCharacteristicProperties</a>.</td>
-  </tr>
-  <tr>
-		<td>initialValue</td>
-		<td>Characteristic initial value.</td>
-  </tr>
-</table>
 
 ### <a name="gatt_stringdeserializable">StringDeserializable Protocol</a>
 
@@ -92,35 +58,21 @@ The `StringDeserializable` `protocol` is used to specify conversion of rawValues
 
 ```swift
 public protocol StringDeserializable {
-    static var stringValues: [String] {get}
-    var stringValue: [String:String] {get}
-    init?(stringValue: [String:String])
+    // Used for enums to specify Strings for values but ignored for other types.
+    static var stringValues: [String] { get }
+    // The String values of the rawType.
+    var stringValue: [String:String] { get }
+    // Create object from stringValue.
+    init?(stringValue:[String:String])
 }
 ```
-
-**Description**
-
-<table>
-	<tr>
-		<td>stringValues</td>
-		<td>Used for enums to specify Strings for values but ignored for other types.</td>
-	</tr>
-  <tr>
-		<td>stringValue</td>
-		<td>The String values of the rawType.</td>
-  </tr>
-  <tr>
-		<td>init?(stringValue: [String:String])</td>
-		<td>Create object from stringValue.</td>
-  </tr>
-</table>
 
 ### <a name="gatt_serviceprofile">ServiceProfile</a>
 
 A `ServiceProfile` is used to define `Service` configuration. It can be used to instantiate either `Service` or `MutableService` objects. 
 
 ```swift
-let serviceProfile = ServiceProfile(UUID: "F000AA10-0451-4000-B000-000000000000", name: "Cool Service", rage) 
+let serviceProfile = ServiceProfile(UUID: "F000AA10-0451-4000-B000-000000000000", name: "Cool Service") 
 ```
 
 The `CharacteristicProfiles` belonging to a `ServiceProfile` are added using a method defined on `ServiceProfile`,
@@ -147,14 +99,15 @@ let serviceProfile = ConfiguredServiceProfile<AccelerometerService>()
  
 ### <a name="gatt_characteristicprofile">CharacteristicProfile</a>
 
-`CharacteristicProfile` is the base class for `CharacteristicProfile` types and is instantiated as the default Characteristic profile if one has not explicitly defined for a discovered `Characteristic`. In this case, with no `String` conversions implemented in a GATT Profile definition, a `Characteristic` will support the default `String` conversions to and from `NSData` using hexadecimal Strings. It can be used to instantiate either `Characteristic` or `MutableCharacteristic` objects.
-
-When defining a GATT profile it is sometimes convenient to specify that something be done after a `Characteristic` is discovered by a `Central`. This can be accomplished using the `CharacteristicProfile` method,
+`CharacteristicProfile` is the base class for `CharacteristicProfile` types and is instantiated as the default Characteristic profile if one was not explicitly defined for a discovered `Characteristic`. In this case, with no `String` conversions implemented in a GATT Profile definition, a `Characteristic` will support the default `String` conversions to and from `Data` using hexadecimal Strings. It can be used to instantiate either `Characteristic` or `MutableCharacteristic` objects.
 
 ```swift
-public func afterDiscovered(capacity: Int?) -> FutureStream<Characteristic>
+public init(UUID: String, name: String,
+permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable],
+properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify],
+nitialValue: Data? = nil)
 ```
-
+                
 ### <a name="gatt_rawcharacteristicprofile">RawCharacteristicProfile</a>
 
 A `RawCharacteristicProfile` object encapsulates configuration and serialization/desserialization for a `Characteristic` implementing [RawDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects and is a subclass of `CharacteristicProfile`.

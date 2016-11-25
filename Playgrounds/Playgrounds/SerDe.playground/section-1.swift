@@ -17,6 +17,11 @@ if let value: UInt8 = SerDe.deserialize(data1) {
     print("\(value)")
 }
 
+let data = SerDe.serialize(UInt8(31))
+if let value : UInt8 = SerDe.deserialize(data) {
+    print("\(value)")
+}
+
 // RawDeserializable Protocol
 enum Enabled : UInt8, RawDeserializable {
     case No  = 0
@@ -119,5 +124,3 @@ if let initValue = RawArrayPairValue(rawValue1:[10, 100], rawValue2:[-10, -100])
         print("\(value.rawValue2)")
     }
 }
-
-let manager = ProfileManager.sharedInstance
