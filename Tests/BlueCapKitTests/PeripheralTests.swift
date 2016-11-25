@@ -388,7 +388,7 @@ class PeripheralTests: XCTestCase {
         future.onFailure(context: QueueContext.global) { error in
             XCTFail()
         }
-        sleep(1)
+        sleep(3)
         XCTAssertEqual(count, 1)
     }
 
@@ -405,7 +405,7 @@ class PeripheralTests: XCTestCase {
             count += 1
             peripheral.stopPollingRSSI()
         }
-        sleep(1)
+        sleep(3)
         XCTAssertEqual(count, 1)
    }
 }

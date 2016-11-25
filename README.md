@@ -95,9 +95,9 @@ This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual)
 
 With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported. [Example applications](/Examples) are also available.
  
-## Central
+## CentralMnager
 
-A simple Central implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217), connects on peripheral discovery, discovers service and characteristics and subscribes to accelerometer data updates will be described. 
+A simple CentralManager implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217), connects on peripheral discovery, discovers service and characteristics and subscribes to accelerometer data updates will be described. 
 
 All applications begin by calling `CentralManager#whenStateChanges` which returns a `Future<Void>` completed when the `CBCentralManager` state is set to `CBCentralManagerState.PoweredOn`.
 
@@ -144,7 +144,7 @@ scanFuture.onFailure { error in
     case .resetting:
         manager.reset()
     case .poweredOff:
-        Break
+        break
     case .unknown:
         break
     }
@@ -186,14 +186,12 @@ var peripheral: Peripheral
 let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
     switch connectionEvent {
     case .connect:
-        self.updateUIStatus()
         return peripheral.discoverServices([serviceUUID])
     case .timeout:
         throw AppError.disconnected
     case .disconnect:
         throw AppError.disconnected
     case .forceDisconnect:
-        self.updateUIStatus()
         throw AppError.connectionFailed
     case .giveUp:
         throw AppError.connectionFailed
@@ -208,7 +206,6 @@ let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -
 
 discoveryFuture.onFailure { error in
     guard let appError = error as? AppError else {
-        self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
         return
     }
     switch appError {
@@ -266,9 +263,9 @@ dataUpdateFuture.onFailure { [unowned self] error in
  
 These examples can be written as a single chain of `flatMap`s as shown in the  [Central Example](/Examples/Central).
 
-## Peripheral
+## PeripheralManager
 
-A simple Peripheral application that emulates a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with all characteristics and services will be described. It will advertise the service and respond to characteristic write request.
+A simple `PeripheralManager` application that emulates a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with a all `Characteristics` will be described. It will advertise the service and respond to characteristic write request.
 
 First the `Characteristics` and `Service` are created,
 
