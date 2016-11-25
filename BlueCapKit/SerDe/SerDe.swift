@@ -62,8 +62,8 @@ public protocol ServiceConfigurable {
 
 public protocol StringDeserializable {
     static var stringValues: [String] { get }
-    var stringValue: [String:String] { get }
-    init?(stringValue:[String:String])
+    var stringValue: [String : String] { get }
+    init?(stringValue:[String : String])
 }
 
 public protocol RawDeserializable {

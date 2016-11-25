@@ -61,11 +61,13 @@ public protocol StringDeserializable {
     // Used for enums to specify Strings for values but ignored for other types.
     static var stringValues: [String] { get }
     // The String values of the rawType.
-    var stringValue: [String:String] { get }
+    var stringValue: [String : String] { get }
     // Create object from stringValue.
-    init?(stringValue:[String:String])
+    init?(stringValue:[String : String])
 }
 ```
+
+`String` values of `Characteristics` are assumed to be `Dictionaries` containing the name-value pairs.
 
 ### <a name="gatt_serviceprofile">ServiceProfile</a>
 
@@ -99,15 +101,27 @@ let serviceProfile = ConfiguredServiceProfile<AccelerometerService>()
  
 ### <a name="gatt_characteristicprofile">CharacteristicProfile</a>
 
-`CharacteristicProfile` is the base class for `CharacteristicProfile` types and is instantiated as the default Characteristic profile if one was not explicitly defined for a discovered `Characteristic`. In this case, with no `String` conversions implemented in a GATT Profile definition, a `Characteristic` will support the default `String` conversions to and from `Data` using hexadecimal Strings. It can be used to instantiate either `Characteristic` or `MutableCharacteristic` objects.
+`CharacteristicProfile` is the base class for `CharacteristicProfile` types and is instantiated as the default Characteristic profile if one was not explicitly defined for a discovered `Characteristic`. In this case, with no `String` conversions implemented in a GATT Profile definition, a `Characteristic` will support the default `String` conversions to and from `Data` using hexadecimal Strings. It can be used to instantiate either `Characteristic` or `MutableCharacteristic` objects. `CharacteristicProfile` have the following initializer,
 
 ```swift
-public init(UUID: String, name: String,
-permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable],
-properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify],
-nitialValue: Data? = nil)
+public init(UUID: String, name: String, permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable], properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify], initialValue: Data? = nil)
+
+public convenience init(UUID: String)
 ```
-                
+   
+Default implementations are provided forth following methods,
+
+```swift
+public func propertyEnabled(_ property: CBCharacteristicProperties) -> Bool
+    
+public func permissionEnabled(_ permission: CBAttributePermissions) -> Bool
+        
+public func stringValue(_ data: Data) -> [String : String]?
+    
+public func data(fromString data: [String : String]) -> Data? 
+```             
+
+
 ### <a name="gatt_rawcharacteristicprofile">RawCharacteristicProfile</a>
 
 A `RawCharacteristicProfile` object encapsulates configuration and serialization/desserialization for a `Characteristic` implementing [RawDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects and is a subclass of `CharacteristicProfile`.
@@ -115,27 +129,37 @@ A `RawCharacteristicProfile` object encapsulates configuration and serialization
 The `CharacteristicProfile` type for the [TiSensorTag Accelerometer Service](BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) Enabled `Characteristic` implementing `RawDeserializable`, `StringDeserializable`, `CharacteristicConfigurable` is given by,
 
 ```swift
-enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
-    case No = 0
-    case Yes = 1
+public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
+    public typealias RawType = UInt8
 
+    case no = 0
+    case yes = 1
+    
     // CharacteristicConfigurable
-    static let UUID = "F000AA12-0451-4000-B000-000000000000"
-    static let name = "Accelerometer Enabled"
-    static let properties: CBCharacteristicProperties = [.Read, .Write]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue : NSData? = Serde.serialize(Enabled.No.rawValue)
-    
+    public static let UUID = "F000AA12-0451-4000-B000-000000000000"
+    public static let name = "Accelerometer Enabled"
+    public static let properties: CBCharacteristicProperties = [.read, .write]
+    public static let permissions: CBAttributePermissions = [.readable, .writeable]
+    public static let initialValue: Foundation.Data? = SerDe.serialize(Enabled.no.rawValue)
+
     // StringDeserializable
-    static let stringValues = ["No", "Yes"]
+    public static let stringValues = ["No", "Yes"]
     
-    init?(stringValue:[String:String]) {
+    public init(boolValue: Bool) {
+        if boolValue {
+            self = Enabled.yes
+        } else {
+            self = Enabled.no
+        }
+    }
+    
+    public init?(stringValue: [String: String]) {
         if let value = stringValue[Enabled.name] {
             switch value {
             case "Yes":
-                self = Enabled.Yes
+                self = Enabled.yes
             case "No":
-                self = Enabled.No
+                self = Enabled.no
             default:
                 return nil
             }
@@ -144,35 +168,45 @@ enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicCon
         }
     }
     
-    var stringValue : [String:String] {
+    public var stringValue: [String: String] {
         switch self {
-        case .No:
+        case .no:
             return [Enabled.name:"No"]
-        case .Yes:
+        case .yes:
             return [Enabled.name:"Yes"]
+        }
+    }
+    
+    public var boolValue: Bool {
+        switch self {
+        case .no:
+            return false
+        case .yes:
+            return true
         }
     }
 }
 ```
 
-To instantiate a profile in an application,
-
 ```swift
-let profile = RawCharacteristicProfile<Enabled>()
+if let value = Enabled(stringValue:[Enabled.name:"Yes"]) {
+    print(value.stringValue)
+}
 ```
 
 ### <a name="gatt_rawarraycharacteristicprofile">RawArrayCharacteristicProfile</a>
 
-A RawArrayCharacteristicProfile object encapsulates configuration and serialization/deserialization for a characteristic implementing [RawArrayDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawarraydeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects. An example profile for an `[Int8]` raw value implementing `RawArrayDeserializable`, `CharacteristicConfigurable` and `StringDeserializable` is given by,
+A `RawArrayCharacteristicProfile` object encapsulates configuration and serialization/deserialization for a characteristic implementing [RawArrayDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawarraydeserializable). It can be used to instantiate both Characteristic and MutableCharacteristic objects. An example profile for an `[Int8]` raw value implementing `RawArrayDeserializable`, `CharacteristicConfigurable` and `StringDeserializable` is given by,
 
 ```swift
 struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
+    
     // CharacteristicConfigurable
     static let UUID = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
     static let properties: CBCharacteristicProperties = [.Read, .Write]
     static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue : NSData? = Serde.serialize(ArrayData(rawValue:[1,2])!)
+    static let initialValue: NSData? = SerDe.serialize(ArrayData(rawValue:[1,2])!)
     
     // RawArrayDeserializable
     let rawValue : [Int8]
@@ -191,26 +225,34 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     
     var stringValue : Dictionary<String,String> {
         return ["value1":"\(self.rawValue[0])",
-                "value2":"\(self.rawValue[1])"]
+            "value2":"\(self.rawValue[1])"]
     }
     
     init?(stringValue:[String:String]) {
         if  let stringValue1 = stringValue["value1"],
-                stringValue2 = stringValue["value2"],
-                value1 = Int8(stringValue: stringValue1),
-                value2 = Int8(stringValue: stringValue2) {
-            self.rawValue = [value1, value2]
+            stringValue2 = stringValue["value2"],
+            value1 = Int8(stringValue1),
+            value2 = Int8(stringValue2) {
+                self.rawValue = [value1, value2]
         } else {
             return nil
         }
     }
+}
+
+if let value = ArrayData(rawValue: [1, 100]) {
+    print(value.rawValue)
+}
+
+if let value = ArrayData(stringValue:["value1":"1", "value2":"100"]) {
+    print(value.stringValue)
 }
 ```
 
 To instantiate a profile in an application,
 
 ```swift
-let profile = RawArrayCharacteristicProfile<ArrayData>()
+let profile = RawArrayPairCharacteristicProfile<PairData>()
 ```
 
 ### <a name="gatt_rawpaircharacteristicprofile">RawPairCharacteristicProfile</a>
@@ -259,7 +301,7 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
 To instantiate a profile in an application,
 
 ```swift
-let profile = RawPairCharacteristicProfile<PairData>()
+let profile = RawArrayPairCharacteristicProfile<PairData>()
 ```
 
 ### <a name="gatt_rawarraypaircharacteristicprofile">RawArrayPairCharacteristicProfile</a>
@@ -267,54 +309,58 @@ let profile = RawPairCharacteristicProfile<PairData>()
 A `RawArrayPairCharacteristicProfile` object encapsulates configuration and serialization/deserialization for a characteristic implementing [RawArrayPairDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawarraypairdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects. An example profile for `[UInt8]` and `[Int8]` raw values implementing `RawArrayPairDeserializable`, `CharacteristicConfigurable` and `StringDeserializable` is given by,
 
 ```swift
-struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
+struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {
+    
     // CharacteristicConfigurable
     static let UUID = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
-    static let properties: CBCharacteristicProperties = [.Read, .Write]
+    static let properties: CBCharacteristicProperties = [.Read, .Notify]
     static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue : NSData? = Serde.serialize()
-            
-	  // RawArrayPairDeserializable
-	  let rawValue1 : [UInt8]
-	  let rawValue2 : [Int8]
-	  static let UUID = "F000AA13-0451-4000-B000-000000000000"
-	  static let size1 = 2
-	  static let size2 = 2
-	
+    static let initialValue: NSData? = SerDe.serialize(ArrayPairData(rawValue1:[1,2], rawValue2:[-1, -2])!)
+    
+    // RawArrayDeserializable
+    let rawValue1 : [UInt8]
+    let rawValue2 : [Int8]
+    static let size1 = 2
+    static let size2 = 2
+    
     init?(rawValue1:[UInt8], rawValue2:[Int8]) {
         if rawValue1.count == 2 && rawValue2.count == 2 {
             self.rawValue1 = rawValue1
-	        self.rawValue2 = rawValue2
-	     } else {
-            return nil
-	     }
-    }
-            
-    // StringDeserializable
-    static let stringValues = [String]()
-            
-    var stringValue : Dictionary<String,String> {
-        return ["value11":"\(self.rawValue1[0])",
-                "value12":"\(self.rawValue1[1])"],
-                "value21":"\(self.rawValue2[0])",
-                "value22":"\(self.rawValue2[1])"]}
-
-    init?(stringValue:[String:String]) {
-	      if  let stringValue11 = stringValue["value11"], 
-                   stringValue12 = stringValue["value12"],
-                   value11 = Int8(stringValue: stringValue11),
-                   value12 = Int8(stringValue: stringValue12),
-                   stringValue21 = stringValue["value21"], 
-                   stringValue22 = stringValue["value22"]
-                   value21 = Int8(stringValue: stringValue21),
-                   value22 = Int8(stringValue: stringValue22) {
-            self.rawValue1 = [value11, value12]
-            self.rawValue2 = [value21, value22]
+            self.rawValue2 = rawValue2
         } else {
             return nil
         }
-    }            
+    }
+    
+    // StringDeserializable
+    static let stringValues = [String]()
+    
+    var stringValue : Dictionary<String,String> {
+        return ["value11":"\(self.rawValue1[0])",
+            "value12":"\(self.rawValue1[1])",
+            "value21":"\(self.rawValue2[0])",
+            "value22":"\(self.rawValue2[1])"]}
+    
+    init?(stringValue:[String:String]) {
+        if  let stringValue11 = stringValue["value11"],
+            stringValue12 = stringValue["value12"],
+            value11 = UInt8(stringValue11),
+            value12 = UInt8(stringValue12),
+            stringValue21 = stringValue["value21"],
+            stringValue22 = stringValue["value22"],
+            value21 = Int8(stringValue21),
+            value22 = Int8(stringValue22) {
+                self.rawValue1 = [value11, value12]
+                self.rawValue2 = [value21, value22]
+        } else {
+            return nil
+        }
+    }
+}
+
+if let value = ArrayPairData(stringValue:["value11":"1", "value12":"2", "value21":"-1", "value22":"-2"]) {
+    print(value.stringValue)
 }
 ```
 
@@ -335,7 +381,7 @@ struct SerialNumber : CharacteristicConfigurable {
     static let name = "Device Serial Number"
     static let permissions: CBAttributePermissions = [.Readable, .Writeable]
     static let properties: CBCharacteristicProperties = [.Read]
-    static let initialValue = Serde.serialize("AAA11")          
+    static let initialValue = SerDe.serialize("AAA11")
 }
 ```
 
@@ -347,7 +393,7 @@ let profile = StringCharacteristicProfile<SerialNumber>()
 
 ### <a name="gatt_profilemanager">ProfileManager</a>
 
-`ProfileManager` is used by the `BlueCap` app as a repository of GATT profiles to be used to instantiate `Services` and `Characteristics`. `ProfileManager` can be used in any application but is not required the framework.
+`ProfileManager` is used by the `BlueCap` app as a repository of GATT profiles to be used to instantiate `Services` and `Characteristics`. `ProfileManager` can be used in any application but is not required.
 
 A `ServiceProfile` is added to `ProfileManager` using a method defined on `ProfileManager`,
 
@@ -358,7 +404,7 @@ public func addService(serviceProfile: ServiceProfile) -> ServiceProfile
 To add `ServiceProfiles` and `CharacteristicProfiles` to `ProfileManager`,
 
 ```swift
-let profileManager = ProfileManager.sharedInstance
+let profileManager = ProfileManager()
 
 // create service profile
 let serviceProfile = ConfiguredServiceProfile<AccelerometerService>()
@@ -377,65 +423,5 @@ profileManager.addService(serviceProfile)
 
 ### <a name="gatt_add_profile">Add Profile to BlueCap App</a>
 
-To add a GATT Profile to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app you need to add a file to the project containing all `ServiceProfiles` and `CharacteristicProfiles`  with public access level. See [GnosusProfiles](/BlueCapKit/Service%20Profile%20Definitions/GnosusProfiles.swift) in the BlueCap Project for an example. A very example is to consider a Service with a single Characteristic.
-
-
-```swift
-public struct MyServices {
-    
-    // Service
-    public struct NumberService : ServiceConfigurable  {
-        public static let UUID  = "F000AA10-0451-4000-B000-000000000000"
-        public static let name  = "NumberService"
-        public static let tag   = "My Services"
-    }
-    
-    // Characteristic
-    public struct Number : RawDeserializable, StringDeserializable, CharacteristicConfigurable {
-        
-        public let rawValue : Int16
-        
-        public init?(rawValue:Int16) {
-            self.rawValue = rawValue
-        }
-        
-        public static let UUID = "F000AA12-0451-4000-B000-000000000000"
-        public static let name = "Number"
-        public static let properties: CBCharacteristicProperties = [.Read, .Notify]
-        public static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-        public static let initialValue : NSData? = Serde.serialize(Int16(22))
-        
-        public static let stringValues = [String]()
-        
-        public init?(stringValue:[String:String]) {
-            if let svalue = stringValue[Number.name], value = Int16(stringValue:svalue) {
-                self.rawValue = value
-            } else {
-                return nil
-            }
-        }
-        
-        public var stringValue : [String:String] {
-            return [Number.name:"\(self.rawValue)"]
-        }
-    }
-    
-    // add to ProfileManager
-    public static func create() {
-        let profileManager = ProfileManager.sharedInstance
-        let service = ConfiguredServiceProfile<NumberService>()
-        let characteristic = RawCharacteristicProfile<Number>()
-        service.addCharacteristic(characteristic)
-        profileManager.addService(service)
-    }
-    
-}
-```
-
-Next place,
-
-```swift
-MyServices.create()
-```
-
-in the BlueCap [AppDelegate.swift](/Examples/BlueCap/BlueCap/AppDelegate.swift#L57-60) and rebuild the app.
+To add a GATT Profile to the [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app you need to add a file to the project containing all `ServiceProfiles` and `CharacteristicProfiles` with public access level. See [GnosusProfiles](/BlueCapKit/Service%20Profile%20Definitions/GnosusProfiles.swift) in the BlueCap Project for an example. 
+Add the profile to BlueCap in [AppDelegate.swift](/Examples/BlueCap/BlueCap/AppDelegate.swift#L61-64).

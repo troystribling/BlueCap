@@ -113,15 +113,15 @@ public struct TISensorTag {
         public enum Enabled: UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
             public typealias RawType = UInt8
 
-            case no     = 0
-            case yes    = 1
+            case no = 0
+            case yes = 1
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "F000AA12-0451-4000-B000-000000000000"
-            public static let name                                      = "Accelerometer Enabled"
-            public static let properties: CBCharacteristicProperties    = [.read, .write]
-            public static let permissions: CBAttributePermissions       = [.readable, .writeable]
-            public static let initialValue: Foundation.Data?            = SerDe.serialize(Enabled.no.rawValue)
+            public static let UUID = "F000AA12-0451-4000-B000-000000000000"
+            public static let name = "Accelerometer Enabled"
+            public static let properties: CBCharacteristicProperties = [.read, .write]
+            public static let permissions: CBAttributePermissions = [.readable, .writeable]
+            public static let initialValue: Foundation.Data? = SerDe.serialize(Enabled.no.rawValue)
 
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
