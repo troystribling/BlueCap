@@ -107,7 +107,7 @@ let manager = CentralManager(options: [CBCentralManagerOptionRestoreIdentifierKe
 let stateChangeFuture = manager.whenStateChanges()
 ```
 
-To start scanning for `Peripherals` advertising the [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) follow `whenStateChanges()` with `CentralManager#startScanning` and combine the two with the [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream#flatMap` combinator. An application error object is also defined,
+To start scanning for `Peripherals` advertising the [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-218) follow `whenStateChanges()` with `CentralManager#startScanning` and combine the two with the [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream#flatMap` combinator. An application error object is also defined,
 
 ```swift
 public enum AppError : Error {
@@ -261,100 +261,110 @@ dataUpdateFuture.onFailure { [unowned self] error in
 }
 ```
  
-These examples can be written as a single chain of `flatMap`s as shown in the  [Central Example](/Examples/Central).
+These examples can be written as a single `flatMap` chain as shown in the  [CentralManager Example](/Examples/CentralManager).
 
 ## PeripheralManager
 
-A simple `PeripheralManager` application that emulates a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217) with a all `Characteristics` will be described. It will advertise the service and respond to characteristic write request.
+A simple `PeripheralManager` application that emulates a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-218) supporting all `Characteristics` will be described. It will advertise the service and respond to characteristic write requests on the writable `Characteristics`.
 
-First the `Characteristics` and `Service` are created,
+First the `Characteristics` and `Service` are created and the `Characteristics` are then added to `Service`
 
 ```swift
 // create accelerometer service
-let accelerometerService = 
-    MutableService(
-      profile:  ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
+let accelerometerService = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
 
 // create accelerometer data characteristic
-let accelerometerDataCharacteristic =
-    MutableCharacteristic(
-      profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
   
 // create accelerometer enabled characteristic
-let accelerometerEnabledCharacteristic = 
-    MutableCharacteristic(
-      profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
+let accelerometerEnabledCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
   
 // create accelerometer update period characteristic
-let accelerometerUpdatePeriodCharacteristic = 
-    MutableCharacteristic(
-      profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
+let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
 
 // add characteristics to service
-accelerometerService.characteristics = 
-    [accelerometerDataCharacteristic,
-     accelerometerEnabledCharacteristic,
-     accelerometerUpdatePeriodCharacteristic]
+accelerometerService.characteristics = [accelerometerDataCharacteristic, accelerometerEnabledCharacteristic, accelerometerUpdatePeriodCharacteristic]
 ```
 
-Next respond to write events on the `Enabled Characteristic`,
+Next create the `PeripheralManager` add the `Service` and start advertising.
 
 ```swift
-let accelerometerEnabledFuture = 
-  self.accelerometerEnabledCharacteristic.startRespondingToWriteRequests()
-  
-accelerometerEnabledFuture.onSuccess { request in  
-    if request.value.length == 1 {
-        accelerometerEnabledCharacteristic.value = request.value
-        accelerometerEnabledCharacteristic.respondToRequest(
-		      request, withResult: CBATTError.Success)
-    } else {
-        accelerometerEnabledCharacteristic.respondToRequest(
-	        request, withResult: CBATTError.InvalidAttributeValueLength)
-	}
+enum AppError: Error {
+    case invalidState
+    case resetting
+    case poweredOff
+    case unsupported
+}
+
+let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
+    switch state {
+    case .poweredOn:
+        manager.removeAllServices()
+        return manager.add(self.accelerometerService)
+    case .poweredOff:
+        throw AppError.poweredOff
+    case .unauthorized, .unknown:
+        throw AppError.invalidState
+    case .unsupported:
+        throw AppError.unsupported
+    case .resetting:
+        throw AppError.resetting
+    }
+}.flatMap { _ -> Future<Void> in 
+
+manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.UUID)])
+}
+
+startAdvertiseFuture.onFailure { error in
+    switch error {
+    case AppError.poweredOff:
+        manager.reset()            
+    case AppError.resetting:
+        manager.reset()
+    default:
+	      break
+    }
+    manager.stopAdvertising()
 }
 ```
 
-and respond to write events on the `Update Period Characteristic`,
+
+Now respond to write events on `accelerometerEnabledFuture` and `accelerometerUpdatePeriodFuture`.
 
 ```swift
-let accelerometerUpdatePeriodFuture =
-    accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
-  
-accelerometerUpdatePeriodFuture.onSuccess { request in
-    if request.value.length > 0 && request.value.length <= 8 {
-        accelerometerUpdatePeriodCharacteristic.value = request.value
-        accelerometerUpdatePeriodCharacteristic.respondToRequest(
-		      request, withResult: CBATTError.Success)
-	} else {
-	    accelerometerUpdatePeriodCharacteristic.respondToRequest(
-          request, withResult: CBATTError.InvalidAttributeValueLength)
-	}
+// respond to Update Period write requests
+let accelerometerUpdatePeriodFuture = startAdvertiseFuture.flatMap {
+
+accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
+}
+
+accelerometerUpdatePeriodFuture.onSuccess {  (request, _) in
+    guard let value = request.value, value.count > 0 && value.count <= 8 else {
+        return
+    }
+    self.accelerometerUpdatePeriodCharacteristic.value = value
+    self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
+}
+
+// respond to Enabled write requests
+let accelerometerEnabledFuture = startAdvertiseFuture.flatMap {
+    accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity: 2)
+}
+
+accelerometerEnabledFuture.onSuccess { (request, _) in
+    guard let value = request.value, value.count == 1 else {
+        return
+    }
+    self.accelerometerEnabledCharacteristic.value = request.value
+    self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.success)
 }
 ```
 
-Next power on the `PeripheralManager`, add services and start advertising.
-
-```swift
-let manager = PeripheralManager()
-
-let startAdvertiseFuture = manager.powerOn().flatmap { _ -> Future<Void> in
-	manager.removeAllServices()
-	manager.addService(accelerometerService)
-}.flatmap { _ -> Future<Void> in
-    manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [uuid])
-}
-
-startAdvertiseFuture.onSuccess {
-}
-
-startAdvertiseFuture.onFailure {error in
-}
-```
+See [PeripheralManager Example](/Examples/PeripheralManager) for details.
 
 ## Examples
 
-[Examples](/Examples) are available that implement both Central and Peripheral roles. The [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require installing the Pod before building,
+[Examples](/Examples) are available that implement both CentralManager and PeripheralManager. The [BluCap](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#) app is also available. The example projects are constructed using either [CocoaPods](https://cocoapods.org) or [Carthage](https://github.com/Carthage/Carthage). The CocaPods projects require installing the Pod before building,
 
 ```bash
 pod install
@@ -369,22 +379,22 @@ carthage update
 <table>
 	<tr>
 		<td><a href="/Examples/BlueCap">BlueCap</a></td>
-		<td>BlueCap provides Central, Peripheral and iBeacon Ranging Bluetooth LE functions and implementations of GATT profiles. In Central mode a scanner for Bluetooth LE peripherals is provided. In peripheral mode an emulation of any of the included GATT profiles or an iBeacon is supported. In iBeacon Ranging mode beacon regions can be configured and monitored.</td>
+		<td>BlueCap provides CentralManager, PeripheralManager and iBeacon Ranging with implementations of GATT profiles. In CentralManager mode a scanner for Bluetooth LE peripherals is provided. In PeripheralManager mode an emulation of any of the included GATT profiles or an iBeacon is supported. In iBeacon Ranging mode beacon regions can be configured and monitored.</td>
 	</tr>
 	<tr>
-		<td><a href="/Examples/Central">Central</a></td>
-		<td>Central implements the BLE Central role scanning for services advertising TiSensorTag Accelerometer Service. When a peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
+		<td><a href="/Examples/CentralManager">CentralManager</a></td>
+		<td>CentralManager implements a BLE CentralManager scanning for services advertising the TiSensorTag Accelerometer Service. When a Peripheral is discovered a connection is established, services are discovered, the accelerometer is enabled and the application subscribes to accelerometer data updates. It is also possible to change the data update period.</td>
 	</tr>
 	<tr>
-		<td><a href="/Examples/CentralWithProfile">CentralWithProfile</a></td>
-		<td>A version of Central that uses GATT Profile Definitions to create services.</td>
+		<td><a href="/Examples/CentralManagerWithProfile">CentralManagerWithProfile</a></td>
+		<td>A version of CentralManager that uses GATT Profile Definitions to create services.</td>
 	</tr>
 	<tr>
-		<td><a href="/Examples/Peripheral">Peripheral</a></td>
-		<td>Peripheral implements the BLE Peripheral role advertising a TiSensorTag Accelerometer Service. Peripheral uses the onboard accelerometer to provide data notification updates.</td>
+		<td><a href="/Examples/PeripheralManager">PeripheralManager</a></td>
+		<td>PeripheralManager implements a BLE PeripheralManager advertising a TiSensorTag Accelerometer Service. PeripheralManager uses the onboard accelerometer to provide data updates.</td>
 	</tr>
 	<tr>
-		<td><a href="Examples/PeripheralWithProfile">PeripheralWithProfile</a></td>
+		<td><a href="Examples/PeripheralManagerWithProfile">PeripheralManagerWithProfile</a></td>
 		<td>A version of Peripheral that uses GATT Profile Definitions to create services.</td>
 	</tr>
 	<tr>
