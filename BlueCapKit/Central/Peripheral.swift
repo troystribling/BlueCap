@@ -251,7 +251,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    public func startPollingRSSI(_ period: Double = 10.0, capacity: Int = Int.max) -> FutureStream<Int> {
+    public func startPollingRSSI(period: Double = 10.0, capacity: Int = Int.max) -> FutureStream<Int> {
         return centralQueue.sync {
             if let pollRSSIPromise = self.pollRSSIPromise {
                 return pollRSSIPromise.stream

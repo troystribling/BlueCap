@@ -416,6 +416,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C72825FC0D815BF731B54A52 /* Pods-BlueCapKitTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Info.plist;
@@ -431,6 +432,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C4C26BD9B7C11D221021AAC6 /* Pods-BlueCapKitTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Info.plist;
