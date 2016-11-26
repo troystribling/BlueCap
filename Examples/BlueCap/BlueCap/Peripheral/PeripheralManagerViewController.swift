@@ -197,9 +197,9 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         future.onSuccess { _ in
             self.setUIState()
         }
-        future.onFailure { (error) in
-            self.setUIState()
-            self.present(UIAlertController.alert(title: "Add Services Error", error:error), animated:true, completion:nil)
+        future.onFailure { [weak self] error in
+            self?.setUIState()
+            self?.present(UIAlertController.alert(title: "Add Services Error", error:error), animated:true, completion:nil)
         }
     }
 

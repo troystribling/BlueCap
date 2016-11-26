@@ -61,8 +61,8 @@ public struct PeripheralAdvertisements {
         return self.advertisements[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
     }
     
-    public var serviceData: [CBUUID:Data]? {
-        return self.advertisements[CBAdvertisementDataServiceDataKey] as? [CBUUID:Data]
+    public var serviceData: [CBUUID : Data]? {
+        return self.advertisements[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data]
     }
     
     public var overflowServiceUUIDs: [CBUUID]? {

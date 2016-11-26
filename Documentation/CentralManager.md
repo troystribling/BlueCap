@@ -1,10 +1,10 @@
 # <a name="central">CentralManager</a>
 
-The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegate`](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [`CBPeripheralDelegate`](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala Futures interface using [`SimpleFutures`](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks, allow chaining asynchronous calls, error handling and error recovery. Also, provided are callbacks for connection events and connection, service discovery and service scan timeouts. This section will give example implementations for all supported use cases.
+The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegate`](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [`CBPeripheralDelegate`](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with with a Scala Futures interface using [`SimpleFutures`](https://github.com/troystribling/SimpleFutures). Futures provide an interface for performing nonblocking asynchronous requests and serialization of multiple requests. This section will give example implementations for supported use cases.
 
 ## Contents
 
-* [PowerOn/PowerOff](#central_poweron_poweroff): Detect when the bluetooth transceiver is powered on and off.
+* [State Change](#central_state_change): Detect when the `CBCentralManager` changes state.
 * [Service Scanning](#central_service_scanning): Scan for services.
 * [Peripheral Advertisements](#central_peripheral_advertisements): Access Advertisements of discovered Peripherals.
 * [Peripheral Connection](#central_peripheral_connection): Connect to discovered Peripherals.
@@ -18,31 +18,52 @@ The `BlueCap` `CentralManager` implementation replaces [`CBCentralManagerDelegat
 * [Errors](#central_errors): Description of all errors.
 * [Statistics](#central_errors): Peripheral connection statistics.
  
-### <a name="central_poweron_poweroff">PowerOn/PowerOff</a>
+### <a name="central_state_change">PowerOn/PowerOff</a>
 
-The state of the Bluetooth transceiver on a device is communicated to an application by the `CentralManager` methods,
-
-```swift
-public func whenPowerOn() -> Future<Void>
-public func whenPowerOff() -> Future<Void>
-```
-
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>`. For an application to process events,
+`ManagerState` is a direct mapping to [`CBManagerState`](https://developer.apple.com/reference/corebluetooth/cbmanagerstate) namely,
 
 ```swift
-let manager = CentralManager()
-let powerOnFuture = manager.whenPowerOn()
-powerOnFuture.onSuccess {
-}
-powerOnFuture.onFailure { error in
-}
-
-let powerOffFuture = manager.whenPowerOff()
-powerOffFuture.onSuccess {
+public enum ManagerState: CustomStringConvertible {
+    case unauthorized
+    case unknown
+    case unsupported
+    case resetting
+    case poweredOff
+    case poweredOn
 }
 ```
 
-When `CentralManager` is instantiated a message giving the current Bluetooth transceiver state is received. After instantiation messages are received if the transceiver is powered on or powered off. `CentralManager#whenPowerOff` cannot fail. `CentralManager#whenPowerOn` only fails if Bluetooth is not supported.
+The state of `CBCentralManager` is communicated to an application by the `CentralManager` method,
+
+```swift
+public func whenStateChanges() -> FutureStream<ManagerState>
+```
+
+To process events,
+
+```swift
+let Manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
+
+let stateChangeFuture = manager.whenStateChanges()
+
+stateChangeFuture.onSuccess { state in
+    switch state {
+        case .poweredOn:
+            break
+        case .poweredOff, .unauthorized:
+            break
+        case .resetting:
+            break
+        case .unknown:
+            break
+        case .unsupported:
+            break
+    }
+}
+
+stateChangeFuture.onFailure { error in
+}
+```
 
 ### <a name="central_service_scanning">Service Scanning</a>
 
@@ -50,10 +71,10 @@ Scans for advertising peripherals are initiated by calling the `CentralManager` 
 
 ```swift
 // Scan promiscuously for all advertising peripherals
-public func startScanning(capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
+public func startScanning(capacity: Int = Int.max, duration: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral>
 
 // Scan for peripherals advertising services with UUIDs
-public func startScanningForServiceUUIDs(UUIDs: [CBUUID]?, capacity: Int? = nil, timeout: Double = Double.infinity, options: [String:AnyObject]? = nil) -> FutureStream<Peripheral>
+ public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, duration: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral>
 ```
 
 Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the discovered `Peripheral`.
@@ -70,8 +91,8 @@ The input parameters for both methods are,
 		<td>FutureStream capacity. The default value is infinite.</td>
 	</tr>
 	<tr>
-		<td>timeout</td>
-		<td>Scan timeout in seconds. The default value is infinite.</td>
+		<td>duration</td>
+		<td>Duration of scan. An error is thrown an scanning stops if nothing is discovered.</td>
 	</tr>
 	<tr>
 		<td>options</td>
@@ -82,15 +103,36 @@ The input parameters for both methods are,
 An application starts scanning for `Peripherals` advertising `Services` with `UUIDs` after power on with the following,
 
 ```swift
-let manager = CentralManager()
-let serviceUUID = CBUUID(string: "F000AA10-0451-4000-B000-000000000000")!
+public enum AppError : Error {
+    case invalidState
+    case resetting
+    case poweredOff
+    case unknown
+}
 
-let peripheraDiscoveredFuture = manager.whenPowerOn().flatmap {
-	manager.startScanningForServiceUUIDs([serviceUUID])
+let Manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
+
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+
+let scanFuture = manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
+    switch state {
+    case .poweredOn:
+        return self.manager.startScanning(forServiceUUIDs: [serviceUUID], capacity: 10)
+    case .poweredOff:
+        throw AppError.poweredOff
+    case .unauthorized, .unsupported:
+        throw AppError.invalidState
+    case .resetting:
+        throw AppError.resetting
+    case .unknown:
+        throw AppError.unknown
+    }
 }
-peripheraDiscoveredFuture.onSuccess { peripheral in
-}
-peripheraDiscoveredFuture.onFailure { error in
+
+scanFuture { error in
+    guard let appError = error as? AppError else {
+        return
+    }
 }
 ```
 
@@ -100,13 +142,6 @@ To stop a peripheral scan use the `CentralManager` method,
 public func stopScanning()
 ```
 
-to use in an application call,
-
-```swift
-let manager = CentralManager()
-manager.stopScanning()
-```
-
 ### <a name="central_peripheral_advertisements">Peripheral Advertisements</a>
 
 `Peripheral` advertisements are encapsulated by the  `PeripheralAdvertisements` `struct` defined by,
@@ -114,28 +149,28 @@ manager.stopScanning()
 ```swift
 public struct PeripheralAdvertisements {
     // Local peripheral name with key CBAdvertisementDataLocalNameKey
-    public var advertisedLocalName : String? 
+    public var localName: String? 
 
     // Manufacture data with key CBAdvertisementDataManufacturerDataKey    
-    public var advertisedManufactuereData : NSData? 
+    public var manufactuereData: Data? 
 
     // Tx power with with key CBAdvertisementDataTxPowerLevelKey
-    public var advertisedTxPower : NSNumber? 
+    public var txPower: NSNumber? 
 
     // Is connectable with key CBAdvertisementDataIsConnectable
-    public var advertisedIsConnectable : NSNumber? 
+    public var isConnectable: NSNumber? 
     
     // Advertised service UUIDs with key CBAdvertisementDataServiceUUIDsKey
-    public var advertisedServiceUUIDs : [CBUUID]? 
+    public var serviceUUIDs: [CBUUID]? 
 
     // Advertised service data with key CBAdvertisementDataServiceDataKey
-    public var advertisedServiceData : [CBUUID:NSData]? 
+    public var serviceData: [CBUUID : Data]? 
 
     // Advertised overflow services with key CBAdvertisementDataOverflowServiceUUIDsKey
-    public var advertisedOverflowServiceUUIDs : [CBUUID]? 
+    public var overflowServiceUUIDs: [CBUUID]? 
 
     // Advertised solicited services with key CBAdvertisementDataSolicitedServiceUUIDsKey
-    public var advertisedSolicitedServiceUUIDs : [CBUUID]?
+    public var solicitedServiceUUIDs: [CBUUID]?
 }
 ```
 
@@ -152,7 +187,11 @@ After discovering a `Peripheral` a connection must be established to run discove
 
 ```swift
 public enum ConnectionEvent {
-    case Connect, Timeout, Disconnect, ForceDisconnect, GiveUp
+    case connect
+    case timeout
+    case disconnect
+    case forceDisconnect
+    case giveUp
 }
 ```
 
@@ -162,23 +201,23 @@ public enum ConnectionEvent {
     <th>Description</th>
   </tr>
 	<tr>
-		<td>Connect</td>
+		<td>connect</td>
 		<td>Connected to peripheral.</td>
 	</tr>
 	<tr>
-		<td>Timeout</td>
+		<td>timeout</td>
 		<td>Connection attempt timeout.</td>
 	</tr>
 	<tr>
-		<td>Disconnect</td>
+		<td>disconnect</td>
 		<td>Peripheral disconnected.</td>
 	</tr>
 	<tr>
-		<td>ForceDisconnect</td>
+		<td>forceDisconnect</td>
 		<td>Peripheral disconnected by application.</td>
 	</tr>
 	<tr>
-		<td>GiveUp</td>
+		<td>giveUp</td>
 		<td>Give up trying to connect.</td>
 	</tr>
 </table>
@@ -186,7 +225,7 @@ public enum ConnectionEvent {
 To connect to a `Peripheral` use The `Peripheral` method,
 
 ```swift
-public func connect(capacity: Int? = nil, timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: Double = Double.infinity) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>
+public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>
 ```
 
 The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream(peripheral: Peripheral, connectionEvent: ConnectionEvent)>` yielding a tuple containing the connected `Peripheral` and the `ConnectionEvent`. 
@@ -194,10 +233,6 @@ The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutu
 The input parameters are,
 
 <table>
-	<tr>
-		<td>capacity</td>
-		<td>FutureStream capacity. The default value is infinite.</td>
-	</tr>
 	<tr>
 		<td>timeoutRetries</td>
 		<td>Maximum number of connection retries after timeout. The default value is infinite.</td>
@@ -210,13 +245,17 @@ The input parameters are,
 		<td>connectionTimeout</td>
 		<td>Connection timeout in seconds. The default is infinite.</td>
 	</tr>
+	<tr>
+		<td>capacity</td>
+		<td>FutureStream capacity. The default value is infinite.</td>
+	</tr>
 </table>
 
 Other `Peripheral` connection management methods are,
 
 ```swift
 // Reconnect with specified delay
-public func reconnect(reconnectDelay: Double = 0.0)
+public func reconnect(withDelay delay: Double = 0.0)
 
 // Force disconnect from peripheral
 public func disconnect()
@@ -226,94 +265,96 @@ public func disconnect()
 public func terminate()
 ```
 
-The `Peripheral#reconnect` method is used to establish a connection to a previously connected `Peripheral`. If the `Peripheral` is connected the method returns immediately. The method takes a single parameter `reconnectDelay` used to specify a delay, in seconds, before trying to reconnect. The default value is `0.0` seconds.
+The `Peripheral#reconnect` method is used to establish a connection to a previously connected `Peripheral`. The method takes a single parameter `reconnectDelay` used to specify a delay, in seconds, before trying to reconnect. The default value is `0.0` seconds. I called before `Peripheral#connect` a connection with default parameters will be attempted.
 
-`Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and will generate the `ConnectionEvent` `ForceDisconnect`. If the `Peripheral` is disconnected the `Peripheral#connect` `FutureStream#onFailure` will complete with `PeripheralErrorCode.Disconnected`.
+`Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and will generate the `ConnectionEvent` `ForceDisconnect`. If the `Peripheral` is disconnected the `Peripheral#connect` `FutureStream#onFailure` will complete with `PeripheralError.disconnected`.
 
 `Peripheral#terminate` performs a `Peripheral#disconnect` and also removes the `Peripheral` from the application cache.
 
-An application can connect a `Peripheral` using,
+After a `Peripheral` is discovered an application connects using,
 
 ```swift
-
-// Connect after peripheral is discovered
-let peripheralConnectFuture = peripheraDiscoveredFuture.flatmap{ peripheral -> FutureStream<(Peripheral, ConnectionEvent)> in
-	return peripheral.connect(timeoutRetries: 5, disconnectRetries: 5, connectionTimeout: 10.0)
+let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+    manager.stopScanning()
+    return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
 }
 
-// Handle connection events
-peripheralConnectFuture.onSuccess { (peripheral, connectionEvent) in
-	switch connectionEvent {
-  case .Connect:
-    break
-  case .Timeout:
-    peripheral.reconnect()
-  case .Disconnect:
-    peripheral.reconnect()
-  case .ForceDisconnect:
-    break
-  case .Failed:
-	  break
-  case .GiveUp:
-	  peripheral.terminate()
-  }
+connectionFuture.onSuccess { (peripheral, connectionEvent) in
+    switch connectionEvent {
+    case .connect:
+        break
+    case .timeout:
+        peripheral.reconnect()
+    case .disconnect:
+        peripheral.reconnect()
+    case .forceDisconnect:
+        break
+    case .giveUp:
+        peripheral.terminate()
+    }
 }
-peripheralConnectFuture.onFailure { error in
+
+connectionFuture.onFailure { error in
 }
 ```
 
-Here the [peripheraDiscoveredFuture](#central_service_scanning) is `flatmapped` to `connect(capacity:Int? = nil, timeoutRetries:UInt, disconnectRetries:UInt?, connectionTimeout:Double) -> FutureStream&lt;(Peripheral, ConnectionEvent)` to ensure that connections are made after `Peripherals` are discovered. When `ConnectionEvents` of `.Timeout` and `.Disconnect` are received an attempt is made to reconnect the Peripheral. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a `.GiveUp` event is received and the `Peripheral` connection is terminated ending all reconnection attempts.
+Here the `scanFuture` is completed after `Peripheral` discovery and `flatMap` combines it with the connection `FutureStream`. This ensures that connections are made after `Peripherals` are discovered. When `ConnectionEvents` of `.timeout` and `.disconnect` are received an attempt is made to `reconnect` the `Peripheral`. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a `.giveUp` event is received and the `Peripheral` connection is terminated ending all reconnection attempts.
 
 ### <a name="central_characteristic_discovery">Service and Characteristic Discovery</a>
 
 After a `Peripheral` is connected its `Services` and `Characteristics` must be discovered before `Characteristic` values can be read or written to or update notifications can be received.
 
-There are several `Peripheral` methods that can be used to discover `Services` and `Characteristics`.
+The `Peripheral` methods used to discover `Services` are,
 
 ```swift
+// Discover all services supported by peripheral
+public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral>
+
 // Discover services with specified UUIDs
-public func discoverServices(services: [CBUUID]?, timeout: Double = Double.infinity) -> Future<Peripheral>
-
-// Discover all services supported by peripherals
-public func discoverAllServices(timeout: Double = Double.infinity) -> Future<Peripheral>
-
-// Discover services and characteristics for services with UUIDs
-public func discoverAllPeripheralServices(timeout: Double = Double.infinity) -> Future<Peripheral>
-
-// Discover all services and characteristics supported by peripheral
-public func discoverAllPeripheralServices() -> Future<Peripheral>
+public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral>
 ```
 
-All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Peripheral>` yielding the connected `Peripheral`.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Peripheral>` yielding the connected `Peripheral`.
 
-An application can discover a Peripheral using,
+The `Service` methods used to discover `Characteristics` are,
 
 ```swift
-// errors
-public enum ApplicationErrorCode : Int {
-    case PeripheralNotConnected = 1
-    case CharacteristicNotFound = 2
+// Discover all characteristics supported by service
+public func discoverAllCharacteristics(timeout: TimeInterval = TimeInterval.infinity) -> Future<Service>
+
+// Discover characteristics with specified UUIDs
+public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: TimeInterval = TimeInterval.infinity) -> Future<Service>
+```
+
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Service>` yielding the supporting `Service`.
+
+After a `Peripheral` is connected `Services` and `Characteristics` are discovered using,
+
+```swift
+public enum AppError : Error {
+    case charactertisticNotFound
+    case serviceNotFound
+    case disconnected
+    case connectionFailed
 }
 
-public struct ApplicationError {
-    public static let domain = "Application"
-    public static let peripheralNotConnected = NSError(domain:domain, code:ApplicationErrorCode.PeripheralNotConnected.rawValue, userInfo:[NSLocalizedDescriptionKey:"Peripheral not connected"])
-    public static let characteristicNotFound = NSError(domain:domain, code:ApplicationErrorCode.CharacteristicNotFound.rawValue, userInfo:[NSLocalizedDescriptionKey:"Characteristic Not Found"])
-}
-
-// Discover all supported services and characteristics
-let characteristicsDiscoveredFuture = peripheralConnectFuture.flatmap { (peripheral, connectionEvent) -> Future<Peripheral> in
-	  if connectionEvent == .Connect {
-		  return peripheral.discoverPeripheralServices([serviceUUID])
-    } else {
-      let promise = Promise<Peripheral>()
-      promise.failure(ApplicationError.peripheralNotConnected)
-      return promise.future
+let discoveryFuture = connectionFuture.flatMap { [unowned self] (peripheral, connectionEvent) -> Future<Peripheral> in
+    switch connectionEvent {
+    case .connect:
+        peripheral.discoverServices([serviceUUID])
+    case .timeout:
+        throw AppError.disconnected
+    case .disconnect:
+        throw AppError.disconnected
+    case .forceDisconnect:
+        throw AppError.connectionFailed
+    case .giveUp:
+        throw AppError.connectionFailed
+}.flatMap { peripheral -> Future<Service> in
+    guard let service = peripheral.service(serviceUUID) else {
+        throw AppError.serviceNotFound
     }
-}
-characteristicsDiscoveredFuture.onSuccess { peripheral in
-}
-characteristicsDiscoveredFuture.onFailure { error in
+    return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
 }
 ```
 
@@ -521,5 +562,35 @@ if let service = peripheral.service(serviceUUID), characteristic = service.chara
 ### <a name="central_state_restoration">State Restoration</a>
 
 ### <a name="central_errors">Errors</a>
+
+```swift
+public enum CharacteristicError : Swift.Error {
+    case readTimeout
+    case writeTimeout
+    case notSerializable
+    case readNotSupported
+    case writeNotSupported
+    case notifyNotSupported
+}
+
+public enum PeripheralError : Swift.Error {
+    case disconnected
+    case noServices
+    case serviceDiscoveryTimeout
+}
+
+public enum CentralManagerError : Swift.Error {
+    case isScanning
+    case isPoweredOff
+    case restoreFailed
+    case peripheralScanTimeout
+    case unsupported
+}
+
+public enum ServiceError : Swift.Error {
+    case characteristicDiscoveryTimeout
+    case characteristicDiscoveryInProgress
+}
+```
 
 ### <a name="central_stats">Statistics</a>

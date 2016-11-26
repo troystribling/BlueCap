@@ -102,7 +102,7 @@ A simple CentralManager implementation that scans for Peripherals advertising a 
 All applications begin by calling `CentralManager#whenStateChanges` which returns a `Future<Void>` completed when the `CBCentralManager` state is set to `CBCentralManagerState.PoweredOn`.
 
 ```swift
-let manager = CentralManager(options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.central-manager-example" as NSString])
+let manager = CentralManager(options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.central-manager-documentation" as NSString])
 
 let stateChangeFuture = manager.whenStateChanges()
 ```
@@ -296,7 +296,7 @@ enum AppError: Error {
     case unsupported
 }
 
-let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager.example" as NSString])
+let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
     
 let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
     switch state {
