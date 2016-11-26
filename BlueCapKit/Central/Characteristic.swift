@@ -89,7 +89,7 @@ public class Characteristic : NSObject {
         return profile.stringValues
     }
 
-    public var stringValue: [String:String]? {
+    public var stringValue: [String : String]? {
         return stringValue(self.dataValue)
     }
     

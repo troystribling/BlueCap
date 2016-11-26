@@ -181,7 +181,7 @@ public enum AppError : Error {
     case unknown
 }
 
-var peripheral: Peripheral
+var peripheral: Peripheral?
 
 let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
     switch connectionEvent {
@@ -212,9 +212,9 @@ discoveryFuture.onFailure { error in
     case .serviceNotFound:
         break
     case .disconnected:
-        peripheral.reconnect()
+        peripheral?.reconnect()
     case .connectionFailed:
-        peripheral.terminate()
+        peripheral?.terminate()
     }
 }
 ```

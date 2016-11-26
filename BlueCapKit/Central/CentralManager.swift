@@ -143,11 +143,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Scan
 
-    public func startScanning(capacity: Int = Int.max, duration: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
-        return startScanning(forServiceUUIDs: nil, capacity: capacity, duration: duration)
+    public func startScanning(capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
+        return startScanning(forServiceUUIDs: nil, capacity: capacity, timeout: timeout)
     }
 
-    public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, duration: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
         return self.centralQueue.sync {
             if let afterPeripheralDiscoveredPromise = self.afterPeripheralDiscoveredPromise {
                 return afterPeripheralDiscoveredPromise.stream
@@ -158,7 +158,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
                 if self.poweredOn {
                     self.cbCentralManager.scanForPeripherals(withServices: UUIDs, options: options)
-                    self.timeScan(duration, sequence: self.scanTimeSequence)
+                    self.timeScan(timeout, sequence: self.scanTimeSequence)
                 } else {
                     self.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.isPoweredOff)
                 }
@@ -184,12 +184,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         afterPeripheralDiscoveredPromise = nil
     }
 
-    fileprivate func timeScan(_ duration: TimeInterval, sequence: Int) {
-        guard duration < TimeInterval.infinity else {
+    fileprivate func timeScan(_ timeout: TimeInterval, sequence: Int) {
+        guard timeout < TimeInterval.infinity else {
             return
         }
-        Logger.debug("\(self.name) scan duration in \(duration)s")
-        centralQueue.delay(duration) { [weak self] in
+        Logger.debug("\(self.name) scan timeout in \(timeout)s")
+        centralQueue.delay(timeout) { [weak self] in
             self.forEach { strongSelf in
                 if strongSelf._isScanning {
                     if sequence == strongSelf.scanTimeSequence {

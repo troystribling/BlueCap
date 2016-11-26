@@ -79,7 +79,7 @@ class CentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
         let peripheralMock = CBPeripheralMock()
-        let future = centralManager.startScanning(duration: 1.0)
+        let future = centralManager.startScanning(timeout: 1.0)
         centralManager.didDiscoverPeripheral(peripheralMock, advertisementData: peripheralAdvertisements, RSSI: NSNumber(value: -45))
         XCTAssertFutureStreamSucceeds(future, context:TestContext.immediate, validations: [
             { peripheral in
@@ -91,7 +91,7 @@ class CentralManagerTests: XCTestCase {
     func testStartScanning_OnScanTimeout_CompletesWithPeripheralScanTimeout() {
         let mock = CBCentralManagerMock(state: .poweredOn)
         let centralManager = CentralManager(centralManager: mock)
-        let future = centralManager.startScanning(duration: 0.1)
+        let future = centralManager.startScanning(timeout: 0.1)
         XCTAssertFutureStreamFails(future, validations: [
             {error in
                 XCTAssertEqualErrors(error, CentralManagerError.peripheralScanTimeout)
