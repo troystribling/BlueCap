@@ -55,14 +55,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 case .poweredOn:
                     strongSelf.setPeripheralManagerServices()
                 case .poweredOff, .unauthorized:
-                    strongSelf.alert(message: "PeripheralManager state \"\(state.stringValue)\"")
+                    strongSelf.alert(message: "PeripheralManager state \"\(state)\"")
                 case .resetting:
                     strongSelf.alert(message:
-                        "PeripheralManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising.")
+                        "PeripheralManager state \"\(state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising.")
                 case .unknown:
                     break
                 case .unsupported:
-                    strongSelf.alert(message: "PeripheralManager state \"\(state.stringValue)\". Bluetooth not supported.")
+                    strongSelf.alert(message: "PeripheralManager state \"\(state)\". Bluetooth not supported.")
                 }
             }
         }

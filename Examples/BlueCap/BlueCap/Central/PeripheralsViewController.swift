@@ -72,26 +72,26 @@ class PeripheralsViewController : UITableViewController {
         startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
         styleUIBarButton(self.startScanBarButtonItem)
         Singletons.discoveryManager.whenStateChanges().onSuccess { state in
-            Logger.debug("discoveryManager state changed: \(state.stringValue)")
+            Logger.debug("discoveryManager state changed: \(state)")
         }
         Singletons.communicationManager.whenStateChanges().onSuccess { state in
-            Logger.debug("communicationManager state changed: \(state.stringValue)")
+            Logger.debug("communicationManager state changed: \(state)")
         }
         Singletons.scanningManager.whenStateChanges().onSuccess { [weak self] state in
             self.forEach { strongSelf in
-                Logger.debug("scanningManager state changed: \(state.stringValue)")
+                Logger.debug("scanningManager state changed: \(state)")
                 switch state {
                 case .poweredOn:
                     break
                 case .unknown:
                     break
                 case .poweredOff, .unauthorized:
-                    strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state.stringValue)\"")
+                    strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state)\"")
                 case .resetting:
                     strongSelf.alertAndStopScanning(message:
-                        "DiscoveryManager state \"\(state.stringValue)\". The connection with the system bluetooth service was momentarily lost.\n Restart scan.")
+                        "DiscoveryManager state \"\(state)\". The connection with the system bluetooth service was momentarily lost.\n Restart scan.")
                 case .unsupported:
-                    strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state.stringValue)\". Bluetooth not supported.")
+                    strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state)\". Bluetooth not supported.")
                 }
             }
         }
@@ -197,7 +197,7 @@ class PeripheralsViewController : UITableViewController {
         guard shouldUpdateConnections else {
             return
         }
-        _ = peripheral.startPollingRSSI(Params.peripheralsViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+        _ = peripheral.startPollingRSSI(period: Params.peripheralsViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
     }
 
     func startPolllingRSSIForPeripherals() {

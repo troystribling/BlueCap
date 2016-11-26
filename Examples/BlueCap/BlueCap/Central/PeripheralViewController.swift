@@ -129,7 +129,7 @@ class PeripheralViewController : UITableViewController {
             return
         }
         if peripheral.state == .connected {
-            let rssiFuture = peripheral.startPollingRSSI(Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+            let rssiFuture = peripheral.startPollingRSSI(period: Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
             rssiFuture.onSuccess { [weak self] _ in
                 self?.updatePeripheralProperties()
             }
