@@ -461,14 +461,6 @@ The input parameters are,
 Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` a connected `Peripheral is obtained and `Services` and `Characteristics` are discovered,
 
 ```swift
-// RawDeserializable enum
-enum Enabled : UInt8, RawDeserializable {
-    case No  = 0
-    case Yes = 1
-    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
-}
-let enabledUUID = CBUUID(string: Enabled.uuid)!
-
 let writeFuture = characteristic.write(Enabled.Yes)
 
 writeCharacteristicFuture.onSuccess { characteristic in
@@ -483,20 +475,21 @@ Here the `characteristic` is assumed to belong to a connected `Peripheral`. This
 public enum AppError : Error {
     case characteristicNotFound
 }
+let enabledUUID = CBUUID(string: Enabled.uuid)!
 
 let writeFuture = discoveryFuture.flatMap { service in
-    guard let characteristic = service[enabledUUID] else {
+    guard let characteristic = service.characteristic(enabledUUID) else {
         throw AppError.characteristicNotFound
     }
     return characteristic.write(Enabled.Yes)
 }
 ```
 
-Here `discoveryFuture` is completed after `Characteristic` discovery and ``flattop` is used to combine with `Characteristic#write`.
+Here `discoveryFuture` is completed after `Characteristic` discovery and ``flatMap` is used to combine with `Characteristic#write`.
 
 ### <a name="central_characteristic_read">Characteristic Read</a>
 
-After a `Peripherals` `Characteristics` are discovered reading `Characteristic` values is possible. `Characteristic` provides the following method to retrieve values from connected `Peripherals`,
+After `Peripheral` `Characteristics` are discovered reading `Characteristic` values is possible. `Characteristic` provides the following method to retrieve values from connected `Peripherals`,
 
 ```swift
 // Read a characteristic from a peripheral service
@@ -505,7 +498,7 @@ public func read(timeout: TimeInterval = TimeInterval.infinity) -> Future<Charac
 
 The `read` method takes a single input parameter, used to specify the timeout. The default value for `timeout` is infinite. If the timeout is exceeded `CharacteristicError.readTimout` is thrown. `read` returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Characteristic>` yielding the `Characteristic`. 
 
-To retrieve the `Characteristic` value after a successful read the following methods are available, where each returns values a different type,
+To retrieve the `Characteristic` value after a successful read the following methods are available. Each returns values a different type,
 
 ```swift
 // Return the characteristic value as and NSData object
@@ -530,35 +523,50 @@ public func value<T: RawPairDeserializable>() -> T? where T.RawType1: Deserializ
 Using the [RawDeserializable enum](#central_characteristic_write) an application can read a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
-let readCharacteristicFuture = characteristicsDiscoveredFuture.flatmap { peripheral -> Future<Characteristic> in
-	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
-		return characteristic.read(10.0)
-	} else {
-		let promise = Promise<Characteristic>()
-		promise.failure(ApplicationError.characteristicNotFound)
-		return promise.future
-	}
+let readFuture = characteristic.write(Enabled.Yes)
+
+readFuture.onSuccess { characteristic in
 }
-readCharacteristicFuture { characteristic in
-	if let value : Enabled = characteristic.value {
+readFuture.onFailure { error in
+}
+```
+
+Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,
+
+```swift
+public enum AppError : Error {
+    case characteristicNotFound
+}
+let enabledUUID = CBUUID(string: Enabled.uuid)!
+
+let readFuture = discoveryFuture.flatMap { service -> Future<Characteristic> in
+	guard let characteristic = service.characteristic(enabledUUID) else {
+	    throw AppError.characteristicNotFound
+	}
+	return characteristic.read()
+}
+
+readFuture { characteristic in
+	guard let value: Enabled = characteristic.value else {
+	    return
 	}
 }
 readCharacteristicFuture { error in
 }
 ```
 
-Here the [`characteristicsDiscoveredFuture`](#central_characteristic_discovery) is flatmapped to `read(timeout: Double = Double.infinity) -> Future<Characteristic> to ensure that characteristic has been discovered before reading. On a successful read the value is retrieved using `public func value<T: RawDeserializable where T.RawType: Deserializable>() -> T?`. An error is returned if the characteristic is not found. 
+Here `discoveryFuture` is completed after `Characteristic` discovery and `flatMap` is used to combine with `Characteristic#read`. 
 
 ### <a name="central_characteristic_update">Characteristic Update Notifications</a>
 
-After a `Peripherals` `Characteristics` are discovered subscribing to `Characteristic` value update notifications is possible. Several `Characteristic` methods are available,
+After `Peripheral` `Characteristics` are discovered subscribing to `Characteristic` value update notifications is possible. Several `Characteristic` methods are available,
 
 ```swift
 // subscribe to characteristic update
 public func startNotifying() -> Future<Characteristic>
 
 // receive characteristic value updates
-public func receiveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>
+public func receiveNotificationUpdates(capacity: Int = Int.max) -> FutureStream<(characteristic: Characteristic, data: Data?)>
 
 // unsubscribe from characteristic updates
 public func stopNotifying() -> Future<Characteristic>
@@ -567,9 +575,9 @@ public func stopNotifying() -> Future<Characteristic>
 public func stopNotificationUpdates()
 ```
 
-The work flow for receiving notification updates is to first subscribe to the notifications using `startNotifying()`. The application will then start receiving notifications. To process the notifications call `receiveNotificationUpdates(capacity:Int? = nil) -> FutureStream<Characteristic>` which returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Characteristic>` yielding the `Characteristic` from which the updated characteristic can be obtained.
+The work flow for receiving notification updates is to first subscribe to the notifications using `Characteristic#startNotifying`. The application will then start receiving notifications. To process the notifications call `Characteristic#receiveNotificationUpdates` which returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<(characteristic: Characteristic, data: Data?)>` yielding the tuple `(characteristic: Characteristic, data: Data?)` from which the updated characteristic can be obtained.
 
-To stop processing notifications call `stopNotifying()` and to unsubscribe to notifications call `stopNotificationUpdates()`.
+To stop processing notifications call `Characteristic#stopNotificationUpdates` and to unsubscribe to notifications call `Characteristic#stopNotifying`.
 
 Using the [RawDeserializable enum](#central_characteristic_write) an application can receive notifications from a `Characteristic` as follows,
 
@@ -618,9 +626,32 @@ if let service = peripheral.service(serviceUUID), characteristic = service.chara
 
 ### <a name="central_retrieve_peripherals">Retrieve Peripherals</a>
 
+```swift
+public func retrieveConnectedPeripherals(withServices services: [CBUUID]) -> [Peripheral]
+
+public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [Peripheral]
+
+public func retrievePeripherals() -> [Peripheral]
+```
+
 ### <a name="central_rssi">Peripheral RSSI</a>
 
+```swift
+// read current RSSI
+public func readRSSI() -> Future<Int>
+
+// Start polling RSSI at the specified period
+public func startPollingRSSI(period: Double = 10.0, capacity: Int = Int.max) -> FutureStream<Int>
+
+// Stop polling RSSI
+public func stopPollingRSSI()
+```
+
 ### <a name="central_state_restoration">State Restoration</a>
+
+```swift
+public func whenStateRestored() -> Future<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>
+```
 
 ### <a name="central_errors">Errors</a>
 
@@ -655,3 +686,46 @@ public enum ServiceError : Swift.Error {
 ```
 
 ### <a name="central_stats">Statistics</a>
+
+<table>
+	<tr>
+		<td>discoveredAt</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>connectedAt</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>disconnectedAt</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>timeoutCount</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>disconnectionCount</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>connectionCount</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>secondsConnected</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>totalSecondsConnected</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>cumlativeSecondsConnected</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>cumlativeSecondsDisconnected</td>
+		<td></td>
+	</tr>
+</table>
