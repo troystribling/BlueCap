@@ -1,6 +1,6 @@
 # PeripheralManager
 
-The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide inline implementation of asynchronous callbacks and allows chaining asynchronous calls as well as error handling and recovery. This section will describe interfaces and give example implementations for all supported use cases. [Simple example applications](https://github.com/troystribling/BlueCap/tree/master/Examples) can be found in the BlueCap github repository.
+The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). Futures provide an interface for performing nonblocking asynchronous requests and serialization of multiple requests. This section will give example implementations for supported use cases.
 
 ## Contents
 
@@ -16,61 +16,74 @@ The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelega
 
 ### <a name="peripheral_poweron_poweroff">PowerOn/PowerOff</a>
 
-The state of the Bluetooth transceiver on a device is communicated to `BlueCap` application by the `PeripheralManager` methods `whenPowerOn` and `whenPowerOff`, which are defined by,
+`ManagerState` is a direct mapping to [`CBManagerState`](https://developer.apple.com/reference/corebluetooth/cbmanagerstate) namely,
 
 ```swift
-public func whenPowerOn() -> Future<Void>
-public func whenPowerOff() -> Future<Void>
-```
-
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>`. For an application to process events,
-
-```swift
-let manager = PeripheralManager()
-let powerOnFuture = manager.whenPowerOn()
-powerOnFuture.onSuccess {
-}
-powerOnFuture.onFailure { error in
-}
-
-let powerOffFuture = manager.whenPowerOff()
-powerOffFuture.onSuccess {
+public enum ManagerState: CustomStringConvertible {
+    case unauthorized
+    case unknown
+    case unsupported
+    case resetting
+    case poweredOff
+    case poweredOn
 }
 ```
 
-When `PeripheralManager` is instantiated a message giving the current Bluetooth transceiver state is received. After instantiation messages are received if the transceiver is powered on or powered off. `whenPowerOff` cannot fail. `whenPowerOn` only fails if Bluetooth is not supported.
+The state of `CBPeripheralManager` is communicated to an application by the `PeripheralManager` method,
+
+```swift
+public func whenStateChanges() -> FutureStream<ManagerState>
+```
+
+To process events,
+
+```swift
+let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager.example" as NSString])
+
+let stateChangeFuture = manager.whenStateChanges()
+
+stateChangeFuture.onSuccess { state in
+    switch state {
+        case .poweredOn:
+            break
+        case .poweredOff, .unauthorized:
+            break
+        case .resetting:
+            break
+        case .unknown:
+            break
+        case .unsupported:
+            break
+    }
+}
+```
 
 ### <a name="peripheral_add_characteristics">Add Services and Characteristics</a>
 
-Services and characteristics are added to a peripheral application before advertising. The BlueCap PeripheralManager methods used for managing services are,
+`Services` and `Characteristics` are added to a `PeripheralManager` application before advertising. `PeripheralManager` provides the methods used for managing `Services` are,
 
 ```swift
 // add a single service
-public func addService(service:MutableService) -> Future<Void>
-
-// add multiple services
-public func addServices(services:[MutableService]) -> Future<Void>
+public func add(_ service: MutableService) -> Future<Void>
 
 // remove a service
-public func removeService(service:MutableService) -> Future<Void>
+public func remove(_ service: MutableService)
 
 // remove all services
-public func removeAllServices() -> Future<Void>
+public func removeAllServices()
 ```
 
-All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Void&gt;*. The methods can only be used before PeripheralManager begins advertising.
-
-The BlueCap MutableService methods are,
+`MutableService` provides the methods for adding `Characteristics`,
 
 ```swift
 // add characteristics
-public var characteristics : [MutableCharacteristic] {get set}
+public var characteristics = [MutableCharacteristic] {get set}
 
 // create characteristics from profiles
-public func characteristicsFromProfiles(profiles:[CharacteristicProfile])
+public func characteristicsFromProfiles()
 ```
 
-A Peripheral application will add Services and Characteristics using,
+A `PeripheralManager` application will add Services and Characteristics using,
 
 ```swift
 // service UUId and characteristic value definition
@@ -302,5 +315,19 @@ Here the powerOn() -> Future&lt;Void&gt; flatmapped to startAdvertising(region:B
 
 ### <a name="peripheral_state_restoration">State Restoration</a>
 
+```swift
+public func whenStateRestored() -> Future<(services: [MutableService], advertisements: PeripheralAdvertisements)>
+```
+
 ### <a name="peripheral_errors">Errors</a>
+
+```swift
+public enum PeripheralManagerError : Swift.Error {
+    case isAdvertising
+    case isNotAdvertising
+    case addServiceFailed
+    case restoreFailed
+    case unconfigured
+}
+```
 

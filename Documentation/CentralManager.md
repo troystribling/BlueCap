@@ -42,7 +42,7 @@ public func whenStateChanges() -> FutureStream<ManagerState>
 To process events,
 
 ```swift
-let Manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
+let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
 
 let stateChangeFuture = manager.whenStateChanges()
 
@@ -59,9 +59,6 @@ stateChangeFuture.onSuccess { state in
         case .unsupported:
             break
     }
-}
-
-stateChangeFuture.onFailure { error in
 }
 ```
 
