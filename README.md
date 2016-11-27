@@ -117,7 +117,7 @@ public enum AppError : Error {
     case unknown
 }
 
-let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)!
     
 let scanFuture = stateChangeFuture.flatMap { state -> FutureStream<Peripheral> in
         switch state {

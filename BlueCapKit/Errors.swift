@@ -20,7 +20,6 @@ public enum CharacteristicError : Swift.Error {
 
 public enum PeripheralError : Swift.Error {
     case disconnected
-    case noServices
     case serviceDiscoveryTimeout
 }
 
@@ -29,7 +28,6 @@ public enum PeripheralManagerError : Swift.Error {
     case isNotAdvertising
     case addServiceFailed
     case restoreFailed
-    case unsupported
     case unconfigured
 }
 
@@ -38,11 +36,9 @@ public enum CentralManagerError : Swift.Error {
     case isPoweredOff
     case restoreFailed
     case peripheralScanTimeout
-    case unsupported
 }
 
 public enum ServiceError : Swift.Error {
     case characteristicDiscoveryTimeout
-    case characteristicDiscoveryInProgress
 }
 

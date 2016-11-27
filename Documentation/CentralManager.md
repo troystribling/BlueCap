@@ -110,7 +110,7 @@ public enum AppError : Error {
     case unknown
 }
 
-let Manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
+let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
 
@@ -458,7 +458,7 @@ The input parameters are,
 	</tr>
 </table>
 
-Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` a connected `Peripheral is obtained and `Services` and `Characteristics` are discovered,
+Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` when a connected `Peripheral` is available and `Services` and `Characteristics` are discovered,
 
 ```swift
 let writeFuture = characteristic.write(Enabled.Yes)
@@ -546,12 +546,12 @@ let readFuture = discoveryFuture.flatMap { service -> Future<Characteristic> in
 	return characteristic.read()
 }
 
-readFuture { characteristic in
+readFuture.onSuccess { characteristic in
 	guard let value: Enabled = characteristic.value else {
 	    return
 	}
 }
-readCharacteristicFuture { error in
+readFuture.onFailure { error in
 }
 ```
 
@@ -562,79 +562,88 @@ Here `discoveryFuture` is completed after `Characteristic` discovery and `flatMa
 After `Peripheral` `Characteristics` are discovered subscribing to `Characteristic` value update notifications is possible. Several `Characteristic` methods are available,
 
 ```swift
-// subscribe to characteristic update
+// Subscribe to characteristic update
 public func startNotifying() -> Future<Characteristic>
 
-// receive characteristic value updates
+// Receive characteristic value updates
 public func receiveNotificationUpdates(capacity: Int = Int.max) -> FutureStream<(characteristic: Characteristic, data: Data?)>
 
-// unsubscribe from characteristic updates
+// Unsubscribe from characteristic updates
 public func stopNotifying() -> Future<Characteristic>
 
-// stop receiving characteristic value updates
+// Stop receiving characteristic value updates
 public func stopNotificationUpdates()
 ```
 
-The work flow for receiving notification updates is to first subscribe to the notifications using `Characteristic#startNotifying`. The application will then start receiving notifications. To process the notifications call `Characteristic#receiveNotificationUpdates` which returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<(characteristic: Characteristic, data: Data?)>` yielding the tuple `(characteristic: Characteristic, data: Data?)` from which the updated characteristic can be obtained.
+The work flow for receiving notification updates is to first subscribe to the notifications using `Characteristic#startNotifying`. The application will then start receiving notifications. To process the notifications call `Characteristic#receiveNotificationUpdates` which returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<(characteristic: Characteristic, data: Data?)>` yielding the tuple `(characteristic: Characteristic, data: Data?)` from which the updated `Characteristic` value can be obtained.
 
 To stop processing notifications call `Characteristic#stopNotificationUpdates` and to unsubscribe to notifications call `Characteristic#stopNotifying`.
 
-Using the [RawDeserializable enum](#central_characteristic_write) an application can receive notifications from a `Characteristic` as follows,
+Using the [RawDeserializable enum](#central_characteristic_write) an application can receive notifications form a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
-let subscribeCharacteristicFuture = characteristicsDiscoveredFuture.flatmap { peripheral -> Future<Characteristic> in
-	if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
-		return characteristic.startNotifying()
-	} else {
-		let promise = Promise<Characteristic>()
-		promise.failure(ApplicationError.characteristicNotFound)
-		return promise.future
-	}
-}
-
-subscribeCharacteristicFuture.onSuccess { characteristic in
-}
-subscribeCharacteristicFuture.onFailure { error in
-}
-
-let updateCharacteristicFuture = subscribeCharacteristicFuture.flatmap{ characteristic -> FutureStream<Characteristic> in
-	return characteristic.receiveNotificationUpdates()
-}
-updateCharacteristicFuture.onSuccess { characteristic in
-	if let value : Enabled = characteristic.value {
-	}
-}
-updateCharacteristicFuture.onFailure { error in 
+let notificationFuture = characteristics.startNotifying().flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+    characteristic.receiveNotificationUpdates(capacity: 10)
 }
 ```
 
-Here the [`characteristicsDiscoveredFuture`](#central_characteristic_discovery) is flatmapped to `startNotifying() -> Future<Characteristic>` to ensure that characteristic has been discovered before subscribing to updates.  Then `subscribeCharacteristicFuture` is flatmapped again to `receiveNotificationUpdates(capacity: Int?) -> FutureStream<Characteristic>` to ensure that the subscription is completed before receiving updates.
+Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,
+
+```swift
+public enum AppError : Error {
+    case characteristicNotFound
+}
+let enabledUUID = CBUUID(string: Enabled.uuid)!
+
+let notificationFuture = discoveryFuture.flatMap { service _ -> Future<Characteristic> in
+    guard let characteristic = service.characteristic(enabledUUID) else {
+	      throw AppError.characteristicNotFound
+	  }
+    characteristics.startNotifying()
+}.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+    characteristic.receiveNotificationUpdates(capacity: 10)
+}
+```
+
+Here `discoveryFuture` is completed after `Characteristic` discovery and `flatMap` is used to combine with `Characteristic#startNotifying`. 
 
 An application can unsubscribe to `Characteristic` value notifications and stop receiving updates by using the following,
 
 ```swift
-// serviceUUID and enabledUUID are define in the example above
-if let service = peripheral.service(serviceUUID), characteristic = service.characteristic(enabledUUID) {
-	
-	// stop receiving updates
-	characteristic.stopNotificationUpdates()
-
-	// unsubscribe to notifications
-	characteristic.stopNotifying()
-}
+characteristic.stopNotificationUpdates()
+characteristic.stopNotifying()
 ```
 
 ### <a name="central_retrieve_peripherals">Retrieve Peripherals</a>
 
+Discovered `Peripherals` can be retrieved from the system cache using the following `CentralManager` methods,
+
 ```swift
+// Retrieve the connected peripherals with specified service UUIDs
 public func retrieveConnectedPeripherals(withServices services: [CBUUID]) -> [Peripheral]
 
+// Retrieve peripherals with UUIDs
 public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [Peripheral]
 
+// Retrive peripherals using framework cached peripheral UUIDs
 public func retrievePeripherals() -> [Peripheral]
 ```
 
+Each of these methods will repopulate the BlueCap framework cache with the retrieved peripherals overwriting any that collide.
+
+An application would populate the framework cache from the system cache with,
+
+```swift
+let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
+
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)!
+
+let peripherals = central.retrieveConnectedPeripherals([serviceUUID]) 
+```
+
 ### <a name="central_rssi">Peripheral RSSI</a>
+
+`Peripheral` provides the following methods to retrieve RSSI,
 
 ```swift
 // read current RSSI
@@ -649,6 +658,10 @@ public func stopPollingRSSI()
 
 ### <a name="central_state_restoration">State Restoration</a>
 
+CoreBluetooth provides [state restoration](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html) for apps that have declared `bluetooth-central` background execution permission. Apps with this permission can be restarted with a previous state if evicted from memory while in the background. 
+
+`CentralManager` provides the following method to process the restored application state,
+
 ```swift
 public func whenStateRestored() -> Future<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>
 ```
@@ -657,75 +670,86 @@ public func whenStateRestored() -> Future<(peripherals: [Peripheral], scannedSer
 
 ```swift
 public enum CharacteristicError : Swift.Error {
+    // Thrown by read when timeout is exceeded
     case readTimeout
+    // Thrown by write when timeout is exceeded
     case writeTimeout
+    // Thrown by write if given string cannot be serialized
     case notSerializable
+    // Thrown by read if Characteristic read property is not enabled
     case readNotSupported
+    // Thrown by write if Characteristic read property is not enabled
     case writeNotSupported
+    // Thrown by startNotifying if Characteristic notifiy or indicate property is not enabled
     case notifyNotSupported
 }
 
 public enum PeripheralError : Swift.Error {
-    case disconnected
-    case noServices
+    // Thrown by any method that requires a Peripheral be connected if the peripheral is not connected
+    case disconnected    
+    // Thrown by discoverAllServices and discoverServices if service discovery timeout is exceeded
     case serviceDiscoveryTimeout
 }
 
 public enum CentralManagerError : Swift.Error {
     case isScanning
+    // Thrown by startScanning if scan is started and CentralManager is poweredOff
     case isPoweredOff
+    // Thrown on state restoration failure
     case restoreFailed
+    // Thrown by startScanning if scan timeout is exceeded
     case peripheralScanTimeout
-    case unsupported
 }
 
 public enum ServiceError : Swift.Error {
+    // Thrown by discoverAllCharcteristics and discoverCharcteristics if service discovery timeout is exceeded
     case characteristicDiscoveryTimeout
-    case characteristicDiscoveryInProgress
 }
 ```
 
 ### <a name="central_stats">Statistics</a>
 
+`Peripheral` provides the following properties to monitor performance,
+
 <table>
 	<tr>
-		<td>discoveredAt</td>
-		<td></td>
+		<td>discoveredAt: Date</td>
+		<td>Date of discovery.</td>
 	</tr>
 	<tr>
-		<td>connectedAt</td>
-		<td></td>
+		<td>connectedAt: Date</td>
+		<td>Date of last connection.</td>
 	</tr>
 	<tr>
-		<td>disconnectedAt</td>
-		<td></td>
+		<td>disconnectedAt: Date</td>
+		<td>Date of last disconnection</td>
 	</tr>
 	<tr>
-		<td>timeoutCount</td>
-		<td></td>
+		<td>timeoutCount: UInt</td>
+		<td>Number of connection timeouts.</td>
 	</tr>
 	<tr>
-		<td>disconnectionCount</td>
-		<td></td>
+		<td>disconnectionCount: UInt</td>
+		<td>Number of disconnections</td>
 	</tr>
 	<tr>
-		<td>connectionCount</td>
-		<td></td>
+		<td>connectionCount: UInt</td>
+		<td>Number of successful connections.</td>
 	</tr>
 	<tr>
-		<td>secondsConnected</td>
-		<td></td>
+		<td>secondsConnected: TimeInterval</td>
+		<td>Seconds of current connection if Peripheral is connected  or seconds of last connection if Peripheral is disconnected.</td>
 	</tr>
 	<tr>
-		<td>totalSecondsConnected</td>
-		<td></td>
+		<td>totalSecondsConnected: TimeInterval</td>
+		<td>Total seconds since discovery has been connected excluding current connection if connected.</td>
 	</tr>
 	<tr>
-		<td>cumlativeSecondsConnected</td>
-		<td></td>
+		<td>cumlativeSecondsConnected: TimeInterval</td>
+		<td>Total seconds since discovery has been connected including the current connection if connected.</td>
 	</tr>
 	<tr>
-		<td>cumlativeSecondsDisconnected</td>
-		<td></td>
+		<td>cumlativeSecondsDisconnected: TimeInterval</td>
+		<td>Total seconds since discovery disconnected.</td>
 	</tr>
 </table>

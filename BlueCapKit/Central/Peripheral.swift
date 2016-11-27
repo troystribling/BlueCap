@@ -154,23 +154,23 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         return centralQueue.sync { return self._disconnectionCount }
     }
 
-    public var connectionCount: Int {
-        return centralQueue.sync { return self.connectionSequence }
+    public var connectionCount: UInt {
+        return centralQueue.sync { return UInt(self.connectionSequence) }
     }
 
-    public var secondsConnected: Double {
+    public var secondsConnected: TimeInterval {
         return centralQueue.sync { return self._secondsConnected }
     }
 
-    public var totalSecondsConnected: Double {
+    public var totalSecondsConnected: TimeInterval {
         return centralQueue.sync { return self._totalSecondsConnected }
     }
 
-    public var cumlativeSecondsConnected: Double {
+    public var cumlativeSecondsConnected: TimeInterval {
         return self.disconnectedAt != nil ? self.totalSecondsConnected : self.totalSecondsConnected + self.secondsConnected
     }
 
-    public var cumlativeSecondsDisconnected: Double {
+    public var cumlativeSecondsDisconnected: TimeInterval {
         return Date().timeIntervalSince(self.discoveredAt) - self.cumlativeSecondsConnected
     }
 
