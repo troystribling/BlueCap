@@ -38,7 +38,7 @@ public func whenStateChanges() -> FutureStream<ManagerState>
 To process events,
 
 ```swift
-let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager.example" as NSString])
+let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
 
 let stateChangeFuture = manager.whenStateChanges()
 
@@ -60,7 +60,9 @@ stateChangeFuture.onSuccess { state in
 
 ### <a name="peripheral_add_characteristics">Add Services and Characteristics</a>
 
-`Services` and `Characteristics` are added to a `PeripheralManager` application before advertising. `PeripheralManager` provides the methods used for managing `Services` are,
+`Services` and `Characteristics` are added to a `PeripheralManager` application before advertising. 
+
+`PeripheralManager` provides the following methods used for managing `Services` are,
 
 ```swift
 // add a single service
@@ -83,50 +85,58 @@ public var characteristics = [MutableCharacteristic] {get set}
 public func characteristicsFromProfiles()
 ```
 
-A `PeripheralManager` application will add Services and Characteristics using,
+A `PeripheralManager` application adds Services and Characteristics using,
 
 ```swift
-// service UUId and characteristic value definition
-let serviceUUID = CBUUID(string:"F000AA10-0451-4000-B000-000000000000")
-enum Enabled : UInt8, RawDeserializable {
-    case No  = 0
-    case Yes = 1
-    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
+enum AppError: Error {
+    case invalidState
+    case resetting
+    case poweredOff
+    case unsupported
 }
 
-// create service and characteristic
-let service = MutableService(uuid:serviceUUID)
-let characteristic = MutableCharacteristic(uuid:Enabled.uuid,                                            properties:CBCharacteristicProperties.Read|CBCharacteristicProperties.Write,                                                 permissions:CBAttributePermissions.Readable|CBAttributePermissions.Writeable,                                                value:Serde.serialize(Enabled.No)))
+let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
 
-// add characteristics to service 
+let service = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
+
+let characteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
+
+// Add Characteristic to Service
 service.characteristics = [characteristic]
-
-// add service to peripheral
-let manager = PeripheralManager.sharedInstance
-let addServiceFuture = manager.powerOn().flatmap {_ -> Future<Void> in
-	manager.removeAllServices()
-}.flatmap {_ -> Future<Void> in
-	manager.addService(service)
+ 
+let addServiceFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
+    switch state {
+    case .poweredOn:
+        self.manager.removeAllServices()
+        return self.manager.add(self.accelerometerService)
+    case .poweredOff:
+        throw AppError.poweredOff
+    case .unauthorized, .unknown:
+        throw AppError.invalidState
+    case .unsupported:
+        throw AppError.unsupported
+    case .resetting:
+        throw AppError.resetting
+    }
 }
 
-addServiceFuture.onSuccess {
-	…
-}
-addServiceFuture.onFailure {error in
-	…
+startAdvertiseFuture.onFailure { error in
+    switch error {
+    case AppError.poweredOff:
+        manager.reset()
+    case AppError.resetting:
+        manager.reset()
+    case AppError.unsupported:
+        break
+    default:
+        manager.reset()
+    }
 }
 ```
 
-First BlueCap MutableServices and MutableCharacteristics are created and [CBCharacteristicProperties](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCharacteristic_Class/index.html#//apple_ref/c/tdef/CBCharacteristicProperties) and [CBAttributePermissions](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBMutableCharacteristic_Class/index.html#//apple_ref/c/tdef/CBAttributePermissions) are specified. The Characteristic is then added to the Service. Then the PeripheralManager *powerOn() -> Future&lt;Void&gt;* is flatmapped to *removeAllServices() -> Future&lt;Void&gt;* which is then flatmapped to *addServices(services:[MutableService]) -> Future&lt;Void&gt;*. This sequence ensures that the Peripheral is powered and with no services before the new services are added.
+First `MutableServices` and `MutableCharacteristics` are created  using the [`TISensorTag.AccelerometerService`](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-216) profile. The `Characteristic` is then added to the `Service` and when `.powerOn` is received existing services are removed and the new 'Service` added.
 
-If Service and Characteristic GATT profile definitions are available creating Services and Characteristics is a little simpler,
-
-```swift
-let  service = MutableService(profile:ConfiguredServiceProfile<TISensorTag.AccelerometerService>())
-let characteristic = MutableCharacteristic(profile:RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
-```
-
-Here the BlueCap the [TiSensorTag GATT profile](https://github.com/troystribling/BlueCap/blob/master/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift) was used.
+Also, An error was added to handle `PeripheralManager` state transitions other than `.powerOn` and `PeripheralManager#reset` is used to recreate `CBPripheralManager`.
 
 ### <a name="peripheral_advertising">Advertising</a>
 
@@ -134,33 +144,17 @@ After services and characteristics have been added the peripheral is ready to be
 
 ```swift
 // start advertising with name and services
-public func startAdvertising(name:String, uuids:[CBUUID]?) -> Future<Void>
-
-// start advertising with name and no services
-public func startAdvertising(name:String) -> Future<Void> 
+public func startAdvertising(_ name: String, uuids: [CBUUID]? = nil) -> Future<Void>
 
 // stop advertising
-public func stopAdvertising() -> Future<Void>
+public func stopAdvertising()
 ```
 
-All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) *Future&lt;Void&gt;*. For a Peripheral application to advertise,
+A `PeripheralManager` application can start advertising after `Services` and `Characteristics` are added,
 
 ```swift
-// use service and characteristic defined in previous section
-let manager = PeripheralManager.sharedInstance
-let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
-	manager.removeAllServices()
-}.flatmap {_ -> Future<Void> in
-	manager.addService(service)
-}.flatmap {_ -> Future<Void> in
-	manager.startAdvertising("My Service", uuids:[serviceUUID])
-}
-            
-startAdvertiseFuture.onSuccess {
-	…
-}
-startAdvertiseFuture.onFailure {error in
-	…
+Let startAdvertisingFuture = addServiceFuture.flatMap { _ -> Future<Void> in
+smanager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
 }
 ```
 

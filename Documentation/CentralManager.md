@@ -149,6 +149,10 @@ scanFuture.onFailure { error in
 }
 ```
 
+Here the scan is started when `CentralManager` transitions to `.powerOn`.
+
+Also, An error was added to handle `CentralManager` state transitions other than `.powerOn` and `CentralManager#reset` is used to recreate `CBCentralManager`.
+
 To stop a peripheral scan use the `CentralManager` method,
 
 ```swift
@@ -472,7 +476,7 @@ Here the `characteristic` is assumed to belong to a connected `Peripheral`. This
 public enum AppError : Error {
     case characteristicNotFound
 }
-let enabledUUID = CBUUID(string: Enabled.uuid)!
+let enabledUUID = CBUUID(string: Enabled.uuid)
 
 let writeFuture = discoveryFuture.flatMap { service in
     guard let characteristic = service.characteristic(enabledUUID) else {
@@ -534,7 +538,7 @@ Here the `characteristic` is assumed to belong to a connected `Peripheral`. This
 public enum AppError : Error {
     case characteristicNotFound
 }
-let enabledUUID = CBUUID(string: Enabled.uuid)!
+let enabledUUID = CBUUID(string: Enabled.uuid)
 
 let readFuture = discoveryFuture.flatMap { service -> Future<Characteristic> in
 	guard let characteristic = service.characteristic(enabledUUID) else {
@@ -590,7 +594,7 @@ Here the `characteristic` is assumed to belong to a connected `Peripheral`. This
 public enum AppError : Error {
     case characteristicNotFound
 }
-let enabledUUID = CBUUID(string: Enabled.uuid)!
+let enabledUUID = CBUUID(string: Enabled.uuid)
 
 let notificationFuture = discoveryFuture.flatMap { service _ -> Future<Characteristic> in
     guard let characteristic = service.characteristic(enabledUUID) else {
@@ -633,7 +637,7 @@ An application would populate the framework cache from the system cache with,
 ```swift
 let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
 
-let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)!
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
 
 let peripherals = central.retrieveConnectedPeripherals([serviceUUID]) 
 ```

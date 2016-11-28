@@ -368,6 +368,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0C8719D0FF98B911745833B1 /* Pods-PeripheralManager.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = HZEX459C37;
@@ -386,6 +387,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 064A0ACAC849E46D150D5886 /* Pods-PeripheralManager.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = HZEX459C37;

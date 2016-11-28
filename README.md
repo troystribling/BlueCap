@@ -97,7 +97,7 @@ With BlueCap it is possible to easily implement Central and Peripheral applicati
  
 ## CentralMnager
 
-A simple CentralManager implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L17-217), connects on peripheral discovery, discovers service and characteristics and subscribes to accelerometer data updates will be described. 
+A simple CentralManager implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-216), connects on peripheral discovery, discovers service and characteristics and subscribes to accelerometer data updates will be described. 
 
 All applications begin by calling `CentralManager#whenStateChanges` which returns a `Future<Void>` completed when the `CBCentralManager` state is set to `CBCentralManagerState.PoweredOn`.
 

@@ -35,7 +35,7 @@ class ViewController: UITableViewController {
     @IBOutlet var enableLabel: UILabel!
     @IBOutlet var enabledSwitch: UISwitch!
     
-    let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager.example" as NSString])
+    let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-example" as NSString])
     let accelerometer = Accelerometer()
 
     let accelerometerService = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
@@ -115,9 +115,9 @@ class ViewController: UITableViewController {
             case .resetting:
                 throw AppError.resetting
             }
-        }.flatMap { [unowned self] _ -> Future<Void> in
-            self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
-        }
+}.flatMap { [unowned self] _ -> Future<Void> in
+    self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
+}
 
         startAdvertiseFuture.onSuccess { [unowned self] in
             self.enableAdvertising()
