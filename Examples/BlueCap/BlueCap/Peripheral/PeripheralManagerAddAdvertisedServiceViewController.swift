@@ -22,7 +22,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     var services: [MutableService] {
         if let peripheral = self.peripheral {
             let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-            return Singletons.peripheralManager.services.filter{!serviceUUIDs.contains($0.UUID)}
+            return Singletons.peripheralManager.services.filter{!serviceUUIDs.contains( $0.uuid) }
         } else {
             return []
         }
@@ -71,7 +71,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         if let _ = self.peripheral {
             let service = self.services[indexPath.row]
             cell.nameLabel.text = service.name
-            cell.uuidLabel.text = service.UUID.uuidString
+            cell.uuidLabel.text = service.uuid.uuidString
         } else {
             cell.nameLabel.text = "Unknown"
             cell.uuidLabel.text = "Unknown"
@@ -82,7 +82,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let peripheral = self.peripheral {
             let service = self.services[indexPath.row]
-            PeripheralStore.addAdvertisedPeripheralService(peripheral, service:service.UUID)
+            PeripheralStore.addAdvertisedPeripheralService(peripheral, service:service.uuid)
         }
         _ = self.navigationController?.popViewController(animated: true)
     }

@@ -147,17 +147,17 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return startScanning(forServiceUUIDs: nil, capacity: capacity, timeout: timeout)
     }
 
-    public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
+    public func startScanning(forServiceUUIDs uuids: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
         return self.centralQueue.sync {
             if let afterPeripheralDiscoveredPromise = self.afterPeripheralDiscoveredPromise {
                 return afterPeripheralDiscoveredPromise.stream
             }
             if !self._isScanning {
-                Logger.debug("\(self.name) UUIDs \(UUIDs)")
+                Logger.debug("\(self.name) UUIDs \(uuids)")
                 self._isScanning = true
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
                 if self.poweredOn {
-                    self.cbCentralManager.scanForPeripherals(withServices: UUIDs, options: options)
+                    self.cbCentralManager.scanForPeripherals(withServices: uuids, options: options)
                     self.timeScan(timeout, sequence: self.scanTimeSequence)
                 } else {
                     self.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.isPoweredOff)
@@ -317,12 +317,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 if let cbServices = cbPeripheral.getServices() {
                     for cbService in cbServices {
                         let service = Service(cbService: cbService, peripheral: peripheral)
-                        peripheral.discoveredServices[service.UUID] = service
+                        peripheral.discoveredServices[service.uuid] = service
                         if let cbCharacteristics = cbService.getCharacteristics() {
                             for cbCharacteristic in cbCharacteristics {
                                 let characteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: service)
-                                service.discoveredCharacteristics[characteristic.UUID] = characteristic
-                                peripheral.discoveredCharacteristics[characteristic.UUID] = characteristic
+                                service.discoveredCharacteristics[characteristic.uuid] = characteristic
+                                peripheral.discoveredCharacteristics[characteristic.uuid] = characteristic
                             }
                         }
                     }

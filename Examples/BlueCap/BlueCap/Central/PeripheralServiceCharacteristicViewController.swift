@@ -75,20 +75,20 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicValuesViewController
-            viewController.characteristicUUID = characteristic?.UUID
+            viewController.characteristicUUID = characteristic?.uuid
             viewController.peripheralIdentifier = peripheral?.identifier
-            viewController.serviceUUID = characteristic?.service?.UUID
+            viewController.serviceUUID = characteristic?.service?.uuid
             viewController.isNotifying = isNotifying
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-            viewController.characteristicUUID = characteristic?.UUID
+            viewController.characteristicUUID = characteristic?.uuid
             viewController.peripheralIdentifier = peripheral?.identifier
-            viewController.serviceUUID = characteristic?.service?.UUID
+            viewController.serviceUUID = characteristic?.service?.uuid
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-            viewController.characteristicUUID = characteristic?.UUID
+            viewController.characteristicUUID = characteristic?.uuid
             viewController.peripheralIdentifier = peripheral?.identifier
-            viewController.serviceUUID = characteristic?.service?.UUID
+            viewController.serviceUUID = characteristic?.service?.uuid
             if let stringValues = self.characteristic?.stringValue {
                 let selectedIndex = sender as! IndexPath
                 let names = Array(stringValues.keys)
@@ -115,7 +115,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         guard let characteristic = characteristic else {
             return
         }
-        uuidLabel.text = characteristic.UUID.uuidString
+        uuidLabel.text = characteristic.uuid.uuidString
         notifyingLabel.text = booleanStringValue(isNotifying)
         propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
         propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))

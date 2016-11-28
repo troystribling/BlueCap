@@ -117,7 +117,7 @@ public enum AppError : Error {
     case unknown
 }
 
-let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)!
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
     
 let scanFuture = stateChangeFuture.flatMap { state -> FutureStream<Peripheral> in
         switch state {
@@ -271,7 +271,7 @@ First the `Characteristics` and `Service` are created and the `Characteristics` 
 
 ```swift
 // create accelerometer service
-let accelerometerService = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
+let accelerometerService = MutableService(uuid: TISensorTag.AccelerometerService.uuid)
 
 // create accelerometer data characteristic
 let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
@@ -314,7 +314,7 @@ let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<
     }
 }.flatMap { _ -> Future<Void> in 
 
-manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.UUID)])
+manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.uuid)])
 }
 
 startAdvertiseFuture.onFailure { error in

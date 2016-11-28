@@ -21,7 +21,7 @@ class RawArrayDeserializableTests: XCTestCase {
         let value2:Int8
         
         // RawArrayDeserializable
-        static let UUID = "abc"
+        static let uuid = "abc"
         static let size = 2
         
         init?(rawValue:[Int8]) {

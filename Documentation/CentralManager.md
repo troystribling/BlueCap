@@ -71,7 +71,7 @@ Scans for advertising peripherals are initiated by calling the `CentralManager` 
 public func startScanning(capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral>
 
 // Scan for peripherals advertising services with UUIDs
- public func startScanning(forServiceUUIDs UUIDs: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral>
+ public func startScanning(forServiceUUIDs uuids: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral>
 ```
 
 Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the discovered `Peripheral`.
@@ -80,7 +80,7 @@ The input parameters for both methods are,
 
 <table>
   <tr>
-    <td>UUIDs</td>
+    <td>uuids</td>
     <td>Scanned service UUIDs.</td>
   </tr>
 	<tr>
@@ -109,7 +109,7 @@ public enum AppError : Error {
 
 let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
 
-let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
 Var discoveredPeripheral: Peripheral?
 
@@ -352,9 +352,9 @@ public enum AppError : Error {
     case connectionFailed
 }
 
-let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
-let characteristicUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.UUID)
+let characteristicUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
 
 let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
     switch connectionEvent {
@@ -626,7 +626,7 @@ An application would populate the framework cache from the system cache with,
 ```swift
 let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
 
-let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
 let peripherals = central.retrieveConnectedPeripherals([serviceUUID]) 
 ```

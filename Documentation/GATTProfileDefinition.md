@@ -27,7 +27,7 @@ public protocol ServiceConfigurable {
     // Service name.
     static var name: String { get }
     // Service UUID.
-    static var UUID: String { get }
+    static var uuid: String { get }
     // Used to organize services in the BlueCap app profile browser.
     static var tag: String { get }
 }}
@@ -42,7 +42,7 @@ public protocol CharacteristicConfigurable {
     // Characteristic name.
     static var name: String { get }
     // Characteristic UUID.
-    static var UUID: String { get }
+    static var uuid: String { get }
     // Charcteristic permissions
     static var permissions: CBAttributePermissions { get }
     // Charcteristic properties
@@ -74,7 +74,7 @@ public protocol StringDeserializable {
 A `ServiceProfile` is used to define `Service` configuration. It can be used to instantiate either `Service` or `MutableService` objects. 
 
 ```swift
-let serviceProfile = ServiceProfile(UUID: "F000AA10-0451-4000-B000-000000000000", name: "Cool Service") 
+let serviceProfile = ServiceProfile(uuid: "F000AA10-0451-4000-B000-000000000000", name: "Cool Service") 
 ```
 
 The `CharacteristicProfiles` belonging to a `ServiceProfile` are added using a method defined on `ServiceProfile`,
@@ -89,7 +89,7 @@ A `ConfiguredServiceProfile` object encapsulates a `Service` configuration and i
 
 ```swift
 struct AccelerometerService : ServiceConfigurable  {
-  static let UUID = "F000AA10-0451-4000-B000-000000000000"
+  static let uuid = "F000AA10-0451-4000-B000-000000000000"
   static let name = "TI Accelerometer"
   static let tag = "TI Sensor Tag"
 }
@@ -104,9 +104,9 @@ let serviceProfile = ConfiguredServiceProfile<AccelerometerService>()
 `CharacteristicProfile` is the base class for `CharacteristicProfile` types and is instantiated as the default Characteristic profile if one was not explicitly defined for a discovered `Characteristic`. In this case, with no `String` conversions implemented in a GATT Profile definition, a `Characteristic` will support the default `String` conversions to and from `Data` using hexadecimal Strings. It can be used to instantiate either `Characteristic` or `MutableCharacteristic` objects. `CharacteristicProfile` have the following initializer,
 
 ```swift
-public init(UUID: String, name: String, permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable], properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify], initialValue: Data? = nil)
+public init(uuid: String, name: String, permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable], properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify], initialValue: Data? = nil)
 
-public convenience init(UUID: String)
+public convenience init(uuid: String)
 ```
    
 Default implementations are provided forth following methods,
@@ -136,7 +136,7 @@ public enum Enabled: UInt8, RawDeserializable, StringDeserializable, Characteris
     case yes = 1
     
     // CharacteristicConfigurable
-    public static let UUID = "F000AA12-0451-4000-B000-000000000000"
+    public static let uuid = "F000AA12-0451-4000-B000-000000000000"
     public static let name = "Accelerometer Enabled"
     public static let properties: CBCharacteristicProperties = [.read, .write]
     public static let permissions: CBAttributePermissions = [.readable, .writeable]
@@ -202,7 +202,7 @@ A `RawArrayCharacteristicProfile` object encapsulates configuration and serializ
 struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
     
     // CharacteristicConfigurable
-    static let UUID = "F000AA11-0451-4000-B000-000000000000"
+    static let uuid = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
     static let properties: CBCharacteristicProperties = [.Read, .Write]
     static let permissions: CBAttributePermissions = [.Readable, .Writeable]
@@ -262,7 +262,7 @@ A RawPairCharacteristicProfile object encapsulates configuration and serializati
 ```swift
 struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
     // CharacteristicConfigurable
-    static let UUID = "F000AA30-0451-4000-B000-000000000000"
+    static let uuid = "F000AA30-0451-4000-B000-000000000000"
     static let name = "Magnetometer Data"
     static let properties: CBCharacteristicProperties = [.Read, .Write]
     static let permissions: CBAttributePermissions = [.Readable, .Writeable]
@@ -312,7 +312,7 @@ A `RawArrayPairCharacteristicProfile` object encapsulates configuration and seri
 struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {
     
     // CharacteristicConfigurable
-    static let UUID = "F000AA11-0451-4000-B000-000000000000"
+    static let uuid = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
     static let properties: CBCharacteristicProperties = [.Read, .Notify]
     static let permissions: CBAttributePermissions = [.Readable, .Writeable]
@@ -377,7 +377,7 @@ A `StringCharacteristicProfile` only requires the implementation of Characterist
 ```swift
 struct SerialNumber : CharacteristicConfigurable {
     // CharacteristicConfigurable
-    static let UUID = "2a25"
+    static let uuid = "2a25"
     static let name = "Device Serial Number"
     static let permissions: CBAttributePermissions = [.Readable, .Writeable]
     static let properties: CBCharacteristicProperties = [.Read]

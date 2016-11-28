@@ -48,7 +48,7 @@ public protocol Serializable {
 
 public protocol CharacteristicConfigurable {
     static var name: String { get }
-    static var UUID: String { get }
+    static var uuid: String { get }
     static var permissions: CBAttributePermissions { get }
     static var properties: CBCharacteristicProperties { get }
     static var initialValue: Data? { get }
@@ -56,7 +56,7 @@ public protocol CharacteristicConfigurable {
 
 public protocol ServiceConfigurable {
     static var name: String { get }
-    static var UUID: String { get }
+    static var uuid: String { get }
     static var tag: String { get }
 }
 
@@ -68,14 +68,14 @@ public protocol StringDeserializable {
 
 public protocol RawDeserializable {
     associatedtype RawType
-    static var UUID: String { get }
+    static var uuid: String { get }
     var rawValue: RawType { get }
     init?(rawValue: RawType)
 }
 
 public protocol RawArrayDeserializable {
     associatedtype RawType
-    static var UUID: String { get }
+    static var uuid: String { get }
     static var size: Int { get }
     var rawValue: [RawType] { get }
     init?(rawValue: [RawType])
@@ -84,7 +84,7 @@ public protocol RawArrayDeserializable {
 public protocol RawPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
-    static var UUID: String { get }
+    static var uuid: String { get }
     var rawValue1: RawType1 { get }
     var rawValue2: RawType2 { get }
     init?(rawValue1: RawType1, rawValue2: RawType2)
@@ -93,7 +93,7 @@ public protocol RawPairDeserializable {
 public protocol RawArrayPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
-    static var UUID: String { get }
+    static var uuid: String { get }
     static var size1: Int { get }
     static var size2: Int { get }
     var rawValue1: [RawType1] { get }

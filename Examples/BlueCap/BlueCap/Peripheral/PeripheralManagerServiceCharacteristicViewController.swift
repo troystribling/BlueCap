@@ -45,7 +45,7 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
     override func viewDidLoad() {
         super.viewDidLoad()
         if let characteristic = self.characteristic {
-            self.uuidLabel.text = characteristic.UUID.uuidString
+            self.uuidLabel.text = characteristic.uuid.uuidString
             
             self.permissionReadableLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.readable))
             self.permissionWriteableLabel.text = self.booleanStringValue(characteristic.permissionEnabled(CBAttributePermissions.writeable))

@@ -18,8 +18,8 @@ public class MutableService : NSObject {
     weak var peripheralManager: PeripheralManager?
     let cbMutableService: CBMutableServiceInjectable
 
-    public var UUID: CBUUID {
-        return self.profile.UUID
+    public var uuid: CBUUID {
+        return self.profile.uuid
     }
     
     public var name: String {
@@ -37,16 +37,16 @@ public class MutableService : NSObject {
     }
     
     public convenience init(profile: ServiceProfile) {
-        self.init(cbMutableService: CBMutableService(type: profile.UUID, primary: true), profile: profile)
+        self.init(cbMutableService: CBMutableService(type: profile.uuid, primary: true), profile: profile)
     }
 
-    public convenience init(UUID: String) {
-        self.init(profile: ServiceProfile(UUID: UUID))
+    public convenience init(uuid: String) {
+        self.init(profile: ServiceProfile(uuid: uuid))
     }
 
     internal init(cbMutableService: CBMutableServiceInjectable, profile: ServiceProfile? = nil) {
         self.cbMutableService = cbMutableService
-        self.profile = profile ?? ServiceProfile(UUID: cbMutableService.UUID.uuidString)
+        self.profile = profile ?? ServiceProfile(uuid: cbMutableService.uuid.uuidString)
         super.init()
     }
 

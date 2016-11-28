@@ -96,7 +96,7 @@ class CharacteristicConnector {
         connectionFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
                 if let characteristic = peripheral.service(strongSelf.serviceUUID)?.characteristic(strongSelf.characteristicUUID) {
-                    Logger.debug("Discovered charcateristic \(characteristic.name), \(characteristic.UUID)")
+                    Logger.debug("Discovered charcateristic \(characteristic.name), \(characteristic.uuid)")
                     strongSelf.connectionPromise?.success((peripheral, characteristic))
                 } else {
                     Logger.debug("Characteristic discovery failed")

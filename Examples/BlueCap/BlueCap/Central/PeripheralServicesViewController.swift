@@ -76,7 +76,7 @@ class PeripheralServicesViewController : UITableViewController {
         if let peripheral = peripheral {
             let service = peripheral.services[indexPath.row]
             cell.nameLabel.text = service.name
-            cell.uuidLabel.text = service.UUID.uuidString
+            cell.uuidLabel.text = service.uuid.uuidString
         } else {
             cell.nameLabel.text = "Unknown"
             cell.uuidLabel.text = "Unknown"

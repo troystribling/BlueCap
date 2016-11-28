@@ -38,7 +38,7 @@ class ViewController: UITableViewController {
     let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-example" as NSString])
     let accelerometer = Accelerometer()
 
-    let accelerometerService = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
+    let accelerometerService = MutableService(uuid: TISensorTag.AccelerometerService.uuid)
 
     let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
     let accelerometerEnabledCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
@@ -99,7 +99,7 @@ class ViewController: UITableViewController {
     }
     
     func startAdvertising() {
-        let uuid = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+        let uuid = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
         let startAdvertiseFuture = manager.whenStateChanges().flatMap { [unowned self] state -> Future<Void> in
             switch state {

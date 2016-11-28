@@ -79,7 +79,7 @@ The `RawDeserializable` `protocol` is used for messages that contain a single va
 public protocol RawDeserializable {
     associatedtype RawType
     // Characteristic UUID.
-    static var UUID: String { get }
+    static var uuid: String { get }
     // Characteristic RawType value.
     var rawValue: RawType { get }
     //Create object from rawValue.
@@ -103,7 +103,7 @@ Note that `RawType` is required to be `Deserializable`. An Enum partially suppor
 enum Enabled : UInt8, RawDeserializable {
     case No  = 0
     case Yes = 1
-    static let UUID = "F000AA12-0451-4000-B000-000000000000"
+    static let uuid = "F000AA12-0451-4000-B000-000000000000"
 }
 
 let data2 = SerDe.serialize(Enabled.Yes)
@@ -118,7 +118,7 @@ if let value : Enabled = SerDe.deserialize(data2) {
 struct RawValue : RawDeserializable {
     
     let rawValue: UInt8
-    static let UUID = "F000AA13-0451-4000-B000-000000000000"
+    static let uuid = "F000AA13-0451-4000-B000-000000000000"
 
     init?(rawValue:UInt8) {
         self.rawValue = rawValue
@@ -141,7 +141,7 @@ The `RawArrayDeserializable` `protocol` is used for messages that contain multip
 public protocol RawArrayDeserializable {
     associatedtype RawType
     // Characteristic UUID.
-    static var UUID: String { get }
+    static var uuid: String { get }
     // Size of array.
     static var size: Int { get }
     // Characteristic RawType values.
@@ -167,7 +167,7 @@ Note that `RawType` is required to be `Deserializable`. `RawArrayDeserializable`
 struct RawArrayValue : RawArrayDeserializable {
     
     let rawValue: [UInt8]
-    static let UUID: String = "F000AA13-0451-4000-B000-000000000000"
+    static let uuid: String = "F000AA13-0451-4000-B000-000000000000"
     
     static let size = 2
     
@@ -197,7 +197,7 @@ public protocol RawPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
     // Characteristic UUID.
-    static var UUID: String { get }
+    static var uuid: String { get }
     // Characteristic RawType1 value.
     var rawValue1: RawType1 { get }
     // Characteristic RawType2 value.
@@ -224,7 +224,7 @@ struct RawPairValue : RawPairDeserializable {
     
     let rawValue1: UInt8
     let rawValue2: Int8
-    static let UUID: String = "F000AA13-0451-4000-B000-000000000000"
+    static let uuid: String = "F000AA13-0451-4000-B000-000000000000"
     
     
     init?(rawValue1:UInt8, rawValue2:Int8) {
@@ -251,7 +251,7 @@ public protocol RawArrayPairDeserializable {
     associatedtype RawType1
     associatedtype RawType2
     // Characteristic UUID.
-    static var UUID: String { get }
+    static var uuid: String { get }
     // Size of RawType1 array.
     static var size1: Int { get }
     // Size of RawType2 array.
@@ -282,7 +282,7 @@ struct RawArrayPairValue : RawArrayPairDeserializable {
     
     let rawValue1: [UInt8]
     let rawValue2: [Int8]
-    static let UUID = "F000AA13-0451-4000-B000-000000000000"
+    static let uuid = "F000AA13-0451-4000-B000-000000000000"
     static let size1 = 2
     static let size2 = 2
     

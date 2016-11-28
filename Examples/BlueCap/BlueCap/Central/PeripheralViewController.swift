@@ -116,7 +116,7 @@ class PeripheralViewController : UITableViewController {
         connectionsLabel.text = "\(peripheral.connectionCount)"
         secondsConnectedLabel.text = "\(Int(peripheral.cumlativeSecondsConnected))"
         if peripheral.connectionCount > 0 {
-            avgSecondsConnected.text = "\(Int(peripheral.cumlativeSecondsConnected) / peripheral.connectionCount)"
+            avgSecondsConnected.text = "\(UInt(peripheral.cumlativeSecondsConnected) / peripheral.connectionCount)"
         } else {
             avgSecondsConnected.text = "0"
         }

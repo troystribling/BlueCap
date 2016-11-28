@@ -414,11 +414,11 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     internal func didDiscoverCharacteristicsForService(_ service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: Error?) {
         Logger.debug("uuid=\(identifier.uuidString), name=\(name)")
-        if let bcService = self.discoveredServices[service.UUID] {
+        if let bcService = self.discoveredServices[service.uuid] {
             bcService.didDiscoverCharacteristics(characteristics, error: error)
             if error == nil {
                 for cbCharacteristic in characteristics {
-                    discoveredCharacteristics[cbCharacteristic.UUID] = bcService.discoveredCharacteristics[cbCharacteristic.UUID]
+                    discoveredCharacteristics[cbCharacteristic.uuid] = bcService.discoveredCharacteristics[cbCharacteristic.uuid]
                 }
             }
         }
@@ -433,10 +433,10 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             }
         } else {
             for service in discoveredServices {
-                let serviceProfile = profileManager?.services[service.UUID]
+                let serviceProfile = profileManager?.services[service.uuid]
                 let bcService = Service(cbService: service, peripheral: self, profile: serviceProfile)
-                self.discoveredServices[bcService.UUID] = bcService
-                Logger.debug("uuid=\(bcService.UUID.uuidString), name=\(bcService.name)")
+                self.discoveredServices[bcService.uuid] = bcService
+                Logger.debug("uuid=\(bcService.uuid.uuidString), name=\(bcService.name)")
             }
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
                 self.servicesDiscoveredPromise?.success(self)
@@ -445,29 +445,29 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
     
     internal func didUpdateNotificationStateForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        guard let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] else {
-            Logger.debug("characteristic not found uuid=\(characteristic.UUID.uuidString)")
+        guard let bcCharacteristic = self.discoveredCharacteristics[characteristic.uuid] else {
+            Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }
-        Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
+        Logger.debug("uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
         bcCharacteristic.didUpdateNotificationState(error)
     }
     
     internal func didUpdateValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        guard let bcCharacteristic = discoveredCharacteristics[characteristic.UUID] else {
-            Logger.debug("characteristic not found uuid=\(characteristic.UUID.uuidString)")
+        guard let bcCharacteristic = discoveredCharacteristics[characteristic.uuid] else {
+            Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }
-        Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
+        Logger.debug("uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
         bcCharacteristic.didUpdate(error)
     }
 
     internal func didWriteValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        guard let bcCharacteristic = self.discoveredCharacteristics[characteristic.UUID] else {
-            Logger.debug("characteristic not found uuid=\(characteristic.UUID.uuidString)")
+        guard let bcCharacteristic = self.discoveredCharacteristics[characteristic.uuid] else {
+            Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }
-        Logger.debug("uuid=\(bcCharacteristic.UUID.uuidString), name=\(bcCharacteristic.name)")
+        Logger.debug("uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
         bcCharacteristic.didWrite(error)
     }
 

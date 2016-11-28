@@ -15,7 +15,7 @@ public class MutableCharacteristic : NSObject {
     // MARK: Properties
     let profile: CharacteristicProfile
 
-    fileprivate var centrals: [UUID : CBCentralInjectable]
+    fileprivate var centrals = [UUID : CBCentralInjectable]()
 
     fileprivate var queuedUpdates = [Data]()
     internal fileprivate(set) var _isUpdating = false
@@ -48,8 +48,8 @@ public class MutableCharacteristic : NSObject {
         }
     }
 
-    public var UUID: CBUUID {
-        return self.profile.UUID
+    public var uuid: CBUUID {
+        return self.profile.uuid
     }
 
     public var name: String {
@@ -98,7 +98,7 @@ public class MutableCharacteristic : NSObject {
     // MARK: Initializers
 
     public convenience init(profile: CharacteristicProfile) {
-        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.UUID, properties: profile.properties, value: nil, permissions: profile.permissions)
+        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
         self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
     }
 
@@ -109,19 +109,19 @@ public class MutableCharacteristic : NSObject {
     }
 
     internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable) {
-        self.profile = CharacteristicProfile(UUID: cbMutableCharacteristic.UUID.uuidString)
+        self.profile = CharacteristicProfile(uuid: cbMutableCharacteristic.uuid.uuidString)
         self._value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
     }
 
     public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: Data?) {
-        self.profile = CharacteristicProfile(UUID: UUID)
+        self.profile = CharacteristicProfile(uuid: UUID)
         self._value = value
-        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.UUID, properties:properties, value:nil, permissions:permissions)
+        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
     }
 
     public convenience init(UUID: String) {
-        self.init(profile: CharacteristicProfile(UUID: UUID))
+        self.init(profile: CharacteristicProfile(uuid: UUID))
     }
 
     public class func withProfiles(_ profiles: [CharacteristicProfile]) -> [MutableCharacteristic] {
@@ -224,13 +224,13 @@ public class MutableCharacteristic : NSObject {
 
     internal func didSubscribeToCharacteristic(_ central: CBCentralInjectable) {
         self._isUpdating = true
-        self.centrals[central.identifier as NSUUID] = central
+        self.centrals[central.identifier] = central
         _ = self.updateValues(self.queuedUpdates)
         self.queuedUpdates.removeAll()
     }
 
     internal func didUnsubscribeFromCharacteristic(_ central: CBCentralInjectable) {
-        self.centrals.removeValue(forKey: central.identifier as NSUUID)
+        self.centrals.removeValue(forKey: central.identifier)
         if self.centrals.keys.count == 0 {
             self._isUpdating = false
         }

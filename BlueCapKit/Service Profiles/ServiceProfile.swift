@@ -14,7 +14,7 @@ public class ServiceProfile {
     
     internal var characteristicProfiles = [CBUUID: CharacteristicProfile]()
 
-    public let UUID: CBUUID
+    public let uuid: CBUUID
     public let name: String
     public let tag: String
     
@@ -26,24 +26,24 @@ public class ServiceProfile {
         return self.characteristicProfiles
     }
     
-    public init(UUID: String, name: String, tag: String = "Miscellaneous") {
+    public init(uuid: String, name: String, tag: String = "Miscellaneous") {
         self.name = name
-        self.UUID = CBUUID(string:UUID)
+        self.uuid = CBUUID(string: uuid)
         self.tag = tag
     }
     
-    public convenience init(UUID:String) {
-        self.init(UUID:UUID, name:"Unknown")
+    public convenience init(uuid: String) {
+        self.init(uuid: uuid, name:"Unknown")
     }
 
     public func addCharacteristic(_ characteristicProfile: CharacteristicProfile) {
-        Logger.debug("name=\(characteristicProfile.name), uuid=\(characteristicProfile.UUID.uuidString)")
-        self.characteristicProfiles[characteristicProfile.UUID] = characteristicProfile
+        Logger.debug("name=\(characteristicProfile.name), uuid=\(characteristicProfile.uuid.uuidString)")
+        self.characteristicProfiles[characteristicProfile.uuid] = characteristicProfile
     }
 
-    public func characteristicProfile(withUUID UUID: CBUUID) -> CharacteristicProfile {
-        guard let characteristicProfile = self.characteristicProfiles[UUID] else {
-            return CharacteristicProfile(UUID: UUID.uuidString)
+    public func characteristicProfile(withUUID uuid: CBUUID) -> CharacteristicProfile {
+        guard let characteristicProfile = self.characteristicProfiles[uuid] else {
+            return CharacteristicProfile(uuid: uuid.uuidString)
         }
         return characteristicProfile
     }
@@ -53,7 +53,7 @@ public class ServiceProfile {
 public class ConfiguredServiceProfile<Config: ServiceConfigurable>: ServiceProfile {
     
     public init() {
-        super.init(UUID: Config.UUID, name: Config.name, tag: Config.tag)
+        super.init(uuid: Config.uuid, name: Config.name, tag: Config.tag)
     }
     
 }

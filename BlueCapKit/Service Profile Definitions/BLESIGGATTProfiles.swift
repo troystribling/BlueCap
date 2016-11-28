@@ -16,14 +16,14 @@ public struct BLESIGGATT {
     public struct DeviceInformationService: ServiceConfigurable {
 
         // ServiceConfigurable
-        public static let UUID = "180a"
+        public static let uuid = "180a"
         public static let name = "Device Information"
         public static let tag  = "BLESIGGATT"
         
         public struct ModelNumber: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
-            public static let UUID                                     = "2a24"
+            public static let uuid                                     = "2a24"
             public static let name                                     = "Device Model Number"
             public static let permissions: CBAttributePermissions      = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties   = .read
@@ -34,7 +34,7 @@ public struct BLESIGGATT {
         public struct SerialNumber: CharacteristicConfigurable {
 
             // CharacteristicConfigurable
-            public static let UUID                                      = "2a25"
+            public static let uuid                                      = "2a25"
             public static let name                                      = "Device Serial Number"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = .read
@@ -45,7 +45,7 @@ public struct BLESIGGATT {
         public struct FirmwareRevision: CharacteristicConfigurable {
 
             // CharacteristicConfigurable
-            public static let UUID                                      = "2a26"
+            public static let uuid                                      = "2a26"
             public static let name                                      = "Device Firmware Revision"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = .read
@@ -56,7 +56,7 @@ public struct BLESIGGATT {
         public struct HardwareRevision: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
-            public static let UUID = "2a27"
+            public static let uuid = "2a27"
             public static let name = "Device Hardware Revision"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = .read
@@ -67,7 +67,7 @@ public struct BLESIGGATT {
         public struct SoftwareRevision: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
-            public static let UUID = "2a28"
+            public static let uuid = "2a28"
             public static let name = "Device Software Revision"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = .read
@@ -78,7 +78,7 @@ public struct BLESIGGATT {
         public struct ManufacturerName: CharacteristicConfigurable {
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "2a29"
+            public static let uuid                                      = "2a29"
             public static let name                                      = "Device Manufacturer Name"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = .read
@@ -91,7 +91,7 @@ public struct BLESIGGATT {
     public struct BatteryService: ServiceConfigurable {
 
         // ServiceConfigurable
-        public static let UUID = "180f"
+        public static let uuid = "180f"
         public static let name = "Battery"
         public static let tag  = "BLESIGGATT"
         
@@ -100,7 +100,7 @@ public struct BLESIGGATT {
             public let value: UInt8
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "2a19"
+            public static let uuid                                      = "2a19"
             public static let name                                      = "Battery Level"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.notify, .read]
@@ -136,7 +136,7 @@ public struct BLESIGGATT {
     public struct TxPowerService: ServiceConfigurable {
 
         // ServiceConfigurable
-        public static let UUID = "1804"
+        public static let uuid = "1804"
         public static let name = "Tx Power Level"
         public static let tag  = "BLESIGGATT"
 
@@ -145,7 +145,7 @@ public struct BLESIGGATT {
             public let value : Int8
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "2a07"
+            public static let uuid                                      = "2a07"
             public static let name                                      = "Tx Power Level"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.notify, .read]

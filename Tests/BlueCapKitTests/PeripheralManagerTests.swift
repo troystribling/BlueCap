@@ -17,7 +17,7 @@ import CoreLocation
 class PeripheralManagerTests: XCTestCase {
 
     let peripheralName  = "Test Peripheral"
-    let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID)
+    let advertisedUUIDs = CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)
     let immediateContext = ImmediateContext()
 
     override func setUp() {
@@ -51,7 +51,7 @@ class PeripheralManagerTests: XCTestCase {
 
     func testStartAdvertising_WhenNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
+        let future = peripheralManager.startAdvertising(self.peripheralName, uuids: [self.advertisedUUIDs])
         peripheralManager.didStartAdvertising(nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) {
             XCTAssert(mock.startAdvertisingCalled)
@@ -67,7 +67,7 @@ class PeripheralManagerTests: XCTestCase {
 
     func testStartAdvertising_WhenErrorInAckAndNotAdvertising_CompletesWithAckError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
+        let future = peripheralManager.startAdvertising(self.peripheralName, uuids: [self.advertisedUUIDs])
         peripheralManager.didStartAdvertising(TestFailure.error)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqualErrors(error, TestFailure.error)
@@ -83,7 +83,7 @@ class PeripheralManagerTests: XCTestCase {
 
     func testStartAdvertising_WhenAdvertising_CompletesWithErrorPeripheralManagerIsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .poweredOn)
-        let future = peripheralManager.startAdvertising(self.peripheralName, uuids:[self.advertisedUUIDs])
+        let future = peripheralManager.startAdvertising(self.peripheralName, uuids: [self.advertisedUUIDs])
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqualErrors(error, PeripheralManagerError.isAdvertising)
             XCTAssert(mock.advertisementData == nil)
@@ -146,7 +146,7 @@ class PeripheralManagerTests: XCTestCase {
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.addServiceCalled)
             XCTAssertEqual(peripheralServices.count, 1)
-            XCTAssertEqual(peripheralServices[0].UUID, service.UUID)
+            XCTAssertEqual(peripheralServices[0].uuid, service.uuid)
         }
     }
 
@@ -176,7 +176,7 @@ class PeripheralManagerTests: XCTestCase {
             XCTAssert(mock.removeServiceCalled)
             XCTAssertEqual(peripheralServices.count, 0)
             if let removedService = mock.removedService {
-                XCTAssertEqual(removedService.UUID, service.UUID)
+                XCTAssertEqual(removedService.uuid, service.uuid)
             } else {
                 XCTFail()
             }
@@ -218,13 +218,13 @@ class PeripheralManagerTests: XCTestCase {
                 XCTAssertEqual(advertisements.localName!, peripheralAdvertisements[CBAdvertisementDataLocalNameKey]! as! String)
                 XCTAssertEqual(advertisements.txPower!, peripheralAdvertisements[CBAdvertisementDataTxPowerLevelKey]! as! NSNumber)
                 XCTAssertEqual(services.count, testServices.count)
-                XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }))
+                XCTAssertEqual(Set(services.map { $0.uuid }), Set(testServices.map { $0.uuid }))
                 for testService in testServices {
                     let testCharacteristics = testService.characteristics!
-                    let service = peripheralManager.services.filter { $0.UUID == testService.UUID }.first!
+                    let service = peripheralManager.services.filter { $0.uuid == testService.uuid }.first!
                     let characteristics = service.characteristics
                     XCTAssertEqual(characteristics.count, testCharacteristics.count)
-                    XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }))
+                    XCTAssertEqual(Set(characteristics.map { $0.uuid }), Set(testCharacteristics.map { $0.uuid }))
                 }
         }
     }

@@ -16,7 +16,7 @@ public struct TISensorTag {
     public struct AccelerometerService: ServiceConfigurable  {
         
         // ServiceConfigurable
-        public static let UUID  = "F000AA10-0451-4000-B000-000000000000"
+        public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
         public static let name  = "TI Accelerometer"
         public static let tag   = "TI Sensor Tag"
         
@@ -58,7 +58,7 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "F000AA11-0451-4000-B000-000000000000"
+            public static let uuid                                      = "F000AA11-0451-4000-B000-000000000000"
             public static let name                                      = "Accelerometer Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -117,7 +117,7 @@ public struct TISensorTag {
             case yes = 1
             
             // CharacteristicConfigurable
-            public static let UUID = "F000AA12-0451-4000-B000-000000000000"
+            public static let uuid = "F000AA12-0451-4000-B000-000000000000"
             public static let name = "Accelerometer Enabled"
             public static let properties: CBCharacteristicProperties = [.read, .write]
             public static let permissions: CBAttributePermissions = [.readable, .writeable]
@@ -183,7 +183,7 @@ public struct TISensorTag {
             }
 
             // CharacteristicConfigurable
-            public static let UUID                                      = "F000AA13-0451-4000-B000-000000000000"
+            public static let uuid                                      = "F000AA13-0451-4000-B000-000000000000"
             public static let name                                      = "Accelerometer Update Period"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.read, .write]
@@ -221,7 +221,7 @@ public struct TISensorTag {
     public struct MagnetometerService: ServiceConfigurable {
         
         // ServiceConfigurable
-        public static let UUID = "F000AA30-0451-4000-B000-000000000000"
+        public static let uuid = "F000AA30-0451-4000-B000-000000000000"
         public static let name = "TI Magnetometer"
         public static let tag  = "TI Sensor Tag"
 
@@ -264,7 +264,7 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa31-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa31-0451-4000-b000-000000000000"
             public static let name                                      = "Magnetometer Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -319,7 +319,7 @@ public struct TISensorTag {
             case yes    = 1
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa32-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa32-0451-4000-b000-000000000000"
             public static let name                                      = "Magnetometer Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -368,7 +368,7 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa33-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa33-0451-4000-b000-000000000000"
             public static let name                                      = "Magnetometer Update Period"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.read, .write]
@@ -406,7 +406,7 @@ public struct TISensorTag {
     public struct GyroscopeService : ServiceConfigurable {
 
         // ServiceConfigurable
-        public static let UUID  = "F000AA50-0451-4000-B000-000000000000"
+        public static let uuid  = "F000AA50-0451-4000-B000-000000000000"
         public static let name  = "TI Gyroscope"
         public static let tag   = "TI Sensor Tag"
 
@@ -448,7 +448,7 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa51-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa51-0451-4000-b000-000000000000"
             public static let name                                      = "Gyroscope Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -509,7 +509,7 @@ public struct TISensorTag {
             case xyzAxis    = 7
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa52-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa52-0451-4000-b000-000000000000"
             public static let name                                      = "Gyroscope Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -572,7 +572,7 @@ public struct TISensorTag {
     // MARK: - Temperature Service units Celsius -
     public struct TemperatureService : ServiceConfigurable {
         
-        public static let UUID  = "F000AA00-0451-4000-B000-000000000000"
+        public static let uuid  = "F000AA00-0451-4000-B000-000000000000"
         public static let name  = "TI Temperature"
         public static let tag   = "TI Sensor Tag"
 
@@ -606,7 +606,7 @@ public struct TISensorTag {
             }
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa01-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa01-0451-4000-b000-000000000000"
             public static let name                                      = "Temperature Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -656,7 +656,7 @@ public struct TISensorTag {
             case yes    = 1
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa02-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa02-0451-4000-b000-000000000000"
             public static let name                                      = "Temperature Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -705,7 +705,7 @@ public struct TISensorTag {
     public struct BarometerService : ServiceConfigurable {
         
         // ServiceConfigurable
-        public static let UUID = "F000AA40-0451-4000-B000-000000000000"
+        public static let uuid = "F000AA40-0451-4000-B000-000000000000"
         public static let name = "TI Barometer"
         public static let tag  = "TI Sensor Tag"
 
@@ -715,7 +715,7 @@ public struct TISensorTag {
             public let pressureRaw: UInt16
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa41-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa41-0451-4000-b000-000000000000"
             public static let name                                      = "Baraometer Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -768,7 +768,7 @@ public struct TISensorTag {
             public let c8 : Int16
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa43-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa43-0451-4000-b000-000000000000"
             public static let name                                      = "Baraometer Calibration Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -847,7 +847,7 @@ public struct TISensorTag {
             case calibrate  = 2
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa42-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa42-0451-4000-b000-000000000000"
             public static let name                                      = "Baraometer Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -892,7 +892,7 @@ public struct TISensorTag {
     public struct HygrometerService: ServiceConfigurable {
         
         // ServiceConfigurable
-        public static let UUID = "F000AA20-0451-4000-B000-000000000000"
+        public static let uuid = "F000AA20-0451-4000-B000-000000000000"
         public static let name = "TI Hygrometer"
         public static let tag  = "TI Sensor Tag"
 
@@ -909,7 +909,7 @@ public struct TISensorTag {
             }
 
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa21-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa21-0451-4000-b000-000000000000"
             public static let name                                      = "Hygrometer Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -961,7 +961,7 @@ public struct TISensorTag {
             case yes    = 1
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa22-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa22-0451-4000-b000-000000000000"
             public static let name                                      = "Hygrometer Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -1002,7 +1002,7 @@ public struct TISensorTag {
     public struct SensorTagTestService: ServiceConfigurable {
         
         // ServiceConfigurable
-        public static let UUID  = "F000AA60-0451-4000-B000-000000000000"
+        public static let uuid  = "F000AA60-0451-4000-B000-000000000000"
         public static let name  = "TI Sensor Tag Test"
         public static let tag   = "TI Sensor Tag"
         
@@ -1020,7 +1020,7 @@ public struct TISensorTag {
             var test8: Bool
         
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa61-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa61-0451-4000-b000-000000000000"
             public static let name                                      = "Test Data"
             public static let properties: CBCharacteristicProperties    = .read
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -1097,7 +1097,7 @@ public struct TISensorTag {
             case yes    = 1
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "f000aa62-0451-4000-b000-000000000000"
+            public static let uuid                                      = "f000aa62-0451-4000-b000-000000000000"
             public static let name                                      = "Test Enabled"
             public static let properties: CBCharacteristicProperties    = [.read, .write]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -1136,7 +1136,7 @@ public struct TISensorTag {
     // MARK: - Key Pressed Service -
     public struct KeyPressedService : ServiceConfigurable {
 
-        public static let UUID = "ffe0"
+        public static let uuid = "ffe0"
         public static let name = "Sensor Tag Key Pressed"
         public static let tag  = "TI Sensor Tag"
 
@@ -1148,7 +1148,7 @@ public struct TISensorTag {
             case buttonTwo  = 2
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "ffe1"
+            public static let uuid                                      = "ffe1"
             public static let name                                      = "Key Pressed"
             public static let properties: CBCharacteristicProperties    = .notify
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]

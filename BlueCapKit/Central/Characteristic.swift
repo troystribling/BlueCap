@@ -53,8 +53,8 @@ public class Characteristic : NSObject {
         return centralQueue.sync { self.writePromises.count }
     }
 
-    public var UUID: CBUUID {
-        return cbCharacteristic.UUID
+    public var uuid: CBUUID {
+        return cbCharacteristic.uuid
     }
     
     public var name: String {
@@ -102,7 +102,7 @@ public class Characteristic : NSObject {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         self.centralQueue = service.centralQueue
-        self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.UUID) ??  CharacteristicProfile(UUID: cbCharacteristic.UUID.uuidString)
+        self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.uuid) ??  CharacteristicProfile(uuid: cbCharacteristic.uuid.uuidString)
         super.init()
     }
 
@@ -278,10 +278,10 @@ public class Characteristic : NSObject {
     // MARK: CBPeripheralDelegate Shim
     internal func didUpdateNotificationState(_ error: Swift.Error?) {
         if let error = error {
-            Logger.debug("failed uuid=\(self.UUID.uuidString), name=\(self.name)")
+            Logger.debug("failed uuid=\(uuid.uuidString), name=\(self.name)")
             notificationStateChangedPromise?.failure(error)
         } else {
-            Logger.debug("success:  uuid=\(self.UUID.uuidString), name=\(self.name)")
+            Logger.debug("success:  uuid=\(uuid.uuidString), name=\(self.name)")
             notificationStateChangedPromise?.success(self)
         }
     }
@@ -299,10 +299,10 @@ public class Characteristic : NSObject {
             return
         }
         if let error = error {
-            Logger.debug("failed:  uuid=\(self.UUID.uuidString), name=\(self.name)")
+            Logger.debug("failed:  uuid=\(uuid.uuidString), name=\(self.name)")
             promise.failure(error)
         } else {
-            Logger.debug("success:  uuid=\(self.UUID.uuidString), name=\(self.name)")
+            Logger.debug("success:  uuid=\(uuid.uuidString), name=\(self.name)")
             promise.success(self)
         }
         writing = false
@@ -383,7 +383,7 @@ public class Characteristic : NSObject {
         guard let parameters = writeParameters.first , !writing else {
             return
         }
-        Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(self.UUID.uuidString)")
+        Logger.debug("write characteristic value=\(parameters.value.hexStringValue()), uuid=\(uuid.uuidString)")
         writeParameters.remove(at :0)
         writing = true
         writeValue(parameters.value, type: parameters.type)
@@ -395,7 +395,7 @@ public class Characteristic : NSObject {
         guard let parameters = readParameters.first , !reading else {
             return
         }
-        Logger.debug("read characteristic \(self.UUID.uuidString)")
+        Logger.debug("read characteristic \(uuid.uuidString)")
         readParameters.remove(at :0)
         readValueForCharacteristic()
         reading = true

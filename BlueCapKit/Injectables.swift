@@ -125,7 +125,7 @@ extension CBPeripheral : CBPeripheralInjectable {
 
 // MARK: - CBServiceInjectable -
 protocol CBServiceInjectable {
-    var UUID: CBUUID { get }
+    var uuid: CBUUID { get }
     func getCharacteristics() -> [CBCharacteristicInjectable]?
 }
 
@@ -138,7 +138,7 @@ extension CBService : CBServiceInjectable {
 
 // MARK: - CBCharacteristicInjectable -
 public protocol CBCharacteristicInjectable {
-    var UUID: CBUUID { get }
+    var uuid: CBUUID { get }
     var value: Data? { get }
     var properties: CBCharacteristicProperties { get }
     var isNotifying: Bool { get }

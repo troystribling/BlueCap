@@ -354,14 +354,14 @@ class PeripheralsViewController : UITableViewController {
         let scanDuration = ConfigStore.getScanDurationEnabled() ? Double(ConfigStore.getScanDuration()) : Double.infinity
         switch scanMode {
         case .promiscuous:
-            future = Singletons.scanningManager.startScanning(capacity:10, duration: scanDuration, options: scanOptions)
+            future = Singletons.scanningManager.startScanning(capacity:10, timeout: scanDuration, options: scanOptions)
         case .service:
             let scannedServices = ConfigStore.getScannedServiceUUIDs()
             guard scannedServices.isEmpty == false else {
                 self.present(UIAlertController.alert(message: "No scan services configured"), animated: true, completion: nil)
                 return
             }
-            future = Singletons.scanningManager.startScanning(forServiceUUIDs:scannedServices, capacity: 10, duration: scanDuration, options: scanOptions)
+            future = Singletons.scanningManager.startScanning(forServiceUUIDs: scannedServices, capacity: 10, timeout: scanDuration, options: scanOptions)
         }
         future.onSuccess(completion: afterPeripheralDiscovered)
         future.onFailure(completion: afterTimeout)

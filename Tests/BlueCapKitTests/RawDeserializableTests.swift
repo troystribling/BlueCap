@@ -19,7 +19,7 @@ class RawDeserializableTests: XCTestCase {
         case no     = 0
         case yes    = 1
         case maybe  = 2        
-        static let UUID = "abc"
+        static let uuid = "abc"
     }
 
     override func setUp() {

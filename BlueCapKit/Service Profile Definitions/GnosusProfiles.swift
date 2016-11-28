@@ -16,14 +16,14 @@ public struct Gnosus {
     public struct HelloWorldService: ServiceConfigurable {
         
         // ServiceConfigurable
-        public static let UUID = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
+        public static let uuid = "2f0a0000-69aa-f316-3e78-4194989a6c1a"
         public static let name = "Hello World"
         public static let tag  = "gnos.us"
         
         public struct Greeting : CharacteristicConfigurable {
 
             // BLEConfigurable
-            public static let UUID                                     = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+            public static let uuid                                     = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
             public static let name                                     = "Hello World Greeting"
             public static let permissions: CBAttributePermissions      = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties   = [.read, .notify]
@@ -36,7 +36,7 @@ public struct Gnosus {
             public let period : UInt16
 
             // CharacteristicConfigurable
-            public static let UUID                                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
+            public static let uuid                                      = "2f0a0002-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Update Period"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.read, .write]
@@ -74,7 +74,7 @@ public struct Gnosus {
     public struct LocationService: ServiceConfigurable {
 
         // ServiceConfigurable
-        public static let UUID  = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
+        public static let uuid  = "2f0a0001-69aa-f316-3e78-4194989a6c1a"
         public static let name  = "Location"
         public static let tag   = "gnos.us"
         
@@ -110,7 +110,7 @@ public struct Gnosus {
             }
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
+            public static let uuid                                      = "2f0a0017-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Lattitude and Longitude"
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
             public static let properties: CBCharacteristicProperties    = [.read, .write]

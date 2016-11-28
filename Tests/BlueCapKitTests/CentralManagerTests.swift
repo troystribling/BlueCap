@@ -131,13 +131,13 @@ class CentralManagerTests: XCTestCase {
                 let services = peripheral!.services
                 let testServices = testPeripheral.services!
                 XCTAssertEqual(services.count, testServices.count)
-                XCTAssertEqual(Set(services.map { $0.UUID }), Set(testServices.map { $0.UUID }))
+                XCTAssertEqual(Set(services.map { $0.uuid }), Set(testServices.map { $0.uuid }))
                 for testService in testServices {
                     let testCharacteristics = testService.characteristics!
-                    let service = peripheral!.discoveredServices[testService.UUID]
+                    let service = peripheral!.discoveredServices[testService.uuid]
                     let characteristics = service!.characteristics
                     XCTAssertEqual(characteristics.count, testCharacteristics.count)
-                    XCTAssertEqual(Set(characteristics.map { $0.UUID }), Set(testCharacteristics.map { $0.UUID }))
+                    XCTAssertEqual(Set(characteristics.map { $0.uuid }), Set(testCharacteristics.map { $0.uuid }))
                 }
             }
         }

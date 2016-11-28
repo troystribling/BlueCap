@@ -190,11 +190,11 @@ class PeripheralUT: Peripheral {
 
 class CBServiceMock: CBServiceInjectable {
 
-    var UUID: CBUUID
+    var uuid: CBUUID
     var characteristics: [CBCharacteristicMock]?
 
-    init(UUID:CBUUID = CBUUID(string: Foundation.UUID().uuidString)) {
-        self.UUID = UUID
+    init(uuid:CBUUID = CBUUID(string: Foundation.UUID().uuidString)) {
+        self.uuid = uuid
     }
 
     func getCharacteristics() -> [CBCharacteristicInjectable]? {
@@ -208,13 +208,13 @@ class CBServiceMock: CBServiceInjectable {
 
 class CBCharacteristicMock: CBCharacteristicInjectable {
     
-    var UUID: CBUUID
+    var uuid: CBUUID
     var value: Data?
     var properties: CBCharacteristicProperties
     var isNotifying = false
 
-    init (UUID: CBUUID = CBUUID(string: Foundation.UUID().uuidString), properties: CBCharacteristicProperties = [.read, .write], isNotifying: Bool = false) {
-        self.UUID = UUID
+    init (uuid: CBUUID = CBUUID(string: Foundation.UUID().uuidString), properties: CBCharacteristicProperties = [.read, .write], isNotifying: Bool = false) {
+        self.uuid = uuid
         self.properties = properties
         self.isNotifying = isNotifying
     }
@@ -308,9 +308,9 @@ class CBMutableServiceMock : CBServiceMock, CBMutableServiceInjectable {
 class CBMutableCharacteristicMock : CBCharacteristicMock, CBMutableCharacteristicInjectable {
     var permissions: CBAttributePermissions
 
-    init (UUID: CBUUID = CBUUID(string: Foundation.UUID().uuidString), properties: CBCharacteristicProperties = [.read, .write], permissions: CBAttributePermissions = [.readable, .writeable], isNotifying: Bool = false) {
+    init (uuid: CBUUID = CBUUID(string: Foundation.UUID().uuidString), properties: CBCharacteristicProperties = [.read, .write], permissions: CBAttributePermissions = [.readable, .writeable], isNotifying: Bool = false) {
         self.permissions = permissions
-        super.init(UUID: UUID, properties: properties, isNotifying: isNotifying)
+        super.init(uuid: uuid, properties: properties, isNotifying: isNotifying)
     }
 }
 
@@ -369,15 +369,15 @@ func createPeripheralManager(_ isAdvertising: Bool, state: ManagerState) -> (CBP
 }
 
 func createPeripheralManagerService(_ peripheralManager: PeripheralManager) -> MutableService {
-    let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.UUID)]!
-    let service = MutableService(cbMutableService: CBMutableServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID)), profile: helloWoroldService)
+    let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.uuid)]!
+    let service = MutableService(cbMutableService: CBMutableServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid)), profile: helloWoroldService)
     service.peripheralManager = peripheralManager
     return service
 }
 
 func createPeripheralManagerCharacteristic(_ service: MutableService) -> MutableCharacteristic {
     service.characteristics = service.profile.characteristics.map { profile in
-        let characteristic = CBMutableCharacteristicMock(UUID:profile.UUID, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
+        let characteristic = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
         return MutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
     }
     return service.characteristics[0]

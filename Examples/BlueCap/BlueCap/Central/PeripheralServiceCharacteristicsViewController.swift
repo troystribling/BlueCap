@@ -90,7 +90,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         if let service = self.service {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name
-            cell.uuidLabel.text = characteristic.UUID.uuidString
+            cell.uuidLabel.text = characteristic.uuid.uuidString
         }
         return cell
     }

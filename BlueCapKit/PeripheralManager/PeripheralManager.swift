@@ -171,11 +171,11 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             if let afterSeriviceAddPromise = self.afterSeriviceAddPromise, !afterSeriviceAddPromise.completed {
                 return afterSeriviceAddPromise.future
             }
-            Logger.debug("service name=\(service.name), uuid=\(service.UUID)")
+            Logger.debug("service name=\(service.name), uuid=\(service.uuid)")
             service.peripheralManager = self
             self.addConfiguredCharacteristics(service.characteristics)
             self.afterSeriviceAddPromise = Promise<Void>()
-            self.configuredServices[service.UUID] = service
+            self.configuredServices[service.uuid] = service
             self.cbPeripheralManager.add(service.cbMutableService)
             return self.afterSeriviceAddPromise!.future
         }
@@ -183,10 +183,10 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     public func remove(_ service: MutableService) {
         peripheralQueue.sync {
-            Logger.debug("removing service \(service.UUID.uuidString)")
+            Logger.debug("removing service \(service.uuid.uuidString)")
             let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
                 for bcCharacteristic in service.characteristics {
-                    if uuid == bcCharacteristic.UUID {
+                    if uuid == bcCharacteristic.uuid {
                         return true
                     }
                 }
@@ -195,7 +195,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             for cbCharacteristic in removedCharacteristics {
                 self.configuredCharcteristics.removeValue(forKey: cbCharacteristic)
             }
-            self.configuredServices.removeValue(forKey: service.UUID)
+            self.configuredServices.removeValue(forKey: service.uuid)
             self.cbPeripheralManager.remove(service.cbMutableService)
         }
     }
@@ -281,12 +281,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     func didSubscribeToCharacteristic(_ characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
         Logger.debug()
-        self.configuredCharcteristics[characteristic.UUID]?.didSubscribeToCharacteristic(central)
+        self.configuredCharcteristics[characteristic.uuid]?.didSubscribeToCharacteristic(central)
     }
     
     func didUnsubscribeFromCharacteristic(_ characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
         Logger.debug()
-        self.configuredCharcteristics[characteristic.UUID]?.didUnsubscribeFromCharacteristic(central)
+        self.configuredCharcteristics[characteristic.uuid]?.didUnsubscribeFromCharacteristic(central)
     }
     
     func isReadyToUpdateSubscribers() {
@@ -299,8 +299,8 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     func didReceiveWriteRequest(_ request: CBATTRequestInjectable, central: CBCentralInjectable) {
-        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
-            Logger.debug("characteristic write request received for \(characteristic.UUID.uuidString)")
+        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().uuid] {
+            Logger.debug("characteristic write request received for \(characteristic.uuid.uuidString)")
             if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic._value = request.value
             } else {
@@ -313,8 +313,8 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     
     func didReceiveReadRequest(_ request: CBATTRequestInjectable, central: CBCentralInjectable) {
         var request = request
-        Logger.debug("chracteracteristic \(request.getCharacteristic().UUID)")
-        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().UUID] {
+        Logger.debug("chracteracteristic \(request.getCharacteristic().uuid)")
+        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().uuid] {
             Logger.debug("responding with data: \(characteristic._value)")
             request.value = characteristic._value
             respondToRequest(request, withResult:CBATTError.Code.success)
@@ -351,7 +351,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     func didAddService(_ service: CBServiceInjectable, error: Error?) {
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
-            self.configuredServices.removeValue(forKey: service.UUID)
+            self.configuredServices.removeValue(forKey: service.uuid)
             self.afterSeriviceAddPromise?.failure(error)
         } else {
             Logger.debug("success")
@@ -363,12 +363,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         if let cbServices = cbServices, let advertisements = advertisements {
             let services = cbServices.map { cbService -> MutableService in
                 let service = MutableService(cbMutableService: cbService)
-                self.configuredServices[service.UUID] = service
+                self.configuredServices[service.uuid] = service
                 var characteristics = [MutableCharacteristic]()
                 if let cbCharacteristics = cbService.getCharacteristics() as? [CBMutableCharacteristic] {
                     characteristics = cbCharacteristics.map { bcChracteristic in
                         let characteristic = MutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
-                        self.configuredCharcteristics[characteristic.UUID] = characteristic
+                        self.configuredCharcteristics[characteristic.uuid] = characteristic
                         return characteristic
                     }
                 }
@@ -389,7 +389,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     fileprivate func addConfiguredCharacteristics(_ characteristics: [MutableCharacteristic]) {
         for characteristic in characteristics {
-            self.configuredCharcteristics[characteristic.cbMutableChracteristic.UUID] = characteristic
+            self.configuredCharcteristics[characteristic.cbMutableChracteristic.uuid] = characteristic
         }
     }
 

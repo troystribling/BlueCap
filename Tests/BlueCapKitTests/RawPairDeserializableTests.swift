@@ -21,7 +21,7 @@ class RawPairDeserializableTests: XCTestCase {
         let value2: UInt8
         
         // RawArrayPairDeserializable
-        static let UUID = "abc"
+        static let uuid = "abc"
         
         var rawValue1: Int8  {
             return self.value1

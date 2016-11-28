@@ -97,7 +97,7 @@ enum AppError: Error {
 
 let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
 
-let service = MutableService(UUID: TISensorTag.AccelerometerService.UUID)
+let service = MutableService(uuid: TISensorTag.AccelerometerService.uuid)
 
 let characteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
 
@@ -153,7 +153,7 @@ public func stopAdvertising()
 A `PeripheralManager` application can start advertising after `MutableServices` and `MutableCharacteristics` are added,
 
 ```swift
-let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
 let startAdvertisingFuture = addServiceFuture.flatMap { _ -> Future<Void> in 
     manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [serviceUUID])

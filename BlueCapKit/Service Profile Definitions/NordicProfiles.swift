@@ -16,7 +16,7 @@ public struct Nordic {
     public struct DeviceTemperatureService : ServiceConfigurable {
         
         // ServiceConfigurable
-        public static let UUID  = "2f0a0003-69aa-f316-3e78-4194989a6c1a"
+        public static let uuid  = "2f0a0003-69aa-f316-3e78-4194989a6c1a"
         public static let name  = "Nordic Device Temperature"
         public static let tag   = "Nordic"
         
@@ -30,7 +30,7 @@ public struct Nordic {
             }
 
             // CharacteristicConfigurable
-            public static let UUID                                      = "2f0a0004-69aa-f316-3e78-4194989a6c1a"
+            public static let uuid                                      = "2f0a0004-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "Device Temperature Data"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -68,7 +68,7 @@ public struct Nordic {
     public struct BLEAddressService: ServiceConfigurable {
         
         // ServiceConfigurable
-        public static let UUID = "2f0a0005-69aa-f316-3e78-4194989a6c1a"
+        public static let uuid = "2f0a0005-69aa-f316-3e78-4194989a6c1a"
         public static let name = "Nordic BLE Address"
         public static let tag   = "Nordic"
 
@@ -82,7 +82,7 @@ public struct Nordic {
             public let addr6: UInt8
 
             // CharacteristicConfigurable
-            public static let UUID                                      = "2f0a0006-69aa-f316-3e78-4194989a6c1a"
+            public static let uuid                                      = "2f0a0006-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Addresss"
             public static let properties: CBCharacteristicProperties    = [.read, .notify]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]
@@ -146,7 +146,7 @@ public struct Nordic {
             case randomPrivateUnresolvable  = 4
             
             // CharacteristicConfigurable
-            public static let UUID                                      = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
+            public static let uuid                                      = "2f0a0007-69aa-f316-3e78-4194989a6c1a"
             public static let name                                      = "BLE Address Type"
             public static let properties: CBCharacteristicProperties    = [.read]
             public static let permissions: CBAttributePermissions       = [.readable, .writeable]

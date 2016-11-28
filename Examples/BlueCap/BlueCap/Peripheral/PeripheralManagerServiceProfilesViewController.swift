@@ -22,7 +22,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
     }
     
     override var excludedServices : Array<CBUUID> {
-        return Singletons.peripheralManager.services.map{$0.UUID}
+        return Singletons.peripheralManager.services.map{ $0.uuid }
     }
     
     override var serviceProfileCell : String {
@@ -62,7 +62,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             let future = Singletons.peripheralManager.add(service)
             future.onSuccess {
                 if let peripheral = self.peripheral {
-                    PeripheralStore.addPeripheralService(peripheral, service:service.UUID)
+                    PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
                 }
                 _ = self.navigationController?.popViewController(animated: true)
                 self.progressView.remove()

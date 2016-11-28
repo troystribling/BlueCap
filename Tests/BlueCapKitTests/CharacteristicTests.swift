@@ -18,16 +18,16 @@ class CharacteristicTests: XCTestCase {
     var peripheral: Peripheral!
     var service: Service!
     let mockPerpheral = CBPeripheralMock(state: .connected)
-    let mockService = CBServiceMock(UUID: CBUUID(string: Gnosus.HelloWorldService.UUID))
+    let mockService = CBServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid))
     let RSSI = -45
 
     override func setUp() {
         GnosusProfiles.create(profileManager: profileManager)
         centralManager = CentralManagerUT(centralManager: CBCentralManagerMock(state: .poweredOn), profileManager: profileManager)
         peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI, profileManager: profileManager)
-        let serviceProfile = profileManager.services[mockService.UUID]!
+        let serviceProfile = profileManager.services[mockService.uuid]!
         service = Service(cbService: mockService, peripheral: peripheral, profile: serviceProfile)
-        peripheral.discoveredServices = [service.UUID : service]
+        peripheral.discoveredServices = [service.uuid : service]
         super.setUp()
     }
     
@@ -38,13 +38,13 @@ class CharacteristicTests: XCTestCase {
     func createCharacteristic(_ properties: CBCharacteristicProperties, isNotifying:Bool, hasProfile: Bool = true) -> (Characteristic, CBCharacteristicMock) {
         let mockCharacteristic: CBCharacteristicMock
         if hasProfile {
-            mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.UUID), properties: properties, isNotifying: isNotifying)
+            mockCharacteristic = CBCharacteristicMock(uuid: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: properties, isNotifying: isNotifying)
         } else {
-            mockCharacteristic = CBCharacteristicMock(UUID: CBUUID(), properties: properties, isNotifying: isNotifying)
+            mockCharacteristic = CBCharacteristicMock(uuid: CBUUID(), properties: properties, isNotifying: isNotifying)
         }
         let characteristic = Characteristic(cbCharacteristic: mockCharacteristic, service: service)
-        peripheral.discoveredCharacteristics = [characteristic.UUID : characteristic]
-        service.discoveredCharacteristics = [characteristic.UUID : characteristic]
+        peripheral.discoveredCharacteristics = [characteristic.uuid : characteristic]
+        service.discoveredCharacteristics = [characteristic.uuid : characteristic]
         return (characteristic, mockCharacteristic)
     }
 
@@ -88,16 +88,16 @@ class CharacteristicTests: XCTestCase {
         }
     }
 
-//    func testWriteData_WithTypeWithResponseWritableAndOnTimeout_CompletesWithTimeoutError() {
-//        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
-//        let future = characteristic.write(data: "aa".dataFromHexString(), timeout:1.0)
-//        XCTAssertFutureFails(future) { error in
-//            XCTAssertEqualErrors(error, CharacteristicError.writeTimeout)
-//            XCTAssert(self.mockPerpheral.writeValueCalled)
-//            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
-//            XCTAssertEqual(self.mockPerpheral.writtenType, .withResponse)
-//        }
-//    }
+    func testWriteData_WithTypeWithResponseWritableAndOnTimeout_CompletesWithTimeoutError() {
+        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
+        let future = characteristic.write(data: "aa".dataFromHexString(), timeout:1.0)
+        XCTAssertFutureFails(future) { error in
+            XCTAssertEqualErrors(error, CharacteristicError.writeTimeout)
+            XCTAssert(self.mockPerpheral.writeValueCalled)
+            XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
+            XCTAssertEqual(self.mockPerpheral.writtenType, .withResponse)
+        }
+    }
 
     func testWriteData_WhenNotWriteable_CompletesWithErrorWriteNotSupported() {
         let (characteristic, _) = createCharacteristic([.read], isNotifying: false)

@@ -14,8 +14,8 @@ public class ProfileManager {
     public private(set) var services = [CBUUID : ServiceProfile]()
 
     public func addService(_ serviceProfile: ServiceProfile) {
-        Logger.debug("name=\(serviceProfile.name), UUID=\(serviceProfile.UUID.uuidString)")
-        self.services[serviceProfile.UUID] = serviceProfile
+        Logger.debug("name=\(serviceProfile.name), uuid=\(serviceProfile.uuid.uuidString)")
+        self.services[serviceProfile.uuid] = serviceProfile
     }
 
     public init() {}

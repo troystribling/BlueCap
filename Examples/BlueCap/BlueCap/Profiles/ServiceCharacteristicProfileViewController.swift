@@ -47,7 +47,7 @@ class ServiceCharacteristicProfileViewController : UITableViewController {
             self.navigationItem.title = characteristicProfile.name
             self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 
-            self.uuidLabel.text = characteristicProfile.UUID.uuidString
+            self.uuidLabel.text = characteristicProfile.uuid.uuidString
             
             self.permissionReadableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(.readable))
             self.permissionWriteableLabel.text = self.booleanStringValue(characteristicProfile.permissionEnabled(.writeable))

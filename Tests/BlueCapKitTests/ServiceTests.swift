@@ -17,11 +17,11 @@ class ServiceTests: XCTestCase {
     
     var centralManager: CentralManager!
     var mockCharateristics = [
-            CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.read, .write], isNotifying:false),
-            CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false),
-            CBCharacteristicMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.read, .write], isNotifying:false)].map { $0 as CBCharacteristicInjectable }
+            CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.read, .write], isNotifying:false),
+            CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false),
+            CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.read, .write], isNotifying:false)].map { $0 as CBCharacteristicInjectable }
 
-    let mockService = CBServiceMock(UUID:CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"))
+    let mockService = CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"))
     let immediateContext = ImmediateContext()
     let RSSI = -45
 
@@ -49,7 +49,7 @@ class ServiceTests: XCTestCase {
         service.didDiscoverCharacteristics(self.mockCharateristics, error: nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(service.characteristics.count == 3)
-            XCTAssertEqual(Set(service.characteristics.map { $0.UUID }), Set(self.mockCharateristics.map { $0.UUID }))
+            XCTAssertEqual(Set(service.characteristics.map { $0.uuid }), Set(self.mockCharateristics.map { $0.uuid }))
         }
     }
 
