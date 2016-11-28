@@ -15,7 +15,7 @@ public class MutableCharacteristic : NSObject {
     // MARK: Properties
     let profile: CharacteristicProfile
 
-    fileprivate var centrals = [NSUUID : CBCentralInjectable]()
+    fileprivate var centrals: [UUID : CBCentralInjectable]
 
     fileprivate var queuedUpdates = [Data]()
     internal fileprivate(set) var _isUpdating = false
@@ -188,7 +188,10 @@ public class MutableCharacteristic : NSObject {
     }
 
     public func update(withData value: Data) -> Bool  {
-        return self.updateValues([value])
+        guard let peripheralQueue = peripheralQueue else {
+            return false
+        }
+        return peripheralQueue.sync { self.updateValues([value]) }
     }
 
     public func update<T: Deserializable>(_ value: T) -> Bool {
@@ -239,8 +242,11 @@ public class MutableCharacteristic : NSObject {
         guard let value = values.last else {
             return _isUpdating
         }
+        guard canNotify else {
+            return false
+        }
         _value = value
-        if let peripheralManager = service?.peripheralManager, _isUpdating && canNotify {
+        if let peripheralManager = service?.peripheralManager, _isUpdating {
             for value in values {
                 _isUpdating = peripheralManager.updateValue(value, forCharacteristic: self)
                 if !_isUpdating {

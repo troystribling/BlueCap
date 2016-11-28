@@ -75,7 +75,7 @@ public func remove(_ service: MutableService)
 public func removeAllServices()
 ```
 
-`MutableService` provides the methods for adding `Characteristics`,
+`MutableService` provides the methods for adding `MutableCharacteristics`,
 
 ```swift
 // add characteristics
@@ -85,7 +85,7 @@ public var characteristics = [MutableCharacteristic] {get set}
 public func characteristicsFromProfiles()
 ```
 
-A `PeripheralManager` application adds Services and Characteristics using,
+A `PeripheralManager` application adds `MutableServices` and `MutableCharacteristics` using,
 
 ```swift
 enum AppError: Error {
@@ -140,7 +140,7 @@ Also, An error was added to handle `PeripheralManager` state transitions other t
 
 ### <a name="peripheral_advertising">Advertising</a>
 
-After services and characteristics have been added the peripheral is ready to begin advertising using the methods,
+After `Services` and `Characteristics` have been added the `PeripheralManager` is ready to begin advertising. `PeripheralManager` provides the following methods to manage advertisement,
 
 ```swift
 // start advertising with name and services
@@ -150,27 +150,27 @@ public func startAdvertising(_ name: String, uuids: [CBUUID]? = nil) -> Future<V
 public func stopAdvertising()
 ```
 
-A `PeripheralManager` application can start advertising after `Services` and `Characteristics` are added,
+A `PeripheralManager` application can start advertising after `MutableServices` and `MutableCharacteristics` are added,
 
 ```swift
-Let startAdvertisingFuture = addServiceFuture.flatMap { _ -> Future<Void> in
-smanager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
+let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+
+let startAdvertisingFuture = addServiceFuture.flatMap { _ -> Future<Void> in 
+    manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [serviceUUID])
 }
 ```
 
-Here the addServiceFuture of the previous section is flatmapped to *startAdvertising(name:String, uuids:[CBUUID]?) -> Future&lt;Void&gt;* ensuring that services and characteristics are available before advertising begins.
+Here the `addServiceFuture` is completed after `Services` are added and `PeripheralManager` is advertising that it supports the `TISensorTag.AccelerometerService`.
 
 ### <a name="peripheral_set_characteristic_value">Set Characteristic Value</a>
 
-A BlueCap Characteristic value can be set any time after creation of the Characteristic. The BlueCap MutableCharacteristic methods used are,
+A `MutableCharacteristic` value can be set any time after its supporting `MutableService` has been successfully added to `PeripheralManager`. The `value` is defined by,
 
 ```swift
 var value : NSData? {get set}
 ```
 
-It is not necessary for the PeripheralManager to be powered on or advertising to set a characteristic value. 
-
-A peripheral application can set a characteristic value using,
+A `PeripheralManager` application can set a `MutableCharacteristic` value using,
 
 ```swift
 // Enabled and characteristic defined above
@@ -179,72 +179,75 @@ characteristic.value = Serde.serialize(Enabled.Yes)
 
 ### <a name="peripheral_update_characteristic_value">Updating Characteristic Value</a>
 
-If a Characteristic value supports the property CBCharacteristicProperties.Notify a Central can subscribe to value updates. In addition to setting the new value an update notification must be sent. The BlueCap MutableCharacteristic methods used are,
+If a `MutableCharacteristic` supports either `CBCharacteristicProperties` of  `CBCharacteristicProperties.notify`,  `CBCharacteristicProperties.indicate`, `CBCharacteristicProperties.notifyEncryptionRequired`, or `CBCharacteristicProperties.indicateEncryptionRequired` and a `MutableService` supporting the `MutableCharacteristic` have been successfully added to `PeripheralManager` a `Central` can subscribe to value updates. In addition to setting the new value an update notification must be sent. `MutableCharacteristic` provides the following methods to support notification updates,
 
 ```swift
-// update with NSData
-func updateValueWithData(value:NSData) -> Bool
+// update with Data
+public func update(withData value: Data) -> Bool
 
-// update with String Dictionary
-public func updateValueWithString(value:Dictionary<String, String>) -> Bool
+// update with String
+public func updateValue(withString value: [String:String]) -> Bool
 
 // update with object supporting Deserializable
-public func updateValue<T:Deserializable>(value:T) -> Bool
+public func update<T: Deserializable>(_ value: T) -> Bool
 
 // update with object supporting RawDeserializable
-public func updateValue<T:RawDeserializable>(value:T) -> Bool
+public func update<T: RawDeserializable>(_ value: T) -> Bool
 
 // update with object supporting RawArrayDeserializable
-public func updateValue<T:RawArrayDeserializable>(value:T) -> Bool
+public func update<T: RawArrayDeserializable>(_ value: T) -> Bool
 
 // update with object supporting RawPairDeserializable
-public func updateValue<T:RawPairDeserializable>(value:T) -> Bool
+public func update<T: RawPairDeserializable>(_ value: T)
 
 // update with object supporting RawArrayPairDeserializable
-public func updateValue<T:RawArrayPairDeserializable>(value:T) -> Bool
+public func update<T: RawArrayPairDeserializable>(_ value: T) -> Bool
 ```
 
-All methods return a Bool which is true if the update succeeds and false if either there are no subscribers, CBCharacteristicProperties.Notify is not supported or the length of the update queue is exceeded. In addition to sending an update notification to a subscribing Central the Characteristic value is set. A BlueCap Characteristic value can be updated any time after creation of the characteristic. It is not necessary for the PeripheralManager to be powered on or advertising. Though in this case the update will fail and return false.
+All methods return a `Bool` which is `true` if the update succeeds and `false` if either the `MutableCharacteristic` has not been added to `PeripheralManager`, there are no subscribers, none of the notify `CBCharacteristicProperties` are supported or the length of the system update queue is exceeded. If the update fails and the `MutabaleCharacteristic` supports notifications and has been added to `PeripheralManager` the update will be queued and sent when a `Central` subscribes or the system update queue empties. In addition to sending an update notification to a subscribing `Central` the `MutabaleCharacteristic` value is set.
 
 Peripheral applications would send notification updates using,
 
 ```swift
 // Enabled and characteristic defined above
-characteristic.updateValue(Enabled.No)
+let updateStatus = characteristic.updateValue(Enabled.No)
 ```
 
 ### <a name="peripheral_respond_characteristic_write">Respond to Characteristic Write</a>
 
-If a Characteristic value supports the property CBCharacteristicProperties.Write a Central can change the Characteristic value. The BlueCap MutableCharacteristic methods used are,
+If a `MutableCharacteristic` supports  `CBCharacteristicProperties.write` a `Central` can change the `MutableCharacteristic` value. `MutableCharacteristic` supports the following methods supporting write requests,
 
 ```swift
-// start processing write requests with stream capacity
-public func startRespondingToWriteRequests(capacity:Int? = nil) -> FutureStream<CBATTRequest>
+// start processing write requests with specified stream capacity
+public func startRespondingToWriteRequests(capacity: Int = Int.max) -> FutureStream<(request: CBATTRequestInjectable, central: CBCentralInjectable)>
 
 // respond to received write request
-func respondToRequest(request:CBATTRequest, withResult result:CBATTError)
+public func respondToRequest(_ request: CBATTRequestInjectable, withResult result: CBATTError.Code)
 
 // stop processing write requests
-public func stopProcessingWriteRequests()
+public func stopRespondingToWriteRequests()
 ```
 
-[CBATTRequest](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBATTRequest_class/index.html) encapsulates Central write requests, [CBATTError](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CoreBluetooth_Constants/index.html#//apple_ref/c/tdef/CBATTError) encapsulates response the code and a [SimpleFutures](https://github.com/troystribling/SimpleFutures) FutureStream&lt;CBATTRequest&gt; is used to respond to write requests.
+[CBATTRequest](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBATTRequest_class/index.html) encapsulates Central write requests, [CBATTError](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CoreBluetooth_Constants/index.html#//apple_ref/c/tdef/CBATTError) encapsulates the response error code and a [SimpleFutures](https://github.com/troystribling/SimpleFutures).
 
-Peripheral applications would start responding to Central writes using,
+`PeripheralManager` applications would start responding to `Central` writes requests using,
 
 ```swift
-let writeFuture = characteristic.startRespondingToWriteRequests(capacity:10)
-writeFuture.onSuccess {request in
-	if request.value.length == 1 {
-		characteristic.value = request.value
-		characteristic.respondToRequest(request, withResult:CBATTError.Success)
-	} else {  
-		characteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
-	}
+let writeResponseFuture = characteristic.startRespondingToWriteRequests(capacity: 10)
+
+writeResponseFuture.onSuccess { (request, _) in
+    guard request.value.length == 1 else {
+        characteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
+        Return
+    }
+    characteristic.value = request.value
+    characteristic.respondToRequest(request, withResult:CBATTError.Success)
 }
 ```
 
-Peripheral applications would stop responding to write requests using,
+Here the length of the characteristic value is expected to be 1 byte.
+
+`PeripheralManager` applications would stop responding to write requests using,
 
 ```swift
 characteristic.stopProcessingWriteRequests()
@@ -252,62 +255,96 @@ characteristic.stopProcessingWriteRequests()
 
 ### <a name="peripheral_ibeacon_emulation">iBeacon Emulation</a>
 
-iBeacon emulation does not require Services and Characteristics. Only advertising is required. The BlueCap PeripheralManager methods used are, 
+`iBeacon` emulation does not require `MutableServices` or `MutableCharcteristics` to be added to `PeripheralManager`. Only advertising is required. `PeripheralManager` provides the following methods supporting `iBeacon` advertisement, 
 
 ```swift
 // start advertising beceacon region
-public func startAdvertising(region:BeaconRegion) -> Future<Void>
+public func startAdvertising(_ region: BeaconRegion) -> Future<Void>
 
 // stop advertising
 public func stopAdvertising() -> Future<Void>
 ```
 
-All methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) Future&lt;Void&gt;. Creation of a [FutureLocation](https://github.com/troystribling/FutureLocation) BeaconRegion is also required,
+Creation of a [FutureLocation](https://github.com/troystribling/FutureLocation) `BeaconRegion` is also required,
 
 ```swift
-public convenience init(proximityUUID:NSUUID, identifier:String, major:UInt16, minor:UInt16)
+public convenience init(proximityUUID: UUID, identifier: String, major: UInt16, minor: UInt16, capacity: Int = Int.max)
 ```
+
+The `BeaconRegion` `init` parameters are,
 
 <table>
 	<tr>
 		<td>proximityUUID</td>
-		<td>The proximity ID of the beacon targeted</td>
+		<td>The proximityUUID of the beacon targeted.</td>
 	</tr>
 	<tr>
 		<td>identifier</td>
-		<td>A unique identifier for region used by application</td>
+		<td>A unique identifier for region used by application.</td>
 	</tr>
 	<tr>
 		<td>major</td>
-		<td>The major value used to identify one or more beacons</td>
+		<td>The major value can be used to distinguish between different beacons with the same proximityUUID.</td>
 	</tr>
 	<tr>
 		<td>minor</td>
-		<td>The minor value used to identify a specific beacon</td>
+		<td>The minor value can be used to distinguish between different beacons with the same proximityUUID and major value.</td>
 	</tr>
 </table>
 
-For an iBeacon application to advertise,
+A `PeripheralManager` application would use the flooring to advertise and iBeacon,
 
 ```swift
-// use service and characteristic defined in previous section
-let regionUUID = CBUUID(string:"DE6E8DAD-8D99-4E20-8C4B-D9CC2F9A7E83")!
-let startAdvertiseFuture = manager.powerOn().flatmap {_ -> Future<Void> in
-	let beaconRegion = BeaconRegion(proximityUUID:regionUUID, identifier:"My iBeacon", major:100, minor:1, capacity:10)
-	manager.startAdvertising(beaconRegion)
+enum AppError: Error {
+    case invalidState
+    case resetting
+    case poweredOff
+    case unsupported
 }
-            
-startAdvertiseFuture.onSuccess {
-	…
+
+let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
+
+let uuid = UUID(uuidString: "B9407F30-F5F8-466E-AFF9-25556B57FE6D")!
+
+BeaconRegion(proximityUUID: uuid, identifier: "iBeacon", major: 1, minor: 1)
+
+let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
+    switch state {
+    case .poweredOn:
+        return self.manager.startAdvertising(beaconRegion)
+    case .poweredOff:
+        throw AppError.poweredOff
+    case .unauthorized, .unknown:
+        throw AppError.invalidState
+    case .unsupported:
+        throw AppError.unsupported
+    case .resetting:
+        throw AppError.resetting
+    }
 }
-startAdvertiseFuture.onFailure {error in
-	…
+
+startAdvertiseFuture.onFailure { error in
+    switch error {
+    case AppError.poweredOff:
+        manager.reset()
+    case AppError.resetting:
+        manager.reset()
+    case AppError.unsupported:
+        break
+    default:
+        manager.reset()
+    }
+    manager.stopAdvertising()
 }
 ```
 
-Here the powerOn() -> Future&lt;Void&gt; flatmapped to startAdvertising(region:BeaconRegion) -> Future&lt;Void&gt; ensuring that the bluetooth transceiver is powered on before advertising begins.
+See the [Beacon Example](/Examples/Beacon) for details.
 
 ### <a name="peripheral_state_restoration">State Restoration</a>
+
+CoreBluetooth provides [state restoration](https://developer.apple.com/library/content/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html) for apps that have declared `bluetooth-peripheral` background execution permission. Apps with this permission can be restarted with a previous state if evicted from memory while in the background. 
+
+`PeripheralManager` provides the following method to process the restored application state,
 
 ```swift
 public func whenStateRestored() -> Future<(services: [MutableService], advertisements: PeripheralAdvertisements)>
@@ -317,10 +354,11 @@ public func whenStateRestored() -> Future<(services: [MutableService], advertise
 
 ```swift
 public enum PeripheralManagerError : Swift.Error {
+    // Thrown by startAdvertising if the PeripheralManager is already advertising
     case isAdvertising
-    case isNotAdvertising
-    case addServiceFailed
+	  // Thrown is state restoration fails    
     case restoreFailed
+    // Thrown by startRespondingToWriteRequests if Mutablecharcteristic has not been added to a PeripheralManager
     case unconfigured
 }
 ```

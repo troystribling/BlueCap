@@ -116,7 +116,7 @@ class ViewController: UITableViewController {
                 throw AppError.resetting
             }
 }.flatMap { [unowned self] _ -> Future<Void> in
-    self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[uuid])
+    self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [uuid])
 }
 
         startAdvertiseFuture.onSuccess { [unowned self] in

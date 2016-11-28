@@ -365,6 +365,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C42AABBA9BB1BA27C1EACBB5 /* Pods-Beacon.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = HZEX459C37;
 				INFOPLIST_FILE = Beacon/Info.plist;
@@ -380,6 +381,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2AE7D7F453F629A21A7080CA /* Pods-Beacon.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = HZEX459C37;
 				INFOPLIST_FILE = Beacon/Info.plist;

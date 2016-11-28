@@ -353,6 +353,7 @@ public enum AppError : Error {
 }
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
+
 let characteristicUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.UUID)
 
 let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
@@ -463,11 +464,6 @@ Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.m
 
 ```swift
 let writeFuture = characteristic.write(Enabled.Yes)
-
-writeCharacteristicFuture.onSuccess { characteristic in
-}
-writeCharacteristicFuture.onFailure { error in
-}
 ```
 
 Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,
@@ -525,11 +521,6 @@ Using the [RawDeserializable enum](#central_characteristic_write) an application
 
 ```swift
 let readFuture = characteristic.write(Enabled.Yes)
-
-readFuture.onSuccess { characteristic in
-}
-readFuture.onFailure { error in
-}
 ```
 
 Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,
@@ -551,8 +542,6 @@ readFuture.onSuccess { characteristic in
 	guard let value: Enabled = characteristic.value else {
 	    return
 	}
-}
-readFuture.onFailure { error in
 }
 ```
 

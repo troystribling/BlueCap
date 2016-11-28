@@ -75,7 +75,7 @@ public class BeaconRegion : Region {
         self.init(region: beaconRegion, capacity: capacity)
     }
 
-    public convenience init(proximityUUID:UUID, identifier:String, major:UInt16, minor:UInt16, capacity: Int = Int.max) {
+    public convenience init(proximityUUID: UUID, identifier: String, major: UInt16, minor: UInt16, capacity: Int = Int.max) {
         let beaconMinor : CLBeaconMinorValue = minor
         let beaconMajor : CLBeaconMajorValue = major
         let beaconRegion = CLBeaconRegion(proximityUUID:proximityUUID, major:beaconMajor, minor:beaconMinor, identifier:identifier)

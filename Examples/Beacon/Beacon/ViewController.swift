@@ -131,7 +131,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                     self.manager.reset()
                 }, animated: true)
             case AppError.resetting:
-                let message = "PeripheralManager state \"\(self.manager.state.stringValue)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
+                let message = "PeripheralManager state \"\(self.manager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
                 self.present(UIAlertController.alertWithMessage(message) { _ in
                     self.manager.reset()
                 }, animated: true)

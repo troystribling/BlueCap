@@ -129,7 +129,7 @@ class PeripheralManagerTests: XCTestCase {
         XCTAssert(mock.stopAdvertisingCalled)
     }
 
-    func testStopAdvertising_WhenNotAdvertising_CompletesWithPeripheralManagerIsNotAdvertising() {
+    func testStopAdvertising_WhenNotAdvertising_StopsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         peripheralManager.stopAdvertising()
         XCTAssertFalse(mock.stopAdvertisingCalled)

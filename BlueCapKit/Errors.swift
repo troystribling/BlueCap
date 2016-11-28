@@ -25,8 +25,6 @@ public enum PeripheralError : Swift.Error {
 
 public enum PeripheralManagerError : Swift.Error {
     case isAdvertising
-    case isNotAdvertising
-    case addServiceFailed
     case restoreFailed
     case unconfigured
 }
