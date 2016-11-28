@@ -107,10 +107,10 @@ class ViewController: UITableViewController {
     }
 
     func activate() {
-        let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.UUID)
-        let dataUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.UUID)
-        let enabledUUID = CBUUID(string: TISensorTag.AccelerometerService.Enabled.UUID)
-        let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.UUID)
+        let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
+        let dataUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
+        let enabledUUID = CBUUID(string: TISensorTag.AccelerometerService.Enabled.uuid)
+        let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.uuid)
         
         // on power, start scanning. when peripheral is discovered connect and stop scanning
         let dataUpdateFuture = self.manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
@@ -150,7 +150,7 @@ class ViewController: UITableViewController {
                 guard let service = peripheral.service(serviceUUID) else {
                     throw AppError.serviceNotFound
                 }
-                return service.discover(characteristics: [dataUUID, enabledUUID, updatePeriodUUID])
+                return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
             }.flatMap { [unowned self] service -> Future<Characteristic> in
                 guard let dataCharacteristic = service.characteristic(dataUUID) else {
                     throw AppError.dataCharactertisticNotFound
