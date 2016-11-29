@@ -15,7 +15,7 @@
 		05BF91CF1CFBFD8A00B78B12 /* FLMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91B11CFBFD8A00B78B12 /* FLMocks.swift */; };
 		05BF91D01CFBFD8A00B78B12 /* RegionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91B21CFBFD8A00B78B12 /* RegionManagerTests.swift */; };
 		05BF91ED1CFCA3D600B78B12 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91EB1CFCA3D600B78B12 /* TestHelper.swift */; };
-		05BF91EE1CFCA3D600B78B12 /* XCTTestCase+SimpleFuturesAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91EC1CFCA3D600B78B12 /* XCTTestCase+SimpleFuturesAssertions.swift */; };
+		05BF91EE1CFCA3D600B78B12 /* XCTTestCase+NewAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91EC1CFCA3D600B78B12 /* XCTTestCase+NewAssertions.swift */; };
 		05F0EC301CF7EA9F00468FC9 /* CentralManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC101CF7E9F000468FC9 /* CentralManagerTests.swift */; };
 		05F0EC321CF7EA9F00468FC9 /* CharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC121CF7E9F000468FC9 /* CharacteristicTests.swift */; };
 		05F0EC331CF7EA9F00468FC9 /* MutableCharacteristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F0EC131CF7E9F000468FC9 /* MutableCharacteristicTests.swift */; };
@@ -42,7 +42,7 @@
 		05BF91B11CFBFD8A00B78B12 /* FLMocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FLMocks.swift; sourceTree = "<group>"; };
 		05BF91B21CFBFD8A00B78B12 /* RegionManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManagerTests.swift; sourceTree = "<group>"; };
 		05BF91EB1CFCA3D600B78B12 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestHelper.swift; path = Helpers/TestHelper.swift; sourceTree = "<group>"; };
-		05BF91EC1CFCA3D600B78B12 /* XCTTestCase+SimpleFuturesAssertions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "XCTTestCase+SimpleFuturesAssertions.swift"; path = "Helpers/XCTTestCase+SimpleFuturesAssertions.swift"; sourceTree = "<group>"; };
+		05BF91EC1CFCA3D600B78B12 /* XCTTestCase+NewAssertions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "XCTTestCase+NewAssertions.swift"; path = "Helpers/XCTTestCase+NewAssertions.swift"; sourceTree = "<group>"; };
 		05BF91EF1CFCA3F000B78B12 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05F0EC001CF7E96D00468FC9 /* BlueCapKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlueCapKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05F0EC101CF7E9F000468FC9 /* CentralManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManagerTests.swift; sourceTree = "<group>"; };
@@ -101,7 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				05BF91EB1CFCA3D600B78B12 /* TestHelper.swift */,
-				05BF91EC1CFCA3D600B78B12 /* XCTTestCase+SimpleFuturesAssertions.swift */,
+				05BF91EC1CFCA3D600B78B12 /* XCTTestCase+NewAssertions.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -306,7 +306,7 @@
 				057413941D72131B00E40905 /* TryTests.swift in Sources */,
 				05BF91D01CFBFD8A00B78B12 /* RegionManagerTests.swift in Sources */,
 				05BF91ED1CFCA3D600B78B12 /* TestHelper.swift in Sources */,
-				05BF91EE1CFCA3D600B78B12 /* XCTTestCase+SimpleFuturesAssertions.swift in Sources */,
+				05BF91EE1CFCA3D600B78B12 /* XCTTestCase+NewAssertions.swift in Sources */,
 				05F0EC3E1CF7EA9F00468FC9 /* Mocks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

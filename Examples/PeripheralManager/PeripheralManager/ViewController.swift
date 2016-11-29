@@ -196,8 +196,10 @@ class ViewController: UITableViewController {
             return
         }
         if accelerometerDataCharacteristic.isUpdating {
-            if !accelerometerDataCharacteristic.updateValue(withString: data.stringValue) {
-                Logger.debug("update failed \(data.stringValue)")
+            do {
+                try accelerometerDataCharacteristic.update(withString: data.stringValue)
+            } catch let error {
+                Logger.debug("update failed for \(data.stringValue), \(error)")
             }
         } else {
             accelerometerDataCharacteristic.value = SerDe.serialize(data)

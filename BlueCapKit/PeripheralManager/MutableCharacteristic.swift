@@ -157,7 +157,7 @@ public class MutableCharacteristic : NSObject {
             }
             self.processWriteRequestPromise = StreamPromise<(request: CBATTRequestInjectable, central: CBCentralInjectable)>(capacity: capacity)
             return self.processWriteRequestPromise!.stream
-        } ?? FutureStream(error: PeripheralManagerError.unconfigured)
+        } ?? FutureStream(error: MutableCharacteristicError.unconfigured)
     }
     
     public func stopRespondingToWriteRequests() {
@@ -180,38 +180,41 @@ public class MutableCharacteristic : NSObject {
 
     // MARK: Manage Notification Updates
 
-    public func updateValue(withString value: [String:String]) -> Bool {
+    public func update(withString value: [String:String]) throws {
         guard let data = self.profile.data(fromString: value) else {
-            return false
+            throw MutableCharacteristicError.notSerializable
         }
-        return self.update(withData: data)
+        return try update(withData: data)
     }
 
-    public func update(withData value: Data) -> Bool  {
+    public func update(withData value: Data) throws {
         guard let peripheralQueue = peripheralQueue else {
-            return false
+            throw MutableCharacteristicError.unconfigured
         }
-        return peripheralQueue.sync { self.updateValues([value]) }
+        guard canNotify else {
+            throw MutableCharacteristicError.notifyNotSupported
+        }
+        peripheralQueue.sync { self.updateValues([value]) }
     }
 
-    public func update<T: Deserializable>(_ value: T) -> Bool {
-        return self.update(withData: SerDe.serialize(value))
+    public func update<T: Deserializable>(_ value: T) throws {
+        try update(withData: SerDe.serialize(value))
     }
 
-    public func update<T: RawDeserializable>(_ value: T) -> Bool  {
-        return self.update(withData: SerDe.serialize(value))
+    public func update<T: RawDeserializable>(_ value: T) throws  {
+        try update(withData: SerDe.serialize(value))
     }
 
-    public func update<T: RawArrayDeserializable>(_ value: T) -> Bool  {
-        return self.update(withData: SerDe.serialize(value))
+    public func update<T: RawArrayDeserializable>(_ value: T) throws {
+        try update(withData: SerDe.serialize(value))
     }
 
-    public func update<T: RawPairDeserializable>(_ value: T) -> Bool  {
-        return self.update(withData: SerDe.serialize(value))
+    public func update<T: RawPairDeserializable>(_ value: T) throws {
+        try update(withData: SerDe.serialize(value))
     }
 
-    public func update<T: RawArrayPairDeserializable>(_ value: T) -> Bool  {
-        return self.update(withData: SerDe.serialize(value))
+    public func update<T: RawArrayPairDeserializable>(_ value: T) throws {
+        try update(withData: SerDe.serialize(value))
     }
 
     // MARK: CBPeripheralManagerDelegate Shims
@@ -238,12 +241,9 @@ public class MutableCharacteristic : NSObject {
 
     // MARK: Utils
 
-    fileprivate func updateValues(_ values: [Data]) -> Bool  {
+    fileprivate func updateValues(_ values: [Data])  {
         guard let value = values.last else {
-            return _isUpdating
-        }
-        guard canNotify else {
-            return false
+            return
         }
         _value = value
         if let peripheralManager = service?.peripheralManager, _isUpdating {
@@ -257,7 +257,6 @@ public class MutableCharacteristic : NSObject {
             _isUpdating = false
             queuedUpdates.append(value)
         }
-        return _isUpdating
     }
 
 }

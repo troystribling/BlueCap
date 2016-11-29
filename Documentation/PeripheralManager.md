@@ -162,7 +162,7 @@ let startAdvertisingFuture = addServiceFuture.flatMap { _ -> Future<Void> in
 
 Here the `addServiceFuture` is completed after `Services` are added and `PeripheralManager` is advertising that it supports the `TISensorTag.AccelerometerService`.
 
-### <a name="peripheral_set_characteristic_value">Set Characteristic Value</a>
+### <a name="peripheral_set_characteristic_value">Get and Set Characteristic Value</a>
 
 A `MutableCharacteristic` value can be set any time after its supporting `MutableService` has been successfully added to `PeripheralManager`. The `value` is defined by,
 
@@ -173,8 +173,10 @@ var value : NSData? {get set}
 A `PeripheralManager` application can set a `MutableCharacteristic` value using,
 
 ```swift
-// Enabled and characteristic defined above
 characteristic.value = Serde.serialize(Enabled.Yes)
+
+If let value: Enabled = characteristic.value {
+}
 ```
 
 ### <a name="peripheral_update_characteristic_value">Updating Characteristic Value</a>
@@ -183,34 +185,34 @@ If a `MutableCharacteristic` supports either `CBCharacteristicProperties` of  `C
 
 ```swift
 // update with Data
-public func update(withData value: Data) -> Bool
+public func update(withData value: Data) throws
 
 // update with String
-public func updateValue(withString value: [String:String]) -> Bool
+public func update(withString value: [String:String]) throws
 
 // update with object supporting Deserializable
-public func update<T: Deserializable>(_ value: T) -> Bool
+public func update<T: Deserializable>(_ value: T) throws {
 
 // update with object supporting RawDeserializable
-public func update<T: RawDeserializable>(_ value: T) -> Bool
+public func update<T: RawDeserializable>(_ value: T) throws
 
 // update with object supporting RawArrayDeserializable
-public func update<T: RawArrayDeserializable>(_ value: T) -> Bool
+public func update<T: RawArrayDeserializable>(_ value: T) throws
 
 // update with object supporting RawPairDeserializable
-public func update<T: RawPairDeserializable>(_ value: T)
+public func update<T: RawPairDeserializable>(_ value: T) throws
 
 // update with object supporting RawArrayPairDeserializable
-public func update<T: RawArrayPairDeserializable>(_ value: T) -> Bool
+public func update<T: RawArrayPairDeserializable>(_ value: T) throws
 ```
 
-All methods return a `Bool` which is `true` if the update succeeds and `false` if either the `MutableCharacteristic` has not been added to `PeripheralManager`, there are no subscribers, none of the notify `CBCharacteristicProperties` are supported or the length of the system update queue is exceeded. If the update fails and the `MutabaleCharacteristic` supports notifications and has been added to `PeripheralManager` the update will be queued and sent when a `Central` subscribes or the system update queue empties. In addition to sending an update notification to a subscribing `Central` the `MutabaleCharacteristic` value is set.
+All methods `throw` if the `MutableCharacteristic` either has not been added to `PeripheralManager` or supports none of the notify `CBCharacteristicProperties`. Additionally `update(withString:)` will `throw` if the `String` value cannot be serialized. If the value is updated and there are no subscribers or the system CoreBluetooth update fails the update will be queued and sent when a `Central` subscribes or the system indicates that updates can continue. In addition to sending an update notification to a subscribing `Central` `update` sets the `MutabaleCharacteristic` value.
 
 Peripheral applications would send notification updates using,
 
 ```swift
 // Enabled and characteristic defined above
-let updateStatus = characteristic.updateValue(Enabled.No)
+let updateStatus = try characteristic.updateValue(Enabled.No)
 ```
 
 ### <a name="peripheral_respond_characteristic_write">Respond to Characteristic Write</a>
@@ -245,9 +247,9 @@ writeResponseFuture.onSuccess { (request, _) in
 }
 ```
 
-Here the length of the characteristic value is expected to be 1 byte.
+Here the length of the `Characteristic` value is expected to be 1 byte.
 
-`PeripheralManager` applications would stop responding to write requests using,
+`PeripheralManager` applications will stop responding to write requests using,
 
 ```swift
 characteristic.stopProcessingWriteRequests()
@@ -358,8 +360,15 @@ public enum PeripheralManagerError : Swift.Error {
     case isAdvertising
 	  // Thrown is state restoration fails    
     case restoreFailed
-    // Thrown by startRespondingToWriteRequests if Mutablecharcteristic has not been added to a PeripheralManager
+}
+
+public enum MutableCharacteristicError : Swift.Error {
+    // Thrown by startRespondingToWriteRequests and update if Mutablecharcteristic has not been added to a PeripheralManager
     case unconfigured
+    // Thrown by update(withString:) if String Characteristic value cannot be serialized
+    case notSerializable
+    // Thrown by update if Characteristic notifiy or indicate property is not enabled
+    case notifyNotSupported
 }
 ```
 

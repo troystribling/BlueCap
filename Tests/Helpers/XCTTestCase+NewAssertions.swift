@@ -210,3 +210,21 @@ func XCTAssertEqualErrors(_ error1: Swift.Error, _ error2: Swift.Error, line: UI
     XCTAssertEqual(error1._domain, error2._domain, "invalid error code", file: file, line: line)
     XCTAssertEqual(error1._code, error2._code, "invalid error code", file: file, line: line)
 }
+
+func XCTAssertNoThrow(_ expression: @autoclosure () throws -> Void, line: UInt = #line, file: StaticString = #file) {
+    do {
+        try expression()
+    } catch let error {
+        XCTFail("Caught error \(error)", file: file, line: line)
+    }
+}
+
+func XCTAssertThrowError(_ expression: @autoclosure () throws -> Void, _ testError: Swift.Error, line: UInt = #line, file: StaticString = #file) {
+    do {
+        try expression()
+        XCTFail("Error not thrown \(testError)", file: file, line: line)
+    } catch let error {
+        XCTAssertEqualErrors(error, testError, line: line, file: file)
+    }
+}
+

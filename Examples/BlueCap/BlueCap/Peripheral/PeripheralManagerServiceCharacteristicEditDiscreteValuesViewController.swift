@@ -74,8 +74,14 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         if let characteristic = self.characteristic {
             if let valueName = self.characteristic.stringValue?.keys.first {
                 let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
-                _ = characteristic.updateValue(withString: stringValue)
-                _ = self.navigationController?.popViewController(animated: true)
+                do {
+                    try characteristic.update(withString: stringValue)
+                    _ = self.navigationController?.popViewController(animated: true)
+                } catch let error {
+                    present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
+                        _ = self?.navigationController?.popViewController(animated: true)
+                    }
+                }
             }
         }
     }

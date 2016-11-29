@@ -26,7 +26,13 @@ public enum PeripheralError : Swift.Error {
 public enum PeripheralManagerError : Swift.Error {
     case isAdvertising
     case restoreFailed
+    case notSerializable
+}
+
+public enum MutableCharacteristicError : Swift.Error {
     case unconfigured
+    case notSerializable
+    case notifyNotSupported
 }
 
 public enum CentralManagerError : Swift.Error {
