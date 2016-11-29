@@ -1,702 +1,2441 @@
-// !$*UTF8*$!
-{
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 46;
-	objects = {
-
-/* Begin PBXBuildFile section */
-		0507973119C4CEEC00A4D547 /* BeaconsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0507973019C4CEEC00A4D547 /* BeaconsViewController.swift */; };
-		0507973519C4D0B100A4D547 /* BeaconRegionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */; };
-		050BF0A11D985B3600928863 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 050BF0A01D985B3600928863 /* UserNotifications.framework */; };
-		05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */; };
-		052A1EB91C74D13C00FBB45B /* CharacteristicValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052A1EB81C74D13C00FBB45B /* CharacteristicValueCell.swift */; };
-		052A1EBB1C77707A00FBB45B /* ConfigurePeripheralSortOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052A1EBA1C77707A00FBB45B /* ConfigurePeripheralSortOrderViewController.swift */; };
-		052A1EBF1C78CEDA00FBB45B /* ConfigureMaximumPeripheralsDiscovered.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052A1EBE1C78CEDA00FBB45B /* ConfigureMaximumPeripheralsDiscovered.swift */; };
-		052A1ECC1C8CCDD300FBB45B /* ConfigurePeripheralMaximumDisconnectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052A1ECB1C8CCDD300FBB45B /* ConfigurePeripheralMaximumDisconnectionsViewController.swift */; };
-		0530B62919D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */; };
-		0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */; };
-		053B0CC219BF2717006C7D1F /* ConfigureScanDurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053B0CC119BF2717006C7D1F /* ConfigureScanDurationViewController.swift */; };
-		0543FEBE1B42E22D00363415 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0543FEBD1B42E22D00363415 /* LaunchScreen.xib */; };
-		054C7C9D1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7C9C1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift */; };
-		054C7C9F1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7C9E1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift */; };
-		054C7CA11BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7CA01BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift */; };
-		054C7CA31BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C7CA21BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift */; };
-		054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */; };
-		054F53451DA54D6B00CD49E5 /* DiscoveredPeripheralStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054F53441DA54D6B00CD49E5 /* DiscoveredPeripheralStore.swift */; };
-		055A5A4F1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055A5A4E1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift */; };
-		056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 056B7C7419DE4E52001B7F95 /* Main.storyboard */; };
-		056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */; };
-		056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */; };
-		056E3B231D29843C002316FC /* DefaultConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 056E3B221D29843C002316FC /* DefaultConfiguration.plist */; };
-		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
-		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
-		05840F6E194206F100C744E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05840F6D194206F100C744E6 /* Images.xcassets */; };
-		05883B2D19F7E21100CE8435 /* ConfigurePeripheralMaximumTimeoutsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05883B2C19F7E21100CE8435 /* ConfigurePeripheralMaximumTimeoutsViewController.swift */; };
-		059F670819D7350000F53D56 /* UITableViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059F670719D7350000F53D56 /* UITableViewControllerExtensions.swift */; };
-		059F670A19D747EA00F53D56 /* ConfigureScanServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059F670919D747EA00F53D56 /* ConfigureScanServiceViewController.swift */; };
-		05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */; };
-		05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */; };
-		05B45BF219A78BA2009DAF6D /* SimpleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE819A78BA2009DAF6D /* SimpleCell.swift */; };
-		05B45BF319A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */; };
-		05B45BF419A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */; };
-		05B45BF519A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEB19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */; };
-		05B45BF619A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEC19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */; };
-		05B45BF719A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */; };
-		05B45BF819A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */; };
-		05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */; };
-		05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */; };
-		05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */; };
-		05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */; };
-		05B45C0219A78C6B009DAF6D /* PeripheralStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */; };
-		05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0019A78C6B009DAF6D /* ProgressView.swift */; };
-		05B45C0419A78C6B009DAF6D /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */; };
-		05B48B5219C8527100800327 /* BeaconRegionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B48B5119C8527100800327 /* BeaconRegionsViewController.swift */; };
-		05B48B5419C85B6900800327 /* BeaconStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B48B5319C85B6900800327 /* BeaconStore.swift */; };
-		05B48B5619C9B69400800327 /* BeaconRegionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B48B5519C9B69400800327 /* BeaconRegionCell.swift */; };
-		05B48B5819C9B7DF00800327 /* BeaconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B48B5719C9B7DF00800327 /* BeaconCell.swift */; };
-		05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */; };
-		05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F0771957ACF300D798CB /* NameUUIDCell.swift */; };
-		05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */; };
-		05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */; };
-		05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */; };
-		05CA6C1219FA6AD000088A39 /* ConfigurePeripheralConnectionTimeoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CA6C1119FA6AD000088A39 /* ConfigurePeripheralConnectionTimeoutViewController.swift */; };
-		05CA6C1519FA6C2C00088A39 /* ConfigureCharacteristicReadWriteTimeoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CA6C1419FA6C2C00088A39 /* ConfigureCharacteristicReadWriteTimeoutViewController.swift */; };
-		05D9D50A19B0D7B0001DBEBC /* ConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D50919B0D7B0001DBEBC /* ConfigStore.swift */; };
-		05D9D50E19B0DA4C001DBEBC /* ConfigureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */; };
-		05D9D51419B0E36B001DBEBC /* ConfigureScanModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */; };
-		05D9D51619B0E464001DBEBC /* ConfigureScanServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */; };
-		05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68700194FF5A2009B38DA /* PeripheralViewController.swift */; };
-		05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */; };
-		05F2A8DA199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */; };
-		05F2A8DB199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */; };
-		05F2A8DC199271FA00004260 /* ServiceCharacteristicProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */; };
-		05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */; };
-		05FAFC3519D30247003725B0 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FAFC3419D30247003725B0 /* Notification.swift */; };
-		05FC225A1DC0FDC200CFF170 /* CharacteristicConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC22591DC0FDC200CFF170 /* CharacteristicConnector.swift */; };
-		4DFFCA12A43784818F7DCE99 /* Pods_BlueCap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF6C7449B7049595537E74D8 /* Pods_BlueCap.framework */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		05840FAC19420B0000C744E6 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
-/* Begin PBXFileReference section */
-		0507973019C4CEEC00A4D547 /* BeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BeaconsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BeaconRegionViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		050BF0A01D985B3600928863 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
-		05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		052A1EB81C74D13C00FBB45B /* CharacteristicValueCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicValueCell.swift; sourceTree = "<group>"; };
-		052A1EBA1C77707A00FBB45B /* ConfigurePeripheralSortOrderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurePeripheralSortOrderViewController.swift; sourceTree = "<group>"; };
-		052A1EBE1C78CEDA00FBB45B /* ConfigureMaximumPeripheralsDiscovered.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureMaximumPeripheralsDiscovered.swift; sourceTree = "<group>"; };
-		052A1ECB1C8CCDD300FBB45B /* ConfigurePeripheralMaximumDisconnectionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurePeripheralMaximumDisconnectionsViewController.swift; sourceTree = "<group>"; };
-		0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerBeaconsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerBeaconViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		053B0CC119BF2717006C7D1F /* ConfigureScanDurationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanDurationViewController.swift; sourceTree = "<group>"; };
-		0543FEBD1B42E22D00363415 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
-		054C7C9C1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralAdvertisementsServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		054C7C9E1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralAdvertisementsServiceDataViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		054C7CA01BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralAdvertisementsOverflowServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		054C7CA21BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralAdvertisementsSolicitedServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralCell.swift; sourceTree = "<group>"; };
-		054F53441DA54D6B00CD49E5 /* DiscoveredPeripheralStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoveredPeripheralStore.swift; sourceTree = "<group>"; };
-		054F53461DA951F300CD49E5 /* BlueCap.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BlueCap.playground; sourceTree = "<group>"; };
-		055A5A4E1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureMaximumPeripheralsConnected.swift; sourceTree = "<group>"; };
-		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerAddAdvertisedServiceViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconCell.swift; sourceTree = "<group>"; };
-		056E3B221D29843C002316FC /* DefaultConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultConfiguration.plist; sourceTree = "<group>"; };
-		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		05840F63194206F100C744E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		05840F64194206F100C744E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		05840F6D194206F100C744E6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		05883B2C19F7E21100CE8435 /* ConfigurePeripheralMaximumTimeoutsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurePeripheralMaximumTimeoutsViewController.swift; sourceTree = "<group>"; };
-		059F670719D7350000F53D56 /* UITableViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITableViewControllerExtensions.swift; sourceTree = "<group>"; };
-		059F670919D747EA00F53D56 /* ConfigureScanServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanServiceViewController.swift; sourceTree = "<group>"; };
-		05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BE819A78BA2009DAF6D /* SimpleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleCell.swift; sourceTree = "<group>"; };
-		05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServiceCharacteristicEditValueViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BEB19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServiceCharacteristicsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BEC19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServiceCharacteristicViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServiceProfilesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServicesCharacteristicValuesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagersViewController.swift; sourceTree = "<group>"; };
-		05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesTableViewController.swift; sourceTree = "<group>"; };
-		05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralStore.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45C0019A78C6B009DAF6D /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
-		05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
-		05B48B5119C8527100800327 /* BeaconRegionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BeaconRegionsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B48B5319C85B6900800327 /* BeaconStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconStore.swift; sourceTree = "<group>"; };
-		05B48B5519C9B69400800327 /* BeaconRegionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconRegionCell.swift; sourceTree = "<group>"; };
-		05B48B5719C9B7DF00800327 /* BeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconCell.swift; sourceTree = "<group>"; };
-		05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B6F0771957ACF300D798CB /* NameUUIDCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameUUIDCell.swift; sourceTree = "<group>"; };
-		05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServiceCharacteristicsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServiceCharacteristicViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerAdvertisedServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05CA6C1119FA6AD000088A39 /* ConfigurePeripheralConnectionTimeoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurePeripheralConnectionTimeoutViewController.swift; sourceTree = "<group>"; };
-		05CA6C1419FA6C2C00088A39 /* ConfigureCharacteristicReadWriteTimeoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureCharacteristicReadWriteTimeoutViewController.swift; sourceTree = "<group>"; };
-		05D9D50919B0D7B0001DBEBC /* ConfigStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigStore.swift; sourceTree = "<group>"; };
-		05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureViewController.swift; sourceTree = "<group>"; };
-		05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanModeViewController.swift; sourceTree = "<group>"; };
-		05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureScanServicesViewController.swift; sourceTree = "<group>"; };
-		05E68700194FF5A2009B38DA /* PeripheralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralAdvertisementsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfilesViewController.swift; sourceTree = "<group>"; };
-		05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileValuesViewController.swift; sourceTree = "<group>"; };
-		05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceCharacteristicProfileViewController.swift; sourceTree = "<group>"; };
-		05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesViewController.swift; sourceTree = "<group>"; };
-		05FAFC3419D30247003725B0 /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
-		05FC22591DC0FDC200CFF170 /* CharacteristicConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacteristicConnector.swift; sourceTree = "<group>"; };
-		DF4955A48C6276E5684493FD /* Pods-BlueCap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.release.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.release.xcconfig"; sourceTree = "<group>"; };
-		F4D18E546090A75C8F3EEEC9 /* Pods-BlueCap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlueCap.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.debug.xcconfig"; sourceTree = "<group>"; };
-		FF6C7449B7049595537E74D8 /* Pods_BlueCap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BlueCap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		05840F5C194206F100C744E6 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				050BF0A11D985B3600928863 /* UserNotifications.framework in Frameworks */,
-				4DFFCA12A43784818F7DCE99 /* Pods_BlueCap.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		050796E519C4C42100A4D547 /* Beacon */ = {
-			isa = PBXGroup;
-			children = (
-				05B48B5719C9B7DF00800327 /* BeaconCell.swift */,
-				05B48B5519C9B69400800327 /* BeaconRegionCell.swift */,
-				05B48B5119C8527100800327 /* BeaconRegionsViewController.swift */,
-				0507973419C4D0B100A4D547 /* BeaconRegionViewController.swift */,
-				0507973019C4CEEC00A4D547 /* BeaconsViewController.swift */,
-			);
-			path = Beacon;
-			sourceTree = "<group>";
-		};
-		050BF09F1D985B3500928863 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				050BF0A01D985B3600928863 /* UserNotifications.framework */,
-				FF6C7449B7049595537E74D8 /* Pods_BlueCap.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		05277C9B1944CAE50022FB59 /* Central */ = {
-			isa = PBXGroup;
-			children = (
-				052A1EB81C74D13C00FBB45B /* CharacteristicValueCell.swift */,
-				05B6F0771957ACF300D798CB /* NameUUIDCell.swift */,
-				054C7CA01BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift */,
-				054C7C9E1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift */,
-				054C7C9C1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift */,
-				054C7CA21BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift */,
-				05E68706195301B1009B38DA /* PeripheralAdvertisementsViewController.swift */,
-				054D47B8194E69C500C6B7D0 /* PeripheralCell.swift */,
-				05B1AEBB197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift */,
-				05B1AEB9197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift */,
-				05B6F07A19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift */,
-				057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */,
-				05B6F07E19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift */,
-				05B6F0751957715800D798CB /* PeripheralServicesViewController.swift */,
-				05277C9D1944CAE50022FB59 /* PeripheralsViewController.swift */,
-				05E68700194FF5A2009B38DA /* PeripheralViewController.swift */,
-			);
-			path = Central;
-			sourceTree = "<group>";
-		};
-		05764D7D1969D01900E6C801 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				05B48B5319C85B6900800327 /* BeaconStore.swift */,
-				05D9D50919B0D7B0001DBEBC /* ConfigStore.swift */,
-				05FAFC3419D30247003725B0 /* Notification.swift */,
-				05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */,
-				05B45C0019A78C6B009DAF6D /* ProgressView.swift */,
-				05B45C0119A78C6B009DAF6D /* UIAlertControllerExtensions.swift */,
-				059F670719D7350000F53D56 /* UITableViewControllerExtensions.swift */,
-				054F53441DA54D6B00CD49E5 /* DiscoveredPeripheralStore.swift */,
-				05FC22591DC0FDC200CFF170 /* CharacteristicConnector.swift */,
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		05840F56194206F100C744E6 = {
-			isa = PBXGroup;
-			children = (
-				054F53461DA951F300CD49E5 /* BlueCap.playground */,
-				05840F61194206F100C744E6 /* BlueCap */,
-				05840F60194206F100C744E6 /* Products */,
-				050BF09F1D985B3500928863 /* Frameworks */,
-				708331A8C303817B83219953 /* Pods */,
-			);
-			sourceTree = "<group>";
-		};
-		05840F60194206F100C744E6 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				05840F5F194206F100C744E6 /* BlueCap.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		05840F61194206F100C744E6 /* BlueCap */ = {
-			isa = PBXGroup;
-			children = (
-				056B7C7419DE4E52001B7F95 /* Main.storyboard */,
-				05840F64194206F100C744E6 /* AppDelegate.swift */,
-				05840F6D194206F100C744E6 /* Images.xcassets */,
-				0543FEBD1B42E22D00363415 /* LaunchScreen.xib */,
-				050796E519C4C42100A4D547 /* Beacon */,
-				05277C9B1944CAE50022FB59 /* Central */,
-				05B45BFC19A78BBB009DAF6D /* Configure */,
-				05E6870219508799009B38DA /* Peripheral */,
-				05E68703195087D0009B38DA /* Profiles */,
-				05840F62194206F100C744E6 /* Supporting Files */,
-				05764D7D1969D01900E6C801 /* Utils */,
-			);
-			path = BlueCap;
-			sourceTree = "<group>";
-		};
-		05840F62194206F100C744E6 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				05840F63194206F100C744E6 /* Info.plist */,
-				056E3B221D29843C002316FC /* DefaultConfiguration.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		05B45BFC19A78BBB009DAF6D /* Configure */ = {
-			isa = PBXGroup;
-			children = (
-				05CA6C1419FA6C2C00088A39 /* ConfigureCharacteristicReadWriteTimeoutViewController.swift */,
-				055A5A4E1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift */,
-				052A1EBE1C78CEDA00FBB45B /* ConfigureMaximumPeripheralsDiscovered.swift */,
-				05CA6C1119FA6AD000088A39 /* ConfigurePeripheralConnectionTimeoutViewController.swift */,
-				052A1ECB1C8CCDD300FBB45B /* ConfigurePeripheralMaximumDisconnectionsViewController.swift */,
-				05883B2C19F7E21100CE8435 /* ConfigurePeripheralMaximumTimeoutsViewController.swift */,
-				052A1EBA1C77707A00FBB45B /* ConfigurePeripheralSortOrderViewController.swift */,
-				05D9D51319B0E36B001DBEBC /* ConfigureScanModeViewController.swift */,
-				05D9D51519B0E464001DBEBC /* ConfigureScanServicesViewController.swift */,
-				059F670919D747EA00F53D56 /* ConfigureScanServiceViewController.swift */,
-				053B0CC119BF2717006C7D1F /* ConfigureScanDurationViewController.swift */,
-				05D9D50D19B0DA4C001DBEBC /* ConfigureViewController.swift */,
-			);
-			path = Configure;
-			sourceTree = "<group>";
-		};
-		05E6870219508799009B38DA /* Peripheral */ = {
-			isa = PBXGroup;
-			children = (
-				056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */,
-				05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */,
-				056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */,
-				0530B62819D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift */,
-				0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */,
-				05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */,
-				05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */,
-				05B45BEB19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift */,
-				05B45BEC19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift */,
-				05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */,
-				05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */,
-				05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */,
-				05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */,
-				05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */,
-				05B45BE819A78BA2009DAF6D /* SimpleCell.swift */,
-			);
-			path = Peripheral;
-			sourceTree = "<group>";
-		};
-		05E68703195087D0009B38DA /* Profiles */ = {
-			isa = PBXGroup;
-			children = (
-				05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */,
-				05F2A8D6199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift */,
-				05F2A8D7199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift */,
-				05F2A8D8199271FA00004260 /* ServiceCharacteristicProfileViewController.swift */,
-				05F2A8D9199271FA00004260 /* ServiceProfilesViewController.swift */,
-			);
-			path = Profiles;
-			sourceTree = "<group>";
-		};
-		708331A8C303817B83219953 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				F4D18E546090A75C8F3EEEC9 /* Pods-BlueCap.debug.xcconfig */,
-				DF4955A48C6276E5684493FD /* Pods-BlueCap.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		05840F5E194206F100C744E6 /* BlueCap */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 05840F7D194206F100C744E6 /* Build configuration list for PBXNativeTarget "BlueCap" */;
-			buildPhases = (
-				593D55269B086257D83AA837 /* [CP] Check Pods Manifest.lock */,
-				05840F5B194206F100C744E6 /* Sources */,
-				05840F5C194206F100C744E6 /* Frameworks */,
-				05840F5D194206F100C744E6 /* Resources */,
-				05840FAC19420B0000C744E6 /* Embed Frameworks */,
-				5882AA77CA19752A234B3072 /* [CP] Embed Pods Frameworks */,
-				638ABEBF1BE6B101A8866413 /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = BlueCap;
-			productName = BlueCap;
-			productReference = 05840F5F194206F100C744E6 /* BlueCap.app */;
-			productType = "com.apple.product-type.application";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		05840F57194206F100C744E6 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0810;
-				ORGANIZATIONNAME = "Troy Stribling";
-				TargetAttributes = {
-					05840F5E194206F100C744E6 = {
-						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = HZEX459C37;
-						LastSwiftMigration = 0800;
-					};
-				};
-			};
-			buildConfigurationList = 05840F5A194206F100C744E6 /* Build configuration list for PBXProject "BlueCap" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				Base,
-			);
-			mainGroup = 05840F56194206F100C744E6;
-			productRefGroup = 05840F60194206F100C744E6 /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				05840F5E194206F100C744E6 /* BlueCap */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		05840F5D194206F100C744E6 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				05840F6E194206F100C744E6 /* Images.xcassets in Resources */,
-				056E3B231D29843C002316FC /* DefaultConfiguration.plist in Resources */,
-				0543FEBE1B42E22D00363415 /* LaunchScreen.xib in Resources */,
-				056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5882AA77CA19752A234B3072 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		593D55269B086257D83AA837 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		638ABEBF1BE6B101A8866413 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		05840F5B194206F100C744E6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				05B45BF419A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */,
-				056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */,
-				05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */,
-				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
-				054C7C9D1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift in Sources */,
-				054D47B9194E69C500C6B7D0 /* PeripheralCell.swift in Sources */,
-				0530B62919D8F78000F366B6 /* PeripheralManagerBeaconsViewController.swift in Sources */,
-				056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */,
-				05B45BF719A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift in Sources */,
-				05D9D50E19B0DA4C001DBEBC /* ConfigureViewController.swift in Sources */,
-				05D9D50A19B0D7B0001DBEBC /* ConfigStore.swift in Sources */,
-				059F670A19D747EA00F53D56 /* ConfigureScanServiceViewController.swift in Sources */,
-				05B45BF519A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicsViewController.swift in Sources */,
-				054F53451DA54D6B00CD49E5 /* DiscoveredPeripheralStore.swift in Sources */,
-				0507973119C4CEEC00A4D547 /* BeaconsViewController.swift in Sources */,
-				05B1AEBA197C285700371E73 /* PeripheralServiceCharacteristicEditValueViewController.swift in Sources */,
-				05CA6C1219FA6AD000088A39 /* ConfigurePeripheralConnectionTimeoutViewController.swift in Sources */,
-				05B45BF619A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicViewController.swift in Sources */,
-				05B6F0761957715800D798CB /* PeripheralServicesViewController.swift in Sources */,
-				05B45C0219A78C6B009DAF6D /* PeripheralStore.swift in Sources */,
-				05B45BF819A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */,
-				0507973519C4D0B100A4D547 /* BeaconRegionViewController.swift in Sources */,
-				05FC225A1DC0FDC200CFF170 /* CharacteristicConnector.swift in Sources */,
-				05B48B5419C85B6900800327 /* BeaconStore.swift in Sources */,
-				05E68707195301B1009B38DA /* PeripheralAdvertisementsViewController.swift in Sources */,
-				05277CA01944CAE50022FB59 /* PeripheralsViewController.swift in Sources */,
-				05B45BF319A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */,
-				05B1AEBC197C28DE00371E73 /* PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift in Sources */,
-				053B0CC219BF2717006C7D1F /* ConfigureScanDurationViewController.swift in Sources */,
-				05D9D51419B0E36B001DBEBC /* ConfigureScanModeViewController.swift in Sources */,
-				054C7CA31BD41EA700A143B4 /* PeripheralAdvertisementsSolicitedServicesViewController.swift in Sources */,
-				05F2A8DA199271FA00004260 /* ServiceCharacteristicProfilesViewController.swift in Sources */,
-				05B48B5219C8527100800327 /* BeaconRegionsViewController.swift in Sources */,
-				05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */,
-				05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */,
-				054C7CA11BD41E5F00A143B4 /* PeripheralAdvertisementsOverflowServicesViewController.swift in Sources */,
-				05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */,
-				05CA6C1519FA6C2C00088A39 /* ConfigureCharacteristicReadWriteTimeoutViewController.swift in Sources */,
-				057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */,
-				05B45BF219A78BA2009DAF6D /* SimpleCell.swift in Sources */,
-				05B45C0419A78C6B009DAF6D /* UIAlertControllerExtensions.swift in Sources */,
-				05FAFC3519D30247003725B0 /* Notification.swift in Sources */,
-				055A5A4F1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift in Sources */,
-				05D9D51619B0E464001DBEBC /* ConfigureScanServicesViewController.swift in Sources */,
-				05B6F07B19587AB700D798CB /* PeripheralServiceCharacteristicsViewController.swift in Sources */,
-				052A1ECC1C8CCDD300FBB45B /* ConfigurePeripheralMaximumDisconnectionsViewController.swift in Sources */,
-				052A1EBB1C77707A00FBB45B /* ConfigurePeripheralSortOrderViewController.swift in Sources */,
-				05883B2D19F7E21100CE8435 /* ConfigurePeripheralMaximumTimeoutsViewController.swift in Sources */,
-				05F2A8DB199271FA00004260 /* ServiceCharacteristicProfileValuesViewController.swift in Sources */,
-				05E68701194FF5A2009B38DA /* PeripheralViewController.swift in Sources */,
-				05B48B5819C9B7DF00800327 /* BeaconCell.swift in Sources */,
-				05F2A8DD199271FA00004260 /* ServiceProfilesViewController.swift in Sources */,
-				05F2A8DC199271FA00004260 /* ServiceCharacteristicProfileViewController.swift in Sources */,
-				059F670819D7350000F53D56 /* UITableViewControllerExtensions.swift in Sources */,
-				05840F65194206F100C744E6 /* AppDelegate.swift in Sources */,
-				05B6F0781957ACF300D798CB /* NameUUIDCell.swift in Sources */,
-				052A1EBF1C78CEDA00FBB45B /* ConfigureMaximumPeripheralsDiscovered.swift in Sources */,
-				05B48B5619C9B69400800327 /* BeaconRegionCell.swift in Sources */,
-				054C7C9F1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift in Sources */,
-				05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */,
-				052A1EB91C74D13C00FBB45B /* CharacteristicValueCell.swift in Sources */,
-				0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */,
-				05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin XCBuildConfiguration section */
-		05840F7B194206F100C744E6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: William Stribling (HZEX459C37)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				METAL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				"OTHER_SWIFT_FLAGS[arch=*]" = "$(inherited)";
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0.1;
-			};
-			name = Debug;
-		};
-		05840F7C194206F100C744E6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: William Stribling (HZEX459C37)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				METAL_ENABLE_DEBUG_INFO = NO;
-				OTHER_SWIFT_FLAGS = "";
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0.1;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		05840F7E194206F100C744E6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = F4D18E546090A75C8F3EEEC9 /* Pods-BlueCap.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = HZEX459C37;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "$(inherited)";
-				INFOPLIST_FILE = BlueCap/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		05840F7F194206F100C744E6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DF4955A48C6276E5684493FD /* Pods-BlueCap.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = HZEX459C37;
-				INFOPLIST_FILE = BlueCap/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 3.0.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		05840F5A194206F100C744E6 /* Build configuration list for PBXProject "BlueCap" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				05840F7B194206F100C744E6 /* Debug */,
-				05840F7C194206F100C744E6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		05840F7D194206F100C744E6 /* Build configuration list for PBXNativeTarget "BlueCap" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				05840F7E194206F100C744E6 /* Debug */,
-				05840F7F194206F100C744E6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
-	};
-	rootObject = 05840F57194206F100C744E6 /* Project object */;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<string>1</string>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<string>46</string>
+	<key>objects</key>
+	<dict>
+		<key>050796E519C4C42100A4D547</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>05B48B5719C9B7DF00800327</string>
+				<string>05B48B5519C9B69400800327</string>
+				<string>05B48B5119C8527100800327</string>
+				<string>0507973419C4D0B100A4D547</string>
+				<string>0507973019C4CEEC00A4D547</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Beacon</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0507973019C4CEEC00A4D547</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>BeaconsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>0507973119C4CEEC00A4D547</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0507973019C4CEEC00A4D547</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0507973419C4D0B100A4D547</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>BeaconRegionViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>0507973519C4D0B100A4D547</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0507973419C4D0B100A4D547</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>050BF09F1D985B3500928863</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>050BF0A01D985B3600928863</string>
+				<string>A2C63599215496CBF8A87125</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>050BF0A01D985B3600928863</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>UserNotifications.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/UserNotifications.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>050BF0A11D985B3600928863</key>
+		<dict>
+			<key>fileRef</key>
+			<string>050BF0A01D985B3600928863</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05277C9B1944CAE50022FB59</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>052A1EB81C74D13C00FBB45B</string>
+				<string>05B6F0771957ACF300D798CB</string>
+				<string>054C7CA01BD41E5F00A143B4</string>
+				<string>054C7C9E1BD4144A00A143B4</string>
+				<string>054C7C9C1BD40F0300A143B4</string>
+				<string>054C7CA21BD41EA700A143B4</string>
+				<string>05E68706195301B1009B38DA</string>
+				<string>054D47B8194E69C500C6B7D0</string>
+				<string>05B1AEBB197C28DE00371E73</string>
+				<string>05B1AEB9197C285700371E73</string>
+				<string>05B6F07A19587AB700D798CB</string>
+				<string>057E6ABA1968BA28009938F4</string>
+				<string>05B6F07E19591AE300D798CB</string>
+				<string>05B6F0751957715800D798CB</string>
+				<string>05277C9D1944CAE50022FB59</string>
+				<string>05E68700194FF5A2009B38DA</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Central</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05277C9D1944CAE50022FB59</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05277CA01944CAE50022FB59</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05277C9D1944CAE50022FB59</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>052A1EB81C74D13C00FBB45B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>CharacteristicValueCell.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>052A1EB91C74D13C00FBB45B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>052A1EB81C74D13C00FBB45B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>052A1EBA1C77707A00FBB45B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigurePeripheralSortOrderViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>052A1EBB1C77707A00FBB45B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>052A1EBA1C77707A00FBB45B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>052A1EBE1C78CEDA00FBB45B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureMaximumPeripheralsDiscovered.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>052A1EBF1C78CEDA00FBB45B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>052A1EBE1C78CEDA00FBB45B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>052A1ECB1C8CCDD300FBB45B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigurePeripheralMaximumDisconnectionsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>052A1ECC1C8CCDD300FBB45B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>052A1ECB1C8CCDD300FBB45B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0530B62819D8F78000F366B6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerBeaconsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>0530B62919D8F78000F366B6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0530B62819D8F78000F366B6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0530B62A19D8F7F800F366B6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerBeaconViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>0530B62B19D8F7F800F366B6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0530B62A19D8F7F800F366B6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>053B0CC119BF2717006C7D1F</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureScanDurationViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>053B0CC219BF2717006C7D1F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>053B0CC119BF2717006C7D1F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0543FEBD1B42E22D00363415</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.xib</string>
+			<key>path</key>
+			<string>LaunchScreen.xib</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0543FEBE1B42E22D00363415</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0543FEBD1B42E22D00363415</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>054C7C9C1BD40F0300A143B4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralAdvertisementsServicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>054C7C9D1BD40F0300A143B4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>054C7C9C1BD40F0300A143B4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>054C7C9E1BD4144A00A143B4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralAdvertisementsServiceDataViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>054C7C9F1BD4144A00A143B4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>054C7C9E1BD4144A00A143B4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>054C7CA01BD41E5F00A143B4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralAdvertisementsOverflowServicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>054C7CA11BD41E5F00A143B4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>054C7CA01BD41E5F00A143B4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>054C7CA21BD41EA700A143B4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralAdvertisementsSolicitedServicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>054C7CA31BD41EA700A143B4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>054C7CA21BD41EA700A143B4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>054D47B8194E69C500C6B7D0</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>PeripheralCell.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>054D47B9194E69C500C6B7D0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>054D47B8194E69C500C6B7D0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>054F53441DA54D6B00CD49E5</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>DiscoveredPeripheralStore.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>054F53451DA54D6B00CD49E5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>054F53441DA54D6B00CD49E5</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>054F53461DA951F300CD49E5</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.playground</string>
+			<key>path</key>
+			<string>BlueCap.playground</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>055A5A4E1DA1C32A00891DF8</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureMaximumPeripheralsConnected.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>055A5A4F1DA1C32A00891DF8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>055A5A4E1DA1C32A00891DF8</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>056B7C7419DE4E52001B7F95</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.storyboard</string>
+			<key>path</key>
+			<string>Main.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>056B7C7519DE4E52001B7F95</key>
+		<dict>
+			<key>fileRef</key>
+			<string>056B7C7419DE4E52001B7F95</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>056B7C7619DE5E18001B7F95</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerAddAdvertisedServiceViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>056B7C7719DE5E18001B7F95</key>
+		<dict>
+			<key>fileRef</key>
+			<string>056B7C7619DE5E18001B7F95</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>056B7C7919E062A9001B7F95</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>PeripheralManagerBeaconCell.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>056B7C7A19E062A9001B7F95</key>
+		<dict>
+			<key>fileRef</key>
+			<string>056B7C7919E062A9001B7F95</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>056E3B221D29843C002316FC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>DefaultConfiguration.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>056E3B231D29843C002316FC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>056E3B221D29843C002316FC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05764D7D1969D01900E6C801</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>05B48B5319C85B6900800327</string>
+				<string>05D9D50919B0D7B0001DBEBC</string>
+				<string>05FAFC3419D30247003725B0</string>
+				<string>05B45BFF19A78C6B009DAF6D</string>
+				<string>05B45C0019A78C6B009DAF6D</string>
+				<string>05B45C0119A78C6B009DAF6D</string>
+				<string>059F670719D7350000F53D56</string>
+				<string>054F53441DA54D6B00CD49E5</string>
+				<string>05FC22591DC0FDC200CFF170</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Utils</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>057E6ABA1968BA28009938F4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralServiceCharacteristicValuesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>057E6ABB1968BA28009938F4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>057E6ABA1968BA28009938F4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05840F56194206F100C744E6</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>054F53461DA951F300CD49E5</string>
+				<string>05840F61194206F100C744E6</string>
+				<string>05840F60194206F100C744E6</string>
+				<string>050BF09F1D985B3500928863</string>
+				<string>6A0AB595FE453ADAFEFB2C89</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05840F57194206F100C744E6</key>
+		<dict>
+			<key>attributes</key>
+			<dict>
+				<key>LastSwiftUpdateCheck</key>
+				<string>0700</string>
+				<key>LastUpgradeCheck</key>
+				<string>0810</string>
+				<key>ORGANIZATIONNAME</key>
+				<string>Troy Stribling</string>
+				<key>TargetAttributes</key>
+				<dict>
+					<key>05840F5E194206F100C744E6</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>6.0</string>
+						<key>DevelopmentTeam</key>
+						<string>HZEX459C37</string>
+						<key>LastSwiftMigration</key>
+						<string>0800</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>buildConfigurationList</key>
+			<string>05840F5A194206F100C744E6</string>
+			<key>compatibilityVersion</key>
+			<string>Xcode 3.2</string>
+			<key>developmentRegion</key>
+			<string>English</string>
+			<key>hasScannedForEncodings</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXProject</string>
+			<key>knownRegions</key>
+			<array>
+				<string>en</string>
+				<string>Base</string>
+			</array>
+			<key>mainGroup</key>
+			<string>05840F56194206F100C744E6</string>
+			<key>productRefGroup</key>
+			<string>05840F60194206F100C744E6</string>
+			<key>projectDirPath</key>
+			<string></string>
+			<key>projectReferences</key>
+			<array/>
+			<key>projectRoot</key>
+			<string></string>
+			<key>targets</key>
+			<array>
+				<string>05840F5E194206F100C744E6</string>
+			</array>
+		</dict>
+		<key>05840F5A194206F100C744E6</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>05840F7B194206F100C744E6</string>
+				<string>05840F7C194206F100C744E6</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>05840F5B194206F100C744E6</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>05B45BF419A78BA2009DAF6D</string>
+				<string>056B7C7A19E062A9001B7F95</string>
+				<string>05B8831119DE4A7D00F34FF0</string>
+				<string>05B6F07F19591AE300D798CB</string>
+				<string>054C7C9D1BD40F0300A143B4</string>
+				<string>054D47B9194E69C500C6B7D0</string>
+				<string>0530B62919D8F78000F366B6</string>
+				<string>056B7C7719DE5E18001B7F95</string>
+				<string>05B45BF719A78BA2009DAF6D</string>
+				<string>05D9D50E19B0DA4C001DBEBC</string>
+				<string>05D9D50A19B0D7B0001DBEBC</string>
+				<string>059F670A19D747EA00F53D56</string>
+				<string>05B45BF519A78BA2009DAF6D</string>
+				<string>054F53451DA54D6B00CD49E5</string>
+				<string>0507973119C4CEEC00A4D547</string>
+				<string>05B1AEBA197C285700371E73</string>
+				<string>05CA6C1219FA6AD000088A39</string>
+				<string>05B45BF619A78BA2009DAF6D</string>
+				<string>05B6F0761957715800D798CB</string>
+				<string>05B45C0219A78C6B009DAF6D</string>
+				<string>05B45BF819A78BA2009DAF6D</string>
+				<string>0507973519C4D0B100A4D547</string>
+				<string>05FC225A1DC0FDC200CFF170</string>
+				<string>05B48B5419C85B6900800327</string>
+				<string>05E68707195301B1009B38DA</string>
+				<string>05277CA01944CAE50022FB59</string>
+				<string>05B45BF319A78BA2009DAF6D</string>
+				<string>05B1AEBC197C28DE00371E73</string>
+				<string>053B0CC219BF2717006C7D1F</string>
+				<string>05D9D51419B0E36B001DBEBC</string>
+				<string>054C7CA31BD41EA700A143B4</string>
+				<string>05F2A8DA199271FA00004260</string>
+				<string>05B48B5219C8527100800327</string>
+				<string>05B45BFB19A78BA2009DAF6D</string>
+				<string>05B45BFE19A78C53009DAF6D</string>
+				<string>054C7CA11BD41E5F00A143B4</string>
+				<string>05B45BF919A78BA2009DAF6D</string>
+				<string>05CA6C1519FA6C2C00088A39</string>
+				<string>057E6ABB1968BA28009938F4</string>
+				<string>05B45BF219A78BA2009DAF6D</string>
+				<string>05B45C0419A78C6B009DAF6D</string>
+				<string>05FAFC3519D30247003725B0</string>
+				<string>055A5A4F1DA1C32A00891DF8</string>
+				<string>05D9D51619B0E464001DBEBC</string>
+				<string>05B6F07B19587AB700D798CB</string>
+				<string>052A1ECC1C8CCDD300FBB45B</string>
+				<string>052A1EBB1C77707A00FBB45B</string>
+				<string>05883B2D19F7E21100CE8435</string>
+				<string>05F2A8DB199271FA00004260</string>
+				<string>05E68701194FF5A2009B38DA</string>
+				<string>05B48B5819C9B7DF00800327</string>
+				<string>05F2A8DD199271FA00004260</string>
+				<string>05F2A8DC199271FA00004260</string>
+				<string>059F670819D7350000F53D56</string>
+				<string>05840F65194206F100C744E6</string>
+				<string>05B6F0781957ACF300D798CB</string>
+				<string>052A1EBF1C78CEDA00FBB45B</string>
+				<string>05B48B5619C9B69400800327</string>
+				<string>054C7C9F1BD4144A00A143B4</string>
+				<string>05B45BFA19A78BA2009DAF6D</string>
+				<string>052A1EB91C74D13C00FBB45B</string>
+				<string>0530B62B19D8F7F800F366B6</string>
+				<string>05B45C0319A78C6B009DAF6D</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>05840F5C194206F100C744E6</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>050BF0A11D985B3600928863</string>
+				<string>25BC1B337C22CA88B3D37B14</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>05840F5D194206F100C744E6</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>05840F6E194206F100C744E6</string>
+				<string>056E3B231D29843C002316FC</string>
+				<string>0543FEBE1B42E22D00363415</string>
+				<string>056B7C7519DE4E52001B7F95</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>05840F5E194206F100C744E6</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>05840F7D194206F100C744E6</string>
+			<key>buildPhases</key>
+			<array>
+				<string>D9B43E9A0867B416EF015CFB</string>
+				<string>593D55269B086257D83AA837</string>
+				<string>05840F5B194206F100C744E6</string>
+				<string>05840F5C194206F100C744E6</string>
+				<string>05840F5D194206F100C744E6</string>
+				<string>05840FAC19420B0000C744E6</string>
+				<string>5882AA77CA19752A234B3072</string>
+				<string>638ABEBF1BE6B101A8866413</string>
+				<string>58658F9720F7B727C6ED1136</string>
+				<string>11F36EE09B5EAD65C7949E8D</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>BlueCap</string>
+			<key>productName</key>
+			<string>BlueCap</string>
+			<key>productReference</key>
+			<string>05840F5F194206F100C744E6</string>
+			<key>productType</key>
+			<string>com.apple.product-type.application</string>
+		</dict>
+		<key>05840F5F194206F100C744E6</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.application</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>BlueCap.app</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>05840F60194206F100C744E6</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>05840F5F194206F100C744E6</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Products</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05840F61194206F100C744E6</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>056B7C7419DE4E52001B7F95</string>
+				<string>05840F64194206F100C744E6</string>
+				<string>05840F6D194206F100C744E6</string>
+				<string>0543FEBD1B42E22D00363415</string>
+				<string>050796E519C4C42100A4D547</string>
+				<string>05277C9B1944CAE50022FB59</string>
+				<string>05B45BFC19A78BBB009DAF6D</string>
+				<string>05E6870219508799009B38DA</string>
+				<string>05E68703195087D0009B38DA</string>
+				<string>05840F62194206F100C744E6</string>
+				<string>05764D7D1969D01900E6C801</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>BlueCap</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05840F62194206F100C744E6</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>05840F63194206F100C744E6</string>
+				<string>056E3B221D29843C002316FC</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05840F63194206F100C744E6</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05840F64194206F100C744E6</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>AppDelegate.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05840F65194206F100C744E6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05840F64194206F100C744E6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05840F6D194206F100C744E6</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>folder.assetcatalog</string>
+			<key>path</key>
+			<string>Images.xcassets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05840F6E194206F100C744E6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05840F6D194206F100C744E6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05840F7B194206F100C744E6</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INFINITE_RECURSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_SUSPICIOUS_MOVE</key>
+				<string>YES</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Distribution: William Stribling (HZEX459C37)</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
+				<string>YES</string>
+				<key>ENABLE_TESTABILITY</key>
+				<string>YES</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_DYNAMIC_NO_PIC</key>
+				<string>NO</string>
+				<key>GCC_NO_COMMON_BLOCKS</key>
+				<string>YES</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>0</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<string>$(inherited)</string>
+				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>10.0</string>
+				<key>METAL_ENABLE_DEBUG_INFO</key>
+				<string>YES</string>
+				<key>ONLY_ACTIVE_ARCH</key>
+				<string>YES</string>
+				<key>OTHER_SWIFT_FLAGS</key>
+				<string>$(inherited)</string>
+				<key>OTHER_SWIFT_FLAGS[arch=*]</key>
+				<string>$(inherited)</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Onone</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>05840F7C194206F100C744E6</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INFINITE_RECURSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_SUSPICIOUS_MOVE</key>
+				<string>YES</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Distribution: William Stribling (HZEX459C37)</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>YES</string>
+				<key>ENABLE_NS_ASSERTIONS</key>
+				<string>NO</string>
+				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
+				<string>YES</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_NO_COMMON_BLOCKS</key>
+				<string>YES</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>10.0</string>
+				<key>METAL_ENABLE_DEBUG_INFO</key>
+				<string>NO</string>
+				<key>OTHER_SWIFT_FLAGS</key>
+				<string></string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Owholemodule</string>
+				<key>VALIDATE_PRODUCT</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>05840F7D194206F100C744E6</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>05840F7E194206F100C744E6</string>
+				<string>05840F7F194206F100C744E6</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>05840F7E194206F100C744E6</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>638799109670C8D7B28E895A</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>HZEX459C37</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<string>$(inherited)</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS[arch=*]</key>
+				<string>$(inherited)</string>
+				<key>INFOPLIST_FILE</key>
+				<string>BlueCap/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>us.gnos.${PRODUCT_NAME:rfc1034identifier}</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE</key>
+				<string></string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Onone</string>
+				<key>SWIFT_VERSION</key>
+				<string>3.0.1</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>05840F7F194206F100C744E6</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>C2C7881C57EDF6CC66EB2B3A</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>HZEX459C37</string>
+				<key>INFOPLIST_FILE</key>
+				<string>BlueCap/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>us.gnos.${PRODUCT_NAME:rfc1034identifier}</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE</key>
+				<string></string>
+				<key>SWIFT_VERSION</key>
+				<string>3.0.1</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>05840FAC19420B0000C744E6</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string></string>
+			<key>dstSubfolderSpec</key>
+			<string>10</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>name</key>
+			<string>Embed Frameworks</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>05883B2C19F7E21100CE8435</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigurePeripheralMaximumTimeoutsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05883B2D19F7E21100CE8435</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05883B2C19F7E21100CE8435</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>059F670719D7350000F53D56</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>UITableViewControllerExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>059F670819D7350000F53D56</key>
+		<dict>
+			<key>fileRef</key>
+			<string>059F670719D7350000F53D56</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>059F670919D747EA00F53D56</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureScanServiceViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>059F670A19D747EA00F53D56</key>
+		<dict>
+			<key>fileRef</key>
+			<string>059F670919D747EA00F53D56</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B1AEB9197C285700371E73</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralServiceCharacteristicEditValueViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B1AEBA197C285700371E73</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B1AEB9197C285700371E73</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B1AEBB197C28DE00371E73</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralServiceCharacteristicEditDiscreteValuesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B1AEBC197C28DE00371E73</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B1AEBB197C28DE00371E73</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BE819A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>SimpleCell.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B45BE919A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BEA19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerServiceCharacteristicEditValueViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BEB19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerServiceCharacteristicsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BEC19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerServiceCharacteristicViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BED19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerServiceProfilesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BEE19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerServicesCharacteristicValuesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BEF19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerServicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BF019A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>PeripheralManagersViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B45BF119A78BA2009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45BF219A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BE819A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BF319A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BE919A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BF419A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BEA19A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BF519A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BEB19A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BF619A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BEC19A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BF719A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BED19A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BF819A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BEE19A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BF919A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BEF19A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BFA19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BF019A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BFB19A78BA2009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BF119A78BA2009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BFC19A78BBB009DAF6D</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>05CA6C1419FA6C2C00088A39</string>
+				<string>055A5A4E1DA1C32A00891DF8</string>
+				<string>052A1EBE1C78CEDA00FBB45B</string>
+				<string>05CA6C1119FA6AD000088A39</string>
+				<string>052A1ECB1C8CCDD300FBB45B</string>
+				<string>05883B2C19F7E21100CE8435</string>
+				<string>052A1EBA1C77707A00FBB45B</string>
+				<string>05D9D51319B0E36B001DBEBC</string>
+				<string>05D9D51519B0E464001DBEBC</string>
+				<string>059F670919D747EA00F53D56</string>
+				<string>053B0CC119BF2717006C7D1F</string>
+				<string>05D9D50D19B0DA4C001DBEBC</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Configure</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B45BFD19A78C53009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ServiceProfilesTableViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B45BFE19A78C53009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BFD19A78C53009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45BFF19A78C6B009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralStore.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B45C0019A78C6B009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ProgressView.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B45C0119A78C6B009DAF6D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>UIAlertControllerExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B45C0219A78C6B009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45BFF19A78C6B009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45C0319A78C6B009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45C0019A78C6B009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B45C0419A78C6B009DAF6D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B45C0119A78C6B009DAF6D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B48B5119C8527100800327</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>BeaconRegionsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B48B5219C8527100800327</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B48B5119C8527100800327</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B48B5319C85B6900800327</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>BeaconStore.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B48B5419C85B6900800327</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B48B5319C85B6900800327</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B48B5519C9B69400800327</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>BeaconRegionCell.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B48B5619C9B69400800327</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B48B5519C9B69400800327</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B48B5719C9B7DF00800327</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>BeaconCell.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B48B5819C9B7DF00800327</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B48B5719C9B7DF00800327</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B6F0751957715800D798CB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralServicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B6F0761957715800D798CB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B6F0751957715800D798CB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B6F0771957ACF300D798CB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>NameUUIDCell.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05B6F0781957ACF300D798CB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B6F0771957ACF300D798CB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B6F07A19587AB700D798CB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralServiceCharacteristicsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B6F07B19587AB700D798CB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B6F07A19587AB700D798CB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B6F07E19591AE300D798CB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralServiceCharacteristicViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B6F07F19591AE300D798CB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B6F07E19591AE300D798CB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05B8831019DE4A7D00F34FF0</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralManagerAdvertisedServicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05B8831119DE4A7D00F34FF0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05B8831019DE4A7D00F34FF0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05CA6C1119FA6AD000088A39</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigurePeripheralConnectionTimeoutViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05CA6C1219FA6AD000088A39</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05CA6C1119FA6AD000088A39</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05CA6C1419FA6C2C00088A39</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureCharacteristicReadWriteTimeoutViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05CA6C1519FA6C2C00088A39</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05CA6C1419FA6C2C00088A39</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05D9D50919B0D7B0001DBEBC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigStore.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05D9D50A19B0D7B0001DBEBC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05D9D50919B0D7B0001DBEBC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05D9D50D19B0DA4C001DBEBC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05D9D50E19B0DA4C001DBEBC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05D9D50D19B0DA4C001DBEBC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05D9D51319B0E36B001DBEBC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureScanModeViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05D9D51419B0E36B001DBEBC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05D9D51319B0E36B001DBEBC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05D9D51519B0E464001DBEBC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ConfigureScanServicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05D9D51619B0E464001DBEBC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05D9D51519B0E464001DBEBC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05E68700194FF5A2009B38DA</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05E68701194FF5A2009B38DA</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05E68700194FF5A2009B38DA</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05E6870219508799009B38DA</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>056B7C7619DE5E18001B7F95</string>
+				<string>05B8831019DE4A7D00F34FF0</string>
+				<string>056B7C7919E062A9001B7F95</string>
+				<string>0530B62819D8F78000F366B6</string>
+				<string>0530B62A19D8F7F800F366B6</string>
+				<string>05B45BE919A78BA2009DAF6D</string>
+				<string>05B45BEA19A78BA2009DAF6D</string>
+				<string>05B45BEB19A78BA2009DAF6D</string>
+				<string>05B45BEC19A78BA2009DAF6D</string>
+				<string>05B45BED19A78BA2009DAF6D</string>
+				<string>05B45BEE19A78BA2009DAF6D</string>
+				<string>05B45BEF19A78BA2009DAF6D</string>
+				<string>05B45BF019A78BA2009DAF6D</string>
+				<string>05B45BF119A78BA2009DAF6D</string>
+				<string>05B45BE819A78BA2009DAF6D</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Peripheral</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05E68703195087D0009B38DA</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>05B45BFD19A78C53009DAF6D</string>
+				<string>05F2A8D6199271FA00004260</string>
+				<string>05F2A8D7199271FA00004260</string>
+				<string>05F2A8D8199271FA00004260</string>
+				<string>05F2A8D9199271FA00004260</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Profiles</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05E68706195301B1009B38DA</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PeripheralAdvertisementsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.swift</string>
+		</dict>
+		<key>05E68707195301B1009B38DA</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05E68706195301B1009B38DA</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05F2A8D6199271FA00004260</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ServiceCharacteristicProfilesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05F2A8D7199271FA00004260</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ServiceCharacteristicProfileValuesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05F2A8D8199271FA00004260</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ServiceCharacteristicProfileViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05F2A8D9199271FA00004260</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ServiceProfilesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05F2A8DA199271FA00004260</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05F2A8D6199271FA00004260</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05F2A8DB199271FA00004260</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05F2A8D7199271FA00004260</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05F2A8DC199271FA00004260</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05F2A8D8199271FA00004260</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05F2A8DD199271FA00004260</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05F2A8D9199271FA00004260</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05FAFC3419D30247003725B0</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Notification.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05FAFC3519D30247003725B0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05FAFC3419D30247003725B0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>05FC22591DC0FDC200CFF170</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>CharacteristicConnector.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>05FC225A1DC0FDC200CFF170</key>
+		<dict>
+			<key>fileRef</key>
+			<string>05FC22591DC0FDC200CFF170</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>11F36EE09B5EAD65C7949E8D</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>&#128230; Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>25BC1B337C22CA88B3D37B14</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A2C63599215496CBF8A87125</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>58658F9720F7B727C6ED1136</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>&#128230; Embed Pods Frameworks</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-frameworks.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>5882AA77CA19752A234B3072</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>[CP] Embed Pods Frameworks</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-frameworks.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>593D55269B086257D83AA837</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>[CP] Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [ $? != 0 ] ; then
+    # print error to STDERR
+    echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." &gt;&amp;2
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>638799109670C8D7B28E895A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-BlueCap.debug.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>638ABEBF1BE6B101A8866413</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>[CP] Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>6A0AB595FE453ADAFEFB2C89</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>638799109670C8D7B28E895A</string>
+				<string>C2C7881C57EDF6CC66EB2B3A</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Pods</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A2C63599215496CBF8A87125</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_BlueCap.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>C2C7881C57EDF6CC66EB2B3A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-BlueCap.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-BlueCap/Pods-BlueCap.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>D9B43E9A0867B416EF015CFB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>&#128230; Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+	</dict>
+	<key>rootObject</key>
+	<string>05840F57194206F100C744E6</string>
+</dict>
+</plist>
