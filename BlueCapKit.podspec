@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
 
   spec.platform           = :ios, "9.0"
 
-  spec.cocoapods_version  = '>= 1.0'
+  spec.cocoapods_version  = '>= 1.1'
 
   spec.source             = { :git => "https://github.com/troystribling/BlueCap.git", :tag => "#{spec.version}" }
   spec.source_files       = "BlueCapKit/**/*.swift"
