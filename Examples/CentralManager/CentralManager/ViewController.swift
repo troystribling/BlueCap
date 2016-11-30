@@ -306,10 +306,9 @@ class ViewController: UITableViewController {
     }
     
     func deactivate() {
-        guard let peripheral = self.peripheral, manager.isScanning else {
+        guard let peripheral = self.peripheral else {
             return
         }
-        manager.stopScanning()
         peripheral.terminate()
         self.peripheral = nil
         updateUIStatus()
