@@ -36,12 +36,12 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 gem install cocoapods
 ```
 
-> Requires CocoaPods 1.0+
+> Requires CocoaPods 1.1+
 
 Add `BluCapKit` to your to your project `Podfile`,
 
 ```ruby
-platform :ios, '10.0'
+platform :ios, '9.0'
 use_frameworks!
 
 target 'Your Target Name' do
@@ -87,7 +87,7 @@ This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual)
 
 1. Place the BlueCap somewhere in your project directory. You can either copy it or add it as a git submodule.
 2. Open the BlueCap project folder and drag BlueCapKit.xcodeproj into the project navigator of your applications Xcode project.
-3. Under your Projects *Info* tab set the *iOS Deployment Target* to 8.0 and verify that the BlueCapKit.xcodeproj *iOS Deployment Target* is also 8.0.
+3. Under your Projects *Info* tab set the *iOS Deployment Target* to 9.0 and verify that the BlueCapKit.xcodeproj *iOS Deployment Target* is also 9.0.
 4. Under the *General* tab for your project target add the top BlueCapKit.framework as an *Embedded Binary*.
 5. Under the *Build Phases* tab add BlueCapKit.framework as a *Target Dependency* and under *Link Binary With Libraries* add CoreLocation.framework and CoreBluetooth.framework.
 
