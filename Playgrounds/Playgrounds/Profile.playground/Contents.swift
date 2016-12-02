@@ -75,9 +75,9 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     // StringDeserializable
     static let stringValues = [String]()
     
-    var stringValue : Dictionary<String,String> {
-        return ["value1":"\(self.rawValue[0])",
-            "value2":"\(self.rawValue[1])"]
+    var stringValue : [String : String] {
+        return ["value1" : "\(self.rawValue[0])",
+            "value2" : "\(self.rawValue[1])"]
     }
     
     init?(stringValue:[String:String]) {
@@ -195,7 +195,7 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
     }
 }
 
-if let value = ArrayPairData(stringValue:["value11":"1", "value12":"2", "value21":"-1", "value22":"-2"]) {
+if let value = ArrayPairData(stringValue:["value11" : "1", "value12" : "2", "value21" : "-1", "value22" : "-2"]) {
     print(value.stringValue)
 }
 

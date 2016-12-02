@@ -104,7 +104,7 @@ let serviceProfile = ConfiguredServiceProfile<AccelerometerService>()
 `CharacteristicProfile` is the base class for `CharacteristicProfile` types and is instantiated as the default Characteristic profile if one was not explicitly defined for a discovered `Characteristic`. In this case, with no `String` conversions implemented in a GATT Profile definition, a `Characteristic` will support the default `String` conversions to and from `Data` using hexadecimal Strings. It can be used to instantiate either `Characteristic` or `MutableCharacteristic` objects. `CharacteristicProfile` have the following initializer,
 
 ```swift
-public init(uuid: String, name: String, permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable], properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify], initialValue: Data? = nil)
+public init(uuid: String, name: String, permissions: CBAttributePermissions = [.readable, .writeable], properties: CBCharacteristicProperties = [.read, .write, .notify], initialValue: Data? = nil)
 
 public convenience init(uuid: String)
 ```
@@ -143,7 +143,7 @@ public enum Enabled: UInt8, RawDeserializable, StringDeserializable, Characteris
     public static let initialValue: Foundation.Data? = SerDe.serialize(Enabled.no.rawValue)
 
     // StringDeserializable
-    public static let stringValues = ["No", "Yes"]
+    public static let stringValues = ["no", "yes"]
     
     public init(boolValue: Bool) {
         if boolValue {
@@ -156,9 +156,9 @@ public enum Enabled: UInt8, RawDeserializable, StringDeserializable, Characteris
     public init?(stringValue: [String: String]) {
         if let value = stringValue[Enabled.name] {
             switch value {
-            case "Yes":
+            case "yes":
                 self = Enabled.yes
-            case "No":
+            case "no":
                 self = Enabled.no
             default:
                 return nil
@@ -171,9 +171,9 @@ public enum Enabled: UInt8, RawDeserializable, StringDeserializable, Characteris
     public var stringValue: [String: String] {
         switch self {
         case .no:
-            return [Enabled.name:"No"]
+            return [Enabled.name : "no"]
         case .yes:
-            return [Enabled.name:"Yes"]
+            return [Enabled.name : "yes"]
         }
     }
     
@@ -189,7 +189,7 @@ public enum Enabled: UInt8, RawDeserializable, StringDeserializable, Characteris
 ```
 
 ```swift
-if let value = Enabled(stringValue:[Enabled.name:"Yes"]) {
+if let value = Enabled(stringValue:[Enabled.name : "Yes"]) {
     print(value.stringValue)
 }
 ```
@@ -204,15 +204,15 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     // CharacteristicConfigurable
     static let uuid = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
-    static let properties: CBCharacteristicProperties = [.Read, .Write]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue: NSData? = SerDe.serialize(ArrayData(rawValue:[1,2])!)
+    static let properties: CBCharacteristicProperties = [.read, .write]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let initialValue: NSData? = SerDe.serialize(ArrayData(rawValue:[1, 2])!)
     
     // RawArrayDeserializable
     let rawValue : [Int8]
     static let size = 2
     
-    init?(rawValue:[Int8]) {
+    init?(rawValue: [Int8]) {
         if rawValue.count == 2 {
             self.rawValue = rawValue
         } else {
@@ -223,16 +223,16 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     // StringDeserializable
     static let stringValues = [String]()
     
-    var stringValue : Dictionary<String,String> {
-        return ["value1":"\(self.rawValue[0])",
-            "value2":"\(self.rawValue[1])"]
+    var stringValue : [String : String] {
+        return ["value1" : "\(self.rawValue[0])",
+            "value2" : "\(self.rawValue[1])"]
     }
     
     init?(stringValue:[String:String]) {
         if  let stringValue1 = stringValue["value1"],
-            stringValue2 = stringValue["value2"],
-            value1 = Int8(stringValue1),
-            value2 = Int8(stringValue2) {
+            let stringValue2 = stringValue["value2"],
+            let value1 = Int8(stringValue1),
+            let value2 = Int8(stringValue2) {
                 self.rawValue = [value1, value2]
         } else {
             return nil
@@ -244,7 +244,7 @@ if let value = ArrayData(rawValue: [1, 100]) {
     print(value.rawValue)
 }
 
-if let value = ArrayData(stringValue:["value1":"1", "value2":"100"]) {
+if let value = ArrayData(stringValue:["value1" : "1", "value2" : "100"]) {
     print(value.stringValue)
 }
 ```
@@ -260,15 +260,16 @@ let profile = RawArrayPairCharacteristicProfile<PairData>()
 A RawPairCharacteristicProfile object encapsulates configuration and serialization/deserialization for a characteristic implementing [RawPairDeserializable](/Documentation/SerializationDeserialization.md/#serde_rawpairdeserializable). It can be used to instantiate both `Characteristic` and `MutableCharacteristic` objects. An example profile for `UInt8` and `Int8` raw values implementing `RawPairDeserializable`, `CharacteristicConfigurable` and `StringDeserializable` is given by,
 
 ```swift
-struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {    
+struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {
+    
     // CharacteristicConfigurable
     static let uuid = "F000AA30-0451-4000-B000-000000000000"
     static let name = "Magnetometer Data"
-    static let properties: CBCharacteristicProperties = [.Read, .Write]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue : NSData? = Serde.serialize(PairData(rawValue1:10, rawValue2:-10)!)
+    static let properties: CBCharacteristicProperties = [.read, .notify]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let initialValue: Data? = SerDe.serialize(PairData(rawValue1: 10, rawValue2: -10)!)
     
-    // RawPairDeserializable
+    // RawArrayDeserializable
     let rawValue1 : UInt8
     let rawValue2 : Int8
     
@@ -282,19 +283,23 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
     
     var stringValue : Dictionary<String,String> {
         return ["value1":"\(self.rawValue1)",
-                "value2":"\(self.rawValue2)"]}
+            "value2":"\(self.rawValue2)"]}
     
     init?(stringValue:[String:String]) {
-        if  let stringValue1 = stringValue["value1"],
-                stringValue2 = stringValue["value2"],
-                value1 = UInt8(stringValue: stringValue1),
-                value2 = Int8(stringValue: stringValue2) {
-            self.rawValue1 = value1
-            self.rawValue2 = value2
+        if let stringValue1 = stringValue["value1"],
+           let stringValue2 = stringValue["value2"],
+           let value1 = UInt8(stringValue1),
+           let value2 = Int8(stringValue2) {
+                self.rawValue1 = value1
+                self.rawValue2 = value2
         } else {
             return nil
         }
-    }            
+    }
+}
+
+if let value = PairData(stringValue: ["value1" : "1", "value2" : "-2"]) {
+    print(value.stringValue)
 }
 ```
 
@@ -314,9 +319,9 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
     // CharacteristicConfigurable
     static let uuid = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
-    static let properties: CBCharacteristicProperties = [.Read, .Notify]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue: NSData? = SerDe.serialize(ArrayPairData(rawValue1:[1,2], rawValue2:[-1, -2])!)
+    static let properties: CBCharacteristicProperties = [.read, .notify]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let initialValue: Data? = SerDe.serialize(ArrayPairData(rawValue1: [1,2], rawValue2: [-1, -2])!)
     
     // RawArrayDeserializable
     let rawValue1 : [UInt8]
@@ -344,13 +349,13 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
     
     init?(stringValue:[String:String]) {
         if  let stringValue11 = stringValue["value11"],
-            stringValue12 = stringValue["value12"],
-            value11 = UInt8(stringValue11),
-            value12 = UInt8(stringValue12),
-            stringValue21 = stringValue["value21"],
-            stringValue22 = stringValue["value22"],
-            value21 = Int8(stringValue21),
-            value22 = Int8(stringValue22) {
+            let stringValue12 = stringValue["value12"],
+            let value11 = UInt8(stringValue11),
+            let value12 = UInt8(stringValue12),
+            let stringValue21 = stringValue["value21"],
+            let stringValue22 = stringValue["value22"],
+            let value21 = Int8(stringValue21),
+            let value22 = Int8(stringValue22) {
                 self.rawValue1 = [value11, value12]
                 self.rawValue2 = [value21, value22]
         } else {
@@ -359,7 +364,7 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
     }
 }
 
-if let value = ArrayPairData(stringValue:["value11":"1", "value12":"2", "value21":"-1", "value22":"-2"]) {
+if let value = ArrayPairData(stringValue:["value11" : "1", "value12" : "2", "value21" : "-1", "value22" : "-2"]) {
     print(value.stringValue)
 }
 ```
@@ -379,8 +384,8 @@ struct SerialNumber : CharacteristicConfigurable {
     // CharacteristicConfigurable
     static let uuid = "2a25"
     static let name = "Device Serial Number"
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let properties: CBCharacteristicProperties = [.Read]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let properties: CBCharacteristicProperties = [.read]
     static let initialValue = SerDe.serialize("AAA11")
 }
 ```

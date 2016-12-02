@@ -463,7 +463,7 @@ The input parameters are,
 Using the [RawDeserializable enum](/Documentation/SerializationDeserialization.md/#serde_rawdeserializable) an application can write a `Characteristic` when a connected `Peripheral` is available and `Services` and `Characteristics` are discovered,
 
 ```swift
-let writeFuture = characteristic.write(Enabled.Yes)
+let writeFuture = characteristic.write(Enabled.yes)
 ```
 
 Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,
@@ -478,7 +478,7 @@ let writeFuture = discoveryFuture.flatMap { service in
     guard let characteristic = service.characteristic(enabledUUID) else {
         throw AppError.characteristicNotFound
     }
-    return characteristic.write(Enabled.Yes)
+    return characteristic.write(Enabled.yes)
 }
 ```
 
@@ -520,7 +520,7 @@ public func value<T: RawPairDeserializable>() -> T? where T.RawType1: Deserializ
 Using the [RawDeserializable enum](#central_characteristic_write) an application can read a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
-let readFuture = characteristic.write(Enabled.Yes)
+let readFuture = characteristic.write(Enabled.yes)
 ```
 
 Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,

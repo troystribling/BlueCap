@@ -173,9 +173,10 @@ var value : NSData? {get set}
 A `PeripheralManager` application can set a `MutableCharacteristic` value using,
 
 ```swift
-characteristic.value = Serde.serialize(Enabled.Yes)
+characteristic.value = Serde.serialize(Enabled.yes)
 
-If let value: Enabled = characteristic.value {
+guard let value: Enabled = characteristic.value {
+    return
 }
 ```
 
@@ -212,7 +213,7 @@ Peripheral applications would send notification updates using,
 
 ```swift
 // Enabled and characteristic defined above
-let updateStatus = try characteristic.updateValue(Enabled.No)
+let updateStatus = try characteristic.updateValue(Enabled.no)
 ```
 
 ### <a name="peripheral_respond_characteristic_write">Respond to Characteristic Write</a>

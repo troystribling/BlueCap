@@ -24,8 +24,8 @@ public class CharacteristicProfile {
     
     public init(uuid: String,
                 name: String,
-                permissions: CBAttributePermissions = [CBAttributePermissions.readable, CBAttributePermissions.writeable],
-                properties: CBCharacteristicProperties = [CBCharacteristicProperties.read, CBCharacteristicProperties.write, CBCharacteristicProperties.notify],
+                permissions: CBAttributePermissions = [.readable, .writeable],
+                properties: CBCharacteristicProperties = [.read, .write, .notify],
                 initialValue: Data? = nil) {
         self.uuid = CBUUID(string: uuid)
         self.name = name
