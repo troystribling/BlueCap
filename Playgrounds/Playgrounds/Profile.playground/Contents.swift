@@ -6,26 +6,28 @@ import CoreBluetooth
 
 // RawCharacteristicProfile
 enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicConfigurable {
-    case No     = 0
-    case Yes    = 1
+    public typealias RawType = UInt8
+    
+    case no     = 0
+    case yes    = 1
     
     // CharacteristicConfigurable
-    static let UUID = "F000AA12-0451-4000-B000-000000000000"
+    static let uuid = "F000AA12-0451-4000-B000-000000000000"
     static let name = "Accelerometer Enabled"
-    static let properties: CBCharacteristicProperties = [.Read, .Write]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue: NSData? = SerDe.serialize(Enabled.No.rawValue)
+    static let properties: CBCharacteristicProperties = [.read, .write]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let initialValue: Data? = SerDe.serialize(Enabled.no.rawValue)
     
     // StringDeserializable
-    static let stringValues = ["No", "Yes"]
+    static let stringValues = ["no", "yes"]
     
-    init?(stringValue:[String:String]) {
+    init?(stringValue:[String : String]) {
         if let value = stringValue[Enabled.name] {
             switch value {
             case "Yes":
-                self = Enabled.Yes
+                self = Enabled.yes
             case "No":
-                self = Enabled.No
+                self = Enabled.no
             default:
                 return nil
             }
@@ -36,10 +38,10 @@ enum Enabled : UInt8, RawDeserializable, StringDeserializable, CharacteristicCon
     
     var stringValue : [String:String] {
         switch self {
-        case .No:
-            return [Enabled.name:"No"]
-        case .Yes:
-            return [Enabled.name:"Yes"]
+        case .no:
+            return [Enabled.name: "no"]
+        case .yes:
+            return [Enabled.name: "yes"]
         }
     }
 }
@@ -52,11 +54,11 @@ if let value = Enabled(stringValue:[Enabled.name:"Yes"]) {
 struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
     
     // CharacteristicConfigurable
-    static let UUID = "F000AA11-0451-4000-B000-000000000000"
+    static let uuid = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
-    static let properties: CBCharacteristicProperties = [.Read, .Write]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue: NSData? = SerDe.serialize(ArrayData(rawValue:[1,2])!)
+    static let properties: CBCharacteristicProperties = [.read, .write]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let initialValue: Data? = SerDe.serialize(ArrayData(rawValue: [1,2])!)
     
     // RawArrayDeserializable
     let rawValue : [Int8]
@@ -80,9 +82,9 @@ struct ArrayData : RawArrayDeserializable, CharacteristicConfigurable, StringDes
     
     init?(stringValue:[String:String]) {
         if  let stringValue1 = stringValue["value1"],
-            stringValue2 = stringValue["value2"],
-            value1 = Int8(stringValue1),
-            value2 = Int8(stringValue2) {
+            let stringValue2 = stringValue["value2"],
+            let value1 = Int8(stringValue1),
+            let value2 = Int8(stringValue2) {
                 self.rawValue = [value1, value2]
         } else {
             return nil
@@ -102,11 +104,11 @@ if let value = ArrayData(stringValue:["value1":"1", "value2":"100"]) {
 struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeserializable {
     
     // CharacteristicConfigurable
-    static let UUID = "F000AA30-0451-4000-B000-000000000000"
+    static let uuid = "F000AA30-0451-4000-B000-000000000000"
     static let name = "Magnetometer Data"
-    static let properties: CBCharacteristicProperties = [.Read, .Notify]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue: NSData? = SerDe.serialize(PairData(rawValue1:10, rawValue2:-10)!)
+    static let properties: CBCharacteristicProperties = [.read, .notify]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let initialValue: Data? = SerDe.serialize(PairData(rawValue1: 10, rawValue2: -10)!)
     
     // RawArrayDeserializable
     let rawValue1 : UInt8
@@ -125,10 +127,10 @@ struct PairData : RawPairDeserializable, CharacteristicConfigurable, StringDeser
             "value2":"\(self.rawValue2)"]}
     
     init?(stringValue:[String:String]) {
-        if  let stringValue1 = stringValue["value1"],
-            stringValue2 = stringValue["value2"],
-            value1 = UInt8(stringValue1),
-            value2 = Int8(stringValue2) {
+        if let stringValue1 = stringValue["value1"],
+           let stringValue2 = stringValue["value2"],
+           let value1 = UInt8(stringValue1),
+           let value2 = Int8(stringValue2) {
                 self.rawValue1 = value1
                 self.rawValue2 = value2
         } else {
@@ -146,11 +148,11 @@ if let value = PairData(stringValue:["value1":"1", "value2":"-2"]) {
 struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, StringDeserializable {
     
     // CharacteristicConfigurable
-    static let UUID = "F000AA11-0451-4000-B000-000000000000"
+    static let uuid = "F000AA11-0451-4000-B000-000000000000"
     static let name = "Accelerometer Data"
-    static let properties: CBCharacteristicProperties = [.Read, .Notify]
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let initialValue: NSData? = SerDe.serialize(ArrayPairData(rawValue1:[1,2], rawValue2:[-1, -2])!)
+    static let properties: CBCharacteristicProperties = [.read, .notify]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let initialValue: Data? = SerDe.serialize(ArrayPairData(rawValue1: [1,2], rawValue2: [-1, -2])!)
     
     // RawArrayDeserializable
     let rawValue1 : [UInt8]
@@ -178,13 +180,13 @@ struct ArrayPairData : RawArrayPairDeserializable, CharacteristicConfigurable, S
     
     init?(stringValue:[String:String]) {
         if  let stringValue11 = stringValue["value11"],
-            stringValue12 = stringValue["value12"],
-            value11 = UInt8(stringValue11),
-            value12 = UInt8(stringValue12),
-            stringValue21 = stringValue["value21"],
-            stringValue22 = stringValue["value22"],
-            value21 = Int8(stringValue21),
-            value22 = Int8(stringValue22) {
+            let stringValue12 = stringValue["value12"],
+            let value11 = UInt8(stringValue11),
+            let value12 = UInt8(stringValue12),
+            let stringValue21 = stringValue["value21"],
+            let stringValue22 = stringValue["value22"],
+            let value21 = Int8(stringValue21),
+            let value22 = Int8(stringValue22) {
                 self.rawValue1 = [value11, value12]
                 self.rawValue2 = [value21, value22]
         } else {
@@ -200,10 +202,10 @@ if let value = ArrayPairData(stringValue:["value11":"1", "value12":"2", "value21
 // StringCharacteristicProfile
 struct SerialNumber : CharacteristicConfigurable {
     // CharacteristicConfigurable
-    static let UUID = "2a25"
+    static let uuid = "2a25"
     static let name = "Device Serial Number"
-    static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-    static let properties: CBCharacteristicProperties = [.Read]
+    static let permissions: CBAttributePermissions = [.readable, .writeable]
+    static let properties: CBCharacteristicProperties = [.read]
     static let initialValue = SerDe.serialize("AAA11")
 }
 
@@ -214,7 +216,7 @@ public struct MyServices {
     
     // Service
     public struct NumberService : ServiceConfigurable  {
-        public static let UUID  = "F000AA10-0451-4000-B000-000000000000"
+        public static let uuid  = "F000AA10-0451-4000-B000-000000000000"
         public static let name  = "NumberService"
         public static let tag   = "My Services"
     }
@@ -228,16 +230,16 @@ public struct MyServices {
             self.rawValue = rawValue
         }
         
-        public static let UUID = "F000AA12-0451-4000-B000-000000000000"
+        public static let uuid = "F000AA12-0451-4000-B000-000000000000"
         public static let name = "Number"
-        public static let properties: CBCharacteristicProperties = [.Read, .Write]
-        public static let permissions: CBAttributePermissions = [.Readable, .Writeable]
-        public static let initialValue: NSData? = SerDe.serialize(Int16(22))
+        public static let properties: CBCharacteristicProperties = [.read, .write]
+        public static let permissions: CBAttributePermissions = [.readable, .writeable]
+        public static let initialValue: Data? = SerDe.serialize(Int16(22))
         
         public static let stringValues = [String]()
         
         public init?(stringValue:[String:String]) {
-            if let svalue = stringValue[Number.name], value = Int16(svalue) {
+            if let svalue = stringValue[Number.name], let value = Int16(svalue) {
                 self.rawValue = value
             } else {
                 return nil
@@ -251,7 +253,7 @@ public struct MyServices {
     
     // add to ProfileManager
     public static func create() {
-        let profileManager = ProfileManager.sharedInstance
+        let profileManager = ProfileManager()
         let service = ConfiguredServiceProfile<NumberService>()
         let characteristic = RawCharacteristicProfile<Number>()
         service.addCharacteristic(characteristic)
