@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/troystribling/BlueCap.svg?branch=remove_prefix)](https://travis-ci.org/troystribling/BlueCap)
+[![Build Status](https://travis-ci.org/troystribling/BlueCap.svg?branch=master)](https://travis-ci.org/troystribling/BlueCap)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/BlueCapKit.svg)](https://img.shields.io/cocoapods/v/BlueCapKit.svg)
 [![Platform](https://img.shields.io/cocoapods/p/BlueCapKit.svg?style=flat)](http://cocoadocs.org/docsets/BlueCapKit)
 [![License](https://img.shields.io/cocoapods/l/BlueCapKit.svg?style=flat)](http://cocoadocs.org/docsets/BlueCapKit)
@@ -362,6 +362,16 @@ accelerometerEnabledFuture.onSuccess { (request, _) in
 ```
 
 See [PeripheralManager Example](/Examples/PeripheralManager) for details.
+
+## Test Cases
+
+[Test Cases](/Tests) are available. To run type,
+
+```bash
+pod install
+```
+
+and run from test tab in generated `workspace`.
 
 ## Examples
 
