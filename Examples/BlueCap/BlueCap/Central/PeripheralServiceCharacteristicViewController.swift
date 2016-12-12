@@ -19,10 +19,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     var isNotifying = false
-    var characteristic: Characteristic?
-    var peripheral: Peripheral?
+    weak var characteristic: Characteristic?
+    weak var peripheral: Peripheral?
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
 
-    var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    let cancelToken = CancelToken()
     let progressView = ProgressView()
     
     @IBOutlet var valuesLabel: UILabel!
@@ -60,9 +61,15 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard peripheral != nil else {
+        guard let connectionFuture = connectionFuture, peripheral != nil, characteristic != nil else {
             _ = navigationController?.popToRootViewController(animated: false)
             return
+        }
+        connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] (peripheral, connectionEvent) in
+            self?.updateUI()
+        }
+        connectionFuture.onFailure { [weak self] error in
+            self?.updateUI()
         }
         setUI()
     }
@@ -70,25 +77,25 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
+        _ = connectionFuture?.cancel(cancelToken)
     }
 
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicValuesViewController
-            viewController.characteristicUUID = characteristic?.uuid
-            viewController.peripheralIdentifier = peripheral?.identifier
-            viewController.serviceUUID = characteristic?.service?.uuid
-            viewController.isNotifying = isNotifying
+            viewController.characteristic = characteristic
+            viewController.peripheral = peripheral
+            viewController.connectionFuture = connectionFuture
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-            viewController.characteristicUUID = characteristic?.uuid
-            viewController.peripheralIdentifier = peripheral?.identifier
-            viewController.serviceUUID = characteristic?.service?.uuid
+            viewController.characteristic = characteristic
+            viewController.peripheral = peripheral
+            viewController.connectionFuture = connectionFuture
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-            viewController.characteristicUUID = characteristic?.uuid
-            viewController.peripheralIdentifier = peripheral?.identifier
-            viewController.serviceUUID = characteristic?.service?.uuid
+            viewController.characteristic = characteristic
+            viewController.peripheral = peripheral
+            viewController.connectionFuture = connectionFuture
             if let stringValues = self.characteristic?.stringValue {
                 let selectedIndex = sender as! IndexPath
                 let names = Array(stringValues.keys)
@@ -98,7 +105,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-        guard let characteristic = characteristic, identifier != nil  else {
+        guard let characteristic = characteristic, identifier != nil else {
             return false
         }
         return characteristic.propertyEnabled(.read)    ||
@@ -107,7 +114,23 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     @IBAction func toggleNotificatons() {
+        guard let characteristic = characteristic else {
+            return
+        }
         isNotifying = notifySwitch.isOn
+        if isNotifying {
+            let updateFuture = characteristic.startNotifying().flatMap { (characteristic) -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+                    return characteristic.receiveNotificationUpdates(capacity: 10)
+            }
+            updateFuture.onSuccess { [weak self] _ in
+                self?.updateWhenActive()
+            }
+            updateFuture.onFailure{ [weak self] error in
+                self?.present(UIAlertController.alert(title: "Characteristic notification error", error: error), animated: true, completion: nil)
+            }
+        } else {
+
+        }
         updateUI()
     }
 
@@ -159,6 +182,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     func didEnterBackground() {
+        peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }
 

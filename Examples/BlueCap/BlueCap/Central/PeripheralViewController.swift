@@ -14,8 +14,10 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
+    var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+
     var peripheralAdvertisements: PeripheralAdvertisements?
-    
+
     let progressView  = ProgressView()
 
     var peripheralDiscovered = false
@@ -57,6 +59,7 @@ class PeripheralViewController : UITableViewController {
         }
         navigationItem.title = peripheral.name
         discoveredAtLabel.text = dateFormatter.string(from: peripheral.discoveredAt)
+        connect()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -67,20 +70,25 @@ class PeripheralViewController : UITableViewController {
             return
         }
         updateConnectionStateLabel()
-        connect()
         toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
         updatePeripheralProperties()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        disconnect()
         super.viewDidDisappear(animated)
+    }
+
+    override func didMove(toParentViewController parent: UIViewController?) {
+        if parent == nil {
+            disconnect()
+        }
     }
     
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
             let viewController = segue.destination as! PeripheralServicesViewController
             viewController.peripheral = peripheral
+            viewController.connectionFuture = connectionFuture
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destination as! PeripheralAdvertisementsViewController
             viewController.peripheralAdvertisements = peripheralAdvertisements
@@ -92,7 +100,7 @@ class PeripheralViewController : UITableViewController {
             return false
         }
         if identifier == MainStoryBoard.peripheralServicesSegue {
-            return peripheral.services.count > 0
+            return peripheral.services.count > 0 && peripheral.state == .connected
         } else if identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             return true
         } else {
@@ -164,9 +172,10 @@ class PeripheralViewController : UITableViewController {
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
-        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
 
-        connectionFuture.onSuccess { [weak self] (peripheral, connectionEvent) in
+        connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+
+        connectionFuture?.onSuccess { [weak self] (peripheral, connectionEvent) in
             self.forEach { strongSelf in
                 switch connectionEvent {
                 case .connect:
@@ -189,7 +198,7 @@ class PeripheralViewController : UITableViewController {
             }
         }
 
-        connectionFuture.onFailure { [weak self] error in
+        connectionFuture?.onFailure { [weak self] error in
             self.forEach { strongSelf in
                 strongSelf.stateLabel.text = "Disconnected"
                 strongSelf.stateLabel.textColor = UIColor.lightGray
@@ -248,10 +257,5 @@ class PeripheralViewController : UITableViewController {
     }
 
     // MARK: UITableViewDataSource
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 0 {
-            disconnect()
-        }
-    }
 
 }

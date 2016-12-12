@@ -14,7 +14,10 @@ import CoreBluetooth
 class PeripheralServicesViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
-    
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+
+    let cancelToken = CancelToken()
+
     struct MainStoryboard {
         static let peripheralServiceCell = "PeripheralServiceCell"
         static let peripheralServicesCharacteritics = "PeripheralServicesCharacteritics"
@@ -32,9 +35,15 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard peripheral != nil else {
+        guard let connectionFuture = connectionFuture, peripheral != nil else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
+        }
+        connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] (peripheral, connectionEvent) in
+            self?.updateWhenActive()
+        }
+        connectionFuture.onFailure { [weak self] error in
+            self?.updateWhenActive()
         }
         updateWhenActive()
     }
@@ -42,6 +51,7 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
+        _ = connectionFuture?.cancel(cancelToken)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
@@ -50,12 +60,14 @@ class PeripheralServicesViewController : UITableViewController {
                 let viewController = segue.destination as! PeripheralServiceCharacteristicsViewController
                 viewController.service = peripheral.services[selectedIndex.row]
                 viewController.peripheral = peripheral
+                viewController.connectionFuture = connectionFuture
             }
         }
     }
     
     func didEnterBackground() {
-        _ = self.navigationController?.popToRootViewController(animated: false)
+        peripheral?.disconnect()
+        _ = navigationController?.popToRootViewController(animated: false)
     }
     
     // UITableViewDataSource
@@ -77,6 +89,7 @@ class PeripheralServicesViewController : UITableViewController {
             let service = peripheral.services[indexPath.row]
             cell.nameLabel.text = service.name
             cell.uuidLabel.text = service.uuid.uuidString
+            cell.nameLabel.textColor = peripheral.state == .connected ? UIColor.black : UIColor.lightGray
         } else {
             cell.nameLabel.text = "Unknown"
             cell.uuidLabel.text = "Unknown"

@@ -249,7 +249,6 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("max connections reached")
             return
         }
-        let peripherals = self.peripheralsSortedByRSSI
         for peripheral in peripherals where connectionCount < maxConnections {
             if !connectingPeripherals.contains(peripheral.identifier) && !connectedPeripherals.contains(peripheral.identifier) {
                 Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")

@@ -12,16 +12,13 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
 
-    var characteristicName = "Unknown"
-    var characteristicUUID: CBUUID?
-    var serviceUUID: CBUUID?
-    var peripheralIdentifier: UUID?
+    weak var characteristic: Characteristic?
+    weak var peripheral: Peripheral?
+    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
 
-    var characteristicConnector: CharacteristicConnector?
-    var characteristic: Characteristic?
+    let cancelToken = CancelToken()
+    let progressView = ProgressView()
 
-    var progressView = ProgressView()
-    
     struct MainStoryboard {
         static let peripheralServiceCharacteristicDiscreteValueCell = "PeripheraServiceCharacteristicEditDiscreteValueCell"
     }
@@ -32,49 +29,48 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = characteristicName
+        guard  let characteristic = characteristic, peripheral != nil, connectionFuture != nil else {
+            _ = self.navigationController?.popViewController(animated: true)
+            return
+        }
+        self.navigationItem.title = characteristic.name
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        guard let peripheralIdentifier = peripheralIdentifier, let characteristicUUID = characteristicUUID, let serviceUUID = serviceUUID else {
-            _ = self.navigationController?.popViewController(animated: true)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        guard  let connectionFuture = connectionFuture, peripheral != nil, characteristic != nil else {
+            _ = navigationController?.popViewController(animated: true)
             return
         }
-        characteristicConnector = CharacteristicConnector(characteristicUUID: characteristicUUID, serviceUUID: serviceUUID, peripheralIdentifier: peripheralIdentifier)
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        connectionFuture.onSuccess(cancelToken: cancelToken)  { (peripheral, connectionEvent) in
+        }
+        connectionFuture.onFailure { error in
+        }
         readCharacteristic()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
+        _ = connectionFuture?.cancel(cancelToken)
     }
 
     func didEnterBackground() {
-        characteristicConnector?.disconnect().onSuccess { [weak self] in
-            _ = self?.navigationController?.popToRootViewController(animated: false)
-        }
+        peripheral?.disconnect()
+        _ = navigationController?.popToRootViewController(animated: false)
     }
 
     func writeCharacteristic(_ stringValue: [String : String]) {
-        guard let characteristicConnector = characteristicConnector else {
+        guard let characteristic = characteristic else {
             present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
             return
         }
         progressView.show()
-        let connectionFuture = characteristicConnector.connect()
-        let writeFuture = connectionFuture.flatMap { (_, characteristic) -> Future<Characteristic> in
-            characteristic.write(string: stringValue, timeout: (Double(ConfigStore.getCharacteristicReadWriteTimeout())))
-        }.flatMap { [weak self] (characteristic) -> Future<Void> in
-            guard let strongSelf = self, let characteristicConnector = strongSelf.characteristicConnector else {
-                return Future<Void>(value: ())
-            }
-            return characteristicConnector.disconnect()
-        }
+        let writeFuture = characteristic.write(string: stringValue, timeout: (Double(ConfigStore.getCharacteristicReadWriteTimeout())))
         writeFuture.onSuccess { [weak self] _ in
             self?.progressView.remove()
             _ = self?.navigationController?.popViewController(animated: true)
@@ -89,23 +85,14 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
 
     func readCharacteristic() {
-        guard let characteristicConnector = characteristicConnector else {
+        guard let characteristic = characteristic else {
             present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
             return
         }
         progressView.show()
-        let connectionFuture = characteristicConnector.connect()
-        let readFuture = connectionFuture.flatMap { [weak self] (_, characteristic) -> Future<Characteristic> in
-            self?.characteristic = characteristic
-            return characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-        }.flatMap { [weak self] (characteristic) -> Future<Void> in
-            guard let strongSelf = self, let characteristicConnector = strongSelf.characteristicConnector else {
-                return Future<Void>(value: ())
-            }
-            return characteristicConnector.disconnect()
-        }
+        let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
         readFuture.onSuccess { [weak self] _ in
             self?.updateWhenActive()
             self?.progressView.remove()

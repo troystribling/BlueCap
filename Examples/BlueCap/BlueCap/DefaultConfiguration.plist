@@ -21,11 +21,11 @@
 	<key>peripheralMaximumTimeoutsEnabled</key>
 	<true/>
 	<key>peripheralMaximumTimeouts</key>
-	<integer>3</integer>
-	<key>maximumPeripheralsConnected</key>
 	<integer>2</integer>
+	<key>maximumPeripheralsConnected</key>
+	<integer>1</integer>
 	<key>maximumPeripheralsDiscovered</key>
-	<integer>30</integer>
+	<integer>20</integer>
 	<key>peripheralSortOrder</key>
 	<integer>0</integer>
 </dict>
