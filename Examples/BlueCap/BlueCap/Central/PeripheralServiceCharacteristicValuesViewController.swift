@@ -17,6 +17,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
 
     let cancelToken = CancelToken()
+    let progressView = ProgressView()
 
     @IBOutlet var refreshButton:UIButton!
     
@@ -86,16 +87,20 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     @IBAction func updateValues() {
-        guard  let characteristic = characteristic, connectionFuture != nil, peripheral != nil else {
+        guard  let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected else {
+            present(UIAlertController.alertOnErrorWithMessage("Not connected"), animated:true, completion:nil)
             return
         }
 
+        progressView.show()
         let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
 
         readFuture.onSuccess { [weak self] _ in
+            self?.progressView.remove()
             self?.updateWhenActive()
         }
         readFuture.onFailure { [weak self] error in
+            self?.progressView.remove()
             self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { [weak self] _ in
                 _ = self?.navigationController?.popViewController(animated: true)
                 return
