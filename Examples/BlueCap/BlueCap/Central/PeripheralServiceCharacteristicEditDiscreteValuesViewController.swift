@@ -63,7 +63,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
 
     func writeCharacteristic(_ stringValue: [String : String]) {
-        guard let characteristic = characteristic else {
+        guard let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected  else {
             present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
@@ -85,7 +85,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
 
     func readCharacteristic() {
-        guard let characteristic = characteristic else {
+        guard let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected  else {
             present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)

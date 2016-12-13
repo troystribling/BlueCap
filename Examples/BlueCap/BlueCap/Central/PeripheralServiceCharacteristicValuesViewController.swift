@@ -38,11 +38,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             return
         }
         self.navigationItem.title = characteristic.name
-        if characteristic.isNotifying {
-            refreshButton.isEnabled = false
-        } else {
-            refreshButton.isEnabled = true
-        }
+        refreshButton.isEnabled  = !characteristic.isNotifying
         navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
     
@@ -59,11 +55,13 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             self?.updateWhenActive()
         }
         updateValues()
+        recieveNotificationsIfNotifying()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
+        stopReceivingNotificationIfNotifying()
         _ = connectionFuture?.cancel(cancelToken)
     }
 
@@ -106,6 +104,22 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 return
             }, animated:true, completion:nil)
         }
+    }
+
+    func recieveNotificationsIfNotifying() {
+        guard let characteristic = characteristic, characteristic.isNotifying, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected else {
+            return
+        }
+        characteristic.receiveNotificationUpdates().onSuccess { [weak self] _ in
+            self?.updateWhenActive()
+        }
+    }
+
+    func stopReceivingNotificationIfNotifying() {
+        guard let characteristic = characteristic, characteristic.isNotifying, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected else {
+            return
+        }
+        characteristic.stopNotificationUpdates()
     }
 
     func didEnterBackground() {

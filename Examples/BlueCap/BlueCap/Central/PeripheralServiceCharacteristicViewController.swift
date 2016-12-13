@@ -18,7 +18,6 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         static let peripheralServiceCharacteristicEditWriteOnlyValueSeque = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
-    var isNotifying = false
     weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
     weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
@@ -117,21 +116,19 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         guard let characteristic = characteristic else {
             return
         }
-        isNotifying = notifySwitch.isOn
-        if isNotifying {
-            let updateFuture = characteristic.startNotifying().flatMap { (characteristic) -> FutureStream<(characteristic: Characteristic, data: Data?)> in
-                    return characteristic.receiveNotificationUpdates(capacity: 10)
-            }
-            updateFuture.onSuccess { [weak self] _ in
-                self?.updateWhenActive()
-            }
-            updateFuture.onFailure{ [weak self] error in
-                self?.present(UIAlertController.alert(title: "Characteristic notification error", error: error), animated: true, completion: nil)
-            }
-        } else {
+        let updateFuture = notifySwitch.isOn ? characteristic.startNotifying() : characteristic.stopNotifying()
+        progressView.show()
 
+        updateFuture.onSuccess { [weak self] _ in
+            self?.progressView.remove()
+            self?.updateUI()
+            self?.updateWhenActive()
         }
-        updateUI()
+        updateFuture.onFailure{ [weak self] error in
+            self?.progressView.remove()
+            self?.updateUI()
+            self?.present(UIAlertController.alert(title: "Characteristic notification error", error: error), animated: true, completion: nil)
+        }
     }
 
     func setUI() {
@@ -139,7 +136,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return
         }
         uuidLabel.text = characteristic.uuid.uuidString
-        notifyingLabel.text = booleanStringValue(isNotifying)
+        notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
         propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
         propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))
         propertyWriteWithoutResponseLabel.text = booleanStringValue(characteristic.propertyEnabled(.writeWithoutResponse))
@@ -162,19 +159,19 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         } else {
             valuesLabel.textColor = UIColor.lightGray
         }
-        if (characteristic.propertyEnabled(.notify)                     ||
+        if (characteristic.propertyEnabled(.notify)                      ||
              characteristic.propertyEnabled(.indicate)                   ||
              characteristic.propertyEnabled(.notifyEncryptionRequired)   ||
              characteristic.propertyEnabled(.indicateEncryptionRequired)) {
             notifyLabel.textColor = UIColor.black
             notifySwitch.isEnabled = true
-            notifySwitch.isOn = isNotifying
+            notifySwitch.isOn = characteristic.isNotifying
         } else {
             notifyLabel.textColor = UIColor.lightGray
             notifySwitch.isEnabled = false
             notifySwitch.isOn = false
         }
-        notifyingLabel.text = booleanStringValue(isNotifying)
+        notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
     }
     
     func booleanStringValue(_ value: Bool) -> String {
