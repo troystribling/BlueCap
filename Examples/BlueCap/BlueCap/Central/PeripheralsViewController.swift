@@ -410,6 +410,7 @@ class PeripheralsViewController : UITableViewController {
         Singletons.communicationManager.disconnectAllPeripherals()
         Singletons.discoveryManager.removeAllPeripherals()
         Singletons.scanningManager.removeAllPeripherals()
+        connectingPeripherals.removeAll()
         connectedPeripherals.removeAll()
         discoveredPeripherals.removeAll()
         removedPeripherals.removeAll()

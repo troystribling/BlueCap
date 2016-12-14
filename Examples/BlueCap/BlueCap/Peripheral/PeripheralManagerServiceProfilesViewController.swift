@@ -65,12 +65,14 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
                     PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
                 }
                 _ = self.navigationController?.popViewController(animated: true)
-                self.progressView.remove()
+                _ = self.progressView.remove()
             }
             future.onFailure { error in
-                self.present(UIAlertController.alert(title: "Add Service Error", error: error), animated: true, completion: nil)
-                _ = self.navigationController?.popViewController(animated: true)
-                self.progressView.remove()
+                self.progressView.remove().onSuccess {
+                    self.present(UIAlertController.alert(title: "Add Service Error", error: error), animated: true) {
+                        _ = self.navigationController?.popViewController(animated: true)
+                    }
+                }
             }
         } else {
             _ = self.navigationController?.popViewController(animated: true)

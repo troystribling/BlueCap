@@ -186,12 +186,13 @@ class PeripheralViewController : UITableViewController {
                 case .disconnect:
                     strongSelf.reconnectIfNeccessay()
                 case .forceDisconnect:
-                    strongSelf.progressView.remove()
+                    _ = strongSelf.progressView.remove()
                 case .giveUp:
-                    strongSelf.progressView.remove()
                     strongSelf.stateLabel.text = "Disconnected"
                     strongSelf.stateLabel.textColor = UIColor.lightGray
-                    strongSelf.present(UIAlertController.alert(message: "Connection to `\(peripheral.name)` failed"), animated:true, completion:nil)
+                    strongSelf.progressView.remove().onSuccess {
+                        strongSelf.present(UIAlertController.alert(message: "Connection to `\(peripheral.name)` failed"), animated: true)
+                    }
                     break
                 }
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
@@ -204,10 +205,11 @@ class PeripheralViewController : UITableViewController {
                 strongSelf.stateLabel.textColor = UIColor.lightGray
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
                 strongSelf.updateConnectionStateLabel()
-                strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
-                    strongSelf.progressView.remove()
-                    _ = strongSelf.navigationController?.popToRootViewController(animated: true)
-                }, animated: true)
+                strongSelf.progressView.remove().onSuccess {
+                    strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
+                        _ = strongSelf.navigationController?.popToRootViewController(animated: true)
+                    }, animated: true)
+                }
             }
         }
     }
@@ -232,7 +234,7 @@ class PeripheralViewController : UITableViewController {
 
     func discoverPeripheralIfNeccessary() {
         guard let peripheral = peripheral, peripheral.state == .connected && !peripheralDiscovered else {
-            progressView.remove()
+            _ = progressView.remove()
             return
         }
         let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
@@ -241,16 +243,16 @@ class PeripheralViewController : UITableViewController {
         }
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
-                strongSelf.progressView.remove()
+                _ = strongSelf.progressView.remove()
                 strongSelf.peripheralDiscovered = true
                 strongSelf.updateConnectionStateLabel()
             }
         }
         peripheralDiscoveryFuture.onFailure { [weak self] (error) in
             self.forEach { strongSelf in
-                strongSelf.present(UIAlertController.alert(title: "Peripheral discovery error", error: error) { _ in
-                    strongSelf.progressView.remove()
-                }, animated: true, completion: nil)
+                strongSelf.progressView.remove().onSuccess {
+                    strongSelf.present(UIAlertController.alert(title: "Peripheral discovery error", error: error), animated: true)
+                }
                 Logger.debug("Service discovery failed")
             }
         }

@@ -9,6 +9,10 @@
 import UIKit
 import BlueCapKit
 
+enum ProgressViewError: Error {
+    case notDisplayed
+}
+
 class ProgressView : UIView {
     
     let BACKGROUND_ALPHA: CGFloat = 0.6
@@ -55,7 +59,7 @@ class ProgressView : UIView {
     
     func remove() -> Future<Void> {
         guard displayed else {
-            return Future<Void>()
+            return Future(error: ProgressViewError.notDisplayed)
         }
         let promise = Promise<Void>()
         self.displayed = false

@@ -120,14 +120,15 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         progressView.show()
 
         updateFuture.onSuccess { [weak self] _ in
-            self?.progressView.remove()
+            _ = self?.progressView.remove()
             self?.updateUI()
             self?.updateWhenActive()
         }
         updateFuture.onFailure{ [weak self] error in
-            self?.progressView.remove()
+            self?.progressView.remove().onSuccess {
+                self?.present(UIAlertController.alert(title: "Characteristic notification error", error: error), animated: true, completion: nil)
+            }
             self?.updateUI()
-            self?.present(UIAlertController.alert(title: "Characteristic notification error", error: error), animated: true, completion: nil)
         }
     }
 
