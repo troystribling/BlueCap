@@ -55,7 +55,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             self?.updateWhenActive()
         }
         updateValues()
-        recieveNotificationsIfNotifying()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -91,12 +90,17 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
 
         progressView.show()
-        let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+        let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout())).flatMap { [weak self] _ -> Future<Void> in
+            guard let strongSelf = self else {
+                throw AppError.unlikelyFailure
+            }
+            return strongSelf.progressView.remove()
+        }
 
         readFuture.onSuccess { [weak self] _ in
-            _ = self?.progressView.remove()
             self?.updateWhenActive()
         }
+
         readFuture.onFailure { [weak self] error in
             self?.progressView.remove().onSuccess {
                 self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { [weak self] _ in
@@ -105,14 +109,13 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 }, animated:true, completion:nil)
             }
         }
-    }
 
-    func recieveNotificationsIfNotifying() {
-        guard let characteristic = characteristic, characteristic.isNotifying, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected else {
-            return
-        }
-        characteristic.receiveNotificationUpdates().onSuccess { [weak self] _ in
-            self?.updateWhenActive()
+        if characteristic.isNotifying {
+            readFuture.flatMap { () -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+                characteristic.receiveNotificationUpdates()
+            }.onSuccess { [weak self] _ in
+                self?.updateWhenActive()
+            }
         }
     }
 

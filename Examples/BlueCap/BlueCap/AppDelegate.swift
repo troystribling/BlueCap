@@ -20,6 +20,7 @@ enum AppError : Error {
     case outOfRegion
     case unknownRegionStatus
     case invalid
+    case unlikelyFailure
 }
 
 struct Singletons {
