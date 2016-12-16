@@ -20,7 +20,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    weak var connectionFuture: FutureStream<Peripheral>?
 
     let cancelToken = CancelToken()
     let progressView = ProgressView()
@@ -64,10 +64,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
-        connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] (peripheral, connectionEvent) in
+        connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
             self?.updateUI()
         }
         connectionFuture.onFailure { [weak self] error in
+            self?.present(UIAlertController.alert(title: "Connection Error", error: error), animated:true)
             self?.updateUI()
         }
         setUI()

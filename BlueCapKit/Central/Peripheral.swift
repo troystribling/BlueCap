@@ -11,11 +11,7 @@ import CoreBluetooth
 
 // MARK - Connection Error -
 enum PeripheralConnectionError {
-    case none, timeout
-}
-
-public enum ConnectionEvent {
-    case connect, timeout, disconnect, forceDisconnect, giveUp
+    case none, timeout, forced
 }
 
 // MARK: - PeripheralAdvertisements -
@@ -78,12 +74,12 @@ public struct PeripheralAdvertisements {
 
 public class Peripheral: NSObject, CBPeripheralDelegate {
 
-    // MARK: Serialize Property IO
+    static let RECONNECT_DELAY = TimeInterval(1.0)
 
     fileprivate var servicesDiscoveredPromise: Promise<Peripheral>?
     fileprivate var readRSSIPromise: Promise<Int>?
     fileprivate var pollRSSIPromise: StreamPromise<Int>?
-    fileprivate var connectionPromise: StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    fileprivate var connectionPromise: StreamPromise<Peripheral>?
 
     fileprivate let profileManager: ProfileManager?
 
@@ -95,7 +91,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     fileprivate var connectionSequence = 0
     fileprivate var serviceDiscoverySequence = 0
-    fileprivate var forcedDisconnect = false
     fileprivate var _currentError = PeripheralConnectionError.none
 
     fileprivate var _connectedAt: Date?
@@ -132,6 +127,10 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     fileprivate var currentError: PeripheralConnectionError {
         return centralQueue.sync { return self._currentError }
+    }
+
+    fileprivate var forcedDisconnect: Bool {
+        return _currentError == .forced
     }
 
     public var RSSI: Int {
@@ -273,15 +272,15 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Connection
 
-    public func reconnect(withDelay delay: Double = 0.0) {
+    public func reconnect(withDelay delay: TimeInterval = 0.0) {
         centralQueue.sync {
             self.reconnectIfNotConnected(delay)
         }
     }
      
-    public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> {
+    public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral> {
         return centralQueue.sync {
-            self.connectionPromise = StreamPromise<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>(capacity: capacity)
+            self.connectionPromise = StreamPromise<Peripheral>(capacity: capacity)
             self.timeoutRetries = timeoutRetries
             self.disconnectRetries = disconnectRetries
             self.connectionTimeout = connectionTimeout
@@ -313,7 +312,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         Logger.debug("reconnect peripheral name=\(name), uuid=\(identifier.uuidString)")
         func performConnection(_ peripheral: Peripheral) {
             centralManager.connect(peripheral)
-            peripheral.forcedDisconnect = false
             peripheral.connectionSequence += 1
             peripheral._currentError = .none
             peripheral.timeoutConnection(peripheral.connectionSequence)
@@ -331,15 +329,15 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         guard let central = self.centralManager else {
             return
         }
-        self.forcedDisconnect = true
-        self.pollRSSIPromise = nil
-        self.readRSSIPromise = nil
-        if self.state != .disconnected {
+        _currentError = .forced
+        pollRSSIPromise = nil
+        readRSSIPromise = nil
+        if state != .disconnected {
             Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
             central.cancelPeripheralConnection(self)
         } else {
             Logger.debug("already disconnected name=\(self.name), uuid=\(self.identifier.uuidString)")
-            self.didDisconnectPeripheral(PeripheralError.disconnected)
+            didDisconnectPeripheral(PeripheralError.disconnected)
         }
     }
 
@@ -494,27 +492,27 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
         self._connectedAt = Date()
         self._disconnectedAt = nil
-        self.connectionPromise?.success((self, .connect))
+        self.connectionPromise?.success(self)
     }
 
     internal func didDisconnectPeripheral(_ error: Swift.Error?) {
         self._disconnectedAt = Date()
         self._totalSecondsConnected += self._secondsConnected
-        switch(self._currentError) {
+        switch(_currentError) {
         case .none:
             if let error = error {
                 Logger.debug("disconnecting with errors uuid=\(self.identifier.uuidString), name=\(self.name), error=\(error.localizedDescription)")
-                self.shouldFailOrGiveUp(error)
-            } else if (self.forcedDisconnect) {
-                Logger.debug("disconnect forced uuid=\(self.identifier.uuidString), name=\(self.name)")
-                self.connectionPromise?.success((self, .forceDisconnect))
+                self.shouldFailOrReconnect(error)
             } else  {
                 Logger.debug("disconnecting with no errors uuid=\(self.identifier.uuidString), name=\(self.name)")
-                self.shouldDisconnectOrGiveup()
+                self.shouldDisconnectOrReconnect()
             }
+        case .forced:
+            Logger.debug("disconnect forced uuid=\(self.identifier.uuidString), name=\(self.name)")
+            self.connectionPromise?.failure(PeripheralError.forcedDisconnect)
         case .timeout:
             Logger.debug("timeout uuid=\(self.identifier.uuidString), name=\(self.name)")
-            self.shouldTimeoutOrGiveup()
+            self.shouldTimeoutOrReconnect()
         }
         for (_ , service) in self.discoveredServices {
             service.didDisconnectPeripheral(error)
@@ -545,33 +543,33 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Utilities
 
-    fileprivate func shouldFailOrGiveUp(_ error: Swift.Error) {
+    fileprivate func shouldFailOrReconnect(_ error: Swift.Error) {
         Logger.debug("name = \(name), uuid = \(identifier.uuidString), disconnectCount = \(_disconnectionCount), disconnectRetries = \(disconnectRetries)")
             if _disconnectionCount < disconnectRetries {
                 _disconnectionCount += 1
-                connectionPromise?.failure(error)
+                reconnect(withDelay: Peripheral.RECONNECT_DELAY)
             } else {
-                connectionPromise?.success((self, ConnectionEvent.giveUp))
+                connectionPromise?.failure(error)
             }
     }
 
-    fileprivate func shouldTimeoutOrGiveup() {
+    fileprivate func shouldTimeoutOrReconnect() {
         Logger.debug("name = \(name), uuid = \(identifier.uuidString), timeoutCount = \(_timeoutCount), timeoutRetries = \(timeoutRetries)")
         if _timeoutCount < timeoutRetries {
-            connectionPromise?.success((self, .timeout))
             _timeoutCount += 1
+            reconnect(withDelay: Peripheral.RECONNECT_DELAY)
         } else {
-            connectionPromise?.success((self, .giveUp))
+            connectionPromise?.failure(PeripheralError.connectionTimeout)
         }
     }
 
-    fileprivate func shouldDisconnectOrGiveup() {
+    fileprivate func shouldDisconnectOrReconnect() {
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), disconnectCount = \(self._disconnectionCount), disconnectRetries = \(self.disconnectRetries)")
-        if self._disconnectionCount < disconnectRetries {
-            self._disconnectionCount += 1
-            self.connectionPromise?.success((self, .disconnect))
+        if _disconnectionCount < disconnectRetries {
+            _disconnectionCount += 1
+            reconnect(withDelay: Peripheral.RECONNECT_DELAY)
         } else {
-            self.connectionPromise?.success((self, .giveUp))
+            self.connectionPromise?.failure(PeripheralError.disconnected)
         }
     }
 

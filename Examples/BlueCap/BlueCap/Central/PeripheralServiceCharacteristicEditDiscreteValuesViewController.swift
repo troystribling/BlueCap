@@ -14,7 +14,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
-    weak var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    weak var connectionFuture: FutureStream<Peripheral>?
 
     let cancelToken = CancelToken()
     let progressView = ProgressView()
@@ -44,9 +44,10 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
             _ = navigationController?.popViewController(animated: true)
             return
         }
-        connectionFuture.onSuccess(cancelToken: cancelToken)  { (peripheral, connectionEvent) in
+        connectionFuture.onSuccess(cancelToken: cancelToken)  { _ in
         }
-        connectionFuture.onFailure { error in
+        connectionFuture.onFailure { [weak self] error in
+            self?.present(UIAlertController.alert(title: "Connection Error", error: error), animated:true)
         }
         readCharacteristic()
     }

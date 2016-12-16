@@ -14,7 +14,7 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
-    var connectionFuture: FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>?
+    var connectionFuture: FutureStream<Peripheral>?
 
     var peripheralAdvertisements: PeripheralAdvertisements?
 
@@ -175,26 +175,10 @@ class PeripheralViewController : UITableViewController {
 
         connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
 
-        connectionFuture?.onSuccess { [weak self] (peripheral, connectionEvent) in
+        connectionFuture?.onSuccess { [weak self] peripheral in
             self.forEach { strongSelf in
-                switch connectionEvent {
-                case .connect:
-                    strongSelf.updateConnectionStateLabel()
-                    strongSelf.discoverPeripheralIfNeccessary()
-                case .timeout:
-                    strongSelf.reconnectIfNeccessay()
-                case .disconnect:
-                    strongSelf.reconnectIfNeccessay()
-                case .forceDisconnect:
-                    _ = strongSelf.progressView.remove()
-                case .giveUp:
-                    strongSelf.stateLabel.text = "Disconnected"
-                    strongSelf.stateLabel.textColor = UIColor.lightGray
-                    strongSelf.progressView.remove().onSuccess {
-                        strongSelf.present(UIAlertController.alert(message: "Connection to `\(peripheral.name)` failed"), animated: true)
-                    }
-                    break
-                }
+                strongSelf.updateConnectionStateLabel()
+                strongSelf.discoverPeripheralIfNeccessary()
                 strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
             }
         }

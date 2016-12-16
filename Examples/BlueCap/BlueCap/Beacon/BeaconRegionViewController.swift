@@ -57,10 +57,10 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
                         BeaconStore.removeBeacon(regionName)
                     }
                 }
-                _ = self.navigationController?.popViewController(animated: true)
+                _ = navigationController?.popViewController(animated: true)
                 return true
             } else {
-                self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true)
                 return false
             }
         } else {

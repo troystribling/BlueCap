@@ -139,7 +139,7 @@ class BeaconRegionsViewController: UITableViewController {
                     guard error is AppError else {
                         return
                     }
-                    strongSelf.present(UIAlertController.alert(title: "Region Monitoring Error", error:error), animated:true, completion:nil)
+                    strongSelf.present(UIAlertController.alert(title: "Region Monitoring Error", error:error), animated:true)
                 }
             }
             self.beaconRegions[name] = beacon

@@ -20,6 +20,8 @@ public enum CharacteristicError : Swift.Error {
 
 public enum PeripheralError : Swift.Error {
     case disconnected
+    case forcedDisconnect
+    case connectionTimeout
     case serviceDiscoveryTimeout
 }
 
