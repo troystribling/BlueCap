@@ -287,11 +287,8 @@ public class Characteristic : NSObject {
     }
     
     internal func didUpdate(_ error: Swift.Error?) {
-        if isNotifying {
-            didNotify(error)
-        } else {
-            didRead(error)
-        }
+        didNotify(error)
+        didRead(error)
     }
     
     internal func didWrite(_ error: Swift.Error?) {
@@ -323,6 +320,9 @@ public class Characteristic : NSObject {
     }
 
     fileprivate func didNotify(_ error: Swift.Error?) {
+        guard isNotifying else {
+            return
+        }
         if let error = error {
             notificationUpdatePromise?.failure(error)
         } else {
