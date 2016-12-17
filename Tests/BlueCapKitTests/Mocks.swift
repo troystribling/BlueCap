@@ -23,8 +23,10 @@ let profileManager = ProfileManager()
 
 class CBCentralManagerMock: CBCentralManagerInjectable {
 
-    var connectPeripheralCalled     = false
-    var cancelPeripheralConnection  = false
+    var connectPeripheralCalled = false
+    var connectPeripheralCount = 0
+    var cancelPeripheralConnectionCalled = false
+    var cancelPeripheralConnectionCount = 0
     var scanForPeripheralsWithServicesCalled = false
 
     var state: ManagerState
@@ -40,27 +42,29 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
     }
 
     func scanForPeripherals(withServices uuids: [CBUUID]?, options:[String : Any]?) {
-        self.scanForPeripheralsWithServicesCalled = true
+        scanForPeripheralsWithServicesCalled = true
     }
     
     func stopScan() {
-        self.stopScanCalled = true
+        stopScanCalled = true
     }
     
     func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
-        self.connectPeripheralCalled = true
+        connectPeripheralCalled = true
+        connectPeripheralCount += 1
     }
 
     func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable) {
-        self.cancelPeripheralConnection = true
+        cancelPeripheralConnectionCalled = true
+        cancelPeripheralConnectionCount += 1
     }
 
     func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
-        return self.retrieveConnectedPeripherals(withServices: serviceUUIDs)
+        return retrieveConnectedPeripherals(withServices: serviceUUIDs)
     }
 
     func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
-        return self.retrievePeripherals(withIdentifiers: identifiers)
+        return retrievePeripherals(withIdentifiers: identifiers)
     }
 
 }

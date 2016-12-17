@@ -9,9 +9,9 @@
 import Foundation
 import CoreBluetooth
 
-// MARK - Connection Error -
-enum PeripheralConnectionStatus {
-    case connecting, timeout, forcedDisconnect
+// MARK - PeripheralTerminationStatus -
+enum PeripheralTerminationStatus {
+    case connected, timeout, forcedDisconnect
 }
 
 // MARK: - PeripheralAdvertisements -
@@ -74,7 +74,7 @@ public struct PeripheralAdvertisements {
 
 public class Peripheral: NSObject, CBPeripheralDelegate {
 
-    static let RECONNECT_DELAY = TimeInterval(1.0)
+    static var RECONNECT_DELAY = TimeInterval(1.0)
 
     fileprivate var servicesDiscoveredPromise: Promise<Peripheral>?
     fileprivate var readRSSIPromise: Promise<Int>?
@@ -91,7 +91,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     fileprivate var connectionSequence = 0
     fileprivate var serviceDiscoverySequence = 0
-    fileprivate var connectionStatus = PeripheralConnectionStatus.connecting
+    fileprivate var terminationStatus = PeripheralTerminationStatus.connected
 
     fileprivate var _connectedAt: Date?
     fileprivate var _disconnectedAt : Date?
@@ -270,7 +270,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
      
-    public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral> {
+    public func connect(timeoutRetries: UInt = 0, disconnectRetries: UInt = 0, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral> {
         return centralQueue.sync {
             self.connectionPromise = StreamPromise<Peripheral>(capacity: capacity)
             self.timeoutRetries = timeoutRetries
@@ -293,7 +293,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     public func disconnect() {
-        centralQueue.sync { self.cancelPeripheralConnection() }
+        centralQueue.sync { self.forceDisconnect() }
     }
 
     fileprivate func reconnectIfNotConnected(_ delay: Double = 0.0) {
@@ -305,7 +305,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         func performConnection(_ peripheral: Peripheral) {
             centralManager.connect(peripheral)
             peripheral.connectionSequence += 1
-            peripheral.connectionStatus = .connecting
+            peripheral.terminationStatus = .connected
             peripheral.timeoutConnection(peripheral.connectionSequence)
         }
         if delay > 0.0 {
@@ -317,13 +317,17 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
-    func cancelPeripheralConnection() {
+    func forceDisconnect() {
+        cancelPeripheralConnection(withTerminationStatus: .forcedDisconnect)
+    }
+
+    fileprivate func cancelPeripheralConnection(withTerminationStatus terminationStatus: PeripheralTerminationStatus) {
         guard let central = self.centralManager else {
             return
         }
-        connectionStatus = .forcedDisconnect
         pollRSSIPromise = nil
         readRSSIPromise = nil
+        self.terminationStatus = terminationStatus
         if state != .disconnected {
             Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
             central.cancelPeripheralConnection(self)
@@ -482,29 +486,29 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     internal func didConnectPeripheral() {
         Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
-        self._connectedAt = Date()
-        self._disconnectedAt = nil
-        self.connectionPromise?.success(self)
+        _connectedAt = Date()
+        _disconnectedAt = nil
+        connectionPromise?.success(self)
     }
 
     internal func didDisconnectPeripheral(_ error: Swift.Error?) {
-        self._disconnectedAt = Date()
-        self._totalSecondsConnected += self._secondsConnected
-        switch(connectionStatus) {
-        case .connecting:
+        _disconnectedAt = Date()
+        _totalSecondsConnected += self._secondsConnected
+        switch(terminationStatus) {
+        case .connected:
             if let error = error {
                 Logger.debug("disconnecting with errors uuid=\(self.identifier.uuidString), name=\(self.name), error=\(error.localizedDescription)")
-                self.shouldFailOrReconnect(error)
+                shouldFailOrReconnect(error)
             } else  {
                 Logger.debug("disconnecting with no errors uuid=\(self.identifier.uuidString), name=\(self.name)")
-                self.shouldDisconnectOrReconnect()
+                shouldDisconnectOrReconnect()
             }
         case .forcedDisconnect:
             Logger.debug("disconnect forced uuid=\(self.identifier.uuidString), name=\(self.name)")
-            self.connectionPromise?.failure(PeripheralError.forcedDisconnect)
+            connectionPromise?.failure(PeripheralError.forcedDisconnect)
         case .timeout:
             Logger.debug("timeout uuid=\(self.identifier.uuidString), name=\(self.name)")
-            self.shouldTimeoutOrReconnect()
+            shouldTimeoutOrReconnect()
         }
         for (_ , service) in self.discoveredServices {
             service.didDisconnectPeripheral(error)
@@ -596,10 +600,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), sequence = \(sequence), timeout = \(self.connectionTimeout)")
         centralQueue.delay(self.connectionTimeout) { [weak self] in
             self.forEach { strongSelf in
-                if strongSelf.state != .connected && sequence == strongSelf.connectionSequence && strongSelf.connectionStatus == .connecting {
+                if strongSelf.state != .connected && sequence == strongSelf.connectionSequence && strongSelf.terminationStatus == .connected {
                     Logger.debug("connection timing out name = \(strongSelf.name), UUID = \(strongSelf.identifier.uuidString), sequence=\(sequence), current connectionSequence=\(strongSelf.connectionSequence)")
-                    strongSelf.connectionStatus = .timeout
-                    strongSelf.didDisconnectPeripheral(nil)
+                    strongSelf.cancelPeripheralConnection(withTerminationStatus: .timeout)
                 } else {
                     Logger.debug("connection timeout expired name = \(strongSelf.name), uuid = \(strongSelf.identifier.uuidString), sequence = \(sequence), current connectionSequence=\(strongSelf.connectionSequence), state=\(strongSelf.state.rawValue)")
                 }
@@ -616,6 +619,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             self.forEach { strongSelf in
                 if let servicesDiscoveredPromise = strongSelf.servicesDiscoveredPromise, sequence == strongSelf.serviceDiscoverySequence && !servicesDiscoveredPromise.completed {
                     Logger.debug("service scan timing out name = \(strongSelf.name), UUID = \(strongSelf.identifier.uuidString), sequence=\(sequence), current sequence=\(strongSelf.serviceDiscoverySequence)")
+                    strongSelf.cancelPeripheralConnection(withTerminationStatus: .connected)
                     servicesDiscoveredPromise.failure(PeripheralError.serviceDiscoveryTimeout)
                 } else {
                     Logger.debug("service scan timeout expired name = \(strongSelf.name), uuid = \(strongSelf.identifier.uuidString), sequence = \(sequence), current sequence = \(strongSelf.serviceDiscoverySequence)")
