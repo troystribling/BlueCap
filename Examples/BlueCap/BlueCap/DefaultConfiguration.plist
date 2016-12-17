@@ -11,13 +11,13 @@
 	<key>peripheralConnectionTimeoutEnabled</key>
 	<true/>
 	<key>peripheralConnectionTimeout</key>
-	<integer>10</integer>
+	<integer>5</integer>
 	<key>characteristicReadWriteTimeout</key>
 	<integer>10</integer>
 	<key>peripheralMaximumDisconnectionsEnabled</key>
 	<false/>
 	<key>peripheralMaximumDisconnections</key>
-	<integer>5</integer>
+	<integer>2</integer>
 	<key>peripheralMaximumTimeoutsEnabled</key>
 	<true/>
 	<key>peripheralMaximumTimeouts</key>

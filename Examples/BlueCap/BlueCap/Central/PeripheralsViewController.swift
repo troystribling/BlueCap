@@ -229,7 +229,9 @@ class PeripheralsViewController : UITableViewController {
         }
 
         for peripheral in peripherals {
-            if connectingPeripherals.contains(peripheral.identifier) && connectedPeripherals.contains(peripheral.identifier) {
+            if connectingPeripherals.contains(peripheral.identifier) &&
+                connectedPeripherals.contains(peripheral.identifier) &&
+                discoveredPeripherals.contains(peripheral.identifier) {
                 Logger.debug("Disconnecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 connectingPeripherals.remove(peripheral.identifier)
                 peripheral.disconnect()
@@ -244,17 +246,17 @@ class PeripheralsViewController : UITableViewController {
             return
         }
         let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
-        var connectionCount = connectingPeripherals.count
-        guard connectionCount < maxConnections else {
+        var connectingCount = connectingPeripherals.count
+        guard connectingCount < maxConnections else {
             Logger.debug("max connections reached")
             return
         }
-        for peripheral in peripherals where connectionCount < maxConnections {
+        for peripheral in peripherals where connectingCount < maxConnections {
             if !connectingPeripherals.contains(peripheral.identifier) && !connectedPeripherals.contains(peripheral.identifier) {
                 Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 connectingPeripherals.insert(peripheral.identifier)
                 connect(peripheral)
-                connectionCount += 1
+                connectingCount += 1
             }
         }
     }
@@ -269,11 +271,12 @@ class PeripheralsViewController : UITableViewController {
             self.forEach { strongSelf in
                 strongSelf.updateWhenActive()
                 strongSelf.disconnectPeripheralsIfNecessary()
-                strongSelf.pollConnectionsAndUpdateIfNeeded()
                 if strongSelf.allPeripheralsConnected {
                     strongSelf.connectedPeripherals.removeAll()
                     strongSelf.connectPeripheralsIfNeccessay()
-            }}
+                }
+                strongSelf.pollConnectionsAndUpdateIfNeeded()
+            }
         }
     }
 
@@ -298,8 +301,12 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("Connection failed: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
             self.forEach { strongSelf in
                 if let peripheralError = error as? PeripheralError, peripheralError == .forcedDisconnect {
+                    Logger.debug("Forced Disconnection: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    strongSelf.connectingPeripherals.remove(peripheral.identifier)
+                    strongSelf.connectPeripheralsIfNeccessay()
                     return
                 }
+                Logger.debug("Connection failed: '\(error), \(peripheral.name)', \(peripheral.identifier.uuidString)")
                 peripheral.stopPollingRSSI()
                 strongSelf.connectingPeripherals.remove(peripheral.identifier)
                 strongSelf.connectedPeripherals.remove(peripheral.identifier)
@@ -342,15 +349,13 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func afterTimeout(error: Swift.Error) -> Void {
-        guard let error = error as? CentralManagerError else {
+        guard let error = error as? CentralManagerError, error == .peripheralScanTimeout else {
             return
         }
-        if error == CentralManagerError.peripheralScanTimeout {
-            Logger.debug("timeoutScan: timing out")
-            stopScanning()
-            self.setScanButton()
-            present(UIAlertController.alert(message: "Bluetooth scan timeout."), animated:true)
-        }
+        Logger.debug("timeoutScan: timing out")
+        stopScanning()
+        self.setScanButton()
+        present(UIAlertController.alert(message: "Bluetooth scan timeout."), animated:true)
     }
 
     func afterPeripheralDiscovered(_ peripheral: Peripheral) -> Void {
@@ -406,8 +411,8 @@ class PeripheralsViewController : UITableViewController {
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self?.discoveredPeripherals.insert(peripheral.identifier)
         }
-        peripheralDiscoveryFuture.onFailure { _ in
-            Logger.debug("Service discovery failed \(peripheral.name), \(peripheral.identifier.uuidString)")
+        peripheralDiscoveryFuture.onFailure { error in
+            Logger.debug("Service discovery failed \(error), \(peripheral.name), \(peripheral.identifier.uuidString)")
         }
     }
 
