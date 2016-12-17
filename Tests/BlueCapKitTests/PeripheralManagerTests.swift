@@ -121,6 +121,26 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
+    // MARK: iBeacon and UUIDs
+    func testStartAdvertising_WheniBeaconAndUUIDAndNoErrorInAckAndNotAdvertising_CompletesSuccessfully() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
+        let future = peripheralManager.startAdvertising(region: BeaconRegion(proximityUUID: UUID(), identifier: "Beacon Regin"), name: self.peripheralName, uuids: [self.advertisedUUIDs])
+        peripheralManager.didStartAdvertising(nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { error in
+            XCTAssert(mock.startAdvertisingCalled)
+            XCTAssert(peripheralManager.isAdvertising)
+        }
+    }
+
+    func testStartAdvertising_WheniBeaconAndUUIDAdvertising_CompletesWithErrorPeripheralManagerIsAdvertising() {
+        let (mock, peripheralManager) = createPeripheralManager(true, state: .poweredOn)
+        let future = peripheralManager.startAdvertising(region: BeaconRegion(proximityUUID: UUID(), identifier: "Beacon Regin"), name: self.peripheralName, uuids: [self.advertisedUUIDs])
+        XCTAssertFutureFails(future, context: self.immediateContext) { error in
+            XCTAssertEqualErrors(error, PeripheralManagerError.isAdvertising)
+            XCTAssertFalse(mock.startAdvertisingCalled)
+        }
+    }
+    
     // MARK: Stop advertising
 
     func testStopAdvertising_WhenAdvertising_CompletesSuccessfully() {
