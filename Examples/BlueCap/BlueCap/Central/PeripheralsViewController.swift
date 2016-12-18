@@ -349,7 +349,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func afterTimeout(error: Swift.Error) -> Void {
-        guard let error = error as? CentralManagerError, error == .peripheralScanTimeout else {
+        guard let error = error as? CentralManagerError, error == .serviceScanTimeout else {
             return
         }
         Logger.debug("timeoutScan: timing out")

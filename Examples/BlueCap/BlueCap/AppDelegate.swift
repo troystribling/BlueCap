@@ -15,12 +15,25 @@ struct BlueCapNotification {
     static let didUpdateBeacon = "DidUpdateBeacon"
 }
 
-enum AppError : Error {
+enum AppError : Error, LocalizedError {
     case rangingBeacons
     case outOfRegion
     case unknownRegionStatus
-    case invalid
     case unlikelyFailure
+
+    public var errorDescription: String? {
+        switch self {
+        case .rangingBeacons:
+            return NSLocalizedString("Beacon ranging enabled.", comment: "AppError.rangingBeacons")
+        case .outOfRegion:
+            return NSLocalizedString("Outside becan region.", comment: "AppError.outOfRegion")
+        case .unknownRegionStatus:
+            return NSLocalizedString("Unknown region state.", comment: "AppError.unknownRegionStatus")
+        case .unlikelyFailure:
+            return NSLocalizedString("Unlikely failure.", comment: "AppError.unlikelyFailure")
+        }
+    }
+
 }
 
 struct Singletons {

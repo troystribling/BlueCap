@@ -95,7 +95,7 @@ class BeaconRegionsViewController: UITableViewController {
             let regionFuture = Singletons.beaconManager.startMonitoring(for: beacon, authorization: .authorizedAlways)
             let beaconFuture = regionFuture.flatMap { [weak self] status -> FutureStream<[Beacon]> in
                 guard let strongSelf = self else {
-                    throw AppError.invalid
+                    throw AppError.unlikelyFailure
                 }
                 switch status {
                 case .inside:

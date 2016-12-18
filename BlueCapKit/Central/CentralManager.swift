@@ -193,7 +193,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             self.forEach { strongSelf in
                 if strongSelf._isScanning {
                     if sequence == strongSelf.scanTimeSequence {
-                        strongSelf.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.peripheralScanTimeout)
+                        strongSelf.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.serviceScanTimeout)
                     }
                     strongSelf.stopScanningIfScanning()
                 }
