@@ -688,7 +688,7 @@ public enum CentralManagerError : Swift.Error {
     // Thrown on state restoration failure
     case restoreFailed
     // Thrown by startScanning if scan timeout is exceeded
-    case peripheralScanTimeout
+    case serviceScanTimeout
 }
 
 public enum ServiceError : Swift.Error {

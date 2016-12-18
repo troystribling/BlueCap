@@ -78,7 +78,7 @@ public enum MutableCharacteristicError : Swift.Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .unconfigured:
-            return NSLocalizedString("Characteristic configuration is incomplete.", comment: "MutableCharacteristicError.unconfigured")
+            return NSLocalizedString("Characteristic needs to be added to a PeripheralManager.", comment: "MutableCharacteristicError.unconfigured")
         case .notSerializable:
             return NSLocalizedString("Characteristic string value is not serializable.", comment: "MutableCharacteristicError.notSerializable")
         case .notifyNotSupported:

@@ -94,7 +94,7 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.startScanning(timeout: 0.1)
         XCTAssertFutureStreamFails(future, validations: [
             {error in
-                XCTAssertEqualErrors(error, CentralManagerError.peripheralScanTimeout)
+                XCTAssertEqualErrors(error, CentralManagerError.serviceScanTimeout)
             }
         ])
     }
