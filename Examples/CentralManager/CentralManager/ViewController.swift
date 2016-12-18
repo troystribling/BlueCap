@@ -15,8 +15,6 @@ public enum AppError : Error {
     case enabledCharactertisticNotFound
     case updateCharactertisticNotFound
     case serviceNotFound
-    case disconnected
-    case connectionFailed
     case invalidState
     case resetting
     case poweredOff
@@ -125,25 +123,13 @@ class ViewController: UITableViewController {
                 case .unknown:
                     throw AppError.unknown
                 }
-        }.flatMap { [unowned self] peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+        }.flatMap { [unowned self] peripheral -> FutureStream<Peripheral> in
             self.manager.stopScanning()
             self.peripheral = peripheral
-            return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
-        }.flatMap { [unowned self] (peripheral, connectionEvent) -> Future<Peripheral> in
-            switch connectionEvent {
-            case .connect:
-                self.updateUIStatus()
-                return peripheral.discoverServices([serviceUUID])
-            case .timeout:
-                throw AppError.disconnected
-            case .disconnect:
-                throw AppError.disconnected
-            case .forceDisconnect:
-                self.updateUIStatus()
-                throw AppError.connectionFailed
-            case .giveUp:
-                throw AppError.connectionFailed
-            }
+            return peripheral.connect(timeoutRetries: 5, disconnectRetries :5, connectionTimeout: 10.0)
+        }.flatMap { [weak self] peripheral -> Future<Peripheral> in
+            self?.updateUIStatus()
+            return peripheral.discoverServices([serviceUUID])
         }.flatMap { peripheral -> Future<Service> in
             guard let service = peripheral.service(serviceUUID) else {
                 throw AppError.serviceNotFound
@@ -192,11 +178,6 @@ class ViewController: UITableViewController {
                 fallthrough
             case .serviceNotFound:
                 self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
-            case .disconnected:
-                self.peripheral?.reconnect()
-            case .connectionFailed:
-                self.peripheral?.terminate()
-                self.present(UIAlertController.alertWithMessage("Connection failed"), animated: true, completion: nil)
             case .invalidState:
                 self.present(UIAlertController.alertWithMessage("Invalid state"), animated: true, completion: nil)
             case .resetting:
