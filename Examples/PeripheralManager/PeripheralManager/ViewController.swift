@@ -38,11 +38,11 @@ class ViewController: UITableViewController {
     let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-example" as NSString])
     let accelerometer = Accelerometer()
 
-    let accelerometerService = MutableService(uuid: TISensorTag.AccelerometerService.uuid)
+    let accelerometerService = MutableService(uuid: TiSensorTag.AccelerometerService.uuid)
 
-    let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
-    let accelerometerEnabledCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
-    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
+    let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TiSensorTag.AccelerometerService.Data>())
+    let accelerometerEnabledCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TiSensorTag.AccelerometerService.Enabled>())
+    let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TiSensorTag.AccelerometerService.UpdatePeriod>())
 
     required init?(coder aDecoder:NSCoder) {
         super.init(coder: aDecoder)
@@ -99,7 +99,7 @@ class ViewController: UITableViewController {
     }
     
     func startAdvertising() {
-        let uuid = CBUUID(string: TISensorTag.AccelerometerService.uuid)
+        let uuid = CBUUID(string: TiSensorTag.AccelerometerService.uuid)
 
         let startAdvertiseFuture = manager.whenStateChanges().flatMap { [unowned self] state -> Future<Void> in
             switch state {
@@ -116,12 +116,12 @@ class ViewController: UITableViewController {
                 throw AppError.resetting
             }
 }.flatMap { [unowned self] _ -> Future<Void> in
-    self.manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [uuid])
+    self.manager.startAdvertising(TiSensorTag.AccelerometerService.name, uuids: [uuid])
 }
 
         startAdvertiseFuture.onSuccess { [unowned self] in
             self.enableAdvertising()
-            self.accelerometerEnabledCharacteristic.value = SerDe.serialize(TISensorTag.AccelerometerService.Enabled(boolValue: self.enabledSwitch.isOn))
+            self.accelerometerEnabledCharacteristic.value = SerDe.serialize(TiSensorTag.AccelerometerService.Enabled(boolValue: self.enabledSwitch.isOn))
             self.present(UIAlertController.alertWithMessage("poweredOn and started advertising"), animated: true, completion: nil)
         }
 
@@ -192,7 +192,7 @@ class ViewController: UITableViewController {
         xRawAccelerationLabel.text = "\(xRaw)"
         yRawAccelerationLabel.text = "\(yRaw)"
         zRawAccelerationLabel.text = "\(zRaw)"
-        guard let data = TISensorTag.AccelerometerService.Data(rawValue: [xRaw, yRaw, zRaw]) else {
+        guard let data = TiSensorTag.AccelerometerService.Data(rawValue: [xRaw, yRaw, zRaw]) else {
             return
         }
         if accelerometerDataCharacteristic.isUpdating {
@@ -208,14 +208,14 @@ class ViewController: UITableViewController {
     
     func updatePeriod() {
         if let value = self.accelerometerUpdatePeriodCharacteristic.value {
-            if let period: TISensorTag.AccelerometerService.UpdatePeriod = SerDe.deserialize(value) {
+            if let period: TiSensorTag.AccelerometerService.UpdatePeriod = SerDe.deserialize(value) {
                 accelerometer.updatePeriod = Double(period.period)/1000.0
                 updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
                 rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
             }
         } else {
             let updatePeriod = UInt8(accelerometer.updatePeriod * 100)
-            if let period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue: updatePeriod)  {
+            if let period = TiSensorTag.AccelerometerService.UpdatePeriod(rawValue: updatePeriod)  {
                 updatePeriodLabel.text =  NSString(format: "%d", period.period) as String
                 rawUpdatePeriodlabel.text = NSString(format: "%d", period.periodRaw) as String
             }
@@ -223,7 +223,7 @@ class ViewController: UITableViewController {
     }
     
     func updateEnabled() {
-        guard let value = accelerometerEnabledCharacteristic.value, let enabled: TISensorTag.AccelerometerService.Enabled = SerDe.deserialize(value), enabledSwitch.isOn != enabled.boolValue else {
+        guard let value = accelerometerEnabledCharacteristic.value, let enabled: TiSensorTag.AccelerometerService.Enabled = SerDe.deserialize(value), enabledSwitch.isOn != enabled.boolValue else {
             return
         }
         enabledSwitch.isOn = enabled.boolValue

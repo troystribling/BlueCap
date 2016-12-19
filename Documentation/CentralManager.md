@@ -200,49 +200,12 @@ public let advertisements: PeripheralAdvertisements
 
 ### <a name="central_peripheral_connection">Peripheral Connection</a>
 
-After discovering a `Peripheral` a connection must be established to run discovery and begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. `BlueCap` provides connection events enabling applications to easily handle anything that can happen. `ConnectionEvent` is defined by,
-
-```swift
-public enum ConnectionEvent {
-    case connect
-    case timeout
-    case disconnect
-    case forceDisconnect
-    case giveUp
-}
-```
-
-<table>
-  <tr>
-    <th>Event</th>
-    <th>Description</th>
-  </tr>
-	<tr>
-		<td>connect</td>
-		<td>Connected to peripheral.</td>
-	</tr>
-	<tr>
-		<td>timeout</td>
-		<td>Connection attempt timeout.</td>
-	</tr>
-	<tr>
-		<td>disconnect</td>
-		<td>Peripheral disconnected.</td>
-	</tr>
-	<tr>
-		<td>forceDisconnect</td>
-		<td>Peripheral disconnected by application.</td>
-	</tr>
-	<tr>
-		<td>giveUp</td>
-		<td>Give up trying to connect.</td>
-	</tr>
-</table>
+After discovering a `Peripheral` a connection must be established to run discovery and begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. `BlueCap`. `Peripherals` can be configured to automatically attempt reconnection on connection timeouts and disconnections.
 
 To connect to a `Peripheral` use The `Peripheral` method,
 
 ```swift
-public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)>
+public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral>
 ```
 
 The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream(peripheral: Peripheral, connectionEvent: ConnectionEvent)>` yielding a tuple containing the connected `Peripheral` and the `ConnectionEvent`. 
@@ -252,11 +215,11 @@ The input parameters are,
 <table>
 	<tr>
 		<td>timeoutRetries</td>
-		<td>Maximum number of connection retries after timeout. The default value is infinite.</td>
+		<td>Maximum number of connection retries after timeout. The default value is 0.</td>
 	</tr>
 	<tr>
 		<td>disconnectRetries</td>
-		<td>Maximum number of connection retries on disconnect. The default value is infinite.</td>
+		<td>Maximum number of connection retries on disconnect. The default value is 0.</td>
 	</tr>
 	<tr>
 		<td>connectionTimeout</td>

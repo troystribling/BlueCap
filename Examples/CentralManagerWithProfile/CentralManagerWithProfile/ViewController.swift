@@ -52,7 +52,7 @@ class ViewController: UITableViewController {
     let manager: CentralManager
 
     required init?(coder aDecoder: NSCoder) {
-        TISensorTagServiceProfiles.create(profileManager: profileManager)
+        TISensorTagProfiles.create(profileManager: profileManager)
         manager = CentralManager(profileManager: profileManager, options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.central-manager-with_profile-example" as NSString])
         super.init(coder: aDecoder)
     }
@@ -105,10 +105,10 @@ class ViewController: UITableViewController {
     }
 
     func activate() {
-        let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
-        let dataUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
-        let enabledUUID = CBUUID(string: TISensorTag.AccelerometerService.Enabled.uuid)
-        let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.uuid)
+        let serviceUUID = CBUUID(string: TiSensorTag.AccelerometerService.uuid)
+        let dataUUID = CBUUID(string: TiSensorTag.AccelerometerService.Data.uuid)
+        let enabledUUID = CBUUID(string: TiSensorTag.AccelerometerService.Enabled.uuid)
+        let updatePeriodUUID = CBUUID(string: TiSensorTag.AccelerometerService.UpdatePeriod.uuid)
         
         // on power, start scanning. when peripheral is discovered connect and stop scanning
         let dataUpdateFuture = self.manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
@@ -150,7 +150,7 @@ class ViewController: UITableViewController {
                 self.accelerometerDataCharacteristic = dataCharacteristic
                 self.accelerometerEnabledCharacteristic = enabledCharacteristic
                 self.accelerometerUpdatePeriodCharacteristic = updatePeriodCharacteristic
-                return enabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.yes)
+                return enabledCharacteristic.write(TiSensorTag.AccelerometerService.Enabled.yes)
             }.flatMap { [unowned self] _ -> Future<[Characteristic]> in
                 return [self.accelerometerEnabledCharacteristic,
                         self.accelerometerUpdatePeriodCharacteristic,
@@ -285,7 +285,7 @@ class ViewController: UITableViewController {
         guard let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic else {
             return
         }
-        let value = TISensorTag.AccelerometerService.Enabled(boolValue: enabledSwitch.isOn)
+        let value = TiSensorTag.AccelerometerService.Enabled(boolValue: enabledSwitch.isOn)
         let writeFuture = accelerometerEnabledCharacteristic.write(value, timeout:10.0)
         writeFuture.onSuccess { [unowned self] _ in
             self.present(UIAlertController.alertWithMessage("Accelerometer is " + (self.enabledSwitch.isOn ? "on" : "off")), animated:true, completion:nil)

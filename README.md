@@ -93,7 +93,7 @@ This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual)
 
 # Getting Started
 
-With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported. [Example applications](/Examples) are also available.
+With BlueCap it is possible to easily implement `CentralManager` and `PeripheralManager` applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported. [Example applications](/Examples) are also available.
  
 ## CentralManager
 
@@ -159,7 +159,7 @@ To connect discovered peripheral the scan is followed by `Peripheral#connect` an
 ```swift
 let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<Peripheral> in
     manager.stopScanning()
-    return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
+    return peripheral.connect(timeoutRetries: 5, disconnectRetries:5, connectionTimeout: 10.0)
 }
 ```
 
@@ -173,8 +173,6 @@ public enum AppError : Error {
     case enabledCharactertisticNotFound
     case updateCharactertisticNotFound
     case serviceNotFound
-    case disconnected
-    case connectionFailed
     case invalidState
     case resetting
     case poweredOff
@@ -183,19 +181,8 @@ public enum AppError : Error {
 
 var peripheral: Peripheral?
 
-let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
-    switch connectionEvent {
-    case .connect:
-        return peripheral.discoverServices([serviceUUID])
-    case .timeout:
-        throw AppError.disconnected
-    case .disconnect:
-        throw AppError.disconnected
-    case .forceDisconnect:
-        throw AppError.connectionFailed
-    case .giveUp:
-        throw AppError.connectionFailed
-    }
+let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<Peripheral> in
+    return peripheral.discoverServices([serviceUUID])
 }.flatMap { discoveredPeripheral -> Future<Service> in
     guard let service = peripheral.service(serviceUUID) else {
         throw AppError.serviceNotFound
@@ -211,10 +198,6 @@ discoveryFuture.onFailure { error in
     switch appError {
     case .serviceNotFound:
         break
-    case .disconnected:
-        peripheral?.reconnect()
-    case .connectionFailed:
-        peripheral?.terminate()
     }
 }
 ```
@@ -227,8 +210,6 @@ public enum AppError : Error {
     case enabledCharactertisticNotFound
     case updateCharactertisticNotFound
     case serviceNotFound
-    case disconnected
-    case connectionFailed
     case invalidState
     case resetting
     case poweredOff
