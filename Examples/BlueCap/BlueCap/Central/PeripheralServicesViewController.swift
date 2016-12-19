@@ -43,7 +43,7 @@ class PeripheralServicesViewController : UITableViewController {
             self?.updateWhenActive()
         }
         connectionFuture.onFailure { [weak self] error in
-            self?.present(UIAlertController.alert(title: "Connection Error", error: error), animated:true)
+            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
             self?.updateWhenActive()
         }
         updateWhenActive()

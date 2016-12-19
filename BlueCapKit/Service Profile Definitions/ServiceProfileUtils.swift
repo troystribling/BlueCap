@@ -8,7 +8,7 @@
 
 import Foundation
 
-func int16ValueFromStringValue(_ name:String, values:[String:String]) -> Int16? {
+func int16ValueFromStringValue(_ name:String, values: [String:String]) -> Int16? {
     if let value = values[name] {
         return Int16(value)
     } else {
@@ -16,7 +16,7 @@ func int16ValueFromStringValue(_ name:String, values:[String:String]) -> Int16? 
     }
 }
 
-func uint16ValueFromStringValue(_ name:String, values:[String:String]) -> UInt16? {
+func uint16ValueFromStringValue(_ name:String, values: [String:String]) -> UInt16? {
     if let value = values[name] {
         return UInt16(value)
     } else {
@@ -24,7 +24,7 @@ func uint16ValueFromStringValue(_ name:String, values:[String:String]) -> UInt16
     }
 }
 
-func int8ValueFromStringValue(_ name:String, values:[String:String]) -> Int8? {
+func int8ValueFromStringValue(_ name:String, values: [String:String]) -> Int8? {
     if let value = values[name] {
         return Int8(value)
     } else {
@@ -32,7 +32,7 @@ func int8ValueFromStringValue(_ name:String, values:[String:String]) -> Int8? {
     }
 }
 
-func uint8ValueFromStringValue(_ name:String, values:[String:String]) -> UInt8? {
+func uint8ValueFromStringValue(_ name:String, values: [String:String]) -> UInt8? {
     if let value = values[name] {
         return UInt8(value)
     } else {

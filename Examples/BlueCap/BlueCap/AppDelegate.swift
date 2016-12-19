@@ -72,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        TISensorTagServiceProfiles.create(profileManager: Singletons.profileManager)
+        TISensorTagProfiles.create(profileManager: Singletons.profileManager)
         BLESIGGATTProfiles.create(profileManager: Singletons.profileManager)
         GnosusProfiles.create(profileManager: Singletons.profileManager)
         NordicProfiles.create(profileManager: Singletons.profileManager)

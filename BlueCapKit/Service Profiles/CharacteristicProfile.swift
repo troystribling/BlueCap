@@ -1,4 +1,4 @@
-//
+                 //
 //  CharacteristicProfile.swift
 //  BlueCap
 //
@@ -73,7 +73,8 @@ public final class RawCharacteristicProfile<DeserializedType>: CharacteristicPro
     
     public override func stringValue(_ data: Data) -> [String:String]? {
         let value: DeserializedType? = SerDe.deserialize(data)
-        return value.map{$0.stringValue}
+        Logger.debug("\(value)")
+        return value.map { $0.stringValue }
     }
     
     public override func data(fromString data: [String: String]) -> Data? {

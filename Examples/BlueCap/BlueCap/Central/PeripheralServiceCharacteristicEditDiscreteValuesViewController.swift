@@ -47,7 +47,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         connectionFuture.onSuccess(cancelToken: cancelToken)  { _ in
         }
         connectionFuture.onFailure { [weak self] error in
-            self?.present(UIAlertController.alert(title: "Connection Error", error: error), animated:true)
+            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
         }
         readCharacteristic()
     }
@@ -92,6 +92,9 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
             present(UIAlertController.alert(message: "Connection error") { _ in
                 _ = self.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
+            return
+        }
+        guard characteristic.propertyEnabled(.read) else {
             return
         }
         progressView.show()

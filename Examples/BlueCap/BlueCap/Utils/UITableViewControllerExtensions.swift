@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BlueCapKit
 
 extension UITableViewController {
     
@@ -38,5 +39,15 @@ extension UITableViewController {
         }
         titleAttributes[NSFontAttributeName] = font
         button.setTitleTextAttributes(titleAttributes, for:UIControlState())
+    }
+
+}
+
+extension UIViewController {
+    func presentAlertIngoringForcedDisconnect(title: String? = nil, error: Swift.Error) {
+        guard let peripheralError = error as? PeripheralError, peripheralError != .forcedDisconnect else {
+            return
+        }
+        present(UIAlertController.alert(title: title, error: error), animated:true)
     }
 }

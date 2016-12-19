@@ -300,7 +300,7 @@ class PeripheralsViewController : UITableViewController {
         connectionFuture.onFailure { [weak self] error in
             Logger.debug("Connection failed: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
             self.forEach { strongSelf in
-                if let peripheralError = error as? PeripheralError, peripheralError == .forcedDisconnect {
+                guard let peripheralError = error as? PeripheralError, peripheralError != .forcedDisconnect else {
                     Logger.debug("Forced Disconnection: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                     strongSelf.connectingPeripherals.remove(peripheral.identifier)
                     strongSelf.connectPeripheralsIfNeccessay()
