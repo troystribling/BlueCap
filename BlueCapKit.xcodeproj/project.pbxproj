@@ -15,7 +15,6 @@
 		055120EE19F5513700ED3B74 /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C419F5513700ED3B74 /* GnosusProfiles.swift */; };
 		055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C519F5513700ED3B74 /* NordicProfiles.swift */; };
 		055120F019F5513700ED3B74 /* ServiceProfileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */; };
-		055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */; };
 		055120F619F551BB00ED3B74 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F519F551BB00ED3B74 /* CoreLocation.framework */; };
 		055120F819F551CB00ED3B74 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055120F719F551CB00ED3B74 /* CoreBluetooth.framework */; };
 		05585BCF1D0CA437000F5307 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCA1D0CA437000F5307 /* CentralManager.swift */; };
@@ -29,6 +28,7 @@
 		05585BE41D0CA4AB000F5307 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BE21D0CA4AB000F5307 /* Logger.swift */; };
 		056276091CCD3F0A00F955D7 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* Errors.swift */; };
 		057FACF01D1C325B0006B93B /* Int32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057FACEF1D1C325B0006B93B /* Int32+Deserializable.swift */; };
+		05AFDBEC1E082FB700AA92E7 /* TiSensorTagProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AFDBEB1E082FB700AA92E7 /* TiSensorTagProfiles.swift */; };
 		05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */; };
 		05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */; };
 		05C405971D7B7BE300803654 /* Data+Serializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405961D7B7BE300803654 /* Data+Serializable.swift */; };
@@ -59,7 +59,6 @@
 		055120C419F5513700ED3B74 /* GnosusProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GnosusProfiles.swift; sourceTree = "<group>"; };
 		055120C519F5513700ED3B74 /* NordicProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NordicProfiles.swift; sourceTree = "<group>"; };
 		055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfileUtils.swift; sourceTree = "<group>"; };
-		055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TISensorTagServiceProfiles.swift; sourceTree = "<group>"; };
 		055120F519F551BB00ED3B74 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		055120F719F551CB00ED3B74 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		05585BCA1D0CA437000F5307 /* CentralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralManager.swift; sourceTree = "<group>"; };
@@ -73,6 +72,7 @@
 		05585BE21D0CA4AB000F5307 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		056276081CCD3F0A00F955D7 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		057FACEF1D1C325B0006B93B /* Int32+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int32+Deserializable.swift"; sourceTree = "<group>"; };
+		05AFDBEB1E082FB700AA92E7 /* TiSensorTagProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TiSensorTagProfiles.swift; sourceTree = "<group>"; };
 		05BF91971CFBF62700B78B12 /* CLProximityExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CLProximityExtension.swift; sourceTree = "<group>"; };
 		05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFutures.swift; sourceTree = "<group>"; };
 		05C405961D7B7BE300803654 /* Data+Serializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Serializable.swift"; sourceTree = "<group>"; };
@@ -188,11 +188,11 @@
 		055120C219F5513700ED3B74 /* Service Profile Definitions */ = {
 			isa = PBXGroup;
 			children = (
+				05AFDBEB1E082FB700AA92E7 /* TiSensorTagProfiles.swift */,
 				055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */,
 				055120C419F5513700ED3B74 /* GnosusProfiles.swift */,
 				055120C519F5513700ED3B74 /* NordicProfiles.swift */,
 				055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */,
-				055120C719F5513700ED3B74 /* TISensorTagServiceProfiles.swift */,
 			);
 			path = "Service Profile Definitions";
 			sourceTree = "<group>";
@@ -348,6 +348,7 @@
 				05C405AA1D7B7C6F00803654 /* LocationManager.swift in Sources */,
 				055120DF19F5513700ED3B74 /* Int16+Deserializable.swift in Sources */,
 				05BF91AD1CFBF62700B78B12 /* SimpleFutures.swift in Sources */,
+				05AFDBEC1E082FB700AA92E7 /* TiSensorTagProfiles.swift in Sources */,
 				05C405A81D7B7C6F00803654 /* BeaconRegion.swift in Sources */,
 				05C405A71D7B7C6F00803654 /* BeaconManager.swift in Sources */,
 				055120E019F5513700ED3B74 /* Int8+Deserializable.swift in Sources */,
@@ -369,7 +370,6 @@
 				055120EF19F5513700ED3B74 /* NordicProfiles.swift in Sources */,
 				05C4059D1D7B7BF900803654 /* MutableService.swift in Sources */,
 				05585BD01D0CA437000F5307 /* Characteristic.swift in Sources */,
-				055120F119F5513700ED3B74 /* TISensorTagServiceProfiles.swift in Sources */,
 				05C4059C1D7B7BF900803654 /* MutableCharacteristic.swift in Sources */,
 				05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */,
 				05585BE01D0CA475000F5307 /* ProfileManager.swift in Sources */,

@@ -157,7 +157,7 @@ Here when `.poweredOn` is received the scan is started. On all other state chang
 To connect discovered peripheral the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`,
 
 ```swift
-let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<Peripheral> in
     manager.stopScanning()
     return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
 }

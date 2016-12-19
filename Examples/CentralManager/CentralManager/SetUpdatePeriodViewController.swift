@@ -25,7 +25,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let isRaw = isRaw, let updatePeriod : TISensorTag.AccelerometerService.UpdatePeriod = characteristic?.value() {
+        if let isRaw = isRaw, let updatePeriod : TiSensorTag.AccelerometerService.UpdatePeriod = characteristic?.value() {
             if isRaw {
                 updatePeriodTextField.text = "\(updatePeriod.rawValue)"
             } else {
@@ -47,7 +47,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
             } else {
                 rawValue = value / 10
             }
-            if let rawPeriod = UInt8(uintValue:rawValue), let period = TISensorTag.AccelerometerService.UpdatePeriod(rawValue:rawPeriod) {
+            if let rawPeriod = UInt8(uintValue:rawValue), let period = TiSensorTag.AccelerometerService.UpdatePeriod(rawValue:rawPeriod) {
                 let writeFuture = self.characteristic?.write(period, timeout:10.0)
                 writeFuture?.onSuccess {_ in
                     textField.resignFirstResponder()

@@ -103,10 +103,10 @@ class ViewController: UITableViewController {
     }
     
     func activate() {
-        let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
-        let dataUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
-        let enabledUUID = CBUUID(string: TISensorTag.AccelerometerService.Enabled.uuid)
-        let updatePeriodUUID = CBUUID(string: TISensorTag.AccelerometerService.UpdatePeriod.uuid)
+        let serviceUUID = CBUUID(string: TiSensorTag.AccelerometerService.uuid)
+        let dataUUID = CBUUID(string: TiSensorTag.AccelerometerService.Data.uuid)
+        let enabledUUID = CBUUID(string: TiSensorTag.AccelerometerService.Enabled.uuid)
+        let updatePeriodUUID = CBUUID(string: TiSensorTag.AccelerometerService.UpdatePeriod.uuid)
             
         // on power, start scanning. when peripheral is discovered connect and stop scanning
         let dataUpdateFuture = manager.whenStateChanges().flatMap { [unowned self] state -> FutureStream<Peripheral> in
@@ -148,7 +148,7 @@ class ViewController: UITableViewController {
             self.accelerometerDataCharacteristic = dataCharacteristic
             self.accelerometerEnabledCharacteristic = enabledCharacteristic
             self.accelerometerUpdatePeriodCharacteristic = updatePeriodCharacteristic
-            return enabledCharacteristic.write(TISensorTag.AccelerometerService.Enabled.yes)
+            return enabledCharacteristic.write(TiSensorTag.AccelerometerService.Enabled.yes)
         }.flatMap { [unowned self] _ -> Future<[Characteristic]> in
             return [self.accelerometerEnabledCharacteristic,
                     self.accelerometerUpdatePeriodCharacteristic,
@@ -233,14 +233,14 @@ class ViewController: UITableViewController {
     
     func updateEnabled() {
         guard let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic,
-              let value : TISensorTag.AccelerometerService.Enabled = accelerometerEnabledCharacteristic.value()else {
+              let value : TiSensorTag.AccelerometerService.Enabled = accelerometerEnabledCharacteristic.value()else {
             return
         }
         enabledSwitch.isOn = value.boolValue
     }
 
     func updatePeriod() {
-        guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic, let value : TISensorTag.AccelerometerService.UpdatePeriod = accelerometerUpdatePeriodCharacteristic.value() else {
+        guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic, let value : TiSensorTag.AccelerometerService.UpdatePeriod = accelerometerUpdatePeriodCharacteristic.value() else {
             return
         }
         updatePeriodLabel.text = "\(value.period)"
@@ -262,7 +262,7 @@ class ViewController: UITableViewController {
     }
 
     func updateData(_ data:Data?) {
-        if let data = data, let accelerometerData: TISensorTag.AccelerometerService.Data = SerDe.deserialize(data) {
+        if let data = data, let accelerometerData: TiSensorTag.AccelerometerService.Data = SerDe.deserialize(data) {
             xAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.x) as String
             yAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.y) as String
             zAccelerationLabel.text = NSString(format: "%.2f", accelerometerData.z) as String
@@ -275,7 +275,7 @@ class ViewController: UITableViewController {
 
     func writeEnabled() {
         if let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic {
-            let value = TISensorTag.AccelerometerService.Enabled(boolValue: enabledSwitch.isOn)
+            let value = TiSensorTag.AccelerometerService.Enabled(boolValue: enabledSwitch.isOn)
             let writeFuture = accelerometerEnabledCharacteristic.write(value, timeout:10.0)
             writeFuture.onSuccess { [unowned self] _ in
                 self.present(UIAlertController.alertWithMessage("Accelerometer is " + (self.enabledSwitch.isOn ? "on" : "off")), animated:true, completion:nil)
