@@ -56,6 +56,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             self?.updateWhenActive()
         }
         updateValues()
+        recieveNotificationsIfEnabled()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -85,8 +86,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     @IBAction func updateValues() {
-        guard  let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected else {
-            present(UIAlertController.alertOnErrorWithMessage("Not connected"), animated:true, completion:nil)
+        guard  let characteristic = characteristic, let peripheral = peripheral, characteristic.propertyEnabled(.read), connectionFuture != nil, peripheral.state == .connected else {
             return
         }
 
@@ -110,13 +110,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 }, animated:true, completion:nil)
             }
         }
+    }
 
-        if characteristic.isNotifying {
-            readFuture.flatMap { () -> FutureStream<(characteristic: Characteristic, data: Data?)> in
-                characteristic.receiveNotificationUpdates()
-            }.onSuccess { [weak self] _ in
-                self?.updateWhenActive()
-            }
+    func recieveNotificationsIfEnabled() {
+        guard  let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, characteristic.isNotifying, peripheral.state == .connected else {
+            return
+        }
+        characteristic.receiveNotificationUpdates().onSuccess { [weak self] _ in
+            self?.updateWhenActive()
         }
     }
 

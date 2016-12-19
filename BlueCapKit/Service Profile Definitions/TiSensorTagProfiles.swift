@@ -1179,9 +1179,9 @@ public struct TiSensorTag {
     public struct MovementService: ServiceConfigurable {
 
         // ServiceConfigurable
-        public static let uuid  = "F000AA80-0451-4000-B000-000000000000"
-        public static let name  = "TI Movement"
-        public static let tag   = "TI Sensor Tag 2"
+        public static let uuid = "F000AA80-0451-4000-B000-000000000000"
+        public static let name = "TI Movement"
+        public static let tag = "TI Sensor Tag 2"
 
         // Movement Data
         public struct Data: RawArrayDeserializable, CharacteristicConfigurable, StringDeserializable {
@@ -1344,8 +1344,8 @@ public struct TiSensorTag {
 
             public typealias RawType = UInt16
 
-            case no = 2
-            case yes = 255
+            case no = 512
+            case yes = 65280
 
             // CharacteristicConfigurable
             public static let uuid = "F000AA82-0451-4000-B000-000000000000"
@@ -1357,11 +1357,6 @@ public struct TiSensorTag {
 
             // StringDeserializable
             public static let stringValues = ["No", "Yes"]
-
-            public init?(rawValue: UInt16) {
-                Logger.debug("\(rawValue)")
-                return nil
-            }
 
             public init(boolValue: Bool) {
                 if boolValue {

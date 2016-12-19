@@ -50,10 +50,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func viewDidLoad()  {
-        guard peripheral != nil, characteristic != nil else {
+        guard let characteristic = characteristic, peripheral != nil else {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
+        navigationItem.title = characteristic.name
         navigationItem.backBarButtonItem = UIBarButtonItem(title:"", style:.plain, target:nil, action:nil)
     }
     

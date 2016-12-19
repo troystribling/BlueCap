@@ -88,8 +88,14 @@ class PeripheralsViewController : UITableViewController {
                 case .poweredOff, .unauthorized:
                     strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state)\"")
                 case .resetting:
-                    strongSelf.alertAndStopScanning(message:
-                        "DiscoveryManager state \"\(state)\". The connection with the system bluetooth service was momentarily lost.\n Restart scan.")
+                    strongSelf.stopScanning()
+                    strongSelf.setScanButton()
+                    Singletons.discoveryManager.reset()
+                    Singletons.scanningManager.reset()
+                    Singletons.communicationManager.reset()
+                    strongSelf.present(UIAlertController.alert(message: "DiscoveryManager state \"\(state)\". The connection with the system bluetooth service was momentarily lost"), animated:true)
+                    strongSelf.stopScanning()
+                    strongSelf.setScanButton()
                 case .unsupported:
                     strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state)\". Bluetooth not supported.")
                 }
