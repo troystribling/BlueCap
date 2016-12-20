@@ -116,7 +116,7 @@ Var discoveredPeripheral: Peripheral?
 let scanFuture = manager.whenStateChanges().flatMap { state -> FutureStream<Peripheral> in
     switch state {
     case .poweredOn:
-        return self.manager.startScanning(forServiceUUIDs: [serviceUUID], capacity: 10)
+        return manager.startScanning(forServiceUUIDs: [serviceUUID], capacity: 10)
     case .poweredOff:
         throw AppError.poweredOff
     case .unauthorized, .unsupported:
@@ -138,12 +138,16 @@ scanFuture.onFailure { error in
     }
     switch appError {
     case .invalidState:
+	      manager.stopScanning()
         break
     case .resetting:
+        manager.stopScanning()
         manager.reset()
     case .poweredOff:
+        manager.stopScanning()
         break
     case .unknown:
+        manager.stopScanning()
         break
     }
 }
@@ -200,7 +204,7 @@ public let advertisements: PeripheralAdvertisements
 
 ### <a name="central_peripheral_connection">Peripheral Connection</a>
 
-After discovering a `Peripheral` a connection must be established to run discovery and begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. `BlueCap`. `Peripherals` can be configured to automatically attempt reconnection on connection timeouts and disconnections.
+After discovering a `Peripheral` a connection must be established to run discovery and begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. `BlueCap` `Peripherals` can be configured to automatically attempt reconnection on connection timeouts and disconnections.
 
 To connect to a `Peripheral` use The `Peripheral` method,
 
@@ -215,11 +219,11 @@ The input parameters are,
 <table>
 	<tr>
 		<td>timeoutRetries</td>
-		<td>Maximum number of connection retries after timeout. The default value is 0.</td>
+		<td>Maximum number of connection retries after timeout. The default value is 0. If timeoutRetries is exceeded PeripheralError.connectionTimeout is thrown. </td>
 	</tr>
 	<tr>
 		<td>disconnectRetries</td>
-		<td>Maximum number of connection retries on disconnect. The default value is 0.</td>
+		<td>Maximum number of connection retries on disconnect. The default value is 0. if disconnectRetries is exceeded PeripheralError.disconnected is thrown if the disconnect occurs without error or the reported connection error is thrown if available.</td>
 	</tr>
 	<tr>
 		<td>connectionTimeout</td>
@@ -245,9 +249,9 @@ public func disconnect()
 public func terminate()
 ```
 
-The `Peripheral#reconnect` method is used to establish a connection to a previously connected `Peripheral`. The method takes a single parameter `reconnectDelay` used to specify a delay, in seconds, before trying to reconnect. The default value is `0.0` seconds. I called before `Peripheral#connect` a connection with default parameters will be attempted.
+The `Peripheral#reconnect` method is used to establish a connection to a previously connected `Peripheral`. The method takes a single parameter `reconnectDelay` used to specify a delay, in seconds, before trying to reconnect. The default value is `0.0` seconds. If it is called before `Peripheral#connect` a connection with default parameters will be attempted.
 
-`Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and will generate the `ConnectionEvent` `ForceDisconnect`. If the `Peripheral` is disconnected the `Peripheral#connect` `FutureStream#onFailure` will complete with `PeripheralError.disconnected`.
+`Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and `throws` `PeripheralError.forcedDisconnect`. If the `Peripheral` is disconnected and the method is called `PeripheralError.forcedDisconnect` is also `thrown`.
 
 `Peripheral#terminate` performs a `Peripheral#disconnect` and also removes the `Peripheral` from the application cache.
 
@@ -260,23 +264,27 @@ let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<(peripher
     return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
 }
 
-connectionFuture.onSuccess { (peripheral, connectionEvent) in
-    switch connectionEvent {
-    case .connect:
+connectionFuture.onSuccess { peripheral in
+	  // handle successful connection
+}
+
+connectionFuture.onFailure { error in
+    guard let peripheralError = error as? PeripheralError else {
+        return
+    }
+    switch peripheralError {
+    case .disconnected:
         break
-    case .timeout:
-        peripheral.reconnect()
-    case .disconnect:
-        peripheral.reconnect()
-    case .forceDisconnect:
+    case .forcedDisconnect:
         break
-    case .giveUp:
-        peripheral.terminate()
+    case .connectionTimeout:
+        break
     }
 }
+
 ```
 
-Here the `scanFuture` is completed after `Peripheral` discovery and `flatMap` combines it with the connection `FutureStream`. This ensures that connections are made after `Peripherals` are discovered. When `ConnectionEvents` of `.timeout` and `.disconnect` are received an attempt is made to `reconnect` the `Peripheral`. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a `.giveUp` event is received and the `Peripheral` connection is terminated ending all reconnection attempts.
+Here the `scanFuture` is completed after `Peripheral` discovery and `flatMap` combines it with the connection `FutureStream`. This ensures that connections are made after `Peripherals` are discovered. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a `PeripheralError.connectionTimeout` or `PeripheralError.disconnected`. is thrown
 
 ### <a name="central_characteristic_discovery">Service and Characteristic Discovery</a>
 
@@ -304,15 +312,13 @@ public func discoverAllCharacteristics(timeout: TimeInterval = TimeInterval.infi
 public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: TimeInterval = TimeInterval.infinity) -> Future<Service>
 ```
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Service>` yielding the supporting `Service` and only take a `timeout` parameter. If the timeout is exceeded the `ServiceError.charcteristicDiscoveryTimeout` is thrown.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Service>` yielding the supporting `Service` and only take a `timeout` parameter. If the timeout is exceeded for `Service` discovery `PeripheralError.serviceDiscoveryTimeout` is thrown and if the timeout is exceeded for `Characteristic` discovery `ServiceError.characteristicDiscoveryTimeout` is thrown.
 
 After a `Peripheral` is connected `Services` and `Characteristics` are discovered using,
 
 ```swift
 public enum AppError : Error {
     case serviceNotFound
-    case disconnected
-    case connectionFailed
 }
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
@@ -320,17 +326,7 @@ let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 let characteristicUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
 
 let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
-    switch connectionEvent {
-    case .connect:
-        discoveredPeripheral.discoverServices([serviceUUID])
-    case .timeout:
-        throw AppError.disconnected
-    case .disconnect:
-        throw AppError.disconnected
-    case .forceDisconnect:
-        throw AppError.connectionFailed
-    case .giveUp:
-        throw AppError.connectionFailed
+        peripheral.discoverServices([serviceUUID])
 }.flatMap { peripheral -> Future<Service> in
     guard let service = peripheral.service(serviceUUID) else {
         throw AppError.serviceNotFound
@@ -339,21 +335,33 @@ let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -
 }
 
 discoveryFuture.onFailure { service in
-    guard let appError = error as? AppError else {
-        return
+   if let appError = error as? AppError {
+        switch appError {
+        case .serviceNotFound:
+            break
     }
-    switch appError {
-    case .serviceNotFound:
-        break
-    case .disconnected:
-        discoveredPeripheral?.reconnect()
-    case .connectionFailed:
-        discoveredPeripheral?.terminate()
+    if let peripheralError = error as? PeripheralError {
+        switch peripheralError {
+        case .disconnected:
+            break
+        case .forcedDisconnect:
+            break
+        case .connectionTimeout:
+            break
+        case .serviceDiscoveryTimeout:
+            break
+        }
+    }
+    
+    if let serviceError = error as? ServiceError {
+        switch serviceError {
+        case .characteristicDiscoveryTimeout:
+            break
     }
 }
 ```
 
-Here the `connectionFuture` is completed after the `Peripheral` connects and `flatMap` combines it with the `Service` discovery `Future` and another `flatMap` combines with `Characteristic` discovery. Also, `ConnectionEvents` need to be handled the first `flatMap` since service discovery is only started on a successful connection.
+Here the `connectionFuture` is completed after the `Peripheral` connects and `flatMap` combines it with the `Service` discovery `Future` and another `flatMap` combines with `Characteristic` discovery.
 
 Discovery of all supported `Peripheral` `Services` and `Characteristics` could be done in a single `flatMap` using,
 
@@ -639,7 +647,11 @@ public enum CharacteristicError : Swift.Error {
 
 public enum PeripheralError : Swift.Error {
     // Thrown by any method that requires a Peripheral be connected if the peripheral is not connected
-    case disconnected    
+    case disconnected   
+		// Peripheral was disconnected by application
+    case forcedDisconnect
+    // Thrown by Peripheral connect when the specified timeoutRetries is exceeded.
+    case connectionTimeout
     // Thrown by discoverAllServices and discoverServices if service discovery timeout is exceeded
     case serviceDiscoveryTimeout
 }
