@@ -89,7 +89,7 @@ The input parameters for both methods are,
 	</tr>
 	<tr>
 		<td>timeout</td>
-		<td>Scan timeout. The error CentralManagerError.peripheralScanTimeout is thrown and scanning stops if nothing is discovered within the timeout.</td>
+		<td>Scan timeout. The default value is infinite. The error CentralManagerError.peripheralScanTimeout is thrown and scanning stops if nothing is discovered within the timeout.</td>
 	</tr>
 	<tr>
 		<td>options</td>
@@ -212,7 +212,7 @@ To connect to a `Peripheral` use The `Peripheral` method,
 public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral>
 ```
 
-The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream(peripheral: Peripheral, connectionEvent: ConnectionEvent)>` yielding a tuple containing the connected `Peripheral` and the `ConnectionEvent`. 
+The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the connected `Peripheral` and the `ConnectionEvent`. 
 
 The input parameters are,
 
@@ -325,7 +325,7 @@ let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
 let characteristicUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
 
-let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
+let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<Peripheral> in
         peripheral.discoverServices([serviceUUID])
 }.flatMap { peripheral -> Future<Service> in
     guard let service = peripheral.service(serviceUUID) else {
@@ -366,27 +366,12 @@ Here the `connectionFuture` is completed after the `Peripheral` connects and `fl
 Discovery of all supported `Peripheral` `Services` and `Characteristics` could be done in a single `flatMap` using,
 
 ```swift
-let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
-    switch connectionEvent {
-    case .connect:
-        discoveredPeripheral.discoverAllServices()
-    case .timeout:
-        throw AppError.disconnected
-    case .disconnect:
-        throw AppError.disconnected
-    case .forceDisconnect:
-        throw AppError.connectionFailed
-    case .giveUp:
-        throw AppError.connectionFailed
-}.flatMap { peripheral -> Future<[Service]> in
-    guard let service = peripheral.service(serviceUUID) else {
-        throw AppError.serviceNotFound
-    }
-    return discoveredPeripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
+let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<[Service]> in
+    peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
 }
 ```
 
-Here the [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future#sequence` methods is used to create a `Future` that completes when all `Characteristic` discovery tasks complete.
+Here the [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future#sequence` method is used to create a `Future` that completes when all `Characteristic` discovery tasks complete.
 
 ### <a name="central_characteristic_write">Characteristic Write</a>
 
