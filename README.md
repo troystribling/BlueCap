@@ -45,7 +45,7 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'Your Target Name' do
-  pod 'BlueCapKit', '~> 0.2'
+  pod 'BlueCapKit', '~> 0.3'
 end
 ```
 
@@ -93,7 +93,7 @@ This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual)
 
 # Getting Started
 
-With BlueCap it is possible to easily implement `CentralManager` and `PeripheralManager` applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported. [Example applications](/Examples) are also available.
+With BlueCap it is possible to easily implement `CentralManager` and `PeripheralManager` applications, serialize and deserialize messages exchanged with Bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [Futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe supported use cases. [Example applications](/Examples) are also available.
  
 ## CentralManager
 
@@ -120,18 +120,18 @@ public enum AppError : Error {
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
     
 let scanFuture = stateChangeFuture.flatMap { state -> FutureStream<Peripheral> in
-        switch state {
-        case .poweredOn:
-            return manager.startScanning(forServiceUUIDs: [serviceUUID])
-        case .poweredOff:
-            throw AppError.poweredOff
-        case .unauthorized, .unsupported:
-            throw AppError.invalidState
-        case .resetting:
-            throw AppError.resetting
-        case .unknown:
-            throw AppError.unknown
-        }
+    switch state {
+    case .poweredOn:
+        return manager.startScanning(forServiceUUIDs: [serviceUUID])
+    case .poweredOff:
+        throw AppError.poweredOff
+    case .unauthorized, .unsupported:
+        throw AppError.invalidState
+    case .resetting:
+        throw AppError.resetting
+    case .unknown:
+        throw AppError.unknown
+    }
 }
 
 scanFuture.onFailure { error in
@@ -294,8 +294,7 @@ let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<
         throw AppError.resetting
     }
 }.flatMap { _ -> Future<Void> in 
-
-manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.uuid)])
+    manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.uuid)])
 }
 
 startAdvertiseFuture.onFailure { error in
@@ -316,8 +315,7 @@ Now respond to write events on `accelerometerEnabledFuture` and `accelerometerUp
 ```swift
 // respond to Update Period write requests
 let accelerometerUpdatePeriodFuture = startAdvertiseFuture.flatMap {
-
-accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
+    accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
 }
 
 accelerometerUpdatePeriodFuture.onSuccess {  (request, _) in

@@ -39,7 +39,7 @@ The state of `CBCentralManager` is communicated to an application by the `Centra
 public func whenStateChanges() -> FutureStream<ManagerState>
 ```
 
-To process events,
+To process `ManagerState` change events use,
 
 ```swift
 let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
