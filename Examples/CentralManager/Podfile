@@ -2,7 +2,7 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'CentralManager' do
-  pod 'BlueCapKit', :path => '../../'
+  pod 'BlueCapKit', '~> 0.3'
 end
 
 post_install do |installer|
