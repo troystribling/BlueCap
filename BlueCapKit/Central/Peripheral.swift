@@ -328,7 +328,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         pollRSSIPromise = nil
         readRSSIPromise = nil
         self.terminationStatus = terminationStatus
-        if state != .disconnected {
+        if state == .connected {
             Logger.debug("disconnecting name=\(self.name), uuid=\(self.identifier.uuidString)")
             central.cancelPeripheralConnection(self)
         } else {

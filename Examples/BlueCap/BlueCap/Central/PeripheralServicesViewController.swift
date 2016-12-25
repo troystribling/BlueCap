@@ -35,18 +35,20 @@ class PeripheralServicesViewController : UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard let connectionFuture = connectionFuture, peripheral != nil else {
+        guard let connectionFuture = connectionFuture, let peripheral = peripheral else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
-        connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
-            self?.updateWhenActive()
-        }
-        connectionFuture.onFailure { [weak self] error in
-            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-            self?.updateWhenActive()
-        }
         updateWhenActive()
+        if peripheral.state == .connected {
+            connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
+                self?.updateWhenActive()
+            }
+            connectionFuture.onFailure { [weak self] error in
+                self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+                self?.updateWhenActive()
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {

@@ -44,19 +44,21 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func viewDidAppear(_ animated:Bool)  {
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard  let connectionFuture = connectionFuture, peripheral != nil, characteristic != nil else {
+        guard  let connectionFuture = connectionFuture, let peripheral = peripheral, characteristic != nil else {
             _ = navigationController?.popViewController(animated: true)
             return
         }
-        connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
-            self?.updateWhenActive()
-        }
-        connectionFuture.onFailure { [weak self] error in
-            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-            self?.updateWhenActive()
-        }
         updateValues()
         recieveNotificationsIfEnabled()
+        if peripheral.state == .connected {
+            connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
+                self?.updateWhenActive()
+            }
+            connectionFuture.onFailure { [weak self] error in
+                self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+                self?.updateWhenActive()
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {

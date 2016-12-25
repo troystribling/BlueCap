@@ -40,16 +40,18 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard  let connectionFuture = connectionFuture, peripheral != nil, characteristic != nil else {
+        guard  let connectionFuture = connectionFuture, let peripheral = peripheral, characteristic != nil else {
             _ = navigationController?.popViewController(animated: true)
             return
         }
-        connectionFuture.onSuccess(cancelToken: cancelToken)  { _ in
-        }
-        connectionFuture.onFailure { [weak self] error in
-            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-        }
         readCharacteristic()
+        if peripheral.state == .connected {
+            connectionFuture.onSuccess(cancelToken: cancelToken)  { _ in
+            }
+            connectionFuture.onFailure { [weak self] error in
+                self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
