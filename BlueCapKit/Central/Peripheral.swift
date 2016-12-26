@@ -287,9 +287,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             return
         }
         central.removePeripheral(withIdentifier: self.cbPeripheral.identifier)
-        if self.state == .connected {
-            self.disconnect()
-        }
+        self.disconnect()
     }
 
     public func disconnect() {

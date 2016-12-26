@@ -33,7 +33,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate var scanTimeSequence = 0
 
     public var discoveredPeripherals : [UUID : Peripheral] {
-        return centralQueue.sync { self._discoveredPeripherals }
+        return self._discoveredPeripherals
     }
 
     public var peripherals: [Peripheral] {
@@ -94,15 +94,27 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func reset()  {
-        centralQueue.async {
-            self.afterStateChangedPromise = nil
-            self.afterPeripheralDiscoveredPromise = nil
-            self.afterStateRestoredPromise = nil
-            if self.cbCentralManager is CBCentralManager {
-                self.cbCentralManager = CBCentralManager(delegate: self, queue: self.centralQueue.queue, options: self.options)
-                self.cbCentralManager.delegate = self
+        centralQueue.async { [weak self] in
+            self.forEach { strongSelf in
+                Logger.debug("'\(strongSelf.name)' is resetting")
+                if strongSelf.cbCentralManager is CBCentralManager {
+                    strongSelf.cbCentralManager.delegate = nil
+                    strongSelf.cbCentralManager = CBCentralManager(delegate: strongSelf, queue: strongSelf.centralQueue.queue, options: strongSelf.options)
+                    strongSelf.cbCentralManager.delegate = self
+                }
             }
         }
+    }
+
+    public func invalidate()  {
+        centralQueue.async { [weak self] in
+            self.forEach { strongSelf in
+                strongSelf.afterStateChangedPromise = nil
+                strongSelf.afterPeripheralDiscoveredPromise = nil
+                strongSelf.afterStateRestoredPromise = nil
+            }
+        }
+        reset()
     }
 
     // MARK: Power ON/OFF
@@ -153,7 +165,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return afterPeripheralDiscoveredPromise.stream
             }
             if !self._isScanning {
-                Logger.debug("\(self.name) UUIDs \(uuids)")
+                Logger.debug("'\(self.name)' scanning UUIDs \(uuids)")
                 self._isScanning = true
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
                 if self.poweredOn {
@@ -175,10 +187,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     fileprivate func stopScanningIfScanning() {
         guard _isScanning else {
-            Logger.debug("\(self.name) is not scanning")
+            Logger.debug("'\(name)' is not scanning")
             return
         }
-        Logger.debug("\(self.name)")
+        Logger.debug("'\(name)'")
         _isScanning = false
         cbCentralManager.stopScan()
         afterPeripheralDiscoveredPromise = nil
@@ -188,7 +200,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         guard timeout < TimeInterval.infinity else {
             return
         }
-        Logger.debug("\(self.name) scan timeout in \(timeout)s")
+        Logger.debug("\(name) scan timeout in \(timeout)s")
         centralQueue.delay(timeout) { [weak self] in
             self.forEach { strongSelf in
                 if strongSelf._isScanning {
@@ -239,7 +251,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         } else {
             newBCPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, profileManager: profileManager)
         }
-        Logger.debug("\(self.name) uuid=\(newBCPeripheral.identifier.uuidString), name=\(newBCPeripheral.name)")
+        Logger.debug("'\(name)' uuid=\(newBCPeripheral.identifier.uuidString), name=\(newBCPeripheral.name)")
         self._discoveredPeripherals[peripheral.identifier] = newBCPeripheral
         return newBCPeripheral
     }
@@ -280,14 +292,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate Shims
     
     func didConnectPeripheral(_ peripheral: CBPeripheralInjectable) {
-        Logger.debug("\(self.name) uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name)")
+        Logger.debug("'\(name)' uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name)")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     func didDisconnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
-        Logger.debug("\(self.name) uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name), error=\(error)")
+        Logger.debug("\(name) uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name), error=\(error)")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral(error)
         }
@@ -295,13 +307,13 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
         let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
-        Logger.debug("\(self.name) uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
+        Logger.debug("'\(name)' uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
         _discoveredPeripherals[peripheral.identifier] = bcPeripheral
         afterPeripheralDiscoveredPromise?.success(bcPeripheral)
     }
     
     func didFailToConnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
-        Logger.debug("\(self.name)")
+        Logger.debug("'\(name)'")
         guard let bcPeripheral = _discoveredPeripherals[peripheral.identifier] else {
             return
         }
@@ -309,7 +321,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     func willRestoreState(_ cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
-        Logger.debug("\(self.name)")
+        Logger.debug("'\(name)'")
         if let cbPeripherals = cbPeripherals, let scannedServices = scannedServices, let options = options {
             let peripherals = cbPeripherals.map { cbPeripheral -> Peripheral in
                 let peripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
@@ -340,6 +352,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     func didUpdateState(_ centralManager: CBCentralManagerInjectable) {
+        Logger.debug("'\(name)' did update state '\(centralManager.managerState)'")
         afterStateChangedPromise?.success(centralManager.managerState)
     }
     

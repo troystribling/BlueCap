@@ -42,10 +42,6 @@ struct Singletons {
     static let scanningManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.scanning-manager.main", qos: .background),
                                                 profileManager: Singletons.profileManager,
                                                 options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.scanning-manager" as NSString])
-    static let communicationManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.communication-manager.main", qos: .background),
-                                                     profileManager: Singletons.profileManager,
-                                                     options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.communication-manager" as NSString])
-
     static let beaconManager = BeaconManager()
     static let profileManager = ProfileManager()
 }
@@ -108,10 +104,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if Singletons.discoveryManager.peripherals.count > 0 {
             Singletons.discoveryManager.disconnectAllPeripherals()
             Singletons.discoveryManager.removeAllPeripherals()
-        }
-        if Singletons.communicationManager.peripherals.count > 0 {
-            Singletons.communicationManager.disconnectAllPeripherals()
-            Singletons.communicationManager.removeAllPeripherals()
         }
     }
 

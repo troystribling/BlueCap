@@ -90,17 +90,28 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     public func reset()  {
-        return self.peripheralQueue.sync {
-            self.afterAdvertisingStartedPromise = nil
-            self.afterBeaconAdvertisingStartedPromise = nil
-            self.afterStateChangedPromise = nil
-            self.afterStateRestoredPromise = nil
-            self.afterSeriviceAddPromise = nil
-            if self.cbPeripheralManager is CBPeripheralManager {
-                self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: self.options)
-                self.cbPeripheralManager?.delegate = self
+        return peripheralQueue.async { [weak self] in
+            self.forEach { strongSelf in
+                if strongSelf.cbPeripheralManager is CBPeripheralManager {
+                    strongSelf.cbPeripheralManager.delegate = nil
+                    strongSelf.cbPeripheralManager = CBPeripheralManager(delegate: strongSelf, queue: strongSelf.peripheralQueue.queue, options: strongSelf.options)
+                    strongSelf.cbPeripheralManager?.delegate = self
+                }
             }
         }
+    }
+
+    public func invalidate()  {
+        peripheralQueue.async { [weak self] in
+            self.forEach { strongSelf in
+                strongSelf.afterAdvertisingStartedPromise = nil
+                strongSelf.afterBeaconAdvertisingStartedPromise = nil
+                strongSelf.afterStateChangedPromise = nil
+                strongSelf.afterStateRestoredPromise = nil
+                strongSelf.afterSeriviceAddPromise = nil
+            }
+        }
+        reset()
     }
 
     // MARK: Power ON/OFF

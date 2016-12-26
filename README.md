@@ -11,12 +11,10 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 # Features
 
 - A [futures](https://github.com/troystribling/SimpleFutures) interface replacing protocol implementations.
-- Connection events for connect, disconnect and timeout.
-- Service scan timeout.
-- Characteristic read/write timeout.
+- Timeout for `Peripheral` connection. `Service` scan, 'Service` and `Characteristic` discovery and `Characteristic` read/write.
 - A DSL for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
-- [Example](/Examples) applications implementing Central and Peripheral roles.
+- [Example](/Examples) applications implementing CentralManager and PeripheralManager.
 - A full featured extendable Central scanner and Peripheral emulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
 - Thread safe.
 - Comprehensive test coverage.
