@@ -41,13 +41,8 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Peripheral"
-        guard let peripheral = peripheral else {
+        guard peripheral != nil else {
             return
-        }
-        if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
-            self.advertisedBeaconLabel.text = advertisedBeacon
-        } else {
-            self.advertisedBeaconLabel.text = "None"
         }
         Singletons.peripheralManager.whenStateChanges().onSuccess { [weak self] state in
             self.forEach { strongSelf in
@@ -129,14 +124,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
         let advertisedServices = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
         if PeripheralStore.getBeaconEnabled(peripheral) {
-            if let name = self.advertisedBeaconLabel.text {
-                if let uuid = PeripheralStore.getBeacon(name) {
-                    let beaconConfig = PeripheralStore.getBeaconConfig(name)
-                    let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconConfig[1], minor: beaconConfig[0])
-                    let future = Singletons.peripheralManager.startAdvertising(beaconRegion)
-                    future.onSuccess(completion: afterAdvertisingStarted)
-                    future.onFailure(completion: afterAdvertisingStartFailed)
-                }
+            if let name = self.advertisedBeaconLabel.text, let uuid = PeripheralStore.getBeacon(name) {
+                let beaconConfig = PeripheralStore.getBeaconConfig(name)
+                let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconConfig[1], minor: beaconConfig[0])
+                let future = Singletons.peripheralManager.startAdvertising(beaconRegion)
+                future.onSuccess(completion: afterAdvertisingStarted)
+                future.onFailure(completion: afterAdvertisingStartFailed)
+            } else {
+                self.present(UIAlertController.alert(message: "iBeacon config is invalid"), animated: true, completion: nil)
             }
         } else if advertisedServices.count > 0 {
             let future = Singletons.peripheralManager.startAdvertising(peripheral, uuids: advertisedServices)
@@ -214,26 +209,38 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             navigationItem.setHidesBackButton(true, animated:true)
             advertiseSwitch.isOn = true
             nameTextField.isEnabled = false
-            beaconLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
-            advertisedLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
-            advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
+            beaconLabel.textColor = UIColor.lightGray
+            advertisedLabel.textColor = UIColor.lightGray
+            advertisedServicesLabel.textColor = UIColor.lightGray
             advertisedBeaconSwitch.isEnabled = false
-        } else if PeripheralStore.getPeripheralServicesForPeripheral(peripheral).count == 0 {
-            advertiseSwitch.isOn = false
-            beaconLabel.textColor = UIColor.black
-            advertisedLabel.textColor = UIColor.black
-            advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
-            navigationItem.setHidesBackButton(false, animated:true)
-            nameTextField.isEnabled = true
-            advertisedBeaconSwitch.isEnabled = true
+            advertisedBeaconLabel.textColor = UIColor.lightGray
         } else {
-            advertiseSwitch.isOn = false
-            beaconLabel.textColor = UIColor.black
-            advertisedLabel.textColor = UIColor.black
-            advertisedServicesLabel.textColor = UIColor.black
-            navigationItem.setHidesBackButton(false, animated:true)
-            nameTextField.isEnabled = true
-            advertisedBeaconSwitch.isEnabled = true
+            if PeripheralStore.getPeripheralServicesForPeripheral(peripheral).count == 0 {
+                advertiseSwitch.isOn = false
+                beaconLabel.textColor = UIColor.black
+                advertisedLabel.textColor = UIColor.black
+                advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
+                navigationItem.setHidesBackButton(false, animated:true)
+                nameTextField.isEnabled = true
+                advertisedBeaconLabel.textColor = UIColor.lightGray
+                advertisedBeaconSwitch.isEnabled = false
+            } else {
+                advertiseSwitch.isOn = false
+                beaconLabel.textColor = UIColor.black
+                advertisedLabel.textColor = UIColor.black
+                advertisedServicesLabel.textColor = UIColor.black
+                navigationItem.setHidesBackButton(false, animated:true)
+                nameTextField.isEnabled = true
+                if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
+                    advertisedBeaconLabel.text = advertisedBeacon
+                    advertisedBeaconLabel.textColor = UIColor.black
+                    advertisedBeaconSwitch.isEnabled = true
+                } else {
+                    advertisedBeaconLabel.text = "None"
+                    advertisedBeaconLabel.textColor = UIColor.lightGray
+                    advertisedBeaconSwitch.isEnabled = false
+                }
+            }
         }
     }
 
