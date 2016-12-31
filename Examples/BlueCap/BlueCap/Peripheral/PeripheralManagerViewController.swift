@@ -14,36 +14,24 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var advertiseSwitch: UISwitch!
-    @IBOutlet var advertisedBeaconSwitch: UISwitch!
-    @IBOutlet var advertisedBeaconLabel: UILabel!
+    @IBOutlet var advertiseLabel: UILabel!
     @IBOutlet var advertisedServicesLabel: UILabel!
     @IBOutlet var advertisedServicesCountLabel: UILabel!
     @IBOutlet var servicesLabel: UILabel!
     @IBOutlet var servicesCountLabel: UILabel!
-    @IBOutlet var beaconLabel: UILabel!
-    @IBOutlet var advertisedLabel: UILabel!
 
     struct MainStoryboard {
         static let peripheralManagerServicesSegue = "PeripheralManagerServices"
         static let peripheralManagerAdvertisedServicesSegue = "PeripheralManagerAdvertisedServices"
-        static let peripheralManagerBeaconsSegue = "PeripheralManagerBeacons"
     }
-    
-    var peripheral : String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let peripheral = peripheral {
-            nameTextField.text = peripheral
-        }
     }
     
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = "Peripheral"
-        guard peripheral != nil else {
-            return
-        }
+        nameTextField.text = PeripheralStore.getPeripheralName()
         Singletons.peripheralManager.whenStateChanges().onSuccess { [weak self] state in
             self.forEach { strongSelf in
                 switch state {
@@ -76,28 +64,19 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServicesSegue {
             let viewController = segue.destination as! PeripheralManagerServicesViewController
-            viewController.peripheral = self.peripheral
             viewController.peripheralManagerViewController = self
         } else if segue.identifier == MainStoryboard.peripheralManagerAdvertisedServicesSegue {
             let viewController = segue.destination as! PeripheralManagerAdvertisedServicesViewController
-            viewController.peripheral = self.peripheral
-            viewController.peripheralManagerViewController = self
-        } else if segue.identifier == MainStoryboard.peripheralManagerBeaconsSegue {
-            let viewController = segue.destination as! PeripheralManagerBeaconsViewController
-            viewController.peripheral = self.peripheral
             viewController.peripheralManagerViewController = self
         }
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-        guard let peripheral = self.peripheral else {
-            return false
-        }
         if let identifier = identifier {
             if Singletons.peripheralManager.isAdvertising {
                 return identifier == MainStoryboard.peripheralManagerServicesSegue
             } else if identifier == MainStoryboard.peripheralManagerAdvertisedServicesSegue {
-                return PeripheralStore.getPeripheralServicesForPeripheral(peripheral).count > 0
+                return PeripheralStore.getSupportedPeripheralServices().count > 0
             } else {
                 return true
             }
@@ -112,7 +91,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             self.setUIState()
             return
         }
-        guard let peripheral = peripheral else {
+        guard let name = PeripheralStore.getPeripheralName() else {
             return
         }
         func afterAdvertisingStarted() {
@@ -122,44 +101,16 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             self.setUIState()
             self.present(UIAlertController.alert(title: "Peripheral Advertise Error", error: error), animated: true, completion: nil)
         }
-        let advertisedServices = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-        if PeripheralStore.getBeaconEnabled(peripheral) {
-            if let name = self.advertisedBeaconLabel.text, let uuid = PeripheralStore.getBeacon(name) {
-                let beaconConfig = PeripheralStore.getBeaconConfig(name)
-                let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconConfig[1], minor: beaconConfig[0])
-                let future = Singletons.peripheralManager.startAdvertising(beaconRegion)
-                future.onSuccess(completion: afterAdvertisingStarted)
-                future.onFailure(completion: afterAdvertisingStartFailed)
-            } else {
-                self.present(UIAlertController.alert(message: "iBeacon config is invalid"), animated: true, completion: nil)
-            }
-        } else if advertisedServices.count > 0 {
-            let future = Singletons.peripheralManager.startAdvertising(peripheral, uuids: advertisedServices)
+        let advertisedServices = PeripheralStore.getAdvertisedPeripheralServices()
+        if advertisedServices.count > 0 {
+            let future = Singletons.peripheralManager.startAdvertising(name, uuids: advertisedServices)
             future.onSuccess(completion: afterAdvertisingStarted)
             future.onFailure(completion: afterAdvertisingStartFailed)
         } else {
-            let future = Singletons.peripheralManager.startAdvertising(peripheral)
+            let future = Singletons.peripheralManager.startAdvertising(name)
             future.onSuccess(completion: afterAdvertisingStarted)
             future.onFailure(completion: afterAdvertisingStartFailed)
         }
-    }
-    
-    @IBAction func toggleBeacon(_ sender:AnyObject) {
-        guard let peripheral = self.peripheral else {
-            return
-        }
-        if PeripheralStore.getBeaconEnabled(peripheral) {
-            PeripheralStore.setBeaconEnabled(peripheral, enabled:false)
-        } else {
-            if let name = self.advertisedBeaconLabel.text {
-                if PeripheralStore.getBeacon(name) != nil {
-                    PeripheralStore.setBeaconEnabled(peripheral, enabled:true)
-                } else {
-                    self.present(UIAlertController.alert(message: "iBeacon is invalid"), animated: true, completion: nil)
-                }
-            }
-        }
-        self.setUIState()
     }
 
     func setPeripheralManagerServices() {
@@ -167,21 +118,14 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             return
         }
         Singletons.peripheralManager.removeAllServices()
-        if self.peripheral != nil {
-            self.loadPeripheralServicesFromConfig()
-        } else {
-            self.setUIState()
-        }
+        self.loadPeripheralServicesFromConfig()
     }
 
     func loadPeripheralServicesFromConfig() {
-        guard let peripheral = self.peripheral else {
-            return
-        }
-        let serviceUUIDs = PeripheralStore.getPeripheralServicesForPeripheral(peripheral)
-        let services = serviceUUIDs.reduce([MutableService]()){ (services, uuid) in
+        let serviceUUIDs = PeripheralStore.getSupportedPeripheralServices()
+        let services = serviceUUIDs.reduce([MutableService]()){ services, uuid in
             if let serviceProfile = Singletons.profileManager.services[uuid] {
-                let service = MutableService(profile:serviceProfile)
+                let service = MutableService(profile: serviceProfile)
                 service.characteristicsFromProfiles()
                 return services + [service]
             } else {
@@ -199,47 +143,32 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     func setUIState() {
-        guard let peripheral = self.peripheral else {
-            return
-        }
-        advertisedBeaconSwitch.isOn = PeripheralStore.getBeaconEnabled(peripheral)
-        advertisedServicesCountLabel.text = "\(PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral).count)"
-        servicesCountLabel.text = "\(PeripheralStore.getPeripheralServicesForPeripheral(peripheral).count)"
+        let advertisedServicesCount = PeripheralStore.getAdvertisedPeripheralServices().count
+        let supportedServicesCount = PeripheralStore.getSupportedPeripheralServices().count
+        advertisedServicesCountLabel.text = "\(advertisedServicesCount)"
+        servicesCountLabel.text = "\(supportedServicesCount)"
         if Singletons.peripheralManager.isAdvertising {
             navigationItem.setHidesBackButton(true, animated:true)
             advertiseSwitch.isOn = true
             nameTextField.isEnabled = false
-            beaconLabel.textColor = UIColor.lightGray
-            advertisedLabel.textColor = UIColor.lightGray
             advertisedServicesLabel.textColor = UIColor.lightGray
-            advertisedBeaconSwitch.isEnabled = false
-            advertisedBeaconLabel.textColor = UIColor.lightGray
         } else {
-            if PeripheralStore.getPeripheralServicesForPeripheral(peripheral).count == 0 {
-                advertiseSwitch.isOn = false
-                beaconLabel.textColor = UIColor.black
-                advertisedLabel.textColor = UIColor.black
-                advertisedServicesLabel.textColor = UIColor(red:0.7, green:0.7, blue:0.7, alpha:1.0)
-                navigationItem.setHidesBackButton(false, animated:true)
-                nameTextField.isEnabled = true
-                advertisedBeaconLabel.textColor = UIColor.lightGray
-                advertisedBeaconSwitch.isEnabled = false
+            nameTextField.isEnabled = true
+            navigationItem.setHidesBackButton(false, animated:true)
+            if canAdvertise() {
+                advertiseSwitch.isEnabled = true
+                advertiseLabel.textColor = UIColor.black
             } else {
+                advertiseSwitch.isEnabled = false
+                advertiseLabel.textColor = UIColor.lightGray
+            }
+            if supportedServicesCount == 0 {
                 advertiseSwitch.isOn = false
-                beaconLabel.textColor = UIColor.black
-                advertisedLabel.textColor = UIColor.black
-                advertisedServicesLabel.textColor = UIColor.black
+                advertisedServicesLabel.textColor = UIColor.lightGray
+            } else {
                 navigationItem.setHidesBackButton(false, animated:true)
-                nameTextField.isEnabled = true
-                if let advertisedBeacon = PeripheralStore.getAdvertisedBeacon(peripheral) {
-                    advertisedBeaconLabel.text = advertisedBeacon
-                    advertisedBeaconLabel.textColor = UIColor.black
-                    advertisedBeaconSwitch.isEnabled = true
-                } else {
-                    advertisedBeaconLabel.text = "None"
-                    advertisedBeaconLabel.textColor = UIColor.lightGray
-                    advertisedBeaconSwitch.isEnabled = false
-                }
+                advertiseSwitch.isOn = false
+                advertisedServicesLabel.textColor = UIColor.black
             }
         }
     }
@@ -252,20 +181,15 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
 
+    func canAdvertise() -> Bool {
+        return PeripheralStore.getPeripheralName() != nil && PeripheralStore.getSupportedPeripheralServices().count > 0
+    }
+
     // UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()
-        if let enteredName = self.nameTextField.text , !enteredName.isEmpty {
-            if let oldname = self.peripheral {
-                let services = PeripheralStore.getPeripheralServicesForPeripheral(oldname)
-                PeripheralStore.removePeripheral(oldname)
-                PeripheralStore.addPeripheralName(enteredName)
-                PeripheralStore.addPeripheralServices(enteredName, services:services)
-                self.peripheral = enteredName
-            } else {
-                self.peripheral = enteredName
-                PeripheralStore.addPeripheralName(enteredName)
-            }
+        if let enteredName = self.nameTextField.text, !enteredName.isEmpty {
+            PeripheralStore.setPeripheralName(enteredName)
         }
         self.setUIState()
         return true

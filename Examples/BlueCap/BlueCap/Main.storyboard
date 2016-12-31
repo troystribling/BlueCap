@@ -497,34 +497,6 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="" id="rr1-gZ-W7Z">
-                                <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="eVO-L6-T7V" detailTextLabel="dAO-KR-e1W" rowHeight="50" style="IBUITableViewCellStyleValue1" id="Uer-Fh-uew">
-                                        <rect key="frame" x="0.0" y="325" width="375" height="50"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Uer-Fh-uew" id="jyb-m9-4HW">
-                                            <rect key="frame" x="0.0" y="0.0" width="342" height="49.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Advertised" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eVO-L6-T7V">
-                                                    <rect key="frame" x="15" y="13" width="99.5" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="None" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dAO-KR-e1W">
-                                                    <rect key="frame" x="292.5" y="13" width="47.5" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="CAb-bN-tC0" id="dBc-vS-MAI"/>
@@ -533,9 +505,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Peripheral" id="fTN-xH-YDe"/>
                     <connections>
+                        <outlet property="advertiseLabel" destination="UZ2-WS-jHp" id="jco-aa-8m1"/>
                         <outlet property="advertiseSwitch" destination="b2G-oo-ufi" id="6nj-yr-nU7"/>
-                        <outlet property="advertisedBeaconLabel" destination="dAO-KR-e1W" id="Mex-Eb-85N"/>
-                        <outlet property="advertisedLabel" destination="eVO-L6-T7V" id="yXC-kL-eEe"/>
                         <outlet property="advertisedServicesCountLabel" destination="zOl-mR-A3m" id="gDP-PI-Hki"/>
                         <outlet property="advertisedServicesLabel" destination="Nl4-1O-xwR" id="eQY-aK-LBr"/>
                         <outlet property="nameTextField" destination="Tak-si-bkz" id="Uqr-VS-TnZ"/>
@@ -730,6 +701,15 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="iBeacon" id="G61-AK-TLz"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="advertiseLabel" destination="R37-Fz-DDn" id="I2B-mv-5Tr"/>
+                        <outlet property="advertiseSwitch" destination="yJq-5X-SXp" id="jJS-nX-3R5"/>
+                        <outlet property="generaUUIDBuuton" destination="do8-yq-sNT" id="hkX-W2-ZyW"/>
+                        <outlet property="majorTextField" destination="fIO-3W-Npr" id="5jV-yj-fpr"/>
+                        <outlet property="minorTextField" destination="yxG-Va-F6T" id="mB3-M6-xHI"/>
+                        <outlet property="nameTextField" destination="uo1-2k-mjG" id="306-DG-Jqu"/>
+                        <outlet property="uuidTextField" destination="vrh-sp-uYv" id="WOe-xL-CJV"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3e4-rf-tde" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -3622,7 +3602,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q0l-Of-Bdu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2479" y="5516"/>
+            <point key="canvasLocation" x="2394" y="5516"/>
         </scene>
         <!--Beacon Region-->
         <scene sceneID="kxH-qV-CMo">
@@ -3814,7 +3794,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="57e-Kk-F9l" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3301" y="5516"/>
+            <point key="canvasLocation" x="3302" y="5516"/>
         </scene>
         <!--Beacons-->
         <scene sceneID="qkx-gB-Z3A">
@@ -4545,7 +4525,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="bDK-NX-3mT" kind="show" id="I6L-6b-29F"/>
+                                            <segue destination="bDK-NX-3mT" kind="show" identifier="iBeaconSimulator" id="I6L-6b-29F"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>

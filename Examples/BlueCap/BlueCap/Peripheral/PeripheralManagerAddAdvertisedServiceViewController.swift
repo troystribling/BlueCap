@@ -15,17 +15,12 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         static let peripheralManagerAddAdverstisedServiceCell = "PeripheralManagerAddAdverstisedServiceCell"
     }
     
-    var peripheral: String?
     var peripheralManagerViewController : PeripheralManagerViewController?
 
 
     var services: [MutableService] {
-        if let peripheral = self.peripheral {
-            let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-            return Singletons.peripheralManager.services.filter{!serviceUUIDs.contains( $0.uuid) }
-        } else {
-            return []
-        }
+        let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServices()
+        return Singletons.peripheralManager.services.filter{!serviceUUIDs.contains( $0.uuid) }
     }
     
 
@@ -53,9 +48,10 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     
     func didEnterBackground() {
         Logger.debug()
-        if let peripheralManagerViewController = self.peripheralManagerViewController {
-            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
+        guard let peripheralManagerViewController = peripheralManagerViewController else {
+            return
         }
+        _ = navigationController?.popToViewController(peripheralManagerViewController, animated: false)
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -68,22 +64,17 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerAddAdverstisedServiceCell, for: indexPath) as! NameUUIDCell
-        if let _ = self.peripheral {
-            let service = self.services[indexPath.row]
-            cell.nameLabel.text = service.name
-            cell.uuidLabel.text = service.uuid.uuidString
-        } else {
-            cell.nameLabel.text = "Unknown"
-            cell.uuidLabel.text = "Unknown"
-        }
+        let service = services[indexPath.row]
+        cell.nameLabel.text = service.name
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let peripheral = self.peripheral {
-            let service = self.services[indexPath.row]
-            PeripheralStore.addAdvertisedPeripheralService(peripheral, service:service.uuid)
+        guard let peripheralManagerViewController = peripheralManagerViewController else {
+            return
         }
-        _ = self.navigationController?.popViewController(animated: true)
+        let service = services[indexPath.row]
+        PeripheralStore.addAdvertisedPeripheralService(service.uuid)
+        _ = navigationController?.popToViewController(peripheralManagerViewController, animated: false)
     }
 }

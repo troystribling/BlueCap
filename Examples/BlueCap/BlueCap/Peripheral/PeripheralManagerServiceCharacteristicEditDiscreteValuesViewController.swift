@@ -39,9 +39,10 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     func didEnterBackground() {
         Logger.debug()
-        if let peripheralManagerViewController = self.peripheralManagerViewController {
-            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
+        guard let peripheralManagerViewController = self.peripheralManagerViewController else {
+            return
         }
+        _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
     }
     
     // UITableViewDataSource
@@ -57,13 +58,11 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, for: indexPath) as UITableViewCell
         let stringValue = characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
-        if let valueName = self.characteristic.stringValue?.keys.first {
-            if let value = self.characteristic.stringValue?[valueName] {
-                if value == stringValue {
-                    cell.accessoryType = UITableViewCellAccessoryType.checkmark
-                } else {
-                    cell.accessoryType = UITableViewCellAccessoryType.none
-                }
+        if let valueName = self.characteristic.stringValue?.keys.first, let value = self.characteristic.stringValue?[valueName] {
+            if value == stringValue {
+                cell.accessoryType = UITableViewCellAccessoryType.checkmark
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryType.none
             }
         }
         return cell

@@ -12,12 +12,11 @@ import BlueCapKit
 
 class PeripheralManagerServicesViewController : UITableViewController {
     
-    var peripheral                      : String?
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    var peripheralManagerViewController: PeripheralManagerViewController?
     
     struct MainStoryboard {
-        static let peripheralManagerServiceCell                 = "PeripheralManagerServiceCell"
-        static let peripheralManagerServiceProfilesSegue        = "PeripheralManagerServiceProfiles"
+        static let peripheralManagerServiceCell = "PeripheralManagerServiceCell"
+        static let peripheralManagerServiceProfilesSegue = "PeripheralManagerServiceProfiles"
         static let peripheralManagerServiceCharacteristicsSegue = "PeripheralManagerServiceCharacteristics"
     }
     
@@ -49,7 +48,6 @@ class PeripheralManagerServicesViewController : UITableViewController {
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
             let viewController = segue.destination as! PeripheralManagerServiceProfilesViewController
-            viewController.peripheral = self.peripheral
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
             }
@@ -98,13 +96,11 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
         if editingStyle == UITableViewCellEditingStyle.delete {
-            if let peripheral = self.peripheral {
-                let service = Singletons.peripheralManager.services[indexPath.row]
-                Singletons.peripheralManager.remove(service)
-                PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.uuid)
-                PeripheralStore.removePeripheralService(peripheral, service: service.uuid)
-                self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
-            }
+            let service = Singletons.peripheralManager.services[indexPath.row]
+            Singletons.peripheralManager.remove(service)
+            PeripheralStore.removeAdvertisedPeripheralService(service.uuid)
+            PeripheralStore.removeSupportedPeripheralService(service.uuid)
+            self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
         }
     }
 

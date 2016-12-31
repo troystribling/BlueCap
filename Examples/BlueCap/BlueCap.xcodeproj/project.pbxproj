@@ -27,7 +27,6 @@
 		055A5A4F1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055A5A4E1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift */; };
 		056B7C7519DE4E52001B7F95 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 056B7C7419DE4E52001B7F95 /* Main.storyboard */; };
 		056B7C7719DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */; };
-		056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */; };
 		056E3B231D29843C002316FC /* DefaultConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 056E3B221D29843C002316FC /* DefaultConfiguration.plist */; };
 		057E6ABB1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */; };
 		05840F65194206F100C744E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05840F64194206F100C744E6 /* AppDelegate.swift */; };
@@ -45,7 +44,6 @@
 		05B45BF719A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */; };
 		05B45BF819A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */; };
 		05B45BF919A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */; };
-		05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */; };
 		05B45BFB19A78BA2009DAF6D /* PeripheralManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */; };
 		05B45BFE19A78C53009DAF6D /* ServiceProfilesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */; };
 		05B45C0219A78C6B009DAF6D /* PeripheralStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */; };
@@ -111,7 +109,6 @@
 		055A5A4E1DA1C32A00891DF8 /* ConfigureMaximumPeripheralsConnected.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigureMaximumPeripheralsConnected.swift; sourceTree = "<group>"; };
 		056B7C7419DE4E52001B7F95 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerAddAdvertisedServiceViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBeaconCell.swift; sourceTree = "<group>"; };
 		056E3B221D29843C002316FC /* DefaultConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultConfiguration.plist; sourceTree = "<group>"; };
 		057E6ABA1968BA28009938F4 /* PeripheralServiceCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralServiceCharacteristicValuesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		05840F5F194206F100C744E6 /* BlueCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlueCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,7 +128,6 @@
 		05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServiceProfilesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServicesCharacteristicValuesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerServicesViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralManagersViewController.swift; sourceTree = "<group>"; };
 		05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralManagerViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		05B45BFD19A78C53009DAF6D /* ServiceProfilesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceProfilesTableViewController.swift; sourceTree = "<group>"; };
 		05B45BFF19A78C6B009DAF6D /* PeripheralStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PeripheralStore.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -306,7 +302,6 @@
 			children = (
 				056B7C7619DE5E18001B7F95 /* PeripheralManagerAddAdvertisedServiceViewController.swift */,
 				05B8831019DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift */,
-				056B7C7919E062A9001B7F95 /* PeripheralManagerBeaconCell.swift */,
 				0530B62A19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift */,
 				05B45BE919A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.swift */,
 				05B45BEA19A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift */,
@@ -315,7 +310,6 @@
 				05B45BED19A78BA2009DAF6D /* PeripheralManagerServiceProfilesViewController.swift */,
 				05B45BEE19A78BA2009DAF6D /* PeripheralManagerServicesCharacteristicValuesViewController.swift */,
 				05B45BEF19A78BA2009DAF6D /* PeripheralManagerServicesViewController.swift */,
-				05B45BF019A78BA2009DAF6D /* PeripheralManagersViewController.swift */,
 				05B45BF119A78BA2009DAF6D /* PeripheralManagerViewController.swift */,
 				05B45BE819A78BA2009DAF6D /* SimpleCell.swift */,
 			);
@@ -470,7 +464,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				05B45BF419A78BA2009DAF6D /* PeripheralManagerServiceCharacteristicEditValueViewController.swift in Sources */,
-				056B7C7A19E062A9001B7F95 /* PeripheralManagerBeaconCell.swift in Sources */,
 				05B8831119DE4A7D00F34FF0 /* PeripheralManagerAdvertisedServicesViewController.swift in Sources */,
 				05B6F07F19591AE300D798CB /* PeripheralServiceCharacteristicViewController.swift in Sources */,
 				054C7C9D1BD40F0300A143B4 /* PeripheralAdvertisementsServicesViewController.swift in Sources */,
@@ -526,7 +519,6 @@
 				052A1EBF1C78CEDA00FBB45B /* ConfigureMaximumPeripheralsDiscovered.swift in Sources */,
 				05B48B5619C9B69400800327 /* BeaconRegionCell.swift in Sources */,
 				054C7C9F1BD4144A00A143B4 /* PeripheralAdvertisementsServiceDataViewController.swift in Sources */,
-				05B45BFA19A78BA2009DAF6D /* PeripheralManagersViewController.swift in Sources */,
 				052A1EB91C74D13C00FBB45B /* CharacteristicValueCell.swift in Sources */,
 				0530B62B19D8F7F800F366B6 /* PeripheralManagerBeaconViewController.swift in Sources */,
 				05B45C0319A78C6B009DAF6D /* ProgressView.swift in Sources */,

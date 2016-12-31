@@ -13,7 +13,6 @@ import CoreBluetooth
 class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewController {
    
     var progressView: ProgressView!
-    var peripheral: String?
     var peripheralManagerViewController: PeripheralManagerViewController?
 
     
@@ -61,9 +60,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             self.progressView.show()
             let future = Singletons.peripheralManager.add(service)
             future.onSuccess {
-                if let peripheral = self.peripheral {
-                    PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
-                }
+                PeripheralStore.addSupportedPeripheralService(service.uuid)
                 _ = self.navigationController?.popViewController(animated: true)
                 _ = self.progressView.remove()
             }
