@@ -123,6 +123,9 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
 
     func loadPeripheralServicesFromConfig() {
         let serviceUUIDs = PeripheralStore.getSupportedPeripheralServices()
+        guard serviceUUIDs.count > 0 else {
+            return
+        }
         let services = serviceUUIDs.reduce([MutableService]()){ services, uuid in
             if let serviceProfile = Singletons.profileManager.services[uuid] {
                 let service = MutableService(profile: serviceProfile)

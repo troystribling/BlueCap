@@ -27,7 +27,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     fileprivate var afterStateChangedPromise: StreamPromise<ManagerState>?
     fileprivate var afterStateRestoredPromise: Promise<(services: [MutableService], advertisements: PeripheralAdvertisements)>?
-    fileprivate var afterSeriviceAddPromise: Promise<Void>?
+    fileprivate var afterServiceAddPromises = [CBUUID : Promise<Void>]()
 
     fileprivate var configuredServices  = [CBUUID : MutableService]()
     fileprivate var configuredCharcteristics = [CBUUID : MutableCharacteristic]()
@@ -108,7 +108,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 strongSelf.afterBeaconAdvertisingStartedPromise = nil
                 strongSelf.afterStateChangedPromise = nil
                 strongSelf.afterStateRestoredPromise = nil
-                strongSelf.afterSeriviceAddPromise = nil
+                strongSelf.afterServiceAddPromises.removeAll()
             }
         }
         reset()
@@ -179,16 +179,14 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     public func add(_ service: MutableService) -> Future<Void> {
         return self.peripheralQueue.sync {
-            if let afterSeriviceAddPromise = self.afterSeriviceAddPromise, !afterSeriviceAddPromise.completed {
-                return afterSeriviceAddPromise.future
-            }
             Logger.debug("service name=\(service.name), uuid=\(service.uuid)")
             service.peripheralManager = self
             self.addConfiguredCharacteristics(service.characteristics)
-            self.afterSeriviceAddPromise = Promise<Void>()
+            let afterSeriviceAddPromise = Promise<Void>()
             self.configuredServices[service.uuid] = service
+            self.afterServiceAddPromises[service.uuid] = afterSeriviceAddPromise
             self.cbPeripheralManager.add(service.cbMutableService)
-            return self.afterSeriviceAddPromise!.future
+            return afterSeriviceAddPromise.future
         }
     }
     
@@ -360,14 +358,19 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     func didAddService(_ service: CBServiceInjectable, error: Error?) {
+        guard let afterServiceAddPromise = afterServiceAddPromises[service.uuid] else {
+            Logger.debug("afterServiceAddPromise not found with UIID: \(service.uuid)")
+            return
+        }
         if let error = error {
             Logger.debug("failed '\(error.localizedDescription)'")
             self.configuredServices.removeValue(forKey: service.uuid)
-            self.afterSeriviceAddPromise?.failure(error)
+            afterServiceAddPromise.failure(error)
         } else {
             Logger.debug("success")
-            self.afterSeriviceAddPromise?.success()
+            afterServiceAddPromise.success()
         }
+        afterServiceAddPromises.removeValue(forKey: service.uuid)
     }
 
     func willRestoreState(_ cbServices: [CBMutableServiceInjectable]?, advertisements: [String: Any]?) {
