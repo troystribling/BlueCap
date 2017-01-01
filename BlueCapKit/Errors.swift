@@ -59,6 +59,7 @@ public enum PeripheralError : Swift.Error, LocalizedError {
 public enum PeripheralManagerError : Swift.Error, LocalizedError {
     case isAdvertising
     case restoreFailed
+    case stopAdvertisingTimeout
 
     public var errorDescription: String? {
         switch self {
@@ -66,7 +67,10 @@ public enum PeripheralManagerError : Swift.Error, LocalizedError {
             return NSLocalizedString("PeripheralManager is advertising.", comment: "PeripheralManagerError.isAdvertising")
         case .restoreFailed:
             return NSLocalizedString("PeripheralManager state restoration failed.", comment: "PeripheralManagerError.restoreFailed")
+        case .stopAdvertisingTimeout:
+            return NSLocalizedString("PeripheralManager stopAdvertising timeout.", comment: "PeripheralManagerError.stopAdvertisingTimout")
         }
+
     }
 }
 

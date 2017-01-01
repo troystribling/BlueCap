@@ -50,20 +50,28 @@ class PeripheralManagerServiceCharacteristicEditValueViewController: UIViewContr
     
     // UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
-        if let newValue = self.valueTextField.text,
-            let valueName = self.valueName,
-            let characteristic = self.characteristic  , !valueName.isEmpty {
-            if var values = characteristic.stringValue {
-                values[valueName] = newValue
-                do {
-                    try characteristic.update(withString: values)
-                    _ = self.navigationController?.popViewController(animated: true)
-                } catch let error {
-                    present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
-                        _ = self?.navigationController?.popViewController(animated: true)
-                    }
+        guard let newValue = self.valueTextField.text, let valueName = self.valueName else {
+            return true
+        }
+        guard let characteristic = self.characteristic, !valueName.isEmpty  else {
+            return true
+        }
+        guard var stringValues = characteristic.stringValue else {
+            return true
+        }
+        stringValues[valueName] = newValue
+        if characteristic.canNotify {
+            do {
+                try characteristic.update(withString: stringValues)
+                _ = self.navigationController?.popViewController(animated: true)
+            } catch let error {
+                present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
+                    _ = self?.navigationController?.popViewController(animated: true)
                 }
             }
+        } else {
+            characteristic.value = characteristic.data(fromString: stringValues)
+            _ = self.navigationController?.popViewController(animated: true)
         }
         return true
     }

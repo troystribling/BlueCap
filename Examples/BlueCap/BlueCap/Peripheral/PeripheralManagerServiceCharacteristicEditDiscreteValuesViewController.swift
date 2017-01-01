@@ -70,18 +70,22 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     // UITableViewDelegate
     override func tableView(_ tableView:UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let characteristic = self.characteristic {
-            if let valueName = self.characteristic.stringValue?.keys.first {
-                let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
-                do {
-                    try characteristic.update(withString: stringValue)
-                    _ = self.navigationController?.popViewController(animated: true)
-                } catch let error {
-                    present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
-                        _ = self?.navigationController?.popViewController(animated: true)
-                    }
+        guard let characteristic = self.characteristic, let valueName = characteristic.stringValue?.keys.first else {
+            return
+        }
+        let stringValue = [valueName : characteristic.stringValues[indexPath.row]]
+        if characteristic.canNotify {
+            do {
+                try characteristic.update(withString: stringValue)
+                _ = self.navigationController?.popViewController(animated: true)
+            } catch let error {
+                present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
+                    _ = self?.navigationController?.popViewController(animated: true)
                 }
             }
+        } else {
+            characteristic.value = characteristic.data(fromString: stringValue)
+            _ = self.navigationController?.popViewController(animated: true)
         }
     }
     

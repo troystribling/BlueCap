@@ -32,24 +32,50 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
         nameTextField.text = PeripheralStore.getPeripheralName()
-        Singletons.peripheralManager.whenStateChanges().onSuccess { [weak self] state in
-            self.forEach { strongSelf in
-                switch state {
-                case .poweredOn:
-                    strongSelf.setPeripheralManagerServices()
-                case .poweredOff, .unauthorized:
-                    strongSelf.alert(message: "PeripheralManager state \"\(state)\"")
-                case .resetting:
-                    strongSelf.alert(message:
-                        "PeripheralManager state \"\(state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising.")
-                case .unknown:
-                    break
-                case .unsupported:
-                    strongSelf.alert(message: "PeripheralManager state \"\(state)\". Bluetooth not supported.")
-                }
+        let addServicesFuture = Singletons.peripheralManager.whenStateChanges().flatMap { [unowned self] state -> Future<[Void]> in
+            switch state {
+            case .poweredOn:
+                Singletons.peripheralManager.removeAllServices()
+                return self.loadPeripheralServicesFromConfig()
+            case .poweredOff:
+                throw AppError.poweredOff
+            case .unauthorized:
+                throw AppError.unauthorized
+            case .unknown:
+                throw AppError.unknown
+            case .unsupported:
+                throw AppError.unsupported
+            case .resetting:
+                throw AppError.resetting
             }
         }
-        self.setUIState()
+
+        addServicesFuture.onSuccess { [weak self] _ in
+            self?.setUIState()
+        }
+
+        addServicesFuture.onFailure { [weak self] error in
+            switch error {
+            case AppError.poweredOff:
+                self?.present(UIAlertController.alert(message: "PeripheralManager powered off.") { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true)
+            case AppError.resetting:
+                let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
+                self?.present(UIAlertController.alert(message: message) { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true)
+            case AppError.unsupported:
+                self?.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+            case AppError.unknown:
+                break;
+            default:
+                self?.present(UIAlertController.alert(error: error) { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true, completion: nil)
+            }
+            self?.setUIState()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -87,45 +113,75 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
 
     @IBAction func toggleAdvertise(_ sender:AnyObject) {
         if Singletons.peripheralManager.isAdvertising {
-            Singletons.peripheralManager.stopAdvertising()
-            self.setUIState()
+            let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
+            stopAdvertisingFuture.onSuccess { [weak self] in
+                self?.setUIState()
+            }
+            stopAdvertisingFuture.onFailure { [weak self] _ in
+                self?.present(UIAlertController.alert(message: "Failed to stop advertising."), animated: true)
+            }
             return
         }
         guard let name = PeripheralStore.getPeripheralName() else {
             return
         }
-        func afterAdvertisingStarted() {
-            self.setUIState()
+        let startAdvertiseFuture = Singletons.peripheralManager.whenStateChanges().flatMap { [unowned self] state -> Future<[Void]> in
+            switch state {
+            case .poweredOn:
+                Singletons.peripheralManager.removeAllServices()
+                return self.loadPeripheralServicesFromConfig()
+            case .poweredOff:
+                throw AppError.poweredOff
+            case .unauthorized:
+                throw AppError.unauthorized
+            case .unknown:
+                throw AppError.unknown
+            case .unsupported:
+                throw AppError.unsupported
+            case .resetting:
+                throw AppError.resetting
+            }
+        }.flatMap { _ -> Future<Void> in
+            let advertisedServices = PeripheralStore.getAdvertisedPeripheralServices()
+            if advertisedServices.count > 0 {
+                return Singletons.peripheralManager.startAdvertising(name, uuids: advertisedServices)
+            } else {
+                return Singletons.peripheralManager.startAdvertising(name)
+            }
         }
-        func afterAdvertisingStartFailed(_ error: Swift.Error) {
-            self.setUIState()
-            self.present(UIAlertController.alert(title: "Peripheral Advertise Error", error: error), animated: true, completion: nil)
+
+        startAdvertiseFuture.onSuccess { [weak self] in
+            self?.setUIState()
+            self?.present(UIAlertController.alert(message: "Powered on and started advertising."), animated: true, completion: nil)
         }
-        let advertisedServices = PeripheralStore.getAdvertisedPeripheralServices()
-        if advertisedServices.count > 0 {
-            let future = Singletons.peripheralManager.startAdvertising(name, uuids: advertisedServices)
-            future.onSuccess(completion: afterAdvertisingStarted)
-            future.onFailure(completion: afterAdvertisingStartFailed)
-        } else {
-            let future = Singletons.peripheralManager.startAdvertising(name)
-            future.onSuccess(completion: afterAdvertisingStarted)
-            future.onFailure(completion: afterAdvertisingStartFailed)
+
+        startAdvertiseFuture.onFailure { [weak self] error in
+            switch error {
+            case AppError.poweredOff:
+                self?.present(UIAlertController.alert(message: "PeripheralManager powered off.") { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true)
+            case AppError.resetting:
+                let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
+                self?.present(UIAlertController.alert(message: message) { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true)
+            case AppError.unsupported:
+                self?.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+            case AppError.unknown:
+                break;
+            default:
+                self?.present(UIAlertController.alert(error: error) { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true, completion: nil)
+            }
+            self?.setUIState()
+            _ = Singletons.peripheralManager.stopAdvertising()
         }
     }
 
-    func setPeripheralManagerServices() {
-        guard !Singletons.peripheralManager.isAdvertising else {
-            return
-        }
-        Singletons.peripheralManager.removeAllServices()
-        self.loadPeripheralServicesFromConfig()
-    }
-
-    func loadPeripheralServicesFromConfig() {
+    func loadPeripheralServicesFromConfig() -> Future<[Void]> {
         let serviceUUIDs = PeripheralStore.getSupportedPeripheralServices()
-        guard serviceUUIDs.count > 0 else {
-            return
-        }
         let services = serviceUUIDs.reduce([MutableService]()){ services, uuid in
             if let serviceProfile = Singletons.profileManager.services[uuid] {
                 let service = MutableService(profile: serviceProfile)
@@ -135,14 +191,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 return services
             }
         }
-        let future = services.map { Singletons.peripheralManager.add($0) }.sequence()
-        future.onSuccess { _ in
-            self.setUIState()
-        }
-        future.onFailure { [weak self] error in
-            self?.setUIState()
-            self?.present(UIAlertController.alert(title: "Add Services Error", error:error), animated:true, completion:nil)
-        }
+        return services.map { Singletons.peripheralManager.add($0) }.sequence()
     }
 
     func setUIState() {

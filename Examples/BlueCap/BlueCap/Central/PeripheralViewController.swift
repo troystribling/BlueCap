@@ -235,7 +235,9 @@ class PeripheralViewController : UITableViewController {
         peripheralDiscoveryFuture.onFailure { [weak self] (error) in
             self.forEach { strongSelf in
                 strongSelf.progressView.remove().onSuccess {
-                    strongSelf.present(UIAlertController.alert(title: "Peripheral discovery error", error: error), animated: true)
+                    strongSelf.present(UIAlertController.alert(title: "Peripheral discovery error", error: error) { _ in
+                        _ = strongSelf.navigationController?.popToRootViewController(animated: true)
+                    }, animated: true)
                 }
                 Logger.debug("Service discovery failed")
             }

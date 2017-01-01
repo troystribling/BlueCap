@@ -147,7 +147,7 @@ After `Services` and `Characteristics` have been added the `PeripheralManager` i
 public func startAdvertising(_ name: String, uuids: [CBUUID]? = nil) -> Future<Void>
 
 // stop advertising
-public func stopAdvertising()
+public func stopAdvertising(timeout: TimeInterval = 10.0) -> Future<Void>
 ```
 
 A `PeripheralManager` application can start advertising after `MutableServices` and `MutableCharacteristics` are added,
@@ -265,7 +265,7 @@ characteristic.stopProcessingWriteRequests()
 public func startAdvertising(_ region: BeaconRegion) -> Future<Void>
 
 // stop advertising
-public func stopAdvertising() -> Future<Void>
+public func stopAdvertising(timeout: TimeInterval = 10.0) -> Future<Void>
 ```
 
 Creation of a [FutureLocation](https://github.com/troystribling/FutureLocation) `BeaconRegion` is also required,
@@ -337,7 +337,7 @@ startAdvertiseFuture.onFailure { error in
     default:
         manager.reset()
     }
-    manager.stopAdvertising()
+    _ = manager.stopAdvertising()
 }
 ```
 
@@ -361,6 +361,8 @@ public enum PeripheralManagerError : Swift.Error {
     case isAdvertising
 	  // Thrown is state restoration fails    
     case restoreFailed
+    // Thrown if the stop advertising timeout is exceeded
+    case stopAdvertisingTimeout
 }
 
 public enum MutableCharacteristicError : Swift.Error {

@@ -30,7 +30,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     let centralQueue: Queue
     fileprivate(set) var cbCentralManager: CBCentralManagerInjectable!
 
-    fileprivate var scanTimeSequence = 0
+    fileprivate var scanTimeoutSequence = 0
 
     public var discoveredPeripherals : [UUID : Peripheral] {
         return self._discoveredPeripherals
@@ -170,7 +170,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
                 if self.poweredOn {
                     self.cbCentralManager.scanForPeripherals(withServices: uuids, options: options)
-                    self.timeScan(timeout, sequence: self.scanTimeSequence)
+                    self.timeoutScan(timeout, sequence: self.scanTimeoutSequence)
                 } else {
                     self.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.isPoweredOff)
                 }
@@ -196,7 +196,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         afterPeripheralDiscoveredPromise = nil
     }
 
-    fileprivate func timeScan(_ timeout: TimeInterval, sequence: Int) {
+    fileprivate func timeoutScan(_ timeout: TimeInterval, sequence: Int) {
         guard timeout < TimeInterval.infinity else {
             return
         }
@@ -204,7 +204,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         centralQueue.delay(timeout) { [weak self] in
             self.forEach { strongSelf in
                 if strongSelf._isScanning {
-                    if sequence == strongSelf.scanTimeSequence {
+                    if sequence == strongSelf.scanTimeoutSequence {
                         strongSelf.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.serviceScanTimeout)
                     }
                     strongSelf.stopScanningIfScanning()

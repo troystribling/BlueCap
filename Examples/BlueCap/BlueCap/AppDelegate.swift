@@ -20,6 +20,11 @@ enum AppError : Error, LocalizedError {
     case outOfRegion
     case unknownRegionStatus
     case unlikelyFailure
+    case resetting
+    case poweredOff
+    case unsupported
+    case unknown
+    case unauthorized
 
     public var errorDescription: String? {
         switch self {
@@ -31,6 +36,16 @@ enum AppError : Error, LocalizedError {
             return NSLocalizedString("Unknown region state.", comment: "AppError.unknownRegionStatus")
         case .unlikelyFailure:
             return NSLocalizedString("Unlikely failure.", comment: "AppError.unlikelyFailure")
+        case .resetting:
+            return NSLocalizedString("CoreBluetooth resetting.", comment: "AppError.resetting")
+        case .poweredOff:
+            return NSLocalizedString("Bluetooth powered off.", comment: "AppError.poweredOff")
+        case .unsupported:
+            return NSLocalizedString("Bluetooth not supported.", comment: "AppError.unsupported")
+        case .unknown:
+            return NSLocalizedString("Bluetooth state unkown.", comment: "AppError.unkown")
+        case .unauthorized:
+            return NSLocalizedString("Bluetooth state unauthorized.", comment: "AppError.unauthorized")
         }
     }
 

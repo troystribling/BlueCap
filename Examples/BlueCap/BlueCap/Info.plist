@@ -23,11 +23,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Peripheral and application development</string>
+	<string>Peripheral Simulation</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Required for iBeacon ranging.</string>
+	<string>iBeacon ranging.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Required for iBeacon ranging.</string>
+	<string>iBeacon ranging.</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<false/>
 	<key>UIBackgroundModes</key>

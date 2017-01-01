@@ -36,24 +36,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Singletons.peripheralManager.whenStateChanges().onSuccess { [weak self] state in
-            self.forEach { strongSelf in
-                switch state {
-                case .poweredOn:
-                    break
-                case .poweredOff, .unauthorized:
-                    strongSelf.alert(message: "PeripheralManager state \"\(state)\"")
-                case .resetting:
-                    strongSelf.alert(message:
-                        "PeripheralManager state \"\(state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising.")
-                case .unknown:
-                    break
-                case .unsupported:
-                    strongSelf.alert(message: "PeripheralManager state \"\(state)\". Bluetooth not supported.")
-                }
-            }
-        }
-        self.setUIState()
+        setUIState()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -68,15 +51,11 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     // UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        return self.addBeacon()
-    }
-    
-    func addBeacon() -> Bool {
         if let enteredUUID = self.uuidTextField.text, !enteredUUID.isEmpty {
             if let uuid = UUID(uuidString:enteredUUID) {
                 PeripheralStore.setBeaconUUID(uuid)
             } else {
-                self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is invalid."), animated:true, completion:nil)
                 return false
             }
         }
@@ -87,34 +66,75 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             if let minor = UInt16(enteredMinor), let major = UInt16(enteredMajor), minor <= 65535, major <= 65535 {
                 PeripheralStore.setBeaconMinorMajor([minor, major])
             } else {
-                self.present(UIAlertController.alertOnErrorWithMessage("major or minor not convertable to a number"), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnErrorWithMessage("major or minor not convertable to a number."), animated:true, completion:nil)
                 return false
             }
         }
+        setUIState()
         return true
     }
 
     @IBAction func toggleAdvertise(_ sender:AnyObject) {
         if Singletons.peripheralManager.isAdvertising {
-            Singletons.peripheralManager.stopAdvertising()
-            self.setUIState()
+            let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
+            stopAdvertisingFuture.onSuccess { [weak self] in
+                self?.setUIState()
+            }
+            stopAdvertisingFuture.onFailure { [weak self] _ in
+                self?.present(UIAlertController.alert(message: "Failed to stop advertising."), animated: true)
+            }
             return
-        }
-        func afterAdvertisingStarted() {
-            self.setUIState()
-        }
-        func afterAdvertisingStartFailed(_ error: Swift.Error) {
-            self.setUIState()
-            self.present(UIAlertController.alert(title: "Peripheral Advertise Error", error: error), animated: true, completion: nil)
         }
         let beaconMinorMajor = PeripheralStore.getBeaconMinorMajor()
         if let uuid = PeripheralStore.getBeaconUUID(), let name = PeripheralStore.getBeaconName(), beaconMinorMajor.count == 2 {
             let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconMinorMajor[1], minor: beaconMinorMajor[0])
-            let future = Singletons.peripheralManager.startAdvertising(beaconRegion)
-            future.onSuccess(completion: afterAdvertisingStarted)
-            future.onFailure(completion: afterAdvertisingStartFailed)
+            let startAdvertiseFuture = Singletons.peripheralManager.whenStateChanges().flatMap { state -> Future<Void> in
+                switch state {
+                case .poweredOn:
+                    return Singletons.peripheralManager.startAdvertising(beaconRegion)
+                case .poweredOff:
+                    throw AppError.poweredOff
+                case .unauthorized:
+                    throw AppError.unauthorized
+                case .unknown:
+                    throw AppError.unknown
+                case .unsupported:
+                    throw AppError.unsupported
+                case .resetting:
+                    throw AppError.resetting
+                }
+            }
+
+            startAdvertiseFuture.onSuccess { [weak self] in
+                self?.setUIState()
+                self?.present(UIAlertController.alert(message: "Powered on and started advertising."), animated: true, completion: nil)
+            }
+
+            startAdvertiseFuture.onFailure { [weak self] error in
+                switch error {
+                case AppError.poweredOff:
+                    self?.present(UIAlertController.alert(message: "PeripheralManager powered off.") { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true)
+                case AppError.resetting:
+                    let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
+                    self?.present(UIAlertController.alert(message: message) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true)
+                case AppError.unsupported:
+                    self?.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+                case AppError.unknown:
+                    break
+                default:
+                    self?.present(UIAlertController.alert(error: error) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true, completion: nil)
+                }
+                self?.setUIState()
+                _ = Singletons.peripheralManager.stopAdvertising()
+            }
         } else {
-            self.present(UIAlertController.alert(message: "iBeacon config is invalid"), animated: true, completion: nil)
+            present(UIAlertController.alert(message: "iBeacon config is invalid."), animated: true, completion: nil)
         }
     }
 
@@ -134,7 +154,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             uuidTextField.isEnabled = true
             majorTextField.isEnabled = true
             minorTextField.isEnabled = true
-            generaUUIDBuuton.isEnabled = false
+            generaUUIDBuuton.isEnabled = true
             if canAdvertise() {
                 advertiseSwitch.isEnabled = true
                 advertiseLabel.textColor = UIColor.black
@@ -147,13 +167,5 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
 
     func canAdvertise() -> Bool {
         return PeripheralStore.getBeaconUUID() != nil && PeripheralStore.getBeaconName() != nil && PeripheralStore.getBeaconMinorMajor().count == 2
-    }
-
-    func alert(message: String) {
-        present(UIAlertController.alert(message: message), animated:true) { [weak self] _ in
-            self.forEach { strongSelf in
-                Singletons.peripheralManager.reset()
-            }
-        }
     }
 }

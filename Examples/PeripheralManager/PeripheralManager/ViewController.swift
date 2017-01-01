@@ -92,7 +92,7 @@ class ViewController: UITableViewController {
     @IBAction func toggleAdvertise(_ sender: AnyObject) {
         if manager.isAdvertising {
             accelerometerUpdatePeriodCharacteristic.stopRespondingToWriteRequests()
-            manager.stopAdvertising()
+            _ = manager.stopAdvertising()
         } else {
             startAdvertising()
         }
@@ -115,9 +115,9 @@ class ViewController: UITableViewController {
             case .resetting:
                 throw AppError.resetting
             }
-}.flatMap { [unowned self] _ -> Future<Void> in
-    self.manager.startAdvertising(TiSensorTag.AccelerometerService.name, uuids: [uuid])
-}
+        }.flatMap { [unowned self] _ -> Future<Void> in
+            self.manager.startAdvertising(TiSensorTag.AccelerometerService.name, uuids: [uuid])
+        }
 
         startAdvertiseFuture.onSuccess { [unowned self] in
             self.enableAdvertising()
@@ -146,7 +146,7 @@ class ViewController: UITableViewController {
                     self.manager.reset()
                 }, animated: true, completion: nil)
             }
-            self.manager.stopAdvertising()
+            _ = self.manager.stopAdvertising()
             if self.accelerometer.accelerometerActive {
                 self.accelerometer.stopAccelerometerUpdates()
                 self.enabledSwitch.isOn = false

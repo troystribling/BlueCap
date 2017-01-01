@@ -33,9 +33,7 @@ public class MutableCharacteristic : NSObject {
 
     public var value: Data? {
         get {
-            return peripheralQueue?.sync {
-                return self._value
-            }
+            return peripheralQueue?.sync { return self._value }
         }
         set {
             peripheralQueue?.sync { self._value = newValue }
@@ -88,7 +86,7 @@ public class MutableCharacteristic : NSObject {
         }
     }
 
-    open var canNotify : Bool {
+    public var canNotify : Bool {
         return self.propertyEnabled(.notify)                    ||
                self.propertyEnabled(.indicate)                  ||
                self.propertyEnabled(.notifyEncryptionRequired)  ||

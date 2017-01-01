@@ -546,6 +546,7 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="yJq-5X-SXp">
                                                     <rect key="frame" x="306" y="9" width="51" height="31"/>
                                                     <connections>
+                                                        <action selector="toggleAdvertise:" destination="bDK-NX-3mT" eventType="primaryActionTriggered" id="0Qg-nw-gZP"/>
                                                         <action selector="toggleAdvertise:" destination="CAb-bN-tC0" eventType="valueChanged" id="dbF-Pr-fJb"/>
                                                     </connections>
                                                 </switch>
