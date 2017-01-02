@@ -31,9 +31,18 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         super.init(coder:aDecoder)
     }
 
+    var characteristic: Characteristic? {
+        guard  let characteristicUUID = characteristicUUID,
+            let peripheral = peripheral,
+            let characteristic = peripheral.characteristic(characteristicUUID) else {
+                return nil
+        }
+        return characteristic
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard  let characteristic = characteristic, peripheral != nil, connectionFuture != nil else {
+        guard  let characteristic = characteristic else {
             _ = self.navigationController?.popViewController(animated: true)
             return
         }
@@ -44,41 +53,44 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func viewDidAppear(_ animated:Bool)  {
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard  let connectionFuture = connectionFuture, let peripheral = peripheral, characteristic != nil else {
-            _ = navigationController?.popViewController(animated: true)
-            return
+        guard  let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
+            let peripheral = peripheral,
+            characteristic != nil,
+            peripheral.state == .connected else {
+                _ = navigationController?.popViewController(animated: true)
+                return
         }
+        
+        peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
+            self?.updateWhenActive()
+        }
+        peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error in
+            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+            self?.updateWhenActive()
+        }
+        
         updateValues()
-        recieveNotificationsIfEnabled()
-        if peripheral.state == .connected {
-            connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
-                self?.updateWhenActive()
-            }
-            connectionFuture.onFailure { [weak self] error in
-                self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-                self?.updateWhenActive()
-            }
-        }
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
         stopReceivingNotificationIfNotifying()
-        _ = connectionFuture?.cancel(cancelToken)
+        _ = peripheralDiscoveryFuture?.cancel(cancelToken)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-            viewController.characteristic = characteristic
+            viewController.characteristicUUID = characteristicUUID
             viewController.peripheral = peripheral
-            viewController.connectionFuture = connectionFuture
+            viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-            viewController.characteristic = characteristic
+            viewController.characteristicUUID = characteristicUUID
             viewController.peripheral = peripheral
-            viewController.connectionFuture = connectionFuture
+            viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
             if let stringValues = self.characteristic?.stringValue {
                 let selectedIndex = sender as! IndexPath
                 let names = Array(stringValues.keys)
@@ -88,22 +100,35 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     @IBAction func updateValues() {
-        guard  let characteristic = characteristic, let peripheral = peripheral, characteristic.propertyEnabled(.read), connectionFuture != nil, peripheral.state == .connected else {
+        guard  let characteristic = characteristic,
+            let peripheral = peripheral,
+            let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
+            characteristic.canRead,
+            peripheral.state == .connected else {
             return
         }
 
         progressView.show()
-        let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout())).flatMap { [weak self] _ -> Future<Void> in
+        
+        let readFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Characteristic> in
             guard let strongSelf = self else {
                 throw AppError.unlikelyFailure
             }
-            return strongSelf.progressView.remove()
+            guard let characteristic = strongSelf.characteristic else {
+                throw AppError.characteristicNotFound
+            }
+            return characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+            }.flatMap { [weak self] _ -> Future<Void> in
+                guard let strongSelf = self else {
+                    throw AppError.unlikelyFailure
+                }
+                return strongSelf.progressView.remove()
         }
-
+        
         readFuture.onSuccess { [weak self] _ in
             self?.updateWhenActive()
         }
-
+        
         readFuture.onFailure { [weak self] error in
             self?.progressView.remove().onSuccess {
                 self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { [weak self] _ in
@@ -112,19 +137,42 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 }, animated:true, completion:nil)
             }
         }
+        
     }
 
     func recieveNotificationsIfEnabled() {
-        guard  let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, characteristic.isNotifying, peripheral.state == .connected else {
+        guard  let characteristic = characteristic,
+            let peripheral = peripheral,
+            let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
+            characteristic.isNotifying,
+            peripheral.state == .connected else {
             return
         }
-        characteristic.receiveNotificationUpdates().onSuccess { [weak self] _ in
+        
+        let resvieveNotificationUpdatesFutureStream = peripheralDiscoveryFuture.flatMap { [weak self] _ -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+            guard let strongSelf = self else {
+                throw AppError.unlikelyFailure
+            }
+            guard let characteristic = strongSelf.characteristic else {
+                throw AppError.characteristicNotFound
+            }
+            return characteristic.receiveNotificationUpdates()
+        }
+            
+        resvieveNotificationUpdatesFutureStream.onSuccess { [weak self] _ in
             self?.updateWhenActive()
+        }
+        
+        resvieveNotificationUpdatesFutureStream.onFailure { [weak self] error in
+            self?.present(UIAlertController.alert(title: "Charcteristic notification update", error: error) { [weak self] _ in
+                _ = self?.navigationController?.popViewController(animated: true)
+                return
+            }, animated:true, completion:nil)
         }
     }
 
     func stopReceivingNotificationIfNotifying() {
-        guard let characteristic = characteristic, characteristic.isNotifying, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected else {
+        guard let characteristic = characteristic, characteristic.isNotifying else {
             return
         }
         characteristic.stopNotificationUpdates()

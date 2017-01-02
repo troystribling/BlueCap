@@ -34,13 +34,13 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         guard let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
             let peripheral = peripheral,
             peripheral.state == .connected else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         updateWhenActive()
         peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
             self?.updateWhenActive()

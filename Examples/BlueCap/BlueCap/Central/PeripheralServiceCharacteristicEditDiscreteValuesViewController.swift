@@ -27,9 +27,18 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         super.init(coder: aDecoder)
     }
     
+    var characteristic: Characteristic? {
+        guard  let characteristicUUID = characteristicUUID,
+            let peripheral = peripheral,
+            let characteristic = peripheral.characteristic(characteristicUUID) else {
+                return nil
+        }
+        return characteristic
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard  let characteristic = characteristic, peripheral != nil, connectionFuture != nil else {
+        guard  let characteristic = characteristic, peripheralDiscoveryFuture != nil else {
             _ = self.navigationController?.popViewController(animated: true)
             return
         }
@@ -40,63 +49,18 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard  let connectionFuture = connectionFuture, let peripheral = peripheral, characteristic != nil else {
-            _ = navigationController?.popViewController(animated: true)
-            return
+        guard  let characteristic = characteristic, let peripheralDiscoveryFuture = peripheralDiscoveryFuture, let peripheral = peripheral, peripheral.state == .connected else {
+                _ = self.navigationController?.popViewController(animated: true)
+                return
         }
-        readCharacteristic()
-        if peripheral.state == .connected {
-            connectionFuture.onSuccess(cancelToken: cancelToken)  { _ in
-            }
-            connectionFuture.onFailure { [weak self] error in
-                self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-            }
-        }
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
-        _ = connectionFuture?.cancel(cancelToken)
-    }
 
-    func didEnterBackground() {
-        peripheral?.disconnect()
-        _ = navigationController?.popToRootViewController(animated: false)
-    }
-
-    func writeCharacteristic(_ stringValue: [String : String]) {
-        guard let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected  else {
-            present(UIAlertController.alert(message: "Connection error") { _ in
-                _ = self.navigationController?.popToRootViewController(animated: false)
+        peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error in
+            self?.present(UIAlertController.alert(message: "Connection error") { _ in
+                _ = self?.navigationController?.popToRootViewController(animated: false)
             }, animated: true, completion: nil)
-            return
         }
-        progressView.show()
-        let writeFuture = characteristic.write(string: stringValue, timeout: (Double(ConfigStore.getCharacteristicReadWriteTimeout())))
-        writeFuture.onSuccess { [weak self] _ in
-            self?.progressView.remove().onSuccess {
-                _ = self?.navigationController?.popViewController(animated: true)
-            }
-        }
-        writeFuture.onFailure { [weak self] error in
-            self?.progressView.remove().onSuccess {
-                self?.present(UIAlertController.alert(title: "Charcteristic write error", error: error) { _ in
-                    _ = self?.navigationController?.popViewController(animated: true)
-                    return
-                }, animated:true, completion:nil)
-            }
-        }
-    }
 
-    func readCharacteristic() {
-        guard let characteristic = characteristic, let peripheral = peripheral, connectionFuture != nil, peripheral.state == .connected  else {
-            present(UIAlertController.alert(message: "Connection error") { _ in
-                _ = self.navigationController?.popToRootViewController(animated: false)
-            }, animated: true, completion: nil)
-            return
-        }
-        guard characteristic.propertyEnabled(.read) else {
+        guard characteristic.canRead else {
             return
         }
         progressView.show()
@@ -114,6 +78,44 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
             }
         }
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+        _ = peripheralDiscoveryFuture?.cancel(cancelToken)
+    }
+
+    func didEnterBackground() {
+        peripheral?.disconnect()
+        _ = navigationController?.popToRootViewController(animated: false)
+    }
+
+    func writeCharacteristic(_ stringValue: [String : String]) {
+        guard  let characteristic = characteristic,
+            let peripheral = peripheral,
+            let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
+            peripheral.state == .connected else {
+                _ = self.navigationController?.popViewController(animated: true)
+                return
+        }
+        progressView.show()
+        let writeFuture = peripheralDiscoveryFuture.flatMap { _ -> Future<Characteristic> in
+            characteristic.write(string: stringValue, timeout: (Double(ConfigStore.getCharacteristicReadWriteTimeout())))
+        }
+        writeFuture.onSuccess { [weak self] _ in
+            self?.progressView.remove().onSuccess {
+                _ = self?.navigationController?.popViewController(animated: true)
+            }
+        }
+        writeFuture.onFailure { [weak self] error in
+            self?.progressView.remove().onSuccess {
+                self?.present(UIAlertController.alert(title: "Charcteristic write error", error: error) { _ in
+                    _ = self?.navigationController?.popViewController(animated: true)
+                    return
+                }, animated:true, completion:nil)
+            }
+        }
+    }
 
     // UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -121,17 +123,23 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
     
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let characteristic = characteristic else {
-            return 0
+        guard  let characteristicUUID = characteristicUUID,
+            let peripheral = peripheral,
+            let characteristic = peripheral.characteristic(characteristicUUID),
+            peripheral.state == .connected else {
+                _ = self.navigationController?.popViewController(animated: true)
+                return 0
         }
         return characteristic.stringValues.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCharacteristicDiscreteValueCell, for: indexPath) as UITableViewCell
-        guard let characteristic = characteristic else {
-            cell.textLabel?.text = "Unknown"
-            return cell
+        guard  let characteristic = characteristic,
+            let peripheral = peripheral,
+            peripheral.state == .connected else {
+                cell.textLabel?.text = "Unknown"
+                return cell
         }
 
         let stringValue = characteristic.stringValues[indexPath.row]
@@ -150,7 +158,14 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     // UITableViewDelegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let characteristic = characteristic, let valueName = characteristic.stringValue?.keys.first else {
+        guard  let characteristicUUID = characteristicUUID,
+            let peripheral = peripheral,
+            let characteristic = peripheral.characteristic(characteristicUUID),
+            peripheral.state == .connected else {
+                _ = self.navigationController?.popViewController(animated: true)
+                return
+        }
+        guard let valueName = characteristic.stringValue?.keys.first else {
             return
         }
         writeCharacteristic([valueName : characteristic.stringValues[indexPath.row]])

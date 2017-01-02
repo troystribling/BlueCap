@@ -69,6 +69,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             peripheral.characteristic(characteristicUUID) != nil,
             peripheral.state == .connected else {
                 _ = navigationController?.popToRootViewController(animated: false)
+                return
         }
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         setUI()
@@ -127,17 +128,20 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     @IBAction func toggleNotificatons() {
-        guard let characteristicUUID = characteristicUUID,
-              let peripheral = peripheral,
-              let characteristic = peripheral.characteristic(characteristicUUID),
-              let peripheralDiscoveryFuture = peripheralDiscoveryFuture else {
+        progressView.show()
+        
+        guard let peripheralDiscoveryFuture = peripheralDiscoveryFuture else {
             return
         }
-        progressView.show()
 
         let updateFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Characteristic> in
             guard let strongSelf = self else {
                 throw AppError.unlikelyFailure
+            }
+            guard let characteristicUUID = strongSelf.characteristicUUID,
+                let peripheral = strongSelf.peripheral,
+                let characteristic = peripheral.characteristic(characteristicUUID) else {
+                    throw AppError.characteristicNotFound
             }
             return strongSelf.notifySwitch.isOn ? characteristic.startNotifying() : characteristic.stopNotifying()
         }

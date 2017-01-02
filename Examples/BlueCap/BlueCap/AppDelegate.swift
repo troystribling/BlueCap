@@ -19,6 +19,8 @@ enum AppError : Error, LocalizedError {
     case rangingBeacons
     case outOfRegion
     case unknownRegionStatus
+    case serviceNotFound
+    case characteristicNotFound
     case unlikelyFailure
     case resetting
     case poweredOff
@@ -34,6 +36,10 @@ enum AppError : Error, LocalizedError {
             return NSLocalizedString("Outside becan region.", comment: "AppError.outOfRegion")
         case .unknownRegionStatus:
             return NSLocalizedString("Unknown region state.", comment: "AppError.unknownRegionStatus")
+        case .serviceNotFound:
+            return NSLocalizedString("Expected service not found.", comment: "AppError.serviceNotFound")
+        case .characteristicNotFound:
+            return NSLocalizedString("Expected characteristic not found..", comment: "AppError.characteristicNotFound")
         case .unlikelyFailure:
             return NSLocalizedString("Unlikely failure.", comment: "AppError.unlikelyFailure")
         case .resetting:
