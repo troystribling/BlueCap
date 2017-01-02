@@ -129,11 +129,18 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     @IBAction func toggleNotificatons() {
         guard let characteristicUUID = characteristicUUID,
               let peripheral = peripheral,
+              let characteristic = peripheral.characteristic(characteristicUUID),
               let peripheralDiscoveryFuture = peripheralDiscoveryFuture else {
             return
         }
-        let updateFuture = notifySwitch.isOn ? characteristic.startNotifying() : characteristic.stopNotifying()
         progressView.show()
+
+        let updateFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Characteristic> in
+            guard let strongSelf = self else {
+                throw AppError.unlikelyFailure
+            }
+            return strongSelf.notifySwitch.isOn ? characteristic.startNotifying() : characteristic.stopNotifying()
+        }
 
         updateFuture.onSuccess { [weak self] _ in
             _ = self?.progressView.remove()

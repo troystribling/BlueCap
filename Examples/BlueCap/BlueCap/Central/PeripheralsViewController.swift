@@ -197,7 +197,6 @@ class PeripheralsViewController : UITableViewController {
                 let viewController = segue.destination as! PeripheralViewController
                 let peripheral = self.peripherals[selectedIndex.row]
                 viewController.peripheral = peripheral
-                viewController.peripheralDiscovered = discoveredPeripherals.contains(peripheral.identifier)
                 viewController.peripheralAdvertisements = peripheralAdvertisments[peripheral.identifier]
             }
         }
