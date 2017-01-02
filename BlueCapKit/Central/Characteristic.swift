@@ -169,13 +169,12 @@ public class Characteristic : NSObject {
             if let notificationStateChangedPromise = self.notificationStateChangedPromise, !notificationStateChangedPromise.completed {
                 return notificationStateChangedPromise.future
             }
-            if self.canNotify {
-                self.notificationStateChangedPromise = Promise<Characteristic>()
-                self.setNotifyValue(true)
-                return self.notificationStateChangedPromise!.future
-            } else {
+            guard self.canNotify else {
                 return Future(error: CharacteristicError.notifyNotSupported)
             }
+            self.notificationStateChangedPromise = Promise<Characteristic>()
+            self.setNotifyValue(true)
+            return self.notificationStateChangedPromise!.future
         }
     }
 
@@ -184,13 +183,12 @@ public class Characteristic : NSObject {
             if let notificationStateChangedPromise = self.notificationStateChangedPromise, !notificationStateChangedPromise.completed {
                 return notificationStateChangedPromise.future
             }
-            if self.canNotify {
-                self.notificationStateChangedPromise = Promise<Characteristic>()
-                self.setNotifyValue(false)
-                return self.notificationStateChangedPromise!.future
-            } else {
+            guard self.canNotify else {
                 return Future(error: CharacteristicError.notifyNotSupported)
             }
+            self.notificationStateChangedPromise = Promise<Characteristic>()
+            self.setNotifyValue(false)
+            return self.notificationStateChangedPromise!.future
         }
     }
 
@@ -199,12 +197,11 @@ public class Characteristic : NSObject {
             if let notificationUpdatePromise = self.notificationUpdatePromise {
                 return notificationUpdatePromise.stream
             }
-            if self.canNotify {
-                self.notificationUpdatePromise = StreamPromise<(characteristic: Characteristic, data: Data?)>(capacity: capacity)
-                return self.notificationUpdatePromise!.stream
-            } else {
+            guard self.canNotify else {
                 return FutureStream(error: CharacteristicError.notifyNotSupported)
             }
+            self.notificationUpdatePromise = StreamPromise<(characteristic: Characteristic, data: Data?)>(capacity: capacity)
+            return self.notificationUpdatePromise!.stream
         }
     }
     

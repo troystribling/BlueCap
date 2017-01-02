@@ -364,9 +364,10 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        if let services = self.cbPeripheral.getServices() {
-            didDiscoverServices(services, error: error)
+        guard let services = self.cbPeripheral.getServices() else {
+            return
         }
+        didDiscoverServices(services, error: error)
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverIncludedServicesFor service: CBService, error: Error?) {
