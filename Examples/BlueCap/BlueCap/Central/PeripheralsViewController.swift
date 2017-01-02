@@ -55,10 +55,6 @@ class PeripheralsViewController : UITableViewController {
     var stopScanBarButtonItem: UIBarButtonItem!
     var startScanBarButtonItem: UIBarButtonItem!
 
-    var isScanning = false
-    var shouldUpdateConnections = false
-    var discoveryLimitReached = false
-
     var peripheralsToConnect = SerialUUIDQueue()
     var peripheralsToDisconnect = SerialUUIDQueue()
 
@@ -68,6 +64,8 @@ class PeripheralsViewController : UITableViewController {
     var removedPeripherals = Set<UUID>()
     var peripheralAdvertisments = [UUID : PeripheralAdvertisements]()
 
+    var scanEnabled = false
+    var canScanAndConnect = false
     var didReset = false
 
     var atDiscoveryLimit: Bool {
@@ -125,7 +123,7 @@ class PeripheralsViewController : UITableViewController {
                 case .poweredOn:
                     if strongSelf.didReset {
                         strongSelf.didReset = false
-                        strongSelf.startScan()
+                        strongSelf.startScanIfNotScanning()
                         strongSelf.updatePeripheralConnectionsIfNecessary()
                     }
                 case .unknown:
@@ -133,7 +131,7 @@ class PeripheralsViewController : UITableViewController {
                 case .poweredOff, .unauthorized:
                     strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state)\"")
                 case .resetting:
-                    strongSelf.stopScan()
+                    strongSelf.stopScanIfScanning()
                     strongSelf.setScanButton()
                     strongSelf.didReset = true
                     sleep(1)
@@ -159,7 +157,7 @@ class PeripheralsViewController : UITableViewController {
     func alertAndStopScanning(message: String) {
         present(UIAlertController.alert(message: message), animated:true) { [weak self] _ in
             self.forEach { strongSelf in
-                strongSelf.stopScan()
+                strongSelf.stopScanIfScanning()
                 strongSelf.setScanButton()
                 Singletons.discoveryManager.reset()
                 Singletons.scanningManager.reset()
@@ -175,11 +173,11 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        shouldUpdateConnections = true
-        restartConnectionUpdatesIfNecessary()
-        updatePeripheralConnectionsIfNecessary()
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
         NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
+        resumeScanningAndConnecting()
+        restartConnectionUpdatesIfNecessary()
+        updatePeripheralConnectionsIfNecessary()
         setScanButton()
         updateWhenActive()
     }
@@ -205,30 +203,6 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func toggleScan(_ sender: AnyObject) {
-        guard !Singletons.beaconManager.isMonitoring else {
-            present(UIAlertController.alert(message: "iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
-            return
-        }
-        guard Singletons.discoveryManager.poweredOn else {
-            present(UIAlertController.alert(message: "Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
-            return
-        }
-        guard Singletons.scanningManager.poweredOn else {
-            present(UIAlertController.alert(message: "Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
-            return
-        }
-        if self.isScanning {
-            Logger.debug("Scan toggled off")
-            stopScan()
-        } else {
-            Logger.debug("Scan toggled on")
-            startScan()
-            updatePeripheralConnectionsIfNecessary()
-        }
-        setScanButton()
-    }
-
     func didBecomeActive() {
         Logger.debug()
         tableView.reloadData()
@@ -237,11 +211,11 @@ class PeripheralsViewController : UITableViewController {
 
     func didEnterBackground() {
         Logger.debug()
-        stopScan()
+        stopScanIfScanning()
     }
 
     func setScanButton() {
-        if isScanning {
+        if scanEnabled {
             navigationItem.setLeftBarButton(self.stopScanBarButtonItem, animated:false)
         } else {
             navigationItem.setLeftBarButton(self.startScanBarButtonItem, animated:false)
@@ -256,8 +230,8 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func connectPeripheralsIfNecessary() {
-        guard shouldUpdateConnections else {
+    func connectPeripheralsToConnect() {
+        guard canScanAndConnect else {
             Logger.debug("connection updates disabled")
             disconnectConnectingPeripherals()
             return
@@ -284,11 +258,7 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
-    func disconnectConnectedPeripheralsIfNecessary() {
-        guard shouldUpdateConnections else {
-            Logger.debug("connection updates disabled")
-            return
-        }
+    func disconnectPeripheralsToDisconnect() {
         let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
         guard maxConnections < peripherals.count else {
             return
@@ -304,14 +274,14 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func updatePeripheralConnectionsIfNecessary() {
-        guard shouldUpdateConnections else {
-            Logger.debug("connection updates disabled")
+        guard canScanAndConnect else {
+            Logger.debug("connection updates paused")
             return
         }
         Queue.main.delay(Params.updateConnectionsInterval) { [weak self] in
             self.forEach { strongSelf in
-                strongSelf.disconnectConnectedPeripheralsIfNecessary()
-                strongSelf.connectPeripheralsIfNecessary()
+                strongSelf.disconnectPeripheralsToDisconnect()
+                strongSelf.connectPeripheralsToConnect()
                 strongSelf.updateWhenActive()
                 strongSelf.updatePeripheralConnectionsIfNecessary()
             }
@@ -323,7 +293,7 @@ class PeripheralsViewController : UITableViewController {
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
-        let connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+        let connectionFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 10)
 
         connectionFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
@@ -338,24 +308,32 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("Connection failed: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
             self.forEach { strongSelf in
                 strongSelf.connectingPeripherals.remove(peripheral.identifier)
-                guard let peripheralError = error as? PeripheralError, peripheralError != .forcedDisconnect else {
+                switch error {
+                case PeripheralError.forcedDisconnect:
                     Logger.debug("Forced Disconnection: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    strongSelf.startScanningAndConnectingIfNotPaused()
                     strongSelf.restartConnectionUpdatesIfNecessary()
-                    if strongSelf.isScanning {
-                        strongSelf.startScan()
-                    }
                     return
+                case PeripheralError.connectionTimeout:
+                    if peripheral.timeoutCount < maxTimeouts {
+                        Logger.debug("Connection timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                        peripheral.reconnect(withDelay: 1.0)
+                        return
+                    }
+                default:
+                    if peripheral.disconnectionCount < maxDisconnections {
+                        peripheral.reconnect(withDelay: 1.0)
+                        Logger.debug("Disconnected: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                        return
+                    }
                 }
                 Logger.debug("Connection failed: '\(error), \(peripheral.name)', \(peripheral.identifier.uuidString)")
                 strongSelf.removedPeripherals.insert(peripheral.identifier)
                 peripheral.terminate()
                 strongSelf.connectedPeripherals.remove(peripheral.identifier)
+                strongSelf.startScanningAndConnectingIfNotPaused()
                 strongSelf.restartConnectionUpdatesIfNecessary()
-                if strongSelf.isScanning {
-                    strongSelf.startScan()
-                }
                 strongSelf.updateWhenActive()
-
             }
         }
     }
@@ -369,15 +347,71 @@ class PeripheralsViewController : UITableViewController {
         peripheralsToConnect.set(peripherals)
     }
 
-    // MARK: Scanning
+    // MARK: Service Scanning
 
-    func startScan() {
+    func pauseScanningAndConnecting() {
+        guard canScanAndConnect else {
+            return
+        }
+        canScanAndConnect = false
+        Singletons.scanningManager.stopScanning()
+    }
+
+    func resumeScanningAndConnecting() {
+        guard !canScanAndConnect else {
+            return
+        }
+        canScanAndConnect = true
+        startScanIfNotScanning()
+    }
+
+    func startScanningAndConnectingIfNotPaused() {
+        guard canScanAndConnect else {
+            return
+        }
+        startScanIfNotScanning()
+    }
+
+    func stopScanningIfDiscoverLimitReached() {
+        guard atDiscoveryLimit else {
+            return
+        }
+        Singletons.scanningManager.stopScanning()
+    }
+
+    func toggleScan(_ sender: AnyObject) {
+        guard !Singletons.beaconManager.isMonitoring else {
+            present(UIAlertController.alert(message: "iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
+            return
+        }
+        guard Singletons.discoveryManager.poweredOn else {
+            present(UIAlertController.alert(message: "Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
+            return
+        }
+        guard Singletons.scanningManager.poweredOn else {
+            present(UIAlertController.alert(message: "Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
+            return
+        }
+        if Singletons.scanningManager.isScanning {
+            Logger.debug("Scan toggled off")
+            scanEnabled = false
+            disconnectConnectingPeripherals()
+            stopScanIfScanning()
+        } else {
+            Logger.debug("Scan toggled on")
+            scanEnabled = true
+            startScanIfNotScanning()
+            updatePeripheralConnectionsIfNecessary()
+        }
+        setScanButton()
+    }
+
+    func startScanIfNotScanning() {
+        guard scanEnabled else { return }
         guard !atDiscoveryLimit else { return }
         guard !Singletons.scanningManager.isScanning else { return }
 
-        isScanning = true
-
-        let scanOptions =  discoveryLimitReached ? [ String : Any]() : [CBCentralManagerScanOptionAllowDuplicatesKey : true]
+        let scanOptions = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
 
         let future: FutureStream<Peripheral>
         let scanMode = ConfigStore.getScanMode()
@@ -402,8 +436,8 @@ class PeripheralsViewController : UITableViewController {
             return
         }
         Logger.debug("timeoutScan: timing out")
-        stopScan()
-        self.setScanButton()
+        stopScanIfScanning()
+        setScanButton()
         present(UIAlertController.alert(message: "Bluetooth scan timeout."), animated:true)
     }
 
@@ -424,17 +458,13 @@ class PeripheralsViewController : UITableViewController {
         Logger.debug("Discovered peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
         peripheralsToConnect.push(peripheral.identifier)
         peripheralAdvertisments[peripheral.identifier] = peripheral.advertisements
-        if atDiscoveryLimit {
-            discoveryLimitReached = true
-            Singletons.scanningManager.stopScanning()
-        }
+        stopScanningIfDiscoverLimitReached()
     }
 
-    func stopScan() {
-        if Singletons.scanningManager.isScanning {
-            Singletons.scanningManager.stopScanning()
-        }
-        isScanning = false
+    func stopScanIfScanning() {
+        guard Singletons.scanningManager.isScanning else { return }
+
+        Singletons.scanningManager.stopScanning()
         Singletons.discoveryManager.removeAllPeripherals()
         Singletons.scanningManager.removeAllPeripherals()
         connectingPeripherals.removeAll()
@@ -447,7 +477,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
 
-    // MARK: Peripheral discovery
+    // MARK: Peripheral Discovery
 
     func discoverPeripheral(_ peripheral: Peripheral) {
         guard peripheral.state == .connected else {
@@ -522,8 +552,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        shouldUpdateConnections = false
-        Singletons.scanningManager.stopScanning()
+        pauseScanningAndConnecting()
         disconnectConnectingPeripherals()
     }
 

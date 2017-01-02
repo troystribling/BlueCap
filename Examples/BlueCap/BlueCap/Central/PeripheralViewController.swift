@@ -14,14 +14,13 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
-    var connectionFuture: FutureStream<Peripheral>?
+    var peripheralDiscoveryFuture: FutureStream<[Service]>?
 
     var peripheralAdvertisements: PeripheralAdvertisements?
 
     let progressView  = ProgressView()
 
-    var peripheralDiscovered = false
-    var shouldReconnect = true
+    var isUpdatingeRSSIAndPeripheralProperties = false
 
     let dateFormatter = DateFormatter()
 
@@ -70,12 +69,12 @@ class PeripheralViewController : UITableViewController {
             return
         }
         updateConnectionStateLabel()
-        toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
-        updatePeripheralProperties()
+        resumeRSSIUpdatesAndPeripheralPropertiesUpdates()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        pauseRSSIUpdatesAndPeripheralPropertiesUpdates()
     }
 
     override func didMove(toParentViewController parent: UIViewController?) {
@@ -88,7 +87,7 @@ class PeripheralViewController : UITableViewController {
         if segue.identifier == MainStoryBoard.peripheralServicesSegue {
             let viewController = segue.destination as! PeripheralServicesViewController
             viewController.peripheral = peripheral
-            viewController.connectionFuture = connectionFuture
+            viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
         } else if segue.identifier == MainStoryBoard.peripehralAdvertisementsSegue {
             let viewController = segue.destination as! PeripheralAdvertisementsViewController
             viewController.peripheralAdvertisements = peripheralAdvertisements
@@ -132,19 +131,40 @@ class PeripheralViewController : UITableViewController {
         timeoutsLabel.text = "\(peripheral.timeoutCount)"
     }
 
-    func toggleRSSIUpdatesAndPeripheralPropertiesUpdates() {
+    func updateRSSIUpdatesAndPeripheralPropertiesIfConnected() {
+        guard isUpdatingeRSSIAndPeripheralProperties else {
+            return
+        }
         guard let peripheral = peripheral else {
             return
         }
-        if peripheral.state == .connected {
-            let rssiFuture = peripheral.startPollingRSSI(period: Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
-            rssiFuture.onSuccess { [weak self] _ in
-                self?.updatePeripheralProperties()
-            }
-        } else {
+        guard peripheral.state == .connected else {
             peripheral.stopPollingRSSI()
+            return
         }
+        let rssiFuture = peripheral.startPollingRSSI(period: Params.peripheralViewRSSIPollingInterval, capacity: Params.peripheralRSSIFutureCapacity)
+        rssiFuture.onSuccess { [weak self] _ in
+            self?.updatePeripheralProperties()
+        }
+    }
 
+    func pauseRSSIUpdatesAndPeripheralPropertiesUpdates() {
+        guard isUpdatingeRSSIAndPeripheralProperties else {
+            return
+        }
+        guard let peripheral = peripheral else {
+            return
+        }
+        isUpdatingeRSSIAndPeripheralProperties = false
+        peripheral.stopPollingRSSI()
+    }
+
+    func resumeRSSIUpdatesAndPeripheralPropertiesUpdates() {
+        guard !isUpdatingeRSSIAndPeripheralProperties else {
+            return
+        }
+        isUpdatingeRSSIAndPeripheralProperties = true
+        updateRSSIUpdatesAndPeripheralPropertiesIfConnected()
     }
 
     func updateConnectionStateLabel() {
@@ -168,27 +188,53 @@ class PeripheralViewController : UITableViewController {
         }
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
         progressView.show()
-        shouldReconnect = true
         let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
         let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
+        let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
 
-        connectionFuture = peripheral.connect(timeoutRetries: maxTimeouts, disconnectRetries: maxDisconnections, connectionTimeout: connectionTimeout, capacity: 10)
+        peripheralDiscoveryFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 10).flatMap { [weak self] peripheral -> Future<Peripheral> in
+            self?.updateConnectionStateLabel()
+            return peripheral.discoverAllServices(timeout: scanTimeout)
+        }.flatMap { peripheral -> Future<[Service]> in
+            peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
+        }
 
-        connectionFuture?.onSuccess { [weak self] peripheral in
+        peripheralDiscoveryFuture?.onSuccess { [weak self] peripheral in
             self.forEach { strongSelf in
                 strongSelf.updateConnectionStateLabel()
-                strongSelf.discoverPeripheralIfNeccessary()
-                strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
+                strongSelf.updateRSSIUpdatesAndPeripheralPropertiesIfConnected()
             }
         }
 
-        connectionFuture?.onFailure { [weak self] error in
+        peripheralDiscoveryFuture?.onFailure { [weak self] error in
             self.forEach { strongSelf in
+                switch error {
+                case PeripheralError.connectionTimeout:
+                    if peripheral.timeoutCount < maxTimeouts {
+                        Logger.debug("Connection timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                        peripheral.reconnect(withDelay: 1.0)
+                        return
+                    }
+                case PeripheralError.serviceDiscoveryTimeout:
+                    Logger.debug("Service discovery timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    peripheral.disconnect()
+                    return
+                case ServiceError.characteristicDiscoveryTimeout:
+                    Logger.debug("Characteristic discovery timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    peripheral.disconnect()
+                    return
+                default:
+                    if peripheral.disconnectionCount < maxDisconnections {
+                        peripheral.reconnect(withDelay: 1.0)
+                        Logger.debug("Disconnected: '\(error)', '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                        return
+                    }
+                }
                 strongSelf.stateLabel.text = "Disconnected"
                 strongSelf.stateLabel.textColor = UIColor.lightGray
-                strongSelf.toggleRSSIUpdatesAndPeripheralPropertiesUpdates()
                 strongSelf.updateConnectionStateLabel()
+                strongSelf.updateRSSIUpdatesAndPeripheralPropertiesIfConnected()
                 strongSelf.progressView.remove().onSuccess {
                     strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
                         _ = strongSelf.navigationController?.popToRootViewController(animated: true)
@@ -198,50 +244,12 @@ class PeripheralViewController : UITableViewController {
         }
     }
 
-    func reconnectIfNeccessay() {
-        guard let peripheral = peripheral, shouldReconnect else {
-            return
-        }
-        peripheral.reconnect()
-    }
-
     func disconnect() {
         guard let peripheral = peripheral, peripheral.state != .disconnected else {
             return
         }
-        shouldReconnect = false
         peripheral.stopPollingRSSI()
         peripheral.disconnect()
-    }
-
-    // MARK: Peripheral discovery
-
-    func discoverPeripheralIfNeccessary() {
-        guard let peripheral = peripheral, peripheral.state == .connected && !peripheralDiscovered else {
-            _ = progressView.remove()
-            return
-        }
-        let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
-        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: scanTimeout).flatMap { peripheral in
-            peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
-        }
-        peripheralDiscoveryFuture.onSuccess { [weak self] _ in
-            self.forEach { strongSelf in
-                _ = strongSelf.progressView.remove()
-                strongSelf.peripheralDiscovered = true
-                strongSelf.updateConnectionStateLabel()
-            }
-        }
-        peripheralDiscoveryFuture.onFailure { [weak self] (error) in
-            self.forEach { strongSelf in
-                strongSelf.progressView.remove().onSuccess {
-                    strongSelf.present(UIAlertController.alert(title: "Peripheral discovery error", error: error) { _ in
-                        _ = strongSelf.navigationController?.popToRootViewController(animated: true)
-                    }, animated: true)
-                }
-                Logger.debug("Service discovery failed")
-            }
-        }
     }
 
     // MARK: UITableViewDataSource

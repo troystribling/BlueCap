@@ -14,7 +14,7 @@ import CoreBluetooth
 class PeripheralServicesViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
-    weak var connectionFuture: FutureStream<Peripheral>?
+    weak var peripheralDiscoveryFuture: FutureStream<[Service]>?
 
     let cancelToken = CancelToken()
 
@@ -34,36 +34,36 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard let connectionFuture = connectionFuture, let peripheral = peripheral else {
+        guard let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
+            let peripheral = peripheral,
+            peripheral.state == .connected else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         updateWhenActive()
-        if peripheral.state == .connected {
-            connectionFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
-                self?.updateWhenActive()
-            }
-            connectionFuture.onFailure { [weak self] error in
-                self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-                self?.updateWhenActive()
-            }
+        peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
+            self?.updateWhenActive()
+        }
+        peripheralDiscoveryFuture.onFailure { [weak self] error in
+            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+            self?.updateWhenActive()
         }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-        _ = connectionFuture?.cancel(cancelToken)
+        _ = peripheralDiscoveryFuture?.cancel(cancelToken)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServicesCharacteritics {
             if let peripheral = peripheral, let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
                 let viewController = segue.destination as! PeripheralServiceCharacteristicsViewController
-                viewController.service = peripheral.services[selectedIndex.row]
+                viewController.serviceUUID = peripheral.services[selectedIndex.row].uuid
                 viewController.peripheral = peripheral
-                viewController.connectionFuture = connectionFuture
+                viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
             }
         }
     }

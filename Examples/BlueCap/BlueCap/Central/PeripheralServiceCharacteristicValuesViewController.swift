@@ -12,9 +12,9 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
 
-    weak var characteristic: Characteristic?
+    weak var characteristicUUID: CBUUID?
     weak var peripheral: Peripheral?
-    weak var connectionFuture: FutureStream<Peripheral>?
+    var peripheralDiscoveryFuture: FutureStream<[Service]>?
 
     let cancelToken = CancelToken()
     let progressView = ProgressView()

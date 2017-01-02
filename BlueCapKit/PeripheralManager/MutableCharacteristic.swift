@@ -247,9 +247,7 @@ public class MutableCharacteristic : NSObject {
         if let peripheralManager = service?.peripheralManager, _isUpdating {
             for value in values {
                 _isUpdating = peripheralManager.updateValue(value, forCharacteristic: self)
-                if !_isUpdating {
-                    queuedUpdates.append(value)
-                }
+                if !_isUpdating { queuedUpdates.append(value) }
             }
         } else {
             _isUpdating = false
