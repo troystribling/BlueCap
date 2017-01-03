@@ -202,6 +202,7 @@ class PeripheralViewController : UITableViewController {
 
         peripheralDiscoveryFuture?.onSuccess { [weak self] peripheral in
             self.forEach { strongSelf in
+                _ = strongSelf.progressView.remove()
                 strongSelf.updateConnectionStateLabel()
                 strongSelf.updateRSSIUpdatesAndPeripheralPropertiesIfConnected()
             }

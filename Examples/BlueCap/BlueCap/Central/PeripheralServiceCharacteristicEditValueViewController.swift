@@ -94,32 +94,26 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     }
 
     func writeCharacteristic() {
-        guard  characteristic != nil,
+        guard  let characteristic = characteristic,
             let peripheral = peripheral,
-            let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
-            valueTextField.text != nil,
+            let newValue = valueTextField.text,
+            peripheralDiscoveryFuture != nil,
             peripheral.state == .connected else {
                 _ = self.navigationController?.popViewController(animated: true)
                 return
         }
         progressView.show()
 
-        let writeFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Characteristic> in
-            guard let strongSelf = self else {
-                throw AppError.unlikelyFailure
-            }
-            guard  let characteristic = strongSelf.characteristic, let newValue = strongSelf.valueTextField.text else {
-                    throw AppError.characteristicNotFound
-            }
-            guard let valueName = strongSelf.valueName else {
-                return characteristic.write(data: newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-            }
+        let writeFuture: Future<Characteristic>
+        if let valueName = self.valueName {
             if var values = characteristic.stringValue {
                 values[valueName] = newValue
-                return characteristic.write(string: values, timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                writeFuture = characteristic.write(string: values, timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
             } else {
-                return characteristic.write(data: newValue.dataFromHexString(), timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
+                writeFuture = characteristic.write(data: newValue.dataFromHexString(), timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
             }
+        } else {
+            writeFuture = characteristic.write(data: newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
         }
 
         writeFuture.onSuccess { [weak self] _ in

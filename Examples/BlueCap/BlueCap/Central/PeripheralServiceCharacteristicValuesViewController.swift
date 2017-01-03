@@ -102,23 +102,15 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     @IBAction func updateValues() {
         guard  let characteristic = characteristic,
             let peripheral = peripheral,
-            let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
             characteristic.canRead,
+            peripheralDiscoveryFuture != nil,
             peripheral.state == .connected else {
             return
         }
 
         progressView.show()
         
-        let readFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Characteristic> in
-            guard let strongSelf = self else {
-                throw AppError.unlikelyFailure
-            }
-            guard let characteristic = strongSelf.characteristic else {
-                throw AppError.characteristicNotFound
-            }
-            return characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout()))
-            }.flatMap { [weak self] _ -> Future<Void> in
+        let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout())).flatMap { [weak self] _ -> Future<Void> in
                 guard let strongSelf = self else {
                     throw AppError.unlikelyFailure
                 }
