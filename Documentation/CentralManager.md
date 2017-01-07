@@ -133,21 +133,23 @@ scanFuture.onSuccess { peripheral in
 }
 
 scanFuture.onFailure { error in
-    guard let appError = error as? AppError else {
+    guard let appError = error as? else {
         return
     }
     switch appError {
-    case .invalidState:
+    case AppError.invalidState:
 	      manager.stopScanning()
         break
-    case .resetting:
+    case AppError.resetting:
         manager.stopScanning()
         manager.reset()
-    case .poweredOff:
+    case AppError.poweredOff:
         manager.stopScanning()
         break
-    case .unknown:
+    case AppError.unknown:
         manager.stopScanning()
+        break
+    case default:
         break
     }
 }
@@ -155,7 +157,7 @@ scanFuture.onFailure { error in
 
 Here the scan is started when `CentralManager` transitions to `.powerOn`.
 
-Also, An error was added to handle `CentralManager` state transitions other than `.powerOn` and `CentralManager#reset` is used to recreate `CBCentralManager`.
+Also, An error was added to handle `CentralManager` state transitions other than `.powerOn`. `CentralManager#reset` is used to recreate `CBCentralManager`.
 
 To stop a peripheral scan use the `CentralManager` method,
 
@@ -204,30 +206,22 @@ public let advertisements: PeripheralAdvertisements
 
 ### <a name="central_peripheral_connection">Peripheral Connection</a>
 
-After discovering a `Peripheral` a connection must be established to run discovery and begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. `BlueCap` `Peripherals` can be configured to automatically attempt reconnection on connection timeouts and disconnections.
+After discovering a `Peripheral` a connection must be established to run discovery and begin messaging. Connecting and maintaining a connection to a Bluetooth device can be difficult since signals are weak and devices may have relative motion. `BlueCap` `Peripherals` have a configurable connection attempt timeout and errors indicating force disconnect, connection attempt timeout and formatting of `CoreBluetooth` disconnection and errors.
 
 To connect to a `Peripheral` use The `Peripheral` method,
 
 ```swift
-public func connect(timeoutRetries: UInt = UInt.max, disconnectRetries: UInt = UInt.max, connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral>
+public func connect(connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral>
 ```
 
-The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the connected `Peripheral` and the `ConnectionEvent`. 
+The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the connected `Peripheral`. 
 
 The input parameters are,
 
 <table>
 	<tr>
-		<td>timeoutRetries</td>
-		<td>Maximum number of connection retries after timeout. The default value is 0. If timeoutRetries is exceeded PeripheralError.connectionTimeout is thrown. </td>
-	</tr>
-	<tr>
-		<td>disconnectRetries</td>
-		<td>Maximum number of connection retries on disconnect. The default value is 0. if disconnectRetries is exceeded PeripheralError.disconnected is thrown if the disconnect occurs without error or the reported connection error is thrown if available.</td>
-	</tr>
-	<tr>
 		<td>connectionTimeout</td>
-		<td>Connection timeout in seconds. The default is infinite.</td>
+		<td>Connection timeout in seconds. The default value is infinite. If the timeout is exceeded PeripheralError.connectionTimeout is thrown.</td>
 	</tr>
 	<tr>
 		<td>capacity</td>
@@ -258,7 +252,7 @@ The `Peripheral#reconnect` method is used to establish a connection to a previou
 After a `Peripheral` is discovered an application connects using,
 
 ```swift
-let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
+let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<Peripheral> in
     manager.stopScanning()
     discoveredPeripheral = peripheral
     return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
@@ -269,15 +263,15 @@ connectionFuture.onSuccess { peripheral in
 }
 
 connectionFuture.onFailure { error in
-    guard let peripheralError = error as? PeripheralError else {
-        return
-    }
-    switch peripheralError {
-    case .disconnected:
+    switch error {
+    case PeripheralError.disconnected:
+        discoveredPeripheral.reconnect()
         break
-    case .forcedDisconnect:
+    case PeripheralError.forcedDisconnect:
         break
-    case .connectionTimeout:
+    case PeripheralError.connectionTimeout:
+        break
+    default:
         break
     }
 }
@@ -334,29 +328,22 @@ let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<Peripheral
     return service.discoverCharacteristics([dataUUID])
 }
 
-discoveryFuture.onFailure { service in
-   if let appError = error as? AppError {
-        switch appError {
-        case .serviceNotFound:
-            break
-    }
-    if let peripheralError = error as? PeripheralError {
-        switch peripheralError {
-        case .disconnected:
-            break
-        case .forcedDisconnect:
-            break
-        case .connectionTimeout:
-            break
-        case .serviceDiscoveryTimeout:
-            break
-        }
-    }
-    
-    if let serviceError = error as? ServiceError {
-        switch serviceError {
-        case .characteristicDiscoveryTimeout:
-            break
+discoveryFuture.onFailure { error in
+    switch error {
+    case PeripheralError.disconnected:
+        break
+    case PeripheralError.forcedDisconnect:
+        break
+    case PeripheralError.connectionTimeout:
+        break
+    case PeripheralError.serviceDiscoveryTimeout:
+        break
+    case ServiceError.characteristicDiscoveryTimeout:
+        break
+    case AppError.serviceNotFound:
+        break
+    default:
+        break
     }
 }
 ```
@@ -617,42 +604,42 @@ public func whenStateRestored() -> Future<(peripherals: [Peripheral], scannedSer
 ```swift
 public enum CharacteristicError : Swift.Error {
     // Thrown by read when timeout is exceeded
-    case readTimeout
+    case readTimeout.
     // Thrown by write when timeout is exceeded
-    case writeTimeout
+    case writeTimeout.
     // Thrown by write if given string cannot be serialized
-    case notSerializable
+    case notSerializable.
     // Thrown by read if Characteristic read property is not enabled
     case readNotSupported
-    // Thrown by write if Characteristic read property is not enabled
+    // Thrown by write if Characteristic read property is not enabled.
     case writeNotSupported
-    // Thrown by startNotifying if Characteristic notifiy or indicate property is not enabled
+    // Thrown by startNotifying if Characteristic notifiy or indicate property is not enabled.
     case notifyNotSupported
 }
 
 public enum PeripheralError : Swift.Error {
-    // Thrown by any method that requires a Peripheral be connected if the peripheral is not connected
+    // Thrown by any method that requires a Peripheral be connected if the peripheral is not connected or is disconnected.
     case disconnected   
-		// Peripheral was disconnected by application
+		// Peripheral was disconnected by application.
     case forcedDisconnect
-    // Thrown by Peripheral connect when the specified timeoutRetries is exceeded.
+    // Thrown by Peripheral connect when the specified timeout is exceeded.
     case connectionTimeout
-    // Thrown by discoverAllServices and discoverServices if service discovery timeout is exceeded
+    // Thrown by discoverAllServices and discoverServices if service discovery timeout is exceeded.
     case serviceDiscoveryTimeout
 }
 
 public enum CentralManagerError : Swift.Error {
     case isScanning
-    // Thrown by startScanning if scan is started and CentralManager is poweredOff
+    // Thrown by startScanning if scan is started and CentralManager is poweredOff.
     case isPoweredOff
-    // Thrown on state restoration failure
+    // Thrown on state restoration failure.
     case restoreFailed
-    // Thrown by startScanning if scan timeout is exceeded
+    // Thrown by startScanning if scan timeout is exceeded.
     case serviceScanTimeout
 }
 
 public enum ServiceError : Swift.Error {
-    // Thrown by discoverAllCharcteristics and discoverCharcteristics if service discovery timeout is exceeded
+    // Thrown by discoverAllCharcteristics and discoverCharcteristics if service discovery timeout is exceeded.
     case characteristicDiscoveryTimeout
 }
 ```

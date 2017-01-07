@@ -11,11 +11,11 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 # Features
 
 - A [futures](https://github.com/troystribling/SimpleFutures) interface replacing protocol implementations.
-- Timeout for `Peripheral` connection. `Service` scan, 'Service` and `Characteristic` discovery and `Characteristic` read/write.
+- Timeout for `Peripheral` connection, `Service` scan, 'Service` and `Characteristic` discovery and `Characteristic` read/write.
 - A DSL for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
 - [Example](/Examples) applications implementing CentralManager and PeripheralManager.
-- A full featured extendable Central scanner and Peripheral emulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
+- A full featured extendable scanner and Peripheral simulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
 - Thread safe.
 - Comprehensive test coverage.
 
@@ -43,7 +43,7 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'Your Target Name' do
-  pod 'BlueCapKit', '~> 0.3'
+  pod 'BlueCapKit', '~> 0.4'
 end
 ```
 
@@ -152,7 +152,7 @@ scanFuture.onFailure { error in
 
 Here when `.poweredOn` is received the scan is started. On all other state changes the appropriate error is `thrown` and handled in the error handler.
 
-To connect discovered peripheral the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`,
+To connect discovered peripherals the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`,
 
 ```swift
 let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<Peripheral> in
@@ -163,7 +163,7 @@ let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<Periphera
 
 Here the scan is also stopped after a peripheral with the desire service UUID is discovered.
 
-The `Peripheral` `Services` and `Characteristics` need to be discovered and the connection events need to be handled. `Service` and `Characteristic` discovery are performed by 'Peripheral#discoverServices' and `Service#discoverCharacteristics` and more errors are added to `AppError`.
+The `Peripheral` `Services` and `Characteristics` need to be discovered and the connection errors need to be handled. `Service` and `Characteristic` discovery are performed by 'Peripheral#discoverServices' and `Service#discoverCharacteristics` and more errors are added to `AppError`.
 
 ```swift
 public enum AppError : Error {
@@ -190,17 +190,18 @@ let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<Peripheral
 }
 
 discoveryFuture.onFailure { error in
-    guard let appError = error as? AppError else {
-        return
-    }
-    switch appError {
-    case .serviceNotFound:
+    switch error {
+    case PeripheralError.disconnected:
+        peripheral.reconnect()
+    case AppError.serviceNotFound:
         break
+    default:
+		    break
     }
 }
 ```
 
-Finally read and subscribe to the data `Characteristic` and handle the `dataCharactertisticNotFound`.
+Here a reconnect attempt is made if the `Peripheral` is disconnected and the `AppError.serviceNotFound` error is handled. Finally read and subscribe to the data `Characteristic` and handle the `dataCharactertisticNotFound`.
 
 ```swift
 public enum AppError : Error {
@@ -230,13 +231,16 @@ let subscriptionFuture = discoveryFuture.flatMap { service -> Future<Characteris
 }
 
 dataUpdateFuture.onFailure { [unowned self] error in
-    guard let appError = error as? AppError else {
-        return
-    }
-    switch appError {
-    case .dataCharactertisticNotFound:
-       break
+    switch error {
+    case PeripheralError.disconnected:
+        peripheral.reconnect()
+    case AppError.serviceNotFound:
+        break
+    case AppError.dataCharactertisticNotFound:
+		     break
     default:
+		    break
+    }
 }
 ```
  

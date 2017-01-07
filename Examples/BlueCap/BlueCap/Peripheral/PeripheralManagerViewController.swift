@@ -19,7 +19,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBOutlet var advertisedServicesCountLabel: UILabel!
     @IBOutlet var servicesLabel: UILabel!
     @IBOutlet var servicesCountLabel: UILabel!
-
+    
     struct MainStoryboard {
         static let peripheralManagerServicesSegue = "PeripheralManagerServices"
         static let peripheralManagerAdvertisedServicesSegue = "PeripheralManagerAdvertisedServices"
@@ -55,26 +55,26 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
 
         addServicesFuture.onFailure { [weak self] error in
-            switch error {
-            case AppError.poweredOff:
-                self?.present(UIAlertController.alert(message: "PeripheralManager powered off.") { _ in
-                    Singletons.peripheralManager.reset()
-                }, animated: true)
-            case AppError.resetting:
-                let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
-                self?.present(UIAlertController.alert(message: message) { _ in
-                    Singletons.peripheralManager.reset()
-                }, animated: true)
-            case AppError.unsupported:
-                self?.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
-            case AppError.unknown:
-                break;
-            default:
-                self?.present(UIAlertController.alert(error: error) { _ in
-                    Singletons.peripheralManager.reset()
-                }, animated: true, completion: nil)
+            self.forEach { strongSelf in
+                switch error {
+                case AppError.poweredOff:
+                    strongSelf.present(UIAlertController.alert(message: "Bluetooth powered off"), animated: true)
+                case AppError.resetting:
+                    let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
+                    strongSelf.present(UIAlertController.alert(message: message) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true)
+                case AppError.unsupported:
+                    strongSelf.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+                case AppError.unknown:
+                    break;
+                default:
+                    strongSelf.present(UIAlertController.alert(error: error) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true, completion: nil)
+                }
+                strongSelf.setUIState()
             }
-            self?.setUIState()
         }
     }
 
@@ -156,27 +156,27 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
 
         startAdvertiseFuture.onFailure { [weak self] error in
-            switch error {
-            case AppError.poweredOff:
-                self?.present(UIAlertController.alert(message: "PeripheralManager powered off.") { _ in
-                    Singletons.peripheralManager.reset()
-                }, animated: true)
-            case AppError.resetting:
-                let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
-                self?.present(UIAlertController.alert(message: message) { _ in
-                    Singletons.peripheralManager.reset()
-                }, animated: true)
-            case AppError.unsupported:
-                self?.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
-            case AppError.unknown:
-                break;
-            default:
-                self?.present(UIAlertController.alert(error: error) { _ in
-                    Singletons.peripheralManager.reset()
-                }, animated: true, completion: nil)
+            self.forEach { strongSelf in
+                switch error {
+                case AppError.poweredOff:
+                    break
+                case AppError.resetting:
+                    let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
+                    strongSelf.present(UIAlertController.alert(message: message) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true)
+                case AppError.unsupported:
+                    strongSelf.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+                case AppError.unknown:
+                    break;
+                default:
+                    strongSelf.present(UIAlertController.alert(error: error) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true, completion: nil)
+                }
+                strongSelf.setUIState()
+                _ = Singletons.peripheralManager.stopAdvertising()
             }
-            self?.setUIState()
-            _ = Singletons.peripheralManager.stopAdvertising()
         }
     }
 

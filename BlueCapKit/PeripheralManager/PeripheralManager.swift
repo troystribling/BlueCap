@@ -172,7 +172,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     public func stopAdvertising(timeout: TimeInterval = 10.0) -> Future<Void> {
         return self.peripheralQueue.sync {
             guard self.isAdvertising else {
-                return Future<Void>(())
+                return Future<Void>(value: ())
             }
             if let afterAdvertisingStoppedPromise = self.afterAdvertisingStoppedPromise, !afterAdvertisingStoppedPromise.completed {
                 return afterAdvertisingStoppedPromise.future

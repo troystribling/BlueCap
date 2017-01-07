@@ -128,8 +128,10 @@ class PeripheralsViewController : UITableViewController {
                     }
                 case .unknown:
                     break
-                case .poweredOff, .unauthorized:
-                    strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state)\"")
+                case .poweredOff:
+                    strongSelf.alertAndStopScanning(message: "Bluetooth powered off")
+                case .unauthorized:
+                    strongSelf.alertAndStopScanning(message: "Bluetooth unauthorized")
                 case .resetting:
                     strongSelf.stopScanIfScanning()
                     strongSelf.setScanButton()
@@ -137,7 +139,7 @@ class PeripheralsViewController : UITableViewController {
                     sleep(1)
                     Singletons.scanningManager.reset()
                 case .unsupported:
-                    strongSelf.alertAndStopScanning(message: "DiscoveryManager state \"\(state)\". Bluetooth not supported.")
+                    strongSelf.alertAndStopScanning(message: "Bluetooth not supported.")
                 }
             }
         }

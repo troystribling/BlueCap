@@ -126,7 +126,7 @@ class ViewController: UITableViewController {
         }.flatMap { [unowned self] peripheral -> FutureStream<Peripheral> in
             self.manager.stopScanning()
             self.peripheral = peripheral
-            return peripheral.connect(timeoutRetries: 5, disconnectRetries :5, connectionTimeout: 10.0)
+            return peripheral.connect(connectionTimeout: 10.0)
         }.flatMap { [weak self] peripheral -> Future<Peripheral> in
             self?.updateUIStatus()
             return peripheral.discoverServices([serviceUUID])
@@ -165,28 +165,28 @@ class ViewController: UITableViewController {
         }
 
         dataUpdateFuture.onFailure { [unowned self] error in
-            guard let appError = error as? AppError else {
+            switch error {
+            case AppError.dataCharactertisticNotFound:
+                fallthrough
+            case AppError.enabledCharactertisticNotFound:
+                fallthrough
+            case AppError.updateCharactertisticNotFound:
+                fallthrough
+            case AppError.serviceNotFound:
                 self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
-                return
-            }
-            switch appError {
-            case .dataCharactertisticNotFound:
-                fallthrough
-            case .enabledCharactertisticNotFound:
-                fallthrough
-            case .updateCharactertisticNotFound:
-                fallthrough
-            case .serviceNotFound:
-                self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
-            case .invalidState:
+            case AppError.invalidState:
                 self.present(UIAlertController.alertWithMessage("Invalid state"), animated: true, completion: nil)
-            case .resetting:
+            case AppError.resetting:
                 self.manager.reset()
                 self.present(UIAlertController.alertWithMessage("Bluetooth service resetting"), animated: true, completion: nil)
-            case .poweredOff:
+            case AppError.poweredOff:
                 self.present(UIAlertController.alertWithMessage("Bluetooth powered off"), animated: true, completion: nil)
-            case .unknown:
+            case AppError.unknown:
                 break
+            case PeripheralError.disconnected:
+                self.peripheral?.reconnect()
+            default:
+                self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
             self.peripheral = nil
             self.updateUIStatus()

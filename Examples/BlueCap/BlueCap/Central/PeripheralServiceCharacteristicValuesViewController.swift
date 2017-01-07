@@ -70,7 +70,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
         
         updateValues()
-        
+        recieveNotificationsIfEnabled()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -190,18 +190,20 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCharactertisticValueCell, for: indexPath) as! CharacteristicValueCell
-        if let characteristic = self.characteristic {
-            if let stringValues = characteristic.stringValue {
-                let names = Array(stringValues.keys)
-                let values = Array(stringValues.values)
-                cell.valueNameLabel.text = names[indexPath.row]
-                cell.valueLable.text = values[indexPath.row]
-            }
-            if characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse) {
-                cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
-            } else {
-                cell.accessoryType = UITableViewCellAccessoryType.none
-            }
+        guard let characteristic = characteristic, let peripheral = peripheral else {
+            return cell
+        }
+        if let stringValues = characteristic.stringValue {
+            let names = Array(stringValues.keys)
+            let values = Array(stringValues.values)
+            cell.valueNameLabel.text = names[indexPath.row]
+            cell.valueLable.text = values[indexPath.row]
+            cell.valueLable.textColor = peripheral.state == .connected ? UIColor.black : UIColor.lightGray
+        }
+        if characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse) {
+            cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryType.none
         }
         return cell
     }

@@ -193,7 +193,7 @@ class PeripheralViewController : UITableViewController {
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
 
-        peripheralDiscoveryFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 10).flatMap { [weak self] peripheral -> Future<Peripheral> in
+        peripheralDiscoveryFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 1).flatMap { [weak self] peripheral -> Future<Peripheral> in
             self?.updateConnectionStateLabel()
             return peripheral.discoverAllServices(timeout: scanTimeout)
         }.flatMap { peripheral -> Future<[Service]> in

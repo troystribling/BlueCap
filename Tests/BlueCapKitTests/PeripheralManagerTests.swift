@@ -96,7 +96,7 @@ class PeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.startAdvertising(BeaconRegion(proximityUUID: UUID(), identifier: "Beacon Regin"))
         peripheralManager.didStartAdvertising(nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) { error in
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
             XCTAssert(mock.startAdvertisingCalled)
             XCTAssert(peripheralManager.isAdvertising)
         }
@@ -125,16 +125,29 @@ class PeripheralManagerTests: XCTestCase {
 
     func testStopAdvertising_WhenAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .poweredOn)
-        peripheralManager.stopAdvertising()
-        XCTAssert(mock.stopAdvertisingCalled)
+        let future = peripheralManager.stopAdvertising()
+        XCTAssertFutureSucceeds(future, timeout: 5.0) {
+            XCTAssert(mock.stopAdvertisingCalled)
+        }
     }
 
     func testStopAdvertising_WhenNotAdvertising_StopsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        peripheralManager.stopAdvertising()
-        XCTAssertFalse(mock.stopAdvertisingCalled)
+        let future = peripheralManager.stopAdvertising()
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+            XCTAssertFalse(mock.stopAdvertisingCalled)
+        }
     }
 
+    func testStopAdvertising_WhenAdvertisingAndTimeoutIsExceeded_CompletesWithErrorStopAdvertisingTimeout() {
+        let (mock, peripheralManager) = createPeripheralManager(true, state: .poweredOn, stopAdvertiseFail: true)
+        let future = peripheralManager.stopAdvertising(timeout: 0.5)
+        XCTAssertFutureFails(future, timeout: 20.0) { error in
+            XCTAssertEqualErrors(error, PeripheralManagerError.stopAdvertisingTimeout)
+            XCTAssertTrue(mock.stopAdvertisingCalled)
+        }
+    }
+    
     // MARK: Add Service
 
     func testAddService_WhenNoErrorInAck_CompletesSuccess() {

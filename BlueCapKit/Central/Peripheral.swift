@@ -494,9 +494,10 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     internal func didDisconnectPeripheral(_ error: Swift.Error?) {
         _disconnectedAt = Date()
-        _totalSecondsConnected += self._secondsConnected
+        _totalSecondsConnected += _secondsConnected
         switch(terminationStatus) {
         case .connected:
+            _disconnectionCount += 1
             if let error = error {
                 Logger.debug("disconnecting with errors uuid=\(self.identifier.uuidString), name=\(self.name), error=\(error.localizedDescription)")
                 connectionPromise?.failure(error)
@@ -508,6 +509,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("disconnect forced uuid=\(self.identifier.uuidString), name=\(self.name)")
             connectionPromise?.failure(PeripheralError.forcedDisconnect)
         case .timeout:
+            _timeoutCount += 1
             Logger.debug("timeout uuid=\(self.identifier.uuidString), name=\(self.name)")
             connectionPromise?.failure(PeripheralError.connectionTimeout)
         }
@@ -539,16 +541,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     // MARK: Utilities
-
-    fileprivate func shouldDisconnectOrReconnect() {
-        Logger.debug("name = \(self.name), uuid = \(self.identifier.uuidString), disconnectCount = \(self._disconnectionCount), disconnectRetries = \(self.disconnectRetries)")
-        if _disconnectionCount < disconnectRetries {
-            _disconnectionCount += 1
-            reconnectIfNotConnected(Peripheral.RECONNECT_DELAY)
-        } else {
-            self.connectionPromise?.failure(PeripheralError.disconnected)
-        }
-    }
 
     fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity)  -> Future<Peripheral> {
         return centralQueue.sync {

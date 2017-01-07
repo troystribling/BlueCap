@@ -243,6 +243,7 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
 
     var advertisementData: [String : Any]?
     var isAdvertising : Bool
+    let stopAdvertiseFail: Bool
     var state: ManagerState
     var addedService: CBMutableServiceInjectable?
     var removedService: CBMutableServiceInjectable?
@@ -252,9 +253,10 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     var addServiceCount = 0
     var updateValueCount = 0
 
-    init(isAdvertising: Bool, state: ManagerState) {
+    init(isAdvertising: Bool, state: ManagerState, stopAdvertiseFail: Bool = false) {
         self.isAdvertising = isAdvertising
         self.state = state
+        self.stopAdvertiseFail = stopAdvertiseFail
     }
 
     var managerState: ManagerState {
@@ -269,6 +271,9 @@ class CBPeripheralManagerMock: NSObject, CBPeripheralManagerInjectable {
     
     func stopAdvertising() {
         self.stopAdvertisingCalled = true
+        guard !stopAdvertiseFail else {
+            return
+        }
         self.isAdvertising = false
     }
     
@@ -367,8 +372,8 @@ class CBCentralMock : CBCentralInjectable {
 }
 
 // MARK: - Utilities -
-func createPeripheralManager(_ isAdvertising: Bool, state: ManagerState) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
-    let mock = CBPeripheralManagerMock(isAdvertising: isAdvertising, state: state)
+func createPeripheralManager(_ isAdvertising: Bool, state: ManagerState, stopAdvertiseFail: Bool = false) -> (CBPeripheralManagerMock, PeripheralManagerUT) {
+    let mock = CBPeripheralManagerMock(isAdvertising: isAdvertising, state: state, stopAdvertiseFail: stopAdvertiseFail)
     return (mock, PeripheralManagerUT(peripheralManager:mock))
 }
 
