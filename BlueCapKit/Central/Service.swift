@@ -71,21 +71,21 @@ public class Service {
     internal func didDiscoverCharacteristics(_ discoveredCharacteristics: [CBCharacteristicInjectable], error: Swift.Error?) {
         self.discoveredCharacteristics.removeAll()
         if let error = error {
-            Logger.debug("discover failed")
+            Logger.debug("Error discovering \(error), service name \(name), service uuid \(uuid), characteristic count \(discoveredCharacteristics.count)")
             if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
                 self.characteristicsDiscoveredPromise?.failure(error)
             }
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
-                Logger.debug("Error discovering uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
+                Logger.debug("Error discovering characterisc uuid=\(bcCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
             }
         } else {
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
-                Logger.debug("uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
+                Logger.debug("Discovered characterisc uuid=\(bcCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
             }
-            Logger.debug("discover success")
+            Logger.debug("discover success service name \(name), service uuid \(uuid)")
             if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
                 self.characteristicsDiscoveredPromise?.success(self)
             }

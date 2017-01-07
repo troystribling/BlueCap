@@ -408,19 +408,21 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     // MARK: CBPeripheralDelegate Shims
 
     internal func didDiscoverCharacteristicsForService(_ service: CBServiceInjectable, characteristics: [CBCharacteristicInjectable], error: Error?) {
-        Logger.debug("uuid=\(identifier.uuidString), name=\(name)")
-        if let bcService = self.discoveredServices[service.uuid] {
-            bcService.didDiscoverCharacteristics(characteristics, error: error)
-            if error == nil {
-                for cbCharacteristic in characteristics {
-                    discoveredCharacteristics[cbCharacteristic.uuid] = bcService.discoveredCharacteristics[cbCharacteristic.uuid]
-                }
+        guard let bcService = self.discoveredServices[service.uuid] else {
+            Logger.debug("service not found peripheral name=\(self.name), peripheral uuid=\(self.identifier.uuidString), service uuid \(service.uuid)")
+            return
+        }
+        Logger.debug("peripheral name=\(self.name), peripheral uuid=\(self.identifier.uuidString), service name \(bcService.name), characteristic count \(characteristics.count)")
+        bcService.didDiscoverCharacteristics(characteristics, error: error)
+        if error == nil {
+            for cbCharacteristic in characteristics {
+                discoveredCharacteristics[cbCharacteristic.uuid] = bcService.discoveredCharacteristics[cbCharacteristic.uuid]
             }
         }
     }
     
     internal func didDiscoverServices(_ discoveredServices: [CBServiceInjectable], error: Error?) {
-        Logger.debug("uuid=\(self.identifier.uuidString), name=\(self.name)")
+        Logger.debug("peripheral name=\(self.name), peripheral uuid=\(self.identifier.uuidString), service count \(discoveredServices.count)")
         self.clearAll()
         if let error = error {
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
@@ -431,7 +433,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 let serviceProfile = profileManager?.services[service.uuid]
                 let bcService = Service(cbService: service, peripheral: self, profile: serviceProfile)
                 self.discoveredServices[bcService.uuid] = bcService
-                Logger.debug("uuid=\(bcService.uuid.uuidString), name=\(bcService.name)")
+                Logger.debug("service uuid=\(bcService.uuid.uuidString), service name=\(bcService.name), peripheral name=\(self.name), peripheral uuid=\(self.identifier.uuidString)")
             }
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
                 self.servicesDiscoveredPromise?.success(self)
@@ -499,7 +501,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         case .connected:
             _disconnectionCount += 1
             if let error = error {
-                Logger.debug("disconnecting with errors uuid=\(self.identifier.uuidString), name=\(self.name), error=\(error.localizedDescription)")
+                Logger.debug("disconnecting with errors uuid=\(self.identifier.uuidString), name=\(self.name), error=\(error.localizedDescription), disconnection count=\(_disconnectionCount) ")
                 connectionPromise?.failure(error)
             } else  {
                 Logger.debug("disconnecting with no errors uuid=\(self.identifier.uuidString), name=\(self.name)")
@@ -510,7 +512,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             connectionPromise?.failure(PeripheralError.forcedDisconnect)
         case .timeout:
             _timeoutCount += 1
-            Logger.debug("timeout uuid=\(self.identifier.uuidString), name=\(self.name)")
+            Logger.debug("timeout connection uuid=\(self.identifier.uuidString), name=\(self.name), timeout count=\(_timeoutCount)")
             connectionPromise?.failure(PeripheralError.connectionTimeout)
         }
         for (_ , service) in self.discoveredServices {

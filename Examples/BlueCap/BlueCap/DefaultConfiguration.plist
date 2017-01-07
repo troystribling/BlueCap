@@ -17,11 +17,11 @@
 	<key>peripheralMaximumDisconnectionsEnabled</key>
 	<false/>
 	<key>peripheralMaximumDisconnections</key>
-	<integer>2</integer>
+	<integer>5</integer>
 	<key>peripheralMaximumTimeoutsEnabled</key>
 	<true/>
 	<key>peripheralMaximumTimeouts</key>
-	<integer>2</integer>
+	<integer>5</integer>
 	<key>maximumPeripheralsConnected</key>
 	<integer>1</integer>
 	<key>maximumPeripheralsDiscovered</key>

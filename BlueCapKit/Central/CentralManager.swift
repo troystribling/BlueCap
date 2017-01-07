@@ -101,6 +101,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                     strongSelf.cbCentralManager.delegate = nil
                     strongSelf.cbCentralManager = CBCentralManager(delegate: strongSelf, queue: strongSelf.centralQueue.queue, options: strongSelf.options)
                     strongSelf.cbCentralManager.delegate = self
+                    strongSelf._discoveredPeripherals.removeAll()
                 }
             }
         }
@@ -163,6 +164,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         return self.centralQueue.sync {
             if let afterPeripheralDiscoveredPromise = self.afterPeripheralDiscoveredPromise {
                 return afterPeripheralDiscoveredPromise.stream
+            }
+            guard self.poweredOn else {
+                return FutureStream(error: CentralManagerError.isPoweredOff)
             }
             if !self._isScanning {
                 Logger.debug("'\(self.name)' scanning UUIDs \(uuids)")

@@ -18,11 +18,16 @@ class SerialUUIDQueue {
         return queue.sync { self.uuids.count == 0 }
     }
 
+    var count: Int {
+        return uuids.count
+    }
+
     func push(_ uuid: UUID) {
         queue.sync {
             guard !self.uuids.contains(uuid) else {
                 return
             }
+            Logger.debug("queueing \(uuid)")
             self.uuids.append(uuid)
         }
     }
@@ -32,7 +37,9 @@ class SerialUUIDQueue {
             guard self.uuids.count > 0 else {
                 return nil
             }
-            return self.uuids.remove(at: 0)
+            let uuid = self.uuids.remove(at: 0)
+            Logger.debug("dequeueing \(uuid)")
+            return uuid
         }
     }
 
@@ -139,7 +146,9 @@ class PeripheralsViewController : UITableViewController {
                     sleep(1)
                     Singletons.scanningManager.reset()
                 case .unsupported:
-                    strongSelf.alertAndStopScanning(message: "Bluetooth not supported.")
+                    Logger.debug("scanningManager bluetooth unsupported")
+                    strongSelf.stopScanIfScanning()
+                    strongSelf.setScanButton()
                 }
             }
         }
@@ -169,8 +178,8 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.styleNavigationBar()
-        self.setScanButton()
+        styleNavigationBar()
+        setScanButton()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -212,7 +221,8 @@ class PeripheralsViewController : UITableViewController {
 
     func didEnterBackground() {
         Logger.debug()
-        stopScanIfScanning()
+        scanEnabled = false
+        stopScan()
     }
 
     func setScanButton() {
@@ -227,6 +237,7 @@ class PeripheralsViewController : UITableViewController {
 
     func disconnectConnectingPeripherals() {
         for peripheral in peripherals where connectingPeripherals.contains(peripheral.identifier) {
+            Logger.debug("Disconnecting peripheral '\(peripheral.name)', \(peripheral.identifier.uuidString)")
             peripheral.disconnect()
         }
     }
@@ -243,12 +254,13 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("max connections reached")
             return
         }
+        Logger.debug("peripheralsToConnect count=\(peripheralsToConnect.count)")
         while let peripheralIdentifier = peripheralsToConnect.shift() {
             guard let peripheral = Singletons.discoveryManager.discoveredPeripherals[peripheralIdentifier] else {
-                Logger.debug("peripheral with identifier '\(peripheralIdentifier.uuidString)' not found")
+                Logger.debug("peripheral with identifier '\(peripheralIdentifier.uuidString)' not found in discovery manager")
                 continue
             }
-            Logger.debug("Connecting peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+            Logger.debug("Connecting peripheral '\(peripheral.name)', \(peripheral.identifier.uuidString), timeout count=\(peripheral.timeoutCount), disconnect count=\(peripheral.disconnectionCount)")
             connectingPeripherals.insert(peripheral.identifier)
             connect(peripheral)
             connectingCount += 1
@@ -264,6 +276,7 @@ class PeripheralsViewController : UITableViewController {
         guard maxConnections < peripherals.count else {
             return
         }
+        Logger.debug("peripheralsToDisconnect count=\(peripheralsToDisconnect.count)")
         while let peripheralIdentifier = peripheralsToDisconnect.shift() {
             guard let peripheral = Singletons.discoveryManager.discoveredPeripherals[peripheralIdentifier] else {
                 Logger.debug("peripheral with identifier '\(peripheralIdentifier.uuidString)' not found")
@@ -279,6 +292,7 @@ class PeripheralsViewController : UITableViewController {
             Logger.debug("connection updates paused")
             return
         }
+        Logger.debug("update peripheral connections")
         Queue.main.delay(Params.updateConnectionsInterval) { [weak self] in
             self.forEach { strongSelf in
                 strongSelf.disconnectPeripheralsToDisconnect()
@@ -290,45 +304,46 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func connect(_ peripheral: Peripheral) {
-        Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
-        let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
-        let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
+        Logger.debug("Connect peripheral '\(peripheral.name)'', \(peripheral.identifier.uuidString), timeout count=\(peripheral.timeoutCount), disconnect count=\(peripheral.disconnectionCount)")
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         let connectionFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 10)
 
         connectionFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
-                Logger.debug("Connected peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                Logger.debug("Connected peripheral '\(peripheral.name)', \(peripheral.identifier.uuidString), timeout count=\(peripheral.timeoutCount), disconnect count=\(peripheral.disconnectionCount)")
                 strongSelf.connectedPeripherals.insert(peripheral.identifier)
-                strongSelf.discoverPeripheral(peripheral)
+                strongSelf.discoverServices(peripheral)
                 strongSelf.updateWhenActive()
             }
         }
 
         connectionFuture.onFailure { [weak self] error in
-            Logger.debug("Connection failed: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
             self.forEach { strongSelf in
-                strongSelf.connectingPeripherals.remove(peripheral.identifier)
+                let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
+                let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
+                Logger.debug("Connection failed: '\(peripheral.name)', \(peripheral.identifier.uuidString), timeout count=\(peripheral.timeoutCount), max timeouts=\(maxTimeouts), disconnect count=\(peripheral.disconnectionCount), max disconnections=\(maxDisconnections)")
                 switch error {
                 case PeripheralError.forcedDisconnect:
-                    Logger.debug("Forced Disconnection: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    Logger.debug("Forced Disconnection '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    strongSelf.connectingPeripherals.remove(peripheral.identifier)
                     strongSelf.startScanningAndConnectingIfNotPaused()
                     strongSelf.restartConnectionUpdatesIfNecessary()
                     return
                 case PeripheralError.connectionTimeout:
                     if peripheral.timeoutCount < maxTimeouts {
-                        Logger.debug("Connection timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                        Logger.debug("Connection timeout retrying '\(peripheral.name)', \(peripheral.identifier.uuidString), timeout count=\(peripheral.timeoutCount), max timeouts=\(maxTimeouts)")
                         peripheral.reconnect(withDelay: 1.0)
                         return
                     }
                 default:
                     if peripheral.disconnectionCount < maxDisconnections {
                         peripheral.reconnect(withDelay: 1.0)
-                        Logger.debug("Disconnected: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                        Logger.debug("Disconnected retrying '\(peripheral.name)', \(peripheral.identifier.uuidString), disconnect count=\(peripheral.disconnectionCount), max disconnections=\(maxDisconnections)")
                         return
                     }
                 }
-                Logger.debug("Connection failed: '\(error), \(peripheral.name)', \(peripheral.identifier.uuidString)")
+                Logger.debug("Connection failed giving up '\(error), \(peripheral.name)', \(peripheral.identifier.uuidString)")
+                strongSelf.connectingPeripherals.remove(peripheral.identifier)
                 strongSelf.removedPeripherals.insert(peripheral.identifier)
                 peripheral.terminate()
                 strongSelf.connectedPeripherals.remove(peripheral.identifier)
@@ -343,6 +358,7 @@ class PeripheralsViewController : UITableViewController {
         guard peripheralsToConnect.isEmpty else {
             return
         }
+        Logger.debug("restart connection updates")
         connectedPeripherals.removeAll()
         connectingPeripherals.removeAll()
         peripheralsToConnect.set(peripherals)
@@ -464,7 +480,10 @@ class PeripheralsViewController : UITableViewController {
 
     func stopScanIfScanning() {
         guard Singletons.scanningManager.isScanning else { return }
+        stopScan()
+    }
 
+    func stopScan() {
         Singletons.scanningManager.stopScanning()
         Singletons.discoveryManager.removeAllPeripherals()
         Singletons.scanningManager.removeAllPeripherals()
@@ -477,10 +496,9 @@ class PeripheralsViewController : UITableViewController {
         updateWhenActive()
     }
 
+    // MARK: Service Discovery
 
-    // MARK: Peripheral Discovery
-
-    func discoverPeripheral(_ peripheral: Peripheral) {
+    func discoverServices(_ peripheral: Peripheral) {
         guard peripheral.state == .connected else {
             return
         }
@@ -488,12 +506,14 @@ class PeripheralsViewController : UITableViewController {
             peripheralsToDisconnect.push(peripheral.identifier)
             return
         }
+        Logger.debug("Discovering service for peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
         let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
         let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: scanTimeout).flatMap { peripheral in
             peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
         }
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
+                Logger.debug("Service discovery successful peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 strongSelf.discoveredPeripherals.insert(peripheral.identifier)
                 strongSelf.peripheralsToDisconnect.push(peripheral.identifier)
                 strongSelf.updateWhenActive()
@@ -501,8 +521,9 @@ class PeripheralsViewController : UITableViewController {
         }
         peripheralDiscoveryFuture.onFailure { [weak self] error in
             self.forEach { strongSelf in
-                Logger.debug("Service discovery failed \(error), \(peripheral.name), \(peripheral.identifier.uuidString)")
+                Logger.debug("Service discovery failed peripheral: \(error), \(peripheral.name), \(peripheral.identifier.uuidString)")
                 strongSelf.peripheralsToDisconnect.push(peripheral.identifier)
+                strongSelf.removedPeripherals.insert(peripheral.identifier)
                 strongSelf.updateWhenActive()
             }
         }
