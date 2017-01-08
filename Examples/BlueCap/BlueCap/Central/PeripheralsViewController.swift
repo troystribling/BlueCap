@@ -539,7 +539,7 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = self.peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        if peripheral.state == .connected || peripheral.services.count > 0 {
+        if peripheral.state == .connected || peripheral.services.count > 0 || discoveredPeripherals.contains(peripheral.identifier) {
             cell.nameLabel.textColor = UIColor.black
         } else {
             cell.nameLabel.textColor = UIColor.lightGray

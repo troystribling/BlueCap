@@ -111,27 +111,28 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             }
 
             startAdvertiseFuture.onFailure { [weak self] error in
-                switch error {
-                case AppError.poweredOff:
-                    self?.present(UIAlertController.alert(message: "PeripheralManager powered off.") { _ in
-                        Singletons.peripheralManager.reset()
-                    }, animated: true)
-                case AppError.resetting:
-                    let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
-                    self?.present(UIAlertController.alert(message: message) { _ in
-                        Singletons.peripheralManager.reset()
-                    }, animated: true)
-                case AppError.unsupported:
-                    self?.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
-                case AppError.unknown:
-                    break
-                default:
-                    self?.present(UIAlertController.alert(error: error) { _ in
-                        Singletons.peripheralManager.reset()
-                    }, animated: true, completion: nil)
+                self.forEach { strongSelf in
+                    switch error {
+                    case AppError.poweredOff:
+                        strongSelf.present(UIAlertController.alert(message: "PeripheralManager powered off."), animated: true)
+                    case AppError.resetting:
+                        let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
+                        strongSelf.present(UIAlertController.alert(message: message) { _ in
+                            Singletons.peripheralManager.reset()
+                        }, animated: true)
+                    case AppError.unsupported:
+                        strongSelf.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+                    case AppError.unknown:
+                        break
+                    default:
+                        self?.present(UIAlertController.alert(error: error) { _ in
+                            Singletons.peripheralManager.reset()
+                        }, animated: true, completion: nil)
+                    }
+                    let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
+                    stopAdvertisingFuture.onSuccess { strongSelf.setUIState() }
+                    stopAdvertisingFuture.onFailure { _ in strongSelf.setUIState() }
                 }
-                self?.setUIState()
-                _ = Singletons.peripheralManager.stopAdvertising()
             }
         } else {
             present(UIAlertController.alert(message: "iBeacon config is invalid."), animated: true, completion: nil)
@@ -150,6 +151,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             advertiseLabel.textColor = UIColor.black
         } else {
             navigationItem.setHidesBackButton(false, animated:true)
+            advertiseSwitch.isOn = false
             nameTextField.isEnabled = true
             uuidTextField.isEnabled = true
             majorTextField.isEnabled = true
@@ -162,6 +164,10 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
                 advertiseSwitch.isEnabled = false
                 advertiseLabel.textColor = UIColor.lightGray
             }
+        }
+        if !Singletons.peripheralManager.poweredOn {
+            advertiseSwitch.isEnabled = false
+            advertiseLabel.textColor = UIColor.lightGray
         }
     }
 

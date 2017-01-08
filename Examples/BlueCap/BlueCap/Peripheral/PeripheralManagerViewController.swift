@@ -158,9 +158,9 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                         Singletons.peripheralManager.reset()
                     }, animated: true, completion: nil)
                 }
-                let advertisingFuture = Singletons.peripheralManager.stopAdvertising()
-                advertisingFuture.onSuccess { strongSelf.setUIState() }
-                advertisingFuture.onFailure { _ in strongSelf.setUIState() }
+                let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
+                stopAdvertisingFuture.onSuccess { strongSelf.setUIState() }
+                stopAdvertisingFuture.onFailure { _ in strongSelf.setUIState() }
             }
         }
     }
@@ -207,6 +207,10 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 advertiseSwitch.isOn = false
                 advertisedServicesLabel.textColor = UIColor.black
             }
+        }
+        if !Singletons.peripheralManager.poweredOn {
+            advertiseSwitch.isEnabled = false
+            advertiseLabel.textColor = UIColor.lightGray
         }
     }
 
