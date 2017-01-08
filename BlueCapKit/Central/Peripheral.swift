@@ -102,8 +102,8 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     fileprivate var disconnectRetries = UInt.max
 
     fileprivate(set) weak var centralManager: CentralManager?
-
     let centralQueue: Queue
+    
     var discoveredServices = [CBUUID : Service]()
     var discoveredCharacteristics = [CBUUID : Characteristic]()
 

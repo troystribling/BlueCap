@@ -188,8 +188,7 @@ class PeripheralViewController : UITableViewController {
         }
         Logger.debug("Connect peripheral: '\(peripheral.name)'', \(peripheral.identifier.uuidString)")
         progressView.show()
-        let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
-        let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
+
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
 
@@ -210,10 +209,16 @@ class PeripheralViewController : UITableViewController {
 
         peripheralDiscoveryFuture?.onFailure { [weak self] error in
             self.forEach { strongSelf in
+                let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
+                let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
                 switch error {
+                case PeripheralError.forcedDisconnect:
+                    Logger.debug("Connection force disconnect: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                    break
                 case PeripheralError.connectionTimeout:
                     if peripheral.timeoutCount < maxTimeouts {
                         Logger.debug("Connection timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
+                        strongSelf.updateConnectionStateLabel()
                         peripheral.reconnect(withDelay: 1.0)
                         return
                     }
@@ -228,6 +233,7 @@ class PeripheralViewController : UITableViewController {
                 default:
                     if peripheral.disconnectionCount < maxDisconnections {
                         peripheral.reconnect(withDelay: 1.0)
+                        strongSelf.updateConnectionStateLabel()
                         Logger.debug("Disconnected: '\(error)', '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                         return
                     }
@@ -236,7 +242,13 @@ class PeripheralViewController : UITableViewController {
                 strongSelf.stateLabel.textColor = UIColor.lightGray
                 strongSelf.updateConnectionStateLabel()
                 strongSelf.updateRSSIUpdatesAndPeripheralPropertiesIfConnected()
-                strongSelf.progressView.remove().onSuccess {
+                let progressViewFuture = strongSelf.progressView.remove()
+                progressViewFuture.onSuccess {
+                    strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
+                        _ = strongSelf.navigationController?.popToRootViewController(animated: true)
+                    }, animated: true)
+                }
+                progressViewFuture.onFailure { _ in 
                     strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
                         _ = strongSelf.navigationController?.popToRootViewController(animated: true)
                     }, animated: true)

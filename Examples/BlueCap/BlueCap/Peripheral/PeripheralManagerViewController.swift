@@ -125,23 +125,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         guard let name = PeripheralStore.getPeripheralName() else {
             return
         }
-        let startAdvertiseFuture = Singletons.peripheralManager.whenStateChanges().flatMap { [unowned self] state -> Future<[Void]> in
-            switch state {
-            case .poweredOn:
-                Singletons.peripheralManager.removeAllServices()
-                return self.loadPeripheralServicesFromConfig()
-            case .poweredOff:
-                throw AppError.poweredOff
-            case .unauthorized:
-                throw AppError.unauthorized
-            case .unknown:
-                throw AppError.unknown
-            case .unsupported:
-                throw AppError.unsupported
-            case .resetting:
-                throw AppError.resetting
-            }
-        }.flatMap { _ -> Future<Void> in
+        let startAdvertiseFuture = loadPeripheralServicesFromConfig().flatMap { _ -> Future<Void> in
             let advertisedServices = PeripheralStore.getAdvertisedPeripheralServices()
             if advertisedServices.count > 0 {
                 return Singletons.peripheralManager.startAdvertising(name, uuids: advertisedServices)
@@ -174,8 +158,9 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                         Singletons.peripheralManager.reset()
                     }, animated: true, completion: nil)
                 }
-                strongSelf.setUIState()
-                _ = Singletons.peripheralManager.stopAdvertising()
+                let advertisingFuture = Singletons.peripheralManager.stopAdvertising()
+                advertisingFuture.onSuccess { strongSelf.setUIState() }
+                advertisingFuture.onFailure { _ in strongSelf.setUIState() }
             }
         }
     }
