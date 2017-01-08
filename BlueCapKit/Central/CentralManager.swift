@@ -208,7 +208,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         centralQueue.delay(timeout) { [weak self] in
             self.forEach { strongSelf in
                 if strongSelf._isScanning {
-                    if sequence == strongSelf.scanTimeoutSequence {
+                    if sequence == strongSelf.scanTimeoutSequence && strongSelf._discoveredPeripherals.count == 0 {
                         strongSelf.afterPeripheralDiscoveredPromise?.failure(CentralManagerError.serviceScanTimeout)
                     }
                     strongSelf.stopScanningIfScanning()

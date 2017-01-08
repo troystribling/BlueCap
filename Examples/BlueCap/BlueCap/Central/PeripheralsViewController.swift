@@ -166,8 +166,7 @@ class PeripheralsViewController : UITableViewController {
     func alertAndStopScan(message: String) {
         present(UIAlertController.alert(message: message), animated:true) { [weak self] _ in
             self.forEach { strongSelf in
-                strongSelf.scanEnabled = false
-                strongSelf.stopScan()
+                strongSelf.stopScanAndToggleOff()
                 strongSelf.setScanButton()
             }
         }
@@ -218,8 +217,7 @@ class PeripheralsViewController : UITableViewController {
 
     func didEnterBackground() {
         Logger.debug()
-        scanEnabled = false
-        stopScan()
+        stopScanAndToggleOff()
     }
 
     func setScanButton() {
@@ -446,8 +444,7 @@ class PeripheralsViewController : UITableViewController {
             return
         }
         Logger.debug("timeoutScan: timing out")
-        scanEnabled = false
-        stopScan()
+        stopScanAndToggleOff()
         setScanButton()
         present(UIAlertController.alert(message: "Bluetooth scan timeout."), animated:true)
     }
@@ -474,6 +471,11 @@ class PeripheralsViewController : UITableViewController {
 
     func stopScanIfScanning() {
         guard Singletons.scanningManager.isScanning else { return }
+        stopScan()
+    }
+
+    func stopScanAndToggleOff() {
+        scanEnabled = false
         stopScan()
     }
 
