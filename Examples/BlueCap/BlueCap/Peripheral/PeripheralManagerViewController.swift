@@ -111,6 +111,12 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
 
+    override func willMove(toParentViewController parent: UIViewController?) {
+        if parent == nil {
+            Singletons.peripheralManager.invalidate()
+        }
+    }
+
     @IBAction func toggleAdvertise(_ sender:AnyObject) {
         if Singletons.peripheralManager.isAdvertising {
             let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
