@@ -32,6 +32,34 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             self.minorTextField.text = "\(beaconMinorMajor[0])"
             self.majorTextField.text = "\(beaconMinorMajor[1])"
         }
+        let stateChangeFuture = Singletons.peripheralManager.whenStateChanges()
+        stateChangeFuture.onSuccess { [weak self] state in
+            self.forEach { strongSelf in
+                strongSelf.setUIState()
+                switch state {
+                case .poweredOn:
+                    break
+                case .poweredOff:
+                    strongSelf.present(UIAlertController.alert(message: "PeripheralManager powered off."), animated: true)
+                case .unauthorized:
+                    strongSelf.present(UIAlertController.alert(message: "Bluetooth not authorized."), animated: true)
+                case .unknown:
+                    break
+                case .unsupported:
+                    strongSelf.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+                case .resetting:
+                    let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost."
+                    strongSelf.present(UIAlertController.alert(message: message) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true)
+                }
+            }
+        }
+        stateChangeFuture.onFailure { [weak self] error in
+            self?.present(UIAlertController.alert(error: error) { _ in
+                Singletons.peripheralManager.reset()
+            }, animated: true, completion: nil)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -66,7 +94,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             if let minor = UInt16(enteredMinor), let major = UInt16(enteredMajor), minor <= 65535, major <= 65535 {
                 PeripheralStore.setBeaconMinorMajor([minor, major])
             } else {
-                self.present(UIAlertController.alertOnErrorWithMessage("major or minor not convertable to a number."), animated:true, completion:nil)
+                present(UIAlertController.alertOnErrorWithMessage("major or minor not convertable to a number."), animated:true, completion:nil)
                 return false
             }
         }
@@ -75,63 +103,40 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
     }
 
     @IBAction func toggleAdvertise(_ sender:AnyObject) {
+        guard Singletons.peripheralManager.poweredOn else {
+            present(UIAlertController.alertOnErrorWithMessage("Bluetooth powered off"), animated:true, completion:nil)
+            return
+        }
         if Singletons.peripheralManager.isAdvertising {
             let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
             stopAdvertisingFuture.onSuccess { [weak self] in
                 self?.setUIState()
             }
-            stopAdvertisingFuture.onFailure { [weak self] _ in
-                self?.present(UIAlertController.alert(message: "Failed to stop advertising."), animated: true)
+            stopAdvertisingFuture.onFailure { [weak self] error in
+                self?.present(UIAlertController.alert(error: error) { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true, completion: nil)
             }
             return
         }
         let beaconMinorMajor = PeripheralStore.getBeaconMinorMajor()
         if let uuid = PeripheralStore.getBeaconUUID(), let name = PeripheralStore.getBeaconName(), beaconMinorMajor.count == 2 {
             let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconMinorMajor[1], minor: beaconMinorMajor[0])
-            let startAdvertiseFuture = Singletons.peripheralManager.whenStateChanges().flatMap { state -> Future<Void> in
-                switch state {
-                case .poweredOn:
-                    return Singletons.peripheralManager.startAdvertising(beaconRegion)
-                case .poweredOff:
-                    throw AppError.poweredOff
-                case .unauthorized:
-                    throw AppError.unauthorized
-                case .unknown:
-                    throw AppError.unknown
-                case .unsupported:
-                    throw AppError.unsupported
-                case .resetting:
-                    throw AppError.resetting
-                }
-            }
+            let startAdvertiseFuture = Singletons.peripheralManager.startAdvertising(beaconRegion)
 
             startAdvertiseFuture.onSuccess { [weak self] in
                 self?.setUIState()
-                self?.present(UIAlertController.alert(message: "Powered on and started advertising."), animated: true, completion: nil)
+                self?.present(UIAlertController.alert(message: "Started advertising."), animated: true, completion: nil)
             }
 
             startAdvertiseFuture.onFailure { [weak self] error in
                 self.forEach { strongSelf in
-                    switch error {
-                    case AppError.poweredOff:
-                        strongSelf.present(UIAlertController.alert(message: "PeripheralManager powered off."), animated: true)
-                    case AppError.resetting:
-                        let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost.\n Restart advertising."
-                        strongSelf.present(UIAlertController.alert(message: message) { _ in
-                            Singletons.peripheralManager.reset()
-                        }, animated: true)
-                    case AppError.unsupported:
-                        strongSelf.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
-                    case AppError.unknown:
-                        break
-                    default:
-                        self?.present(UIAlertController.alert(error: error) { _ in
-                            Singletons.peripheralManager.reset()
-                        }, animated: true, completion: nil)
-                    }
                     let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
                     stopAdvertisingFuture.onSuccess { strongSelf.setUIState() }
                     stopAdvertisingFuture.onFailure { _ in strongSelf.setUIState() }
+                    self?.present(UIAlertController.alert(error: error) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true, completion: nil)
                 }
             }
         } else {
