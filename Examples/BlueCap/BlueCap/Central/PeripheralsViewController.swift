@@ -400,11 +400,11 @@ class PeripheralsViewController : UITableViewController {
             present(UIAlertController.alert(message: "Bluetooth is not enabled. Enable Bluetooth in settings."), animated:true, completion:nil)
             return
         }
-        if Singletons.scanningManager.isScanning {
+        if scanEnabled {
             Logger.debug("Scan toggled off")
             scanEnabled = false
             disconnectConnectingPeripherals()
-            stopScanIfScanning()
+            stopScan()
         } else {
             Logger.debug("Scan toggled on")
             scanEnabled = true
@@ -467,11 +467,6 @@ class PeripheralsViewController : UITableViewController {
         peripheralsToConnect.push(peripheral.identifier)
         peripheralAdvertisments[peripheral.identifier] = peripheral.advertisements
         stopScanIfDiscoverLimitReached()
-    }
-
-    func stopScanIfScanning() {
-        guard Singletons.scanningManager.isScanning else { return }
-        stopScan()
     }
 
     func stopScanAndToggleOff() {
