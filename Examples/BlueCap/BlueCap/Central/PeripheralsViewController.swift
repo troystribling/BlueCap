@@ -209,6 +209,14 @@ class PeripheralsViewController : UITableViewController {
         }
     }
 
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        guard let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell), identifier == MainStoryboard.peripheralSegue else {
+            return true
+        }
+        let peripheral = self.peripherals[selectedIndex.row]
+        return !connectingPeripherals.contains(peripheral.identifier)
+    }
+
     func didBecomeActive() {
         Logger.debug()
         tableView.reloadData()
@@ -565,8 +573,11 @@ class PeripheralsViewController : UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        pauseScanAndConnecting()
-        disconnectConnectingPeripherals()
+        let peripheral = peripherals[indexPath.row]
+        if !connectingPeripherals.contains(peripheral.identifier) {
+            pauseScanAndConnecting()
+            disconnectConnectingPeripherals()
+        }
     }
 
     func updateRSSI(peripheral: Peripheral, cell: PeripheralCell) {
