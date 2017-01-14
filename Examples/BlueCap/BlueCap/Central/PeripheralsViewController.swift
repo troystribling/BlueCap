@@ -522,7 +522,6 @@ class PeripheralsViewController : UITableViewController {
             self.forEach { strongSelf in
                 Logger.debug("Service discovery failed peripheral: \(error), \(peripheral.name), \(peripheral.identifier.uuidString)")
                 strongSelf.peripheralsToDisconnect.push(peripheral.identifier)
-                strongSelf.removedPeripherals.insert(peripheral.identifier)
                 strongSelf.updateWhenActive()
             }
         }
