@@ -67,20 +67,22 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: Initialize
 
-    public convenience override init() {
-        self.init(queue: DispatchQueue(label: "com.gnos.us.peripheral-manger.main", qos: .background), options: nil)
-    }
+    #if os(iOS)
+        public convenience override init() {
+            self.init(queue: DispatchQueue(label: "com.gnos.us.peripheral-manger.main", qos: .background), options: nil)
+        }
 
-    public convenience init(options: [String : Any]? = nil) {
-        self.init(queue: DispatchQueue(label: "com.gnos.us.peripheral-manger.main", qos: .background), options: options)
-    }
+        public convenience init(options: [String : Any]? = nil) {
+            self.init(queue: DispatchQueue(label: "com.gnos.us.peripheral-manger.main", qos: .background), options: options)
+        }
 
-    public init(queue: DispatchQueue, options: [String : Any]? = nil) {
-        self.peripheralQueue = Queue(queue)
-        self.options = options
-        super.init()
-        self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
-    }
+        public init(queue: DispatchQueue, options: [String : Any]? = nil) {
+            self.peripheralQueue = Queue(queue)
+            self.options = options
+            super.init()
+            self.cbPeripheralManager = CBPeripheralManager(delegate:self, queue: self.peripheralQueue.queue, options: options)
+        }
+    #endif
 
     init(peripheralManager: CBPeripheralManagerInjectable) {
         self.peripheralQueue = Queue("com.gnos.us.peripheral.main")
@@ -92,30 +94,32 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         cbPeripheralManager?.delegate = nil
     }
 
-    public func reset()  {
-        return peripheralQueue.async { [weak self] in
-            self.forEach { strongSelf in
-                if strongSelf.cbPeripheralManager is CBPeripheralManager {
-                    strongSelf.cbPeripheralManager.delegate = nil
-                    strongSelf.cbPeripheralManager = CBPeripheralManager(delegate: strongSelf, queue: strongSelf.peripheralQueue.queue, options: strongSelf.options)
-                    strongSelf.cbPeripheralManager?.delegate = self
+    #if os(iOS)
+        public func reset()  {
+            return peripheralQueue.async { [weak self] in
+                self.forEach { strongSelf in
+                    if strongSelf.cbPeripheralManager is CBPeripheralManager {
+                        strongSelf.cbPeripheralManager.delegate = nil
+                        strongSelf.cbPeripheralManager = CBPeripheralManager(delegate: strongSelf, queue: strongSelf.peripheralQueue.queue, options: strongSelf.options)
+                        strongSelf.cbPeripheralManager?.delegate = self
+                    }
                 }
             }
         }
-    }
 
-    public func invalidate()  {
-        peripheralQueue.async { [weak self] in
-            self.forEach { strongSelf in
-                strongSelf.afterAdvertisingStartedPromise = nil
-                strongSelf.afterBeaconAdvertisingStartedPromise = nil
-                strongSelf.afterStateChangedPromise = nil
-                strongSelf.afterStateRestoredPromise = nil
-                strongSelf.afterServiceAddPromises.removeAll()
+        public func invalidate()  {
+            peripheralQueue.async { [weak self] in
+                self.forEach { strongSelf in
+                    strongSelf.afterAdvertisingStartedPromise = nil
+                    strongSelf.afterBeaconAdvertisingStartedPromise = nil
+                    strongSelf.afterStateChangedPromise = nil
+                    strongSelf.afterStateRestoredPromise = nil
+                    strongSelf.afterServiceAddPromises.removeAll()
+                }
             }
+            reset()
         }
-        reset()
-    }
+    #endif
 
     // MARK: Power ON/OFF
 
@@ -150,24 +154,26 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             }
         }
     }
-    
-    public func startAdvertising(_ region: BeaconRegion) -> Future<Void> {
-        return self.peripheralQueue.sync {
-            if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
-                Logger.debug("Alerady adversting beacon")
-                return afterBeaconAdvertisingStartedPromise.future
-            }
-            Logger.debug("Adversting beacon with UUID: \(region.proximityUUID)")
-            self._name = region.identifier
-            self.afterBeaconAdvertisingStartedPromise = Promise<Void>()
-            if !self.isAdvertising {
-                self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
-                return self.afterBeaconAdvertisingStartedPromise!.future
-            } else {
-                return Future(error: PeripheralManagerError.isAdvertising)
+
+    #if os(iOS)
+        public func startAdvertising(_ region: BeaconRegion) -> Future<Void> {
+            return self.peripheralQueue.sync {
+                if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
+                    Logger.debug("Alerady adversting beacon")
+                    return afterBeaconAdvertisingStartedPromise.future
+                }
+                Logger.debug("Adversting beacon with UUID: \(region.proximityUUID)")
+                self._name = region.identifier
+                self.afterBeaconAdvertisingStartedPromise = Promise<Void>()
+                if !self.isAdvertising {
+                    self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
+                    return self.afterBeaconAdvertisingStartedPromise!.future
+                } else {
+                    return Future(error: PeripheralManagerError.isAdvertising)
+                }
             }
         }
-    }
+    #endif
     
     public func stopAdvertising(timeout: TimeInterval = 10.0) -> Future<Void> {
         return self.peripheralQueue.sync {

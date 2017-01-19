@@ -35,14 +35,17 @@ public class MutableService : NSObject {
             self.cbMutableService.setCharacteristics(cbCharacteristics)
         }
     }
-    
-    public convenience init(profile: ServiceProfile) {
-        self.init(cbMutableService: CBMutableService(type: profile.uuid, primary: true), profile: profile)
-    }
 
-    public convenience init(uuid: String) {
-        self.init(profile: ServiceProfile(uuid: uuid))
-    }
+    #if os(iOS)
+        public convenience init(profile: ServiceProfile) {
+            self.init(cbMutableService: CBMutableService(type: profile.uuid, primary: true), profile: profile)
+        }
+
+
+        public convenience init(uuid: String) {
+            self.init(profile: ServiceProfile(uuid: uuid))
+        }
+    #endif
 
     internal init(cbMutableService: CBMutableServiceInjectable, profile: ServiceProfile? = nil) {
         self.cbMutableService = cbMutableService
@@ -50,8 +53,10 @@ public class MutableService : NSObject {
         super.init()
     }
 
-    public func characteristicsFromProfiles() {
-        self.characteristics = self.profile.characteristics.map { MutableCharacteristic(profile: $0) }
-    }
+    #if os(iOS)
+        public func characteristicsFromProfiles() {
+            self.characteristics = self.profile.characteristics.map { MutableCharacteristic(profile: $0) }
+        }
+    #endif
     
 }

@@ -46,6 +46,36 @@
 		05D3B9461A2BA162008E794E /* String+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* String+BlueCap.swift */; };
 		05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */; };
 		4ED105C01C315C420034D5D2 /* UInt32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */; };
+		82F970AE1E30D40400DCF557 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82F970AD1E30D40400DCF557 /* CoreBluetooth.framework */; };
+		82F970B31E30E44500DCF557 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BE21D0CA4AB000F5307 /* Logger.swift */; };
+		82F970B41E30E45700DCF557 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056276081CCD3F0A00F955D7 /* Errors.swift */; };
+		82F970B51E30E45700DCF557 /* Injectables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */; };
+		82F970B61E30E45700DCF557 /* CentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCA1D0CA437000F5307 /* CentralManager.swift */; };
+		82F970B71E30E45700DCF557 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCB1D0CA437000F5307 /* Characteristic.swift */; };
+		82F970B81E30E45700DCF557 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCC1D0CA437000F5307 /* Peripheral.swift */; };
+		82F970B91E30E45700DCF557 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BCD1D0CA437000F5307 /* Service.swift */; };
+		82F970BA1E30E45700DCF557 /* Double+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9431A2BA162008E794E /* Double+BlueCap.swift */; };
+		82F970BB1E30E45700DCF557 /* String+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* String+BlueCap.swift */; };
+		82F970C41E30E45700DCF557 /* SimpleFutures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF91A21CFBF62700B78B12 /* SimpleFutures.swift */; };
+		82F970C51E30E45700DCF557 /* MutableCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405991D7B7BF900803654 /* MutableCharacteristic.swift */; };
+		82F970C61E30E45700DCF557 /* MutableService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C4059A1D7B7BF900803654 /* MutableService.swift */; };
+		82F970C71E30E45700DCF557 /* PeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C4059B1D7B7BF900803654 /* PeripheralManager.swift */; };
+		82F970C81E30E45700DCF557 /* Data+Serializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C405961D7B7BE300803654 /* Data+Serializable.swift */; };
+		82F970C91E30E45700DCF557 /* SerDe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDA1D0CA459000F5307 /* SerDe.swift */; };
+		82F970CA1E30E45700DCF557 /* Int8+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B419F5513700ED3B74 /* Int8+Deserializable.swift */; };
+		82F970CB1E30E45700DCF557 /* Int16+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B319F5513700ED3B74 /* Int16+Deserializable.swift */; };
+		82F970CC1E30E45700DCF557 /* Uint8+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B819F5513700ED3B74 /* Uint8+Deserializable.swift */; };
+		82F970CD1E30E45700DCF557 /* UInt16+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B719F5513700ED3B74 /* UInt16+Deserializable.swift */; };
+		82F970CE1E30E45700DCF557 /* UInt32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */; };
+		82F970CF1E30E45700DCF557 /* Int32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057FACEF1D1C325B0006B93B /* Int32+Deserializable.swift */; };
+		82F970D01E30E45700DCF557 /* TiSensorTagProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AFDBEB1E082FB700AA92E7 /* TiSensorTagProfiles.swift */; };
+		82F970D11E30E45700DCF557 /* BLESIGGATTProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C319F5513700ED3B74 /* BLESIGGATTProfiles.swift */; };
+		82F970D21E30E45700DCF557 /* GnosusProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C419F5513700ED3B74 /* GnosusProfiles.swift */; };
+		82F970D31E30E45700DCF557 /* NordicProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C519F5513700ED3B74 /* NordicProfiles.swift */; };
+		82F970D41E30E45700DCF557 /* ServiceProfileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120C619F5513700ED3B74 /* ServiceProfileUtils.swift */; };
+		82F970D51E30E45700DCF557 /* CharacteristicProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDC1D0CA475000F5307 /* CharacteristicProfile.swift */; };
+		82F970D61E30E45700DCF557 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDD1D0CA475000F5307 /* ProfileManager.swift */; };
+		82F970D71E30E45700DCF557 /* ServiceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05585BDE1D0CA475000F5307 /* ServiceProfile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +120,9 @@
 		05D3B9441A2BA162008E794E /* String+BlueCap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+BlueCap.swift"; sourceTree = "<group>"; };
 		05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Injectables.swift; sourceTree = "<group>"; };
 		4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UInt32+Deserializable.swift"; sourceTree = "<group>"; };
+		82F970A41E30D39A00DCF557 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		82F970AD1E30D40400DCF557 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.1.sdk/System/Library/Frameworks/CoreBluetooth.framework; sourceTree = DEVELOPER_DIR; };
+		82F970AF1E30D40A00DCF557 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.1.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,16 +135,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		82F970A01E30D39A00DCF557 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82F970AE1E30D40400DCF557 /* CoreBluetooth.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0551207819F5506000ED3B74 = {
 			isa = PBXGroup;
 			children = (
-				055120F719F551CB00ED3B74 /* CoreBluetooth.framework */,
-				055120F519F551BB00ED3B74 /* CoreLocation.framework */,
 				0551208419F5506000ED3B74 /* BlueCapKit */,
 				0551208319F5506000ED3B74 /* Products */,
+				82F970AC1E30D40400DCF557 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -119,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				0551208219F5506000ED3B74 /* BlueCapKit.framework */,
+				82F970A41E30D39A00DCF557 /* BlueCapKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -256,6 +297,33 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		82F970AC1E30D40400DCF557 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				82F970B11E30D41D00DCF557 /* iOS */,
+				82F970B21E30D42000DCF557 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		82F970B11E30D41D00DCF557 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				055120F719F551CB00ED3B74 /* CoreBluetooth.framework */,
+				055120F519F551BB00ED3B74 /* CoreLocation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		82F970B21E30D42000DCF557 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				82F970AF1E30D40A00DCF557 /* CoreLocation.framework */,
+				82F970AD1E30D40400DCF557 /* CoreBluetooth.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -266,12 +334,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		82F970A11E30D39A00DCF557 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0551208119F5506000ED3B74 /* BlueCapKit */ = {
+		0551208119F5506000ED3B74 /* BlueCapKit iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0551209519F5506000ED3B74 /* Build configuration list for PBXNativeTarget "BlueCapKit" */;
+			buildConfigurationList = 0551209519F5506000ED3B74 /* Build configuration list for PBXNativeTarget "BlueCapKit iOS" */;
 			buildPhases = (
 				0551207D19F5506000ED3B74 /* Sources */,
 				0551207E19F5506000ED3B74 /* Frameworks */,
@@ -282,9 +357,27 @@
 			);
 			dependencies = (
 			);
-			name = BlueCapKit;
+			name = "BlueCapKit iOS";
 			productName = BlueCapKit;
 			productReference = 0551208219F5506000ED3B74 /* BlueCapKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		82F970A31E30D39A00DCF557 /* BlueCapKit tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82F970AB1E30D39A00DCF557 /* Build configuration list for PBXNativeTarget "BlueCapKit tvOS" */;
+			buildPhases = (
+				82F9709F1E30D39A00DCF557 /* Sources */,
+				82F970A01E30D39A00DCF557 /* Frameworks */,
+				82F970A11E30D39A00DCF557 /* Headers */,
+				82F970A21E30D39A00DCF557 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "BlueCapKit tvOS";
+			productName = "BlueCapKit tvOS";
+			productReference = 82F970A41E30D39A00DCF557 /* BlueCapKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -302,6 +395,10 @@
 						DevelopmentTeam = HZEX459C37;
 						LastSwiftMigration = 0800;
 					};
+					82F970A31E30D39A00DCF557 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Manual;
+					};
 				};
 			};
 			buildConfigurationList = 0551207C19F5506000ED3B74 /* Build configuration list for PBXProject "BlueCapKit" */;
@@ -316,13 +413,21 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0551208119F5506000ED3B74 /* BlueCapKit */,
+				0551208119F5506000ED3B74 /* BlueCapKit iOS */,
+				82F970A31E30D39A00DCF557 /* BlueCapKit tvOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		0551208019F5506000ED3B74 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82F970A21E30D39A00DCF557 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -373,6 +478,42 @@
 				05C4059C1D7B7BF900803654 /* MutableCharacteristic.swift in Sources */,
 				05BF91A31CFBF62700B78B12 /* CLProximityExtension.swift in Sources */,
 				05585BE01D0CA475000F5307 /* ProfileManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82F9709F1E30D39A00DCF557 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82F970B51E30E45700DCF557 /* Injectables.swift in Sources */,
+				82F970C81E30E45700DCF557 /* Data+Serializable.swift in Sources */,
+				82F970D41E30E45700DCF557 /* ServiceProfileUtils.swift in Sources */,
+				82F970BA1E30E45700DCF557 /* Double+BlueCap.swift in Sources */,
+				82F970D31E30E45700DCF557 /* NordicProfiles.swift in Sources */,
+				82F970D61E30E45700DCF557 /* ProfileManager.swift in Sources */,
+				82F970BB1E30E45700DCF557 /* String+BlueCap.swift in Sources */,
+				82F970CE1E30E45700DCF557 /* UInt32+Deserializable.swift in Sources */,
+				82F970D51E30E45700DCF557 /* CharacteristicProfile.swift in Sources */,
+				82F970B91E30E45700DCF557 /* Service.swift in Sources */,
+				82F970B81E30E45700DCF557 /* Peripheral.swift in Sources */,
+				82F970D71E30E45700DCF557 /* ServiceProfile.swift in Sources */,
+				82F970CD1E30E45700DCF557 /* UInt16+Deserializable.swift in Sources */,
+				82F970D01E30E45700DCF557 /* TiSensorTagProfiles.swift in Sources */,
+				82F970B41E30E45700DCF557 /* Errors.swift in Sources */,
+				82F970B71E30E45700DCF557 /* Characteristic.swift in Sources */,
+				82F970CF1E30E45700DCF557 /* Int32+Deserializable.swift in Sources */,
+				82F970C71E30E45700DCF557 /* PeripheralManager.swift in Sources */,
+				82F970D21E30E45700DCF557 /* GnosusProfiles.swift in Sources */,
+				82F970C91E30E45700DCF557 /* SerDe.swift in Sources */,
+				82F970D11E30E45700DCF557 /* BLESIGGATTProfiles.swift in Sources */,
+				82F970B31E30E44500DCF557 /* Logger.swift in Sources */,
+				82F970C61E30E45700DCF557 /* MutableService.swift in Sources */,
+				82F970CA1E30E45700DCF557 /* Int8+Deserializable.swift in Sources */,
+				82F970C51E30E45700DCF557 /* MutableCharacteristic.swift in Sources */,
+				82F970C41E30E45700DCF557 /* SimpleFutures.swift in Sources */,
+				82F970CC1E30E45700DCF557 /* Uint8+Deserializable.swift in Sources */,
+				82F970CB1E30E45700DCF557 /* Int16+Deserializable.swift in Sources */,
+				82F970B61E30E45700DCF557 /* CentralManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,8 +628,8 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = us.gnos.BlueCapKit;
+				PRODUCT_NAME = BlueCapKit;
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -508,11 +649,63 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = us.gnos.BlueCapKit;
+				PRODUCT_NAME = BlueCapKit;
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		82F970A91E30D39A00DCF557 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/BlueCapKit/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = us.gnos.BlueCapKit;
+				PRODUCT_NAME = BlueCapKit;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		82F970AA1E30D39A00DCF557 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/BlueCapKit/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = us.gnos.BlueCapKit;
+				PRODUCT_NAME = BlueCapKit;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
@@ -528,7 +721,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0551209519F5506000ED3B74 /* Build configuration list for PBXNativeTarget "BlueCapKit" */ = {
+		0551209519F5506000ED3B74 /* Build configuration list for PBXNativeTarget "BlueCapKit iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0551209619F5506000ED3B74 /* Debug */,
@@ -536,6 +729,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		82F970AB1E30D39A00DCF557 /* Build configuration list for PBXNativeTarget "BlueCapKit tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82F970A91E30D39A00DCF557 /* Debug */,
+				82F970AA1E30D39A00DCF557 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
