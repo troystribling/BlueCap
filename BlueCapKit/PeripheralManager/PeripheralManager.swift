@@ -150,24 +150,26 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             }
         }
     }
-    
-    public func startAdvertising(_ region: BeaconRegion) -> Future<Void> {
-        return self.peripheralQueue.sync {
-            if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
-                Logger.debug("Alerady adversting beacon")
-                return afterBeaconAdvertisingStartedPromise.future
-            }
-            Logger.debug("Adversting beacon with UUID: \(region.proximityUUID)")
-            self._name = region.identifier
-            self.afterBeaconAdvertisingStartedPromise = Promise<Void>()
-            if !self.isAdvertising {
-                self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
-                return self.afterBeaconAdvertisingStartedPromise!.future
-            } else {
-                return Future(error: PeripheralManagerError.isAdvertising)
+
+    #if os(iOS)
+        public func startAdvertising(_ region: BeaconRegion) -> Future<Void> {
+            return self.peripheralQueue.sync {
+                if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
+                    Logger.debug("Alerady adversting beacon")
+                    return afterBeaconAdvertisingStartedPromise.future
+                }
+                Logger.debug("Adversting beacon with UUID: \(region.proximityUUID)")
+                self._name = region.identifier
+                self.afterBeaconAdvertisingStartedPromise = Promise<Void>()
+                if !self.isAdvertising {
+                    self.cbPeripheralManager.startAdvertising(region.peripheralDataWithMeasuredPower(nil))
+                    return self.afterBeaconAdvertisingStartedPromise!.future
+                } else {
+                    return Future(error: PeripheralManagerError.isAdvertising)
+                }
             }
         }
-    }
+    #endif
     
     public func stopAdvertising(timeout: TimeInterval = 10.0) -> Future<Void> {
         return self.peripheralQueue.sync {
