@@ -95,10 +95,12 @@ public class MutableCharacteristic : NSObject {
 
     // MARK: Initializers
 
-    public convenience init(profile: CharacteristicProfile) {
-        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
-        self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
-    }
+    #if os(iOS)
+        public convenience init(profile: CharacteristicProfile) {
+            let cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
+            self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
+        }
+    #endif
 
     internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable, profile: CharacteristicProfile) {
         self.profile = profile
@@ -112,23 +114,25 @@ public class MutableCharacteristic : NSObject {
         self.cbMutableChracteristic = cbMutableCharacteristic
     }
 
-    public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: Data?) {
-        self.profile = CharacteristicProfile(uuid: UUID)
-        self._value = value
-        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
-    }
+    #if os(iOS)
+        public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: Data?) {
+            self.profile = CharacteristicProfile(uuid: UUID)
+            self._value = value
+            self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
+        }
 
-    public convenience init(UUID: String) {
-        self.init(profile: CharacteristicProfile(uuid: UUID))
-    }
+        public convenience init(UUID: String) {
+            self.init(profile: CharacteristicProfile(uuid: UUID))
+        }
 
-    public class func withProfiles(_ profiles: [CharacteristicProfile]) -> [MutableCharacteristic] {
-        return profiles.map{ MutableCharacteristic(profile: $0) }
-    }
+        public class func withProfiles(_ profiles: [CharacteristicProfile]) -> [MutableCharacteristic] {
+            return profiles.map{ MutableCharacteristic(profile: $0) }
+        }
 
-    public class func withProfiles(_ profiles: [CharacteristicProfile], cbCharacteristics: [CBMutableCharacteristic]) -> [MutableCharacteristic] {
-        return profiles.map{ MutableCharacteristic(profile: $0) }
-    }
+        public class func withProfiles(_ profiles: [CharacteristicProfile], cbCharacteristics: [CBMutableCharacteristic]) -> [MutableCharacteristic] {
+            return profiles.map{ MutableCharacteristic(profile: $0) }
+        }
+    #endif
 
     // MARK: Properties & Permissions
 
