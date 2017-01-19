@@ -21,7 +21,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 
 # Requirements
 
-- iOS 9.0+
+- iOS 9.0+ / tvOS 9.0+
 - Xcode 8.2
 
 # Installation
