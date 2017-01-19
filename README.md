@@ -11,7 +11,7 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 # Features
 
 - A [futures](https://github.com/troystribling/SimpleFutures) interface replacing protocol implementations.
-- Timeout for `Peripheral` connection, `Service` scan, 'Service` and `Characteristic` discovery and `Characteristic` read/write.
+- Timeout for `Peripheral` connection, `Service` scan, `Service` and `Characteristic` discovery and `Characteristic` read/write.
 - A DSL for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
 - [Example](/Examples) applications implementing CentralManager and PeripheralManager.
@@ -62,7 +62,7 @@ brew install carthage
 To add `BlueCapKit` to your `Cartfile`
 
 ```ogdl
-github "troystribling/BlueCap" ~> 0.2
+github "troystribling/BlueCap" ~> 0.4
 ```
 
 To download and build `BlueCapKit.framework` run the command,
