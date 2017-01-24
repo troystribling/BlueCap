@@ -32,7 +32,7 @@ public class Characteristic : NSObject {
 
     fileprivate weak var _service: Service?
     
-    fileprivate let profile: CharacteristicProfile
+    fileprivate weak var profile: CharacteristicProfile?
 
     fileprivate var reading = false
     fileprivate var writing = false
@@ -58,7 +58,7 @@ public class Characteristic : NSObject {
     }
     
     public var name: String {
-        return profile.name
+        return profile?.name ?? "Unknown"
     }
     
     public var isNotifying: Bool {
@@ -86,7 +86,7 @@ public class Characteristic : NSObject {
     }
     
     public var stringValues: [String] {
-        return profile.stringValues
+        return profile?.stringValues ?? []
     }
 
     public var stringValue: [String : String]? {
@@ -109,14 +109,14 @@ public class Characteristic : NSObject {
     // MARK: Data Access
     public func stringValue(_ data: Data?) -> [String : String]? {
         if let data = data {
-            return profile.stringValue(data)
+            return profile?.stringValue(data)
         } else {
             return nil
         }
     }
     
     public func data(fromString stringValue: [String : String]) -> Data? {
-        return profile.data(fromString: stringValue)
+        return profile?.data(fromString: stringValue)
     }
     
     public func propertyEnabled(_ property: CBCharacteristicProperties) -> Bool {
