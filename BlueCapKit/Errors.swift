@@ -41,6 +41,7 @@ public enum PeripheralError : Swift.Error, LocalizedError {
     case forcedDisconnect
     case connectionTimeout
     case serviceDiscoveryTimeout
+    case invalidCbPeripheral
 
     public var errorDescription: String? {
         switch self {
@@ -52,6 +53,8 @@ public enum PeripheralError : Swift.Error, LocalizedError {
             return NSLocalizedString("Peripheral connection timeout.", comment: "PeripheralError.connectionTimeout")
         case .serviceDiscoveryTimeout:
             return NSLocalizedString("Service discovery timeout.", comment: "PeripheralError.serviceDiscoveryTimeout")
+        case .invalidCbPeripheral:
+            return NSLocalizedString("Got CBPeripheral with wrong identifier.", comment: "PeripheralError.invalidCbPeripheral")
         }
     }
 }

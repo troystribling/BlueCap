@@ -109,7 +109,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     internal fileprivate(set) var cbPeripheral: CBPeripheralInjectable
     public private(set) var advertisements: PeripheralAdvertisements
-    public let discoveredAt = Date()
+    public private(set) var discoveredAt = Date()
 
     // MARK: Private Properties
 
@@ -230,6 +230,30 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     deinit {
         self.cbPeripheral.delegate = nil
+    }
+
+    func updateDiscovery(_ peripheral: CBPeripheralInjectable, advertisements: [String : Any], RSSI: Int) throws {
+        guard self.identifier == peripheral.identifier else {
+            throw PeripheralError.invalidCbPeripheral
+        }
+
+        if let oldCbPeripheral = self.cbPeripheral as? CBPeripheral,
+            let aCbPeripehral = peripheral as? CBPeripheral {
+            if oldCbPeripheral !== aCbPeripehral {
+                self.cbPeripheral = peripheral
+                self.cbPeripheral.delegate = self
+
+                if oldCbPeripheral.delegate === self {
+                    oldCbPeripheral.delegate = nil
+                }
+
+                Logger.debug("cbPeripheral instance changed!")
+            }
+        }
+
+        self._RSSI = RSSI
+        self.discoveredAt = Date()
+        self.advertisements = PeripheralAdvertisements(advertisements: advertisements)
     }
 
     // MARK: RSSI

@@ -310,11 +310,18 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
-        let bcPeripheral: Peripheral
+        var bcPeripheral: Peripheral!
+
         if let discoveredPeripheral = _discoveredPeripherals[peripheral.identifier] {
-            bcPeripheral = discoveredPeripheral
-            bcPeripheral._RSSI = RSSI.intValue
-        } else {
+            do {
+                try discoveredPeripheral.updateDiscovery(peripheral, advertisements: advertisementData, RSSI: RSSI.intValue)
+                bcPeripheral = discoveredPeripheral
+            } catch {
+                Logger.debug("Error updating peripheral \(error)")
+            }
+        }
+
+        if bcPeripheral == nil {
             bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
             _discoveredPeripherals[peripheral.identifier] = bcPeripheral
         }
