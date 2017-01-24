@@ -102,7 +102,7 @@ public class Characteristic : NSObject {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         self.centralQueue = service.centralQueue
-        self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.uuid) ??  CharacteristicProfile(uuid: cbCharacteristic.uuid.uuidString)
+        self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.uuid)
         super.init()
     }
 
@@ -116,7 +116,7 @@ public class Characteristic : NSObject {
     }
     
     public func data(fromString stringValue: [String : String]) -> Data? {
-        return profile?.data(fromString: stringValue)
+        return profile?.data(fromString: stringValue) ?? CharacteristicProfile(uuid: cbCharacteristic.uuid.uuidString).data(fromString: stringValue)
     }
     
     public func propertyEnabled(_ property: CBCharacteristicProperties) -> Bool {
