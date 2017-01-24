@@ -3366,7 +3366,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="BsC-C9-NZC">
-                                            <rect key="frame" x="20" y="35" width="315" height="28"/>
+                                            <rect key="frame" x="20" y="35" width="276" height="28"/>
                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="21"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
@@ -3414,7 +3414,7 @@
                                         <constraint firstItem="oSL-NR-Cyl" firstAttribute="centerX" secondItem="y2T-fE-UiN" secondAttribute="centerX" id="TOP-yi-N3a"/>
                                         <constraint firstItem="8ua-pZ-lzb" firstAttribute="top" secondItem="7UM-ye-K73" secondAttribute="topMargin" constant="9" id="U9N-Kf-pi5"/>
                                         <constraint firstItem="0jF-MW-Io7" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="81" id="bJP-IN-Fo4"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="BsC-C9-NZC" secondAttribute="trailing" constant="-1" id="ehE-aI-spN"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="BsC-C9-NZC" secondAttribute="trailing" constant="38" id="ehE-aI-spN"/>
                                         <constraint firstItem="8ua-pZ-lzb" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="63" id="krl-Ed-laO"/>
                                         <constraint firstItem="oSL-NR-Cyl" firstAttribute="top" secondItem="y2T-fE-UiN" secondAttribute="bottom" constant="1" id="lev-K0-Tzh"/>
                                         <constraint firstItem="Gl5-65-yK5" firstAttribute="leading" secondItem="7UM-ye-K73" secondAttribute="leadingMargin" constant="12" id="oYy-dy-4Xz"/>

@@ -310,9 +310,15 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
-        let bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
+        let bcPeripheral: Peripheral
+        if let discoveredPeripheral = _discoveredPeripherals[peripheral.identifier] {
+            bcPeripheral = discoveredPeripheral
+            bcPeripheral._RSSI = RSSI.intValue
+        } else {
+            bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
+            _discoveredPeripherals[peripheral.identifier] = bcPeripheral
+        }
         Logger.debug("'\(name)' uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
-        _discoveredPeripherals[peripheral.identifier] = bcPeripheral
         afterPeripheralDiscoveredPromise?.success(bcPeripheral)
     }
     

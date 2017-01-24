@@ -83,7 +83,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     fileprivate let profileManager: ProfileManager?
 
-    fileprivate var _RSSI: Int = 0
+    var _RSSI: Int = 0
     fileprivate var _state = CBPeripheralState.disconnected
 
     fileprivate var _timeoutCount: UInt = 0
