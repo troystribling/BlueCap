@@ -134,7 +134,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return
         }
 
-        let updateFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Characteristic> in
+        let updateFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Void> in
             guard let strongSelf = self else {
                 throw AppError.unlikelyFailure
             }
@@ -146,7 +146,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return strongSelf.notifySwitch.isOn ? characteristic.startNotifying() : characteristic.stopNotifying()
         }
 
-        updateFuture.onSuccess { [weak self] _ in
+        updateFuture.onSuccess { [weak self] in
             _ = self?.progressView.remove()
             self?.updateUI()
             self?.updateWhenActive()
@@ -166,7 +166,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
                 return
         }
 
-        uuidLabel.text = characteristic.uuid.uuidString
+        uuidLabel.text = characteristic.uuid?.uuidString
         notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
         propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
         propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))

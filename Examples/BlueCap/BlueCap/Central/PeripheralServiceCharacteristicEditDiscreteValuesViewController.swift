@@ -99,10 +99,10 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
                 return
         }
         progressView.show()
-        let writeFuture = peripheralDiscoveryFuture.flatMap { _ -> Future<Characteristic> in
+        let writeFuture = peripheralDiscoveryFuture.flatMap { _ -> Future<Void> in
             characteristic.write(string: stringValue, timeout: (Double(ConfigStore.getCharacteristicReadWriteTimeout())))
         }
-        writeFuture.onSuccess { [weak self] _ in
+        writeFuture.onSuccess { [weak self] in
             self?.progressView.remove().onSuccess {
                 _ = self?.navigationController?.popViewController(animated: true)
             }

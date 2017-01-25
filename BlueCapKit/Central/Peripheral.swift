@@ -447,7 +447,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }
-        Logger.debug("uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
+        Logger.debug("uuid=\(characteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
         bcCharacteristic.didUpdateNotificationState(error)
     }
     
@@ -456,7 +456,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }
-        Logger.debug("uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
+        Logger.debug("uuid=\(characteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
         bcCharacteristic.didUpdate(error)
     }
 
@@ -465,7 +465,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
             Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }
-        Logger.debug("uuid=\(bcCharacteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
+        Logger.debug("uuid=\(characteristic.uuid.uuidString), name=\(bcCharacteristic.name)")
         bcCharacteristic.didWrite(error)
     }
 
@@ -527,16 +527,16 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: CBPeripheral Delegation
 
-    internal func setNotifyValue(_ state: Bool, forCharacteristic characteristic: Characteristic) {
-        cbPeripheral.setNotifyValue(state, forCharacteristic:characteristic.cbCharacteristic)
+    internal func setNotifyValue(_ state: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
+        cbPeripheral.setNotifyValue(state, forCharacteristic:characteristic)
     }
     
-    internal func readValueForCharacteristic(_ characteristic: Characteristic) {
-        cbPeripheral.readValueForCharacteristic(characteristic.cbCharacteristic)
+    internal func readValueForCharacteristic(_ characteristic: CBCharacteristicInjectable) {
+        cbPeripheral.readValueForCharacteristic(characteristic)
     }
     
-    internal func writeValue(_ value: Data, forCharacteristic characteristic: Characteristic, type: CBCharacteristicWriteType = .withResponse) {
-        cbPeripheral.writeValue(value, forCharacteristic:characteristic.cbCharacteristic, type: type)
+    internal func writeValue(_ value: Data, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType = .withResponse) {
+        cbPeripheral.writeValue(value, forCharacteristic:characteristic, type: type)
     }
     
     internal func discoverCharacteristics(_ characteristics: [CBUUID]?, forService service: CBServiceInjectable) {

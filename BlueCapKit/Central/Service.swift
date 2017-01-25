@@ -77,13 +77,13 @@ public class Service {
             }
             for cbCharacteristic in discoveredCharacteristics {
                 let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
-                Logger.debug("Error discovering characterisc uuid=\(bcCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
+                Logger.debug("Error discovering characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
             }
         } else {
-            let bcCharacteristics = discoveredCharacteristics.map { characteristic -> Characteristic in
-                let bcCharacteristic = Characteristic(cbCharacteristic: characteristic, service: self)
-                Logger.debug("Discovered characterisc uuid=\(bcCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
-                self.discoveredCharacteristics[bcCharacteristic.uuid] = bcCharacteristic
+            let bcCharacteristics = discoveredCharacteristics.map { cbCharacteristic -> Characteristic in
+                let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
+                Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
+                self.discoveredCharacteristics[cbCharacteristic.uuid] = bcCharacteristic
                 return bcCharacteristic
             }
             Logger.debug("discovery success service name \(name), service uuid \(uuid)")

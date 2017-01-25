@@ -104,7 +104,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         }
         progressView.show()
 
-        let writeFuture: Future<Characteristic>
+        let writeFuture: Future<Void>
         if let valueName = self.valueName {
             if var values = characteristic.stringValue {
                 values[valueName] = newValue
@@ -116,7 +116,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
             writeFuture = characteristic.write(data: newValue.dataFromHexString(), timeout:Double(ConfigStore.getCharacteristicReadWriteTimeout()))
         }
 
-        writeFuture.onSuccess { [weak self] _ in
+        writeFuture.onSuccess { [weak self] in
             self?.progressView.remove().onSuccess {
                 _ = self?.navigationController?.popViewController(animated: true)
             }

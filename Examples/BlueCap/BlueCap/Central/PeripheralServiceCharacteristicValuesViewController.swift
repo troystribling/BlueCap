@@ -141,7 +141,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             return
         }
         
-        let resvieveNotificationUpdatesFutureStream = peripheralDiscoveryFuture.flatMap { [weak self] _ -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+        let resvieveNotificationUpdatesFutureStream = peripheralDiscoveryFuture.flatMap { [weak self] _ -> FutureStream<Data?> in
             guard let strongSelf = self else {
                 throw AppError.unlikelyFailure
             }

@@ -16,6 +16,7 @@ public enum CharacteristicError : Swift.Error, LocalizedError {
     case readNotSupported
     case writeNotSupported
     case notifyNotSupported
+    case unconfigured
 
     public var errorDescription: String? {
         switch self {
@@ -31,9 +32,25 @@ public enum CharacteristicError : Swift.Error, LocalizedError {
             return NSLocalizedString("Characteristic write property not enabled.", comment: "CharacteristicError.writeNotSupported")
         case .notifyNotSupported:
             return NSLocalizedString("Characteristic notify property not enabled.", comment: "CharacteristicError.notifyNotSupported")
+        case .unconfigured:
+            return NSLocalizedString("Characteristic needs to be added to a PeripheralManager.", comment: "CharacteristicError.unconfigured")
         }
     }
 
+}
+
+public enum ServiceError : Swift.Error, LocalizedError {
+    case characteristicDiscoveryTimeout
+    case unconfigured
+
+    public var errorDescription: String? {
+        switch self {
+        case .characteristicDiscoveryTimeout:
+            return NSLocalizedString("Characteristic discovery timeout.", comment: "ServiceError.characteristicDiscoveryTimeout")
+        case .unconfigured:
+            return NSLocalizedString("Service has no associated Peripheral.", comment: "ServiceError.unconfigured")
+        }
+    }
 }
 
 public enum PeripheralError : Swift.Error, LocalizedError {
@@ -107,20 +124,6 @@ public enum CentralManagerError : Swift.Error, LocalizedError {
             return NSLocalizedString("CentralManager state resoration failed.", comment: "CentralManagerError.restoreFailed")
         case .serviceScanTimeout:
             return NSLocalizedString("Service scan timeout.", comment: "CentralManagerError.peripheralScanTimeout")
-        }
-    }
-}
-
-public enum ServiceError : Swift.Error, LocalizedError {
-    case characteristicDiscoveryTimeout
-    case unconfigured
-
-    public var errorDescription: String? {
-        switch self {
-        case .characteristicDiscoveryTimeout:
-            return NSLocalizedString("Characteristic discovery timeout.", comment: "ServiceError.characteristicDiscoveryTimeout")
-        case .unconfigured:
-            return NSLocalizedString("Service has no associated Peripgeral.", comment: "ServiceError.unconfigured")
         }
     }
 }
