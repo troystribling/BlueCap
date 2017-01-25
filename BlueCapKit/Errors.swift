@@ -113,11 +113,14 @@ public enum CentralManagerError : Swift.Error, LocalizedError {
 
 public enum ServiceError : Swift.Error, LocalizedError {
     case characteristicDiscoveryTimeout
+    case unconfigured
 
     public var errorDescription: String? {
         switch self {
         case .characteristicDiscoveryTimeout:
             return NSLocalizedString("Characteristic discovery timeout.", comment: "ServiceError.characteristicDiscoveryTimeout")
+        case .unconfigured:
+            return NSLocalizedString("Service has no associated Peripgeral.", comment: "ServiceError.unconfigured")
         }
     }
 }

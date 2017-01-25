@@ -14,7 +14,7 @@ import CoreBluetooth
 class PeripheralServicesViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
-    weak var peripheralDiscoveryFuture: FutureStream<[Service]>?
+    weak var peripheralDiscoveryFuture: FutureStream<[[Characteristic]]>?
 
     let cancelToken = CancelToken()
 
@@ -91,7 +91,7 @@ class PeripheralServicesViewController : UITableViewController {
         if let peripheral = peripheral {
             let service = peripheral.services[indexPath.row]
             cell.nameLabel.text = service.name
-            cell.uuidLabel.text = service.uuid.uuidString
+            cell.uuidLabel.text = service.uuid?.uuidString
             cell.nameLabel.textColor = peripheral.state == .connected ? UIColor.black : UIColor.lightGray
         } else {
             cell.nameLabel.text = "Unknown"

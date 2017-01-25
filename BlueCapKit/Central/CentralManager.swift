@@ -339,7 +339,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 if let cbServices = cbPeripheral.getServices() {
                     for cbService in cbServices {
                         let service = Service(cbService: cbService, peripheral: peripheral)
-                        peripheral.discoveredServices[service.uuid] = service
+                        peripheral.discoveredServices[cbService.uuid] = service
                         if let cbCharacteristics = cbService.getCharacteristics() {
                             for cbCharacteristic in cbCharacteristics {
                                 let characteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: service)
