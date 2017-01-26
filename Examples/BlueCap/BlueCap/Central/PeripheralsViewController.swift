@@ -429,7 +429,7 @@ class PeripheralsViewController : UITableViewController {
 
         let scanOptions = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
 
-        let future: FutureStream<Peripheral>
+        let future: FutureStream<Peripheral?>
         let scanMode = ConfigStore.getScanMode()
         let scanDuration = ConfigStore.getScanDurationEnabled() ? Double(ConfigStore.getScanDuration()) : Double.infinity
         switch scanMode {
@@ -457,7 +457,7 @@ class PeripheralsViewController : UITableViewController {
         present(UIAlertController.alert(message: "Bluetooth scan timeout."), animated:true)
     }
 
-    func afterPeripheralDiscovered(_ peripheral: Peripheral) -> Void {
+    func afterPeripheralDiscovered(_ peripheral: Peripheral?) -> Void {
         updateWhenActive()
         guard Singletons.discoveryManager.discoveredPeripherals[peripheral.identifier] == nil else {
             Logger.debug("Peripheral already discovered \(peripheral.name), \(peripheral.identifier.uuidString)")
