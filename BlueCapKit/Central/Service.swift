@@ -19,16 +19,10 @@ public class Service {
 
     let centralQueue: Queue
 
-    let profile: ServiceProfile?
     var discoveredCharacteristics = [CBUUID : Characteristic]()
-    weak var cbService: CBServiceInjectable?
 
     public var name: String {
-        if let profile = self.profile {
-            return profile.name
-        } else {
-            return "Unknown"
-        }
+        return profile?.name ?? "Unknown"
     }
     
     public var uuid: CBUUID? {
@@ -39,6 +33,8 @@ public class Service {
         return Array(self.discoveredCharacteristics.values)
     }
     
+    fileprivate(set) weak var profile: ServiceProfile?
+    fileprivate(set) weak var cbService: CBServiceInjectable?
     public fileprivate(set) weak var peripheral: Peripheral?
 
     // MARK: Initializer

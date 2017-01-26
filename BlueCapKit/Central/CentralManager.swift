@@ -130,12 +130,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Manage Peripherals
 
-    func connect(_ peripheral: Peripheral, options: [String : Any]? = nil) {
-        cbCentralManager.connect(peripheral.cbPeripheral, options: options)
+    func connect(_ cbPeripheral: CBPeripheralInjectable, options: [String : Any]? = nil) {
+        cbCentralManager.connect(cbPeripheral, options: options)
     }
     
-    func cancelPeripheralConnection(_ peripheral: Peripheral) {
-        cbCentralManager.cancelPeripheralConnection(peripheral.cbPeripheral)
+    func cancelPeripheralConnection(_ cbPeripheral: CBPeripheralInjectable) {
+        cbCentralManager.cancelPeripheralConnection(cbPeripheral)
     }
 
     public func disconnectAllPeripherals() {
@@ -147,7 +147,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
 
     public func removeAllPeripherals() {
-        centralQueue.sync { self._discoveredPeripherals.removeAll() }
+        centralQueue.sync {
+            self.afterPeripheralDiscoveredPromise = nil
+            self._discoveredPeripherals.removeAll()
+        }
     }
 
     public func removePeripheral(withIdentifier identifier: UUID) {
@@ -335,7 +338,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         if let cbPeripherals = cbPeripherals, let scannedServices = scannedServices, let options = options {
             let peripherals = cbPeripherals.map { cbPeripheral -> Peripheral in
                 let peripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
-                _discoveredPeripherals[peripheral.identifier] = peripheral
+                _discoveredPeripherals[cbPeripheral.identifier] = peripheral
                 if let cbServices = cbPeripheral.getServices() {
                     for cbService in cbServices {
                         let service = Service(cbService: cbService, peripheral: peripheral)

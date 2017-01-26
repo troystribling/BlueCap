@@ -117,7 +117,7 @@ extension CBPeripheral: CBPeripheralInjectable {
     }
 
     func getServices() -> [CBServiceInjectable]? {
-        guard let services = self.services else { return nil }
+        guard let services = services else { return nil }
         return services.map{ $0 as CBServiceInjectable }
     }
     
