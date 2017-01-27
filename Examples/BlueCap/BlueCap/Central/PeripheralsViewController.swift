@@ -522,7 +522,10 @@ class PeripheralsViewController : UITableViewController {
             }
             return peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
         }
-        peripheralDiscoveryFuture.onSuccess { [weak self] _ in
+        peripheralDiscoveryFuture.onSuccess { [weak self, weak peripheral] _ in
+            guard let peripheral = peripheral else {
+                return
+            }
             self.forEach { strongSelf in
                 Logger.debug("Service discovery successful peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
                 strongSelf.discoveredPeripherals.insert(peripheral.identifier)
@@ -530,7 +533,10 @@ class PeripheralsViewController : UITableViewController {
                 strongSelf.updateWhenActive()
             }
         }
-        peripheralDiscoveryFuture.onFailure { [weak self] error in
+        peripheralDiscoveryFuture.onFailure { [weak self, weak peripheral] error in
+            guard let peripheral = peripheral else {
+                return
+            }
             self.forEach { strongSelf in
                 Logger.debug("Service discovery failed peripheral: \(error), \(peripheral.name), \(peripheral.identifier.uuidString)")
                 strongSelf.peripheralsToDisconnect.push(peripheral.identifier)

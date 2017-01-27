@@ -31,7 +31,6 @@ public class Characteristic : NSObject {
     fileprivate var writeParameters = [WriteParameters]()
 
     fileprivate weak var _service: Service?
-    
     fileprivate weak var profile: CharacteristicProfile?
 
     fileprivate var reading = false
@@ -44,7 +43,9 @@ public class Characteristic : NSObject {
 
     weak var cbCharacteristic: CBCharacteristicInjectable?
 
-    let centralQueue: Queue
+    var centralQueue: Queue {
+        return service!.centralQueue
+    }
 
     public var pendingReadCount: Int {
         return centralQueue.sync { self.readPromises.count }
@@ -102,7 +103,6 @@ public class Characteristic : NSObject {
     init(cbCharacteristic: CBCharacteristicInjectable, service: Service) {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
-        self.centralQueue = service.centralQueue
         self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.uuid)
         super.init()
     }

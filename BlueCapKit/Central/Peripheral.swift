@@ -102,10 +102,14 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     fileprivate var disconnectRetries = UInt.max
 
     fileprivate(set) weak var centralManager: CentralManager?
-    let centralQueue: Queue
-    
+
+    var centralQueue: Queue {
+        return centralManager!.centralQueue
+    }
+
     var discoveredServices = [CBUUID : Service]()
     var discoveredCharacteristics = [CBUUID : Characteristic]()
+
 
     let cbPeripheral: CBPeripheralInjectable
     
@@ -197,7 +201,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: advertisements)
         self.profileManager = profileManager
-        self.centralQueue = centralManager.centralQueue
         super.init()
         self._RSSI = RSSI
         self.cbPeripheral.delegate = self
@@ -208,7 +211,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: [String : AnyObject]())
         self.profileManager = profileManager
-        self.centralQueue = centralManager.centralQueue
         super.init()
         self._RSSI = 0
         self.cbPeripheral.delegate = self
@@ -218,7 +220,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.cbPeripheral = cbPeripheral
         self.advertisements = bcPeripheral.advertisements
         self.centralManager = bcPeripheral.centralManager
-        self.centralQueue = bcPeripheral.centralManager!.centralQueue
         self.profileManager = profileManager
         super.init()
         self._RSSI = bcPeripheral._RSSI

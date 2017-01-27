@@ -17,8 +17,6 @@ public class Service {
 
     // MARK: Properties
 
-    let centralQueue: Queue
-
     public var name: String {
         return profile?.name ?? "Unknown"
     }
@@ -40,11 +38,14 @@ public class Service {
     fileprivate(set) weak var cbService: CBServiceInjectable?
     public fileprivate(set) weak var peripheral: Peripheral?
 
+    var centralQueue: Queue {
+        return peripheral!.centralQueue
+    }
+
     // MARK: Initializer
 
     internal init(cbService: CBServiceInjectable, peripheral: Peripheral, profile: ServiceProfile? = nil) {
         self.cbService = cbService
-        self.centralQueue = peripheral.centralQueue
         self.peripheral = peripheral
         self.profile = profile
     }
@@ -123,17 +124,17 @@ public class Service {
     }
 
     fileprivate func timeoutCharacteristicDiscovery(_ sequence: Int, timeout: TimeInterval) {
-        guard let peripheral = peripheral, timeout < TimeInterval.infinity else {
+        guard let peripheral = peripheral, timeout < TimeInterval.infinity, cbService != nil else {
             return
         }
         Logger.debug("name = \(self.name), uuid = \(peripheral.identifier.uuidString), sequence = \(sequence), timeout = \(timeout)")
         centralQueue.delay(timeout) { [weak self] in
             self.forEach { strongSelf in
                 if let characteristicsDiscoveredPromise = strongSelf.characteristicsDiscoveredPromise, sequence == strongSelf.characteristicDiscoverySequence && !characteristicsDiscoveredPromise.completed {
-                    Logger.debug("characteristic scan timing out name = \(strongSelf.name), uuid = \(strongSelf.uuid.uuidString), peripheral uuid = \(peripheral.identifier.uuidString), sequence=\(sequence), current sequence = \(strongSelf.characteristicDiscoverySequence)")
+                    Logger.debug("characteristic scan timing out name = \(strongSelf.name), peripheral uuid = \(peripheral.identifier.uuidString), sequence=\(sequence), current sequence = \(strongSelf.characteristicDiscoverySequence)")
                     characteristicsDiscoveredPromise.failure(ServiceError.characteristicDiscoveryTimeout)
                 } else {
-                    Logger.debug("characteristic scan timeout expired name = \(strongSelf.name), uuid = \(strongSelf.uuid.uuidString), peripheral UUID = \(peripheral.identifier.uuidString), sequence = \(sequence), current sequence = \(strongSelf.characteristicDiscoverySequence)")
+                    Logger.debug("characteristic scan timeout expired name = \(strongSelf.name), peripheral UUID = \(peripheral.identifier.uuidString), sequence = \(sequence), current sequence = \(strongSelf.characteristicDiscoverySequence)")
                 }
             }
         }
