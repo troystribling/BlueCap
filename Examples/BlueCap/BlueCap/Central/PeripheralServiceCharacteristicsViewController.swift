@@ -14,7 +14,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
 
     weak var serviceUUID: CBUUID?
     weak var peripheral: Peripheral?
-    var peripheralDiscoveryFuture: FutureStream<[[Characteristic]]>?
+    var peripheralDiscoveryFuture: FutureStream<[Service?]>?
 
     let cancelToken = CancelToken()
 
@@ -102,7 +102,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         if let serviceUUID = serviceUUID, let peripheral = peripheral, let service = peripheral.service(serviceUUID) {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name
-            cell.uuidLabel.text = characteristic.uuid?.uuidString
+            cell.uuidLabel.text = characteristic.uuid.uuidString
             cell.nameLabel.textColor = peripheral.state == .connected ? UIColor.black : UIColor.lightGray
         }
         return cell

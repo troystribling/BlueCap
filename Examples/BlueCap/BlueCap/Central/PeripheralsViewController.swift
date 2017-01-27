@@ -307,7 +307,10 @@ class PeripheralsViewController : UITableViewController {
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         let connectionFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 10)
 
-        connectionFuture.onSuccess { [weak self] _ in
+        connectionFuture.onSuccess { [weak self, weak peripheral] _ in
+            guard let peripheral = peripheral else {
+                return
+            }
             self.forEach { strongSelf in
                 Logger.debug("Connected peripheral '\(peripheral.name)', \(peripheral.identifier.uuidString), timeout count=\(peripheral.timeoutCount), disconnect count=\(peripheral.disconnectionCount)")
                 strongSelf.connectedPeripherals.insert(peripheral.identifier)
@@ -316,7 +319,10 @@ class PeripheralsViewController : UITableViewController {
             }
         }
 
-        connectionFuture.onFailure { [weak self] error in
+        connectionFuture.onFailure {  [weak self, weak peripheral]  error in
+            guard let peripheral = peripheral else {
+                return
+            }
             self.forEach { strongSelf in
                 let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
                 let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
@@ -459,6 +465,9 @@ class PeripheralsViewController : UITableViewController {
 
     func afterPeripheralDiscovered(_ peripheral: Peripheral?) -> Void {
         updateWhenActive()
+        guard let peripheral = peripheral else {
+            return
+        }
         guard Singletons.discoveryManager.discoveredPeripherals[peripheral.identifier] == nil else {
             Logger.debug("Peripheral already discovered \(peripheral.name), \(peripheral.identifier.uuidString)")
             return
@@ -507,8 +516,11 @@ class PeripheralsViewController : UITableViewController {
         }
         Logger.debug("Discovering service for peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
         let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
-        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: scanTimeout).flatMap { services in
-            services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
+        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: scanTimeout).flatMap { peripheral -> Future<[Service?]> in
+            guard let peripheral = peripheral else {
+                throw AppError.unlikelyFailure
+            }
+            return peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
         }
         peripheralDiscoveryFuture.onSuccess { [weak self] _ in
             self.forEach { strongSelf in

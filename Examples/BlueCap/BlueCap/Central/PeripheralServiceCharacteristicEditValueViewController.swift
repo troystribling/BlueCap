@@ -16,7 +16,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
 
     weak var characteristicUUID: CBUUID?
     weak var peripheral: Peripheral?
-    var peripheralDiscoveryFuture: FutureStream<[[Characteristic]]>?
+    var peripheralDiscoveryFuture: FutureStream<[Service?]>?
 
     let cancelToken = CancelToken()
     let progressView = ProgressView()

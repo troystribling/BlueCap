@@ -20,7 +20,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     weak var characteristicUUID: CBUUID?
     weak var peripheral: Peripheral?
-    var peripheralDiscoveryFuture: FutureStream<[[Characteristic]]>?
+    var peripheralDiscoveryFuture: FutureStream<[Service?]>?
 
 
     let cancelToken = CancelToken()
@@ -166,7 +166,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
                 return
         }
 
-        uuidLabel.text = characteristic.uuid?.uuidString
+        uuidLabel.text = characteristic.uuid.uuidString
         notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
         propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
         propertyReadLabel.text = booleanStringValue(characteristic.propertyEnabled(.read))
