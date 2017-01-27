@@ -322,7 +322,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             _discoveredPeripherals[peripheral.identifier] = bcPeripheral
         }
         Logger.debug("'\(name)' uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
-        weak(bcPeripheral, sreamPromise: afterPeripheralDiscoveredPromise)
+        weakSuccess(bcPeripheral, sreamPromise: afterPeripheralDiscoveredPromise)
     }
     
     func didFailToConnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
@@ -346,7 +346,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                         if let cbCharacteristics = cbService.getCharacteristics() {
                             for cbCharacteristic in cbCharacteristics {
                                 let characteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: service)
-                                service.discoveredCharacteristics[cbCharacteristic.uuid] = characteristic
+                                service.discoveredCharacteristicsUUIDs.append(characteristic.uuid.uuidString)
                                 peripheral.discoveredCharacteristics[cbCharacteristic.uuid] = characteristic
                             }
                         }

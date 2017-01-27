@@ -76,7 +76,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     static var RECONNECT_DELAY = TimeInterval(1.0)
 
-    fileprivate var servicesDiscoveredPromise: Promise<[Service]>?
+    fileprivate var servicesDiscoveredPromise: Promise<Peripheral?>?
     fileprivate var readRSSIPromise: Promise<Int>?
     fileprivate var pollRSSIPromise: StreamPromise<Int>?
     fileprivate var connectionPromise: StreamPromise<Void>?
@@ -336,12 +336,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Discover Services
 
-    public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<[Service]> {
+    public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral?> {
         Logger.debug("uuid=\(identifier.uuidString), name=\(self.name)")
         return self.discoverServices(nil, timeout: timeout)
     }
 
-    public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<[Service]> {
+    public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral?> {
         Logger.debug(" \(self.name)")
         return self.discoverIfConnected(services, timeout: timeout)
     }
@@ -411,11 +411,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
         Logger.debug("peripheral name=\(self.name), peripheral uuid=\(identifier.uuidString), service name \(bcService.name), characteristic count \(characteristics.count)")
         bcService.didDiscoverCharacteristics(characteristics, error: error)
-        if error == nil {
-            for cbCharacteristic in characteristics {
-                discoveredCharacteristics[cbCharacteristic.uuid] = bcService.discoveredCharacteristics[cbCharacteristic.uuid]
-            }
-        }
     }
     
     internal func didDiscoverServices(_ discoveredServices: [CBServiceInjectable], error: Error?) {
@@ -423,7 +418,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         self.clearAll()
         if let error = error {
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
-                self.servicesDiscoveredPromise?.failure(error)
+                servicesDiscoveredPromise.failure(error)
             }
         } else {
             let bcServices = discoveredServices.map { service -> Service in
@@ -434,7 +429,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 return bcService
             }
             if let servicesDiscoveredPromise = servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
-                servicesDiscoveredPromise.success(bcServices)
+                 weakSuccess(self, promise: servicesDiscoveredPromise)
             }
         }
     }
@@ -542,12 +537,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Utilities
 
-    fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity)  -> Future<[Service]> {
+    fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity)  -> Future<Peripheral?> {
         return centralQueue.sync {
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
                 return servicesDiscoveredPromise.future
             }
-            self.servicesDiscoveredPromise = Promise<[Service]>()
+            self.servicesDiscoveredPromise = Promise<Peripheral?>()
             if self.state == .connected {
                 self.serviceDiscoverySequence += 1
                 self.discoveredServices.removeAll()

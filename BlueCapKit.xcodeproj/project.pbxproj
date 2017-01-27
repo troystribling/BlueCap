@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0513FB501E3A7E95003340E1 /* Miscellaneous.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0513FB4F1E3A7E95003340E1 /* Miscellaneous.swift */; };
 		055120DF19F5513700ED3B74 /* Int16+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B319F5513700ED3B74 /* Int16+Deserializable.swift */; };
 		055120E019F5513700ED3B74 /* Int8+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B419F5513700ED3B74 /* Int8+Deserializable.swift */; };
 		055120E319F5513700ED3B74 /* UInt16+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055120B719F5513700ED3B74 /* UInt16+Deserializable.swift */; };
@@ -49,6 +50,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0513FB4F1E3A7E95003340E1 /* Miscellaneous.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Miscellaneous.swift; sourceTree = "<group>"; };
 		0551208219F5506000ED3B74 /* BlueCapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BlueCapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0551208619F5506000ED3B74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		055120B319F5513700ED3B74 /* Int16+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int16+Deserializable.swift"; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 		055120C819F5513700ED3B74 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				0513FB4F1E3A7E95003340E1 /* Miscellaneous.swift */,
 				05585BE21D0CA4AB000F5307 /* Logger.swift */,
 			);
 			path = Utilities;
@@ -364,6 +367,7 @@
 				05D3B9451A2BA162008E794E /* Double+BlueCap.swift in Sources */,
 				05C405AC1D7B7C6F00803654 /* RegionManager.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16+Deserializable.swift in Sources */,
+				0513FB501E3A7E95003340E1 /* Miscellaneous.swift in Sources */,
 				05C4059E1D7B7BF900803654 /* PeripheralManager.swift in Sources */,
 				057FACF01D1C325B0006B93B /* Int32+Deserializable.swift in Sources */,
 				4ED105C01C315C420034D5D2 /* UInt32+Deserializable.swift in Sources */,
