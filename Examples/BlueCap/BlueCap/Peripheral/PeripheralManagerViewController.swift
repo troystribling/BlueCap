@@ -35,7 +35,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         let addServicesFuture = Singletons.peripheralManager.whenStateChanges().flatMap { [unowned self] state -> Future<[Void]> in
             switch state {
             case .poweredOn:
-                Singletons.peripheralManager.removeAllServices()
                 return self.loadPeripheralServicesFromConfig()
             case .poweredOff:
                 throw AppError.poweredOff
@@ -182,6 +181,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                 return services
             }
         }
+        Singletons.peripheralManager.removeAllServices()
         return services.map { Singletons.peripheralManager.add($0) }.sequence()
     }
 

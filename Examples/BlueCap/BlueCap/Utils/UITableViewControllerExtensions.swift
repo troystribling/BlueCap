@@ -48,6 +48,8 @@ extension UIViewController {
         guard let peripheralError = error as? PeripheralError, peripheralError != .forcedDisconnect else {
             return
         }
-        present(UIAlertController.alert(title: title, error: error), animated:true)
+        present(UIAlertController.alert(title: "Connection error", error: error) { [weak self] _ in
+            _ = self?.navigationController?.popToRootViewController(animated: true)
+        }, animated: true)
     }
 }

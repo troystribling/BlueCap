@@ -55,9 +55,7 @@ public class Characteristic : NSObject {
         return centralQueue.sync { self.writePromises.count }
     }
 
-    public var uuid: CBUUID {
-        return cbCharacteristic!.uuid
-    }
+    public let uuid: CBUUID
     
     public var name: String {
         return profile?.name ?? "Unknown"
@@ -104,6 +102,7 @@ public class Characteristic : NSObject {
         self.cbCharacteristic = cbCharacteristic
         self._service = service
         self.profile = service.profile?.characteristicProfile(withUUID: cbCharacteristic.uuid)
+        uuid = CBUUID(data: cbCharacteristic.uuid.data)
         super.init()
     }
 

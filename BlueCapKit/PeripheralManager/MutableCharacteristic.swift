@@ -31,6 +31,8 @@ public class MutableCharacteristic : NSObject {
         return service?.peripheralManager?.peripheralQueue
     }
 
+    public let uuid: CBUUID
+
     public var value: Data? {
         get {
             return peripheralQueue?.sync { return self._value }
@@ -44,10 +46,6 @@ public class MutableCharacteristic : NSObject {
         get {
             return peripheralQueue?.sync { return self._isUpdating } ?? false
         }
-    }
-
-    public var uuid: CBUUID {
-        return profile.uuid
     }
 
     public var name: String {
@@ -104,18 +102,21 @@ public class MutableCharacteristic : NSObject {
         self.profile = profile
         self._value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
+        uuid = CBUUID(data: cbMutableCharacteristic.uuid.data)
     }
 
     internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable) {
         self.profile = CharacteristicProfile(uuid: cbMutableCharacteristic.uuid.uuidString)
         self._value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
+        uuid = CBUUID(data: cbMutableCharacteristic.uuid.data)
     }
 
     public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: Data?) {
         self.profile = CharacteristicProfile(uuid: UUID)
         self._value = value
         self.cbMutableChracteristic = CBMutableCharacteristic(type: self.profile.uuid, properties: properties, value: nil, permissions: permissions)
+        uuid = CBUUID(data: self.profile.uuid.data)
     }
 
     public convenience init(UUID: String) {

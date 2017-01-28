@@ -55,9 +55,8 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         }
 
         peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error in
-            self?.present(UIAlertController.alert(message: "Connection error") { _ in
-                _ = self?.navigationController?.popToRootViewController(animated: false)
-            }, animated: true, completion: nil)
+            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+            self?.updateWhenActive()
         }
 
         guard characteristic.canRead else {

@@ -313,7 +313,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
-        let bcPeripheral: Peripheral
+        var bcPeripheral: Peripheral
         if let discoveredPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral = discoveredPeripheral
             bcPeripheral._RSSI = RSSI.intValue

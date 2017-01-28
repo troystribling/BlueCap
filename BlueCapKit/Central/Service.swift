@@ -17,14 +17,12 @@ public class Service {
 
     // MARK: Properties
 
+    public let uuid: CBUUID
+
     public var name: String {
         return profile?.name ?? "Unknown"
     }
-    
-    public var uuid: CBUUID {
-        return cbService!.uuid
-    }
-    
+
     var discoveredCharacteristicsUUIDs = [String]()
     
     public var characteristics: [Characteristic] {
@@ -48,6 +46,7 @@ public class Service {
         self.cbService = cbService
         self.peripheral = peripheral
         self.profile = profile
+        uuid = CBUUID(data: cbService.uuid.data)
     }
 
     // MARK: Discover Characteristics
@@ -84,7 +83,7 @@ public class Service {
             }
         } else {
             let bcCharacteristics = discoveredCharacteristics.map { cbCharacteristic -> Characteristic in
-                let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
+                var bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
                 peripheral.discoveredCharacteristics[cbCharacteristic.uuid] = bcCharacteristic
                 discoveredCharacteristicsUUIDs.append(cbCharacteristic.uuid.uuidString)

@@ -424,8 +424,11 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         } else {
             let bcServices = discoveredServices.map { service -> Service in
                 let serviceProfile = profileManager?.services[service.uuid]
-                let bcService = Service(cbService: service, peripheral: self, profile: serviceProfile)
+                var bcService = Service(cbService: service, peripheral: self, profile: serviceProfile)
                 Logger.debug("service uuid=\(service.uuid.uuidString), service name=\(bcService.name), peripheral name=\(self.name), peripheral uuid=\(identifier.uuidString)")
+                withUnsafePointer(to: &bcService) {
+                    Logger.debug("Address: \($0), service uuid=\(service.uuid.uuidString), service name=\(bcService.name), peripheral name=\(self.name), peripheral uuid=\(identifier.uuidString)")
+                }
                 self.discoveredServices[service.uuid] = bcService
                 return bcService
             }

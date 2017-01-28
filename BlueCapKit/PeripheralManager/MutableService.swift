@@ -18,12 +18,10 @@ public class MutableService : NSObject {
     weak var peripheralManager: PeripheralManager?
     let cbMutableService: CBMutableServiceInjectable
 
-    public var uuid: CBUUID {
-        return self.profile.uuid
-    }
+    public let uuid: CBUUID
     
     public var name: String {
-        return self.profile.name
+        return profile.name
     }
     
     public var characteristics = [MutableCharacteristic]() {
@@ -47,6 +45,7 @@ public class MutableService : NSObject {
     internal init(cbMutableService: CBMutableServiceInjectable, profile: ServiceProfile? = nil) {
         self.cbMutableService = cbMutableService
         self.profile = profile ?? ServiceProfile(uuid: cbMutableService.uuid.uuidString)
+        uuid = CBUUID(data: cbMutableService.uuid.data)
         super.init()
     }
 

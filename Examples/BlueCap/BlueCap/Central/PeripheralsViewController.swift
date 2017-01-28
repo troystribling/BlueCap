@@ -557,7 +557,7 @@ class PeripheralsViewController : UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
-        let peripheral = self.peripherals[indexPath.row]
+        let peripheral = peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
         if peripheral.state == .connected || peripheral.services.count > 0 || discoveredPeripherals.contains(peripheral.identifier) {
             cell.nameLabel.textColor = UIColor.black

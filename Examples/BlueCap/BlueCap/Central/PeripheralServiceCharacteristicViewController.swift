@@ -78,7 +78,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
         peripheralDiscoveryFuture.onFailure { [weak self] error in
             self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-            self?.updateUI()
+            self?.updateWhenActive()
         }
     }
     
