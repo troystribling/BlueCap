@@ -14,7 +14,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
 
     weak var serviceUUID: CBUUID?
     weak var peripheral: Peripheral?
-    var peripheralDiscoveryFuture: FutureStream<[Service?]>?
+    var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
     let cancelToken = CancelToken()
 

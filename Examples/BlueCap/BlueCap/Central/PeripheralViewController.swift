@@ -14,7 +14,7 @@ import BlueCapKit
 class PeripheralViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
-    var peripheralDiscoveryFuture: FutureStream<[Service?]>?
+    var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
     var peripheralAdvertisements: PeripheralAdvertisements?
 
@@ -192,20 +192,20 @@ class PeripheralViewController : UITableViewController {
         let connectionTimeout = ConfigStore.getPeripheralConnectionTimeoutEnabled() ? Double(ConfigStore.getPeripheralConnectionTimeout()) : Double.infinity
         let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
 
-        peripheralDiscoveryFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 1).flatMap { [weak self, weak peripheral] () -> Future<Peripheral?> in
+        peripheralDiscoveryFuture = peripheral.connect(connectionTimeout: connectionTimeout, capacity: 1).flatMap { [weak self, weak peripheral] () -> Future<Void> in
             guard let peripheral = peripheral else {
                 throw AppError.unlikelyFailure
             }
             self?.updateConnectionStateLabel()
             return peripheral.discoverAllServices(timeout: scanTimeout)
-        }.flatMap { peripheral -> Future<[Service?]> in
+        }.flatMap { [weak peripheral] ()  -> Future<[Void]> in
             guard let peripheral = peripheral else {
                 throw AppError.unlikelyFailure
             }
             return peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
         }
 
-        peripheralDiscoveryFuture?.onSuccess { [weak self] peripheral in
+        peripheralDiscoveryFuture?.onSuccess { [weak self] _ in
             self.forEach { strongSelf in
                 _ = strongSelf.progressView.remove()
                 strongSelf.updateConnectionStateLabel()

@@ -76,7 +76,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     static var RECONNECT_DELAY = TimeInterval(1.0)
 
-    fileprivate var servicesDiscoveredPromise: Promise<Peripheral?>?
+    fileprivate var servicesDiscoveredPromise: Promise<Void>?
     fileprivate var readRSSIPromise: Promise<Int>?
     fileprivate var pollRSSIPromise: StreamPromise<Int>?
     fileprivate var connectionPromise: StreamPromise<Void>?
@@ -337,12 +337,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Discover Services
 
-    public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral?> {
+    public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<Void> {
         Logger.debug("uuid=\(identifier.uuidString), name=\(self.name)")
         return self.discoverServices(nil, timeout: timeout)
     }
 
-    public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral?> {
+    public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<Void> {
         Logger.debug(" \(self.name)")
         return self.discoverIfConnected(services, timeout: timeout)
     }
@@ -430,7 +430,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 return bcService
             }
             if let servicesDiscoveredPromise = servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
-                 weakSuccess(self, promise: servicesDiscoveredPromise)
+                 servicesDiscoveredPromise.success()
             }
         }
     }
@@ -538,12 +538,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Utilities
 
-    fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity)  -> Future<Peripheral?> {
+    fileprivate func discoverIfConnected(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity)  -> Future<Void> {
         return centralQueue.sync {
             if let servicesDiscoveredPromise = self.servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
                 return servicesDiscoveredPromise.future
             }
-            self.servicesDiscoveredPromise = Promise<Peripheral?>()
+            self.servicesDiscoveredPromise = Promise<Void>()
             if self.state == .connected {
                 self.serviceDiscoverySequence += 1
                 self.discoveredServices.removeAll()

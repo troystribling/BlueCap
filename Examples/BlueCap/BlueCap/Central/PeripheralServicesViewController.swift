@@ -14,7 +14,7 @@ import CoreBluetooth
 class PeripheralServicesViewController : UITableViewController {
 
     weak var peripheral: Peripheral?
-    weak var peripheralDiscoveryFuture: FutureStream<[Service?]>?
+    weak var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
     let cancelToken = CancelToken()
 

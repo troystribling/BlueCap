@@ -516,7 +516,7 @@ class PeripheralsViewController : UITableViewController {
         }
         Logger.debug("Discovering service for peripheral: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
         let scanTimeout = TimeInterval(ConfigStore.getCharacteristicReadWriteTimeout())
-        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: scanTimeout).flatMap { peripheral -> Future<[Service?]> in
+        let peripheralDiscoveryFuture = peripheral.discoverAllServices(timeout: scanTimeout).flatMap { [weak peripheral] () -> Future<[Void]> in
             guard let peripheral = peripheral else {
                 throw AppError.unlikelyFailure
             }
