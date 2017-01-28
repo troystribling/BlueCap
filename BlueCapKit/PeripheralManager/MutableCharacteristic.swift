@@ -47,23 +47,23 @@ public class MutableCharacteristic : NSObject {
     }
 
     public var uuid: CBUUID {
-        return self.profile.uuid
+        return profile.uuid
     }
 
     public var name: String {
-        return self.profile.name
+        return profile.name
     }
     
     public var stringValues: [String] {
-        return self.profile.stringValues
+        return profile.stringValues
     }
     
     public var permissions: CBAttributePermissions {
-        return self.cbMutableChracteristic.permissions
+        return cbMutableChracteristic.permissions
     }
     
     public var properties: CBCharacteristicProperties {
-        return self.cbMutableChracteristic.properties
+        return cbMutableChracteristic.properties
     }
 
     public var subscribers: [CBCentralInjectable] {
@@ -115,7 +115,7 @@ public class MutableCharacteristic : NSObject {
     public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: Data?) {
         self.profile = CharacteristicProfile(uuid: UUID)
         self._value = value
-        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
+        self.cbMutableChracteristic = CBMutableCharacteristic(type: self.profile.uuid, properties: properties, value: nil, permissions: permissions)
     }
 
     public convenience init(UUID: String) {
@@ -157,7 +157,7 @@ public class MutableCharacteristic : NSObject {
             return self.processWriteRequestPromise!.stream
         } ?? FutureStream(error: MutableCharacteristicError.unconfigured)
     }
-    
+
     public func stopRespondingToWriteRequests() {
         peripheralQueue?.sync {
             self.processWriteRequestPromise = nil

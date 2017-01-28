@@ -12,7 +12,7 @@ import CoreBluetooth
 
 class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewController {
     
-    var characteristic: MutableCharacteristic!
+    weak var characteristic: MutableCharacteristic?
     var peripheralManagerViewController: PeripheralManagerViewController?
 
     
@@ -33,17 +33,22 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
-        if let characteristic = self.characteristic {
-            self.navigationItem.title = characteristic.name
+        guard let characteristic = self.characteristic else {
+            _ = navigationController?.popViewController(animated: true)
+            return
         }
-        let future = self.characteristic.startRespondingToWriteRequests(capacity: 10)
-        future.onSuccess {(request, _) in
+        self.navigationItem.title = characteristic.name
+        let future = characteristic.startRespondingToWriteRequests(capacity: 10)
+        future.onSuccess { [weak self, weak characteristic] (request, _) in
+            guard let strongSelf = self, let characteristic = characteristic else {
+                return
+            }
             if let value = request.value , value.count > 0 {
-                self.characteristic.value = request.value
-                self.characteristic.respondToRequest(request, withResult: CBATTError.success)
-                self.updateWhenActive()
+                characteristic.value = request.value
+                characteristic.respondToRequest(request, withResult: CBATTError.success)
+                strongSelf.updateWhenActive()
             } else {
-                self.characteristic.respondToRequest(request, withResult :CBATTError.invalidAttributeValueLength)
+                characteristic.respondToRequest(request, withResult :CBATTError.invalidAttributeValueLength)
             }
         }
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServicesCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
@@ -53,7 +58,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         super.viewWillDisappear(animated)
         self.navigationItem.title = ""
         NotificationCenter.default.removeObserver(self)
-        self.characteristic.stopRespondingToWriteRequests()
+        self.characteristic?.stopRespondingToWriteRequests()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
@@ -108,7 +113,10 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.characteristic.stringValues.isEmpty {
+        guard let characteristic = characteristic else {
+            return
+        }
+        if characteristic.stringValues.isEmpty {
             self.performSegue(withIdentifier: MainStoryboard.peripheralManagerServiceCharacteristicEditValueSegue, sender:indexPath)
         } else {
             self.performSegue(withIdentifier: MainStoryboard.peripheralManagerServiceCharacteristicEditDiscreteValuesSegue, sender:indexPath)

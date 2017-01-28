@@ -17,9 +17,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     fileprivate var afterStateChangedPromise: StreamPromise<ManagerState>?
     fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral?>?
-    fileprivate var afterStateRestoredPromise: Promise<(peripherals: [Peripheral]?, scannedServices: [CBUUID], options: [String:AnyObject])>?
+    fileprivate var afterStateRestoredPromise: Promise<Void>?
 
-    fileprivate let options: [String : Any]?
+    fileprivate var options: [String : Any]?
     fileprivate let name: String
 
     fileprivate var _isScanning = false
@@ -222,12 +222,12 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: State Restoration
 
-    public func whenStateRestored() -> Future<(peripherals: [Peripheral]?, scannedServices: [CBUUID], options: [String:AnyObject])> {
+    public func whenStateRestored() -> Future<Void> {
         return centralQueue.sync {
             if let afterStateRestoredPromise = self.afterStateRestoredPromise, !afterStateRestoredPromise.completed {
                 return afterStateRestoredPromise.future
             }
-            self.afterStateRestoredPromise = Promise<(peripherals: [Peripheral]?, scannedServices: [CBUUID], options: [String:AnyObject])>()
+            self.afterStateRestoredPromise = Promise<Void>()
             return self.afterStateRestoredPromise!.future
         }
     }
@@ -336,6 +336,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     func willRestoreState(_ cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
         Logger.debug("'\(name)'")
         if let cbPeripherals = cbPeripherals, let scannedServices = scannedServices, let options = options {
+            self.options = options
             let peripherals = cbPeripherals.map { cbPeripheral -> Peripheral in
                 let peripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
                 _discoveredPeripherals[cbPeripheral.identifier] = peripheral
@@ -355,7 +356,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return peripheral
             }
             if let completed = afterStateRestoredPromise?.completed, !completed {
-                afterStateRestoredPromise?.success((peripherals, scannedServices, options))
+                afterStateRestoredPromise?.success()
             }
         } else {
             if let completed = afterStateRestoredPromise?.completed, !completed {

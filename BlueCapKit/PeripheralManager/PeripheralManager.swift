@@ -27,15 +27,22 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate var options: [String : Any]?
 
     fileprivate var afterStateChangedPromise: StreamPromise<ManagerState>?
-    fileprivate var afterStateRestoredPromise: Promise<(services: [MutableService], advertisements: PeripheralAdvertisements)>?
+    fileprivate var afterStateRestoredPromise: Promise<PeripheralAdvertisements>?
     fileprivate var afterServiceAddPromises = [CBUUID : Promise<Void>]()
 
     fileprivate var configuredServices  = [CBUUID : MutableService]()
-    fileprivate var configuredCharcteristics = [CBUUID : MutableCharacteristic]()
 
     internal let peripheralQueue: Queue
 
     fileprivate var stopAdvertisingTimeoutSequence = 0
+
+    fileprivate var _characteristics: [MutableCharacteristic] {
+        return Array(self.configuredServices.values).map { $0.characteristics }.flatMap { $0 }
+    }
+
+    fileprivate func _characteristic(withUUID uuid: CBUUID) -> MutableCharacteristic? {
+        return self._characteristics.filter { $0.uuid == uuid }.first
+    }
 
     public var isAdvertising: Bool {
         return cbPeripheralManager?.isAdvertising ?? false
@@ -50,19 +57,19 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     public var services: [MutableService] {
-        return peripheralQueue.sync { return Array(self.configuredServices.values) }
+        return peripheralQueue.sync { Array(self.configuredServices.values) }
     }
 
     public var characteristics: [MutableCharacteristic] {
-        return peripheralQueue.sync { Array(self.configuredCharcteristics.values) }
+        return peripheralQueue.sync { self._characteristics }
     }
 
     public func service(withUUID uuid: CBUUID) -> MutableService? {
-        return peripheralQueue.sync { return self.configuredServices[uuid] }
+        return peripheralQueue.sync { self.configuredServices[uuid] }
     }
 
     public func characteristic(withUUID uuid: CBUUID) -> MutableCharacteristic? {
-        return peripheralQueue.sync { return self.configuredCharcteristics[uuid] }
+        return peripheralQueue.sync {  self._characteristic(withUUID: uuid) }
     }
 
     // MARK: Initialize
@@ -191,7 +198,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         return self.peripheralQueue.sync {
             Logger.debug("service name=\(service.name), uuid=\(service.uuid)")
             service.peripheralManager = self
-            self.addConfiguredCharacteristics(service.characteristics)
             let afterSeriviceAddPromise = Promise<Void>()
             self.configuredServices[service.uuid] = service
             self.afterServiceAddPromises[service.uuid] = afterSeriviceAddPromise
@@ -203,17 +209,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     public func remove(_ service: MutableService) {
         peripheralQueue.sync {
             Logger.debug("removing service \(service.uuid.uuidString)")
-            let removedCharacteristics = Array(self.configuredCharcteristics.keys).filter{(uuid) in
-                for bcCharacteristic in service.characteristics {
-                    if uuid == bcCharacteristic.uuid {
-                        return true
-                    }
-                }
-                return false
-            }
-            for cbCharacteristic in removedCharacteristics {
-                self.configuredCharcteristics.removeValue(forKey: cbCharacteristic)
-            }
             self.configuredServices.removeValue(forKey: service.uuid)
             self.cbPeripheralManager.remove(service.cbMutableService)
         }
@@ -223,7 +218,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         Logger.debug()
         peripheralQueue.sync {
             self.configuredServices.removeAll()
-            self.configuredCharcteristics.removeAll()
             self.cbPeripheralManager.removeAllServices()
         }
     }
@@ -242,12 +236,12 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     // MARK: State Restoration
 
-    public func whenStateRestored() -> Future<(services: [MutableService], advertisements: PeripheralAdvertisements)> {
+    public func whenStateRestored() -> Future<PeripheralAdvertisements> {
         return peripheralQueue.sync {
             if let afterStateRestoredPromise = self.afterStateRestoredPromise, !afterStateRestoredPromise.completed {
                 return afterStateRestoredPromise.future
             }
-            self.afterStateRestoredPromise = Promise<(services: [MutableService], advertisements: PeripheralAdvertisements)>()
+            self.afterStateRestoredPromise = Promise<PeripheralAdvertisements>()
             return self.afterStateRestoredPromise!.future
         }
     }
@@ -300,17 +294,17 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     func didSubscribeToCharacteristic(_ characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
         Logger.debug()
-        configuredCharcteristics[characteristic.uuid]?.didSubscribeToCharacteristic(central)
+        _characteristic(withUUID: characteristic.uuid)?.didSubscribeToCharacteristic(central)
     }
     
     func didUnsubscribeFromCharacteristic(_ characteristic: CBCharacteristicInjectable, central: CBCentralInjectable) {
         Logger.debug()
-        configuredCharcteristics[characteristic.uuid]?.didUnsubscribeFromCharacteristic(central)
+        _characteristic(withUUID: characteristic.uuid)?.didUnsubscribeFromCharacteristic(central)
     }
     
     func isReadyToUpdateSubscribers() {
         Logger.debug()
-        for characteristic in self.configuredCharcteristics.values {
+        for characteristic in _characteristics {
             if !characteristic._isUpdating {
                 characteristic.peripheralManagerIsReadyToUpdateSubscribers()
             }
@@ -318,7 +312,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     func didReceiveWriteRequest(_ request: CBATTRequestInjectable, central: CBCentralInjectable) {
-        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().uuid] {
+        if let characteristic = _characteristic(withUUID: request.getCharacteristic().uuid) {
             Logger.debug("characteristic write request received for \(characteristic.uuid.uuidString)")
             if characteristic.didRespondToWriteRequest(request, central: central) {
                 characteristic._value = request.value
@@ -333,7 +327,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     func didReceiveReadRequest(_ request: CBATTRequestInjectable, central: CBCentralInjectable) {
         var request = request
         Logger.debug("chracteracteristic \(request.getCharacteristic().uuid)")
-        if let characteristic = self.configuredCharcteristics[request.getCharacteristic().uuid] {
+        if let characteristic = _characteristic(withUUID: request.getCharacteristic().uuid) {
             Logger.debug("responding with data: \(characteristic._value.map { $0.hexStringValue() })")
             request.value = characteristic._value
             respondToRequest(request, withResult:CBATTError.Code.success)
@@ -392,7 +386,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 if let cbCharacteristics = cbService.getCharacteristics() as? [CBMutableCharacteristic] {
                     characteristics = cbCharacteristics.map { bcChracteristic in
                         let characteristic = MutableCharacteristic(cbMutableCharacteristic: bcChracteristic)
-                        self.configuredCharcteristics[characteristic.uuid] = characteristic
                         return characteristic
                     }
                 }
@@ -400,7 +393,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 return service
             }
             if let completed = self.afterStateRestoredPromise?.completed, !completed {
-                self.afterStateRestoredPromise?.success((services, PeripheralAdvertisements(advertisements: advertisements)))
+                self.afterStateRestoredPromise?.success(PeripheralAdvertisements(advertisements: advertisements))
             }
         } else {
             if let completed = self.afterStateRestoredPromise?.completed, !completed {
@@ -410,12 +403,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
 
     // MARK: Utils
-
-    fileprivate func addConfiguredCharacteristics(_ characteristics: [MutableCharacteristic]) {
-        for characteristic in characteristics {
-            self.configuredCharcteristics[characteristic.cbMutableChracteristic.uuid] = characteristic
-        }
-    }
 
     fileprivate func timeoutStopAdvertising(_ timeout: TimeInterval, sequence: Int, count: Int = 0) {
         guard timeout < TimeInterval.infinity else {

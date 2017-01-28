@@ -28,14 +28,14 @@ public class MutableService : NSObject {
     
     public var characteristics = [MutableCharacteristic]() {
         didSet {
-            let cbCharacteristics = characteristics.map { characteristic -> CBCharacteristicInjectable in
-                characteristic.service = self
-                return characteristic.cbMutableChracteristic
-            }
-            self.cbMutableService.setCharacteristics(cbCharacteristics)
+            let cbCharacteristics = characteristics.map { bcCharacteristic -> CBMutableCharacteristicInjectable in
+                bcCharacteristic.service = self
+                return bcCharacteristic.cbMutableChracteristic
+            }.flatMap { $0 }
+            cbMutableService.setCharacteristics(cbCharacteristics)
         }
     }
-    
+
     public convenience init(profile: ServiceProfile) {
         self.init(cbMutableService: CBMutableService(type: profile.uuid, primary: true), profile: profile)
     }

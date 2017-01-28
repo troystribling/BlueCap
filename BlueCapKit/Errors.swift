@@ -91,6 +91,17 @@ public enum PeripheralManagerError : Swift.Error, LocalizedError {
     }
 }
 
+public enum MutableServiceError : Swift.Error, LocalizedError {
+    case unconfigured
+
+    public var errorDescription: String? {
+        switch self {
+        case .unconfigured:
+            return NSLocalizedString("MutableService has no CBMutableService.", comment: "MutableServiceError.unconfigured")
+        }
+    }
+}
+
 public enum MutableCharacteristicError : Swift.Error, LocalizedError {
     case unconfigured
     case notSerializable
