@@ -16,7 +16,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: Properties
 
     fileprivate var afterStateChangedPromise: StreamPromise<ManagerState>?
-    fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral?>?
+    fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral>?
     fileprivate var afterStateRestoredPromise: Promise<Void>?
 
     fileprivate var options: [String : Any]?
@@ -159,11 +159,11 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     // MARK: Scan
 
-    public func startScanning(capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral?> {
+    public func startScanning(capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
         return startScanning(forServiceUUIDs: nil, capacity: capacity, timeout: timeout)
     }
 
-    public func startScanning(forServiceUUIDs uuids: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral?> {
+    public func startScanning(forServiceUUIDs uuids: [CBUUID]?, capacity: Int = Int.max, timeout: TimeInterval = TimeInterval.infinity, options: [String : Any]? = nil) -> FutureStream<Peripheral> {
         return self.centralQueue.sync {
             if let afterPeripheralDiscoveredPromise = self.afterPeripheralDiscoveredPromise {
                 return afterPeripheralDiscoveredPromise.stream
@@ -174,7 +174,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             if !self._isScanning {
                 Logger.debug("'\(self.name)' scanning UUIDs \(uuids)")
                 self._isScanning = true
-                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral?>(capacity: capacity)
+                self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
                 if self.poweredOn {
                     self.cbCentralManager.scanForPeripherals(withServices: uuids, options: options)
                     self.timeoutScan(timeout, sequence: self.scanTimeoutSequence)
@@ -313,7 +313,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     }
     
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
-        let bcPeripheral: Peripheral
+        var bcPeripheral: Peripheral
         if let discoveredPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral = discoveredPeripheral
             bcPeripheral._RSSI = RSSI.intValue
@@ -322,7 +322,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             _discoveredPeripherals[peripheral.identifier] = bcPeripheral
         }
         Logger.debug("'\(name)' uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
-        weakSuccess(bcPeripheral, sreamPromise: afterPeripheralDiscoveredPromise)
+        afterPeripheralDiscoveredPromise?.success(bcPeripheral)
     }
     
     func didFailToConnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {

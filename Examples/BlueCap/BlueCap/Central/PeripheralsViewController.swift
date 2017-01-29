@@ -441,7 +441,7 @@ class PeripheralsViewController : UITableViewController {
 
         let scanOptions = [CBCentralManagerScanOptionAllowDuplicatesKey : true]
 
-        let future: FutureStream<Peripheral?>
+        let future: FutureStream<Peripheral>
         let scanMode = ConfigStore.getScanMode()
         let scanDuration = ConfigStore.getScanDurationEnabled() ? Double(ConfigStore.getScanDuration()) : Double.infinity
         switch scanMode {
