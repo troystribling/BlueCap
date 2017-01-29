@@ -333,6 +333,12 @@ class PeripheralsViewController : UITableViewController {
                     strongSelf.connectingPeripherals.remove(peripheral.identifier)
                     strongSelf.startScanAndConnectingIfNotPaused()
                     strongSelf.restartConnectionUpdatesIfNecessary()
+                    if !strongSelf.discoveredPeripherals.contains(peripheral.identifier) {
+                        strongSelf.removedPeripherals.insert(peripheral.identifier)
+                        peripheral.terminate()
+                        strongSelf.connectedPeripherals.remove(peripheral.identifier)
+                        strongSelf.updateWhenActive()
+                    }
                     return
                 case PeripheralError.connectionTimeout:
                     if peripheral.timeoutCount < maxTimeouts {
@@ -349,11 +355,11 @@ class PeripheralsViewController : UITableViewController {
                 }
                 Logger.debug("Connection failed giving up '\(error), \(peripheral.name)', \(peripheral.identifier.uuidString)")
                 strongSelf.connectingPeripherals.remove(peripheral.identifier)
+                strongSelf.startScanAndConnectingIfNotPaused()
+                strongSelf.restartConnectionUpdatesIfNecessary()
                 strongSelf.removedPeripherals.insert(peripheral.identifier)
                 peripheral.terminate()
                 strongSelf.connectedPeripherals.remove(peripheral.identifier)
-                strongSelf.startScanAndConnectingIfNotPaused()
-                strongSelf.restartConnectionUpdatesIfNecessary()
                 strongSelf.updateWhenActive()
             }
         }

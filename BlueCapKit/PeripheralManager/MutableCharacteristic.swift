@@ -94,7 +94,7 @@ public class MutableCharacteristic : NSObject {
     // MARK: Initializers
 
     public convenience init(profile: CharacteristicProfile) {
-        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
+        var cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
         self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
     }
 
