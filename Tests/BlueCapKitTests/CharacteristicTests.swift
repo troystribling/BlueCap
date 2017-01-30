@@ -44,7 +44,6 @@ class CharacteristicTests: XCTestCase {
         }
         let characteristic = Characteristic(cbCharacteristic: mockCharacteristic, service: service)
         peripheral.discoveredCharacteristics = [characteristic.uuid : characteristic]
-        service.discoveredCharacteristics = [characteristic.uuid : characteristic]
         return (characteristic, mockCharacteristic)
     }
 
@@ -161,19 +160,19 @@ class CharacteristicTests: XCTestCase {
         XCTAssertEqual(characteristic.pendingWriteCount, 3)
 
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssertFutureSucceeds(future1, context: TestContext.immediate) { characteristic in
+        XCTAssertFutureSucceeds(future1, context: TestContext.immediate) {
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 2)
             XCTAssertEqual(self.mockPerpheral.writtenData!, "bb".dataFromHexString())
             XCTAssertEqual(characteristic.pendingWriteCount, 2)
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssertFutureSucceeds(future2, context: TestContext.immediate) { characteristic in
+        XCTAssertFutureSucceeds(future2, context: TestContext.immediate) {
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 3)
             XCTAssertEqual(self.mockPerpheral.writtenData!, "cc".dataFromHexString())
             XCTAssertEqual(characteristic.pendingWriteCount, 1)
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssertFutureSucceeds(future3, context: TestContext.immediate) { characteristic in
+        XCTAssertFutureSucceeds(future3, context: TestContext.immediate) {
             XCTAssertEqual(characteristic.pendingWriteCount, 0)
         }
     }

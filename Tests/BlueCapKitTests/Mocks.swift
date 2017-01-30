@@ -77,9 +77,6 @@ class CentralManagerUT: CentralManager {
         super.init(centralManager: centralManager, profileManager: profileManager)
     }
 
-    override func cancelPeripheralConnection(_ peripheral: Peripheral) {
-        peripheral.didDisconnectPeripheral(nil)
-    }
 }
 
 // MARK: - CBPeripheralMock -

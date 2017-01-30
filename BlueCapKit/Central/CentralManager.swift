@@ -19,7 +19,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate var afterPeripheralDiscoveredPromise: StreamPromise<Peripheral>?
     fileprivate var afterStateRestoredPromise: Promise<Void>?
 
-    fileprivate var options: [String : Any]?
     fileprivate let name: String
 
     fileprivate var _isScanning = false
@@ -28,12 +27,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate var _discoveredPeripherals = [UUID : Peripheral]()
 
     let centralQueue: Queue
+    public var options: [String : Any]?
+
     fileprivate(set) var cbCentralManager: CBCentralManagerInjectable!
 
     fileprivate var scanTimeoutSequence = 0
 
     public var discoveredPeripherals : [UUID : Peripheral] {
-        return self._discoveredPeripherals
+        return centralQueue.sync { self._discoveredPeripherals }
     }
 
     public var peripherals: [Peripheral] {
@@ -47,6 +48,10 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return true
             }
         }
+    }
+
+    public var services: [Service] {
+        return peripherals.map { $0.services }.flatMap { $0 }
     }
 
     public var isScanning: Bool {

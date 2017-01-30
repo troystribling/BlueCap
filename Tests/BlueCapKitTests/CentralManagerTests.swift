@@ -119,7 +119,13 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
                                         scannedServices: testScannedServices, options: testOptions)
-        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { (peripherals, scannedServices, options) in
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
+            guard let options = centralManager.options else {
+                XCTFail()
+                return
+            }
+            let peripherals = centralManager.peripherals
+            let scannedServices = centralManager.services.map { $0.uuid }
             XCTAssertEqual(peripherals.count, testPeripherals.count)
             XCTAssertEqual(scannedServices, testScannedServices)
             XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber)

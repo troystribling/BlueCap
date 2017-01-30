@@ -227,7 +227,8 @@ class PeripheralManagerTests: XCTestCase {
         }
         let future = peripheralManager.whenStateRestored()
         peripheralManager.willRestoreState(testServices.map { $0 as CBMutableServiceInjectable }, advertisements: peripheralAdvertisements)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) { (services, advertisements) in
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { advertisements in
+                let services = peripheralManager.services
                 XCTAssertEqual(advertisements.localName!, peripheralAdvertisements[CBAdvertisementDataLocalNameKey]! as! String)
                 XCTAssertEqual(advertisements.txPower!, peripheralAdvertisements[CBAdvertisementDataTxPowerLevelKey]! as! NSNumber)
                 XCTAssertEqual(services.count, testServices.count)
