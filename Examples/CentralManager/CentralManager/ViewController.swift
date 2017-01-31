@@ -159,7 +159,7 @@ class ViewController: UITableViewController {
             self.accelerometerEnabledCharacteristic = enabledCharacteristic
             self.accelerometerUpdatePeriodCharacteristic = updatePeriodCharacteristic
             return enabledCharacteristic.write(TiSensorTag.AccelerometerService.Enabled.yes)
-        }.flatMap { [unowned self] _ -> Future<[Void]> in
+        }.flatMap { [unowned self] () -> Future<[Void]> in
             return [self.accelerometerEnabledCharacteristic,
                     self.accelerometerUpdatePeriodCharacteristic,
                     self.accelerometerDataCharacteristic].flatMap { $0 }.map { $0.read(timeout: 10.0) }.sequence()

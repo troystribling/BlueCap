@@ -43,7 +43,7 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'Your Target Name' do
-  pod 'BlueCapKit', '~> 0.4'
+  pod 'BlueCapKit', '~> 0.5'
 end
 ```
 
@@ -62,7 +62,7 @@ brew install carthage
 To add `BlueCapKit` to your `Cartfile`
 
 ```ogdl
-github "troystribling/BlueCap" ~> 0.2
+github "troystribling/BlueCap" ~> 0.5
 ```
 
 To download and build `BlueCapKit.framework` run the command,
@@ -117,10 +117,10 @@ public enum AppError : Error {
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
     
-let scanFuture = stateChangeFuture.flatMap { state -> FutureStream<Peripheral> in
+let scanFuture = stateChangeFuture.flatMap { [unowned self] state -> FutureStream<Peripheral> in
     switch state {
     case .poweredOn:
-        return manager.startScanning(forServiceUUIDs: [serviceUUID])
+        return self.manager.startScanning(forServiceUUIDs: [serviceUUID])
     case .poweredOff:
         throw AppError.poweredOff
     case .unauthorized, .unsupported:
@@ -132,7 +132,7 @@ let scanFuture = stateChangeFuture.flatMap { state -> FutureStream<Peripheral> i
     }
 }
 
-scanFuture.onFailure { error in
+scanFuture.onFailure { [unowned self] error in
     guard let appError = error as? AppError else {
         return
     }
@@ -140,7 +140,7 @@ scanFuture.onFailure { error in
     case .invalidState:
 	      break
     case .resetting:
-        manager.reset()
+        self.manager.reset()
     case .poweredOff:
         break
     case .unknown:
@@ -155,13 +155,16 @@ Here when `.poweredOn` is received the scan is started. On all other state chang
 To connect discovered peripherals the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`,
 
 ```swift
-let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<Peripheral> in
+var peripheral: Peripheral?
+
+let connectionFuture = scanFuture.flatMap { [unowned self] discoveredPeripheral  -> FutureStream<Void> in
     manager.stopScanning()
-    return peripheral.connect(timeoutRetries: 5, disconnectRetries:5, connectionTimeout: 10.0)
+    self.peripheral = discoveredPeripheral
+    return peripheral.connect(connectionTimeout: 10.0)
 }
 ```
 
-Here the scan is also stopped after a peripheral with the desire service UUID is discovered.
+Here the scan is also stopped after a peripheral with the desired service UUID is discovered.
 
 The `Peripheral` `Services` and `Characteristics` need to be discovered and the connection errors need to be handled. `Service` and `Characteristic` discovery are performed by 'Peripheral#discoverServices' and `Service#discoverCharacteristics` and more errors are added to `AppError`.
 
@@ -177,19 +180,23 @@ public enum AppError : Error {
     case unknown
 }
 
-var peripheral: Peripheral?
-
-let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<Peripheral> in
+let discoveryFuture = connectionFuture.flatMap { 
+() -> Future<Void> in
+	  guard let peripheral = peripheral else {
+        throw AppError.unknown
+    }
     return peripheral.discoverServices([serviceUUID])
-}.flatMap { discoveredPeripheral -> Future<Service> in
-    guard let service = peripheral.service(serviceUUID) else {
+}.flatMap { [unowned self] () -> Future<Void> in
+    guard let peripheral = self.peripheral, let service = peripheral.service(serviceUUID) else {
         throw AppError.serviceNotFound
     }
-    peripheral = discoveredPeripheral
-    return service.discover(: [dataUUID, enabledUUID, updatePeriodUUID])
+    return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
 }
 
-discoveryFuture.onFailure { error in
+discoveryFuture.onFailure { [unowned self] error in
+	  guard let peripheral = self.peripheral else {
+        return
+    }
     switch error {
     case PeripheralError.disconnected:
         peripheral.reconnect()
@@ -215,25 +222,33 @@ public enum AppError : Error {
     case unknown
 }
 
-let subscriptionFuture = discoveryFuture.flatMap { service -> Future<Characteristic> in
+var accelerometerDataCharacteristic: Characteristic?
+
+let subscriptionFuture = discoveryFuture.flatMap { [unowned self] () -> Future<Void> in
+   guard let peripheral = self.peripheral, let service = peripheral.service(serviceUUID) else {
+        throw AppError.serviceNotFound
+    }
     guard let dataCharacteristic = service.characteristic(dataUUID) else {
         throw AppError.dataCharactertisticNotFound
     }
     self.accelerometerDataCharacteristic = dataCharacteristic
     return self.accelerometerEnabledCharacteristic.read(timeout: 10.0)
-}.flatMap { _ -> Future<Characteristic> in
+}.flatMap { [unowned self] () -> Future<Void> in
     guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
         throw AppError.dataCharactertisticNotFound
     }
     return accelerometerDataCharacteristic.startNotifying()
-}.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
-    return characteristic.receiveNotificationUpdates(capacity: 10)
+}.flatMap { [unowned self] () -> FutureStream<Data?> in
+    guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
+        throw AppError.dataCharactertisticNotFound
+    }
+    return accelerometerDataCharacteristic.receiveNotificationUpdates(capacity: 10)
 }
 
 dataUpdateFuture.onFailure { [unowned self] error in
     switch error {
     case PeripheralError.disconnected:
-        peripheral.reconnect()
+        self.peripheral.reconnect()
     case AppError.serviceNotFound:
         break
     case AppError.dataCharactertisticNotFound:
