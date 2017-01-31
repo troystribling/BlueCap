@@ -104,16 +104,16 @@ class CentralManagerTests: XCTestCase {
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let mock = CBCentralManagerMock()
         let centralManager = CentralManager(centralManager: mock)
+        let testScannedServices = [CBUUID(string: UUID().uuidString), CBUUID(string: UUID().uuidString)]
         let testPeripherals = [CBPeripheralMock(state: .connected), CBPeripheralMock(state: .connected)]
         for testPeripheral in testPeripherals {
-            let testServices = [CBServiceMock(), CBServiceMock()]
+            let testServices = [CBServiceMock(uuid: testScannedServices[0]), CBServiceMock(uuid: testScannedServices[1])]
             for testService in testServices {
                 let testCharacteristics = [CBCharacteristicMock(), CBCharacteristicMock()]
                 testService.characteristics = testCharacteristics
             }
             testPeripheral.services = testServices
         }
-        let testScannedServices = [CBUUID(string: UUID().uuidString), CBUUID(string: UUID().uuidString)]
         let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(value: true),
                                                 CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test" as AnyObject]
         let future = centralManager.whenStateRestored()
@@ -127,7 +127,7 @@ class CentralManagerTests: XCTestCase {
             let peripherals = centralManager.peripherals
             let scannedServices = centralManager.services.map { $0.uuid }
             XCTAssertEqual(peripherals.count, testPeripherals.count)
-            XCTAssertEqual(scannedServices, testScannedServices)
+            XCTAssertEqual(Set(scannedServices), Set(testScannedServices))
             XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber)
             XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString)
             XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }))

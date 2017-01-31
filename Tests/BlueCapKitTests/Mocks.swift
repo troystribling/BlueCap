@@ -183,8 +183,7 @@ class PeripheralUT: Peripheral {
     init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String: AnyObject], rssi: Int, error: Error?) {
         self.error = error
         super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, RSSI: rssi)
-    }
-    
+    }    
 }
 
 // MARK: - CBServiceMock -
@@ -194,7 +193,7 @@ class CBServiceMock: CBServiceInjectable {
     var uuid: CBUUID
     var characteristics: [CBCharacteristicMock]?
 
-    init(uuid:CBUUID = CBUUID(string: Foundation.UUID().uuidString)) {
+    init(uuid: CBUUID = CBUUID(nsuuid: UUID())) {
         self.uuid = uuid
     }
 

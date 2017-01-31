@@ -14,7 +14,7 @@
 		053EFDBF1DE88C8D00C18FED /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 053EFDBB1DE88C8D00C18FED /* LaunchScreen.xib */; };
 		053EFDC01DE88C8D00C18FED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 053EFDBD1DE88C8D00C18FED /* Main.storyboard */; };
 		053EFDC21DE88C9F00C18FED /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 053EFDC11DE88C9F00C18FED /* Images.xcassets */; };
-		D4D085B991FC50C66A541863 /* Pods_PeripheralManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E008883F2DC01848DA4B9F42 /* Pods_PeripheralManager.framework */; };
+		3C3A64DB18F19314B7303A5F /* Pods_PeripheralManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44BBE5A284253F218C38FD9A /* Pods_PeripheralManager.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,9 +40,9 @@
 		053EFDBC1DE88C8D00C18FED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = PeripheralManager/Base.lproj/LaunchScreen.xib; sourceTree = SOURCE_ROOT; };
 		053EFDBE1DE88C8D00C18FED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = PeripheralManager/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
 		053EFDC11DE88C9F00C18FED /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PeripheralManager/Images.xcassets; sourceTree = SOURCE_ROOT; };
-		9D91AAEB956B870136101949 /* Pods-PeripheralManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.debug.xcconfig"; sourceTree = "<group>"; };
-		E008883F2DC01848DA4B9F42 /* Pods_PeripheralManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PeripheralManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3EDCEB94AD3275D0A0BCAA1 /* Pods-PeripheralManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.release.xcconfig"; sourceTree = "<group>"; };
+		44BBE5A284253F218C38FD9A /* Pods_PeripheralManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PeripheralManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		62212D9DC159D7FDECC753EE /* Pods-PeripheralManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.debug.xcconfig"; sourceTree = "<group>"; };
+		FD05AB7AEC9A72AAB378C673 /* Pods-PeripheralManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4D085B991FC50C66A541863 /* Pods_PeripheralManager.framework in Frameworks */,
+				3C3A64DB18F19314B7303A5F /* Pods_PeripheralManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,8 +62,8 @@
 			children = (
 				0513E28D1AE2D6AF0062C505 /* PeripheralManager */,
 				0513E28C1AE2D6AF0062C505 /* Products */,
-				82CD0DE1C268925CF9ADC3BA /* Pods */,
-				4076A670149231AC40B9238B /* Frameworks */,
+				7F0540B36834FB016226BC1D /* Pods */,
+				7742D528214A0AABBC1BE18E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,19 +99,19 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		4076A670149231AC40B9238B /* Frameworks */ = {
+		7742D528214A0AABBC1BE18E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E008883F2DC01848DA4B9F42 /* Pods_PeripheralManager.framework */,
+				44BBE5A284253F218C38FD9A /* Pods_PeripheralManager.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		82CD0DE1C268925CF9ADC3BA /* Pods */ = {
+		7F0540B36834FB016226BC1D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9D91AAEB956B870136101949 /* Pods-PeripheralManager.debug.xcconfig */,
-				E3EDCEB94AD3275D0A0BCAA1 /* Pods-PeripheralManager.release.xcconfig */,
+				62212D9DC159D7FDECC753EE /* Pods-PeripheralManager.debug.xcconfig */,
+				FD05AB7AEC9A72AAB378C673 /* Pods-PeripheralManager.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -123,13 +123,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0513E2AA1AE2D6AF0062C505 /* Build configuration list for PBXNativeTarget "PeripheralManager" */;
 			buildPhases = (
-				2B6CF644ECC0FB1C7435F7FA /* [CP] Check Pods Manifest.lock */,
+				D04CF6835A44E81BC60BB725 /* [CP] Check Pods Manifest.lock */,
 				0513E2871AE2D6AF0062C505 /* Sources */,
 				0513E2881AE2D6AF0062C505 /* Frameworks */,
 				0513E2891AE2D6AF0062C505 /* Resources */,
 				0513E2BD1AE2D7050062C505 /* Embed Frameworks */,
-				93E0F54416AFDC4D02C08A6F /* [CP] Embed Pods Frameworks */,
-				36AC0AE203024E9A1650AB0C /* [CP] Copy Pods Resources */,
+				0BBF40133479A717CEBD51E5 /* [CP] Embed Pods Frameworks */,
+				C69291DDEAF9F591EE3C6D95 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -194,22 +194,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2B6CF644ECC0FB1C7435F7FA /* [CP] Check Pods Manifest.lock */ = {
+		0BBF40133479A717CEBD51E5 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		36AC0AE203024E9A1650AB0C /* [CP] Copy Pods Resources */ = {
+		C69291DDEAF9F591EE3C6D95 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -224,19 +224,19 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		93E0F54416AFDC4D02C08A6F /* [CP] Embed Pods Frameworks */ = {
+		D04CF6835A44E81BC60BB725 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -366,7 +366,7 @@
 		};
 		0513E2AB1AE2D6AF0062C505 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9D91AAEB956B870136101949 /* Pods-PeripheralManager.debug.xcconfig */;
+			baseConfigurationReference = 62212D9DC159D7FDECC753EE /* Pods-PeripheralManager.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -384,7 +384,7 @@
 		};
 		0513E2AC1AE2D6AF0062C505 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E3EDCEB94AD3275D0A0BCAA1 /* Pods-PeripheralManager.release.xcconfig */;
+			baseConfigurationReference = FD05AB7AEC9A72AAB378C673 /* Pods-PeripheralManager.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

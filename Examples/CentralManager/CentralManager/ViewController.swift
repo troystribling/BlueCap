@@ -19,6 +19,7 @@ public enum AppError : Error {
     case resetting
     case poweredOff
     case unknown
+    case unlikley
 }
 
 class ViewController: UITableViewController {
@@ -123,19 +124,28 @@ class ViewController: UITableViewController {
                 case .unknown:
                     throw AppError.unknown
                 }
-        }.flatMap { [unowned self] peripheral -> FutureStream<Peripheral> in
+        }.flatMap { [unowned self] peripheral -> FutureStream<Void> in
             self.manager.stopScanning()
             self.peripheral = peripheral
             return peripheral.connect(connectionTimeout: 10.0)
-        }.flatMap { [weak self] peripheral -> Future<Peripheral> in
-            self?.updateUIStatus()
+        }.flatMap { [unowned self] () -> Future<Void> in
+            guard let peripheral = self.peripheral else {
+                throw AppError.unlikley
+            }
+            self.updateUIStatus()
             return peripheral.discoverServices([serviceUUID])
-        }.flatMap { peripheral -> Future<Service> in
+        }.flatMap { [unowned self] () -> Future<Void> in
+            guard let peripheral = self.peripheral else {
+                throw AppError.unlikley
+            }
             guard let service = peripheral.service(serviceUUID) else {
                 throw AppError.serviceNotFound
             }
             return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
-        }.flatMap { [unowned self] service -> Future<Characteristic> in
+        }.flatMap { [unowned self] () -> Future<Void> in
+            guard let peripheral = self.peripheral, let service = peripheral.service(serviceUUID) else {
+                throw AppError.serviceNotFound
+            }
             guard let dataCharacteristic = service.characteristic(dataUUID) else {
                 throw AppError.dataCharactertisticNotFound
             }
@@ -149,19 +159,22 @@ class ViewController: UITableViewController {
             self.accelerometerEnabledCharacteristic = enabledCharacteristic
             self.accelerometerUpdatePeriodCharacteristic = updatePeriodCharacteristic
             return enabledCharacteristic.write(TiSensorTag.AccelerometerService.Enabled.yes)
-        }.flatMap { [unowned self] _ -> Future<[Characteristic]> in
+        }.flatMap { [unowned self] _ -> Future<[Void]> in
             return [self.accelerometerEnabledCharacteristic,
                     self.accelerometerUpdatePeriodCharacteristic,
                     self.accelerometerDataCharacteristic].flatMap { $0 }.map { $0.read(timeout: 10.0) }.sequence()
-        }.flatMap { [unowned self] _ -> Future<Characteristic> in
+        }.flatMap { [unowned self] _ -> Future<Void> in
             guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
                 throw AppError.dataCharactertisticNotFound
             }
             self.updateEnabled()
             self.updatePeriod()
             return accelerometerDataCharacteristic.startNotifying()
-        }.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
-            return characteristic.receiveNotificationUpdates(capacity: 10)
+        }.flatMap { [unowned self] () -> FutureStream<Data?> in
+            guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
+                throw AppError.dataCharactertisticNotFound
+            }
+            return accelerometerDataCharacteristic.receiveNotificationUpdates(capacity: 10)
         }
 
         dataUpdateFuture.onFailure { [unowned self] error in
@@ -192,7 +205,7 @@ class ViewController: UITableViewController {
             self.updateUIStatus()
         }
 
-        dataUpdateFuture.onSuccess { [unowned self] (_, data) in
+        dataUpdateFuture.onSuccess { [unowned self] data in
             self.updateData(data)
         }
     }

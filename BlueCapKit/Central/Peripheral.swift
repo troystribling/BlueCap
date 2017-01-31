@@ -457,7 +457,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     internal func didWriteValueForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        guard let bcCharacteristic = self.discoveredCharacteristics[characteristic.uuid] else {
+        guard let bcCharacteristic = discoveredCharacteristics[characteristic.uuid] else {
             Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }
@@ -484,14 +484,14 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: CBCentralManagerDelegate Shims
 
-    internal func didConnectPeripheral() {
+    func didConnectPeripheral() {
         Logger.debug("uuid=\(identifier.uuidString), name=\(self.name)")
         _connectedAt = Date()
         _disconnectedAt = nil
         connectionPromise?.success()
     }
 
-    internal func didDisconnectPeripheral(_ error: Swift.Error?) {
+    func didDisconnectPeripheral(_ error: Swift.Error?) {
         _disconnectedAt = Date()
         _totalSecondsConnected += _secondsConnected
         switch(terminationStatus) {

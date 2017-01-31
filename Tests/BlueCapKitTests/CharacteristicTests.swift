@@ -40,7 +40,7 @@ class CharacteristicTests: XCTestCase {
         if hasProfile {
             mockCharacteristic = CBCharacteristicMock(uuid: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid), properties: properties, isNotifying: isNotifying)
         } else {
-            mockCharacteristic = CBCharacteristicMock(uuid: CBUUID(), properties: properties, isNotifying: isNotifying)
+            mockCharacteristic = CBCharacteristicMock(uuid: CBUUID(nsuuid: UUID()), properties: properties, isNotifying: isNotifying)
         }
         let characteristic = Characteristic(cbCharacteristic: mockCharacteristic, service: service)
         peripheral.discoveredCharacteristics = [characteristic.uuid : characteristic]
@@ -65,12 +65,13 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteData_WithTypeWithoutResponseAndWriteable_DoesNotQueueRequestsAndCompleteSuccessfully() {
-        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(data: "aa".dataFromHexString(), type: .withoutResponse)
-        XCTAssert(self.mockPerpheral.writeValueCalled)
-        XCTAssertEqual(self.mockPerpheral.writeValueCount, 1)
-        XCTAssertEqual(self.mockPerpheral.writtenType, .withoutResponse)
-        XCTAssertEqual(self.mockPerpheral.writtenData!, "aa".dataFromHexString())
+        XCTAssert(mockPerpheral.writeValueCalled)
+        XCTAssertEqual(mockCharacteristic.properties, [.read, .write])
+        XCTAssertEqual(mockPerpheral.writeValueCount, 1)
+        XCTAssertEqual(mockPerpheral.writtenType, .withoutResponse)
+        XCTAssertEqual(mockPerpheral.writtenData!, "aa".dataFromHexString())
         XCTAssertEqual(characteristic.pendingWriteCount, 0)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate)
     }
@@ -88,8 +89,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteData_WithTypeWithResponseWritableAndOnTimeout_CompletesWithTimeoutError() {
-        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
         let future = characteristic.write(data: "aa".dataFromHexString(), timeout:1.0)
+        XCTAssertEqual(mockCharacteristic.properties, [.read, .write])
         XCTAssertFutureFails(future) { error in
             XCTAssertEqualErrors(error, CharacteristicError.writeTimeout)
             XCTAssert(self.mockPerpheral.writeValueCalled)
@@ -99,8 +101,9 @@ class CharacteristicTests: XCTestCase {
     }
 
     func testWriteData_WhenNotWriteable_CompletesWithErrorWriteNotSupported() {
-        let (characteristic, _) = createCharacteristic([.read], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read], isNotifying: false)
         let future = characteristic.write(data: "aa".dataFromHexString())
+        XCTAssertEqual(mockCharacteristic.properties, [.read])
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertEqualErrors(error, CharacteristicError.writeNotSupported)
             XCTAssertFalse(self.mockPerpheral.writeValueCalled)
@@ -198,18 +201,20 @@ class CharacteristicTests: XCTestCase {
         }
     }
     
-//    func testRead_WhenReadableAndNoResponsdeReceivedBeforeTimeout_CompletesWithTimeoutError() {
-//        let (characteristic, _) = createCharacteristic([.read, .write], isNotifying: false)
-//        let future = characteristic.read(timeout: 0.25)
-//        XCTAssertFutureFails(future) { error in
-//            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled)
-//            XCTAssertEqualErrors(error, CharacteristicError.readTimeout)
-//            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
-//        }
-//    }
+    func testRead_WhenReadableAndNoResponsdeReceivedBeforeTimeout_CompletesWithTimeoutError() {
+        let (characteristic, mockCharacteristic) = createCharacteristic([.read, .write], isNotifying: false)
+        XCTAssertEqual(mockCharacteristic.properties, [.read, .write])
+        let future = characteristic.read(timeout: 0.25)
+        XCTAssertFutureFails(future) { error in
+            XCTAssert(self.mockPerpheral.readValueForCharacteristicCalled)
+            XCTAssertEqualErrors(error, CharacteristicError.readTimeout)
+            XCTAssertEqual(self.mockPerpheral.readValueForCharacteristicCount, 1)
+        }
+    }
     
     func testRead_WhenNotReadable_CompletesWithReadNotSupported() {
-        let (characteristic, _) = createCharacteristic([.write], isNotifying: false)
+        let (characteristic, mockCharacteristic) = createCharacteristic([.write], isNotifying: false)
+        XCTAssertEqual(mockCharacteristic.properties, [.write])
         let future = characteristic.read()
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertFalse(self.mockPerpheral.readValueForCharacteristicCalled)
@@ -336,7 +341,7 @@ class CharacteristicTests: XCTestCase {
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let startNotifyingFuture = characteristic.startNotifying()
-        let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+        let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<Data?> in
             characteristic.receiveNotificationUpdates()
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
@@ -344,7 +349,7 @@ class CharacteristicTests: XCTestCase {
         self.peripheral.didUpdateValueForCharacteristic(mockCharacteristic, error: nil)
         XCTAssertFutureSucceeds(startNotifyingFuture, context: TestContext.immediate)
         XCTAssertFutureStreamSucceeds(updateFuture, context: TestContext.immediate, validations: [
-            { (_, data) in
+            { data in
                 if let data = data {
                     XCTAssertEqual(data, "11".dataFromHexString())
                 } else {
@@ -357,7 +362,7 @@ class CharacteristicTests: XCTestCase {
     func testReceiveNotificationUpdates_WhenNotifiableUpdateIsReceivedWitfError_CompletesWithReceivedError() {
         let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let startNotifyingFuture = characteristic.startNotifying()
-        let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+        let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<Data?> in
             characteristic.receiveNotificationUpdates()
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
@@ -386,7 +391,7 @@ class CharacteristicTests: XCTestCase {
 
         let startNotifyingFuture = characteristic.startNotifying()
 
-        let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+        let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<Data?> in
             characteristic.receiveNotificationUpdates()
         }
         self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristic, error: nil)
@@ -400,21 +405,21 @@ class CharacteristicTests: XCTestCase {
 
         XCTAssertFutureSucceeds(startNotifyingFuture, context: TestContext.immediate)
         XCTAssertFutureStreamSucceeds(updateFuture, context: TestContext.immediate, validations: [
-            { (_, data) in
+            { data in
                 if let data = data {
                     XCTAssertEqual(data, "00".dataFromHexString())
                 } else {
                     XCTFail()
                 }
             },
-            { (_, data) in
+            { data in
                 if let data = data {
                     XCTAssertEqual(data, "01".dataFromHexString())
                 } else {
                     XCTFail()
                 }
             },
-            { (_, data) in
+            { data in
                 if let data = data {
                     XCTAssertEqual(data, "02".dataFromHexString())
                 } else {

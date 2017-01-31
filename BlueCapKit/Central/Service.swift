@@ -82,12 +82,11 @@ public class Service {
                 Logger.debug("Error discovering characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
             }
         } else {
-            let bcCharacteristics = discoveredCharacteristics.map { cbCharacteristic -> Characteristic in
+            discoveredCharacteristics.forEach { cbCharacteristic in
                 var bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
                 peripheral.discoveredCharacteristics[cbCharacteristic.uuid] = bcCharacteristic
                 discoveredCharacteristicsUUIDs.append(cbCharacteristic.uuid.uuidString)
-                return bcCharacteristic
             }
             Logger.debug("discovery success service name \(name), service uuid \(uuid)")
             if let characteristicsDiscoveredPromise = characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
