@@ -117,10 +117,10 @@ public enum AppError : Error {
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
     
-let scanFuture = stateChangeFuture.flatMap { [unowned self] state -> FutureStream<Peripheral> in
+let scanFuture = stateChangeFuture.flatMap { [weak manager] state -> FutureStream<Peripheral> in
     switch state {
     case .poweredOn:
-        return self.manager.startScanning(forServiceUUIDs: [serviceUUID])
+        return manager?.startScanning(forServiceUUIDs: [serviceUUID])
     case .poweredOff:
         throw AppError.poweredOff
     case .unauthorized, .unsupported:
@@ -132,7 +132,7 @@ let scanFuture = stateChangeFuture.flatMap { [unowned self] state -> FutureStrea
     }
 }
 
-scanFuture.onFailure { [unowned self] error in
+scanFuture.onFailure { [weak manager] error in
     guard let appError = error as? AppError else {
         return
     }
@@ -140,7 +140,7 @@ scanFuture.onFailure { [unowned self] error in
     case .invalidState:
 	      break
     case .resetting:
-        self.manager.reset()
+        manager?.reset()
     case .poweredOff:
         break
     case .unknown:
@@ -157,9 +157,9 @@ To connect discovered peripherals the scan is followed by `Peripheral#connect` a
 ```swift
 var peripheral: Peripheral?
 
-let connectionFuture = scanFuture.flatMap { [unowned self] discoveredPeripheral  -> FutureStream<Void> in
-    manager.stopScanning()
-    self.peripheral = discoveredPeripheral
+let connectionFuture = scanFuture.flatMap { [weak manager] discoveredPeripheral  -> FutureStream<Void> in
+    manager?.stopScanning()
+    peripheral = discoveredPeripheral
     return peripheral.connect(connectionTimeout: 10.0)
 }
 ```
@@ -180,21 +180,20 @@ public enum AppError : Error {
     case unknown
 }
 
-let discoveryFuture = connectionFuture.flatMap { 
-() -> Future<Void> in
+let discoveryFuture = connectionFuture.flatMap { [weak peripheral] () -> Future<Void> in
 	  guard let peripheral = peripheral else {
         throw AppError.unknown
     }
     return peripheral.discoverServices([serviceUUID])
-}.flatMap { [unowned self] () -> Future<Void> in
-    guard let peripheral = self.peripheral, let service = peripheral.service(serviceUUID) else {
+}.flatMap { [weak peripheral] () -> Future<Void> in
+    guard let peripheral = peripheral, let service = peripheral.service(serviceUUID) else {
         throw AppError.serviceNotFound
     }
     return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
 }
 
-discoveryFuture.onFailure { [unowned self] error in
-	  guard let peripheral = self.peripheral else {
+discoveryFuture.onFailure { weak peripheral error in
+	  guard let peripheral = peripheral else {
         return
     }
     switch error {
@@ -224,31 +223,31 @@ public enum AppError : Error {
 
 var accelerometerDataCharacteristic: Characteristic?
 
-let subscriptionFuture = discoveryFuture.flatMap { [unowned self] () -> Future<Void> in
-   guard let peripheral = self.peripheral, let service = peripheral.service(serviceUUID) else {
+let subscriptionFuture = discoveryFuture.flatMap { [weak peripheral] () -> Future<Void> in
+   guard let peripheral = peripheral, let service = peripheral.service(serviceUUID) else {
         throw AppError.serviceNotFound
     }
     guard let dataCharacteristic = service.characteristic(dataUUID) else {
         throw AppError.dataCharactertisticNotFound
     }
-    self.accelerometerDataCharacteristic = dataCharacteristic
-    return self.accelerometerEnabledCharacteristic.read(timeout: 10.0)
-}.flatMap { [unowned self] () -> Future<Void> in
-    guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
+    accelerometerDataCharacteristic = dataCharacteristic
+    return dataCharacteristic.read(timeout: 10.0)
+}.flatMap { [weak accelerometerDataCharacteristic] () -> Future<Void> in
+    guard let accelerometerDataCharacteristic = accelerometerDataCharacteristic else {
         throw AppError.dataCharactertisticNotFound
     }
     return accelerometerDataCharacteristic.startNotifying()
-}.flatMap { [unowned self] () -> FutureStream<Data?> in
-    guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
+}.flatMap { [weak accelerometerDataCharacteristic] () -> FutureStream<Data?> in
+    guard let accelerometerDataCharacteristic = accelerometerDataCharacteristic else {
         throw AppError.dataCharactertisticNotFound
     }
     return accelerometerDataCharacteristic.receiveNotificationUpdates(capacity: 10)
 }
 
-dataUpdateFuture.onFailure { [unowned self] error in
+dataUpdateFuture.onFailure { [weak peripheral] error in
     switch error {
     case PeripheralError.disconnected:
-        self.peripheral.reconnect()
+        peripheral.reconnect()
     case AppError.serviceNotFound:
         break
     case AppError.dataCharactertisticNotFound:
@@ -292,11 +291,15 @@ enum AppError: Error {
     case resetting
     case poweredOff
     case unsupported
+    case unlikely
 }
 
 let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
     
-let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
+let startAdvertiseFuture = manager.whenStateChanges().flatMap { [weak manager] state -> Future<Void> in
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }
     switch state {
     case .poweredOn:
         manager.removeAllServices()
@@ -310,20 +313,23 @@ let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<
     case .resetting:
         throw AppError.resetting
     }
-}.flatMap { _ -> Future<Void> in 
+}.flatMap { [weak manager] _ -> Future<Void> in 
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }
     manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.uuid)])
 }
 
-startAdvertiseFuture.onFailure { error in
+startAdvertiseFuture.onFailure { [weak manager] error in
     switch error {
     case AppError.poweredOff:
-        manager.reset()            
+        manager?.reset()            
     case AppError.resetting:
-        manager.reset()
+        manager?.reset()
     default:
 	      break
     }
-    manager.stopAdvertising()
+    manager?.stopAdvertising()
 }
 ```
 
@@ -335,12 +341,15 @@ let accelerometerUpdatePeriodFuture = startAdvertiseFuture.flatMap {
     accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
 }
 
-accelerometerUpdatePeriodFuture.onSuccess {  (request, _) in
+accelerometerUpdatePeriodFuture.onSuccess {  [weak accelerometerUpdatePeriodCharacteristic] (request, _) in
+    guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic else {
+        throw AppError.unlikely
+    }
     guard let value = request.value, value.count > 0 && value.count <= 8 else {
         return
     }
-    self.accelerometerUpdatePeriodCharacteristic.value = value
-    self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
+    accelerometerUpdatePeriodCharacteristic.value = value
+    accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
 }
 
 // respond to Enabled write requests
@@ -348,12 +357,15 @@ let accelerometerEnabledFuture = startAdvertiseFuture.flatMap {
     accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity: 2)
 }
 
-accelerometerEnabledFuture.onSuccess { (request, _) in
+accelerometerEnabledFuture.onSuccess { [weak accelerometerUpdatePeriodCharacteristic] (request, _) in
+    guard let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic else {
+        throw AppError.unlikely
+    }
     guard let value = request.value, value.count == 1 else {
         return
     }
-    self.accelerometerEnabledCharacteristic.value = request.value
-    self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.success)
+    accelerometerEnabledCharacteristic.value = request.value
+    accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.success)
 }
 ```
 
