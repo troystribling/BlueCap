@@ -93,6 +93,7 @@ enum AppError: Error {
     case resetting
     case poweredOff
     case unsupported
+    case unlikely
 }
 
 let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
@@ -105,10 +106,13 @@ let characteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfil
 service.characteristics = [characteristic]
  
 let addServiceFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }    
     switch state {
     case .poweredOn:
-        self.manager.removeAllServices()
-        return self.manager.add(self.accelerometerService)
+        manager.removeAllServices()
+        return manager.add(self.accelerometerService)
     case .poweredOff:
         throw AppError.poweredOff
     case .unauthorized, .unknown:
@@ -121,6 +125,9 @@ let addServiceFuture = manager.whenStateChanges().flatMap { state -> Future<Void
 }
 
 startAdvertiseFuture.onFailure { error in
+    guard let manager = manager else {
+        return
+    }    
     switch error {
     case AppError.poweredOff:
         manager.reset()
@@ -156,7 +163,10 @@ A `PeripheralManager` application can start advertising after `MutableServices` 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
 let startAdvertisingFuture = addServiceFuture.flatMap { _ -> Future<Void> in 
-    manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [serviceUUID])
+	  guard let manager = manager else {
+        throw AppError.unlikely
+    }    
+	manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids: [serviceUUID])
 }
 ```
 
@@ -212,7 +222,6 @@ All methods `throw` if the `MutableCharacteristic` either has not been added to 
 Peripheral applications would send notification updates using,
 
 ```swift
-// Enabled and characteristic defined above
 let updateStatus = try characteristic.updateValue(Enabled.no)
 ```
 
@@ -238,7 +247,10 @@ public func stopRespondingToWriteRequests()
 ```swift
 let writeResponseFuture = characteristic.startRespondingToWriteRequests(capacity: 10)
 
-writeResponseFuture.onSuccess { (request, _) in
+writeResponseFuture.onSuccess { [weak characteristic] (request, _) in
+    guard let characteristic = characteristic else {
+        throw AppError.unlikely
+    }    
     guard request.value.length == 1 else {
         characteristic.respondToRequest(request, withResult:CBATTError.InvalidAttributeValueLength)
         Return
@@ -312,9 +324,12 @@ let uuid = UUID(uuidString: "B9407F30-F5F8-466E-AFF9-25556B57FE6D")!
 BeaconRegion(proximityUUID: uuid, identifier: "iBeacon", major: 1, minor: 1)
 
 let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
-    switch state {
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }    
+   switch state {
     case .poweredOn:
-        return self.manager.startAdvertising(beaconRegion)
+        return manager.startAdvertising(beaconRegion)
     case .poweredOff:
         throw AppError.poweredOff
     case .unauthorized, .unknown:
@@ -350,13 +365,13 @@ CoreBluetooth provides [state restoration](https://developer.apple.com/library/c
 `PeripheralManager` provides the following method to process the restored application state,
 
 ```swift
-public func whenStateRestored() -> Future<(services: [MutableService], advertisements: PeripheralAdvertisements)>
+public func whenStateRestored() -> Future<PeripheralAdvertisements>
 ```
 
 ### <a name="peripheral_errors">Errors</a>
 
 ```swift
-public enum PeripheralManagerError : Swift.Error {
+public enum PeripheralManagerError: Swift.Error {
     // Thrown by startAdvertising if the PeripheralManager is already advertising
     case isAdvertising
 	  // Thrown is state restoration fails    
@@ -365,6 +380,11 @@ public enum PeripheralManagerError : Swift.Error {
     case stopAdvertisingTimeout
 }
 
+public enum MutableServiceError: Swift.Error {
+		// MutableService has no CBMutableService.
+    case unconfigured
+}
+ 
 public enum MutableCharacteristicError : Swift.Error {
     // Thrown by startRespondingToWriteRequests and update if Mutablecharcteristic has not been added to a PeripheralManager
     case unconfigured
