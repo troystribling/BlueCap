@@ -113,14 +113,18 @@ public enum AppError : Error {
     case resetting
     case poweredOff
     case unknown
+    case unlikely
 }
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
     
 let scanFuture = stateChangeFuture.flatMap { [weak manager] state -> FutureStream<Peripheral> in
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }
     switch state {
     case .poweredOn:
-        return manager?.startScanning(forServiceUUIDs: [serviceUUID])
+        return manager.startScanning(forServiceUUIDs: [serviceUUID])
     case .poweredOff:
         throw AppError.poweredOff
     case .unauthorized, .unsupported:
@@ -192,13 +196,10 @@ let discoveryFuture = connectionFuture.flatMap { [weak peripheral] () -> Future<
     return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
 }
 
-discoveryFuture.onFailure { weak peripheral error in
-	  guard let peripheral = peripheral else {
-        return
-    }
+discoveryFuture.onFailure { [weak peripheral] error in
     switch error {
     case PeripheralError.disconnected:
-        peripheral.reconnect()
+        peripheral?.reconnect()
     case AppError.serviceNotFound:
         break
     default:
@@ -247,7 +248,7 @@ let subscriptionFuture = discoveryFuture.flatMap { [weak peripheral] () -> Futur
 dataUpdateFuture.onFailure { [weak peripheral] error in
     switch error {
     case PeripheralError.disconnected:
-        peripheral.reconnect()
+        peripheral?.reconnect()
     case AppError.serviceNotFound:
         break
     case AppError.dataCharactertisticNotFound:

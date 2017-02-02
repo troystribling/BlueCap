@@ -30,6 +30,7 @@ public enum ManagerState: CustomStringConvertible {
     case resetting
     case poweredOff
     case poweredOn
+    case unlikely
 }
 ```
 
@@ -101,10 +102,13 @@ An application starts scanning for `Peripherals` advertising `Services` with `UU
 
 ```swift
 public enum AppError : Error {
-    case invalidState
+   case unauthorized
+    case unknown
+    case unsupported
     case resetting
     case poweredOff
-    case unknown
+    case poweredOn
+    case unlikely
 }
 
 let manager = CentralManager(options [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.documentation-manager" as NSString])
@@ -113,7 +117,10 @@ let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
 Var discoveredPeripheral: Peripheral?
 
-let scanFuture = manager.whenStateChanges().flatMap { state -> FutureStream<Peripheral> in
+let scanFuture = manager.whenStateChanges().flatMap { [weak manager] state -> FutureStream<Peripheral> in
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }    
     switch state {
     case .poweredOn:
         return manager.startScanning(forServiceUUIDs: [serviceUUID], capacity: 10)
@@ -132,8 +139,8 @@ scanFuture.onSuccess { peripheral in
     discoveredPeripheral = peripheral
 }
 
-scanFuture.onFailure { error in
-    guard let appError = error as? else {
+scanFuture.onFailure { [weak manager] error in
+    guard let manager = manager, let appError = error as? else {
         return
     }
     switch appError {
@@ -211,10 +218,10 @@ After discovering a `Peripheral` a connection must be established to run discove
 To connect to a `Peripheral` use The `Peripheral` method,
 
 ```swift
-public func connect(connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Peripheral>
+public func connect(connectionTimeout: TimeInterval = TimeInterval.infinity, capacity: Int = Int.max) -> FutureStream<Void>
 ```
 
-The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Peripheral>` yielding the connected `Peripheral`. 
+The method returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Void>`. 
 
 The input parameters are,
 
@@ -252,13 +259,13 @@ The `Peripheral#reconnect` method is used to establish a connection to a previou
 After a `Peripheral` is discovered an application connects using,
 
 ```swift
-let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<Peripheral> in
-    manager.stopScanning()
+let connectionFuture = scanFuture.flatMap { [weak manager] () -> FutureStream<Void> in
+    manager?.stopScanning()
     discoveredPeripheral = peripheral
     return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
 }
 
-connectionFuture.onSuccess { peripheral in
+connectionFuture.onSuccess { [weak peripheral] in
 	  // handle successful connection
 }
 
@@ -288,25 +295,25 @@ The `Peripheral` methods used to discover `Services` are,
 
 ```swift
 // Discover all services supported by peripheral
-public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral>
+public func discoverAllServices(timeout: TimeInterval = TimeInterval.infinity) -> Future<Void>
 
 // Discover services with specified UUIDs
-public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<Peripheral>
+public func discoverServices(_ services: [CBUUID]?, timeout: TimeInterval = TimeInterval.infinity) -> Future<Void>
 ```
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Peripheral>` yielding the connected `Peripheral` and only take a `timeout` parameter. If the timeout is exceeded the `PeripheralError.serviceDiscoveryTimeout` is thrown.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>` and only take a `timeout` parameter. If the timeout is exceeded the `PeripheralError.serviceDiscoveryTimeout` is thrown.
 
 The `Service` methods used to discover `Characteristics` are,
 
 ```swift
 // Discover all characteristics supported by service
-public func discoverAllCharacteristics(timeout: TimeInterval = TimeInterval.infinity) -> Future<Service>
+public func discoverAllCharacteristics(timeout: TimeInterval = TimeInterval.infinity) -> Future<Void>
 
 // Discover characteristics with specified UUIDs
-public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: TimeInterval = TimeInterval.infinity) -> Future<Service>
+public func discoverCharacteristics(_ characteristics: [CBUUID], timeout: TimeInterval = TimeInterval.infinity) -> Future<Void>
 ```
 
-Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Service>` yielding the supporting `Service` and only take a `timeout` parameter. If the timeout is exceeded for `Service` discovery `PeripheralError.serviceDiscoveryTimeout` is thrown and if the timeout is exceeded for `Characteristic` discovery `ServiceError.characteristicDiscoveryTimeout` is thrown.
+Both methods return a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>` and only take a `timeout` parameter. If the timeout is exceeded `ServiceError.characteristicDiscoveryTimeout` is thrown.
 
 After a `Peripheral` is connected `Services` and `Characteristics` are discovered using,
 
@@ -319,10 +326,13 @@ let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
 
 let characteristicUUID = CBUUID(string: TISensorTag.AccelerometerService.Data.uuid)
 
-let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<Peripheral> in
-        peripheral.discoverServices([serviceUUID])
-}.flatMap { peripheral -> Future<Service> in
-    guard let service = peripheral.service(serviceUUID) else {
+let discoveryFuture = connectionFuture.flatMap { [weak peripheral] () -> Future<Void> in
+    guard let peripheral = peripheral else {
+        throw AppError.unlikely
+    }    
+    peripheral.discoverServices([serviceUUID])
+}.flatMap { [peripheral weak] -> Future<Void> in
+    guard let peripheral = peripheral, let service = peripheral.service(serviceUUID) else {
         throw AppError.serviceNotFound
     }
     return service.discoverCharacteristics([dataUUID])
@@ -353,7 +363,10 @@ Here the `connectionFuture` is completed after the `Peripheral` connects and `fl
 Discovery of all supported `Peripheral` `Services` and `Characteristics` could be done in a single `flatMap` using,
 
 ```swift
-let discoveryFuture = connectionFuture.flatMap { peripheral -> Future<[Service]> in
+let discoveryFuture = connectionFuture.flatMap { [weak peripheral] -> Future<[Void]> in
+    guard let peripheral = peripheral else {
+        throw AppError.unlikely
+    }    
     peripheral.services.map { $0.discoverAllCharacteristics() }.sequence()
 }
 ```
@@ -366,28 +379,28 @@ After `Peripheral` `Characteristics` are discovered writing `Characteristic` val
 
 ```swift
 // Write an Data object to characteristic value
-public func write(data value: Data, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic>
+public func write(data value: Data, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Void>
 
 // Write a characteristic String Dictionary value
-public func write(string stringValue: [String: String], timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic>
+public func write(string stringValue: [String: String], timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Void>
 
 // Write a Deserializable characteristic value
-public func write<T: Deserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic>
+public func write<T: Deserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Void>
 
 // Write a RawDeserializable characteristic value
-public func write<T: RawDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic>
+public func write<T: RawDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Void>
 
 // Write a RawArrayDeserializable characteristic value
-public func write<T: RawArrayDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic>
+public func write<T: RawArrayDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Void>
 
 // Write a RawPairDeserializable characteristic value
-public func write<T: RawPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic>
+public func write<T: RawPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Void>
 
 // Write a RawArrayPairDeserializable characteristic value
-public func write<T: RawArrayPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Characteristic>
+public func write<T: RawArrayPairDeserializable>(_ value: T, timeout: TimeInterval = TimeInterval.infinity, type: CBCharacteristicWriteType = .withResponse) -> Future<Void>
 ```
 
-Each of the `write` method takes a writable input of a different type. The other parameters are the same. Each returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Characteristic>` yielding the `Characteristic`,
+Each of the `write` method takes a writable input of a different type. The other parameters are the same. Each returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>`,
 
 The input parameters are,
 
@@ -413,13 +426,12 @@ Here the `characteristic` is assumed to belong to a connected `Peripheral`. This
 
 ```swift
 public enum AppError : Error {
-    case characteristicNotFound
+    case unlikely
 }
-let enabledUUID = CBUUID(string: Enabled.uuid)
 
-let writeFuture = discoveryFuture.flatMap { service in
-    guard let characteristic = service.characteristic(enabledUUID) else {
-        throw AppError.characteristicNotFound
+let writeFuture = discoveryFuture.flatMap { [weak characteristic] () -> Future<Void> in
+    guard let let characteristic = characteristic else {
+        throw AppError.unlikely
     }
     return characteristic.write(Enabled.yes)
 }
@@ -433,10 +445,10 @@ After `Peripheral` `Characteristics` are discovered reading `Characteristic` val
 
 ```swift
 // Read a characteristic from a peripheral service
-public func read(timeout: TimeInterval = TimeInterval.infinity) -> Future<Characteristic>
+public func read(timeout: TimeInterval = TimeInterval.infinity) -> Future<Void>
 ```
 
-The `read` method takes a single input parameter, used to specify the timeout. The default value for `timeout` is infinite. If the timeout is exceeded `CharacteristicError.readTimout` is thrown. `read` returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Characteristic>` yielding the `Characteristic`. 
+The `read` method takes a single input parameter, used to specify the timeout. The default value for `timeout` is infinite. If the timeout is exceeded `CharacteristicError.readTimout` is thrown. `read` returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `Future<Void>`. 
 
 To retrieve the `Characteristic` value after a successful read the following methods are available. Each returns values a different type,
 
@@ -463,28 +475,14 @@ public func value<T: RawPairDeserializable>() -> T? where T.RawType1: Deserializ
 Using the [RawDeserializable enum](#central_characteristic_write) an application can read a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
-let readFuture = characteristic.write(Enabled.yes)
+let readFuture = characteristic.read()
 ```
 
 Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,
 
 ```swift
-public enum AppError : Error {
-    case characteristicNotFound
-}
-let enabledUUID = CBUUID(string: Enabled.uuid)
-
-let readFuture = discoveryFuture.flatMap { service -> Future<Characteristic> in
-	guard let characteristic = service.characteristic(enabledUUID) else {
-	    throw AppError.characteristicNotFound
-	}
+let readFuture = discoveryFuture.flatMap { [weak characteristic] () -> Future<Void> in
 	return characteristic.read()
-}
-
-readFuture.onSuccess { characteristic in
-	guard let value: Enabled = characteristic.value else {
-	    return
-	}
 }
 ```
 
@@ -496,49 +494,32 @@ After `Peripheral` `Characteristics` are discovered subscribing to `Characterist
 
 ```swift
 // Subscribe to characteristic update
-public func startNotifying() -> Future<Characteristic>
+public func startNotifying() -> Future<Void>
 
 // Receive characteristic value updates
-public func receiveNotificationUpdates(capacity: Int = Int.max) -> FutureStream<(characteristic: Characteristic, data: Data?)>
+public func receiveNotificationUpdates(capacity: Int = Int.max) -> FutureStream<Data)>
 
 // Unsubscribe from characteristic updates
-public func stopNotifying() -> Future<Characteristic>
+public func stopNotifying() -> Future<Void>
 
 // Stop receiving characteristic value updates
 public func stopNotificationUpdates()
 ```
 
-The work flow for receiving notification updates is to first subscribe to the notifications using `Characteristic#startNotifying`. The application will then start receiving notifications. To process the notifications call `Characteristic#receiveNotificationUpdates` which returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<(characteristic: Characteristic, data: Data?)>` yielding the tuple `(characteristic: Characteristic, data: Data?)` from which the updated `Characteristic` value can be obtained.
+The work flow for receiving notification updates is to first subscribe to the notifications using `Characteristic#startNotifying`. The application will then start receiving notifications. To process the notifications call `Characteristic#receiveNotificationUpdates` which returns a [SimpleFutures](https://github.com/troystribling/SimpleFutures) `FutureStream<Data?>` from which the updated `Characteristic` value can be obtained.
 
 To stop processing notifications call `Characteristic#stopNotificationUpdates` and to unsubscribe to notifications call `Characteristic#stopNotifying`.
 
 Using the [RawDeserializable enum](#central_characteristic_write) an application can receive notifications form a `Characteristic` after connecting to a `Peripheral` and running `Service` and `Characteristic` discovery with the following,
 
 ```swift
-let notificationFuture = characteristics.startNotifying().flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
+let notificationFuture = characteristics.startNotifying().flatMap { [weak characteristic] () -> FutureStream<Data?> in
+    guard let let characteristic = characteristic else {
+        throw AppError.unlikely
+    }
     characteristic.receiveNotificationUpdates(capacity: 10)
 }
 ```
-
-Here the `characteristic` is assumed to belong to a connected `Peripheral`. This could also be part of a `flatMap` chain,
-
-```swift
-public enum AppError : Error {
-    case characteristicNotFound
-}
-let enabledUUID = CBUUID(string: Enabled.uuid)
-
-let notificationFuture = discoveryFuture.flatMap { service _ -> Future<Characteristic> in
-    guard let characteristic = service.characteristic(enabledUUID) else {
-	      throw AppError.characteristicNotFound
-	  }
-    characteristics.startNotifying()
-}.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
-    characteristic.receiveNotificationUpdates(capacity: 10)
-}
-```
-
-Here `discoveryFuture` is completed after `Characteristic` discovery and `flatMap` is used to combine with `Characteristic#startNotifying`. 
 
 An application can unsubscribe to `Characteristic` value notifications and stop receiving updates by using the following,
 
@@ -596,7 +577,7 @@ CoreBluetooth provides [state restoration](https://developer.apple.com/library/c
 `CentralManager` provides the following method to process the restored application state,
 
 ```swift
-public func whenStateRestored() -> Future<(peripherals: [Peripheral], scannedServices: [CBUUID], options: [String:AnyObject])>
+public func whenStateRestored() -> Future<Void>
 ```
 
 ### <a name="central_errors">Errors</a>
@@ -615,6 +596,8 @@ public enum CharacteristicError : Swift.Error {
     case writeNotSupported
     // Thrown by startNotifying if Characteristic notifiy or indicate property is not enabled.
     case notifyNotSupported
+    // Characteristic needs to be added to a PeripheralManager.
+    case unconfigured
 }
 
 public enum PeripheralError : Swift.Error {
@@ -641,6 +624,8 @@ public enum CentralManagerError : Swift.Error {
 public enum ServiceError : Swift.Error {
     // Thrown by discoverAllCharcteristics and discoverCharcteristics if service discovery timeout is exceeded.
     case characteristicDiscoveryTimeout
+    // Service has no associated Peripheral.
+    case unconfigured
 }
 ```
 
