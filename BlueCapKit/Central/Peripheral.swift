@@ -422,7 +422,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                 servicesDiscoveredPromise.failure(error)
             }
         } else {
-            let bcServices = discoveredServices.map { service -> Service in
+            discoveredServices.forEach { service in
                 let serviceProfile = profileManager?.services[service.uuid]
                 var bcService = Service(cbService: service, peripheral: self, profile: serviceProfile)
                 Logger.debug("service uuid=\(service.uuid.uuidString), service name=\(bcService.name), peripheral name=\(self.name), peripheral uuid=\(identifier.uuidString)")
@@ -430,7 +430,6 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
                     Logger.debug("Address: \($0), service uuid=\(service.uuid.uuidString), service name=\(bcService.name), peripheral name=\(self.name), peripheral uuid=\(identifier.uuidString)")
                 }
                 self.discoveredServices[service.uuid] = bcService
-                return bcService
             }
             if let servicesDiscoveredPromise = servicesDiscoveredPromise, !servicesDiscoveredPromise.completed {
                  servicesDiscoveredPromise.success()

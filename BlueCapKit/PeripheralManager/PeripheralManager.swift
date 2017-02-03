@@ -379,7 +379,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
 
     func willRestoreState(_ cbServices: [CBMutableServiceInjectable]?, advertisements: [String: Any]?) {
         if let cbServices = cbServices, let advertisements = advertisements {
-            let services = cbServices.map { cbService -> MutableService in
+            cbServices.forEach { cbService in
                 let service = MutableService(cbMutableService: cbService)
                 self.configuredServices[service.uuid] = service
                 var characteristics = [MutableCharacteristic]()
@@ -390,7 +390,6 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                     }
                 }
                 service.characteristics = characteristics
-                return service
             }
             if let completed = self.afterStateRestoredPromise?.completed, !completed {
                 self.afterStateRestoredPromise?.success(PeripheralAdvertisements(advertisements: advertisements))

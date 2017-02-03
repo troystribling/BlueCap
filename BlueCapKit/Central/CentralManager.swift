@@ -345,9 +345,9 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     func willRestoreState(_ cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
         Logger.debug("'\(name)'")
-        if let cbPeripherals = cbPeripherals, let scannedServices = scannedServices, let options = options {
+        if let cbPeripherals = cbPeripherals, let options = options {
             self.options = options
-            let peripherals = cbPeripherals.map { cbPeripheral -> Peripheral in
+            cbPeripherals.forEach { cbPeripheral in
                 let peripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
                 _discoveredPeripherals[cbPeripheral.identifier] = peripheral
                 if let cbServices = cbPeripheral.getServices() {
@@ -363,7 +363,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                         }
                     }
                 }
-                return peripheral
             }
             if let completed = afterStateRestoredPromise?.completed, !completed {
                 afterStateRestoredPromise?.success()

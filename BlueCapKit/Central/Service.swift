@@ -83,9 +83,8 @@ public class Service {
             }
         } else {
             discoveredCharacteristics.forEach { cbCharacteristic in
-                var bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
-                Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
-                peripheral.discoveredCharacteristics[cbCharacteristic.uuid] = bcCharacteristic
+                Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), service name \(name), service uuid \(uuid)")
+                peripheral.discoveredCharacteristics[cbCharacteristic.uuid] = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 discoveredCharacteristicsUUIDs.append(cbCharacteristic.uuid.uuidString)
             }
             Logger.debug("discovery success service name \(name), service uuid \(uuid)")
