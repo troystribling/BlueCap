@@ -124,6 +124,7 @@ public enum CentralManagerError : Swift.Error, LocalizedError {
     case isPoweredOff
     case restoreFailed
     case serviceScanTimeout
+    case invalidPeripheral
 
     public var errorDescription: String? {
         switch self {
@@ -135,6 +136,9 @@ public enum CentralManagerError : Swift.Error, LocalizedError {
             return NSLocalizedString("CentralManager state resoration failed.", comment: "CentralManagerError.restoreFailed")
         case .serviceScanTimeout:
             return NSLocalizedString("Service scan timeout.", comment: "CentralManagerError.peripheralScanTimeout")
+        case .invalidPeripheral:
+            return NSLocalizedString("A CBPeripheral was discovered with conflictig UUID.", comment: "CentralManagerError.invalidPeripheral")
+
         }
     }
 }

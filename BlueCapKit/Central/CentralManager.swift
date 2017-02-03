@@ -321,13 +321,18 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         var bcPeripheral: Peripheral
         if let discoveredPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral = discoveredPeripheral
-            bcPeripheral._RSSI = RSSI.intValue
+            if bcPeripheral.cbPeripheral === peripheral {
+                bcPeripheral._RSSI = RSSI.intValue
+                afterPeripheralDiscoveredPromise?.success(bcPeripheral)
+            } else {
+                afterPeripheralDiscoveredPromise?.failure(CentralManagerError.invalidPeripheral)
+            }
         } else {
             bcPeripheral = Peripheral(cbPeripheral: peripheral, centralManager: self, advertisements: advertisementData, RSSI: RSSI.intValue, profileManager: profileManager)
             _discoveredPeripherals[peripheral.identifier] = bcPeripheral
+            afterPeripheralDiscoveredPromise?.success(bcPeripheral)
         }
         Logger.debug("'\(name)' uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
-        afterPeripheralDiscoveredPromise?.success(bcPeripheral)
     }
     
     func didFailToConnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
