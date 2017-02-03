@@ -24,7 +24,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     fileprivate var _isScanning = false
 
     fileprivate let profileManager: ProfileManager?
-    fileprivate var _discoveredPeripherals = [UUID : Peripheral]()
 
     let centralQueue: Queue
     public var options: [String : Any]?
@@ -33,6 +32,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     fileprivate var scanTimeoutSequence = 0
 
+    fileprivate var _discoveredPeripherals = [UUID : Peripheral]()
     public var discoveredPeripherals : [UUID : Peripheral] {
         return centralQueue.sync { self._discoveredPeripherals }
     }
@@ -353,12 +353,19 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 if let cbServices = cbPeripheral.getServices() {
                     for cbService in cbServices {
                         let service = Service(cbService: cbService, peripheral: peripheral)
-                        peripheral.discoveredServices[cbService.uuid] = service
+                        if let services = peripheral.discoveredServices[cbService.uuid] {
+                            peripheral.discoveredServices[cbService.uuid] = services + [service]
+                        } else {
+                            peripheral.discoveredServices[cbService.uuid] = [service]
+                        }
                         if let cbCharacteristics = cbService.getCharacteristics() {
                             for cbCharacteristic in cbCharacteristics {
                                 let characteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: service)
-                                service.discoveredCharacteristicsUUIDs.append(characteristic.uuid.uuidString)
-                                peripheral.discoveredCharacteristics[cbCharacteristic.uuid] = characteristic
+                                if let characteristics = service.discoveredCharacteristics[cbCharacteristic.uuid] {
+                                    service.discoveredCharacteristics[cbCharacteristic.uuid] = characteristics + [characteristic]
+                                } else {
+                                    service.discoveredCharacteristics[cbCharacteristic.uuid] = [characteristic]
+                                }
                             }
                         }
                     }

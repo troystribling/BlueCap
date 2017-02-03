@@ -23,13 +23,10 @@ public class Service {
         return profile?.name ?? "Unknown"
     }
 
-    var discoveredCharacteristicsUUIDs = [String]()
+    var discoveredCharacteristics = [CBUUID : [Characteristic]]()
     
     public var characteristics: [Characteristic] {
-        guard let discoveredCharacteristics = peripheral?.discoveredCharacteristics else {
-            return []
-        }
-        return Array(discoveredCharacteristics.values).filter { self.discoveredCharacteristicsUUIDs.contains($0.uuid.uuidString) }
+        return centralQueue.sync { Array(self.discoveredCharacteristics.values).flatMap { $0 } }
     }
     
     fileprivate(set) weak var profile: ServiceProfile?
@@ -61,31 +58,31 @@ public class Service {
         return self.discoverIfConnected(characteristics, timeout: timeout)
     }
     
-    public func characteristic(_ uuid: CBUUID) -> Characteristic? {
-        return peripheral?.discoveredCharacteristics[uuid]
+    public func characteristic(_ uuid: CBUUID) -> [Characteristic]? {
+        return centralQueue.sync { self.discoveredCharacteristics[uuid] }
     }
 
     // MARK: CBPeripheralDelegate Shim
 
-    internal func didDiscoverCharacteristics(_ discoveredCharacteristics: [CBCharacteristicInjectable], error: Swift.Error?) {
+    internal func didDiscoverCharacteristics(_ characteristics: [CBCharacteristicInjectable], error: Swift.Error?) {
         guard let peripheral = peripheral else {
             return
         }
-        discoveredCharacteristicsUUIDs.removeAll()
+        discoveredCharacteristics.removeAll()
         if let error = error {
             Logger.debug("Error discovering \(error), service name \(name), service uuid \(uuid), characteristic count \(discoveredCharacteristics.count)")
             if let characteristicsDiscoveredPromise = self.characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
                 self.characteristicsDiscoveredPromise?.failure(error)
             }
-            for cbCharacteristic in discoveredCharacteristics {
-                let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
-                Logger.debug("Error discovering characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
-            }
         } else {
-            discoveredCharacteristics.forEach { cbCharacteristic in
-                Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), service name \(name), service uuid \(uuid)")
-                peripheral.discoveredCharacteristics[cbCharacteristic.uuid] = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
-                discoveredCharacteristicsUUIDs.append(cbCharacteristic.uuid.uuidString)
+            characteristics.forEach { cbCharacteristic in
+                var bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
+                Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
+                if let bcCharacteristics = discoveredCharacteristics[cbCharacteristic.uuid] {
+                    discoveredCharacteristics[cbCharacteristic.uuid] = bcCharacteristics + [bcCharacteristic]
+                } else {
+                    discoveredCharacteristics[cbCharacteristic.uuid] = [bcCharacteristic]
+                }
             }
             Logger.debug("discovery success service name \(name), service uuid \(uuid)")
             if let characteristicsDiscoveredPromise = characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {

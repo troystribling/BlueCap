@@ -138,7 +138,6 @@ public enum CentralManagerError : Swift.Error, LocalizedError {
             return NSLocalizedString("Service scan timeout.", comment: "CentralManagerError.peripheralScanTimeout")
         case .invalidPeripheral:
             return NSLocalizedString("A CBPeripheral was discovered with conflictig UUID.", comment: "CentralManagerError.invalidPeripheral")
-
         }
     }
 }
