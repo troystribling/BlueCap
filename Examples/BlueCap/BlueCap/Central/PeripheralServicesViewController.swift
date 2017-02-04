@@ -36,8 +36,9 @@ class PeripheralServicesViewController : UITableViewController {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         guard let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
-            let peripheral = peripheral,
-            peripheral.state == .connected else {
+              let peripheral = peripheral,
+              peripheral.state == .connected
+        else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
@@ -61,7 +62,7 @@ class PeripheralServicesViewController : UITableViewController {
         if segue.identifier == MainStoryboard.peripheralServicesCharacteritics {
             if let peripheral = peripheral, let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
                 let viewController = segue.destination as! PeripheralServiceCharacteristicsViewController
-                viewController.serviceUUID = peripheral.services[selectedIndex.row].uuid
+                viewController.service = peripheral.services[selectedIndex.row]
                 viewController.peripheral = peripheral
                 viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
             }

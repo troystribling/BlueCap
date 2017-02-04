@@ -14,7 +14,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
 
     @IBOutlet var valueTextField: UITextField!
 
-    weak var characteristicUUID: CBUUID?
+    weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
     var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
@@ -27,15 +27,6 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         super.init(coder: aDecoder)
     }
 
-    var characteristic: Characteristic? {
-        guard  let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID) else {
-                return nil
-        }
-        return characteristic
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = valueName
@@ -46,11 +37,12 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditValueViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         guard  let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
-            let peripheral = peripheral,
-            let characteristic = characteristic,
-            peripheral.state == .connected else {
-                _ = navigationController?.popViewController(animated: true)
-                return
+               let peripheral = peripheral,
+               let characteristic = characteristic,
+               peripheral.state == .connected
+        else {
+            _ = navigationController?.popViewController(animated: true)
+            return
         }
 
         peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error in

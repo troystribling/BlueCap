@@ -12,7 +12,7 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicsViewController : UITableViewController {
 
-    weak var serviceUUID: CBUUID?
+    weak var service: Service?
     weak var peripheral: Peripheral?
     var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
@@ -39,8 +39,9 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         guard let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
             let peripheral = peripheral,
-            serviceUUID != nil,
-            peripheral.state == .connected else {
+            service != nil,
+            peripheral.state == .connected
+        else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
@@ -62,12 +63,12 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicSegue {
-            if let serviceUUID = serviceUUID,
+            if let service = service,
                let peripheral = peripheral,
-               let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell),
-               let service = peripheral.service(serviceUUID) {
+               let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell)
+            {
                 let viewController = segue.destination as! PeripheralServiceCharacteristicViewController
-                viewController.characteristicUUID = service.characteristics[selectedIndex.row].uuid
+                viewController.characteristic = service.characteristics[selectedIndex.row]
                 viewController.peripheral = peripheral
                 viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
             }
@@ -90,7 +91,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
     
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let serviceUUID = serviceUUID, let peripheral = peripheral, let service = peripheral.service(serviceUUID) {
+        if let service = service {
             return service.characteristics.count
         } else {
             return 0;
@@ -99,7 +100,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     override func tableView(_ tableView:UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCharacteristicCell, for: indexPath) as! NameUUIDCell
-        if let serviceUUID = serviceUUID, let peripheral = peripheral, let service = peripheral.service(serviceUUID) {
+        if let service = service, let peripheral = peripheral {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name
             cell.uuidLabel.text = characteristic.uuid.uuidString

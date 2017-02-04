@@ -12,7 +12,7 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableViewController {
 
-    weak var characteristicUUID: CBUUID?
+    weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
     var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
@@ -25,15 +25,6 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
     required init?(coder aDecoder:NSCoder) {
         super.init(coder: aDecoder)
-    }
-    
-    var characteristic: Characteristic? {
-        guard  let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID) else {
-                return nil
-        }
-        return characteristic
     }
     
     override func viewDidLoad() {
@@ -122,12 +113,12 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     }
     
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard  let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID),
-            peripheral.state == .connected else {
-                _ = self.navigationController?.popViewController(animated: true)
-                return 0
+        guard let characteristic = characteristic,
+              let peripheral = peripheral,
+              peripheral.state == .connected
+        else {
+            _ = self.navigationController?.popViewController(animated: true)
+            return 0
         }
         return characteristic.stringValues.count
     }
@@ -157,12 +148,12 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     // UITableViewDelegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard  let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID),
-            peripheral.state == .connected else {
-                _ = self.navigationController?.popViewController(animated: true)
-                return
+        guard let characteristic = characteristic,
+              let peripheral = peripheral,
+              peripheral.state == .connected
+        else {
+            _ = self.navigationController?.popViewController(animated: true)
+            return
         }
         guard let valueName = characteristic.stringValue?.keys.first else {
             return

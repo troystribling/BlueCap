@@ -18,7 +18,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         static let peripheralServiceCharacteristicEditWriteOnlyValueSeque = "PeripheralServiceCharacteristicEditWriteOnlyValue"
     }
     
-    weak var characteristicUUID: CBUUID?
+    weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
     var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
@@ -51,9 +51,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func viewDidLoad()  {
-        guard let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID) else {
+        guard let characteristic = characteristic,
+              peripheral != nil
+        else {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
@@ -63,13 +63,13 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        guard let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
-            peripheral.characteristic(characteristicUUID) != nil,
-            peripheral.state == .connected else {
-                _ = navigationController?.popToRootViewController(animated: false)
-                return
+        guard let peripheral = peripheral,
+              let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
+              peripheral.state == .connected,
+              characteristic != nil
+        else {
+            _ = navigationController?.popToRootViewController(animated: false)
+            return
         }
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         setUI()
@@ -91,23 +91,22 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicValueSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicValuesViewController
-            viewController.characteristicUUID = characteristicUUID
+            viewController.characteristic = characteristic
             viewController.peripheral = peripheral
             viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-            viewController.characteristicUUID = characteristicUUID
+            viewController.characteristic = characteristic
             viewController.peripheral = peripheral
             viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditWriteOnlyValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-            viewController.characteristicUUID = characteristicUUID
+            viewController.characteristic = characteristic
             viewController.peripheral = peripheral
             viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
-            if let characteristicUUID = characteristicUUID,
-               let peripheral = peripheral,
-               let characteristic = peripheral.characteristic(characteristicUUID),
-               let stringValues = characteristic.stringValue {
+            if let characteristic = characteristic,
+               let stringValues = characteristic.stringValue
+            {
                 let selectedIndex = sender as! IndexPath
                 let names = Array(stringValues.keys)
                 viewController.valueName = names[selectedIndex.row]
@@ -116,10 +115,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-        guard let characteristicUUID = characteristicUUID,
-              let peripheral = peripheral,
-              let characteristic = peripheral.characteristic(characteristicUUID),
-              identifier != nil else {
+        guard let characteristic = characteristic,
+              identifier != nil
+        else {
             return false
         }
         return characteristic.propertyEnabled(.read)    ||
@@ -135,13 +133,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         }
 
         let updateFuture = peripheralDiscoveryFuture.flatMap { [weak self] _ -> Future<Void> in
-            guard let strongSelf = self else {
+            guard let strongSelf = self, let characteristic = strongSelf.characteristic else {
                 throw AppError.unlikelyFailure
-            }
-            guard let characteristicUUID = strongSelf.characteristicUUID,
-                let peripheral = strongSelf.peripheral,
-                let characteristic = peripheral.characteristic(characteristicUUID) else {
-                    throw AppError.characteristicNotFound
             }
             return strongSelf.notifySwitch.isOn ? characteristic.startNotifying() : characteristic.stopNotifying()
         }
@@ -160,12 +153,9 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
 
     func setUI() {
-        guard let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID) else {
-                return
+        guard let characteristic = characteristic else {
+            return
         }
-
         uuidLabel.text = characteristic.uuid.uuidString
         notifyingLabel.text = booleanStringValue(characteristic.isNotifying)
         propertyBroadcastLabel.text = booleanStringValue(characteristic.propertyEnabled(.broadcast))
@@ -182,10 +172,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
 
     func updateUI() {
-        guard let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID) else {
-                return
+        guard let characteristic = characteristic else {
+            return
         }
 
         if (characteristic.propertyEnabled(.read) || characteristic.propertyEnabled(.write) || characteristic.isNotifying) {
@@ -218,10 +206,8 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID) else {
-                return
+        guard let characteristic = characteristic else {
+            return
         }
         if indexPath.row == 0 && indexPath.section == 0 {
             if characteristic.propertyEnabled(.read) || characteristic.isNotifying  {

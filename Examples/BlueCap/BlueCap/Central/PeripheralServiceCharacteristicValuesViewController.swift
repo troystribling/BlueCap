@@ -12,7 +12,7 @@ import CoreBluetooth
 
 class PeripheralServiceCharacteristicValuesViewController : UITableViewController {
 
-    weak var characteristicUUID: CBUUID?
+    weak var characteristic: Characteristic?
     weak var peripheral: Peripheral?
     var peripheralDiscoveryFuture: FutureStream<[Void]>?
 
@@ -29,15 +29,6 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
-    }
-
-    var characteristic: Characteristic? {
-        guard  let characteristicUUID = characteristicUUID,
-            let peripheral = peripheral,
-            let characteristic = peripheral.characteristic(characteristicUUID) else {
-                return nil
-        }
-        return characteristic
     }
 
     override func viewDidLoad() {
@@ -83,12 +74,12 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditDiscreteValuesSegue {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditDiscreteValuesViewController
-            viewController.characteristicUUID = characteristicUUID
+            viewController.characteristic = characteristic
             viewController.peripheral = peripheral
             viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
         } else if segue.identifier == MainStoryboard.peripheralServiceCharacteristicEditValueSeque {
             let viewController = segue.destination as! PeripheralServiceCharacteristicEditValueViewController
-            viewController.characteristicUUID = characteristicUUID
+            viewController.characteristic = characteristic
             viewController.peripheral = peripheral
             viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
             if let stringValues = self.characteristic?.stringValue {

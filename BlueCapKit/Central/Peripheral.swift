@@ -540,16 +540,16 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func characteristicWithCBCharacteristic(_ cbCharacteristic: CBCharacteristicInjectable) -> Characteristic? {
-        guard let services = cbPeripheral.getServices() else {
+        guard let cbServices = cbPeripheral.getServices() else {
             return nil
         }
-        for service in services {
-            guard let characteristics = service.getCharacteristics() else {
+        for cbService in cbServices {
+            guard let discoveredCBCharacteristics = cbService.getCharacteristics() else {
                 continue
             }
-            for characteristic in characteristics {
-                if characteristic === cbCharacteristic {
-                    guard let bcService = self.serviceWithCBService(service) else {
+            for discoveredCBCharacteristic in discoveredCBCharacteristics {
+                if discoveredCBCharacteristic === cbCharacteristic {
+                    guard let bcService = self.serviceWithCBService(cbService) else {
                         return nil
                     }
                     return Array(bcService.discoveredCharacteristics.values).flatMap { $0 }.filter { $0.cbCharacteristic === cbCharacteristic }.first
