@@ -421,6 +421,11 @@ carthage update
 		<td><a href="/Examples/Beacon">Beacon</a></td>
 		<td>Peripheral emulating an iBeacon.</td>
 	</tr>
+		<tr>
+		<td><a href="/Examples/Beacons">Beacons</a></td>
+		<td>iBeacon ranging.</td>
+	</tr>
+
 
 </table>
 
