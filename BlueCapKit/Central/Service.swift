@@ -58,7 +58,7 @@ public class Service {
         return self.discoverIfConnected(characteristics, timeout: timeout)
     }
     
-    public func characteristic(_ uuid: CBUUID) -> [Characteristic]? {
+    public func characteristics(withUUID uuid: CBUUID) -> [Characteristic]? {
         return centralQueue.sync { self.discoveredCharacteristics[uuid] }
     }
 

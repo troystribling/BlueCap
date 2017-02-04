@@ -180,7 +180,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         return cbPeripheral.identifier
     }
 
-    public func service(_ uuid: CBUUID) -> [Service]? {
+    public func services(withUUID uuid: CBUUID) -> [Service]? {
         return centralQueue.sync { return self.discoveredServices[uuid] }
     }
 
@@ -540,16 +540,16 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     fileprivate func characteristicWithCBCharacteristic(_ cbCharacteristic: CBCharacteristicInjectable) -> Characteristic? {
-        guard let cbServices = cbPeripheral.getServices() else {
+        guard let discoveredCBServices = cbPeripheral.getServices() else {
             return nil
         }
-        for cbService in cbServices {
-            guard let discoveredCBCharacteristics = cbService.getCharacteristics() else {
+        for discoveredCBService in discoveredCBServices {
+            guard let discoveredCBCharacteristics = discoveredCBService.getCharacteristics() else {
                 continue
             }
             for discoveredCBCharacteristic in discoveredCBCharacteristics {
                 if discoveredCBCharacteristic === cbCharacteristic {
-                    guard let bcService = self.serviceWithCBService(cbService) else {
+                    guard let bcService = self.serviceWithCBService(discoveredCBService) else {
                         return nil
                     }
                     return Array(bcService.discoveredCharacteristics.values).flatMap { $0 }.filter { $0.cbCharacteristic === cbCharacteristic }.first

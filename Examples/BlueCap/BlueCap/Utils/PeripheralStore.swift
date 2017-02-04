@@ -48,8 +48,9 @@ class PeripheralStore {
     }
 
     class func removeSupportedPeripheralService(_ uuid: CBUUID) {
-        let uuids = getSupportedPeripheralServices().filter { $0 != uuid }
-        setSupportedPeripheralServices(uuids)
+        let remainingServices =  getSupportedPeripheralServices().filter { $0 != uuid }
+        let remmovedServices = getSupportedPeripheralServices().filter { $0 == uuid }.dropFirst()
+        setSupportedPeripheralServices(remainingServices + remmovedServices)
     }
 
     // MARK: Advertised Peripheral Services

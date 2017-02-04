@@ -198,7 +198,7 @@ extension CBPeripheralManager: CBPeripheralManagerInjectable {
 }
 
 // MARK: - CBMutableServiceInjectable -
-protocol CBMutableServiceInjectable: class, CBServiceInjectable {
+protocol CBMutableServiceInjectable: CBServiceInjectable {
     func setCharacteristics(_ characteristics: [CBCharacteristicInjectable]?)
 }
 
@@ -209,7 +209,7 @@ extension CBMutableService: CBMutableServiceInjectable {
 }
 
 // MARK: - CBMutableCharacteristicInjectable -
-protocol CBMutableCharacteristicInjectable: class, CBCharacteristicInjectable {
+protocol CBMutableCharacteristicInjectable: CBCharacteristicInjectable {
     var permissions: CBAttributePermissions { get }
 }
 

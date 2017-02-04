@@ -78,7 +78,6 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationItem.title = ""
         NotificationCenter.default.removeObserver(self)
     }
 

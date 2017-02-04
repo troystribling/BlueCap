@@ -20,10 +20,6 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
         static let peripheralManagerServiceCell = "PeripheralManagerServiceProfileCell"
     }
     
-    override var excludedServices : Array<CBUUID> {
-        return Singletons.peripheralManager.services.map{ $0.uuid }
-    }
-    
     override var serviceProfileCell : String {
         return MainStoryboard.peripheralManagerServiceCell
     }

@@ -17,6 +17,7 @@ public class MutableService : NSObject {
 
     weak var peripheralManager: PeripheralManager?
     let cbMutableService: CBMutableServiceInjectable
+    var afterServiceAddPromise: Promise<Void>?
 
     public let uuid: CBUUID
     

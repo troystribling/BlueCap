@@ -17,12 +17,13 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     
     var peripheralManagerViewController : PeripheralManagerViewController?
 
-
     var services: [MutableService] {
         let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServices()
-        return Singletons.peripheralManager.services.filter{!serviceUUIDs.contains( $0.uuid) }
+        return Singletons.peripheralManager.services.reduce([]) { (services, service) in
+            let avaiableServiceUUIDS = services.map { $0.uuid }
+            return !serviceUUIDs.contains(service.uuid) && !avaiableServiceUUIDS.contains(service.uuid) ? (services + [service]) : services
+        }
     }
-    
 
     required init?(coder aDecoder:NSCoder) {
         super.init(coder: aDecoder)
@@ -41,9 +42,6 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     }
     
     func didEnterBackground() {

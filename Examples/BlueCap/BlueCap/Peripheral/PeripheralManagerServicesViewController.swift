@@ -30,7 +30,6 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = "Services"
         self.tableView.reloadData()
         if Singletons.peripheralManager.isAdvertising {
             self.navigationItem.rightBarButtonItem!.isEnabled = false
@@ -41,7 +40,6 @@ class PeripheralManagerServicesViewController : UITableViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationItem.title = ""
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -98,8 +96,10 @@ class PeripheralManagerServicesViewController : UITableViewController {
         if editingStyle == UITableViewCellEditingStyle.delete {
             let service = Singletons.peripheralManager.services[indexPath.row]
             Singletons.peripheralManager.remove(service)
-            PeripheralStore.removeAdvertisedPeripheralService(service.uuid)
             PeripheralStore.removeSupportedPeripheralService(service.uuid)
+            if PeripheralStore.getSupportedPeripheralServices().count == 0 {
+                PeripheralStore.removeAdvertisedPeripheralService(service.uuid)
+            }
             self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
         }
     }

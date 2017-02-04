@@ -68,7 +68,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerAdvertisedServiceCell, for: indexPath) as! NameUUIDCell
         let serviceUUID = PeripheralStore.getAdvertisedPeripheralServices()[(indexPath as NSIndexPath).row]
         cell.uuidLabel.text = serviceUUID.uuidString
-        if let service = Singletons.peripheralManager.service(withUUID: serviceUUID) {
+        if let service = Singletons.peripheralManager.service(withUUID: serviceUUID)?.first {
             cell.nameLabel.text = service.name
         } else {
             cell.nameLabel.text = "Unknown"
