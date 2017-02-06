@@ -375,8 +375,10 @@ func createPeripheralManager(_ isAdvertising: Bool, state: ManagerState, stopAdv
 
 func createPeripheralManagerService(_ peripheralManager: PeripheralManager) -> MutableService {
     let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.uuid)]!
-    let service = MutableService(cbMutableService: CBMutableServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid)), profile: helloWoroldService)
+    let mockService = CBMutableServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid))
+    let service = MutableService(cbMutableService: mockService, profile: helloWoroldService)
     service.peripheralManager = peripheralManager
+    peripheralManager.configuredServices = [service.uuid: [service]]
     return service
 }
 

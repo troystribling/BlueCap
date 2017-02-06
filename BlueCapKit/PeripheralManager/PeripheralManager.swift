@@ -29,9 +29,8 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
     fileprivate var afterStateChangedPromise: StreamPromise<ManagerState>?
     fileprivate var afterStateRestoredPromise: Promise<PeripheralAdvertisements>?
 
-    fileprivate var configuredServices  = [CBUUID : [MutableService]]()
-
-    internal let peripheralQueue: Queue
+    var configuredServices  = [CBUUID : [MutableService]]()
+    let peripheralQueue: Queue
 
     fileprivate var stopAdvertisingTimeoutSequence = 0
 

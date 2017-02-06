@@ -17,8 +17,8 @@ class CharacteristicTests: XCTestCase {
     var centralManager: CentralManager!
     var peripheral: Peripheral!
     var service: Service!
-    let mockPerpheral = CBPeripheralMock(state: .connected)
     let mockService = CBServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid))
+    let mockPerpheral = CBPeripheralMock(state: .connected)
     let RSSI = -45
 
     override func setUp() {
@@ -27,7 +27,8 @@ class CharacteristicTests: XCTestCase {
         peripheral = Peripheral(cbPeripheral: self.mockPerpheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI, profileManager: profileManager)
         let serviceProfile = profileManager.services[mockService.uuid]!
         service = Service(cbService: mockService, peripheral: peripheral, profile: serviceProfile)
-        peripheral.discoveredServices = [service.uuid : service]
+        peripheral.discoveredServices = [service.uuid : [service]]
+        mockPerpheral.services = [mockService]
         super.setUp()
     }
     
@@ -43,7 +44,8 @@ class CharacteristicTests: XCTestCase {
             mockCharacteristic = CBCharacteristicMock(uuid: CBUUID(nsuuid: UUID()), properties: properties, isNotifying: isNotifying)
         }
         let characteristic = Characteristic(cbCharacteristic: mockCharacteristic, service: service)
-        peripheral.discoveredCharacteristics = [characteristic.uuid : characteristic]
+        service.discoveredCharacteristics = [characteristic.uuid : [characteristic]]
+        mockService.characteristics = [mockCharacteristic]
         return (characteristic, mockCharacteristic)
     }
 
