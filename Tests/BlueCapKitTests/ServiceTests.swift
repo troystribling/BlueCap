@@ -21,6 +21,11 @@ class ServiceTests: XCTestCase {
             CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false),
             CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.read, .write], isNotifying:false)].map { $0 as CBCharacteristicInjectable }
 
+    var duplicateMockCharateristics = [
+        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.read, .write], isNotifying:false),
+        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false),
+        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false)].map { $0 as CBCharacteristicInjectable }
+
     let mockService = CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"))
     let immediateContext = ImmediateContext()
     let RSSI = -45

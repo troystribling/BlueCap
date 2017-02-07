@@ -27,12 +27,12 @@ class PeripheralTests: XCTestCase {
         CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))
     ]
 
-    var mockCharateristics = [
-        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties: [.read, .write], isNotifying: false),
-        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties: [.read, .write], isNotifying: false),
-        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties: [.read, .write], isNotifying: false)
+    let dublicateMockServices = [
+        CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
+        CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff")),
+        CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))
     ]
-    
+
     override func setUp() {
         Peripheral.RECONNECT_DELAY = TimeInterval(0.0)
         super.setUp()
@@ -45,6 +45,7 @@ class PeripheralTests: XCTestCase {
     }
 
     // MARK: discoverAllServices
+
     func testDiscoverAllServices_WhenConnectedAndNoErrorInResponse_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
@@ -98,6 +99,22 @@ class PeripheralTests: XCTestCase {
             XCTAssertEqual(discoveredServices.count, 0)
             XCTAssertEqualErrors(error, PeripheralError.serviceDiscoveryTimeout)
             XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1)
+            XCTAssert(mockPeripheral.discoverServicesCalled)
+            XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled)
+        }
+    }
+
+    func testDiscoverAllServices_WhenConnectedWithDuplicateUUIDsAndNoErrorInResponse_CompletesSuccessfully() {
+        let mockPeripheral = CBPeripheralMock(state: .connected)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: RSSI)
+        let future = peripheral.discoverAllServices()
+        peripheral.didDiscoverServices(dublicateMockServices.map { $0 as CBServiceInjectable }, error:nil)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
+            let discoveredServices = peripheral.services
+            XCTAssertEqual(discoveredServices.count, 3)
+            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1)
+            XCTAssertEqual(peripheral.services(withUUID: self.dublicateMockServices[0].uuid)!.count, 1)
+            XCTAssertEqual(peripheral.services(withUUID: self.dublicateMockServices[1].uuid)!.count, 2)
             XCTAssert(mockPeripheral.discoverServicesCalled)
             XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled)
         }
