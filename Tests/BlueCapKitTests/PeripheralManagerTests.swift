@@ -152,7 +152,7 @@ class PeripheralManagerTests: XCTestCase {
 
     func testAddService_WhenNoErrorInAck_CompletesSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let service = createPeripheralManagerService(peripheralManager)
+        let service = createPeripheralManagerService()
         let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) {

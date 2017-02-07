@@ -26,7 +26,7 @@ class MutableCharacteristicTests: XCTestCase {
 
     func addCharacteristics() -> (CBPeripheralManagerMock, PeripheralManagerUT, MutableService) {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let service = createPeripheralManagerService(peripheralManager)
+        let service = createPeripheralManagerService()
         service.characteristics = service.profile.characteristics.map { profile in
             let characteristic = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
             return MutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)

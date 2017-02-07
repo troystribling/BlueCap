@@ -382,6 +382,13 @@ func createPeripheralManagerService(_ peripheralManager: PeripheralManager) -> M
     return service
 }
 
+func createPeripheralManagerService() -> MutableService {
+    let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.uuid)]!
+    let mockService = CBMutableServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid))
+    let service = MutableService(cbMutableService: mockService, profile: helloWoroldService)
+    return service
+}
+
 func createPeripheralManagerCharacteristic(_ service: MutableService) -> MutableCharacteristic {
     service.characteristics = service.profile.characteristics.map { profile in
         let characteristic = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
