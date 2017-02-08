@@ -104,7 +104,7 @@ class PeripheralTests: XCTestCase {
         }
     }
 
-    func testDiscoverAllServices_WhenConnectedWithDuplicateUUIDsAndNoErrorInResponse_CompletesSuccessfully() {
+    func testDiscoverAllServices_WithDuplicateUUIDs_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: RSSI)
         let future = peripheral.discoverAllServices()

@@ -32,7 +32,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
 
     fileprivate var scanTimeoutSequence = 0
 
-    fileprivate var _discoveredPeripherals = [UUID : Peripheral]()
+    var _discoveredPeripherals = [UUID : Peripheral]()
     public var discoveredPeripherals : [UUID : Peripheral] {
         return centralQueue.sync { self._discoveredPeripherals }
     }

@@ -15,6 +15,8 @@ import CoreBluetooth
 
 class CentralManagerTests: XCTestCase {
 
+    let RSSI = -45
+
     override func setUp() {
         super.setUp()
     }
@@ -95,6 +97,26 @@ class CentralManagerTests: XCTestCase {
         XCTAssertFutureStreamFails(future, validations: [
             {error in
                 XCTAssertEqualErrors(error, CentralManagerError.serviceScanTimeout)
+            }
+        ])
+    }
+
+    func testStartScanning_WhenInvalidPeripheralDiscovered_CompletesWithError() {
+        let centralMock = CBCentralManagerMock(state: .poweredOn)
+        let centralManager = CentralManager(centralManager: centralMock)
+
+        let peripheralMockOrig = CBPeripheralMock()
+        let peripheralOrig = Peripheral(cbPeripheral: peripheralMockOrig, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: RSSI)
+        centralManager._discoveredPeripherals[peripheralOrig.identifier] = peripheralOrig
+
+        let peripheralMockInvalid = CBPeripheralMock(identifier: peripheralMockOrig.identifier)
+        let stream = centralManager.startScanning()
+
+        centralManager.didDiscoverPeripheral(peripheralMockInvalid, advertisementData: peripheralAdvertisements, RSSI: NSNumber(value: -45))
+        XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
+            { error in
+                XCTAssert(centralMock.scanForPeripheralsWithServicesCalled)
+                XCTAssertEqualErrors(error, CentralManagerError.invalidPeripheral)
             }
         ])
     }
