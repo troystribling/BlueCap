@@ -296,7 +296,7 @@ class CharacteristicTests: XCTestCase {
         }
     }
 
-    // MARK: Notifications
+    // MARK: StartNotifying
 
     func testStartNotifying_WhenNotifiableAndNoErrorOnAck_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: false)
@@ -401,6 +401,8 @@ class CharacteristicTests: XCTestCase {
         }
     }
 
+    // MARK: ReceiveNotificationUpdates
+
     func testReceiveNotificationUpdates_WhenNotifiableAndUpdateIsReceivedWithoutError_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let startNotifyingFuture = characteristic.startNotifying()
@@ -491,7 +493,30 @@ class CharacteristicTests: XCTestCase {
             }
         ])
     }
-    
+
+    func testReceiveNotificationUpdates_WithDublicateUUIDsr_CompletesSuccessfully() {
+        let (characteristics, mockCharacteristics) = createDuplicateCharacteristics([.notify], isNotifying: true)
+        let startNotifyingFuture = characteristics[0].startNotifying()
+        let updateFuture = startNotifyingFuture.flatMap(context: TestContext.immediate) { _ -> FutureStream<Data?> in
+            characteristics[0].receiveNotificationUpdates()
+        }
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristics[0], error: nil)
+        mockCharacteristics[0].value = "11".dataFromHexString()
+        self.peripheral.didUpdateValueForCharacteristic(mockCharacteristics[0], error: nil)
+        XCTAssertFutureSucceeds(startNotifyingFuture, context: TestContext.immediate)
+        XCTAssertFutureStreamSucceeds(updateFuture, context: TestContext.immediate, validations: [
+            { data in
+                if let data = data {
+                    XCTAssertEqual(data, "11".dataFromHexString())
+                } else {
+                    XCTFail()
+                }
+            }
+        ])
+    }
+
+    // MARK: StopNotifying
+
     func testStopNotifying_WhenNotifyingAndNoErrorOnAck_CompletesSuccessfully() {
         let (characteristic, mockCharacteristic) = createCharacteristic([.notify], isNotifying: true)
         let future = characteristic.stopNotifying()
@@ -531,5 +556,20 @@ class CharacteristicTests: XCTestCase {
             XCTAssertEqualErrors(error, CharacteristicError.notifyNotSupported)
         }
     }
-    
+
+    func testStopNotifying_WithDuplicateUUIDs_CompletesSuccessfully() {
+        let (characteristics, mockCharacteristics) = createDuplicateCharacteristics([.notify], isNotifying: true)
+        let future = characteristics[0].stopNotifying()
+        self.peripheral.didUpdateNotificationStateForCharacteristic(mockCharacteristics[0], error: nil)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
+            XCTAssert(self.mockPerpheral.setNotifyValueCalled)
+            XCTAssertEqual(self.mockPerpheral.setNotifyValueCount, 1)
+            if let state = self.mockPerpheral.notifyingState {
+                XCTAssertFalse(state)
+            } else {
+                XCTFail()
+            }
+        }
+    }
+
 }

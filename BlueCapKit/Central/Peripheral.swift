@@ -433,7 +433,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
     
     internal func didUpdateNotificationStateForCharacteristic(_ characteristic: CBCharacteristicInjectable, error: Error?) {
-        guard let bcCharacteristic = self.characteristicWithCBCharacteristic(characteristic) else {
+        guard let bcCharacteristic = characteristicWithCBCharacteristic(characteristic) else {
             Logger.debug("characteristic not found uuid=\(characteristic.uuid.uuidString)")
             return
         }

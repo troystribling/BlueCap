@@ -389,6 +389,15 @@ func createPeripheralManagerService() -> MutableService {
     return service
 }
 
+func createDuplicatePeripheralManagerServices() -> [MutableService] {
+    let helloWoroldService = profileManager.services[CBUUID(string: Gnosus.HelloWorldService.uuid)]!
+    let mockService1 = CBMutableServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid))
+    let mockService2 = CBMutableServiceMock(uuid: CBUUID(string: Gnosus.HelloWorldService.uuid))
+    let services = [MutableService(cbMutableService: mockService1, profile: helloWoroldService),
+                    MutableService(cbMutableService: mockService2, profile: helloWoroldService)]
+    return services
+}
+
 func createPeripheralManagerCharacteristic(_ service: MutableService) -> MutableCharacteristic {
     service.characteristics = service.profile.characteristics.map { profile in
         let characteristic = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
@@ -396,4 +405,14 @@ func createPeripheralManagerCharacteristic(_ service: MutableService) -> Mutable
     }
     return service.characteristics[0]
 }
+
+func createDuplicatePeripheralManagerCharacteristics(_ service: MutableService) -> [MutableCharacteristic] {
+    let profile = service.profile.characteristics[0]
+    let cbCharacteristic1 = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
+    let cbCharacteristic2 = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
+    service.characteristics = [MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic1, profile: profile),
+                               MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic2, profile: profile)]
+    return service.characteristics
+}
+
 

@@ -150,7 +150,7 @@ class PeripheralManagerTests: XCTestCase {
     
     // MARK: Add Service
 
-    func testAddService_WhenNoErrorInAck_CompletesSuccess() {
+    func testAddService_WhenNoError_CompletesSuccess() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let service = createPeripheralManagerService()
         let future = peripheralManager.add(service)
@@ -163,7 +163,7 @@ class PeripheralManagerTests: XCTestCase {
         }
     }
 
-    func testAddService_WhenErrorOnAck_CompletesWithAckError() {
+    func testAddService_WhenErrorinCallback_CompletesWithCallbackError() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let service = createPeripheralManagerService(peripheralManager)
         let future = peripheralManager.add(service)
@@ -173,6 +173,20 @@ class PeripheralManagerTests: XCTestCase {
             XCTAssertEqualErrors(error, TestFailure.error)
             XCTAssert(mock.addServiceCalled)
             XCTAssertEqual(peripheralServices.count, 0)
+        }
+    }
+
+    func testAddService_WithDublicateUUIDs_CompletesSuccess() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
+        let services = createDuplicatePeripheralManagerServices()
+        _ = peripheralManager.add(services[0])
+        peripheralManager.didAddService(services[0].cbMutableService, error: nil)
+        let future = peripheralManager.add(services[1])
+        peripheralManager.didAddService(services[1].cbMutableService, error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+            let peripheralServices = peripheralManager.services
+            XCTAssert(mock.addServiceCalled)
+            XCTAssertEqual(peripheralServices.count, 2)
         }
     }
 
@@ -213,6 +227,26 @@ class PeripheralManagerTests: XCTestCase {
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.removeAllServicesCalled, "CBPeripheralManager#removeAllServices not called")
             XCTAssertEqual(peripheralServices.count, 0, "peripheralManager service count invalid")
+        }
+    }
+
+    func testRemovedService_WithDuplicateUUIDs_RemovesService() {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
+        let services = createDuplicatePeripheralManagerServices()
+        _ = peripheralManager.add(services[0])
+        peripheralManager.didAddService(services[0].cbMutableService, error: nil)
+        let future = peripheralManager.add(services[1])
+        peripheralManager.didAddService(services[1].cbMutableService, error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+            peripheralManager.remove(services[0])
+            XCTAssert(mock.removeServiceCalled)
+            let peripheralServices = peripheralManager.services
+            XCTAssertEqual(peripheralServices.count, 1)
+            if let removedService = mock.removedService {
+                XCTAssertEqual(removedService.uuid, services[0].uuid)
+            } else {
+                XCTFail()
+            }
         }
     }
 
