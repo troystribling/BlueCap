@@ -405,14 +405,3 @@ func createPeripheralManagerCharacteristic(_ service: MutableService) -> Mutable
     }
     return service.characteristics[0]
 }
-
-func createDuplicatePeripheralManagerCharacteristics(_ service: MutableService) -> [MutableCharacteristic] {
-    let profile = service.profile.characteristics[0]
-    let cbCharacteristic1 = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
-    let cbCharacteristic2 = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
-    service.characteristics = [MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic1, profile: profile),
-                               MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic2, profile: profile)]
-    return service.characteristics
-}
-
-

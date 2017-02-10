@@ -242,6 +242,7 @@ class PeripheralManagerTests: XCTestCase {
             XCTAssert(mock.removeServiceCalled)
             let peripheralServices = peripheralManager.services
             XCTAssertEqual(peripheralServices.count, 1)
+            XCTAssertEqual(peripheralManager.service(withUUID: services[1].uuid)?.count, 1)
             if let removedService = mock.removedService {
                 XCTAssertEqual(removedService.uuid, services[0].uuid)
             } else {
