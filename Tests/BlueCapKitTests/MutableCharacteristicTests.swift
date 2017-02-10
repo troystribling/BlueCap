@@ -233,6 +233,27 @@ class MutableCharacteristicTests: XCTestCase {
         XCTAssertFalse(mock.updateValueCalled)
         XCTAssertEqual(characteristic1.pendingUpdates.count, 1)
         XCTAssertEqual(characteristic2.pendingUpdates.count, 0)
+        XCTAssertNoThrow(try characteristic2.update(withData: "aa".dataFromHexString()))
+        XCTAssertEqual(characteristic1.pendingUpdates.count, 1)
+        XCTAssertEqual(characteristic2.pendingUpdates.count, 1)
+    }
+
+    func testUpdateValueWithData_WithDuplicateUUIDsWithSubscriber_IsSendingUpdates() {
+        let centralMock = CBCentralMock(maximumUpdateValueLength: 20)
+        let (mock, peripheralManager, _) = addDuplicateCharacteristics()
+        let characteristic1 = peripheralManager.characteristics[0]
+        let characteristic2 = peripheralManager.characteristics[1]
+        let value = "aa".dataFromHexString()
+        peripheralManager.didSubscribeToCharacteristic(characteristic1.cbMutableChracteristic, central: centralMock)
+        XCTAssert(characteristic1.isUpdating)
+        XCTAssertNoThrow(try characteristic1.update(withData: value))
+        XCTAssert(mock.updateValueCalled)
+        XCTAssertEqual(characteristic1.value, value)
+        XCTAssertEqual(characteristic1.subscribers.count, 1)
+        XCTAssertEqual(characteristic1.pendingUpdates.count, 0)
+        peripheralManager.didSubscribeToCharacteristic(characteristic2.cbMutableChracteristic, central: centralMock)
+        XCTAssert(characteristic2.isUpdating)
+        XCTAssertNoThrow(try characteristic2.update(withData: value))
     }
 
     // MARK: Respond to write requests
@@ -365,14 +386,27 @@ class MutableCharacteristicTests: XCTestCase {
         let centralMock = CBCentralMock(maximumUpdateValueLength: 20)
         let (_, peripheralManager, _) = addDuplicateCharacteristics()
         let characteristic1 = peripheralManager.characteristics[0]
+        let characteristic2 = peripheralManager.characteristics[1]
         let value = "aa".dataFromHexString()
-        let requestMock = CBATTRequestMock(characteristic: characteristic1.cbMutableChracteristic, offset: 0, value: value)
-        let future = characteristic1.startRespondingToWriteRequests()
-        peripheralManager.didReceiveWriteRequest(requestMock, central: centralMock)
-        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [{ (request, central) in
+        let requestMock1 = CBATTRequestMock(characteristic: characteristic1.cbMutableChracteristic, offset: 0, value: value)
+        let future1 = characteristic1.startRespondingToWriteRequests()
+        peripheralManager.didReceiveWriteRequest(requestMock1, central: centralMock)
+        XCTAssertFutureStreamSucceeds(future1, context: TestContext.immediate, validations: [{ (request, central) in
             characteristic1.respondToRequest(request, withResult: CBATTError.Code.success)
             XCTAssertEqual(centralMock.identifier, central.identifier)
             XCTAssertEqual(request.getCharacteristic().uuid, characteristic1.uuid)
+            XCTAssertEqual(peripheralManager.result, CBATTError.Code.success)
+            XCTAssertEqual(request.value, value)
+            XCTAssert(peripheralManager.respondToRequestCalled)
+            }
+        ])
+        let requestMock2 = CBATTRequestMock(characteristic: characteristic2.cbMutableChracteristic, offset: 0, value: value)
+        let future2 = characteristic2.startRespondingToWriteRequests()
+        peripheralManager.didReceiveWriteRequest(requestMock2, central: centralMock)
+        XCTAssertFutureStreamSucceeds(future2, context: TestContext.immediate, validations: [{ (request, central) in
+            characteristic1.respondToRequest(request, withResult: CBATTError.Code.success)
+            XCTAssertEqual(centralMock.identifier, central.identifier)
+            XCTAssertEqual(request.getCharacteristic().uuid, characteristic2.uuid)
             XCTAssertEqual(peripheralManager.result, CBATTError.Code.success)
             XCTAssertEqual(request.value, value)
             XCTAssert(peripheralManager.respondToRequestCalled)
