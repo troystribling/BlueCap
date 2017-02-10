@@ -138,21 +138,21 @@ class ViewController: UITableViewController {
             guard let peripheral = self.peripheral else {
                 throw AppError.unlikley
             }
-            guard let service = peripheral.service(serviceUUID)?.first else {
+            guard let service = peripheral.services(withUUID: serviceUUID)?.first else {
                 throw AppError.serviceNotFound
             }
             return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
         }.flatMap { [unowned self] () -> Future<Void> in
-            guard let peripheral = self.peripheral, let service = peripheral.service(serviceUUID)?.first else {
+            guard let peripheral = self.peripheral, let service = peripheral.services(withUUID: serviceUUID)?.first else {
                 throw AppError.serviceNotFound
             }
-            guard let dataCharacteristic = service.characteristic(dataUUID)?.first else {
+            guard let dataCharacteristic = service.characteristics(withUUID: dataUUID)?.first else {
                 throw AppError.dataCharactertisticNotFound
             }
-            guard let enabledCharacteristic = service.characteristic(enabledUUID)?.first else {
+            guard let enabledCharacteristic = service.characteristics(withUUID: dataUUID)?.first else {
                 throw AppError.enabledCharactertisticNotFound
             }
-            guard let updatePeriodCharacteristic = service.characteristic(updatePeriodUUID)?.first else {
+            guard let updatePeriodCharacteristic = service.characteristics(withUUID: dataUUID)?.first else {
                 throw AppError.updateCharactertisticNotFound
             }
             self.accelerometerDataCharacteristic = dataCharacteristic
