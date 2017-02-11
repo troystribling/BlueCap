@@ -418,7 +418,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         } else {
             services.forEach { cbService in
                 let serviceProfile = profileManager?.services[cbService.uuid]
-                var bcService = Service(cbService: cbService, peripheral: self, profile: serviceProfile)
+                let bcService = Service(cbService: cbService, peripheral: self, profile: serviceProfile)
                 Logger.debug("service uuid=\(cbService.uuid.uuidString), service name=\(bcService.name), peripheral name=\(self.name), peripheral uuid=\(identifier.uuidString)")
                 if let bcServices = discoveredServices[cbService.uuid] {
                     discoveredServices[cbService.uuid] = bcServices + [bcService]

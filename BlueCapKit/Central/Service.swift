@@ -65,7 +65,7 @@ public class Service {
     // MARK: CBPeripheralDelegate Shim
 
     internal func didDiscoverCharacteristics(_ characteristics: [CBCharacteristicInjectable], error: Swift.Error?) {
-        guard let peripheral = peripheral else {
+        guard peripheral != nil else {
             return
         }
         discoveredCharacteristics.removeAll()
@@ -76,7 +76,7 @@ public class Service {
             }
         } else {
             characteristics.forEach { cbCharacteristic in
-                var bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
+                let bcCharacteristic = Characteristic(cbCharacteristic: cbCharacteristic, service: self)
                 Logger.debug("Discovered characterisc uuid=\(cbCharacteristic.uuid.uuidString), characteristic name=\(bcCharacteristic.name), service name \(name), service uuid \(uuid)")
                 if let bcCharacteristics = discoveredCharacteristics[cbCharacteristic.uuid] {
                     discoveredCharacteristics[cbCharacteristic.uuid] = bcCharacteristics + [bcCharacteristic]
