@@ -1,1 +1,1 @@
-github "troystribling/BlueCap" "multi-uuid" 
+github "troystribling/BlueCap" ~> 0.5 
