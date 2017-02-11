@@ -149,10 +149,10 @@ class ViewController: UITableViewController {
             guard let dataCharacteristic = service.characteristics(withUUID: dataUUID)?.first else {
                 throw AppError.dataCharactertisticNotFound
             }
-            guard let enabledCharacteristic = service.characteristics(withUUID: dataUUID)?.first else {
+            guard let enabledCharacteristic = service.characteristics(withUUID: enabledUUID)?.first else {
                 throw AppError.enabledCharactertisticNotFound
             }
-            guard let updatePeriodCharacteristic = service.characteristics(withUUID: dataUUID)?.first else {
+            guard let updatePeriodCharacteristic = service.characteristics(withUUID: updatePeriodUUID)?.first else {
                 throw AppError.updateCharactertisticNotFound
             }
             self.accelerometerDataCharacteristic = dataCharacteristic
