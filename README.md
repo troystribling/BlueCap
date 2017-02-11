@@ -225,10 +225,10 @@ public enum AppError : Error {
 var accelerometerDataCharacteristic: Characteristic?
 
 let subscriptionFuture = discoveryFuture.flatMap { [weak peripheral] () -> Future<Void> in
-   guard let peripheral = peripheral, let service = peripheral.service(serviceUUID) else {
+   guard let peripheral = peripheral, let service = peripheral.services(withUUID: serviceUUID)?.first else {
         throw AppError.serviceNotFound
     }
-    guard let dataCharacteristic = service.characteristic(dataUUID) else {
+    guard let dataCharacteristic = service.service.characteristics(withUUID: dataUUID)?.first else {
         throw AppError.dataCharactertisticNotFound
     }
     accelerometerDataCharacteristic = dataCharacteristic

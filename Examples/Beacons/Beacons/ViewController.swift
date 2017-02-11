@@ -118,7 +118,6 @@ class ViewController: UITableViewController, UITextFieldDelegate {
             self.beaconsLabel.text = "\(beacons.count)"
         }
         beaconRangingFuture!.onFailure { [unowned self]  error in
-            self.progressView.remove()
             if error is AppError {
                 return
             }
