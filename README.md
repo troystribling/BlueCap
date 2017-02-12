@@ -190,7 +190,7 @@ let discoveryFuture = connectionFuture.flatMap { [weak peripheral] () -> Future<
     }
     return peripheral.discoverServices([serviceUUID])
 }.flatMap { [weak peripheral] () -> Future<Void> in
-    guard let peripheral = peripheral, let service = peripheral.service(serviceUUID) else {
+    guard let peripheral = peripheral, let service = peripheral.services(withUUID: serviceUUID)?.first else {
         throw AppError.serviceNotFound
     }
     return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
