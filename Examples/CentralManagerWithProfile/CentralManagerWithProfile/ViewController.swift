@@ -185,6 +185,7 @@ class ViewController: UITableViewController {
             case AppError.updateCharactertisticNotFound:
                 fallthrough
             case AppError.serviceNotFound:
+                self.peripheral?.disconnect()
                 self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
             case AppError.invalidState:
                 self.present(UIAlertController.alertWithMessage("Invalid state"), animated: true, completion: nil)
@@ -193,17 +194,16 @@ class ViewController: UITableViewController {
                 self.present(UIAlertController.alertWithMessage("Bluetooth service resetting"), animated: true, completion: nil)
             case AppError.poweredOff:
                 self.present(UIAlertController.alertWithMessage("Bluetooth powered off"), animated: true, completion: nil)
-            case AppError.unkown:
-                break
             case PeripheralError.disconnected:
                 self.peripheral?.reconnect()
+            case PeripheralError.forcedDisconnect:
+                break
             default:
                 self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
-            self.peripheral = nil
             self.updateUIStatus()
         }
-        
+
         dataUpdateFuture.onSuccess { [unowned self] data in
             self.updateData(data)
         }

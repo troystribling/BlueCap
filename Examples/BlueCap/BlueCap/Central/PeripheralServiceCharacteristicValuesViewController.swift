@@ -113,10 +113,15 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
         
         readFuture.onFailure { [weak self] error in
-            self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { [weak self] _ in
-                _ = self?.navigationController?.popViewController(animated: true)
+            guard let strongSelf = self else {
                 return
-            }, animated:true, completion:nil)
+            }
+            return strongSelf.progressView.remove().onSuccess {
+                strongSelf.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { _ in
+                    _ = strongSelf.navigationController?.popViewController(animated: true)
+                    return
+                }, animated:true, completion:nil)
+            }
         }
         
     }
