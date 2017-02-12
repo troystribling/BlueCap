@@ -102,10 +102,10 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         progressView.show()
         
         let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout())).flatMap { [weak self] _ -> Future<Void> in
-                guard let strongSelf = self else {
-                    throw AppError.unlikelyFailure
-                }
-                return strongSelf.progressView.remove()
+            guard let strongSelf = self else {
+                throw AppError.unlikelyFailure
+            }
+            return strongSelf.progressView.remove()
         }
         
         readFuture.onSuccess { [weak self] _ in
@@ -113,12 +113,10 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
         
         readFuture.onFailure { [weak self] error in
-            self?.progressView.remove().onSuccess {
-                self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { [weak self] _ in
-                    _ = self?.navigationController?.popViewController(animated: true)
-                    return
-                }, animated:true, completion:nil)
-            }
+            self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { [weak self] _ in
+                _ = self?.navigationController?.popViewController(animated: true)
+                return
+            }, animated:true, completion:nil)
         }
         
     }

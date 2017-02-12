@@ -261,6 +261,7 @@ class PeripheralsViewController : UITableViewController {
         while let peripheralIdentifier = peripheralsToConnect.shift() {
             guard let peripheral = Singletons.discoveryManager.discoveredPeripherals[peripheralIdentifier] else {
                 Logger.debug("peripheral with identifier '\(peripheralIdentifier.uuidString)' not found in discovery manager")
+                restartConnectionUpdatesIfNecessary()
                 continue
             }
             Logger.debug("Connecting peripheral '\(peripheral.name)', \(peripheral.identifier.uuidString), timeout count=\(peripheral.timeoutCount), disconnect count=\(peripheral.disconnectionCount)")
