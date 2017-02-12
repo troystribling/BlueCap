@@ -186,6 +186,7 @@ class ViewController: UITableViewController {
             case AppError.updateCharactertisticNotFound:
                 fallthrough
             case AppError.serviceNotFound:
+                self.peripheral?.disconnect()
                 self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
             case AppError.invalidState:
                 self.present(UIAlertController.alertWithMessage("Invalid state"), animated: true, completion: nil)
@@ -198,10 +199,11 @@ class ViewController: UITableViewController {
                 break
             case PeripheralError.disconnected:
                 self.peripheral?.reconnect()
+            case PeripheralError.forcedDisconnect:
+                break
             default:
                 self.present(UIAlertController.alertOnError(error), animated:true, completion:nil)
             }
-            self.peripheral = nil
             self.updateUIStatus()
         }
 
@@ -232,7 +234,6 @@ class ViewController: UITableViewController {
             } else {
                 enabledLabel.textColor = UIColor.lightGray
                 enabledSwitch.isEnabled = false
-                enabledSwitch.isOn = false
             }
         } else {
             statusLabel.text = "Disconnected"
