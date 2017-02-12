@@ -56,8 +56,13 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             self?.updateWhenActive()
         }
         peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error in
-            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
-            self?.updateWhenActive()
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.progressView.remove().onSuccess {
+                strongSelf.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+                strongSelf.updateWhenActive()
+            }
         }
         
         updateValues()

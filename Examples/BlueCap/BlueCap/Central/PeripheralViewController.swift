@@ -254,11 +254,6 @@ class PeripheralViewController : UITableViewController {
                         _ = strongSelf.navigationController?.popToRootViewController(animated: true)
                     }, animated: true)
                 }
-                progressViewFuture.onFailure { _ in 
-                    strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
-                        _ = strongSelf.navigationController?.popToRootViewController(animated: true)
-                    }, animated: true)
-                }
             }
         }
     }
