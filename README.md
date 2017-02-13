@@ -182,11 +182,12 @@ public enum AppError : Error {
     case resetting
     case poweredOff
     case unknown
+    case unlikely
 }
 
 let discoveryFuture = connectionFuture.flatMap { [weak peripheral] () -> Future<Void> in
 	  guard let peripheral = peripheral else {
-        throw AppError.unknown
+        throw AppError.unlikely
     }
     return peripheral.discoverServices([serviceUUID])
 }.flatMap { [weak peripheral] () -> Future<Void> in
