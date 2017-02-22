@@ -11,101 +11,172 @@ import BlueCapKit
 
 class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldDelegate {
 
-    @IBOutlet var nameTextField     : UITextField!
-    @IBOutlet var uuidTextField     : UITextField!
-    @IBOutlet var majorTextField    : UITextField!
-    @IBOutlet var minorTextField    : UITextField!
-    @IBOutlet var doneBarButtonItem : UIBarButtonItem!
-    
-    var beaconName                      : String?
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    @IBOutlet var advertiseSwitch: UISwitch!
+    @IBOutlet var advertiseLabel: UILabel!
+    @IBOutlet var nameTextField: UITextField!
+    @IBOutlet var uuidTextField: UITextField!
+    @IBOutlet var majorTextField: UITextField!
+    @IBOutlet var minorTextField: UITextField!
+    @IBOutlet var generaUUIDBuuton: UIButton!
 
-    
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let beaconName = self.beaconName {
-            self.navigationItem.title = beaconName
-            self.nameTextField.text = beaconName
-            self.doneBarButtonItem.isEnabled = false
-            if let uuid = PeripheralStore.getBeacon(beaconName) {
-                self.uuidTextField.text = uuid.uuidString
+        self.nameTextField.text = PeripheralStore.getBeaconName()
+        self.uuidTextField.text = PeripheralStore.getBeaconUUID()?.uuidString
+        let beaconMinorMajor = PeripheralStore.getBeaconMinorMajor()
+        if beaconMinorMajor.count == 2 {
+            self.minorTextField.text = "\(beaconMinorMajor[0])"
+            self.majorTextField.text = "\(beaconMinorMajor[1])"
+        }
+        let stateChangeFuture = Singletons.peripheralManager.whenStateChanges()
+        stateChangeFuture.onSuccess { [weak self] state in
+            self.forEach { strongSelf in
+                strongSelf.setUIState()
+                switch state {
+                case .poweredOn:
+                    break
+                case .poweredOff:
+                    strongSelf.present(UIAlertController.alert(message: "PeripheralManager powered off."), animated: true)
+                case .unauthorized:
+                    strongSelf.present(UIAlertController.alert(message: "Bluetooth not authorized."), animated: true)
+                case .unknown:
+                    break
+                case .unsupported:
+                    strongSelf.present(UIAlertController.alert(message: "Bluetooth not supported."), animated: true)
+                case .resetting:
+                    let message = "PeripheralManager state \"\(Singletons.peripheralManager.state)\". The connection with the system bluetooth service was momentarily lost."
+                    strongSelf.present(UIAlertController.alert(message: message) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true)
+                }
             }
-            let beaconConfig = PeripheralStore.getBeaconConfig(beaconName)
-            self.minorTextField.text = "\(beaconConfig[0])"
-            self.majorTextField.text = "\(beaconConfig[1])"
+        }
+        stateChangeFuture.onFailure { [weak self] error in
+            self?.present(UIAlertController.alert(error: error) { _ in
+                Singletons.peripheralManager.reset()
+            }, animated: true, completion: nil)
         }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerBeaconViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
+        setUIState()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }
-    
-    func didEnterBackground() {
-        Logger.debug()
-        if let peripheralManagerViewController = self.peripheralManagerViewController {
-            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
-        }
-    }
-    
+
     @IBAction func generateUUID(_ sender: AnyObject) {
         self.uuidTextField.text = UUID().uuidString
-        let enteredName = self.nameTextField.text
-        let enteredMajor = self.majorTextField.text
-        let enteredMinor = self.minorTextField.text
-        if enteredName != nil && enteredMinor != nil && enteredMinor != nil {
-            if !enteredName!.isEmpty && !enteredMinor!.isEmpty && !enteredMajor!.isEmpty {
-                self.doneBarButtonItem.isEnabled = true
-            }
-        }
     }
-    
-    @IBAction func done(_ sender:AnyObject) {
-        _ = self.addBeacon()
-    }
-    
+        
     // UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        return self.addBeacon()
-    }
-    
-    func addBeacon() -> Bool {
-        if let enteredUUID = self.uuidTextField.text, let enteredName = self.nameTextField.text, let enteredMajor = self.majorTextField.text, let enteredMinor = self.minorTextField.text
-        , !enteredName.isEmpty && !enteredUUID.isEmpty && !enteredMinor.isEmpty && !enteredMajor.isEmpty {
+        if let enteredUUID = self.uuidTextField.text, !enteredUUID.isEmpty {
             if let uuid = UUID(uuidString:enteredUUID) {
-                if let minor = Int(enteredMinor), let major = Int(enteredMajor) , minor < 65536 && major < 65536 {
-                    PeripheralStore.addBeaconConfig(enteredName, config:[UInt16(minor), UInt16(major)])
-                    PeripheralStore.addBeacon(enteredName, uuid:uuid)
-                    if let beaconName = self.beaconName {
-                        if self.beaconName != enteredName {
-                            PeripheralStore.removeBeacon(beaconName)
-                            PeripheralStore.removeBeaconConfig(beaconName)
-                        }
-                    }
-                    _ = self.navigationController?.popViewController(animated: true)
-                    return true
-
-                } else {
-                    self.present(UIAlertController.alertOnErrorWithMessage("major or minor not convertable to a number"), animated:true, completion:nil)
-                    return false
-                }
+                PeripheralStore.setBeaconUUID(uuid)
             } else {
-                self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is Invalid"), animated:true, completion:nil)
+                self.present(UIAlertController.alertOnErrorWithMessage("UUID '\(enteredUUID)' is invalid."), animated:true, completion:nil)
                 return false
             }
+        }
+        if let enteredName = self.nameTextField.text, !enteredName.isEmpty {
+            PeripheralStore.setBeaconName(enteredName)
+        }
+        if let enteredMinor = self.minorTextField.text, let enteredMajor = self.majorTextField.text, !enteredMinor.isEmpty, !enteredMajor.isEmpty {
+            if let minor = UInt16(enteredMinor), let major = UInt16(enteredMajor), minor <= 65535, major <= 65535 {
+                PeripheralStore.setBeaconMinorMajor([minor, major])
+            } else {
+                present(UIAlertController.alertOnErrorWithMessage("major or minor not convertable to a number."), animated:true, completion:nil)
+                return false
+            }
+        }
+        setUIState()
+        return true
+    }
+
+    @IBAction func toggleAdvertise(_ sender:AnyObject) {
+        guard Singletons.peripheralManager.poweredOn else {
+            present(UIAlertController.alertOnErrorWithMessage("Bluetooth powered off"), animated:true, completion:nil)
+            return
+        }
+        if Singletons.peripheralManager.isAdvertising {
+            let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
+            stopAdvertisingFuture.onSuccess { [weak self] in
+                self?.setUIState()
+            }
+            stopAdvertisingFuture.onFailure { [weak self] error in
+                self?.present(UIAlertController.alert(error: error) { _ in
+                    Singletons.peripheralManager.reset()
+                }, animated: true, completion: nil)
+            }
+            return
+        }
+        let beaconMinorMajor = PeripheralStore.getBeaconMinorMajor()
+        if let uuid = PeripheralStore.getBeaconUUID(), let name = PeripheralStore.getBeaconName(), beaconMinorMajor.count == 2 {
+            let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconMinorMajor[1], minor: beaconMinorMajor[0])
+            let startAdvertiseFuture = Singletons.peripheralManager.startAdvertising(beaconRegion)
+
+            startAdvertiseFuture.onSuccess { [weak self] in
+                self?.setUIState()
+                self?.present(UIAlertController.alert(message: "Started advertising."), animated: true, completion: nil)
+            }
+
+            startAdvertiseFuture.onFailure { [weak self] error in
+                self.forEach { strongSelf in
+                    let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
+                    stopAdvertisingFuture.onSuccess { strongSelf.setUIState() }
+                    stopAdvertisingFuture.onFailure { _ in strongSelf.setUIState() }
+                    self?.present(UIAlertController.alert(error: error) { _ in
+                        Singletons.peripheralManager.reset()
+                    }, animated: true, completion: nil)
+                }
+            }
         } else {
-            return false
+            present(UIAlertController.alert(message: "iBeacon config is invalid."), animated: true, completion: nil)
         }
     }
 
+    func setUIState() {
+        if Singletons.peripheralManager.isAdvertising {
+            navigationItem.setHidesBackButton(true, animated:true)
+            advertiseSwitch.isOn = true
+            nameTextField.isEnabled = false
+            uuidTextField.isEnabled = false
+            majorTextField.isEnabled = false
+            minorTextField.isEnabled = false
+            generaUUIDBuuton.isEnabled = false
+            advertiseLabel.textColor = UIColor.black
+        } else {
+            navigationItem.setHidesBackButton(false, animated:true)
+            advertiseSwitch.isOn = false
+            nameTextField.isEnabled = true
+            uuidTextField.isEnabled = true
+            majorTextField.isEnabled = true
+            minorTextField.isEnabled = true
+            generaUUIDBuuton.isEnabled = true
+            if canAdvertise() {
+                advertiseSwitch.isEnabled = true
+                advertiseLabel.textColor = UIColor.black
+            } else {
+                advertiseSwitch.isEnabled = false
+                advertiseLabel.textColor = UIColor.lightGray
+            }
+        }
+        if !Singletons.peripheralManager.poweredOn {
+            advertiseSwitch.isEnabled = false
+            advertiseLabel.textColor = UIColor.lightGray
+        }
+    }
+
+    func canAdvertise() -> Bool {
+        return PeripheralStore.getBeaconUUID() != nil && PeripheralStore.getBeaconName() != nil && PeripheralStore.getBeaconMinorMajor().count == 2
+    }
 }

@@ -17,25 +17,24 @@ public class MutableService : NSObject {
 
     weak var peripheralManager: PeripheralManager?
     let cbMutableService: CBMutableServiceInjectable
+    var afterServiceAddPromise: Promise<Void>?
 
-    public var uuid: CBUUID {
-        return self.profile.uuid
-    }
+    public let uuid: CBUUID
     
     public var name: String {
-        return self.profile.name
+        return profile.name
     }
     
     public var characteristics = [MutableCharacteristic]() {
         didSet {
-            let cbCharacteristics = characteristics.map { characteristic -> CBCharacteristicInjectable in
-                characteristic.service = self
-                return characteristic.cbMutableChracteristic
-            }
-            self.cbMutableService.setCharacteristics(cbCharacteristics)
+            let cbCharacteristics = characteristics.map { bcCharacteristic -> CBMutableCharacteristicInjectable in
+                bcCharacteristic.service = self
+                return bcCharacteristic.cbMutableChracteristic
+            }.flatMap { $0 }
+            cbMutableService.setCharacteristics(cbCharacteristics)
         }
     }
-    
+
     public convenience init(profile: ServiceProfile) {
         self.init(cbMutableService: CBMutableService(type: profile.uuid, primary: true), profile: profile)
     }
@@ -47,6 +46,7 @@ public class MutableService : NSObject {
     internal init(cbMutableService: CBMutableServiceInjectable, profile: ServiceProfile? = nil) {
         self.cbMutableService = cbMutableService
         self.profile = profile ?? ServiceProfile(uuid: cbMutableService.uuid.uuidString)
+        uuid = CBUUID(data: cbMutableService.uuid.data)
         super.init()
     }
 

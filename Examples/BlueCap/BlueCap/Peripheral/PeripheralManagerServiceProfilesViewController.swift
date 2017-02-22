@@ -13,16 +13,11 @@ import CoreBluetooth
 class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewController {
    
     var progressView: ProgressView!
-    var peripheral: String?
     var peripheralManagerViewController: PeripheralManagerViewController?
 
     
     struct MainStoryboard {
         static let peripheralManagerServiceCell = "PeripheralManagerServiceProfileCell"
-    }
-    
-    override var excludedServices : Array<CBUUID> {
-        return Singletons.peripheralManager.services.map{ $0.uuid }
     }
     
     override var serviceProfileCell : String {
@@ -61,16 +56,16 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             self.progressView.show()
             let future = Singletons.peripheralManager.add(service)
             future.onSuccess {
-                if let peripheral = self.peripheral {
-                    PeripheralStore.addPeripheralService(peripheral, service:service.uuid)
-                }
+                PeripheralStore.addSupportedPeripheralService(service.uuid)
                 _ = self.navigationController?.popViewController(animated: true)
-                self.progressView.remove()
+                _ = self.progressView.remove()
             }
             future.onFailure { error in
-                self.present(UIAlertController.alert(title: "Add Service Error", error: error), animated: true, completion: nil)
-                _ = self.navigationController?.popViewController(animated: true)
-                self.progressView.remove()
+                self.progressView.remove().onSuccess {
+                    self.present(UIAlertController.alert(title: "Add Service Error", error: error), animated: true) {
+                        _ = self.navigationController?.popViewController(animated: true)
+                    }
+                }
             }
         } else {
             _ = self.navigationController?.popViewController(animated: true)

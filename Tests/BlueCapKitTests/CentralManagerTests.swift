@@ -15,6 +15,8 @@ import CoreBluetooth
 
 class CentralManagerTests: XCTestCase {
 
+    let RSSI = -45
+
     override func setUp() {
         super.setUp()
     }
@@ -94,7 +96,27 @@ class CentralManagerTests: XCTestCase {
         let future = centralManager.startScanning(timeout: 0.1)
         XCTAssertFutureStreamFails(future, validations: [
             {error in
-                XCTAssertEqualErrors(error, CentralManagerError.peripheralScanTimeout)
+                XCTAssertEqualErrors(error, CentralManagerError.serviceScanTimeout)
+            }
+        ])
+    }
+
+    func testStartScanning_WhenInvalidPeripheralDiscovered_CompletesWithError() {
+        let centralMock = CBCentralManagerMock(state: .poweredOn)
+        let centralManager = CentralManager(centralManager: centralMock)
+
+        let peripheralMockOrig = CBPeripheralMock()
+        let peripheralOrig = Peripheral(cbPeripheral: peripheralMockOrig, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: RSSI)
+        centralManager._discoveredPeripherals[peripheralOrig.identifier] = peripheralOrig
+
+        let peripheralMockInvalid = CBPeripheralMock(identifier: peripheralMockOrig.identifier)
+        let stream = centralManager.startScanning()
+
+        centralManager.didDiscoverPeripheral(peripheralMockInvalid, advertisementData: peripheralAdvertisements, RSSI: NSNumber(value: -45))
+        XCTAssertFutureStreamFails(stream, context: TestContext.immediate, validations: [
+            { error in
+                XCTAssert(centralMock.scanForPeripheralsWithServicesCalled)
+                XCTAssertEqualErrors(error, CentralManagerError.invalidPeripheral)
             }
         ])
     }
@@ -104,24 +126,30 @@ class CentralManagerTests: XCTestCase {
     func testWhenStateRestored_WithPreviousValidState_CompletesSuccessfully() {
         let mock = CBCentralManagerMock()
         let centralManager = CentralManager(centralManager: mock)
+        let testScannedServices = [CBUUID(string: UUID().uuidString), CBUUID(string: UUID().uuidString)]
         let testPeripherals = [CBPeripheralMock(state: .connected), CBPeripheralMock(state: .connected)]
         for testPeripheral in testPeripherals {
-            let testServices = [CBServiceMock(), CBServiceMock()]
+            let testServices = [CBServiceMock(uuid: testScannedServices[0]), CBServiceMock(uuid: testScannedServices[1])]
             for testService in testServices {
                 let testCharacteristics = [CBCharacteristicMock(), CBCharacteristicMock()]
                 testService.characteristics = testCharacteristics
             }
             testPeripheral.services = testServices
         }
-        let testScannedServices = [CBUUID(string: UUID().uuidString), CBUUID(string: UUID().uuidString)]
         let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(value: true),
                                                 CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test" as AnyObject]
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
                                         scannedServices: testScannedServices, options: testOptions)
-        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { (peripherals, scannedServices, options) in
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
+            guard let options = centralManager.options else {
+                XCTFail()
+                return
+            }
+            let peripherals = centralManager.peripherals
+            let scannedServices = centralManager.services.map { $0.uuid }
             XCTAssertEqual(peripherals.count, testPeripherals.count)
-            XCTAssertEqual(scannedServices, testScannedServices)
+            XCTAssertEqual(Set(scannedServices), Set(testScannedServices))
             XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber)
             XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString)
             XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }))
@@ -135,7 +163,7 @@ class CentralManagerTests: XCTestCase {
                 for testService in testServices {
                     let testCharacteristics = testService.characteristics!
                     let service = peripheral!.discoveredServices[testService.uuid]
-                    let characteristics = service!.characteristics
+                    let characteristics = service!.first!.characteristics
                     XCTAssertEqual(characteristics.count, testCharacteristics.count)
                     XCTAssertEqual(Set(characteristics.map { $0.uuid }), Set(testCharacteristics.map { $0.uuid }))
                 }

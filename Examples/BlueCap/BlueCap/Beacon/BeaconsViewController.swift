@@ -11,7 +11,7 @@ import BlueCapKit
 
 class BeaconsViewController: UITableViewController {
 
-    var beaconRegion: BeaconRegion?
+    weak var beaconRegion: BeaconRegion?
 
     struct MainStoryBoard {
         static let beaconCell   = "BeaconCell"
@@ -30,7 +30,6 @@ class BeaconsViewController: UITableViewController {
         super.viewWillAppear(animated)
         if let beaconRegion = self.beaconRegion {
             self.navigationItem.title = beaconRegion.identifier
-            // TODO: Use Future Callback
             NotificationCenter.default.addObserver(self, selector: #selector(BeaconsViewController.updateBeacons), name: NSNotification.Name(rawValue: BlueCapNotification.didUpdateBeacon), object: beaconRegion)
         } else {
             self.navigationItem.title = "Beacons"
@@ -44,9 +43,6 @@ class BeaconsViewController: UITableViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    override func prepare(for segue:UIStoryboardSegue, sender: Any!) {
-    }
-
     func updateBeacons() {
         Logger.debug()
         self.tableView.reloadData()

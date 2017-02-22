@@ -26,11 +26,30 @@ class MutableCharacteristicTests: XCTestCase {
 
     func addCharacteristics() -> (CBPeripheralManagerMock, PeripheralManagerUT, MutableService) {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
-        let service = createPeripheralManagerService(peripheralManager)
+        let service = createPeripheralManagerService()
         service.characteristics = service.profile.characteristics.map { profile in
             let characteristic = CBMutableCharacteristicMock(uuid: profile.uuid, properties: profile.properties, permissions: profile.permissions, isNotifying: false)
             return MutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
         }
+        let future = peripheralManager.add(service)
+        future.onSuccess(context: TestContext.immediate) {
+            mock.isAdvertising = true
+        }
+        future.onFailure(context: TestContext.immediate) { error in
+            XCTFail()
+        }
+        peripheralManager.didAddService(service.cbMutableService, error: nil)
+        return (mock, peripheralManager, service)
+    }
+
+    func addDuplicateCharacteristics() -> (CBPeripheralManagerMock, PeripheralManagerUT, MutableService) {
+        let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
+        let service = createPeripheralManagerService()
+        let characteristicProfile = service.profile.characteristics[0]
+        let cbCharacteristic1 = CBMutableCharacteristicMock(uuid: characteristicProfile.uuid, properties: characteristicProfile.properties, permissions: characteristicProfile.permissions, isNotifying: false)
+        let cbCharacteristic2 = CBMutableCharacteristicMock(uuid: characteristicProfile.uuid, properties: characteristicProfile.properties, permissions: characteristicProfile.permissions, isNotifying: false)
+        service.characteristics = [MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic1, profile: characteristicProfile),
+                                   MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic2, profile: characteristicProfile)]
         let future = peripheralManager.add(service)
         future.onSuccess(context: TestContext.immediate) {
             mock.isAdvertising = true
@@ -50,6 +69,14 @@ class MutableCharacteristicTests: XCTestCase {
         XCTAssertEqual(chracteristics.count, 2)
         XCTAssert(chracteristics.contains(CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)))
         XCTAssert(chracteristics.contains(CBUUID(string: Gnosus.HelloWorldService.UpdatePeriod.uuid)))
+    }
+
+    func testAddCharacteristics_WithDuplicateUUIDs_CompletesSuccessfully() {
+        let (_, peripheralManager, _) = addDuplicateCharacteristics()
+        let chracteristics = peripheralManager.characteristics.map { $0.uuid }
+        XCTAssertEqual(chracteristics.count, 2)
+        XCTAssert(chracteristics.contains(CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid)))
+        XCTAssertEqual(peripheralManager.characteristics(withUUID: CBUUID(string: Gnosus.HelloWorldService.Greeting.uuid))?.count, 2)
     }
 
     // MARK: Subscribe to charcteristic updates
@@ -196,6 +223,38 @@ class MutableCharacteristicTests: XCTestCase {
         XCTAssertThrowError(try characteristic.update(withString: ["bad name" : "Invalid"]), MutableCharacteristicError.notSerializable)
     }
     
+    func testUpdateValueWithData_WithDuplicateUUIDsAndNoSubscribers_AddsUpdateToPengingQueue() {
+        let (mock, peripheralManager, _) = addDuplicateCharacteristics()
+        let characteristic1 = peripheralManager.characteristics[0]
+        let characteristic2 = peripheralManager.characteristics[1]
+        XCTAssertFalse(characteristic1.isUpdating)
+        XCTAssertEqual(characteristic1.subscribers.count, 0)
+        XCTAssertNoThrow(try characteristic1.update(withData: "aa".dataFromHexString()))
+        XCTAssertFalse(mock.updateValueCalled)
+        XCTAssertEqual(characteristic1.pendingUpdates.count, 1)
+        XCTAssertEqual(characteristic2.pendingUpdates.count, 0)
+        XCTAssertNoThrow(try characteristic2.update(withData: "aa".dataFromHexString()))
+        XCTAssertEqual(characteristic1.pendingUpdates.count, 1)
+        XCTAssertEqual(characteristic2.pendingUpdates.count, 1)
+    }
+
+    func testUpdateValueWithData_WithDuplicateUUIDsWithSubscriber_IsSendingUpdates() {
+        let centralMock = CBCentralMock(maximumUpdateValueLength: 20)
+        let (mock, peripheralManager, _) = addDuplicateCharacteristics()
+        let characteristic1 = peripheralManager.characteristics[0]
+        let characteristic2 = peripheralManager.characteristics[1]
+        let value = "aa".dataFromHexString()
+        peripheralManager.didSubscribeToCharacteristic(characteristic1.cbMutableChracteristic, central: centralMock)
+        XCTAssert(characteristic1.isUpdating)
+        XCTAssertNoThrow(try characteristic1.update(withData: value))
+        XCTAssert(mock.updateValueCalled)
+        XCTAssertEqual(characteristic1.value, value)
+        XCTAssertEqual(characteristic1.subscribers.count, 1)
+        XCTAssertEqual(characteristic1.pendingUpdates.count, 0)
+        peripheralManager.didSubscribeToCharacteristic(characteristic2.cbMutableChracteristic, central: centralMock)
+        XCTAssert(characteristic2.isUpdating)
+        XCTAssertNoThrow(try characteristic2.update(withData: value))
+    }
 
     // MARK: Respond to write requests
     
@@ -323,6 +382,38 @@ class MutableCharacteristicTests: XCTestCase {
         XCTAssertEqual(peripheralManager.result, CBATTError.Code.requestNotSupported)
     }
 
+    func testStartRespondingToWriteRequests_WithDuplicateUUIDs_CompletesSuccessfullyAndResponds() {
+        let centralMock = CBCentralMock(maximumUpdateValueLength: 20)
+        let (_, peripheralManager, _) = addDuplicateCharacteristics()
+        let characteristic1 = peripheralManager.characteristics[0]
+        let characteristic2 = peripheralManager.characteristics[1]
+        let value = "aa".dataFromHexString()
+        let requestMock1 = CBATTRequestMock(characteristic: characteristic1.cbMutableChracteristic, offset: 0, value: value)
+        let future1 = characteristic1.startRespondingToWriteRequests()
+        peripheralManager.didReceiveWriteRequest(requestMock1, central: centralMock)
+        XCTAssertFutureStreamSucceeds(future1, context: TestContext.immediate, validations: [{ (request, central) in
+            characteristic1.respondToRequest(request, withResult: CBATTError.Code.success)
+            XCTAssertEqual(centralMock.identifier, central.identifier)
+            XCTAssertEqual(request.getCharacteristic().uuid, characteristic1.uuid)
+            XCTAssertEqual(peripheralManager.result, CBATTError.Code.success)
+            XCTAssertEqual(request.value, value)
+            XCTAssert(peripheralManager.respondToRequestCalled)
+            }
+        ])
+        let requestMock2 = CBATTRequestMock(characteristic: characteristic2.cbMutableChracteristic, offset: 0, value: value)
+        let future2 = characteristic2.startRespondingToWriteRequests()
+        peripheralManager.didReceiveWriteRequest(requestMock2, central: centralMock)
+        XCTAssertFutureStreamSucceeds(future2, context: TestContext.immediate, validations: [{ (request, central) in
+            characteristic1.respondToRequest(request, withResult: CBATTError.Code.success)
+            XCTAssertEqual(centralMock.identifier, central.identifier)
+            XCTAssertEqual(request.getCharacteristic().uuid, characteristic2.uuid)
+            XCTAssertEqual(peripheralManager.result, CBATTError.Code.success)
+            XCTAssertEqual(request.value, value)
+            XCTAssert(peripheralManager.respondToRequestCalled)
+            }
+        ])
+    }
+
     // MARK: Respond to read requests
     
     func testDidReceiveReadRequest_WhenCharacteristicIsInService_RespondsToRequest() {
@@ -349,6 +440,19 @@ class MutableCharacteristicTests: XCTestCase {
         XCTAssertEqual(request.value, nil)
         XCTAssert(peripheralManager.respondToRequestCalled)
         XCTAssertEqual(peripheralManager.result, CBATTError.Code.unlikelyError)
+    }
+
+    func testDidReceiveReadRequest_WithDuplicateUUIDs_RespondsToRequest() {
+        let centralMock = CBCentralMock(maximumUpdateValueLength: 20)
+        let (_, peripheralManager, _) = addDuplicateCharacteristics()
+        let characteristic = peripheralManager.characteristics[0]
+        let request = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: nil)
+        let value = "aa".dataFromHexString()
+        characteristic.value = value
+        peripheralManager.didReceiveReadRequest(request, central: centralMock)
+        XCTAssertEqual(request.value, value)
+        XCTAssert(peripheralManager.respondToRequestCalled)
+        XCTAssertEqual(peripheralManager.result, CBATTError.Code.success)
     }
 
 }

@@ -21,11 +21,16 @@ class ServiceTests: XCTestCase {
             CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false),
             CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties:[.read, .write], isNotifying:false)].map { $0 as CBCharacteristicInjectable }
 
+    var duplicateMockCharateristics = [
+        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties:[.read, .write], isNotifying:false),
+        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false),
+        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties:[.read, .write], isNotifying:false)]
+
     let mockService = CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc"))
     let immediateContext = ImmediateContext()
     let RSSI = -45
 
-    func service(_ peripheral: Peripheral) -> Service {
+    func createService(withPeripheral peripheral: Peripheral) -> Service {
         return Service(cbService:self.mockService, peripheral: peripheral)
     }
 
@@ -44,7 +49,7 @@ class ServiceTests: XCTestCase {
 
     // MARK: Discover characteristics
     func testDiscoverAllCharacteristics_WhenConnectedAndNoErrorInResponce_CompletesSuccessfully() {
-        let service = self.service(self.peripheral(.connected))
+        let service = createService(withPeripheral: peripheral(.connected))
         let future = service.discoverAllCharacteristics()
         service.didDiscoverCharacteristics(self.mockCharateristics, error: nil)
         XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
@@ -54,7 +59,7 @@ class ServiceTests: XCTestCase {
     }
 
     func testDiscoverAllCharacteristics_WhenConnectedAndErrorInResonce_CompeletesWithResponseError() {
-        let service = self.service(self.peripheral(.connected))
+        let service = createService(withPeripheral: peripheral(.connected))
         let future = service.discoverAllCharacteristics()
         service.didDiscoverCharacteristics(self.mockCharateristics, error: TestFailure.error)
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
@@ -63,7 +68,7 @@ class ServiceTests: XCTestCase {
     }
 
     func testDiscoverAllCharacteristics_WhenDisconnected_CompeltesWithPeripheralDisconnected() {
-        let service = self.service(self.peripheral(.disconnected))
+        let service = createService(withPeripheral: peripheral(.disconnected))
         let future = service.discoverAllCharacteristics()
         XCTAssertFutureFails(future, context: self.immediateContext) { error in
             XCTAssertEqualErrors(error, PeripheralError.disconnected)
@@ -71,10 +76,21 @@ class ServiceTests: XCTestCase {
     }
 
     func testDiscoverAllCharacteristics_WhenConnectedOnTimeout_CompletesServiceCharacteristicDiscoveryTimeout() {
-        let service = self.service(self.peripheral(.connected))
+        let service = createService(withPeripheral: peripheral(.connected))
         let future = service.discoverAllCharacteristics(timeout: 0.25)
         XCTAssertFutureFails(future, timeout: 5) { error in
             XCTAssertEqualErrors(error, ServiceError.characteristicDiscoveryTimeout)
+        }
+    }
+
+    func testDiscoverAllCharacteristics_WithDuplicateUUIDs_CompletesSuccessfully() {
+        let service = createService(withPeripheral: peripheral(.connected))
+        let future = service.discoverAllCharacteristics()
+        service.didDiscoverCharacteristics(duplicateMockCharateristics.map { $0 as CBCharacteristicInjectable }, error: nil)
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
+            XCTAssert(service.characteristics.count == 3)
+            XCTAssertEqual(service.characteristics(withUUID: self.duplicateMockCharateristics[0].uuid)!.count, 1)
+            XCTAssertEqual(service.characteristics(withUUID: self.duplicateMockCharateristics[1].uuid)!.count, 2)
         }
     }
 

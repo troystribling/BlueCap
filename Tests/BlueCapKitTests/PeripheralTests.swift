@@ -27,13 +27,14 @@ class PeripheralTests: XCTestCase {
         CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))
     ]
 
-    var mockCharateristics = [
-        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6111"), properties: [.read, .write], isNotifying: false),
-        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6222"), properties: [.read, .write], isNotifying: false),
-        CBCharacteristicMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6333"), properties: [.read, .write], isNotifying: false)
+    let dublicateMockServices = [
+        CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6ccc")),
+        CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff")),
+        CBServiceMock(uuid: CBUUID(string:"2f0a0017-69aa-f316-3e78-4194989a6fff"))
     ]
-    
+
     override func setUp() {
+        Peripheral.RECONNECT_DELAY = TimeInterval(0.0)
         super.setUp()
         self.centralManagerMock = CBCentralManagerMock(state: .poweredOn)
         self.centralManager = CentralManagerUT(centralManager: self.centralManagerMock)
@@ -44,6 +45,7 @@ class PeripheralTests: XCTestCase {
     }
 
     // MARK: discoverAllServices
+
     func testDiscoverAllServices_WhenConnectedAndNoErrorInResponse_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
         let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
@@ -75,7 +77,7 @@ class PeripheralTests: XCTestCase {
 
     func testDiscoverAllServices_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices()
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             let discoveredServices = peripheral.services
@@ -90,7 +92,7 @@ class PeripheralTests: XCTestCase {
 
     func testDiscoverAllServices_WhenConnectedOnTimeout_CompletesWithServiceDiscoveryTimeout() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.discoverAllServices(timeout: 0.25)
         XCTAssertFutureFails(future, timeout: 5.0) { error in
             let discoveredServices = peripheral.services
@@ -102,174 +104,163 @@ class PeripheralTests: XCTestCase {
         }
     }
 
+    func testDiscoverAllServices_WithDuplicateUUIDs_CompletesSuccessfully() {
+        let mockPeripheral = CBPeripheralMock(state: .connected)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: RSSI)
+        let future = peripheral.discoverAllServices()
+        peripheral.didDiscoverServices(dublicateMockServices.map { $0 as CBServiceInjectable }, error:nil)
+        XCTAssertFutureSucceeds(future, context: TestContext.immediate) { _ in
+            let discoveredServices = peripheral.services
+            XCTAssertEqual(discoveredServices.count, 3)
+            XCTAssertEqual(mockPeripheral.discoverServicesCalledCount, 1)
+            XCTAssertEqual(peripheral.services(withUUID: self.dublicateMockServices[0].uuid)!.count, 1)
+            XCTAssertEqual(peripheral.services(withUUID: self.dublicateMockServices[1].uuid)!.count, 2)
+            XCTAssert(mockPeripheral.discoverServicesCalled)
+            XCTAssertFalse(mockPeripheral.discoverCharacteristicsCalled)
+        }
+    }
+
     // MARK: connect
-    func testConnect_WhenDisconnected_CompletesSuccesfullyWithEventConnect() {
+    func testConnect_WhenDisconnected_CompletesSuccesfullyAndYields() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect(connectionTimeout: 120.0)
-        XCTAssert(self.centralManagerMock.connectPeripheralCalled)
         peripheral.didConnectPeripheral()
         XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
-            { (peripheral, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.connect)
+            {
+                XCTAssert(self.centralManagerMock.connectPeripheralCalled)
             }
         ])
     }
 
-    func testConnect_WhenConnected_DoesNotConnect() {
+    func testConnect_WhenConnected_DoesNotCallConnect() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let _ = peripheral.connect()
         XCTAssertFalse(centralManagerMock.connectPeripheralCalled)
     }
 
     func testConnect_WhenDisconnectedWithConnectionError_CompletesWithConnectionError() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect(connectionTimeout: 120.0)
         XCTAssert(centralManagerMock.connectPeripheralCalled)
         peripheral.didFailToConnectPeripheral(TestFailure.error)
         XCTAssertFutureStreamFails(future, context:  TestContext.immediate, validations: [
             { error in
                 XCTAssertEqualErrors(error, TestFailure.error)
+                XCTAssertEqual(peripheral.disconnectionCount, 1)
+                XCTAssertEqual(peripheral.timeoutCount, 0)
             }
         ])
     }
 
-    func testConnect_WhenDisconnectedAndForcedDisconnect_CompletesWithPeripheralDisconnected() {
+    func testConnect_WhenDisconnectedAndDisconnectCalled_CompletesWithErrorDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.disconnect()
         XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
-                XCTAssertEqualErrors(error, PeripheralError.disconnected)
+                XCTAssertEqualErrors(error, PeripheralError.forcedDisconnect)
+                XCTAssertEqual(peripheral.disconnectionCount, 0)
+                XCTAssertEqual(peripheral.timeoutCount, 0)
             }
         ])
     }
     
-    func testConnect_WhenConnectedAndForcedDisconnect_CompletesSuccessfullyWithEventForceDisconnect() {
+    func testConnect_WhenConnectedAndDisconnectCalled_CompletesWithErrorForcedDisconnect() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.disconnect()
-        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
-            { (_, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.forceDisconnect)
+        peripheral.didDisconnectPeripheral(nil)
+        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
+            { error in
+                XCTAssertEqualErrors(error, PeripheralError.forcedDisconnect)
+                XCTAssertEqual(peripheral.disconnectionCount, 0)
+                XCTAssertEqual(peripheral.timeoutCount, 0)
             }
         ])
     }
 
-    func testConnect_WhenConnectedAndPeripheralDisconnectsWithoutError_CompletesSuccessfullyWithEventDisconnect() {
+    func testConnect_WhenConnectedAndPeripheralDisconnectsWithoutError_CompletesWithErrorDisconnect() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.didDisconnectPeripheral(nil)
-        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
-            { (_, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.disconnect)
+        XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
+            { error in
+                XCTAssertEqualErrors(error, PeripheralError.disconnected)
+                XCTAssertEqual(peripheral.disconnectionCount, 1)
+                XCTAssertEqual(peripheral.timeoutCount, 0)
             }
         ])
     }
 
-    func testConnect_WhenConnectedAndPeripheralDisconnectsWithError_CompletesDisconnectError() {
+    func testConnect_WhenConnectedAndPeripheralDisconnectsWithError_CompletesErrorDisconnect() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect()
         peripheral.didDisconnectPeripheral(TestFailure.error)
         XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
                 XCTAssertEqualErrors(error, TestFailure.error)
+                XCTAssertEqual(peripheral.disconnectionCount, 1)
+                XCTAssertEqual(peripheral.timeoutCount, 0)
             }
         ])
     }
 
 
-    func testConnect_WhenDisconnetedAndConnectionTimeout_CompletesSuccessfullyWithEventTimeout() {
+    func testConnect_WhenDisconnectedByConnectionTimeout_CompletesWithErrorConnectionTimeout() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.connect(connectionTimeout: 0.25)
-        XCTAssertFutureStreamSucceeds(future, timeout: 5.0, validations: [
-            { (_, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.timeout)
+        XCTAssertFutureStreamFails(future, timeout: 5.0, validations: [
+            { error in
+                XCTAssertEqualErrors(error, PeripheralError.connectionTimeout)
+                XCTAssertEqual(self.centralManagerMock.connectPeripheralCount, 1)
+                XCTAssertEqual(peripheral.disconnectionCount, 0)
+                XCTAssertEqual(peripheral.timeoutCount, 1)
             }
         ])
     }
     
-    func testConnect_WhenDisconnetedAndExceedsTimeoutRetries_CompletesSuccessfullyWithEventGiveUp() {
-        let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let future = peripheral.connect(timeoutRetries: 1, connectionTimeout: 0.25)
-        XCTAssertFutureStreamSucceeds(future, timeout: 5.0, validations: [
-            { (peripheral, connectionEvent) in
-                peripheral.reconnect()
-                XCTAssertEqual(connectionEvent, ConnectionEvent.timeout)
-            },
-            { (peripheral, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.giveUp)
+    func testConnect_WhenDisconnectedWithNoError_CompletesWithErrorDisconnected() {
+        let mockPeripheral = CBPeripheralMock(state:.disconnected)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let future = peripheral.connect()
+        peripheral.didDisconnectPeripheral(nil)
+        XCTAssertFutureStreamFails(future, timeout: 5.0, validations: [
+            { error in
+                XCTAssertEqualErrors(error, PeripheralError.disconnected)
+                XCTAssertEqual(self.centralManagerMock.connectPeripheralCount, 1)
+                XCTAssertEqual(peripheral.disconnectionCount, 1)
+                XCTAssertEqual(peripheral.timeoutCount, 0)
             }
         ])
     }
 
-    func testConnect_WhenDisconnectedWithNoErrorAndExceedsDisconnectRetries_CompletesSuccessfullyWithEventGiveUp() {
-        let mockPeripheral = CBPeripheralMock(state:.connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let future = peripheral.connect(disconnectRetries: 1)
-        peripheral.didConnectPeripheral()
-        XCTAssertFutureStreamSucceeds(future, timeout: 5.0, validations: [
-            { (peripheral, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.connect)
-                peripheral.didDisconnectPeripheral(nil)
-            },
-            { (peripheral, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.disconnect)
-                peripheral.reconnect()
-                peripheral.didConnectPeripheral()
-            },
-            { (peripheral, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.connect)
-                peripheral.didDisconnectPeripheral(nil)
-            },
-            { (peripheral, connectionEvent) in
-                XCTAssertEqual(connectionEvent, ConnectionEvent.giveUp)
-            }
-        ])
-    }
-
-    
-    func testConnect_WhenDisconnectedWithErrorAndExceedsDisconnectRetries_CompletesSuccessfullyWithEventGiveUp() {
-        let mockPeripheral = CBPeripheralMock(state:.connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
-        let expectation = self.expectation(description: "expectation fulfilled")
-        let future = peripheral.connect(disconnectRetries: 1)
-        future.onSuccess { (peripheral, connectionEvent) in
-            switch connectionEvent {
-            case .connect:
-                peripheral.didDisconnectPeripheral(TestFailure.error)
-            case .timeout:
-                XCTFail()
-            case .disconnect:
-                XCTFail()
-            case .forceDisconnect:
-                XCTFail()
-            case .giveUp:
-                expectation.fulfill()
-            }
-        }
+    func testConnect_WhenDisconnectedWithError_CompletesWithError() {
+        let mockPeripheral = CBPeripheralMock(state:.disconnected)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let future = peripheral.connect()
         peripheral.didDisconnectPeripheral(TestFailure.error)
-        future.onFailure { _ in
-            peripheral.reconnect()
-            peripheral.didConnectPeripheral()
-        }
-        waitForExpectations(timeout: 20) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        XCTAssertFutureStreamFails(future, timeout: 5.0, validations: [
+            { error in
+                XCTAssertEqualErrors(error, TestFailure.error)
+                XCTAssertEqual(self.centralManagerMock.connectPeripheralCount, 1)
+                XCTAssertEqual(peripheral.disconnectionCount, 1)
+                XCTAssertEqual(peripheral.timeoutCount, 0)
+            }
+        ])
     }
 
     // MARK: Read RSSI
     func testReadRSSI_WhenConnected_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
         peripheral.didReadRSSI(NSNumber(value: Int32(self.updatedRSSI1)), error: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) { rssi in
@@ -280,7 +271,7 @@ class PeripheralTests: XCTestCase {
 
     func testReadRSSI_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
             XCTAssertEqualErrors(error, PeripheralError.disconnected)
@@ -289,7 +280,7 @@ class PeripheralTests: XCTestCase {
 
     func testReadRSSI_WhenConnectedAndErrorInResponse_CompletesWithResponseError() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.readRSSI()
         peripheral.didReadRSSI(NSNumber(value: Int32(self.updatedRSSI1)), error: TestFailure.error)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
@@ -299,7 +290,7 @@ class PeripheralTests: XCTestCase {
 
     func testStartPollingRSSI_WhenConnectedAndNoErrorInAck_CompletesSuccessfully() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         mockPeripheral.bcPeripheral = peripheral
         let future = peripheral.startPollingRSSI(period: 0.25)
         XCTAssertFutureStreamSucceeds(future, timeout: 120, validations: [
@@ -319,7 +310,7 @@ class PeripheralTests: XCTestCase {
 
     func testStartPollingRSSI_WhenDisconnected_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.startPollingRSSI()
         XCTAssertFutureStreamFails(future, context: TestContext.immediate, validations: [
             { error in
@@ -332,7 +323,7 @@ class PeripheralTests: XCTestCase {
 
    func testStartPollingRSSI_WhenDisconnectedAfterStart_CompletesWithPeripheralDisconnected() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         mockPeripheral.bcPeripheral = peripheral
         let expectation = self.expectation(description: "expectation fulfilled")
         var completed = false
@@ -361,7 +352,7 @@ class PeripheralTests: XCTestCase {
 
     func testStartPollingRSSI_WhenConnectedAndErrorInResponse_CompletedWithResponceError() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.startPollingRSSI(period: 0.25)
         mockPeripheral.error = TestFailure.error
         mockPeripheral.bcPeripheral = peripheral
@@ -375,7 +366,7 @@ class PeripheralTests: XCTestCase {
 
     func testStopPollingRSSI_WhenConnected_StopsRSSIUpdates() {
         let mockPeripheral = CBPeripheralMock(state: .connected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.startPollingRSSI(period: 0.1)
         mockPeripheral.bcPeripheral = peripheral
         XCTAssertFutureStreamSucceeds(future, timeout: 120, validations: [
@@ -388,7 +379,7 @@ class PeripheralTests: XCTestCase {
 
     func testStopPollingRSSI_WhenDisconnected_StopsRSSIUpdates() {
         let mockPeripheral = CBPeripheralMock(state: .disconnected)
-        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: self.centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
+        let peripheral = Peripheral(cbPeripheral: mockPeripheral, centralManager: centralManager, advertisements: peripheralAdvertisements, RSSI: self.RSSI)
         let future = peripheral.startPollingRSSI(period: 0.1)
         mockPeripheral.bcPeripheral = peripheral
         XCTAssertFutureStreamFails(future, validations: [

@@ -15,11 +15,46 @@ struct BlueCapNotification {
     static let didUpdateBeacon = "DidUpdateBeacon"
 }
 
-enum AppError : Error {
+enum AppError : Error, LocalizedError {
     case rangingBeacons
     case outOfRegion
     case unknownRegionStatus
-    case invalid
+    case serviceNotFound
+    case characteristicNotFound
+    case unlikelyFailure
+    case resetting
+    case poweredOff
+    case unsupported
+    case unknown
+    case unauthorized
+
+    public var errorDescription: String? {
+        switch self {
+        case .rangingBeacons:
+            return NSLocalizedString("Beacon ranging enabled.", comment: "AppError.rangingBeacons")
+        case .outOfRegion:
+            return NSLocalizedString("Outside becan region.", comment: "AppError.outOfRegion")
+        case .unknownRegionStatus:
+            return NSLocalizedString("Unknown region state.", comment: "AppError.unknownRegionStatus")
+        case .serviceNotFound:
+            return NSLocalizedString("Expected service not found.", comment: "AppError.serviceNotFound")
+        case .characteristicNotFound:
+            return NSLocalizedString("Expected characteristic not found..", comment: "AppError.characteristicNotFound")
+        case .unlikelyFailure:
+            return NSLocalizedString("Unlikely failure.", comment: "AppError.unlikelyFailure")
+        case .resetting:
+            return NSLocalizedString("CoreBluetooth resetting.", comment: "AppError.resetting")
+        case .poweredOff:
+            return NSLocalizedString("Bluetooth powered off.", comment: "AppError.poweredOff")
+        case .unsupported:
+            return NSLocalizedString("Bluetooth not supported.", comment: "AppError.unsupported")
+        case .unknown:
+            return NSLocalizedString("Bluetooth state unkown.", comment: "AppError.unkown")
+        case .unauthorized:
+            return NSLocalizedString("Bluetooth state unauthorized.", comment: "AppError.unauthorized")
+        }
+    }
+
 }
 
 struct Singletons {
@@ -28,17 +63,13 @@ struct Singletons {
     static let scanningManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.scanning-manager.main", qos: .background),
                                                 profileManager: Singletons.profileManager,
                                                 options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.scanning-manager" as NSString])
-    static let communicationManager = CentralManager(queue: DispatchQueue(label: "us.gnos.blueCap.communication-manager.main", qos: .background),
-                                                     profileManager: Singletons.profileManager,
-                                                     options: [CBCentralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.communication-manager" as NSString])
-
     static let beaconManager = BeaconManager()
     static let profileManager = ProfileManager()
 }
 
 struct Params {
     static let peripheralsViewRSSIPollingInterval = 5.0
-    static let updateConnectionsInterval = 5.0
+    static let updateConnectionsInterval = 2.0
     static let peripheralViewRSSIPollingInterval = 1.0
     static let peripheralRSSIFutureCapacity = 10
 }
@@ -58,7 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        TISensorTagServiceProfiles.create(profileManager: Singletons.profileManager)
+        TISensorTagProfiles.create(profileManager: Singletons.profileManager)
         BLESIGGATTProfiles.create(profileManager: Singletons.profileManager)
         GnosusProfiles.create(profileManager: Singletons.profileManager)
         NordicProfiles.create(profileManager: Singletons.profileManager)
@@ -94,10 +125,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if Singletons.discoveryManager.peripherals.count > 0 {
             Singletons.discoveryManager.disconnectAllPeripherals()
             Singletons.discoveryManager.removeAllPeripherals()
-        }
-        if Singletons.communicationManager.peripherals.count > 0 {
-            Singletons.communicationManager.disconnectAllPeripherals()
-            Singletons.communicationManager.removeAllPeripherals()
         }
     }
 

@@ -7,15 +7,16 @@
 //
 
 import UIKit
+import BlueCapKit
 
 class ProgressView : UIView {
     
-    let BACKGROUND_ALPHA        : CGFloat           = 0.6
-    let DISPLAY_REMOVE_DURATION : TimeInterval    = 0.5
+    let BACKGROUND_ALPHA: CGFloat = 0.6
+    let DISPLAY_REMOVE_DURATION: TimeInterval = 0.5
     
-    var activityIndicator   : UIActivityIndicatorView!
-    var backgroundView      : UIView!
-    
+    var activityIndicator: UIActivityIndicatorView!
+    var backgroundView: UIView!
+
     var displayed = false
     
     required init?(coder aDecoder: NSCoder) {
@@ -44,22 +45,27 @@ class ProgressView : UIView {
     }
     
     func show(_ view:UIView) {
-        if !self.displayed {
-            self.displayed = true
-            self.activityIndicator.startAnimating()
-            view.addSubview(self)
+        guard !displayed else {
+            return
         }
+        self.displayed = true
+        self.activityIndicator.startAnimating()
+        view.addSubview(self)
     }
     
-    func remove() {
-        if self.displayed {
-            self.displayed = false
-            UIView.animate(withDuration: DISPLAY_REMOVE_DURATION, animations:{
-                    self.alpha = 0.0
-                }, completion:{(finished) in
-                    self.removeFromSuperview()
-                    self.alpha = 1.0
-                })
+    func remove() -> Future<Void> {
+        guard displayed else {
+            return Future(())
         }
+        let promise = Promise<Void>()
+        self.displayed = false
+        UIView.animate(withDuration: DISPLAY_REMOVE_DURATION, animations: { [weak self] in
+            self?.alpha = 0.0
+        }, completion:{ [weak self] finished in
+            promise.success()
+            self?.removeFromSuperview()
+            self?.alpha = 1.0
+        })
+        return promise.future
     }
 }

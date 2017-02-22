@@ -39,9 +39,10 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     func didEnterBackground() {
         Logger.debug()
-        if let peripheralManagerViewController = self.peripheralManagerViewController {
-            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)
+        guard let peripheralManagerViewController = self.peripheralManagerViewController else {
+            return
         }
+        _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
     }
     
     // UITableViewDataSource
@@ -57,13 +58,11 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerServiceCharacteristicDiscreteValueCell, for: indexPath) as UITableViewCell
         let stringValue = characteristic.stringValues[indexPath.row]
         cell.textLabel?.text = stringValue
-        if let valueName = self.characteristic.stringValue?.keys.first {
-            if let value = self.characteristic.stringValue?[valueName] {
-                if value == stringValue {
-                    cell.accessoryType = UITableViewCellAccessoryType.checkmark
-                } else {
-                    cell.accessoryType = UITableViewCellAccessoryType.none
-                }
+        if let valueName = self.characteristic.stringValue?.keys.first, let value = self.characteristic.stringValue?[valueName] {
+            if value == stringValue {
+                cell.accessoryType = UITableViewCellAccessoryType.checkmark
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryType.none
             }
         }
         return cell
@@ -71,18 +70,22 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     // UITableViewDelegate
     override func tableView(_ tableView:UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let characteristic = self.characteristic {
-            if let valueName = self.characteristic.stringValue?.keys.first {
-                let stringValue = [valueName:characteristic.stringValues[indexPath.row]]
-                do {
-                    try characteristic.update(withString: stringValue)
-                    _ = self.navigationController?.popViewController(animated: true)
-                } catch let error {
-                    present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
-                        _ = self?.navigationController?.popViewController(animated: true)
-                    }
+        guard let characteristic = self.characteristic, let valueName = characteristic.stringValue?.keys.first else {
+            return
+        }
+        let stringValue = [valueName : characteristic.stringValues[indexPath.row]]
+        if characteristic.canNotify {
+            do {
+                try characteristic.update(withString: stringValue)
+                _ = self.navigationController?.popViewController(animated: true)
+            } catch let error {
+                present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
+                    _ = self?.navigationController?.popViewController(animated: true)
                 }
             }
+        } else {
+            characteristic.value = characteristic.data(fromString: stringValue)
+            _ = self.navigationController?.popViewController(animated: true)
         }
     }
     

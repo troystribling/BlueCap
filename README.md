@@ -11,20 +11,18 @@ BlueCap provides a swift wrapper around CoreBluetooth and much more.
 # Features
 
 - A [futures](https://github.com/troystribling/SimpleFutures) interface replacing protocol implementations.
-- Connection events for connect, disconnect and timeout.
-- Service scan timeout.
-- Characteristic read/write timeout.
+- Timeout for `Peripheral` connection, `Service` scan, 'Service` and `Characteristic` discovery and `Characteristic` read/write.
 - A DSL for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
-- [Example](/Examples) applications implementing Central and Peripheral roles.
-- A full featured extendable Central scanner and Peripheral emulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
+- [Example](/Examples) applications implementing CentralManager and PeripheralManager.
+- A full featured extendable scanner and Peripheral simulator available in the [App Store](https://itunes.apple.com/us/app/bluecap/id931219725?mt=8#).
 - Thread safe.
 - Comprehensive test coverage.
 
 # Requirements
 
 - iOS 9.0+
-- Xcode 8.1
+- Xcode 8.2
 
 # Installation
 
@@ -45,7 +43,7 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'Your Target Name' do
-  pod 'BlueCapKit', '~> 0.2'
+  pod 'BlueCapKit', '~> 0.5'
 end
 ```
 
@@ -64,7 +62,7 @@ brew install carthage
 To add `BlueCapKit` to your `Cartfile`
 
 ```ogdl
-github "troystribling/BlueCap" ~> 0.2
+github "troystribling/BlueCap" ~> 0.5
 ```
 
 To download and build `BlueCapKit.framework` run the command,
@@ -93,7 +91,7 @@ This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual)
 
 # Getting Started
 
-With BlueCap it is possible to easily implement Central and Peripheral applications, serialize and deserialize messages exchanged with bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe all use cases supported. [Example applications](/Examples) are also available.
+With BlueCap it is possible to easily implement `CentralManager` and `PeripheralManager` applications, serialize and deserialize messages exchanged with Bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [Futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe supported use cases. [Example applications](/Examples) are also available.
  
 ## CentralManager
 
@@ -115,26 +113,30 @@ public enum AppError : Error {
     case resetting
     case poweredOff
     case unknown
+    case unlikely
 }
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
     
-let scanFuture = stateChangeFuture.flatMap { state -> FutureStream<Peripheral> in
-        switch state {
-        case .poweredOn:
-            return manager.startScanning(forServiceUUIDs: [serviceUUID])
-        case .poweredOff:
-            throw AppError.poweredOff
-        case .unauthorized, .unsupported:
-            throw AppError.invalidState
-        case .resetting:
-            throw AppError.resetting
-        case .unknown:
-            throw AppError.unknown
-        }
+let scanFuture = stateChangeFuture.flatMap { [weak manager] state -> FutureStream<Peripheral> in
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }
+    switch state {
+    case .poweredOn:
+        return manager.startScanning(forServiceUUIDs: [serviceUUID])
+    case .poweredOff:
+        throw AppError.poweredOff
+    case .unauthorized, .unsupported:
+        throw AppError.invalidState
+    case .resetting:
+        throw AppError.resetting
+    case .unknown:
+        throw AppError.unknown
+    }
 }
 
-scanFuture.onFailure { error in
+scanFuture.onFailure { [weak manager] error in
     guard let appError = error as? AppError else {
         return
     }
@@ -142,7 +144,7 @@ scanFuture.onFailure { error in
     case .invalidState:
 	      break
     case .resetting:
-        manager.reset()
+        manager?.reset()
     case .poweredOff:
         break
     case .unknown:
@@ -154,72 +156,21 @@ scanFuture.onFailure { error in
 
 Here when `.poweredOn` is received the scan is started. On all other state changes the appropriate error is `thrown` and handled in the error handler.
 
-To connect discovered peripheral the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`,
+To connect discovered peripherals the scan is followed by `Peripheral#connect` and combined with `FutureStream#flatMap`,
 
 ```swift
-let connectionFuture = scanFuture.flatMap { peripheral -> FutureStream<(peripheral: Peripheral, connectionEvent: ConnectionEvent)> in
-    manager.stopScanning()
-    return peripheral.connect(timeoutRetries:5, disconnectRetries:5, connectionTimeout: 10.0)
-}
-```
-
-Here the scan is also stopped after a peripheral with the desire service UUID is discovered.
-
-The `Peripheral` `Services` and `Characteristics` need to be discovered and the connection events need to be handled. `Service` and `Characteristic` discovery are performed by 'Peripheral#discoverServices' and `Service#discoverCharacteristics` and more errors are added to `AppError`.
-
-```swift
-public enum AppError : Error {
-    case dataCharactertisticNotFound
-    case enabledCharactertisticNotFound
-    case updateCharactertisticNotFound
-    case serviceNotFound
-    case disconnected
-    case connectionFailed
-    case invalidState
-    case resetting
-    case poweredOff
-    case unknown
-}
-
 var peripheral: Peripheral?
 
-let discoveryFuture = connectionFuture.flatMap { (peripheral, connectionEvent) -> Future<Peripheral> in
-    switch connectionEvent {
-    case .connect:
-        return peripheral.discoverServices([serviceUUID])
-    case .timeout:
-        throw AppError.disconnected
-    case .disconnect:
-        throw AppError.disconnected
-    case .forceDisconnect:
-        throw AppError.connectionFailed
-    case .giveUp:
-        throw AppError.connectionFailed
-    }
-}.flatMap { discoveredPeripheral -> Future<Service> in
-    guard let service = peripheral.service(serviceUUID) else {
-        throw AppError.serviceNotFound
-    }
+let connectionFuture = scanFuture.flatMap { [weak manager] discoveredPeripheral  -> FutureStream<Void> in
+    manager?.stopScanning()
     peripheral = discoveredPeripheral
-    return service.discover(: [dataUUID, enabledUUID, updatePeriodUUID])
-}
-
-discoveryFuture.onFailure { error in
-    guard let appError = error as? AppError else {
-        return
-    }
-    switch appError {
-    case .serviceNotFound:
-        break
-    case .disconnected:
-        peripheral?.reconnect()
-    case .connectionFailed:
-        peripheral?.terminate()
-    }
+    return peripheral.connect(connectionTimeout: 10.0)
 }
 ```
 
-Finally read and subscribe to the data `Characteristic` and handle the `dataCharactertisticNotFound`.
+Here the scan is also stopped after a peripheral with the desired service UUID is discovered.
+
+The `Peripheral` `Services` and `Characteristics` need to be discovered and the connection errors need to be handled. `Service` and `Characteristic` discovery are performed by 'Peripheral#discoverServices' and `Service#discoverCharacteristics` and more errors are added to `AppError`.
 
 ```swift
 public enum AppError : Error {
@@ -227,37 +178,85 @@ public enum AppError : Error {
     case enabledCharactertisticNotFound
     case updateCharactertisticNotFound
     case serviceNotFound
-    case disconnected
-    case connectionFailed
+    case invalidState
+    case resetting
+    case poweredOff
+    case unknown
+    case unlikely
+}
+
+let discoveryFuture = connectionFuture.flatMap { [weak peripheral] () -> Future<Void> in
+	  guard let peripheral = peripheral else {
+        throw AppError.unlikely
+    }
+    return peripheral.discoverServices([serviceUUID])
+}.flatMap { [weak peripheral] () -> Future<Void> in
+    guard let peripheral = peripheral, let service = peripheral.services(withUUID: serviceUUID)?.first else {
+        throw AppError.serviceNotFound
+    }
+    return service.discoverCharacteristics([dataUUID, enabledUUID, updatePeriodUUID])
+}
+
+discoveryFuture.onFailure { [weak peripheral] error in
+    switch error {
+    case PeripheralError.disconnected:
+        peripheral?.reconnect()
+    case AppError.serviceNotFound:
+        break
+    default:
+		    break
+    }
+}
+```
+
+Here a reconnect attempt is made if the `Peripheral` is disconnected and the `AppError.serviceNotFound` error is handled. Finally read and subscribe to the data `Characteristic` and handle the `dataCharactertisticNotFound`.
+
+```swift
+public enum AppError : Error {
+    case dataCharactertisticNotFound
+    case enabledCharactertisticNotFound
+    case updateCharactertisticNotFound
+    case serviceNotFound
     case invalidState
     case resetting
     case poweredOff
     case unknown
 }
 
-let subscriptionFuture = discoveryFuture.flatMap { service -> Future<Characteristic> in
-    guard let dataCharacteristic = service.characteristic(dataUUID) else {
+var accelerometerDataCharacteristic: Characteristic?
+
+let subscriptionFuture = discoveryFuture.flatMap { [weak peripheral] () -> Future<Void> in
+   guard let peripheral = peripheral, let service = peripheral.services(withUUID: serviceUUID)?.first else {
+        throw AppError.serviceNotFound
+    }
+    guard let dataCharacteristic = service.service.characteristics(withUUID: dataUUID)?.first else {
         throw AppError.dataCharactertisticNotFound
     }
-    self.accelerometerDataCharacteristic = dataCharacteristic
-    return self.accelerometerEnabledCharacteristic.read(timeout: 10.0)
-}.flatMap { _ -> Future<Characteristic> in
-    guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
+    accelerometerDataCharacteristic = dataCharacteristic
+    return dataCharacteristic.read(timeout: 10.0)
+}.flatMap { [weak accelerometerDataCharacteristic] () -> Future<Void> in
+    guard let accelerometerDataCharacteristic = accelerometerDataCharacteristic else {
         throw AppError.dataCharactertisticNotFound
     }
     return accelerometerDataCharacteristic.startNotifying()
-}.flatMap { characteristic -> FutureStream<(characteristic: Characteristic, data: Data?)> in
-    return characteristic.receiveNotificationUpdates(capacity: 10)
+}.flatMap { [weak accelerometerDataCharacteristic] () -> FutureStream<Data?> in
+    guard let accelerometerDataCharacteristic = accelerometerDataCharacteristic else {
+        throw AppError.dataCharactertisticNotFound
+    }
+    return accelerometerDataCharacteristic.receiveNotificationUpdates(capacity: 10)
 }
 
-dataUpdateFuture.onFailure { [unowned self] error in
-    guard let appError = error as? AppError else {
-        return
-    }
-    switch appError {
-    case .dataCharactertisticNotFound:
-       break
+dataUpdateFuture.onFailure { [weak peripheral] error in
+    switch error {
+    case PeripheralError.disconnected:
+        peripheral?.reconnect()
+    case AppError.serviceNotFound:
+        break
+    case AppError.dataCharactertisticNotFound:
+		     break
     default:
+		    break
+    }
 }
 ```
  
@@ -294,11 +293,15 @@ enum AppError: Error {
     case resetting
     case poweredOff
     case unsupported
+    case unlikely
 }
 
 let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
     
-let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<Void> in
+let startAdvertiseFuture = manager.whenStateChanges().flatMap { [weak manager] state -> Future<Void> in
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }
     switch state {
     case .poweredOn:
         manager.removeAllServices()
@@ -312,21 +315,23 @@ let startAdvertiseFuture = manager.whenStateChanges().flatMap { state -> Future<
     case .resetting:
         throw AppError.resetting
     }
-}.flatMap { _ -> Future<Void> in 
-
-manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.uuid)])
+}.flatMap { [weak manager] _ -> Future<Void> in 
+    guard let manager = manager else {
+        throw AppError.unlikely
+    }
+    manager.startAdvertising(TISensorTag.AccelerometerService.name, uuids:[CBUUID(string: TISensorTag.AccelerometerService.uuid)])
 }
 
-startAdvertiseFuture.onFailure { error in
+startAdvertiseFuture.onFailure { [weak manager] error in
     switch error {
     case AppError.poweredOff:
-        manager.reset()            
+        manager?.reset()            
     case AppError.resetting:
-        manager.reset()
+        manager?.reset()
     default:
 	      break
     }
-    manager.stopAdvertising()
+    manager?.stopAdvertising()
 }
 ```
 
@@ -335,16 +340,18 @@ Now respond to write events on `accelerometerEnabledFuture` and `accelerometerUp
 ```swift
 // respond to Update Period write requests
 let accelerometerUpdatePeriodFuture = startAdvertiseFuture.flatMap {
-
-accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
+    accelerometerUpdatePeriodCharacteristic.startRespondingToWriteRequests()
 }
 
-accelerometerUpdatePeriodFuture.onSuccess {  (request, _) in
+accelerometerUpdatePeriodFuture.onSuccess {  [weak accelerometerUpdatePeriodCharacteristic] (request, _) in
+    guard let accelerometerUpdatePeriodCharacteristic = accelerometerUpdatePeriodCharacteristic else {
+        throw AppError.unlikely
+    }
     guard let value = request.value, value.count > 0 && value.count <= 8 else {
         return
     }
-    self.accelerometerUpdatePeriodCharacteristic.value = value
-    self.accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
+    accelerometerUpdatePeriodCharacteristic.value = value
+    accelerometerUpdatePeriodCharacteristic.respondToRequest(request, withResult:CBATTError.success)
 }
 
 // respond to Enabled write requests
@@ -352,12 +359,15 @@ let accelerometerEnabledFuture = startAdvertiseFuture.flatMap {
     accelerometerEnabledCharacteristic.startRespondingToWriteRequests(capacity: 2)
 }
 
-accelerometerEnabledFuture.onSuccess { (request, _) in
+accelerometerEnabledFuture.onSuccess { [weak accelerometerUpdatePeriodCharacteristic] (request, _) in
+    guard let accelerometerEnabledCharacteristic = accelerometerEnabledCharacteristic else {
+        throw AppError.unlikely
+    }
     guard let value = request.value, value.count == 1 else {
         return
     }
-    self.accelerometerEnabledCharacteristic.value = request.value
-    self.accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.success)
+    accelerometerEnabledCharacteristic.value = request.value
+    accelerometerEnabledCharacteristic.respondToRequest(request, withResult:CBATTError.success)
 }
 ```
 
@@ -412,6 +422,11 @@ carthage update
 		<td><a href="/Examples/Beacon">Beacon</a></td>
 		<td>Peripheral emulating an iBeacon.</td>
 	</tr>
+		<tr>
+		<td><a href="/Examples/Beacons">Beacons</a></td>
+		<td>iBeacon ranging.</td>
+	</tr>
+
 
 </table>
 

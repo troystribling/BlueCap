@@ -14,6 +14,9 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
 
     weak var service: Service?
     weak var peripheral: Peripheral?
+    var peripheralDiscoveryFuture: FutureStream<[Void]>?
+
+    let cancelToken = CancelToken()
 
     var dataValid = false
 
@@ -28,36 +31,46 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard peripheral != nil,  service != nil else {
-            _ = self.navigationController?.popToRootViewController(animated: false)
-            return
-        }
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        guard peripheral != nil, service != nil else {
+        guard let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
+            let peripheral = peripheral,
+            service != nil,
+            peripheral.state == .connected
+        else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
         }
-        self.updateWhenActive()
+        updateWhenActive()
+        peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
+            self?.updateWhenActive()
+        }
+        peripheralDiscoveryFuture.onFailure { [weak self] error in
+            self?.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
+            self?.updateWhenActive()
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
+        _ = peripheralDiscoveryFuture?.cancel(cancelToken)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralServiceCharacteristicSegue {
-            if let service = self.service, let peripheral = peripheral {
-                if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
-                    let viewController = segue.destination as! PeripheralServiceCharacteristicViewController
-                    viewController.characteristic = service.characteristics[selectedIndex.row]
-                    viewController.peripheral = peripheral
-                }
+            if let service = service,
+               let peripheral = peripheral,
+               let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell)
+            {
+                let viewController = segue.destination as! PeripheralServiceCharacteristicViewController
+                viewController.characteristic = service.characteristics[selectedIndex.row]
+                viewController.peripheral = peripheral
+                viewController.peripheralDiscoveryFuture = peripheralDiscoveryFuture
             }
         }
     }
@@ -78,7 +91,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     }
     
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let service = self.service {
+        if let service = service {
             return service.characteristics.count
         } else {
             return 0;
@@ -87,17 +100,15 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
     
     override func tableView(_ tableView:UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralServiceCharacteristicCell, for: indexPath) as! NameUUIDCell
-        if let service = self.service {
+        if let service = service, let peripheral = peripheral {
             let characteristic = service.characteristics[indexPath.row]
             cell.nameLabel.text = characteristic.name
             cell.uuidLabel.text = characteristic.uuid.uuidString
+            cell.nameLabel.textColor = peripheral.state == .connected ? UIColor.black : UIColor.lightGray
         }
         return cell
     }
     
-    override func tableView(_ tableView:UITableView, didSelectRowAt indexPath: IndexPath) {
-    }
-
     // UITableViewDelegate
 
 }

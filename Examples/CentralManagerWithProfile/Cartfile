@@ -1,1 +1,1 @@
-github "troystribling/BlueCap" "next_release" 
+github "troystribling/BlueCap" ~> 0.5 

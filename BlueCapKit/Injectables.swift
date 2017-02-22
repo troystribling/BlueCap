@@ -32,7 +32,7 @@ public enum ManagerState: CustomStringConvertible {
 }
 
 // MARK: - CBCentralManagerInjectable -
-protocol CBCentralManagerInjectable {
+protocol CBCentralManagerInjectable: class {
     var managerState : ManagerState { get }
     var delegate: CBCentralManagerDelegate? { get set }
     func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?)
@@ -82,7 +82,7 @@ extension CBCentralManager : CBCentralManagerInjectable {
 }
 
 // MARK: - CBPeripheralInjectable -
-protocol CBPeripheralInjectable {
+protocol CBPeripheralInjectable: class {
     var name: String? { get }
     var state: CBPeripheralState { get }
     var identifier: UUID { get }
@@ -98,7 +98,7 @@ protocol CBPeripheralInjectable {
     func getServices() -> [CBServiceInjectable]?
 }
 
-extension CBPeripheral : CBPeripheralInjectable {
+extension CBPeripheral: CBPeripheralInjectable {
 
     func discoverCharacteristics(_ characteristics:[CBUUID]?, forService service: CBServiceInjectable) {
         self.discoverCharacteristics(characteristics, for: service as! CBService)
@@ -117,14 +117,14 @@ extension CBPeripheral : CBPeripheralInjectable {
     }
 
     func getServices() -> [CBServiceInjectable]? {
-        guard let services = self.services else { return nil }
+        guard let services = services else { return nil }
         return services.map{ $0 as CBServiceInjectable }
     }
     
 }
 
 // MARK: - CBServiceInjectable -
-protocol CBServiceInjectable {
+protocol CBServiceInjectable: class {
     var uuid: CBUUID { get }
     func getCharacteristics() -> [CBCharacteristicInjectable]?
 }
@@ -137,7 +137,7 @@ extension CBService : CBServiceInjectable {
 }
 
 // MARK: - CBCharacteristicInjectable -
-public protocol CBCharacteristicInjectable {
+public protocol CBCharacteristicInjectable: class {
     var uuid: CBUUID { get }
     var value: Data? { get }
     var properties: CBCharacteristicProperties { get }
@@ -198,18 +198,18 @@ extension CBPeripheralManager: CBPeripheralManagerInjectable {
 }
 
 // MARK: - CBMutableServiceInjectable -
-protocol CBMutableServiceInjectable : CBServiceInjectable {
+protocol CBMutableServiceInjectable: CBServiceInjectable {
     func setCharacteristics(_ characteristics: [CBCharacteristicInjectable]?)
 }
 
-extension CBMutableService : CBMutableServiceInjectable {
+extension CBMutableService: CBMutableServiceInjectable {
     func setCharacteristics(_ characteristics: [CBCharacteristicInjectable]?) {
         self.characteristics = characteristics?.map { $0 as! CBCharacteristic }
     }
 }
 
 // MARK: - CBMutableCharacteristicInjectable -
-protocol CBMutableCharacteristicInjectable : CBCharacteristicInjectable {
+protocol CBMutableCharacteristicInjectable: CBCharacteristicInjectable {
     var permissions: CBAttributePermissions { get }
 }
 

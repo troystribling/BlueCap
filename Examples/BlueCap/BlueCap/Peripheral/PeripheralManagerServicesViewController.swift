@@ -12,12 +12,11 @@ import BlueCapKit
 
 class PeripheralManagerServicesViewController : UITableViewController {
     
-    var peripheral                      : String?
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    var peripheralManagerViewController: PeripheralManagerViewController?
     
     struct MainStoryboard {
-        static let peripheralManagerServiceCell                 = "PeripheralManagerServiceCell"
-        static let peripheralManagerServiceProfilesSegue        = "PeripheralManagerServiceProfiles"
+        static let peripheralManagerServiceCell = "PeripheralManagerServiceCell"
+        static let peripheralManagerServiceProfilesSegue = "PeripheralManagerServiceProfiles"
         static let peripheralManagerServiceCharacteristicsSegue = "PeripheralManagerServiceCharacteristics"
     }
     
@@ -31,7 +30,6 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = "Services"
         self.tableView.reloadData()
         if Singletons.peripheralManager.isAdvertising {
             self.navigationItem.rightBarButtonItem!.isEnabled = false
@@ -42,14 +40,12 @@ class PeripheralManagerServicesViewController : UITableViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationItem.title = ""
         NotificationCenter.default.removeObserver(self)
     }
     
     override func prepare(for segue:UIStoryboardSegue, sender:Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceProfilesSegue {
             let viewController = segue.destination as! PeripheralManagerServiceProfilesViewController
-            viewController.peripheral = self.peripheral
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
             }
@@ -98,13 +94,13 @@ class PeripheralManagerServicesViewController : UITableViewController {
     
     override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
         if editingStyle == UITableViewCellEditingStyle.delete {
-            if let peripheral = self.peripheral {
-                let service = Singletons.peripheralManager.services[indexPath.row]
-                Singletons.peripheralManager.remove(service)
-                PeripheralStore.removeAdvertisedPeripheralService(peripheral, service: service.uuid)
-                PeripheralStore.removePeripheralService(peripheral, service: service.uuid)
-                self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
+            let service = Singletons.peripheralManager.services[indexPath.row]
+            Singletons.peripheralManager.remove(service)
+            PeripheralStore.removeSupportedPeripheralService(service.uuid)
+            if PeripheralStore.getSupportedPeripheralServices().count == 0 {
+                PeripheralStore.removeAdvertisedPeripheralService(service.uuid)
             }
+            self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
         }
     }
 

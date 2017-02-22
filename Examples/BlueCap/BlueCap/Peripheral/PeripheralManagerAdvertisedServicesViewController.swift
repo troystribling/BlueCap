@@ -16,8 +16,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         static let peripheralManagerAdvertisedServiceCell       = "PeripheralManagerAdvertisedServiceCell"
     }
     
-    var peripheral                      : String?
-    var peripheralManagerViewController : PeripheralManagerViewController?
+    var peripheralManagerViewController: PeripheralManagerViewController?
     
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
@@ -43,7 +42,6 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == MainStoryboard.peripheralManagerAddAdvertisedServiceSegue {
             let viewController = segue.destination as! PeripheralManagerAddAdvertisedServiceViewController
-            viewController.peripheral = self.peripheral
             if let peripheralManagerViewController = self.peripheralManagerViewController {
                 viewController.peripheralManagerViewController = peripheralManagerViewController
             }
@@ -52,9 +50,10 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     
     func didEnterBackground() {
         Logger.debug()
-        if let peripheralManagerViewController = self.peripheralManagerViewController {
-            _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
+        guard let peripheralManagerViewController = self.peripheralManagerViewController else {
+            return
         }
+        _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
     }
     
     override func numberOfSections(in tableView:UITableView) -> Int {
@@ -62,25 +61,16 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     }
 
     override func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int {
-        if let peripheral = self.peripheral {
-            return PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral).count
-        } else {
-            return 0
-        }
+        return PeripheralStore.getAdvertisedPeripheralServices().count
     }
 
     override func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerAdvertisedServiceCell, for: indexPath) as! NameUUIDCell
-        if let peripheral = self.peripheral {
-            let serviceUUID = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)[(indexPath as NSIndexPath).row]
-            cell.uuidLabel.text = serviceUUID.uuidString
-            if let service = Singletons.peripheralManager.service(withUUID: serviceUUID) {
-                cell.nameLabel.text = service.name
-            } else {
-                cell.nameLabel.text = "Unknown"
-            }
+        let serviceUUID = PeripheralStore.getAdvertisedPeripheralServices()[(indexPath as NSIndexPath).row]
+        cell.uuidLabel.text = serviceUUID.uuidString
+        if let service = Singletons.peripheralManager.service(withUUID: serviceUUID)?.first {
+            cell.nameLabel.text = service.name
         } else {
-            cell.uuidLabel.text = "Unknown"
             cell.nameLabel.text = "Unknown"
         }
         return cell
@@ -92,11 +82,9 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
 
     override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
         if editingStyle == .delete {
-            if let peripheral = self.peripheral {
-                let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServicesForPeripheral(peripheral)
-                PeripheralStore.removeAdvertisedPeripheralService(peripheral, service:serviceUUIDs[(indexPath as NSIndexPath).row])
-                tableView.deleteRows(at: [indexPath], with:.fade)
-            }
+            let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServices()
+            PeripheralStore.removeAdvertisedPeripheralService(serviceUUIDs[(indexPath as NSIndexPath).row])
+            tableView.deleteRows(at: [indexPath], with:.fade)
         }
     }
 

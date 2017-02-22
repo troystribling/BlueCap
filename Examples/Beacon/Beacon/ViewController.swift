@@ -62,7 +62,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
 
     @IBAction func toggleAdvertise(_ sender: AnyObject) {
         if manager.isAdvertising {
-            manager.stopAdvertising()
+            _ = manager.stopAdvertising()
         } else {
             startAdvertising()
         }
@@ -142,7 +142,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                     self.manager.reset()
                 }, animated: true, completion: nil)
             }
-            self.manager.stopAdvertising()
+            _ = self.manager.stopAdvertising()
         }
     }
 

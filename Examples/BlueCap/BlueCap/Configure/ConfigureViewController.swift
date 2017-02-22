@@ -45,9 +45,6 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var maximumPeripheralsDiscoveredTitleLabel: UILabel!
     @IBOutlet var maximumPeripheralsDiscoveredLabel: UILabel!
 
-    @IBOutlet var peripheralSortOrderTitleLabel: UILabel!
-    @IBOutlet var peripheralSortOrderLabel: UILabel!
-
     @IBOutlet var notifySwitch: UISwitch!
 
     struct MainStroryboard {
@@ -82,7 +79,6 @@ class ConfigureViewController : UITableViewController {
         self.characteristicReadWriteTimeoutLabel.text = "\(ConfigStore.getCharacteristicReadWriteTimeout())s"
         self.maximumPeripheralsConnectedLabel.text = "\(ConfigStore.getMaximumPeripheralsConnected())"
         self.maximumPeripheralsDiscoveredLabel.text = "\(ConfigStore.getMaximumPeripheralsDiscovered())"
-        self.peripheralSortOrderLabel.text = ConfigStore.getPeripheralSortOrder().stringValue
         self.configUI()
         self.navigationItem.title = "Configure"
         super.viewWillAppear(animated)
@@ -153,8 +149,6 @@ class ConfigureViewController : UITableViewController {
         self.maximumPeripheralsConnectedTitleLabel.textColor = self.labelColorIfScanning()
 
         self.maximumPeripheralsDiscoveredTitleLabel.textColor = self.labelColorIfScanning()
-
-        self.peripheralSortOrderTitleLabel.textColor = self.labelColorIfScanning()
     }
 
     func labelColorIfScanning() -> UIColor {

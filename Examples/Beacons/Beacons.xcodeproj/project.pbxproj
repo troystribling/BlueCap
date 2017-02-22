@@ -1,0 +1,436 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0503536E1AD20CCB006AE6FB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0503536D1AD20CCB006AE6FB /* AppDelegate.swift */; };
+		050353701AD20CCB006AE6FB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0503536F1AD20CCB006AE6FB /* ViewController.swift */; };
+		050353731AD20CCB006AE6FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 050353711AD20CCB006AE6FB /* Main.storyboard */; };
+		050353751AD20CCB006AE6FB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 050353741AD20CCB006AE6FB /* Images.xcassets */; };
+		050353781AD20CCB006AE6FB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 050353761AD20CCB006AE6FB /* LaunchScreen.xib */; };
+		050353AD1AD2DF64006AE6FB /* BeaconsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050353AC1AD2DF64006AE6FB /* BeaconsViewController.swift */; };
+		050353B01AD2DFAA006AE6FB /* BeaconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050353AF1AD2DFAA006AE6FB /* BeaconCell.swift */; };
+		050353B41AD2E232006AE6FB /* Notify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050353B21AD2E232006AE6FB /* Notify.swift */; };
+		050353B51AD2E232006AE6FB /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050353B31AD2E232006AE6FB /* UIAlertControllerExtensions.swift */; };
+		050353BD1AD57DB0006AE6FB /* BeaconStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050353BC1AD57DB0006AE6FB /* BeaconStore.swift */; };
+		05F5B2821AD9B31E00432393 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F5B2811AD9B31E00432393 /* ProgressView.swift */; };
+		1448C4ADB33C80407D2C0BE6 /* Pods_Beacons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB362ADC4A9D75D8BE44D4 /* Pods_Beacons.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		050353A41AD20FC2006AE6FB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		050353681AD20CCB006AE6FB /* Beacons.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Beacons.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0503536C1AD20CCB006AE6FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0503536D1AD20CCB006AE6FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0503536F1AD20CCB006AE6FB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		050353721AD20CCB006AE6FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		050353741AD20CCB006AE6FB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		050353771AD20CCB006AE6FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		050353AC1AD2DF64006AE6FB /* BeaconsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconsViewController.swift; sourceTree = "<group>"; };
+		050353AF1AD2DFAA006AE6FB /* BeaconCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconCell.swift; sourceTree = "<group>"; };
+		050353B21AD2E232006AE6FB /* Notify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notify.swift; sourceTree = "<group>"; };
+		050353B31AD2E232006AE6FB /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
+		050353BC1AD57DB0006AE6FB /* BeaconStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconStore.swift; sourceTree = "<group>"; };
+		05F5B2811AD9B31E00432393 /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		368D0D37C4D5BF852547C82D /* Pods-Beacons.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Beacons.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Beacons/Pods-Beacons.debug.xcconfig"; sourceTree = "<group>"; };
+		AC6D86FE76E78CFBFA1B8D38 /* Pods-Beacons.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Beacons.release.xcconfig"; path = "Pods/Target Support Files/Pods-Beacons/Pods-Beacons.release.xcconfig"; sourceTree = "<group>"; };
+		B7FB362ADC4A9D75D8BE44D4 /* Pods_Beacons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Beacons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		050353651AD20CCB006AE6FB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1448C4ADB33C80407D2C0BE6 /* Pods_Beacons.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0503535F1AD20CCB006AE6FB = {
+			isa = PBXGroup;
+			children = (
+				0503536A1AD20CCB006AE6FB /* Beacons */,
+				050353691AD20CCB006AE6FB /* Products */,
+				2BAC2CC74C48C0C87BCC91B5 /* Pods */,
+				9C365D50A1EAFD5FD43D2A3A /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		050353691AD20CCB006AE6FB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				050353681AD20CCB006AE6FB /* Beacons.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0503536A1AD20CCB006AE6FB /* Beacons */ = {
+			isa = PBXGroup;
+			children = (
+				0503536D1AD20CCB006AE6FB /* AppDelegate.swift */,
+				050353AF1AD2DFAA006AE6FB /* BeaconCell.swift */,
+				050353BC1AD57DB0006AE6FB /* BeaconStore.swift */,
+				050353AC1AD2DF64006AE6FB /* BeaconsViewController.swift */,
+				050353B21AD2E232006AE6FB /* Notify.swift */,
+				05F5B2811AD9B31E00432393 /* ProgressView.swift */,
+				050353B31AD2E232006AE6FB /* UIAlertControllerExtensions.swift */,
+				0503536F1AD20CCB006AE6FB /* ViewController.swift */,
+				050353741AD20CCB006AE6FB /* Images.xcassets */,
+				050353761AD20CCB006AE6FB /* LaunchScreen.xib */,
+				050353711AD20CCB006AE6FB /* Main.storyboard */,
+				0503536B1AD20CCB006AE6FB /* Supporting Files */,
+			);
+			path = Beacons;
+			sourceTree = "<group>";
+		};
+		0503536B1AD20CCB006AE6FB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0503536C1AD20CCB006AE6FB /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2BAC2CC74C48C0C87BCC91B5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				368D0D37C4D5BF852547C82D /* Pods-Beacons.debug.xcconfig */,
+				AC6D86FE76E78CFBFA1B8D38 /* Pods-Beacons.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		9C365D50A1EAFD5FD43D2A3A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B7FB362ADC4A9D75D8BE44D4 /* Pods_Beacons.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		050353671AD20CCB006AE6FB /* Beacons */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 050353871AD20CCB006AE6FB /* Build configuration list for PBXNativeTarget "Beacons" */;
+			buildPhases = (
+				1A2D9048888FB72D35712D11 /* [CP] Check Pods Manifest.lock */,
+				050353641AD20CCB006AE6FB /* Sources */,
+				050353651AD20CCB006AE6FB /* Frameworks */,
+				050353661AD20CCB006AE6FB /* Resources */,
+				050353A41AD20FC2006AE6FB /* Embed Frameworks */,
+				9393D9FEE6FF6F55F78AB4DA /* [CP] Embed Pods Frameworks */,
+				B4BC34A5B912975F2B8EC3F3 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Beacons;
+			productName = Beacons;
+			productReference = 050353681AD20CCB006AE6FB /* Beacons.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		050353601AD20CCB006AE6FB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "Troy Stribling";
+				TargetAttributes = {
+					050353671AD20CCB006AE6FB = {
+						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = HZEX459C37;
+						LastSwiftMigration = 0810;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 050353631AD20CCB006AE6FB /* Build configuration list for PBXProject "Beacons" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0503535F1AD20CCB006AE6FB;
+			productRefGroup = 050353691AD20CCB006AE6FB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				050353671AD20CCB006AE6FB /* Beacons */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		050353661AD20CCB006AE6FB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				050353731AD20CCB006AE6FB /* Main.storyboard in Resources */,
+				050353781AD20CCB006AE6FB /* LaunchScreen.xib in Resources */,
+				050353751AD20CCB006AE6FB /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1A2D9048888FB72D35712D11 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9393D9FEE6FF6F55F78AB4DA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Beacons/Pods-Beacons-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B4BC34A5B912975F2B8EC3F3 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Beacons/Pods-Beacons-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		050353641AD20CCB006AE6FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				050353701AD20CCB006AE6FB /* ViewController.swift in Sources */,
+				0503536E1AD20CCB006AE6FB /* AppDelegate.swift in Sources */,
+				050353BD1AD57DB0006AE6FB /* BeaconStore.swift in Sources */,
+				050353AD1AD2DF64006AE6FB /* BeaconsViewController.swift in Sources */,
+				050353B01AD2DFAA006AE6FB /* BeaconCell.swift in Sources */,
+				05F5B2821AD9B31E00432393 /* ProgressView.swift in Sources */,
+				050353B51AD2E232006AE6FB /* UIAlertControllerExtensions.swift in Sources */,
+				050353B41AD2E232006AE6FB /* Notify.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		050353711AD20CCB006AE6FB /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				050353721AD20CCB006AE6FB /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		050353761AD20CCB006AE6FB /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				050353771AD20CCB006AE6FB /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		050353851AD20CCB006AE6FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 2.3;
+			};
+			name = Debug;
+		};
+		050353861AD20CCB006AE6FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 2.3;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		050353881AD20CCB006AE6FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 368D0D37C4D5BF852547C82D /* Pods-Beacons.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = HZEX459C37;
+				INFOPLIST_FILE = Beacons/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		050353891AD20CCB006AE6FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AC6D86FE76E78CFBFA1B8D38 /* Pods-Beacons.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = HZEX459C37;
+				INFOPLIST_FILE = Beacons/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		050353631AD20CCB006AE6FB /* Build configuration list for PBXProject "Beacons" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				050353851AD20CCB006AE6FB /* Debug */,
+				050353861AD20CCB006AE6FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		050353871AD20CCB006AE6FB /* Build configuration list for PBXNativeTarget "Beacons" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				050353881AD20CCB006AE6FB /* Debug */,
+				050353891AD20CCB006AE6FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 050353601AD20CCB006AE6FB /* Project object */;
+}

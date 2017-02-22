@@ -31,11 +31,11 @@ public class MutableCharacteristic : NSObject {
         return service?.peripheralManager?.peripheralQueue
     }
 
+    public let uuid: CBUUID
+
     public var value: Data? {
         get {
-            return peripheralQueue?.sync {
-                return self._value
-            }
+            return peripheralQueue?.sync { return self._value }
         }
         set {
             peripheralQueue?.sync { self._value = newValue }
@@ -48,24 +48,20 @@ public class MutableCharacteristic : NSObject {
         }
     }
 
-    public var uuid: CBUUID {
-        return self.profile.uuid
-    }
-
     public var name: String {
-        return self.profile.name
+        return profile.name
     }
     
     public var stringValues: [String] {
-        return self.profile.stringValues
+        return profile.stringValues
     }
     
     public var permissions: CBAttributePermissions {
-        return self.cbMutableChracteristic.permissions
+        return cbMutableChracteristic.permissions
     }
     
     public var properties: CBCharacteristicProperties {
-        return self.cbMutableChracteristic.properties
+        return cbMutableChracteristic.properties
     }
 
     public var subscribers: [CBCentralInjectable] {
@@ -88,7 +84,7 @@ public class MutableCharacteristic : NSObject {
         }
     }
 
-    open var canNotify : Bool {
+    public var canNotify : Bool {
         return self.propertyEnabled(.notify)                    ||
                self.propertyEnabled(.indicate)                  ||
                self.propertyEnabled(.notifyEncryptionRequired)  ||
@@ -98,26 +94,28 @@ public class MutableCharacteristic : NSObject {
     // MARK: Initializers
 
     public convenience init(profile: CharacteristicProfile) {
-        let cbMutableChracteristic = CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions)
-        self.init(cbMutableCharacteristic: cbMutableChracteristic, profile: profile)
+        self.init(cbMutableCharacteristic: CBMutableCharacteristic(type: profile.uuid, properties: profile.properties, value: nil, permissions: profile.permissions), profile: profile)
     }
 
     internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable, profile: CharacteristicProfile) {
         self.profile = profile
         self._value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
+        uuid = CBUUID(data: cbMutableCharacteristic.uuid.data)
     }
 
     internal init(cbMutableCharacteristic: CBMutableCharacteristicInjectable) {
         self.profile = CharacteristicProfile(uuid: cbMutableCharacteristic.uuid.uuidString)
         self._value = profile.initialValue
         self.cbMutableChracteristic = cbMutableCharacteristic
+        uuid = CBUUID(data: cbMutableCharacteristic.uuid.data)
     }
 
     public init(UUID: String, properties: CBCharacteristicProperties, permissions: CBAttributePermissions, value: Data?) {
         self.profile = CharacteristicProfile(uuid: UUID)
         self._value = value
-        self.cbMutableChracteristic = CBMutableCharacteristic(type:self.profile.uuid, properties:properties, value:nil, permissions:permissions)
+        self.cbMutableChracteristic = CBMutableCharacteristic(type: self.profile.uuid, properties: properties, value: nil, permissions: permissions)
+        uuid = CBUUID(data: self.profile.uuid.data)
     }
 
     public convenience init(UUID: String) {
@@ -159,7 +157,7 @@ public class MutableCharacteristic : NSObject {
             return self.processWriteRequestPromise!.stream
         } ?? FutureStream(error: MutableCharacteristicError.unconfigured)
     }
-    
+
     public func stopRespondingToWriteRequests() {
         peripheralQueue?.sync {
             self.processWriteRequestPromise = nil
@@ -249,9 +247,7 @@ public class MutableCharacteristic : NSObject {
         if let peripheralManager = service?.peripheralManager, _isUpdating {
             for value in values {
                 _isUpdating = peripheralManager.updateValue(value, forCharacteristic: self)
-                if !_isUpdating {
-                    queuedUpdates.append(value)
-                }
+                if !_isUpdating { queuedUpdates.append(value) }
             }
         } else {
             _isUpdating = false

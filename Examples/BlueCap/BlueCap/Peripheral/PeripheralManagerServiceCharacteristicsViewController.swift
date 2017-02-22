@@ -44,13 +44,14 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
     
     override func prepare(for segue:UIStoryboardSegue, sender: Any!) {
         if segue.identifier == MainStoryboard.peripheralManagerServiceCharacteristicSegue {
-            if let service = self.service {
-                if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
-                    let viewController = segue.destination as! PeripheralManagerServiceCharacteristicViewController
-                    viewController.characteristic = service.characteristics[selectedIndex.row]
-                    if let peripheralManagerViewController = self.peripheralManagerViewController {
-                        viewController.peripheralManagerViewController = peripheralManagerViewController
-                    }
+            guard let service = self.service  else {
+                return
+            }
+            if let selectedIndex = self.tableView.indexPath(for: sender as! UITableViewCell) {
+                let viewController = segue.destination as! PeripheralManagerServiceCharacteristicViewController
+                viewController.characteristic = service.characteristics[selectedIndex.row]
+                if let peripheralManagerViewController = self.peripheralManagerViewController {
+                    viewController.peripheralManagerViewController = peripheralManagerViewController
                 }
             }
         }

@@ -15,7 +15,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1</string>
+	<string>2.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -23,11 +23,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Peripheral and application development</string>
+	<string>Peripheral Simulation</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Required for iBeacon ranging.</string>
+	<string>iBeacon ranging.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Required for iBeacon ranging.</string>
+	<string>iBeacon ranging.</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<false/>
 	<key>UIBackgroundModes</key>
