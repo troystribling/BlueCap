@@ -108,11 +108,13 @@ public class Characteristic : NSObject {
 
     // MARK: Data Access
     public func stringValue(_ data: Data?) -> [String : String]? {
-        if let data = data {
-            return profile?.stringValue(data)
-        } else {
+        guard let uuidString = cbCharacteristic?.uuid.uuidString else {
             return nil
         }
+        guard let data = data else {
+            return nil
+        }
+        return profile?.stringValue(data) ?? CharacteristicProfile(uuid: uuidString).stringValue(data)
     }
     
     public func data(fromString stringValue: [String : String]) -> Data? {
