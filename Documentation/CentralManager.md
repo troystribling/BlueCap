@@ -283,7 +283,7 @@ connectionFuture.onFailure { error in
 
 ```
 
-Here the `scanFuture` is completed after `Peripheral` discovery and `flatMap` combines it with the connection `FutureStream`. This ensures that connections are made after `Peripherals` are discovered. Connection errors are handled in `onFailure`. Here a reconnection attempt is made on `PeripheralError.disconnected` and a disconnect is performed on `PeripheralError.connectionTimeout`. Note that if `PeripheralError.connectionTimeout` is received to stop trying to connect `Peripheral#disconnect` must be called. The framework will not stop trying to connect otherwise.
+Here the `scanFuture` is completed after `Peripheral` discovery and `flatMap` combines it with the connection `FutureStream`. This ensures that connections are made after `Peripherals` are discovered. Connection errors are handled in `onFailure`. A reconnection attempt is made on `PeripheralError.disconnected` and a disconnect is performed on `PeripheralError.connectionTimeout`. Note that if `PeripheralError.connectionTimeout` is received to stop trying to connect `Peripheral#disconnect` must be called. The framework will not stop trying to connect otherwise.
 
 ### <a name="central_characteristic_discovery">Service and Characteristic Discovery</a>
 
