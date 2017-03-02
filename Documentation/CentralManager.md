@@ -236,8 +236,6 @@ The input parameters are,
 	</tr>
 </table>
 
-Other `Peripheral` connection management methods are,
-
 ```swift
 // Reconnect with specified delay
 public func reconnect(withDelay delay: Double = 0.0)
@@ -277,7 +275,7 @@ connectionFuture.onFailure { error in
     case PeripheralError.forcedDisconnect:
         break
     case PeripheralError.connectionTimeout:
-        break
+        discoveredPeripheral.disconnect()
     default:
         break
     }
@@ -285,7 +283,7 @@ connectionFuture.onFailure { error in
 
 ```
 
-Here the `scanFuture` is completed after `Peripheral` discovery and `flatMap` combines it with the connection `FutureStream`. This ensures that connections are made after `Peripherals` are discovered. The connection is configured for a maximum of 5 timeout retries and 5 disconnect retries. If either of these thresholds is exceeded a `PeripheralError.connectionTimeout` or `PeripheralError.disconnected`. is thrown
+Here the `scanFuture` is completed after `Peripheral` discovery and `flatMap` combines it with the connection `FutureStream`. This ensures that connections are made after `Peripherals` are discovered. Connection errors are handled in `onFailure`. Here a reconnection attempt is made on `PeripheralError.disconnected` and a disconnect is performed on `PeripheralError.connectionTimeout`. Note that if `PeripheralError.connectionTimeout` is received to stop trying to connect `Peripheral#disconnect` must be called. The framework will not stop trying to connect otherwise.
 
 ### <a name="central_characteristic_discovery">Service and Characteristic Discovery</a>
 
