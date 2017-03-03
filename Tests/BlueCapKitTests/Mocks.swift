@@ -178,12 +178,10 @@ class CBPeripheralMock: CBPeripheralInjectable {
 
 class PeripheralUT: Peripheral {
     
-    let error: Error?
-    
-    init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String: AnyObject], rssi: Int, error: Error?) {
-        self.error = error
-        super.init(cbPeripheral: cbPeripheral, centralManager: centralManager, advertisements: advertisements, RSSI: rssi)
-    }    
+    override func cancelPeripheralConnection(withTerminationStatus terminationStatus: PeripheralTerminationStatus) {
+        super.cancelPeripheralConnection(withTerminationStatus: terminationStatus)
+        didDisconnectPeripheral(nil)
+    }
 }
 
 // MARK: - CBServiceMock -

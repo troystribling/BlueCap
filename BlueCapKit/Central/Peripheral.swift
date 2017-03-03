@@ -16,23 +16,6 @@ enum PeripheralTerminationStatus {
 
 // MARK: - PeripheralAdvertisements -
 
-public extension CBPeripheralState {
-    public var stringValue: String {
-        switch self {
-        case .disconnected:
-            return "disconnected"
-        case .connected:
-            return "connected"
-        case .disconnecting:
-            return "disconnecting"
-        case .connecting:
-            return "connecting"
-        }
-    }
-}
-
-// MARK: - PeripheralAdvertisements -
-
 public struct PeripheralAdvertisements {
     
     let advertisements: [String : Any]
@@ -313,20 +296,15 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         cancelPeripheralConnection(withTerminationStatus: .forcedDisconnect)
     }
 
-    fileprivate func cancelPeripheralConnection(withTerminationStatus terminationStatus: PeripheralTerminationStatus) {
+    func cancelPeripheralConnection(withTerminationStatus terminationStatus: PeripheralTerminationStatus) {
         guard let central = self.centralManager else {
             return
         }
         pollRSSIPromise = nil
         readRSSIPromise = nil
         self.terminationStatus = terminationStatus
-        if state == .connected {
-            Logger.debug("disconnecting name=\(self.name), uuid=\(identifier.uuidString)")
-            central.cancelPeripheralConnection(cbPeripheral)
-        } else {
-            Logger.debug("already disconnected name=\(self.name), uuid=\(identifier.uuidString)")
-            didDisconnectPeripheral(PeripheralError.disconnected)
-        }
+        Logger.debug("disconnecting name=\(self.name), uuid=\(identifier.uuidString)")
+        central.cancelPeripheralConnection(cbPeripheral)
     }
 
     // MARK: Discover Services
