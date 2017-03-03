@@ -250,7 +250,7 @@ public func terminate()
 
 The `Peripheral#reconnect` method is used to establish a connection to a previously connected `Peripheral`. The method takes a single parameter `reconnectDelay` used to specify a delay, in seconds, before trying to reconnect. The default value is `0.0` seconds. If it is called before `Peripheral#connect` a connection with default parameters will be attempted.
 
-`Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and `throws` `PeripheralError.forcedDisconnect`. If the `Peripheral` is disconnected and the method is called `PeripheralError.forcedDisconnect` is also `thrown`.
+`Peripheral#disconnect` preforms and immediate disconnection from the connected `Peripheral` and `throws` `PeripheralError.forcedDisconnect`.
 
 `Peripheral#terminate` performs a `Peripheral#disconnect` and also removes the `Peripheral` from the application cache.
 
