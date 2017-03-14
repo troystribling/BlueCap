@@ -45,8 +45,6 @@ class ConfigureViewController : UITableViewController {
     @IBOutlet var maximumPeripheralsDiscoveredTitleLabel: UILabel!
     @IBOutlet var maximumPeripheralsDiscoveredLabel: UILabel!
 
-    @IBOutlet var notifySwitch: UISwitch!
-
     struct MainStroryboard {
         static let configureScanServicesSegue = "ConfigureScanServices"
         static let configureScanModeSegue = "ConfigureScanMode"
@@ -67,7 +65,6 @@ class ConfigureViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.styleNavigationBar()
-        self.notifySwitch.isOn = Notification.getEnabled()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -104,7 +101,6 @@ class ConfigureViewController : UITableViewController {
     }
     
     @IBAction func toggelNotification(_: AnyObject) {
-        Notification.setEnable(self.notifySwitch.isOn)
     }
 
     @IBAction func toggelPeripheralConnectionTimeout(_: AnyObject) {
