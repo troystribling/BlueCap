@@ -10,48 +10,72 @@ import Foundation
 import CoreLocation
 
 // MARK: - Errors -
-public enum LocationError : Swift.Error {
-    case notAvailable
+
+public enum LocationError : Swift.Error, LocalizedError {
     case updateFailed
     case authorizationAlwaysFailed
     case authorizationWhenInUseFailed
     case authroizationInvalid
     case authorizationFailed
+    
+    public var errorDescription: String? {
+        switch self {
+        case .updateFailed:
+            return NSLocalizedString("Location update failed.", comment: "LocationError.updateFailed")
+        case .authorizationAlwaysFailed:
+            return NSLocalizedString("Location Authorizarion Always failed.", comment: "LocationError.authorizationAlwaysFailed")
+        case .authorizationWhenInUseFailed:
+            return NSLocalizedString("Location Authorization When In Use failed.", comment: "LocationError.authorizationWhenInUseFailed")
+        case .authroizationInvalid:
+            return NSLocalizedString("Location Authorization Invalid.", comment: "LocationError.authroizationInvalid")
+        case .authorizationFailed:
+            return NSLocalizedString("Location Authorization Falied.", comment: "LocationError.authorizationFailed")
+
+        }
+    }
+
 }
 
 // MARK: - CLLocationManagerInjectable -
+
 public protocol CLLocationManagerInjectable {
 
     var delegate: CLLocationManagerDelegate? { get set }
 
     // MARK: Authorization
+    
     static func authorizationStatus() -> CLAuthorizationStatus
     func requestAlwaysAuthorization()
     func requestWhenInUseAuthorization()
 
     // MARK: Configure
+    
     var pausesLocationUpdatesAutomatically: Bool { get set }
     var activityType: CLActivityType { get set }
     var distanceFilter : CLLocationDistance { get set }
     var desiredAccuracy: CLLocationAccuracy { get set }
 
     // MARK: Location Updates
+    
     var location: CLLocation? { get }
     static func locationServicesEnabled() -> Bool
     func requestLocation()
     func startUpdatingLocation()
     func stopUpdatingLocation()
 
-     // MARK: Deferred Location Updates
+    // MARK: Deferred Location Updates
+    
     static func deferredLocationUpdatesAvailable() -> Bool
     func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: TimeInterval)
 
     // MARK: Significant Change in Location
+    
     static func significantLocationChangeMonitoringAvailable() -> Bool
     func startMonitoringSignificantLocationChanges()
     func stopMonitoringSignificantLocationChanges()
 
     // MARK: Region Monitoring
+    
     var maximumRegionMonitoringDistance: CLLocationDistance { get }
     var monitoredRegions: Set<CLRegion> { get }
     func startMonitoring(for region: CLRegion)
@@ -59,6 +83,7 @@ public protocol CLLocationManagerInjectable {
     func requestState(for region: CLRegion)
 
     // MARK: Beacons
+    
     static func isRangingAvailable() -> Bool
     var rangedRegions: Set<CLRegion> { get }
     func startRangingBeacons(in region: CLBeaconRegion)
@@ -68,9 +93,11 @@ public protocol CLLocationManagerInjectable {
 extension CLLocationManager : CLLocationManagerInjectable {}
 
 // MARK: - FLLocationManager -
+
 public class LocationManager : NSObject, CLLocationManagerDelegate {
 
     // MARK: Properties
+    
     fileprivate var locationUpdatePromise: StreamPromise<[CLLocation]>?
     fileprivate var deferredLocationUpdatePromise: Promise<Void>?
     fileprivate var requestLocationPromise: Promise<[CLLocation]>?
@@ -82,6 +109,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     public fileprivate(set) var isUpdating = false
 
     // MARK: Configure
+    
     public var pausesLocationUpdatesAutomatically: Bool {
         get {
             return self.clLocationManager.pausesLocationUpdatesAutomatically
@@ -134,6 +162,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: Authorization
+    
     public func authorizationStatus() -> CLAuthorizationStatus {
         return CLLocationManager.authorizationStatus()
     }
@@ -147,8 +176,8 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     public func authorize(_ authorization: CLAuthorizationStatus, context: ExecutionContext = QueueContext.main) -> Future<Void> {
-        let currentAuthorization = self.authorizationStatus()
-        if currentAuthorization != authorization && currentAuthorization != .authorizedAlways {
+        let currentAuthorization = authorizationStatus()
+        if currentAuthorization == .notDetermined {
             if let authorizationFuture = self.authorizationFuture, !authorizationFuture.completed {
                 return authorizationFuture
             }
@@ -185,6 +214,9 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
                 }
             }
             return authorizationFuture!
+        } else if currentAuthorization != authorization {
+            Logger.debug("authorization has been given: \(currentAuthorization)")
+            return Future(error: LocationError.authroizationInvalid)
         } else {
             Logger.debug("requested authoriztation given: \(currentAuthorization)")
             return Future(value: ())
@@ -192,6 +224,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     //MARK: Initialize
+    
     public convenience override init() {
         self.init(clLocationManager: CLLocationManager())
     }
@@ -207,6 +240,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: Reverse Geocode
+    
     public class func reverseGeocode(location: CLLocation) -> Future<[CLPlacemark]>  {
         let geocoder = CLGeocoder()
         let promise = Promise<[CLPlacemark]>()
@@ -233,6 +267,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: Location Updates
+    
     public var location: CLLocation? {
         return self.clLocationManager.location
     }
@@ -276,6 +311,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: Significant Change in Location
+    
     public class func significantLocationChangeMonitoringAvailable() -> Bool {
         return CLLocationManager.significantLocationChangeMonitoringAvailable()
     }
@@ -301,6 +337,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: Deferred Location Updates
+    
     public func deferredLocationUpdatesAvailable() -> Bool {
         return CLLocationManager.deferredLocationUpdatesAvailable()
     }
@@ -312,6 +349,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
     }
 
     // MARK: CLLocationManagerDelegate
+    
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.didUpdate(locations: locations)
     }

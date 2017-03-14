@@ -9,6 +9,7 @@
 import Foundation
 
 // MARK: - Errors -
+
 public enum CharacteristicError : Swift.Error, LocalizedError {
     case readTimeout
     case writeTimeout

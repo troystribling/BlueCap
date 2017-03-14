@@ -24,8 +24,6 @@
 	<true/>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Peripheral Simulation</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>iBeacon ranging.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>iBeacon ranging.</string>
 	<key>UIApplicationExitsOnSuspend</key>

@@ -10,9 +10,11 @@ import Foundation
 import CoreLocation
 
 // MARK - FLBeaconManager -
+
 public class BeaconManager : RegionManager {
 
     // MARK: Properties
+    
     fileprivate var regionRangingStatus = [String : Bool]()
     internal var configuredBeaconRegions = [String : BeaconRegion]()
 
@@ -31,6 +33,7 @@ public class BeaconManager : RegionManager {
     }
 
     //MARK: Initialize
+    
     public convenience init() {
         self.init(clLocationManager: CLLocationManager())
     }
@@ -40,6 +43,7 @@ public class BeaconManager : RegionManager {
     }
 
     // MARK: Control
+    
     public func isRangingRegion(identifier:String) -> Bool {
         return self.regionRangingStatus[identifier] ?? false
     }
@@ -72,6 +76,7 @@ public class BeaconManager : RegionManager {
     }
     
     // MARK: CLLocationManagerDelegate
+    
     public func locationManager(_: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         self.didRange(beacons: beacons.map { $0 as CLBeaconInjectable }, inRegion: region)
     }
@@ -81,7 +86,7 @@ public class BeaconManager : RegionManager {
     }
 
     public func didRange(beacons: [CLBeaconInjectable], inRegion region: CLBeaconRegion) {
-        Logger.debug("region identifier \(region.identifier)")
+        Logger.debug("ranged \(beacons.count) beacons, in region with identifier \(region.identifier)")
         if let beaconRegion = self.configuredBeaconRegions[region.identifier] {
             self.regionRangingStatus[beaconRegion.identifier] = true
             let flBeacons = beacons.map { Beacon(clBeacon:$0) }
@@ -97,6 +102,7 @@ public class BeaconManager : RegionManager {
     }
 
     // MARK: Utilies
+    
     func updateIsRanging(_ value: Bool) {
         let regionCount = Array(self.regionRangingStatus.values).filter{$0}.count
         if value {

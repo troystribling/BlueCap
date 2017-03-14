@@ -21,14 +21,22 @@ class Notification {
     class func send(_ message: String) {
         if UIApplication.shared.applicationState != .active && self.getEnabled(){
             eventCount += 1
-            let content = UNMutableNotificationContent()
-            content.title = ""
-            content.body = message
-            content.sound = UNNotificationSound.default()
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.0, repeats: false)
-            let request = UNNotificationRequest(identifier: "Immediate", content: content, trigger: trigger)
-            let center = UNUserNotificationCenter.current()
-            center.add(request)
+            if #available(iOS 10.0, *) {
+                let content = UNMutableNotificationContent()
+                content.title = ""
+                content.body = message
+                content.sound = UNNotificationSound.default()
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.0, repeats: false)
+                let request = UNNotificationRequest(identifier: "Immediate", content: content, trigger: trigger)
+                let center = UNUserNotificationCenter.current()
+                center.add(request)
+            } else {
+                let localNotification = UILocalNotification()
+                localNotification.alertBody = message
+                localNotification.soundName = UILocalNotificationDefaultSoundName
+                localNotification.applicationIconBadgeNumber = eventCount
+                UIApplication.shared.presentLocalNotificationNow(localNotification)
+            }
         }
 
     }
