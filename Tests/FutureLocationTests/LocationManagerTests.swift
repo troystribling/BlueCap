@@ -49,8 +49,9 @@ class LocationManagerTests: XCTestCase {
         CLLocationManagerMock._authorizationStatus = .authorizedWhenInUse
         let future = self.locationManager.authorize(.authorizedAlways, context: TestContext.immediate)
         self.locationManager.didChangeAuthorization(status: .authorizedAlways)
-        XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
-            XCTAssertTrue(self.mock.requestAlwaysAuthorizationCalled)
+        XCTAssertFutureFails(future, context: TestContext.immediate) { error in
+            XCTAssertFalse(self.mock.requestAlwaysAuthorizationCalled)
+            XCTAssertEqualErrors(error, LocationError.authorizationInvalid)
         }
     }
 

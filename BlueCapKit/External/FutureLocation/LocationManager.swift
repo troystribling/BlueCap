@@ -15,8 +15,8 @@ public enum LocationError : Swift.Error, LocalizedError {
     case updateFailed
     case authorizationAlwaysFailed
     case authorizationWhenInUseFailed
-    case authroizationInvalid
-    case authorizationFailed
+    case authorizationInvalid
+    case unlikelyFailure
     
     public var errorDescription: String? {
         switch self {
@@ -26,10 +26,10 @@ public enum LocationError : Swift.Error, LocalizedError {
             return NSLocalizedString("Location Authorizarion Always failed.", comment: "LocationError.authorizationAlwaysFailed")
         case .authorizationWhenInUseFailed:
             return NSLocalizedString("Location Authorization When In Use failed.", comment: "LocationError.authorizationWhenInUseFailed")
-        case .authroizationInvalid:
+        case .authorizationInvalid:
             return NSLocalizedString("Location Authorization Invalid.", comment: "LocationError.authroizationInvalid")
-        case .authorizationFailed:
-            return NSLocalizedString("Location Authorization Falied.", comment: "LocationError.authorizationFailed")
+        case .unlikelyFailure:
+            return NSLocalizedString("Location Authorization Falied in an unlikely manner.", comment: "LocationError.unlikelyFailure")
 
         }
     }
@@ -189,7 +189,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
                 requestWhenInUseAuthorization()
             default:
                 Logger.debug("requested location authorization invalid")
-                return Future(error: LocationError.authroizationInvalid)
+                return Future(error: LocationError.authorizationInvalid)
             }
             authorizationFuture = self.authorizationStatusChangedPromise!.future.map(context: context) { status in
                 switch authorization {
@@ -210,13 +210,13 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
                         throw LocationError.authorizationWhenInUseFailed
                     }
                 default:
-                    throw LocationError.authroizationInvalid
+                    throw LocationError.authorizationInvalid
                 }
             }
             return authorizationFuture!
         } else if currentAuthorization != authorization {
             Logger.debug("authorization has been given: \(currentAuthorization)")
-            return Future(error: LocationError.authroizationInvalid)
+            return Future(error: LocationError.authorizationInvalid)
         } else {
             Logger.debug("requested authoriztation given: \(currentAuthorization)")
             return Future(value: ())
@@ -303,7 +303,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         requestLocationPromise = Promise<[CLLocation]>()
         return authorize(authorization, context: context).flatMap(context: context) { [weak self] in
             guard let strongSelf = self else {
-                throw LocationError.authorizationFailed
+                throw LocationError.unlikelyFailure
             }
             strongSelf.clLocationManager.requestLocation()
             return strongSelf.requestLocationPromise!.future

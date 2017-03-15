@@ -78,7 +78,7 @@ class BeaconManagerTests: XCTestCase {
 
     func testStopRanging_WhenRanging_StopsRanging() {
         CLLocationManagerMock._authorizationStatus = .authorizedAlways
-        let future = self.beaconManager.startRangingBeacons(in: self.testBeaconRegion, context: TestContext.immediate)
+        let future = self.beaconManager.startRangingBeacons(in: self.testBeaconRegion, authorization: .authorizedAlways, context: TestContext.immediate)
         future.onSuccess(context: TestContext.immediate) { beacons in
             XCTAssert(self.beaconManager.isRanging, "isRanging invalid")
             XCTAssertFalse(self.mock.stopRangingBeaconsInRegionCalled, "stopRangingBeaconsInRegion called")
