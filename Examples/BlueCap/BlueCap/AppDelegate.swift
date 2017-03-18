@@ -97,18 +97,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let defaultConfig = defaultConfig {
             UserDefaults.standard.register(defaults: defaultConfig)
         }
-        if #available(iOS 10.0, *) {
-            let center = UNUserNotificationCenter.current()
-            center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-                guard error != nil else {
-                    Notification.setPermissionGranted(false)
-                    return
-                }
-                Notification.setPermissionGranted(granted)
-            }
-        } else {
-            application.registerUserNotificationSettings(UIUserNotificationSettings(types:[UIUserNotificationType.sound, UIUserNotificationType.alert, UIUserNotificationType.badge], categories:nil))
-        }
         return true
     }
 
