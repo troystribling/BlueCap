@@ -347,7 +347,7 @@ class PeripheralTests: XCTestCase {
             XCTAssertEqualErrors(error, PeripheralError.disconnected)
         }
         waitForExpectations(timeout: 120) { error in
-            XCTAssertNil(error, "\(error)")
+            XCTAssertNil(error, "\(String(describing: error))")
         }
     }
 

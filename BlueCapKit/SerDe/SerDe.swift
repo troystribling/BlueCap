@@ -110,7 +110,7 @@ public struct SerDe {
     }
 
     public static func deserialize(_ data: Data, encoding: String.Encoding = String.Encoding.utf8) -> String? {
-        return (NSString(data: data, encoding: encoding.rawValue) as? String)
+        return String(data: data, encoding: encoding)
     }
 
     public static func deserialize<T: Deserializable>(_ data: Data) -> T? {

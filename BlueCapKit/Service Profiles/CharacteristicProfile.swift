@@ -73,7 +73,7 @@ public final class RawCharacteristicProfile<DeserializedType>: CharacteristicPro
     
     public override func stringValue(_ data: Data) -> [String:String]? {
         let value: DeserializedType? = SerDe.deserialize(data)
-        Logger.debug("\(value)")
+        Logger.debug("\(String(describing: value))")
         return value.map { $0.stringValue }
     }
     

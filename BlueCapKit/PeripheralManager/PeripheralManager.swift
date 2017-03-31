@@ -140,7 +140,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 return afterAdvertisingStartedPromise.future
             }
             if !self.isAdvertising {
-                Logger.debug("Adversting with UUIDs: \(uuids.map { $0 })")
+                Logger.debug("Adversting with UUIDs: \(String(describing: uuids))")
                 self._name = name
                 self.afterAdvertisingStartedPromise = Promise<Void>()
                 var advertisementData: [String : AnyObject] = [CBAdvertisementDataLocalNameKey: name as AnyObject]
@@ -161,7 +161,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                 Logger.debug("Alerady adversting beacon")
                 return afterBeaconAdvertisingStartedPromise.future
             }
-            Logger.debug("Adversting beacon with UUID: \(region.proximityUUID)")
+            Logger.debug("Adversting beacon with UUID: \(String(describing: region.proximityUUID))")
             self._name = region.identifier
             self.afterBeaconAdvertisingStartedPromise = Promise<Void>()
             if !self.isAdvertising {
@@ -336,7 +336,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         var request = request
         Logger.debug("chracteracteristic \(request.getCharacteristic().uuid)")
         if let characteristic = characteristicWithCBCharacteristic(request.getCharacteristic()) {
-            Logger.debug("responding with data: \(characteristic._value.map { $0.hexStringValue() })")
+            Logger.debug("responding with data: \(String(describing: characteristic._value.map { $0.hexStringValue() }))")
             request.value = characteristic._value
             respondToRequest(request, withResult:CBATTError.Code.success)
         } else {

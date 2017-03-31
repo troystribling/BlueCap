@@ -177,7 +177,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 return FutureStream(error: CentralManagerError.isPoweredOff)
             }
             if !self._isScanning {
-                Logger.debug("'\(self.name)' scanning UUIDs \(uuids)")
+                Logger.debug("'\(self.name)' scanning UUIDs \(String(describing: uuids))")
                 self._isScanning = true
                 self.afterPeripheralDiscoveredPromise = StreamPromise<Peripheral>(capacity: capacity)
                 if self.poweredOn {
@@ -304,14 +304,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     // MARK: CBCentralManagerDelegate Shims
     
     func didConnectPeripheral(_ peripheral: CBPeripheralInjectable) {
-        Logger.debug("'\(name)' uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name)")
+        Logger.debug("'\(name)' uuid=\(peripheral.identifier.uuidString), name=\(String(describing: peripheral.name))")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
     
     func didDisconnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
-        Logger.debug("\(name) uuid=\(peripheral.identifier.uuidString), name=\(peripheral.name), error=\(error)")
+        Logger.debug("\(name) uuid=\(peripheral.identifier.uuidString), name=\(String(describing: peripheral.name)), error=\(String(describing: error))")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral(error)
         }
