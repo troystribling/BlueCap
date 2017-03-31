@@ -14,7 +14,7 @@
 		053EFDBF1DE88C8D00C18FED /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 053EFDBB1DE88C8D00C18FED /* LaunchScreen.xib */; };
 		053EFDC01DE88C8D00C18FED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 053EFDBD1DE88C8D00C18FED /* Main.storyboard */; };
 		053EFDC21DE88C9F00C18FED /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 053EFDC11DE88C9F00C18FED /* Images.xcassets */; };
-		4447E0EB9FFA5762D2A604D9 /* Pods_PeripheralManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C820CE5C6A281F1ABD641B7 /* Pods_PeripheralManager.framework */; };
+		9C98BD3685F3C46118900CF2 /* Pods_PeripheralManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E87BD2F328C567C9181F545 /* Pods_PeripheralManager.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,9 +40,9 @@
 		053EFDBC1DE88C8D00C18FED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = PeripheralManager/Base.lproj/LaunchScreen.xib; sourceTree = SOURCE_ROOT; };
 		053EFDBE1DE88C8D00C18FED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = PeripheralManager/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
 		053EFDC11DE88C9F00C18FED /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PeripheralManager/Images.xcassets; sourceTree = SOURCE_ROOT; };
-		2C820CE5C6A281F1ABD641B7 /* Pods_PeripheralManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PeripheralManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		71079DDFC015D0C3F88B69AB /* Pods-PeripheralManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.debug.xcconfig"; sourceTree = "<group>"; };
-		BB312D81D2924D656CB3572C /* Pods-PeripheralManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.release.xcconfig"; sourceTree = "<group>"; };
+		0E87BD2F328C567C9181F545 /* Pods_PeripheralManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PeripheralManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CA4A8B8B0152B0C17539215 /* Pods-PeripheralManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.release.xcconfig"; sourceTree = "<group>"; };
+		38866AF980882555BF6AD674 /* Pods-PeripheralManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PeripheralManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4447E0EB9FFA5762D2A604D9 /* Pods_PeripheralManager.framework in Frameworks */,
+				9C98BD3685F3C46118900CF2 /* Pods_PeripheralManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,8 +62,8 @@
 			children = (
 				0513E28D1AE2D6AF0062C505 /* PeripheralManager */,
 				0513E28C1AE2D6AF0062C505 /* Products */,
-				C93A5CE2373CCE2FCA7806EB /* Pods */,
-				1D48527F3E253742F8A1C896 /* Frameworks */,
+				1B39291ADF51310EEDBA0AAF /* Pods */,
+				E9B7799917FF25D81D59149C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,21 +99,21 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		1D48527F3E253742F8A1C896 /* Frameworks */ = {
+		1B39291ADF51310EEDBA0AAF /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2C820CE5C6A281F1ABD641B7 /* Pods_PeripheralManager.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		C93A5CE2373CCE2FCA7806EB /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				71079DDFC015D0C3F88B69AB /* Pods-PeripheralManager.debug.xcconfig */,
-				BB312D81D2924D656CB3572C /* Pods-PeripheralManager.release.xcconfig */,
+				38866AF980882555BF6AD674 /* Pods-PeripheralManager.debug.xcconfig */,
+				2CA4A8B8B0152B0C17539215 /* Pods-PeripheralManager.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		E9B7799917FF25D81D59149C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0E87BD2F328C567C9181F545 /* Pods_PeripheralManager.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -123,13 +123,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0513E2AA1AE2D6AF0062C505 /* Build configuration list for PBXNativeTarget "PeripheralManager" */;
 			buildPhases = (
-				84C5D5467BBAC55750F26760 /* [CP] Check Pods Manifest.lock */,
+				7F5E5C2776AA15C0BD80D831 /* [CP] Check Pods Manifest.lock */,
 				0513E2871AE2D6AF0062C505 /* Sources */,
 				0513E2881AE2D6AF0062C505 /* Frameworks */,
 				0513E2891AE2D6AF0062C505 /* Resources */,
 				0513E2BD1AE2D7050062C505 /* Embed Frameworks */,
-				BAF1325ED1D94C17109A2568 /* [CP] Embed Pods Frameworks */,
-				CFF7ABDB17FFC2F666E82FCD /* [CP] Copy Pods Resources */,
+				C8D6C156E0BCB00EAD91189F /* [CP] Embed Pods Frameworks */,
+				8AD37F2B460A38F4A048E984 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -147,7 +147,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = "Troy Stribling";
 				TargetAttributes = {
 					0513E28A1AE2D6AF0062C505 = {
@@ -194,7 +194,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		84C5D5467BBAC55750F26760 /* [CP] Check Pods Manifest.lock */ = {
+		7F5E5C2776AA15C0BD80D831 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -209,22 +209,7 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		BAF1325ED1D94C17109A2568 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CFF7ABDB17FFC2F666E82FCD /* [CP] Copy Pods Resources */ = {
+		8AD37F2B460A38F4A048E984 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -237,6 +222,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C8D6C156E0BCB00EAD91189F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PeripheralManager/Pods-PeripheralManager-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -366,7 +366,7 @@
 		};
 		0513E2AB1AE2D6AF0062C505 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71079DDFC015D0C3F88B69AB /* Pods-PeripheralManager.debug.xcconfig */;
+			baseConfigurationReference = 38866AF980882555BF6AD674 /* Pods-PeripheralManager.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -385,7 +385,7 @@
 		};
 		0513E2AC1AE2D6AF0062C505 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BB312D81D2924D656CB3572C /* Pods-PeripheralManager.release.xcconfig */;
+			baseConfigurationReference = 2CA4A8B8B0152B0C17539215 /* Pods-PeripheralManager.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
