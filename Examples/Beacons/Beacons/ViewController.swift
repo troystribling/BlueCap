@@ -86,12 +86,13 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     func startMonitoring() {
         self.progressView.show()
         self.uuidTextField.isEnabled = false
-        beaconRangingFuture = self.beaconManager.startMonitoring(for: beaconRegion, authorization: .authorizedAlways).flatMap{ [unowned self] state -> FutureStream<[Beacon]> in
+        beaconRangingFuture = beaconManager.startMonitoring(for: beaconRegion, authorization: .authorizedWhenInUse).flatMap{ [unowned self] state -> FutureStream<[Beacon]> in
             self.progressView.remove()
             switch state {
             case .start:
                 self.setStartedMonitoring()
-                throw AppError.started
+                self.isRanging = true
+                return self.beaconManager.startRangingBeacons(in: self.beaconRegion)
             case .inside:
                 self.setInsideRegion()
                 guard !self.beaconManager.isRangingRegion(identifier: self.beaconRegion.identifier) else {

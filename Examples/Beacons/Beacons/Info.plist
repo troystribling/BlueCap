@@ -22,16 +22,13 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysUsageDescription</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>FutureLocation iBeacon example</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>FutureLocation iBeacon example</string>
 	<key>NSLocationUsageDescription</key>
 	<string>FutureLocation iBeacon example</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
-		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
