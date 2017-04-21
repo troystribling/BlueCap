@@ -125,7 +125,8 @@ public class Characteristic : NSObject {
     }
     
     public func propertyEnabled(_ property: CBCharacteristicProperties) -> Bool {
-        return (self.properties.rawValue & property.rawValue) > 0
+        return ((self.properties.rawValue & property.rawValue)) > 0 ||
+               ((self.profile.properties.rawValue & property.rawValue) > 0)
     }
 
     public func value<T: Deserializable>() -> T? {
