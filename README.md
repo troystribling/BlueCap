@@ -186,7 +186,7 @@ public enum AppError : Error {
 }
 
 let discoveryFuture = connectionFuture.flatMap { [weak peripheral] () -> Future<Void> in
-	  guard let peripheral = peripheral else {
+    guard let peripheral = peripheral else {
         throw AppError.unlikely
     }
     return peripheral.discoverServices([serviceUUID])
