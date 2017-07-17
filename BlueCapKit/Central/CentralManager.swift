@@ -138,7 +138,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
     func connect(_ cbPeripheral: CBPeripheralInjectable, options: [String : Any]? = nil) {
         cbCentralManager.connect(cbPeripheral, options: options)
     }
-    
+
     func cancelPeripheralConnection(_ cbPeripheral: CBPeripheralInjectable) {
         cbCentralManager.cancelPeripheralConnection(cbPeripheral)
     }
@@ -190,7 +190,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             return self.afterPeripheralDiscoveredPromise!.stream
         }
     }
-    
+
     public func stopScanning() {
         self.centralQueue.sync {
             self.stopScanningIfScanning()
@@ -293,30 +293,30 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
             injectablePeripherals = cbPeripherals.map { $0 as CBPeripheralInjectable }
         }
         let scannedServices = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID]
-        let options = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject]
-        willRestoreState(injectablePeripherals, scannedServices: scannedServices, options: options)
+        let scanOptions = dict[CBCentralManagerRestoredStateScanOptionsKey] as? [String: AnyObject]
+        willRestoreState(injectablePeripherals, scannedServices: scannedServices, scanOptions: scanOptions)
     }
-    
+
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         didUpdateState(central)
     }
 
     // MARK: CBCentralManagerDelegate Shims
-    
+
     func didConnectPeripheral(_ peripheral: CBPeripheralInjectable) {
         Logger.debug("'\(name)' uuid=\(peripheral.identifier.uuidString), name=\(String(describing: peripheral.name))")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didConnectPeripheral()
         }
     }
-    
+
     func didDisconnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
         Logger.debug("\(name) uuid=\(peripheral.identifier.uuidString), name=\(String(describing: peripheral.name)), error=\(String(describing: error))")
         if let bcPeripheral = _discoveredPeripherals[peripheral.identifier] {
             bcPeripheral.didDisconnectPeripheral(error)
         }
     }
-    
+
     func didDiscoverPeripheral(_ peripheral: CBPeripheralInjectable, advertisementData: [String : Any], RSSI: NSNumber) {
         var bcPeripheral: Peripheral
         if let discoveredPeripheral = _discoveredPeripherals[peripheral.identifier] {
@@ -334,7 +334,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         }
         Logger.debug("'\(name)' uuid=\(bcPeripheral.identifier.uuidString), name=\(bcPeripheral.name), RSSI=\(RSSI), Advertisements=\(advertisementData)")
     }
-    
+
     func didFailToConnectPeripheral(_ peripheral: CBPeripheralInjectable, error: Error?) {
         Logger.debug("'\(name)'")
         guard let bcPeripheral = _discoveredPeripherals[peripheral.identifier] else {
@@ -343,10 +343,14 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         bcPeripheral.didFailToConnectPeripheral(error)
     }
 
-    func willRestoreState(_ cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, options: [String: AnyObject]?) {
+
+
+    func willRestoreState(_ cbPeripherals: [CBPeripheralInjectable]?, scannedServices: [CBUUID]?, scanOptions: [String: AnyObject]?) {
         Logger.debug("'\(name)'")
-        if let cbPeripherals = cbPeripherals, let options = options {
-            self.options = options
+        if let cbPeripherals = cbPeripherals {
+            if let options = scanOptions {
+                self.options = options
+            }
             cbPeripherals.forEach { cbPeripheral in
                 let peripheral = Peripheral(cbPeripheral: cbPeripheral, centralManager: self)
                 _discoveredPeripherals[cbPeripheral.identifier] = peripheral
@@ -385,5 +389,6 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
         Logger.debug("'\(name)' did update state '\(centralManager.managerState)'")
         afterStateChangedPromise?.success(centralManager.managerState)
     }
-    
+
 }
+
