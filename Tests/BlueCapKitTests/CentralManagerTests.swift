@@ -140,7 +140,7 @@ class CentralManagerTests: XCTestCase {
                                                 CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test" as AnyObject]
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
-                                        scannedServices: testScannedServices, options: testOptions)
+                                        scannedServices: testScannedServices, scanOptions: testOptions)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
             guard let options = centralManager.options else {
                 XCTFail()
@@ -175,7 +175,7 @@ class CentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock()
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenStateRestored()
-        centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
+        centralManager.willRestoreState(nil, scannedServices: nil, scanOptions: nil)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
                 XCTAssertEqualErrors(error, CentralManagerError.restoreFailed)
         }
