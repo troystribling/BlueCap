@@ -136,22 +136,15 @@ class CentralManagerTests: XCTestCase {
             }
             testPeripheral.services = testServices
         }
-        let testOptions: [String: AnyObject] = [CBCentralManagerOptionShowPowerAlertKey: NSNumber(value: true),
-                                                CBCentralManagerOptionRestoreIdentifierKey: "us.gnos.bluecap.test" as AnyObject]
+
         let future = centralManager.whenStateRestored()
         centralManager.willRestoreState(testPeripherals.map { $0 as CBPeripheralInjectable },
-                                        scannedServices: testScannedServices, options: testOptions)
+                                        scannedServices: testScannedServices, scanOptions: nil)
         XCTAssertFutureSucceeds(future, context: TestContext.immediate) {
-            guard let options = centralManager.options else {
-                XCTFail()
-                return
-            }
             let peripherals = centralManager.peripherals
             let scannedServices = centralManager.services.map { $0.uuid }
             XCTAssertEqual(peripherals.count, testPeripherals.count)
             XCTAssertEqual(Set(scannedServices), Set(testScannedServices))
-            XCTAssertEqual(options[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber, testOptions[CBCentralManagerOptionShowPowerAlertKey]! as? NSNumber)
-            XCTAssertEqual(options[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString, testOptions[CBCentralManagerOptionRestoreIdentifierKey]! as? NSString)
             XCTAssertEqual(Set(peripherals.map { $0.identifier }), Set(testPeripherals.map { $0.identifier }))
             for testPeripheral in testPeripherals {
                 let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
@@ -175,7 +168,7 @@ class CentralManagerTests: XCTestCase {
         let mock = CBCentralManagerMock()
         let centralManager = CentralManager(centralManager: mock)
         let future = centralManager.whenStateRestored()
-        centralManager.willRestoreState(nil, scannedServices: nil, options: nil)
+        centralManager.willRestoreState(nil, scannedServices: nil, scanOptions: nil)
         XCTAssertFutureFails(future, context: TestContext.immediate) { error in
                 XCTAssertEqualErrors(error, CentralManagerError.restoreFailed)
         }
