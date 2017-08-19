@@ -293,7 +293,7 @@ public class Characteristic : NSObject {
             notificationStateChangedPromise?.failure(error)
         } else {
             Logger.debug("success:  uuid=\(uuid.uuidString), name=\(self.name)")
-            notificationStateChangedPromise?.success()
+            notificationStateChangedPromise?.success(())
         }
     }
     
@@ -311,7 +311,7 @@ public class Characteristic : NSObject {
             promise.failure(error)
         } else {
             Logger.debug("success:  uuid=\(uuid.uuidString), name=\(self.name)")
-            promise.success()
+            promise.success(())
         }
         writing = false
         writeNext()
@@ -324,7 +324,7 @@ public class Characteristic : NSObject {
         if let error = error {
             promise.failure(error)
         } else {
-            promise.success()
+            promise.success(())
         }
         reading = false
         readNext()

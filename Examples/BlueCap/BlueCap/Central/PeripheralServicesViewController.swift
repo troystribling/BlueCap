@@ -69,7 +69,7 @@ class PeripheralServicesViewController : UITableViewController {
         }
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }

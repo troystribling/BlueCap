@@ -107,7 +107,7 @@ class PeripheralViewController : UITableViewController {
         }
     }
 
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }
@@ -205,7 +205,7 @@ class PeripheralViewController : UITableViewController {
             return peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
         }
 
-        peripheralDiscoveryFuture?.onSuccess { [weak self] _ in
+        peripheralDiscoveryFuture?.onSuccess { [weak self] _ -> Void in
             self.forEach { strongSelf in
                 _ = strongSelf.progressView.remove()
                 strongSelf.updateConnectionStateLabel()
@@ -213,14 +213,13 @@ class PeripheralViewController : UITableViewController {
             }
         }
 
-        peripheralDiscoveryFuture?.onFailure { [weak self] error in
+        peripheralDiscoveryFuture?.onFailure { [weak self] (error) -> Void in
             self.forEach { strongSelf in
                 let maxTimeouts = ConfigStore.getPeripheralMaximumTimeoutsEnabled() ? ConfigStore.getPeripheralMaximumTimeouts() : UInt.max
                 let maxDisconnections = ConfigStore.getPeripheralMaximumDisconnectionsEnabled() ? ConfigStore.getPeripheralMaximumDisconnections() : UInt.max
                 switch error {
                 case PeripheralError.forcedDisconnect:
                     Logger.debug("Connection force disconnect: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
-                    break
                 case PeripheralError.connectionTimeout:
                     if peripheral.timeoutCount < maxTimeouts {
                         Logger.debug("Connection timeout: '\(peripheral.name)', \(peripheral.identifier.uuidString)")
@@ -249,7 +248,7 @@ class PeripheralViewController : UITableViewController {
                 strongSelf.updateConnectionStateLabel()
                 strongSelf.updateRSSIUpdatesAndPeripheralPropertiesIfConnected()
                 let progressViewFuture = strongSelf.progressView.remove()
-                progressViewFuture.onSuccess {
+                progressViewFuture.onSuccess { _ in
                     strongSelf.present(UIAlertController.alert(title: "Connection error", error: error) { _ in
                         _ = strongSelf.navigationController?.popToRootViewController(animated: true)
                     }, animated: true)

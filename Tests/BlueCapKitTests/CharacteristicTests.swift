@@ -174,19 +174,19 @@ class CharacteristicTests: XCTestCase {
         XCTAssertEqual(characteristic.pendingWriteCount, 3)
 
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssertFutureSucceeds(future1, context: TestContext.immediate) {
+        XCTAssertFutureSucceeds(future1, context: TestContext.immediate) { _ in
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 2)
             XCTAssertEqual(self.mockPerpheral.writtenData!, "bb".dataFromHexString())
             XCTAssertEqual(characteristic.pendingWriteCount, 2)
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssertFutureSucceeds(future2, context: TestContext.immediate) {
+        XCTAssertFutureSucceeds(future2, context: TestContext.immediate) { _ in
             XCTAssertEqual(self.mockPerpheral.writeValueCount, 3)
             XCTAssertEqual(self.mockPerpheral.writtenData!, "cc".dataFromHexString())
             XCTAssertEqual(characteristic.pendingWriteCount, 1)
         }
         self.peripheral.didWriteValueForCharacteristic(mockCharacteristic, error:nil)
-        XCTAssertFutureSucceeds(future3, context: TestContext.immediate) {
+        XCTAssertFutureSucceeds(future3, context: TestContext.immediate) { _ in
             XCTAssertEqual(characteristic.pendingWriteCount, 0)
         }
     }

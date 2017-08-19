@@ -45,11 +45,11 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
                 return
         }
 
-        peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error in
+        peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error -> Void in
             guard let strongSelf = self else {
                 return
             }
-            strongSelf.progressView.remove().onSuccess {
+            strongSelf.progressView.remove().onSuccess { _ in
                 strongSelf.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
                 strongSelf.updateWhenActive()
             }
@@ -65,7 +65,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
             _ = self?.progressView.remove()
         }
         readFuture.onFailure { [weak self] error in
-            self?.progressView.remove().onSuccess {
+            self?.progressView.remove().onSuccess { _ in
                 self?.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { _ in
                     _ = self?.navigationController?.popViewController(animated: true)
                     return
@@ -80,7 +80,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         _ = peripheralDiscoveryFuture?.cancel(cancelToken)
     }
 
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }
@@ -97,13 +97,13 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
         let writeFuture = peripheralDiscoveryFuture.flatMap { _ -> Future<Void> in
             characteristic.write(string: stringValue, timeout: (Double(ConfigStore.getCharacteristicReadWriteTimeout())))
         }
-        writeFuture.onSuccess { [weak self] in
-            self?.progressView.remove().onSuccess {
+        writeFuture.onSuccess { [weak self] _ in
+            self?.progressView.remove().onSuccess { _ in
                 _ = self?.navigationController?.popViewController(animated: true)
             }
         }
         writeFuture.onFailure { [weak self] error in
-            self?.progressView.remove().onSuccess {
+            self?.progressView.remove().onSuccess { _ in
                 self?.present(UIAlertController.alert(title: "Charcteristic write error", error: error) { _ in
                     _ = self?.navigationController?.popViewController(animated: true)
                     return

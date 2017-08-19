@@ -10,7 +10,7 @@ import Foundation
 
 import UIKit
 
-class ConfigureMaximumPeripheralsConnected: UIViewController {
+class ConfigureMaximumPeripheralsConnected: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var maximumPeripheralsConnectedTextField: UITextField!
 
@@ -25,6 +25,7 @@ class ConfigureMaximumPeripheralsConnected: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        maximumPeripheralsConnectedTextField.becomeFirstResponder()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -32,7 +33,7 @@ class ConfigureMaximumPeripheralsConnected: UIViewController {
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let maxConnectedText = self.maximumPeripheralsConnectedTextField.text, let maxConnected = Int(maxConnectedText) , !maxConnectedText.isEmpty {
             ConfigStore.setMaximumPeripheralsConnected(maxConnected)
             _ = self.navigationController?.popToRootViewController(animated: true)

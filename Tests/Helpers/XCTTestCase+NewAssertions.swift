@@ -32,16 +32,16 @@ func XCTAssertFutureSucceeds<T>(_ future: Future<T>, context: ExecutionContext =
         currentTest.waitForExpectations(timeout: timeout) { error in
             if error != nil {
                 let message = "Failed to meet expectation after \(timeout)s"
-                currentTest.recordFailure(withDescription: message, inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: message, inFile: file, atLine: Int(line), expected: true)
             } else {
                 if !onSuccessCalled {
-                    currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: line, expected: true)
+                    currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: Int(line), expected: true)
                 }
             }
         }
     } else {
         if !onSuccessCalled {
-            currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: line, expected: true)
+            currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: Int(line), expected: true)
         }
     }
 }
@@ -78,31 +78,31 @@ func XCTAssertFutureStreamSucceeds<T>(_ stream: FutureStream<T>, context: Execut
                 if maxCount == 0 {
                     // no validations given onSuccess only called one time
                     if count != 1 {
-                        currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: line, expected: true)
+                        currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: Int(line), expected: true)
                     }
                 } else {
                     // validations given onSuccess called for each validation
                     if maxCount != count {
                         let message = "onSuccess not called \(maxCount) times"
-                        currentTest.recordFailure(withDescription: message, inFile: file, atLine: line, expected: true)
+                        currentTest.recordFailure(withDescription: message, inFile: file, atLine: Int(line), expected: true)
                     }
                 }
             } else {
                 // expectation not filfilled
                 let message = "Failed to meet expectation after \(timeout)s"
-                currentTest.recordFailure(withDescription: message, inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: message, inFile: file, atLine: Int(line), expected: true)
             }
         }
     } else {
         if maxCount == 0 {
             // no validations given onSuccess only called one time
             if count != 1 {
-                currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: "onSuccess not called", inFile: file, atLine: Int(line), expected: true)
             }
         } else {
             // validations given onSuccess called once for each validation
             if maxCount != count {
-                currentTest.recordFailure(withDescription: "onSuccess not called \(maxCount) times", inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: "onSuccess not called \(maxCount) times", inFile: file, atLine: Int(line), expected: true)
             }
         }
     }
@@ -130,16 +130,16 @@ func XCTAssertFutureFails<T>(_ future: Future<T>, context: ExecutionContext = Qu
         currentTest.waitForExpectations(timeout: timeout) { error in
             if error != nil {
                 let message = "Failed to meet expectation after \(timeout)s"
-                currentTest.recordFailure(withDescription: message, inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: message, inFile: file, atLine: Int(line), expected: true)
             } else {
                 if !onFailureCalled {
-                    currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: line, expected: true)
+                    currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: Int(line), expected: true)
                 }
             }
         }
     } else {
         if !onFailureCalled {
-            currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: line, expected: true)
+            currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: Int(line), expected: true)
         }
     }
 }
@@ -176,31 +176,31 @@ func XCTAssertFutureStreamFails<T>(_ stream: FutureStream<T>, context: Execution
                 if maxCount == 0 {
                     // no validations given onFailure only called one time
                     if count != 1 {
-                        currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: line, expected: true)
+                        currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: Int(line), expected: true)
                     }
                 } else {
                     // validations given onFailure called once for each validation
                     if maxCount != count {
                         let message = "onFailure not called \(maxCount) times"
-                        currentTest.recordFailure(withDescription: message, inFile: file, atLine: line, expected: true)
+                        currentTest.recordFailure(withDescription: message, inFile: file, atLine: Int(line), expected: true)
                     }
                 }
             } else {
                 // expectation not fulfilled
                 let message = "Failed to meet expectation after \(timeout)s"
-                currentTest.recordFailure(withDescription: message, inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: message, inFile: file, atLine: Int(line), expected: true)
             }
         }
     } else {
         if maxCount == 0 {
             // no validations given onFailure only called one time
             if count != 1 {
-                currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: "onFailure not called", inFile: file, atLine: Int(line), expected: true)
             }
         } else {
             // validations given onFailure called once for each validation
             if maxCount != count {
-                currentTest.recordFailure(withDescription: "onFailure not called \(maxCount) times", inFile: file, atLine: line, expected: true)
+                currentTest.recordFailure(withDescription: "onFailure not called \(maxCount) times", inFile: file, atLine: Int(line), expected: true)
             }
         }
     }

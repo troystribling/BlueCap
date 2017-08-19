@@ -79,7 +79,7 @@ class PeripheralServiceCharacteristicsViewController : UITableViewController {
         return true
     }
 
-    func didEnterBackground() {
+   @objc func didEnterBackground() {
         peripheral?.stopPollingRSSI()
         peripheral?.disconnect()
         _ = self.navigationController?.popToRootViewController(animated: false)

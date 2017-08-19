@@ -57,7 +57,7 @@ class PeripheralManagerServiceCharacteristicsViewController : UITableViewControl
         }
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)

@@ -55,14 +55,14 @@ class ProgressView : UIView {
     
     func remove() -> Future<Void> {
         guard displayed else {
-            return Future(())
+            return Future(value: ())
         }
         let promise = Promise<Void>()
         self.displayed = false
         UIView.animate(withDuration: DISPLAY_REMOVE_DURATION, animations: { [weak self] in
             self?.alpha = 0.0
         }, completion:{ [weak self] finished in
-            promise.success()
+            promise.success(())
             self?.removeFromSuperview()
             self?.alpha = 1.0
         })

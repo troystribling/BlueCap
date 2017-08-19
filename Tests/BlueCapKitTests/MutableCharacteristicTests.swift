@@ -32,10 +32,10 @@ class MutableCharacteristicTests: XCTestCase {
             return MutableCharacteristic(cbMutableCharacteristic: characteristic, profile: profile)
         }
         let future = peripheralManager.add(service)
-        future.onSuccess(context: TestContext.immediate) {
+        future.onSuccess(context: TestContext.immediate) { _ in
             mock.isAdvertising = true
         }
-        future.onFailure(context: TestContext.immediate) { error in
+        future.onFailure(context: TestContext.immediate) { _ in
             XCTFail()
         }
         peripheralManager.didAddService(service.cbMutableService, error: nil)
@@ -51,10 +51,10 @@ class MutableCharacteristicTests: XCTestCase {
         service.characteristics = [MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic1, profile: characteristicProfile),
                                    MutableCharacteristic(cbMutableCharacteristic: cbCharacteristic2, profile: characteristicProfile)]
         let future = peripheralManager.add(service)
-        future.onSuccess(context: TestContext.immediate) {
+        future.onSuccess(context: TestContext.immediate) { _ in
             mock.isAdvertising = true
         }
-        future.onFailure(context: TestContext.immediate) { error in
+        future.onFailure(context: TestContext.immediate) { _ in
             XCTFail()
         }
         peripheralManager.didAddService(service.cbMutableService, error: nil)
@@ -266,7 +266,9 @@ class MutableCharacteristicTests: XCTestCase {
         let requestMock = CBATTRequestMock(characteristic: characteristic.cbMutableChracteristic, offset: 0, value: value)
         let future = characteristic.startRespondingToWriteRequests()
         peripheralManager.didReceiveWriteRequest(requestMock, central: centralMock)
-        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [{ (request, central) in
+        XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [{ (arg) in
+                
+                let (request, central) = arg
                 characteristic.respondToRequest(request, withResult: CBATTError.Code.success)
                 XCTAssertEqual(centralMock.identifier, central.identifier)
                 XCTAssertEqual(request.getCharacteristic().uuid, characteristic.uuid)
@@ -288,7 +290,8 @@ class MutableCharacteristicTests: XCTestCase {
             peripheralManager.didReceiveWriteRequest(requestMock, central: centralMock)
         }
         XCTAssertFutureStreamSucceeds(future, context: TestContext.immediate, validations: [
-             { (request, central) in
+             { (arg) in
+                let (request, central) = arg
                 characteristic.respondToRequest(request, withResult: CBATTError.Code.success)
                 XCTAssertEqual(centralMock.identifier, central.identifier)
                 XCTAssertEqual(request.getCharacteristic().uuid, characteristic.uuid)
@@ -296,7 +299,8 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(request.value, values[0])
                 XCTAssert(peripheralManager.respondToRequestCalled)
             },
-            { (request, central) in
+            { (arg) in
+                let (request, central) = arg
                 characteristic.respondToRequest(request, withResult: CBATTError.Code.success)
                 XCTAssertEqual(centralMock.identifier, central.identifier)
                 XCTAssertEqual(request.getCharacteristic().uuid, characteristic.uuid)
@@ -304,7 +308,8 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(request.value, values[1])
                 XCTAssert(peripheralManager.respondToRequestCalled)
             },
-            { (request, central) in
+            { (arg) in
+                let (request, central) = arg
                 characteristic.respondToRequest(request, withResult: CBATTError.Code.success)
                 XCTAssertEqual(centralMock.identifier, central.identifier)
                 XCTAssertEqual(request.getCharacteristic().uuid, characteristic.uuid)
@@ -312,7 +317,8 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(request.value, values[2])
                 XCTAssert(peripheralManager.respondToRequestCalled)
             },
-            { (request, central) in
+            { (arg) in
+                let (request, central) = arg
                 characteristic.respondToRequest(request, withResult: CBATTError.Code.success)
                 XCTAssertEqual(centralMock.identifier, central.identifier)
                 XCTAssertEqual(request.getCharacteristic().uuid, characteristic.uuid)
@@ -320,7 +326,8 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(request.value, values[3])
                 XCTAssert(peripheralManager.respondToRequestCalled)
             },
-            { (request, central) in
+            { (arg) in
+                let (request, central) = arg
                 characteristic.respondToRequest(request, withResult: CBATTError.Code.success)
                 XCTAssertEqual(centralMock.identifier, central.identifier)
                 XCTAssertEqual(request.getCharacteristic().uuid, characteristic.uuid)
@@ -328,7 +335,8 @@ class MutableCharacteristicTests: XCTestCase {
                 XCTAssertEqual(request.value, values[4])
                 XCTAssert(peripheralManager.respondToRequestCalled)
             },
-            { (request, central) in
+            { (arg) in
+                let (request, central) = arg
                 characteristic.respondToRequest(request, withResult: CBATTError.Code.success)
                 XCTAssertEqual(centralMock.identifier, central.identifier)
                 XCTAssertEqual(request.getCharacteristic().uuid, characteristic.uuid)
@@ -391,7 +399,9 @@ class MutableCharacteristicTests: XCTestCase {
         let requestMock1 = CBATTRequestMock(characteristic: characteristic1.cbMutableChracteristic, offset: 0, value: value)
         let future1 = characteristic1.startRespondingToWriteRequests()
         peripheralManager.didReceiveWriteRequest(requestMock1, central: centralMock)
-        XCTAssertFutureStreamSucceeds(future1, context: TestContext.immediate, validations: [{ (request, central) in
+        XCTAssertFutureStreamSucceeds(future1, context: TestContext.immediate, validations: [{ (arg) in
+            
+            let (request, central) = arg
             characteristic1.respondToRequest(request, withResult: CBATTError.Code.success)
             XCTAssertEqual(centralMock.identifier, central.identifier)
             XCTAssertEqual(request.getCharacteristic().uuid, characteristic1.uuid)
@@ -403,7 +413,9 @@ class MutableCharacteristicTests: XCTestCase {
         let requestMock2 = CBATTRequestMock(characteristic: characteristic2.cbMutableChracteristic, offset: 0, value: value)
         let future2 = characteristic2.startRespondingToWriteRequests()
         peripheralManager.didReceiveWriteRequest(requestMock2, central: centralMock)
-        XCTAssertFutureStreamSucceeds(future2, context: TestContext.immediate, validations: [{ (request, central) in
+        XCTAssertFutureStreamSucceeds(future2, context: TestContext.immediate, validations: [{ (arg) in
+            
+            let (request, central) = arg
             characteristic1.respondToRequest(request, withResult: CBATTError.Code.success)
             XCTAssertEqual(centralMock.identifier, central.identifier)
             XCTAssertEqual(request.getCharacteristic().uuid, characteristic2.uuid)

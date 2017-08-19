@@ -39,10 +39,11 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         }
         self.navigationItem.title = characteristic.name
         let future = characteristic.startRespondingToWriteRequests(capacity: 10)
-        future.onSuccess { [weak self, weak characteristic] (request, _) in
+        future.onSuccess { [weak self, weak characteristic] (args) -> Void in
             guard let strongSelf = self, let characteristic = characteristic else {
                 return
             }
+            let (request, _) = args
             if let value = request.value , value.count > 0 {
                 characteristic.value = request.value
                 characteristic.respondToRequest(request, withResult: CBATTError.success)
@@ -82,7 +83,7 @@ class PeripheralManagerServicesCharacteristicValuesViewController : UITableViewC
         }
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated: false)

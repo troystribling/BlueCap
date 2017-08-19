@@ -77,11 +77,11 @@ public class BeaconManager : RegionManager {
     
     // MARK: CLLocationManagerDelegate
     
-    public func locationManager(_: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
+    @objc public func locationManager(_: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         self.didRange(beacons: beacons.map { $0 as CLBeaconInjectable }, inRegion: region)
     }
     
-    public func locationManager(_: CLLocationManager, rangingBeaconsDidFailForRegion region: CLBeaconRegion, withError error: Error) {
+    @objc public func locationManager(_: CLLocationManager, rangingBeaconsDidFailForRegion region: CLBeaconRegion, withError error: Error) {
         self.rangingBeaconsDidFail(inRegion: region, withError: error)
     }
 

@@ -15,6 +15,10 @@
 		05C0C49C1AEC9DD200FAEBE1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05C0C49B1AEC9DD200FAEBE1 /* Images.xcassets */; };
 		05C0C49F1AEC9DD200FAEBE1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 05C0C49D1AEC9DD200FAEBE1 /* LaunchScreen.xib */; };
 		05C0C4C81AED434900FAEBE1 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C0C4C71AED434900FAEBE1 /* UIAlertControllerExtensions.swift */; };
+<<<<<<< HEAD
+=======
+		D1A9521494EEC18D8E194490 /* Pods_CentralManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8E209F099B9BB0D9A4E75F6 /* Pods_CentralManager.framework */; };
+>>>>>>> test cases work with swift 4
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,9 +44,15 @@
 		05C0C49B1AEC9DD200FAEBE1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		05C0C49E1AEC9DD200FAEBE1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		05C0C4C71AED434900FAEBE1 /* UIAlertControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtensions.swift; sourceTree = "<group>"; };
+<<<<<<< HEAD
 		32E675605F2F7FCF276DCDF1 /* Pods_CentralManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CentralManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E788F7317782871E98B2A65 /* Pods-CentralManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CentralManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-CentralManager/Pods-CentralManager.release.xcconfig"; sourceTree = "<group>"; };
 		FDB8095BB3BE1752F69FB107 /* Pods-CentralManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CentralManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CentralManager/Pods-CentralManager.debug.xcconfig"; sourceTree = "<group>"; };
+=======
+		8B9B0A48DBB76767B08BAE3D /* Pods-CentralManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CentralManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CentralManager/Pods-CentralManager.debug.xcconfig"; sourceTree = "<group>"; };
+		A8E209F099B9BB0D9A4E75F6 /* Pods_CentralManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CentralManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D623837D4B7687B65B1987DA /* Pods-CentralManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CentralManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-CentralManager/Pods-CentralManager.release.xcconfig"; sourceTree = "<group>"; };
+>>>>>>> test cases work with swift 4
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +60,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+<<<<<<< HEAD
 				05AC1C43AC25E13E6F415893 /* Pods_CentralManager.framework in Frameworks */,
+=======
+				D1A9521494EEC18D8E194490 /* Pods_CentralManager.framework in Frameworks */,
+>>>>>>> test cases work with swift 4
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,8 +76,13 @@
 			children = (
 				05C0C4911AEC9DD200FAEBE1 /* CentralManager */,
 				05C0C4901AEC9DD200FAEBE1 /* Products */,
+<<<<<<< HEAD
 				CF8D825C89311DFE41F2AF74 /* Pods */,
 				C4B8B4DEC40B30F7CCB754C7 /* Frameworks */,
+=======
+				B489D2F15B3AFB00336A30AA /* Pods */,
+				AC109DCCAA1DC3E476DA1425 /* Frameworks */,
+>>>>>>> test cases work with swift 4
 			);
 			sourceTree = "<group>";
 		};
@@ -98,19 +117,34 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+<<<<<<< HEAD
 		C4B8B4DEC40B30F7CCB754C7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				32E675605F2F7FCF276DCDF1 /* Pods_CentralManager.framework */,
+=======
+		AC109DCCAA1DC3E476DA1425 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A8E209F099B9BB0D9A4E75F6 /* Pods_CentralManager.framework */,
+>>>>>>> test cases work with swift 4
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+<<<<<<< HEAD
 		CF8D825C89311DFE41F2AF74 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				FDB8095BB3BE1752F69FB107 /* Pods-CentralManager.debug.xcconfig */,
 				9E788F7317782871E98B2A65 /* Pods-CentralManager.release.xcconfig */,
+=======
+		B489D2F15B3AFB00336A30AA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8B9B0A48DBB76767B08BAE3D /* Pods-CentralManager.debug.xcconfig */,
+				D623837D4B7687B65B1987DA /* Pods-CentralManager.release.xcconfig */,
+>>>>>>> test cases work with swift 4
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -122,13 +156,22 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 05C0C4AE1AEC9DD200FAEBE1 /* Build configuration list for PBXNativeTarget "CentralManager" */;
 			buildPhases = (
+<<<<<<< HEAD
 				74D92B550BB06C69305E0ECC /* [CP] Check Pods Manifest.lock */,
+=======
+				429D657D86CF652E2A3737F2 /* [CP] Check Pods Manifest.lock */,
+>>>>>>> test cases work with swift 4
 				05C0C48B1AEC9DD200FAEBE1 /* Sources */,
 				05C0C48C1AEC9DD200FAEBE1 /* Frameworks */,
 				05C0C48D1AEC9DD200FAEBE1 /* Resources */,
 				05C0C4C31AEC9F3E00FAEBE1 /* Embed Frameworks */,
+<<<<<<< HEAD
 				1AF5BE90E02BA2CD8D682189 /* [CP] Embed Pods Frameworks */,
 				FFED2EE8FEAB06F0CC5BF879 /* [CP] Copy Pods Resources */,
+=======
+				4304A66B0FD8717EB5E6FF55 /* [CP] Embed Pods Frameworks */,
+				58737A364E22A535EA802ADF /* [CP] Copy Pods Resources */,
+>>>>>>> test cases work with swift 4
 			);
 			buildRules = (
 			);
@@ -146,13 +189,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Troy Stribling";
 				TargetAttributes = {
 					05C0C48E1AEC9DD200FAEBE1 = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = HZEX459C37;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 0900;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -193,7 +236,11 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+<<<<<<< HEAD
 		1AF5BE90E02BA2CD8D682189 /* [CP] Embed Pods Frameworks */ = {
+=======
+		429D657D86CF652E2A3737F2 /* [CP] Check Pods Manifest.lock */ = {
+>>>>>>> test cases work with swift 4
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -208,10 +255,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
+<<<<<<< HEAD
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CentralManager/Pods-CentralManager-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		74D92B550BB06C69305E0ECC /* [CP] Check Pods Manifest.lock */ = {
+=======
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		4304A66B0FD8717EB5E6FF55 /* [CP] Embed Pods Frameworks */ = {
+>>>>>>> test cases work with swift 4
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -229,7 +283,11 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+<<<<<<< HEAD
 		FFED2EE8FEAB06F0CC5BF879 /* [CP] Copy Pods Resources */ = {
+=======
+		58737A364E22A535EA802ADF /* [CP] Copy Pods Resources */ = {
+>>>>>>> test cases work with swift 4
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -288,14 +346,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -337,14 +401,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -373,7 +443,11 @@
 		};
 		05C0C4AF1AEC9DD200FAEBE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+<<<<<<< HEAD
 			baseConfigurationReference = FDB8095BB3BE1752F69FB107 /* Pods-CentralManager.debug.xcconfig */;
+=======
+			baseConfigurationReference = 8B9B0A48DBB76767B08BAE3D /* Pods-CentralManager.debug.xcconfig */;
+>>>>>>> test cases work with swift 4
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -383,12 +457,18 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		05C0C4B01AEC9DD200FAEBE1 /* Release */ = {
 			isa = XCBuildConfiguration;
+<<<<<<< HEAD
 			baseConfigurationReference = 9E788F7317782871E98B2A65 /* Pods-CentralManager.release.xcconfig */;
+=======
+			baseConfigurationReference = D623837D4B7687B65B1987DA /* Pods-CentralManager.release.xcconfig */;
+>>>>>>> test cases work with swift 4
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -398,6 +478,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "us.gnos.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

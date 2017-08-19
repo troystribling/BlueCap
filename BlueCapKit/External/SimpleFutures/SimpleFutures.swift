@@ -86,7 +86,7 @@ public enum Try<T> : Tryable {
         self = .failure(error)
     }
 
-    public init(_ task: (Void) throws -> T) {
+    public init(_ task: () throws -> T) {
         do {
             self = try .success(task())
         } catch {
@@ -260,14 +260,14 @@ extension Sequence where Iterator.Element: Tryable {
 
 public protocol ExecutionContext {
 
-    func execute(_ task: @escaping (Void) -> Void)
+    func execute(_ task: @escaping () -> Void)
 
 }
 
 public class ImmediateContext : ExecutionContext {
 
     public init() {}
-    public func execute(_ task: @escaping (Void) -> Void) {
+    public func execute(_ task: @escaping () -> Void) {
         task()
     }
 
@@ -284,7 +284,7 @@ public struct QueueContext : ExecutionContext {
         self.queue = queue
     }
 
-    public func execute(_ task: @escaping (Void) -> Void) {
+    public func execute(_ task: @escaping () -> Void) {
         queue.async(task)
     }
 
@@ -299,7 +299,7 @@ public struct MaxStackDepthContext : ExecutionContext {
         self.maxDepth = maxDepth
     }
 
-    public func execute(_ task: @escaping (Void) -> Void) {
+    public func execute(_ task: @escaping () -> Void) {
         let localThreadDictionary = Thread.current.threadDictionary
         let previousDepth = localThreadDictionary[MaxStackDepthContext.taskDepthKey] as? Int ?? 0
         if previousDepth < maxDepth {
@@ -330,19 +330,19 @@ public struct Queue {
         self.queue = queue
     }
     
-    public func sync(_ block: @escaping (Void) -> Void) {
+    public func sync(_ block: @escaping () -> Void) {
         queue.sync(execute: block)
     }
     
-    public func sync<T>(_ block: @escaping (Void) -> T) -> T {
+    public func sync<T>(_ block: @escaping () -> T) -> T {
         return queue.sync(execute: block);
     }
     
-    public func async(_ block:  @escaping (Void) -> Void) {
+    public func async(_ block:  @escaping () -> Void) {
         queue.async(execute: block);
     }
     
-    public func delay(_ delay: TimeInterval, request: @escaping (Void) -> Void) {
+    public func delay(_ delay: TimeInterval, request: @escaping () -> Void) {
         let popTime = DispatchTime.now() + Double(Int64(Float(delay)*Float(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
         queue.asyncAfter(deadline: popTime, execute: request)
     }
@@ -536,7 +536,7 @@ public final class Future<T> : Futurable {
         self.result = Try(error)
     }
 
-    public init(resolver: ((Try<T>) -> Void) -> Void) {
+    public init(resolver: (@escaping (Try<T>) -> Void) -> Void) {
         resolver { value in
             self.complete(value)
         }
@@ -668,11 +668,11 @@ public final class Future<T> : Futurable {
 
 // MARK: - future -
 
-public func future<T>( _ task: @autoclosure @escaping  (Void) -> T) -> Future<T> {
+public func future<T>( _ task: @autoclosure @escaping () -> T) -> Future<T> {
     return future(context: ImmediateContext(), task)
 }
 
-public func future<T>(context: ExecutionContext = QueueContext.futuresDefault, _ task: @escaping (Void) throws -> T) -> Future<T> {
+public func future<T>(context: ExecutionContext = QueueContext.futuresDefault, _ task: @escaping () throws -> T) -> Future<T> {
     let future = Future<T>()
     context.execute {
         future.complete(Try(task))
@@ -715,13 +715,13 @@ public func future<T>(method: ((T) -> Void) -> Void) -> Future<T> {
     })
 }
 
-public func ??<T>(lhs: Future<T>, rhs: @autoclosure @escaping  (Void) throws -> T) -> Future<T> {
+public func ??<T>(lhs: Future<T>, rhs: @autoclosure @escaping  () throws -> T) -> Future<T> {
     return lhs.recover { _ in
         return try rhs()
     }
 }
 
-public func ??<T>(lhs: Future<T>, rhs: @autoclosure @escaping (Void) throws -> Future<T>) -> Future<T> {
+public func ??<T>(lhs: Future<T>, rhs: @autoclosure @escaping () throws -> Future<T>) -> Future<T> {
     return lhs.recoverWith { _ in
         return try rhs()
     }

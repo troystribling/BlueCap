@@ -19,31 +19,32 @@ extension UITableViewController {
     
     func styleNavigationBar() {
         let font = UIFont(name:"Thonburi", size:20.0)
-        var titleAttributes : [String:AnyObject]
+        var titleAttributes: [NSAttributedStringKey : Any]
         if let defaultTitleAttributes = UINavigationBar.appearance().titleTextAttributes {
-            titleAttributes = defaultTitleAttributes as [String : AnyObject]
+            titleAttributes = defaultTitleAttributes
         } else {
-            titleAttributes = [String:AnyObject]()
+            titleAttributes = [NSAttributedStringKey : Any]()
         }
-        titleAttributes[NSFontAttributeName] = font
+        titleAttributes[NSAttributedStringKey.font] = font
         self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
     }
-    
+
     func styleUIBarButton(_ button:UIBarButtonItem) {
         let font = UIFont(name:"Thonburi", size:16.0)
-        var titleAttributes : [String:AnyObject]
-        if let defaultitleAttributes = button.titleTextAttributes(for: UIControlState()) {
-            titleAttributes = defaultitleAttributes as [String : AnyObject]
+        var titleAttributes: [NSAttributedStringKey: Any]
+        if let defaultTitleAttributes = UINavigationBar.appearance().titleTextAttributes {
+            titleAttributes = defaultTitleAttributes
         } else {
-            titleAttributes = [String:AnyObject]()
+            titleAttributes = [NSAttributedStringKey: Any]()
         }
-        titleAttributes[NSFontAttributeName] = font
+        titleAttributes[NSAttributedStringKey.font] = font
         button.setTitleTextAttributes(titleAttributes, for:UIControlState())
     }
 
 }
 
 extension UIViewController {
+
     func presentAlertIngoringForcedDisconnect(title: String? = nil, error: Swift.Error) {
         guard let peripheralError = error as? PeripheralError else {
             present(UIAlertController.alert(title: "Connection error", error: error) { [weak self] _ in
@@ -58,4 +59,5 @@ extension UIViewController {
             _ = self?.navigationController?.popToRootViewController(animated: true)
         }, animated: true)
     }
+
 }

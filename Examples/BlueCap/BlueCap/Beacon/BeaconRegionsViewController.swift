@@ -64,7 +64,7 @@ class BeaconRegionsViewController: UITableViewController {
         }
     }
     
-    func toggleMonitoring(_ sender:AnyObject) {
+    @objc func toggleMonitoring(_ sender:AnyObject) {
         if !Singletons.scanningManager.isScanning {
             if Singletons.beaconManager.isMonitoring {
                 Singletons.beaconManager.stopRangingAllBeacons()
@@ -93,7 +93,7 @@ class BeaconRegionsViewController: UITableViewController {
             beaconRegion.notifyOnEntry = true
             beaconRegion.notifyOnExit = true
             let regionFuture = Singletons.beaconManager.startMonitoring(for: beaconRegion, authorization: .authorizedWhenInUse)
-            let beaconFuture = regionFuture.flatMap { [weak self, weak beaconRegion] status -> FutureStream<[Beacon]> in
+            let beaconFuture = regionFuture.flatMap { [weak self, weak beaconRegion] (status) -> FutureStream<[Beacon]> in
                 guard let strongSelf = self, let beaconRegion = beaconRegion else {
                     throw AppError.unlikelyFailure
                 }
@@ -150,8 +150,7 @@ class BeaconRegionsViewController: UITableViewController {
             }
         }
     }
-    
-   func didBecomeActive() {
+  @objc func didBecomeActive() {
         Logger.debug()
         self.updateWhenActive()
     }

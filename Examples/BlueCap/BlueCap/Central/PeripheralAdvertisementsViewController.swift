@@ -92,7 +92,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         _ = navigationController?.popToRootViewController(animated: false)
     }
     

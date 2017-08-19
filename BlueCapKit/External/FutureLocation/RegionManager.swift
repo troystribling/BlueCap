@@ -52,7 +52,7 @@ public class RegionManager : LocationManager {
         authorizationFuture.onFailure { _ in
             self.updateIsMonitoring(false)
         }
-        return authorizationFuture.flatMap(capacity: capacity, context: context) {
+        return authorizationFuture.flatMap(capacity: capacity, context: context) { _ in
             self.updateIsMonitoring(true)
             self.configuredRegions[region.identifier] = region
             self.clLocationManager.startMonitoring(for: region.clRegion)
@@ -83,24 +83,24 @@ public class RegionManager : LocationManager {
 
     // MARK: CLLocationManagerDelegate
     
-    public func locationManager(_: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
+    @objc public func locationManager(_: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
         didDetermine(state: state, forRegion: region)
     }
     
-    public func locationManager(_:CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: Error) {
+    @objc public func locationManager(_:CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: Error) {
         monitoringDidFail(forRegion: region, withError: error)
     }
     
-    public func locationManager(_: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
+    @objc public func locationManager(_: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
         didStartMonitoring(forRegion: region)
     }
 
-    public func didEnter(region: CLRegion) {
+    @objc public func didEnter(region: CLRegion) {
         Logger.debug("region identifier '\(region.identifier)'")
         configuredRegions[region.identifier]?.regionPromise.success(.inside)
     }
 
-    public func didExit(region: CLRegion) {
+    @objc public func didExit(region: CLRegion) {
         Logger.debug("region identifier '\(region.identifier)'")
         configuredRegions[region.identifier]?.regionPromise.success(.outside)
     }

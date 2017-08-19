@@ -76,11 +76,11 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
             self?.updateUI()
         }
-        peripheralDiscoveryFuture.onFailure { [weak self] error in
+        peripheralDiscoveryFuture.onFailure { [weak self] error -> Void in
             guard let strongSelf = self else {
                 return
             }
-            strongSelf.progressView.remove().onSuccess {
+            strongSelf.progressView.remove().onSuccess { _ in
                 strongSelf.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
                 strongSelf.updateWhenActive()
             }
@@ -144,13 +144,13 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             return strongSelf.notifySwitch.isOn ? characteristic.startNotifying() : characteristic.stopNotifying()
         }
 
-        updateFuture.onSuccess { [weak self] in
+        updateFuture.onSuccess { [weak self] _ in
             _ = self?.progressView.remove()
             self?.updateUI()
             self?.updateWhenActive()
         }
-        updateFuture.onFailure{ [weak self] error in
-            self?.progressView.remove().onSuccess {
+        updateFuture.onFailure{ [weak self] error -> Void in
+            self?.progressView.remove().onSuccess { _ in
                 self?.present(UIAlertController.alert(title: "Characteristic notification error", error: error), animated: true, completion: nil)
             }
             self?.updateUI()
@@ -205,7 +205,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
         return value ? "YES" : "NO"
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }

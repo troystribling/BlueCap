@@ -128,7 +128,7 @@ class PeripheralTests: XCTestCase {
         let stream = peripheral.connect(connectionTimeout: 120.0)
         peripheral.didConnectPeripheral()
         XCTAssertFutureStreamSucceeds(stream, context: TestContext.immediate, validations: [
-            {
+            { _ in
                 XCTAssert(self.centralManagerMock.connectPeripheralCalled)
             }
         ])

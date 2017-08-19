@@ -52,14 +52,14 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
                 return
         }
         
-        peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
+        peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ -> Void in
             self?.updateWhenActive()
         }
-        peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] error in
+        peripheralDiscoveryFuture.onFailure(cancelToken: cancelToken) { [weak self] (error) -> Void in
             guard let strongSelf = self else {
                 return
             }
-            strongSelf.progressView.remove().onSuccess {
+            strongSelf.progressView.remove().onSuccess { _ in
                 strongSelf.presentAlertIngoringForcedDisconnect(title: "Connection Error", error: error)
                 strongSelf.updateWhenActive()
             }
@@ -69,10 +69,10 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         recieveNotificationsIfEnabled()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-        stopReceivingNotificationIfNotifying()
+        stopReceivingNotifications()
         _ = peripheralDiscoveryFuture?.cancel(cancelToken)
     }
 
@@ -106,7 +106,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
 
         progressView.show()
         
-        let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout())).flatMap { [weak self] _ -> Future<Void> in
+        let readFuture = characteristic.read(timeout: Double(ConfigStore.getCharacteristicReadWriteTimeout())).flatMap { [weak self] () -> Future<Void> in
             guard let strongSelf = self else {
                 throw AppError.unlikelyFailure
             }
@@ -117,13 +117,13 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             self?.updateWhenActive()
         }
         
-        readFuture.onFailure { [weak self] error in
-            guard let strongSelf = self else {
+        readFuture.onFailure { [weak self] (error) -> Void in
+            guard let `self` = self else {
                 return
             }
-            return strongSelf.progressView.remove().onSuccess {
-                strongSelf.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { _ in
-                    _ = strongSelf.navigationController?.popViewController(animated: true)
+            return self.progressView.remove().onSuccess { _ in
+                self.present(UIAlertController.alert(title: "Charcteristic read error", error: error) { _ in
+                    _ = self.navigationController?.popViewController(animated: true)
                     return
                 }, animated:true, completion:nil)
             }
@@ -155,21 +155,18 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
         }
         
         resvieveNotificationUpdatesFutureStream.onFailure { [weak self] error in
-            self?.present(UIAlertController.alert(title: "Charcteristic notification update", error: error) { [weak self] _ in
-                _ = self?.navigationController?.popViewController(animated: true)
-                return
-            }, animated:true, completion:nil)
+            self?.presentAlertIngoringForcedDisconnect(title: "Charcteristic notification update", error: error)
         }
     }
 
-    func stopReceivingNotificationIfNotifying() {
-        guard let characteristic = characteristic, characteristic.isNotifying else {
+    func stopReceivingNotifications() {
+        guard let characteristic = characteristic else {
             return
         }
         characteristic.stopNotificationUpdates()
     }
 
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         peripheral?.disconnect()
         _ = navigationController?.popToRootViewController(animated: false)
     }

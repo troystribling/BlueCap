@@ -83,7 +83,7 @@ class BeaconManagerTests: XCTestCase {
             XCTAssert(self.beaconManager.isRanging, "isRanging invalid")
             XCTAssertFalse(self.mock.stopRangingBeaconsInRegionCalled, "stopRangingBeaconsInRegion called")
         }
-        future.onFailure(context: TestContext.immediate) { error in
+        future.onFailure(context: TestContext.immediate) { _ in
             XCTFail()
         }
         self.beaconManager.didRange(beacons: self.testCLBeacons.map{$0 as CLBeaconInjectable}, inRegion: self.testCLBeaconRegion)

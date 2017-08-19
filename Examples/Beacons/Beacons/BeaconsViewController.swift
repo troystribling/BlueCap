@@ -17,7 +17,7 @@ class BeaconsViewController: UITableViewController {
     let beaconRangingCancelToken = CancelToken()
     
     struct MainStoryBoard {
-        static let beaconCell   = "BeaconCell"
+        static let beaconCell = "BeaconCell"
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,7 +50,6 @@ class BeaconsViewController: UITableViewController {
             }
         }
     }
-    
     
     // UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {

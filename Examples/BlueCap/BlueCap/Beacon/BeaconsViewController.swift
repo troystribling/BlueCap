@@ -43,7 +43,7 @@ class BeaconsViewController: UITableViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    func updateBeacons() {
+    @objc func updateBeacons() {
         Logger.debug()
         self.tableView.reloadData()
     }
@@ -59,8 +59,7 @@ class BeaconsViewController: UITableViewController {
             }
         }
     }
-    
-    func didEnterBackground() {
+   @objc func didEnterBackground() {
         Logger.debug()
         _ = self.navigationController?.popToRootViewController(animated: false)
     }
@@ -89,6 +88,16 @@ class BeaconsViewController: UITableViewController {
             cell.rssiLabel.text = "\(beacon.rssi)"
             let accuracy = NSString(format:"%.4f", beacon.accuracy)
             cell.accuracyLabel.text = "\(accuracy)m"
+            switch beacon.proximity {
+            case .unknown:
+                cell.proximityLabel.textColor = UIColor(red:0.7, green:0.1, blue:0.1, alpha:0.6)
+            case .immediate:
+                cell.proximityLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.6)
+            case .near:
+                cell.proximityLabel.textColor = UIColor(red:0.4, green:0.75, blue:1.0, alpha:0.6)
+            case .far:
+                cell.proximityLabel.textColor = UIColor(red:1.0, green:0.6, blue:0.0, alpha:0.6)
+            }
         }
         return cell
     }
