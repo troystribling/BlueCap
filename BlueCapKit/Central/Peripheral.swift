@@ -204,7 +204,9 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
     }
 
     deinit {
-        self.cbPeripheral.delegate = nil
+        if cbPeripheral.delegate === self {
+            cbPeripheral.delegate = nil
+        }
     }
 
     // MARK: RSSI

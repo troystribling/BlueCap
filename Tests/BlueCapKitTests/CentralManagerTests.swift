@@ -149,6 +149,8 @@ class CentralManagerTests: XCTestCase {
             for testPeripheral in testPeripherals {
                 let peripheral = centralManager.discoveredPeripherals[testPeripheral.identifier]
                 XCTAssertNotNil(peripheral)
+                XCTAssertNotNil(peripheral?.cbPeripheral)
+                XCTAssertNotNil(peripheral?.cbPeripheral.delegate)
                 let services = peripheral!.services
                 let testServices = testPeripheral.services!
                 XCTAssertEqual(services.count, testServices.count)
@@ -173,4 +175,22 @@ class CentralManagerTests: XCTestCase {
                 XCTAssertEqualErrors(error, CentralManagerError.restoreFailed)
         }
     }
+
+    // MARK: Retrieve Peripherals
+
+    func testWhenPeripheralsretrieved_WithIdentifiers_CompletesSuccessfully() {
+        let mock = CBCentralManagerMock()
+        let centralManager = CentralManager(centralManager: mock)
+        let testPeripherals = [CBPeripheralMock(state: .connected), CBPeripheralMock(state: .connected)]
+        mock.retrievedPeripherals = testPeripherals
+        centralManager._discoveredPeripherals =
+            [testPeripherals[0].identifier: Peripheral(cbPeripheral: testPeripherals[0], centralManager: centralManager)]
+        let retrievedPeripherals = centralManager.retrievePeripherals(withIdentifiers: testPeripherals.map { $0.identifier })
+        XCTAssertEqual(retrievedPeripherals.count, testPeripherals.count)
+        for peripheral in retrievedPeripherals {
+            XCTAssertNotNil(peripheral.cbPeripheral)
+            XCTAssertNotNil(peripheral.cbPeripheral.delegate)
+        }
+    }
+
 }

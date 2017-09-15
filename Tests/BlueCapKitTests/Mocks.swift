@@ -29,6 +29,8 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
     var cancelPeripheralConnectionCount = 0
     var scanForPeripheralsWithServicesCalled = false
 
+    var retrievedPeripherals: [CBPeripheralInjectable] = []
+
     var state: ManagerState
     var stopScanCalled = false
     var delegate: CBCentralManagerDelegate?
@@ -60,11 +62,11 @@ class CBCentralManagerMock: CBCentralManagerInjectable {
     }
 
     func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
-        return retrieveConnectedPeripherals(withServices: serviceUUIDs)
+        return retrievedPeripherals
     }
 
     func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
-        return retrievePeripherals(withIdentifiers: identifiers)
+        return retrievedPeripherals
     }
 
 }
