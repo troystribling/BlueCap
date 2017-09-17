@@ -19,8 +19,8 @@
 
 # Requirements
 
-- iOS 9.0+
-- Xcode 8.3
+- iOS 10.0+
+- Xcode 9.0
 
 # Installation
 
@@ -37,11 +37,11 @@ gem install cocoapods
 Add `BluCapKit` to your to your project `Podfile`,
 
 ```ruby
-platform :ios, '9.0'
+platform :ios, '10.0'
 use_frameworks!
 
 target 'Your Target Name' do
-  pod 'BlueCapKit', '~> 0.5'
+  pod 'BlueCapKit', '~> 0.6'
 end
 ```
 
@@ -60,7 +60,7 @@ brew install carthage
 To add `BlueCapKit` to your `Cartfile`
 
 ```ogdl
-github "troystribling/BlueCap" ~> 0.5
+github "troystribling/BlueCap" ~> 0.6
 ```
 
 To download and build `BlueCapKit.framework` run the command,
@@ -90,10 +90,10 @@ This will only download `BlueCapKit`. Then follow the steps in [Manual](#manual)
 # Getting Started
 
 With BlueCap it is possible to easily implement `CentralManager` and `PeripheralManager` applications, serialize and deserialize messages exchanged with Bluetooth devices and define reusable GATT profile definitions. The BlueCap asynchronous interface uses [Futures](https://github.com/troystribling/SimpleFutures) instead of the usual block interface or the protocol-delegate pattern. Futures can be chained with the result of the previous passed as input to the next. This simplifies application implementation because the persistence of state between asynchronous calls is eliminated and code will not be distributed over multiple files, which is the case for protocol-delegate, or be deeply nested, which is the case for block interfaces. In this section a brief overview of how an application is constructed will be given.  [Following sections](#usage) will describe supported use cases. [Example applications](/Examples) are also available.
- 
+
 ## CentralManager
 
-A simple CentralManager implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-216), connects on peripheral discovery, discovers service and characteristics and subscribes to accelerometer data updates will be described. 
+A simple CentralManager implementation that scans for Peripherals advertising a [TiSensorTag Accelerometer Service](/BlueCapKit/Service%20Profile%20Definitions/TISensorTagServiceProfiles.swift#L16-216), connects on peripheral discovery, discovers service and characteristics and subscribes to accelerometer data updates will be described.
 
 All applications begin by calling `CentralManager#whenStateChanges`.
 
@@ -115,7 +115,7 @@ public enum AppError : Error {
 }
 
 let serviceUUID = CBUUID(string: TISensorTag.AccelerometerService.uuid)
-    
+
 let scanFuture = stateChangeFuture.flatMap { [weak manager] state -> FutureStream<Peripheral> in
     guard let manager = manager else {
         throw AppError.unlikely
@@ -257,7 +257,7 @@ dataUpdateFuture.onFailure { [weak peripheral] error in
     }
 }
 ```
- 
+
 These examples can be written as a single `flatMap` chain as shown in the  [CentralManager Example](/Examples/CentralManager).
 
 ## PeripheralManager
@@ -272,10 +272,10 @@ let accelerometerService = MutableService(uuid: TISensorTag.AccelerometerService
 
 // create accelerometer data characteristic
 let accelerometerDataCharacteristic = MutableCharacteristic(profile: RawArrayCharacteristicProfile<TISensorTag.AccelerometerService.Data>())
-  
+
 // create accelerometer enabled characteristic
 let accelerometerEnabledCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.Enabled>())
-  
+
 // create accelerometer update period characteristic
 let accelerometerUpdatePeriodCharacteristic = MutableCharacteristic(profile: RawCharacteristicProfile<TISensorTag.AccelerometerService.UpdatePeriod>())
 
@@ -295,7 +295,7 @@ enum AppError: Error {
 }
 
 let manager = PeripheralManager(options: [CBPeripheralManagerOptionRestoreIdentifierKey : "us.gnos.BlueCap.peripheral-manager-documentation" as NSString])
-    
+
 let startAdvertiseFuture = manager.whenStateChanges().flatMap { [weak manager] state -> Future<Void> in
     guard let manager = manager else {
         throw AppError.unlikely
@@ -313,7 +313,7 @@ let startAdvertiseFuture = manager.whenStateChanges().flatMap { [weak manager] s
     case .resetting:
         throw AppError.resetting
     }
-}.flatMap { [weak manager] _ -> Future<Void> in 
+}.flatMap { [weak manager] _ -> Future<Void> in
     guard let manager = manager else {
         throw AppError.unlikely
     }
@@ -432,12 +432,10 @@ carthage update
 
 BlueCap supports many features that simplify writing Bluetooth LE applications. Use cases with example implementations are described in each of the following sections.
 
-1. [CentralManager](/Documentation/CentralManager.md): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures). 
+1. [CentralManager](/Documentation/CentralManager.md): The BlueCap CentralManager implementation replaces [CBCentralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBCentralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBCentralManagerDelegate) and [CBPeripheralDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
 
 2. [PeripheralManager](/Documentation/PeripheralManager.md): The BlueCap PeripheralManager implementation replaces [CBPeripheralManagerDelegate](https://developer.apple.com/library/prerelease/ios/documentation/CoreBluetooth/Reference/CBPeripheralManagerDelegate_Protocol/index.html#//apple_ref/occ/intf/CBPeripheralManagerDelegate) protocol implementations with a Scala Futures interface using [SimpleFutures](https://github.com/troystribling/SimpleFutures).
 
 3. [Serialization/Deserialization](/Documentation/SerializationDeserialization.md): Serialization and deserialization of device messages.
- 
+
 4. [GATT Profile Definition](/Documentation/GATTProfileDefinition.md): Define reusable GATT profiles and add profiles to the BlueCap app.
-
-
