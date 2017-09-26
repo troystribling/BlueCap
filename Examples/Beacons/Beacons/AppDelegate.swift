@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 enum AppError : Swift.Error {
     case rangingBeacon
@@ -26,8 +27,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     fileprivate func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable: Any]?) -> Bool {
-        application.registerUserNotificationSettings(
-            UIUserNotificationSettings(types:[UIUserNotificationType.alert, UIUserNotificationType.sound, UIUserNotificationType.badge], categories:nil))
+        let center = UNUserNotificationCenter.current()
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge]
+        center.requestAuthorization(options: options) { (granted, error) in
+        }
         return true
     }
 

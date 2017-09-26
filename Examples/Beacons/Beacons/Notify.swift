@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Troy Stribling. The MIT License (MIT).
 //
 import UIKit
+import UserNotifications
 
 class Notify {
     
@@ -19,11 +20,14 @@ class Notify {
     class func withMessage(_ message:String) {
         if UIApplication.shared.applicationState != .active {
             eventCount += 1
-            let localNotification = UILocalNotification()
-            localNotification.alertBody = message
-            localNotification.soundName = UILocalNotificationDefaultSoundName
-            localNotification.applicationIconBadgeNumber = eventCount
-            UIApplication.shared.presentLocalNotificationNow(localNotification)
+            let content = UNMutableNotificationContent()
+            content.title = ""
+            content.body = message
+            content.sound = UNNotificationSound.default()
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.0, repeats: false)
+            let request = UNNotificationRequest(identifier: "Immediate", content: content, trigger: trigger)
+            let center = UNUserNotificationCenter.current()
+            center.add(request)
         }
         
     }
