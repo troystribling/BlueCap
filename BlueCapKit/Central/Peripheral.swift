@@ -24,7 +24,7 @@ public struct PeripheralAdvertisements {
         return self.advertisements[CBAdvertisementDataLocalNameKey] as? String
     }
     
-    public var manufactuereData: Data? {
+    public var manufacturerData: Data? {
         return self.advertisements[CBAdvertisementDataManufacturerDataKey] as? Data
     }
     
